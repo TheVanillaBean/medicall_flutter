@@ -5,7 +5,7 @@ import './screens/doctors.dart' as _doctorsPage;
 import './screens/chat.dart' as _chatPage;
 import './screens/history.dart' as _historyPage;
 import './screens/settings.dart' as _settingsPage;
-import './presentation/my_flutter_app_icons.dart' as CustomIcons;
+import './presentation/medicall_app_icons.dart' as CustomIcons;
 
 void main() => runApp(new MaterialApp(
   title: 'Medicall',
@@ -126,7 +126,7 @@ class TabsState extends State<Tabs> {
         },
         child: new Container(
           child: new Icon(
-            CustomIcons.MyFlutterApp.logo_m,
+            CustomIcons.MedicallApp.logo_m,
             size: 35.0,
             ),
         ),
@@ -180,7 +180,7 @@ class TabsState extends State<Tabs> {
               ),
               child: new Center(
                 child: new Icon(
-                  CustomIcons.MyFlutterApp.logo, 
+                  CustomIcons.MedicallApp.logo, 
                   size: 60.0,
                   color: Colors.lightBlueAccent),
               ),
