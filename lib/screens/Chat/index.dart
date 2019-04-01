@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class Settings extends StatelessWidget {
+class ChatScreen extends StatelessWidget {
   @override
   Widget build (BuildContext context) => new Scaffold(
 
@@ -8,7 +8,7 @@ class Settings extends StatelessWidget {
     appBar: new AppBar(
       centerTitle: true,
       title: new Text(
-        'Settings', 
+        'Chat', 
         style: new TextStyle(
           fontSize: Theme.of(context).platform == TargetPlatform.iOS ? 17.0 : 20.0,
         ),
@@ -22,7 +22,7 @@ class Settings extends StatelessWidget {
         new Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            new Text('Settings page content')
+            new Text('Chat page content'),
           ],
         )
       ],
