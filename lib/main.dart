@@ -1,5 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:medicall/routes.dart';
 
-void main() {
-  new Routes();
-}
+void main() => runApp(Routes());

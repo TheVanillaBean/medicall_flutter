@@ -97,17 +97,17 @@ class DrawerMenu extends StatelessWidget {
             new ListTile(
                 leading: new Icon(
                   Icons.folder_shared,
-                  color: Colors.grey,
+                  color: Color.fromRGBO(35, 179, 232, 1),
                 ),
                 title: new Text(
                   'History',
                   style: TextStyle(
-                    color: Colors.grey,
+                    color: Colors.blueGrey,
                   ),
                 ),
                 onTap: () {
-                  //Navigator.pop(context);
-                  //Navigator.of(context).pushNamed('/history');
+                  Navigator.pop(context);
+                  Navigator.of(context).pushNamed('/history');
                 }),
             new ListTile(
                 leading: new Icon(
