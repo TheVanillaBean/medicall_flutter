@@ -1,117 +1,87 @@
 import 'package:flutter/material.dart';
-import 'package:medicall/presentation/medicall_app_icons.dart' as CustomIcons;
-import 'package:medicall/models/providers_model.dart';
+// import 'package:Medicall/presentation/medicall_app_icons.dart' as CustomIcons;
+// import 'package:Medicall/models/providers_model.dart';
+import 'package:flutter_alert/flutter_alert.dart';
+
+import 'dart:async';
+import 'package:google_maps_webservice/places.dart';
+import 'package:flutter_google_places/flutter_google_places.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart' as LocationManager;
+import 'package:Medicall/screens/SelectProvider/placeDetail.dart';
+
+const kGoogleApiKey = "AIzaSyBx8brcoVisQ4_5FUD-xJlS1i4IwjSS-Hc";
+GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
 
 class SelectProviderScreen extends StatefulWidget {
+  final String questions;
+
+  const SelectProviderScreen({Key key, @required this.questions}) : super(key: key);
   @override
   _SelectProviderScreenState createState() => _SelectProviderScreenState();
 }
 
 class _SelectProviderScreenState extends State<SelectProviderScreen> {
-  Providers _providers = Providers(providers: [
-    Provider(
-        prefix: 'Dr.',
-        firstName: 'Layla',
-        lastName: 'Smith',
-        address: '2131 S Sunset Dr California 82934',
-        rating: '5'),
-  ]);
-  _providerBuilder(context, index) {
-    final item = _providers.providers[index];
-    
-    if (item.firstName != '') {
-       return Column(
-      children: <Widget>[
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                
-                Padding(
-                  padding:
-                      const EdgeInsets.fromLTRB(5.0, 5.0, 5.0, 6.0),
-                  child: Text(
-                    item.prefix + ' ' + item.firstName + ' ' + item.lastName,
-                    style: TextStyle(
-                        fontSize: 22.0, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsets.fromLTRB(5.0, 6.0, 5.0, 5.0),
-                  child: Text(
-                    item.address,
-                    style: TextStyle(fontSize: 14.0),
-                  ),
-                ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Text(
-                    "5m",
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Icon(
-                      Icons.star_border,
-                      size: 35.0,
-                      color: Colors.grey,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        Divider(
-          height: 2.0,
-          color: Colors.grey,
-        )
-      ],
-    );
-    }
-  }
-
-  _buildProviders(context) {
-    return ListView.builder(
-      // Let the ListView know how many items it needs to build
-      itemCount: _providers.providers.length,
-      // Provide a builder function. This is where the magic happens! We'll
-      // convert each item into a Widget based on the type of item it is.
-      itemBuilder: (context, index) => _providerBuilder(context, index),
-    );
-  }
+  final homeScaffoldKey = GlobalKey<ScaffoldState>();
+  GoogleMapController mapController;
+  List<PlacesSearchResult> places = [];
+  bool isLoading = false;
+  var selectedProvider = '';
+  String errorMessage;
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-        appBar: new AppBar(
+    Widget expandedChild;
+    if (isLoading) {
+      expandedChild = Center(child: CircularProgressIndicator(value: null));
+    } else if (errorMessage != null) {
+      expandedChild = Center(
+        child: Text(errorMessage),
+      );
+    } else {
+      expandedChild = buildPlacesList();
+    }
+
+    return Scaffold(
+        key: homeScaffoldKey,
+        appBar: AppBar(
           centerTitle: true,
           backgroundColor: Color.fromRGBO(35, 179, 232, 1),
-          title: new Text(
-            'Select Provider',
-            style: new TextStyle(
-              fontSize: Theme.of(context).platform == TargetPlatform.iOS
-                  ? 17.0
-                  : 20.0,
+          title: const Text("Select Provider"),
+          actions: <Widget>[
+            isLoading
+                ? IconButton(
+                    icon: Icon(Icons.timer),
+                    onPressed: () {},
+                  )
+                : IconButton(
+                    icon: Icon(Icons.refresh),
+                    onPressed: () {
+                      refresh();
+                    },
+                  ),
+            IconButton(
+              icon: Icon(Icons.search),
+              onPressed: () {
+                _handlePressButton();
+              },
             ),
-          ),
-          elevation:
-              Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
+          ],
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         bottomNavigationBar: new FlatButton(
           padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
           color: Color.fromRGBO(35, 179, 232, 1),
-          onPressed: () => Navigator.pushNamed(context, '/questionsHistory'), // Switch tabs
-
+          onPressed: () {
+            if (selectedProvider.length > 0) {
+              Navigator.pushNamed(
+                context,
+                '/questionsHistory',
+                arguments: selectedProvider,
+              );
+            } else {
+              _showMessageDialog();
+            }
+          },
           child: Text(
             'CONTINUE',
             style: TextStyle(
@@ -120,9 +90,269 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
             ),
           ),
         ),
-        body: new Container(
-          child: _buildProviders(context),
+        body: Column(
+          children: <Widget>[
+            Container(
+              child: SizedBox(
+                  height: 200.0,
+                  child: GoogleMap(
+                      onMapCreated: _onMapCreated,
+                      options: GoogleMapOptions(
+                          myLocationEnabled: true,
+                          cameraPosition:
+                              const CameraPosition(target: LatLng(0.0, 0.0))))),
+            ),
+            Expanded(child: expandedChild)
+          ],
+        ));
+  }
+
+  void _showMessageDialog() {
+    showAlert(
+        context: context,
+        title: "Notice",
+        body: "Please select one of the providers in order to continue");
+  }
+
+  void refresh() async {
+    final center = await getUserLocation();
+
+    mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+        target: center == null ? LatLng(0, 0) : center, zoom: 15.0)));
+    getNearbyPlaces(center);
+  }
+
+  void _onMapCreated(GoogleMapController controller) async {
+    mapController = controller;
+    refresh();
+  }
+
+  void _selectProvider(provider) {
+    selectedProvider = provider;
+  }
+
+  Future<LatLng> getUserLocation() async {
+    var currentLocation = <String, double>{};
+    final location = LocationManager.Location();
+    try {
+      currentLocation = await location.getLocation();
+      final lat = currentLocation["latitude"];
+      final lng = currentLocation["longitude"];
+      final center = LatLng(lat, lng);
+      return center;
+    } on Exception {
+      currentLocation = null;
+      return null;
+    }
+  }
+
+  void getNearbyPlaces(LatLng center) async {
+    setState(() {
+      this.isLoading = true;
+      this.errorMessage = null;
+    });
+
+    final practice0 =
+        await _places.searchByText('281 Lincoln Street Worchester, MA');
+    final practice1 =
+        await _places.searchByText('1493 Cambridge Street, Cambridge MA');
+    final practice2 =
+        await _places.searchByText('1244 Boyston Street, Chestnut Hill, MA');
+    //final location = Location(center.latitude, center.longitude);
+    //final result = await _places.searchByText('281 Lincoln Street Worchester, MA ; ');
+    // final result = Future.wait([
+    //   _places.searchByText('281 Lincoln Street Worchester, MA'),
+    //   _places.searchByText('281 Lincoln Street Worchester, MA'),
+    // ]);
+    setState(() {
+      this.isLoading = false;
+      if (practice0.status == "OK" &&
+          practice1.status == "OK" &&
+          practice2.status == "OK") {
+        var newResults = practice0;
+        newResults.results.add(practice1.results[0]);
+        newResults.results.add(practice2.results[0]);
+        this.places = newResults.results;
+        newResults.results.forEach((f) {
+          final markerOptions = MarkerOptions(
+              position:
+                  LatLng(f.geometry.location.lat, f.geometry.location.lng),
+              infoWindowText: InfoWindowText("${f.name}", "${f.types?.first}"));
+          mapController.addMarker(markerOptions);
+          mapController.animateCamera(CameraUpdate.newCameraPosition(
+              CameraPosition(
+                  target:
+                      LatLng(f.geometry.location.lat, f.geometry.location.lng),
+                  zoom: 8.0)));
+        });
+      } else {
+        this.errorMessage = practice0.errorMessage +
+            practice1.errorMessage +
+            practice2.errorMessage;
+      }
+    });
+  }
+
+  void onError(PlacesAutocompleteResponse response) {
+    homeScaffoldKey.currentState.showSnackBar(
+      SnackBar(content: Text(response.errorMessage)),
+    );
+  }
+
+  Future<void> _handlePressButton() async {
+    try {
+      final center = await getUserLocation();
+      Prediction p = await PlacesAutocomplete.show(
+          context: context,
+          strictbounds: center == null ? false : true,
+          apiKey: kGoogleApiKey,
+          onError: onError,
+          mode: Mode.fullscreen,
+          language: "en",
+          location: center == null
+              ? null
+              : Location(center.latitude, center.longitude),
+          radius: center == null ? null : 10000);
+
+      showDetailPlace(p.placeId);
+    } catch (e) {
+      return;
+    }
+  }
+
+  Future<Null> showDetailPlace(String placeId) async {
+    if (placeId != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => PlaceDetailWidget(placeId)),
+      );
+    }
+  }
+
+  ListView buildPlacesList() {
+    final doctorNames = [
+      'Dr. Omar Badri',
+      'Dr. Jeffery Dover',
+      'Dr. Robert Stavert'
+    ];
+    final displayNames = [
+      'University of Massachusetts',
+      'Cambridge Health Alliance',
+      'Skincare Physicians'
+    ];
+    final placesWidget = places.map((f) {
+      List<Widget> list = [
+        Row(
+          children: <Widget>[
+            Expanded(
+              flex: 1,
+              child: ListTile(
+                dense: true,
+                leading: Icon(
+                  Icons.account_circle,
+                  color: Colors.blue,
+                  size: 50,
+                ),
+                trailing: Container(
+                  child: FlatButton(
+                    onPressed: () {
+                      setState(() {
+                        _selectProvider(doctorNames[places.indexOf(f)]);
+                      });
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          'Select',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 10,
+                          ),
+                        ),
+                        Icon(
+                            selectedProvider == doctorNames[places.indexOf(f)]
+                                ? Icons.radio_button_checked
+                                : Icons.radio_button_unchecked,
+                            color: Colors.grey,
+                            size: 20.0)
+                      ],
+                    ),
+                  ),
+                ),
+                title: Text(
+                  doctorNames[places.indexOf(f)],
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
+
+                subtitle: Column(
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        Text(
+                          displayNames[places.indexOf(f)],
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Text(
+                          f.formattedAddress.split(',')[0] +
+                              f.formattedAddress.split(',')[1],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
+      ];
+      // if (f.formattedAddress != null) {
+      //   list.add(Padding(
+      //     padding: EdgeInsets.only(bottom: 2.0),
+      //     child: Text(
+      //       f.formattedAddress,
+      //       style: Theme.of(context).textTheme.subtitle,
+      //     ),
+      //   ));
+      // }
+
+      // if (f.vicinity != null) {
+      //   list.add(Padding(
+      //     padding: EdgeInsets.only(bottom: 2.0),
+      //     child: Text(
+      //       f.vicinity,
+      //       style: Theme.of(context).textTheme.body1,
+      //     ),
+      //   ));
+      // }
+
+      return Padding(
+        padding: EdgeInsets.only(top: 4.0, bottom: 4.0, left: 8.0, right: 8.0),
+        child: Card(
+          child: InkWell(
+            onTap: () {
+              showDetailPlace(f.placeId);
+            },
+            highlightColor: Colors.lightBlueAccent,
+            splashColor: Colors.red,
+            child: Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: list,
+              ),
+            ),
+          ),
         ),
       );
+    }).toList();
+
+    return ListView(shrinkWrap: true, children: placesWidget);
   }
 }

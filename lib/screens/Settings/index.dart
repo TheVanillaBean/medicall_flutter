@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../globals.dart' as globals;
+import 'package:Medicall/globals.dart' as globals;
 
 class SettingsScreen extends StatelessWidget {
   @override
@@ -31,11 +31,16 @@ class SettingsScreen extends StatelessWidget {
                     height: 190.0,
                     decoration: new BoxDecoration(
                         shape: BoxShape.circle,
-                        image: new DecorationImage(
-                            fit: BoxFit.fill,
-                            image: new NetworkImage(
-                                globals.currentUser.photoUrl)))),
-                new Text(globals.currentUser.displayName, textScaleFactor: 1.5)
+                        image: globals.currentUser != null
+                            ? new DecorationImage(
+                                fit: BoxFit.fill,
+                                image: globals.currentUser.photoUrl != null
+                                    ? new NetworkImage(
+                                        globals.currentUser.photoUrl)
+                                    : null)
+                            : null)),
+                new Text(globals.medicallUser.firstName,
+                    textScaleFactor: 1.5)
               ],
             )
           ],

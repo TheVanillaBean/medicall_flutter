@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:medicall/components/DrawerMenu.dart';
-import 'package:medicall/presentation/medicall_app_icons.dart' as CustomIcons;
-import 'package:medicall/screens/QuestionsScreening/index.dart';
+import 'package:Medicall/components/DrawerMenu.dart';
+import 'package:Medicall/presentation/medicall_app_icons.dart' as CustomIcons;
+import 'package:Medicall/screens/QuestionsScreening/index.dart';
 
 class DoctorsScreen extends StatelessWidget {
   @override
@@ -130,7 +130,7 @@ class DoctorsScreen extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (BuildContext context) =>
-                                  QuestionsScreeningScreen(),
+                                  QuestionsScreeningScreen(consultType: 'Lesion',),
                             )),
                       ),
                       RaisedButton(

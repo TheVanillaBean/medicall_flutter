@@ -1,31 +1,46 @@
 import 'package:flutter/material.dart';
 
-class ChatScreen extends StatelessWidget {
+class ChatScreen extends StatefulWidget {
   @override
-  Widget build (BuildContext context) => new Scaffold(
+  _ChatScreenState createState() => _ChatScreenState();
+}
 
-    //App Bar
-    appBar: new AppBar(
-      centerTitle: true,
-      title: new Text(
-        'Chat', 
-        style: new TextStyle(
-          fontSize: Theme.of(context).platform == TargetPlatform.iOS ? 17.0 : 20.0,
+class _ChatScreenState extends State<ChatScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      appBar: new AppBar(
+        centerTitle: true,
+        backgroundColor: Color.fromRGBO(35, 179, 232, 1),
+        title: new Text(
+          'Pictures',
+          style: new TextStyle(
+            fontSize:
+                Theme.of(context).platform == TargetPlatform.iOS ? 17.0 : 20.0,
+          ),
         ),
+        elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
       ),
-      elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
-    ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      body: Column(
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Please make sure the pictures are taken in bright daylight and that the area of concern is centered in the photo.',
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
-    //Content of tabs
-    body: new PageView(
-      children: <Widget>[
-        new Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            new Text('Chat page content'),
-          ],
-        )
-      ],
-    ),
-  );
+  @override
+  void initState() {
+    super.initState();
+    
+  }
 }

@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/animation.dart';
+//import 'package:flutter/animation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import '../presentation/medicall_app_icons.dart' as CustomIcons;
-import 'package:medicall/screens/Login/index.dart';
+import 'package:Medicall/presentation/medicall_app_icons.dart' as CustomIcons;
+import 'package:Medicall/screens/Login/index.dart';
 
 class DrawerMenu extends StatelessWidget {
-  Animation<double> containerGrowAnimation;
-  AnimationController _screenController;
-  AnimationController _buttonController;
-  Animation<double> buttonGrowAnimation;
-  Animation<double> listTileWidth;
-  Animation<Alignment> listSlideAnimation;
-  Animation<Alignment> buttonSwingAnimation;
-  Animation<EdgeInsets> listSlidePosition;
-  Animation<Color> fadeScreenAnimation;
-  var animateStatus = 0;
-  GoogleSignIn _googleSignIn = new GoogleSignIn(
+  // Animation<double> containerGrowAnimation;
+  // AnimationController _screenController;
+  // AnimationController _buttonController;
+  // Animation<double> buttonGrowAnimation;
+  // Animation<double> listTileWidth;
+  // Animation<Alignment> listSlideAnimation;
+  // Animation<Alignment> buttonSwingAnimation;
+  // Animation<EdgeInsets> listSlidePosition;
+  // Animation<Color> fadeScreenAnimation;
+  //var animateStatus = 0;
+  final GoogleSignIn _googleSignIn = new GoogleSignIn(
     scopes: [
       'email',
       'https://www.googleapis.com/auth/contacts.readonly',
@@ -23,6 +23,7 @@ class DrawerMenu extends StatelessWidget {
   );
   Future<void> _handleSignOut() async {
     _googleSignIn.disconnect();
+    
   }
 
   @override
@@ -82,17 +83,17 @@ class DrawerMenu extends StatelessWidget {
             new ListTile(
                 leading: new Icon(
                   Icons.chat,
-                  color: Colors.grey,
+                  color: Color.fromRGBO(35, 179, 232, 1),
                 ),
                 title: new Text(
                   'Chat',
                   style: TextStyle(
-                    color: Colors.grey,
+                    color: Colors.blueGrey,
                   ),
                 ),
                 onTap: () {
-                  //Navigator.pop(context);
-                  //Navigator.of(context).pushNamed('/chat');
+                  Navigator.pop(context);
+                  Navigator.of(context).pushNamed('/chat');
                 }),
             new ListTile(
                 leading: new Icon(
@@ -143,7 +144,7 @@ class DrawerMenu extends StatelessWidget {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => LoginScreen()),
+                    MaterialPageRoute(builder: (context) => LoginPage()),
                   );
                   _handleSignOut();
                 }),

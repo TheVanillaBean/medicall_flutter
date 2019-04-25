@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/animation.dart';
-import 'dart:async';
-import 'homeAnimation.dart';
-import '../../presentation/medicall_app_icons.dart' as CustomIcons;
+// import 'dart:async';
+// import 'homeAnimation.dart';
+import 'package:Medicall/presentation/medicall_app_icons.dart' as CustomIcons;
 import 'package:flutter/scheduler.dart' show timeDilation;
-import 'package:medicall/components/DrawerMenu.dart';
-import '../../globals.dart' as globals;
+import 'package:Medicall/components/DrawerMenu.dart';
+import 'package:Medicall/globals.dart' as globals;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key key}) : super(key: key);
@@ -16,6 +16,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
+  
   Animation<double> containerGrowAnimation;
   AnimationController _screenController;
   AnimationController _buttonController;
@@ -30,6 +31,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    
     _screenController = new AnimationController(
         duration: new Duration(milliseconds: 2000), vsync: this);
     _buttonController = new AnimationController(
@@ -173,7 +175,9 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 children: <Widget>[
                   new Icon(Icons.find_in_page,
                       size: 150.0, color: Colors.black12),
-                  new Text('You are logged in as ' + globals.currentUser.displayName),
+                  new Text(globals.medicallUser.firstName +
+                      ' ' +
+                      globals.medicallUser.lastName)
                 ],
               ),
             ],

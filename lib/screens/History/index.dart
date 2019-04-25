@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:medicall/components/DrawerMenu.dart';
-import '../../presentation/medicall_app_icons.dart' as CustomIcons;
-import '../../globals.dart' as globals;
+import 'package:Medicall/components/DrawerMenu.dart';
+import 'package:Medicall/presentation/medicall_app_icons.dart' as CustomIcons;
+//import 'package:Medicall/globals.dart' as globals;
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:medicall/queries/readRepositories.dart' as queries;
-import 'package:medicall/mutations/addStar.dart' as mutations;
+import 'package:Medicall/queries/readRepositories.dart' as queries;
+import 'package:Medicall/mutations/addStar.dart' as mutations;
 
 class HistoryScreen extends StatefulWidget {
   @override
@@ -14,7 +14,7 @@ class HistoryScreen extends StatefulWidget {
 class _HistoryScreenState extends State<HistoryScreen> {
   @override
   Widget build(BuildContext context) {
-    Size screenSize = MediaQuery.of(context).size;
+    //Size screenSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: new AppBar(
         centerTitle: true,

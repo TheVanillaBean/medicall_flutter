@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import '../../tabs/dashboard.dart' as _dashboard;
 import '../../presentation/medicall_app_icons.dart' as CustomIcons;
 
 
@@ -12,14 +11,13 @@ class Dashboard extends StatefulWidget {
 class TabsState extends State<Dashboard> {
   PageController _tabController;
 
-  var _title_app = null;
-  int _tab = 0;
+  var _titleApp;
 
   @override
   void initState() {
     super.initState();
     _tabController = new PageController();
-    this._title_app = 'Welcome to Medicall!';
+    this._titleApp = 'Welcome to Medicall!';
   }
 
   @override
@@ -35,7 +33,7 @@ class TabsState extends State<Dashboard> {
       appBar: new AppBar(
         centerTitle: true,
         title: new Text(
-          _title_app,
+          _titleApp,
           style: new TextStyle(
             fontSize:
                 Theme.of(context).platform == TargetPlatform.iOS ? 17.0 : 20.0,
@@ -55,15 +53,6 @@ class TabsState extends State<Dashboard> {
             ),
           );
         }),
-      ),
-
-      //Content of tabs
-      body: new PageView(
-        // controller: _tabController,
-        // onPageChanged: onTabChanged,
-        children: <Widget>[
-          new _dashboard.Dashboard(),
-        ],
       ),
 
       //Tabs

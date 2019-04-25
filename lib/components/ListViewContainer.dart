@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'List.dart';
 import 'Calender.dart';
-import '../screens/Home/styles.dart';
+//import '../screens/Home/styles.dart';
 
 class ListViewContent extends StatelessWidget {
   final Animation<double> listTileWidth;
