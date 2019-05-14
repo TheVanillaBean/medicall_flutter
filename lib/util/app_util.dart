@@ -1,4 +1,3 @@
-import 'package:Medicall/components/fluttertoast.dart';
 import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
 

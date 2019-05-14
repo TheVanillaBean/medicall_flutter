@@ -2,19 +2,17 @@ import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:Medicall/util/app_util.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_alert/flutter_alert.dart';
 
 class FirebaseNotifications {
   FirebaseMessaging _firebaseMessaging;
 
   void setUpFirebase() {
     _firebaseMessaging = FirebaseMessaging();
-    firebaseCloudMessaging_Listeners();
+    firebaseCloudMessagingListeners();
   }
 
-  void firebaseCloudMessaging_Listeners() {
-    if (Platform.isIOS) iOS_Permission();
+  void firebaseCloudMessagingListeners() {
+    if (Platform.isIOS) iOSPermission();
 
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
@@ -49,7 +47,7 @@ class FirebaseNotifications {
     });
   }
 
-  void iOS_Permission() {
+  void iOSPermission() {
     _firebaseMessaging.requestNotificationPermissions(
         IosNotificationSettings(sound: true, badge: true, alert: true));
     _firebaseMessaging.onIosSettingsRegistered

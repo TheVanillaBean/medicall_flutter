@@ -1,8 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:Medicall/globals.dart' as globals;
 
 class RegistrationTypeScreen extends StatefulWidget {
   @override

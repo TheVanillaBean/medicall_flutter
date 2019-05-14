@@ -14,7 +14,6 @@ import 'package:Medicall/screens/Registration/Patient/index.dart';
 import 'package:Medicall/screens/OtpVerification/index.dart';
 import 'package:Medicall/screens/Terms/index.dart';
 import 'package:Medicall/screens/Privacy/index.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:oktoast/oktoast.dart';
 
 // import 'package:Medicall/mutations/addStar.dart' as mutations;
@@ -28,18 +27,8 @@ class MyCustomRoute<T> extends MaterialPageRoute<T> {
 class Routes extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    ValueNotifier<Client> client = ValueNotifier(
-      Client(
-        endPoint: 'https://api.github.com/graphql',
-        cache: InMemoryCache(),
-        apiToken: '',
-      ),
-    );
     return OKToast(
-      child: GraphqlProvider(
-        client: client,
-        child: CacheProvider(
-            child: MaterialApp(
+      child: MaterialApp(
           title: 'Medicall',
           debugShowCheckedModeBanner: false,
           theme: new ThemeData(
@@ -152,8 +141,7 @@ class Routes extends StatelessWidget {
           // routes: <String, WidgetBuilder> {
           //   '/about': (BuildContext context) => new _aboutPage.About(),
           // }
-        )),
-      ),
+        ),
     );
   }
 }

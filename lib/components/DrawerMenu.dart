@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 //import 'package:flutter/animation.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:Medicall/presentation/medicall_app_icons.dart' as CustomIcons;
 import 'package:Medicall/screens/Login/index.dart';
 
@@ -15,16 +14,6 @@ class DrawerMenu extends StatelessWidget {
   // Animation<EdgeInsets> listSlidePosition;
   // Animation<Color> fadeScreenAnimation;
   //var animateStatus = 0;
-  final GoogleSignIn _googleSignIn = new GoogleSignIn(
-    scopes: [
-      'email',
-      'https://www.googleapis.com/auth/contacts.readonly',
-    ],
-  );
-  Future<void> _handleSignOut() async {
-    _googleSignIn.disconnect();
-    
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -146,7 +135,6 @@ class DrawerMenu extends StatelessWidget {
                     context,
                     MaterialPageRoute(builder: (context) => LoginPage()),
                   );
-                  _handleSignOut();
                 }),
           ],
         )

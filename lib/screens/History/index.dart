@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/presentation/medicall_app_icons.dart' as CustomIcons;
 //import 'package:Medicall/globals.dart' as globals;
-import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:Medicall/queries/readRepositories.dart' as queries;
-import 'package:Medicall/mutations/addStar.dart' as mutations;
+// import 'package:graphql_flutter/graphql_flutter.dart';
+// import 'package:Medicall/queries/readRepositories.dart' as queries;
+// import 'package:Medicall/mutations/addStar.dart' as mutations;
 
 class HistoryScreen extends StatefulWidget {
   @override
@@ -44,79 +44,79 @@ class _HistoryScreenState extends State<HistoryScreen> {
           foregroundColor: Colors.white,
         );
       }),
-      body: Query(
-        queries.readRepositories,
-        pollInterval: 1,
-        builder: ({
-          bool loading,
-          Map data,
-          Exception error,
-        }) {
-          if (error != null) {
-            return Text(error.toString());
-          }
+      // body: Query(
+      //   queries.readRepositories,
+      //   pollInterval: 1,
+      //   builder: ({
+      //     bool loading,
+      //     Map data,
+      //     Exception error,
+      //   }) {
+      //     if (error != null) {
+      //       return Text(error.toString());
+      //     }
 
-          if (loading) {
-            return Text('Loading');
-          }
+      //     if (loading) {
+      //       return Text('Loading');
+      //     }
 
-          // it can be either Map or List
-          List repositories = data['viewer']['repositories']['nodes'];
+      //     // it can be either Map or List
+      //     List repositories = data['viewer']['repositories']['nodes'];
 
-          return ListView.builder(
-            itemCount: repositories.length,
-            itemBuilder: (context, index) {
-              final repository = repositories[index];
+      //     return ListView.builder(
+      //       itemCount: repositories.length,
+      //       itemBuilder: (context, index) {
+      //         final repository = repositories[index];
 
-              return Mutation(
-                mutations.addStar,
-                builder: (
-                  addStar, {
-                  bool loading,
-                  Map data,
-                  Exception error,
-                }) {
-                  if (data.isNotEmpty) {
-                    repository['viewerHasStarred'] =
-                        data['addStar']['starrable']['viewerHasStarred'];
-                  }
+      //         return Mutation(
+      //           mutations.addStar,
+      //           builder: (
+      //             addStar, {
+      //             bool loading,
+      //             Map data,
+      //             Exception error,
+      //           }) {
+      //             if (data.isNotEmpty) {
+      //               repository['viewerHasStarred'] =
+      //                   data['addStar']['starrable']['viewerHasStarred'];
+      //             }
 
-                  return ListTile(
-                    leading: repository['viewerHasStarred']
-                        ? const Icon(Icons.star, color: Colors.amber)
-                        : const Icon(Icons.star_border),
-                    title: Text(repository['name']),
-                    // NOTE: optimistic ui updates are not implemented yet, therefore changes may take upto 1 second to show.
-                    onTap: () {
-                      addStar({
-                        'starrableId': repository['id'],
-                      });
-                    },
-                  );
-                },
-                onCompleted: (Map<String, dynamic> data) {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text('Thanks for your star!'),
-                        actions: <Widget>[
-                          SimpleDialogOption(
-                            child: Text('Dismiss'),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          )
-                        ],
-                      );
-                    },
-                  );
-                },
-              );
-            },
-          );
-        },
-      ),
+      //             return ListTile(
+      //               leading: repository['viewerHasStarred']
+      //                   ? const Icon(Icons.star, color: Colors.amber)
+      //                   : const Icon(Icons.star_border),
+      //               title: Text(repository['name']),
+      //               // NOTE: optimistic ui updates are not implemented yet, therefore changes may take upto 1 second to show.
+      //               onTap: () {
+      //                 addStar({
+      //                   'starrableId': repository['id'],
+      //                 });
+      //               },
+      //             );
+      //           },
+      //           onCompleted: (Map<String, dynamic> data) {
+      //             showDialog(
+      //               context: context,
+      //               builder: (BuildContext context) {
+      //                 return AlertDialog(
+      //                   title: Text('Thanks for your star!'),
+      //                   actions: <Widget>[
+      //                     SimpleDialogOption(
+      //                       child: Text('Dismiss'),
+      //                       onPressed: () {
+      //                         Navigator.of(context).pop();
+      //                       },
+      //                     )
+      //                   ],
+      //                 );
+      //               },
+      //             );
+      //           },
+      //         );
+      //       },
+      //     );
+      //   },
+      // ),
     );
   }
 }

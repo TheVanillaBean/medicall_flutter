@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:multi_image_picker/asset.dart';
+import 'package:flutter/services.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 
 class AssetView extends StatefulWidget {
   final int _index;
@@ -18,6 +19,8 @@ class AssetView extends StatefulWidget {
 class AssetState extends State<AssetView> {
   int _index = 0;
   Asset _asset;
+  ByteData byteData;
+  List<int> imageData;
   AssetState(this._index, this._asset);
 
   @override
@@ -27,7 +30,7 @@ class AssetState extends State<AssetView> {
   }
 
   void _loadImage() async {
-    await this._asset.requestThumbnail(300, 300, quality: 50);
+    byteData = await this._asset.requestThumbnail(300, 300, quality: 50);
 
     if (this.mounted) {
       setState(() {});
@@ -36,9 +39,9 @@ class AssetState extends State<AssetView> {
 
   @override
   Widget build(BuildContext context) {
-    if (null != this._asset.thumbData) {
+    if (null != byteData) {
       return Image.memory(
-        this._asset.thumbData.buffer.asUint8List(),
+        byteData.buffer.asUint8List(),
         fit: BoxFit.cover,
         gaplessPlayback: true,
       );

@@ -3,12 +3,12 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
-import 'package:multi_image_picker/material_options.dart';
+//import 'package:multi_image_picker/material_options.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:Medicall/screens/ConfirmConsult/index.dart';
 
 //import 'package:Medicall/presentation/medicall_app_icons.dart' as CustomIcons;
-import 'package:flutter_alert/flutter_alert.dart';
+//import 'package:flutter_alert/flutter_alert.dart';
 import 'asset_view.dart';
 
 class QuestionsUploadScreen extends StatefulWidget {

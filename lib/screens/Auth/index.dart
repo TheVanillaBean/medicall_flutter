@@ -45,22 +45,23 @@ class _AuthScreenState extends State<AuthScreen> {
 
   // Firebase
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   GoogleSignInAccount _googleUser;
 
   // PhoneVerificationCompleted
-  verificationCompleted(FirebaseUser user) async {
-    Logger.log(TAG, message: "onVerificationCompleted, user: $user");
-    if (await _onCodeVerified(user)) {
-      await _finishSignIn(user);
-    } else {
-      setState(() {
-        this.status = AuthStatus.SMS_AUTH;
-        Logger.log(TAG, message: "Changed status to $status");
-      });
-    }
-  }
+  // verificationCompleted(FirebaseUser user) async {
+  //   Logger.log(TAG, message: "onVerificationCompleted, user: $user");
+  //   if (await _onCodeVerified(user)) {
+  //     await _finishSignIn(user);
+  //   } else {
+  //     setState(() {
+  //       this.status = AuthStatus.SMS_AUTH;
+  //       Logger.log(TAG, message: "Changed status to $status");
+  //     });
+  //   }
+  // }
 
   // PhoneVerificationFailed
   verificationFailed(AuthException authException) {
@@ -201,6 +202,19 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   Future<Null> _verifyPhoneNumber() async {
+    FirebaseUser user = await _auth.currentUser();
+    final PhoneVerificationCompleted verificationCompleted =
+        (AuthCredential phoneAuthCredential) async {
+      Logger.log(TAG, message: "onVerificationCompleted, user: $user");
+      if (await _onCodeVerified(user)) {
+        await _finishSignIn(user);
+      } else {
+        setState(() {
+          this.status = AuthStatus.SMS_AUTH;
+          Logger.log(TAG, message: "Changed status to $status");
+        });
+      }
+    };
     Logger.log(TAG, message: "Got phone number as: ${this.phoneNumber}");
     await _auth.verifyPhoneNumber(
         phoneNumber: this.phoneNumber,
@@ -232,8 +246,8 @@ class _AuthScreenState extends State<AuthScreen> {
 
   Future<void> _signInWithPhoneNumber() async {
     final errorMessage = "We couldn't verify your code, please try again!";
-
-    await _auth
+    FirebaseUser user = await _auth.currentUser();
+    await user
         .linkWithCredential(
       PhoneAuthProvider.getCredential(
         verificationId: _verificationId,

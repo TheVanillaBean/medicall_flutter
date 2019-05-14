@@ -16,7 +16,8 @@ GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
 class SelectProviderScreen extends StatefulWidget {
   final String questions;
 
-  const SelectProviderScreen({Key key, @required this.questions}) : super(key: key);
+  const SelectProviderScreen({Key key, @required this.questions})
+      : super(key: key);
   @override
   _SelectProviderScreenState createState() => _SelectProviderScreenState();
 }
@@ -132,12 +133,12 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
   }
 
   Future<LatLng> getUserLocation() async {
-    var currentLocation = <String, double>{};
+    LocationManager.LocationData currentLocation;
     final location = LocationManager.Location();
     try {
       currentLocation = await location.getLocation();
-      final lat = currentLocation["latitude"];
-      final lng = currentLocation["longitude"];
+      final lat = currentLocation.latitude;
+      final lng = currentLocation.longitude;
       final center = LatLng(lat, lng);
       return center;
     } on Exception {
@@ -242,73 +243,67 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
     ];
     final placesWidget = places.map((f) {
       List<Widget> list = [
-        Row(
-          children: <Widget>[
-            Expanded(
-              flex: 1,
-              child: ListTile(
-                dense: true,
-                leading: Icon(
-                  Icons.account_circle,
-                  color: Colors.blue,
-                  size: 50,
-                ),
-                trailing: Container(
-                  child: FlatButton(
-                    onPressed: () {
-                      setState(() {
-                        _selectProvider(doctorNames[places.indexOf(f)]);
-                      });
-                    },
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          'Select',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 10,
-                          ),
-                        ),
-                        Icon(
-                            selectedProvider == doctorNames[places.indexOf(f)]
-                                ? Icons.radio_button_checked
-                                : Icons.radio_button_unchecked,
-                            color: Colors.grey,
-                            size: 20.0)
-                      ],
+        ListTile(
+          dense: true,
+          contentPadding: EdgeInsets.all(0),
+          leading: Icon(
+            Icons.account_circle,
+            color: Colors.blue,
+            size: 50,
+          ),
+          trailing: Container(
+            child: FlatButton(
+              onPressed: () {
+                setState(() {
+                  _selectProvider(doctorNames[places.indexOf(f)]);
+                });
+              },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    'Select',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 10,
                     ),
                   ),
-                ),
-                title: Text(
-                  doctorNames[places.indexOf(f)],
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
-
-                subtitle: Column(
-                  children: <Widget>[
-                    Row(
-                      children: <Widget>[
-                        Text(
-                          displayNames[places.indexOf(f)],
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Text(
-                          f.formattedAddress.split(',')[0] +
-                              f.formattedAddress.split(',')[1],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                  Icon(
+                      selectedProvider == doctorNames[places.indexOf(f)]
+                          ? Icons.radio_button_checked
+                          : Icons.radio_button_unchecked,
+                      color: Colors.grey,
+                      size: 20.0)
+                ],
               ),
-            )
-          ],
+            ),
+          ),
+          title: Text(
+            doctorNames[places.indexOf(f)],
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
+
+          subtitle: Column(
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Text(
+                    displayNames[places.indexOf(f)],
+                  ),
+                ],
+              ),
+              Row(
+                children: <Widget>[
+                  Text(
+                    f.formattedAddress.split(',')[0] +
+                        f.formattedAddress.split(',')[1],
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ];
       // if (f.formattedAddress != null) {

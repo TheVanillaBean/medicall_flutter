@@ -306,7 +306,7 @@ class _LoginScreenState extends State<LoginPage>
   @override
   Widget build(BuildContext context) {
     new FirebaseNotifications().setUpFirebase();
-    var tabs = new Row(
+    new Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         new GestureDetector(
@@ -515,7 +515,7 @@ class _LoginScreenState extends State<LoginPage>
       ],
     );
 
-    var googleForm = new Column(
+    new Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: <Widget>[
         new SizedBox(

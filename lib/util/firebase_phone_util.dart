@@ -33,7 +33,7 @@ class FirebasePhoneUtil {
 
   Future<void> verifyPhoneNumber(String phoneNumber, String code) async {
     final PhoneVerificationCompleted verificationCompleted =
-        (FirebaseUser user) {};
+        (AuthCredential user) {};
 
     final PhoneVerificationFailed verificationFailed =
         (AuthException authException) {
