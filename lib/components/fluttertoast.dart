@@ -28,7 +28,7 @@ class Fluttertoast {
   // }
 
   static Future<bool> cancel() async {
-    bool res = await _channel.invokeMethod("cancel");
+    bool res = await _channel.invokeMethod('cancel');
     return res;
   }
 
@@ -44,18 +44,18 @@ class Fluttertoast {
     // Function(bool) didTap,
   }) async {
     // this.didTap = didTap;
-    String toast = "short";
+    String toast = 'short';
     if (toastLength == Toast.LENGTH_LONG) {
-      toast = "long";
+      toast = 'long';
     }
 
-    String gravityToast = "bottom";
+    String gravityToast = 'bottom';
     if (gravity == ToastGravity.TOP) {
-      gravityToast = "top";
+      gravityToast = 'top';
     } else if (gravity == ToastGravity.CENTER) {
-      gravityToast = "center";
+      gravityToast = 'center';
     } else {
-      gravityToast = "bottom";
+      gravityToast = 'bottom';
     }
 
     if(backgroundColor == null && defaultTargetPlatform == TargetPlatform.iOS) {

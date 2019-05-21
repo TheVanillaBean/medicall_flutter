@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-String privacy =""" 
+String privacy =''' 
 Note from Medicall: We encourage you to review our Privacy Policy so you feel comfortable with how your information is collected and used in our Service.
 
 INTRODUCTION 
@@ -76,7 +76,7 @@ Medicall, Inc.
 15 Flagg Street
 Cambridge, MA 02138
 
-Thanks again for using Medicall!""";
+Thanks again for using Medicall!''';
 
 
 class PrivacyScreen extends StatelessWidget {

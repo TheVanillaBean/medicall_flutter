@@ -6,7 +6,7 @@ import 'package:Medicall/util/firebase_listenter.dart';
 // import 'package:Medicall/globals.dart' as globals;
 
 class FirebasePhoneUtil {
-  static final FirebasePhoneUtil _instance = new FirebasePhoneUtil.internal();
+  static final FirebasePhoneUtil _instance = FirebasePhoneUtil.internal();
 
   FirebasePhoneUtil.internal();
 
@@ -78,6 +78,6 @@ class FirebasePhoneUtil {
   }
 
   onTokenError(String string) {
-    print("libs " + string);
+    print('libs ' + string);
   }
 }

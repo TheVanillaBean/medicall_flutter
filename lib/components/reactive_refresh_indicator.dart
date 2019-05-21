@@ -15,7 +15,7 @@
 //       from this software without specific prior written permission.
 
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+// 'AS IS' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 // LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 // A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 // OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
@@ -55,7 +55,7 @@ typedef void RefreshCallback();
 enum _RefreshIndicatorMode {
   drag, // Pointer is down.
   armed, // Dragged far enough that an up event will run the onRefresh callback.
-  snap, // Animating to the indicator's final "displacement".
+  snap, // Animating to the indicator's final 'displacement'.
   refresh, // Running the refresh callback.
   done, // Animating the indicator's fade-out after refreshing.
   canceled, // Animating the indicator's fade-out after not arming.
@@ -100,7 +100,7 @@ class ReactiveRefreshIndicator extends StatefulWidget {
 
   @override
   ReactiveRefreshIndicatorState createState() =>
-      new ReactiveRefreshIndicatorState();
+      ReactiveRefreshIndicatorState();
 }
 
 class ReactiveRefreshIndicatorState extends State<ReactiveRefreshIndicator>
@@ -120,19 +120,19 @@ class ReactiveRefreshIndicatorState extends State<ReactiveRefreshIndicator>
   void initState() {
     super.initState();
 
-    _positionController = new AnimationController(vsync: this);
-    _positionFactor = new Tween<double>(
+    _positionController = AnimationController(vsync: this);
+    _positionFactor = Tween<double>(
       begin: 0.0,
       end: _kDragSizeFactorLimit,
     ).animate(_positionController);
-    _value = new Tween<double>(
-      // The "value" of the circular progress indicator during a drag.
+    _value = Tween<double>(
+      // The 'value' of the circular progress indicator during a drag.
       begin: 0.0,
       end: 0.75,
     ).animate(_positionController);
 
-    _scaleController = new AnimationController(vsync: this);
-    _scaleFactor = new Tween<double>(
+    _scaleController = AnimationController(vsync: this);
+    _scaleFactor = Tween<double>(
       begin: 1.0,
       end: 0.0,
     ).animate(_scaleController);
@@ -141,10 +141,10 @@ class ReactiveRefreshIndicatorState extends State<ReactiveRefreshIndicator>
   @override
   void didChangeDependencies() {
     final ThemeData theme = Theme.of(context);
-    _valueColor = new ColorTween(
+    _valueColor = ColorTween(
             begin: (widget.color ?? theme.accentColor).withOpacity(0.0),
             end: (widget.color ?? theme.accentColor).withOpacity(1.0))
-        .animate(new CurvedAnimation(
+        .animate(CurvedAnimation(
             parent: _positionController,
             curve: const Interval(0.0, 1.0 / _kDragSizeFactorLimit)));
 
@@ -169,7 +169,7 @@ class ReactiveRefreshIndicatorState extends State<ReactiveRefreshIndicator>
         //
         // Therefore, we schedule it via a future instead.
 
-        new Future(() {
+        Future(() {
           _start(AxisDirection.down);
           _show();
         });
@@ -361,20 +361,20 @@ class ReactiveRefreshIndicatorState extends State<ReactiveRefreshIndicator>
       if (mounted && _mode == _RefreshIndicatorMode.snap) {
         assert(widget.onRefresh != null);
         setState(() => _mode = _RefreshIndicatorMode.refresh);
-        print("ReactiveRefreshIndicator: called onRefresh");
+        print('ReactiveRefreshIndicator: called onRefresh');
         widget.onRefresh();
       }
     });
   }
 
-  final GlobalKey _key = new GlobalKey();
+  final GlobalKey _key = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
-    final Widget child = new NotificationListener<ScrollNotification>(
+    final Widget child = NotificationListener<ScrollNotification>(
       key: _key,
       onNotification: _handleScrollNotification,
-      child: new NotificationListener<OverscrollIndicatorNotification>(
+      child: NotificationListener<OverscrollIndicatorNotification>(
         onNotification: _handleGlowNotification,
         child: widget.child,
       ),
@@ -394,30 +394,30 @@ class ReactiveRefreshIndicatorState extends State<ReactiveRefreshIndicator>
         _mode == _RefreshIndicatorMode.refresh ||
             _mode == _RefreshIndicatorMode.done;
 
-    return new Stack(
+    return Stack(
       children: <Widget>[
         child,
-        new Positioned(
+        Positioned(
           top: _isIndicatorAtTop ? 0.0 : null,
           bottom: !_isIndicatorAtTop ? 0.0 : null,
           left: 0.0,
           right: 0.0,
-          child: new SizeTransition(
+          child: SizeTransition(
             axisAlignment: _isIndicatorAtTop ? 1.0 : -1.0,
             sizeFactor: _positionFactor, // this is what brings it down
-            child: new Container(
+            child: Container(
               padding: _isIndicatorAtTop
-                  ? new EdgeInsets.only(top: widget.displacement)
-                  : new EdgeInsets.only(bottom: widget.displacement),
+                  ? EdgeInsets.only(top: widget.displacement)
+                  : EdgeInsets.only(bottom: widget.displacement),
               alignment: _isIndicatorAtTop
                   ? Alignment.topCenter
                   : Alignment.bottomCenter,
-              child: new ScaleTransition(
+              child: ScaleTransition(
                 scale: _scaleFactor,
-                child: new AnimatedBuilder(
+                child: AnimatedBuilder(
                   animation: _positionController,
                   builder: (BuildContext context, Widget child) {
-                    return new RefreshProgressIndicator(
+                    return RefreshProgressIndicator(
                       value: showIndeterminateIndicator ? null : _value.value,
                       valueColor: _valueColor,
                       backgroundColor: widget.backgroundColor,

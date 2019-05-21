@@ -6,12 +6,15 @@ import 'package:flutter/services.dart';
 //import 'package:multi_image_picker/material_options.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:Medicall/screens/ConfirmConsult/index.dart';
-
+import 'package:Medicall/globals.dart' as globals;
 //import 'package:Medicall/presentation/medicall_app_icons.dart' as CustomIcons;
 //import 'package:flutter_alert/flutter_alert.dart';
 import 'asset_view.dart';
 
 class QuestionsUploadScreen extends StatefulWidget {
+  final globals.ConsultData data;
+
+  const QuestionsUploadScreen({Key key, @required this.data}) : super(key: key);
   @override
   _QuestionsUploadScreenState createState() => _QuestionsUploadScreenState();
 }
@@ -21,10 +24,14 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
   String _error = '';
   @override
   void initState() {
+    if(widget.data.media != null && widget.data.media.length > 0){
+      images = widget.data.media;
+    }
     super.initState();
   }
 
   Widget buildGridView() {
+    widget.data.media = images;
     return GridView.count(
         crossAxisCount: 2,
         padding: EdgeInsets.all(10),
@@ -32,6 +39,7 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
         mainAxisSpacing: 10,
         children: List.generate(images.length, (index) {
           Asset asset = images[index];
+          
           return Container(
             child: AssetView(
               index,
@@ -50,9 +58,9 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
   }
 
   Future<void> loadAssets() async {
-    setState(() {
-      images = List<Asset>();
-    });
+    // setState(() {
+    //   images = List<Asset>();
+    // });
 
     List<Asset> resultList = List<Asset>();
     String error = '';
@@ -61,12 +69,16 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
       resultList = await MultiImagePicker.pickImages(
           maxImages: 4,
           enableCamera: true,
-          cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
+          cupertinoOptions: CupertinoOptions(takePhotoIcon: 'chat'),
           materialOptions: MaterialOptions(
-              actionBarColor: "#F16477",
-              statusBarColor: "#D8485C",
-              actionBarTitle: "Select Images",
-              allViewTitle: "All Photos"));
+              actionBarColor:
+                  '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
+              statusBarColor:
+                  '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
+              lightStatusBar: false,
+              startInAllView: true,
+              actionBarTitle: 'Select Images',
+              allViewTitle: 'All Photos'));
     } on PlatformException catch (e) {
       error = e.message;
     }
@@ -84,13 +96,12 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
+    return Scaffold(
+      appBar: AppBar(
         centerTitle: true,
-        backgroundColor: Color.fromRGBO(35, 179, 232, 1),
-        title: new Text(
+        title: Text(
           'Pictures',
-          style: new TextStyle(
+          style: TextStyle(
             fontSize:
                 Theme.of(context).platform == TargetPlatform.iOS ? 17.0 : 20.0,
           ),
@@ -98,20 +109,19 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
         elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      bottomNavigationBar: new FlatButton(
+      bottomNavigationBar: FlatButton(
         padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
-        color: Color.fromRGBO(35, 179, 232, 1),
+        color: Theme.of(context).colorScheme.primary,
         onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => ConfirmConsultScreen(),
-          ));
+          widget.data.media = images;
+          Navigator.pushNamed(context, '/consultReview',
+              arguments: widget.data);
         },
         //Navigator.pushNamed(context, '/history'), // Switch tabs
 
         child: Text(
-          'SEND CONSULT REQUEST',
+          'CONTINUE',
           style: TextStyle(
-            color: Colors.white,
             letterSpacing: 2,
           ),
         ),
@@ -137,8 +147,8 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
                     mainAxisSpacing: 10,
                     children: List.generate(4, (index) {
                       return Container(
-                        decoration: new BoxDecoration(
-                            border: new Border.all(color: Colors.black12)),
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black12)),
                         child: Container(
                           child: Icon(
                             Icons.photo,
@@ -158,21 +168,19 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
               Expanded(
                 flex: 1,
                 child: FlatButton(
-                  color: Colors.transparent,
-                  splashColor: Color.fromRGBO(241, 100, 119, 0.2),
                   padding: EdgeInsets.all(10),
                   onPressed: loadAssets,
                   child: Column(
                     children: <Widget>[
                       Icon(
                         Icons.camera_alt,
-                        color: Color.fromRGBO(241, 100, 119, 0.8),
+                        color: Theme.of(context).colorScheme.secondary,
                         size: 40,
                       ),
                       Text(
                         'Camera/Album',
                         style: TextStyle(
-                          color: Color.fromRGBO(241, 100, 119, 0.8),
+                          color: Theme.of(context).colorScheme.secondary,
                         ),
                       )
                     ],
@@ -183,20 +191,18 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
                   ? Expanded(
                       flex: 1,
                       child: FlatButton(
-                        color: Colors.transparent,
-                        splashColor: Color.fromRGBO(241, 100, 119, 0.2),
                         padding: EdgeInsets.all(10),
                         child: Column(
                           children: <Widget>[
                             Icon(
                               Icons.clear,
-                              color: Color.fromRGBO(241, 100, 119, 0.8),
+                              color: Theme.of(context).colorScheme.secondary,
                               size: 40,
                             ),
                             Text(
                               'Delete All',
                               style: TextStyle(
-                                color: Color.fromRGBO(241, 100, 119, 0.8),
+                                color: Theme.of(context).colorScheme.secondary,
                               ),
                             )
                           ],

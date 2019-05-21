@@ -3,7 +3,7 @@ import 'CalenderCell.dart';
 
 class Calender extends StatelessWidget {
   final EdgeInsets margin;
-  final List<String> week = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+  final List<String> week = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
   final List arrayDay = [];
   Calender({this.margin});
 
@@ -18,33 +18,33 @@ class Calender extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int element = new DateTime.now().day - new DateTime.now().weekday;
-    int totalDay = totaldays(new DateTime.now().month);
+    int element = DateTime.now().day - DateTime.now().weekday;
+    int totalDay = totaldays(DateTime.now().month);
     for (var i = 0; i < 7; i++) {
       if (element > totalDay) element = 1;
       arrayDay.add(element);
       element++;
     }
     var i = -1;
-    return (new Container(
+    return (Container(
       margin: margin,
       alignment: Alignment.center,
-      padding: new EdgeInsets.only(top: 20.0),
-      decoration: new BoxDecoration(
+      padding: EdgeInsets.only(top: 20.0),
+      decoration: BoxDecoration(
         color: Colors.white,
-        border: new Border(
-          bottom: new BorderSide(
+        border: Border(
+          bottom: BorderSide(
               width: 1.0, color: const Color.fromRGBO(204, 204, 204, 1.0)),
         ),
       ),
-      child: new Row(
+      child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: week.map((String week) {
             ++i;
-            return new CalenderCell(
+            return CalenderCell(
                 week: week,
                 day: arrayDay[i].toString(),
-                today: arrayDay[i] != new DateTime.now().day ? false : true);
+                today: arrayDay[i] != DateTime.now().day ? false : true);
           }).toList()),
     ));
   }

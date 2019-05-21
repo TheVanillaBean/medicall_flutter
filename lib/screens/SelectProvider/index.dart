@@ -9,14 +9,16 @@ import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as LocationManager;
 import 'package:Medicall/screens/SelectProvider/placeDetail.dart';
+import 'package:Medicall/globals.dart' as globals;
 
-const kGoogleApiKey = "AIzaSyBx8brcoVisQ4_5FUD-xJlS1i4IwjSS-Hc";
+
+const kGoogleApiKey = 'AIzaSyBx8brcoVisQ4_5FUD-xJlS1i4IwjSS-Hc';
 GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
 
 class SelectProviderScreen extends StatefulWidget {
-  final String questions;
+  final globals.ConsultData data;
 
-  const SelectProviderScreen({Key key, @required this.questions})
+  const SelectProviderScreen({Key key, @required this.data})
       : super(key: key);
   @override
   _SelectProviderScreenState createState() => _SelectProviderScreenState();
@@ -25,6 +27,9 @@ class SelectProviderScreen extends StatefulWidget {
 class _SelectProviderScreenState extends State<SelectProviderScreen> {
   final homeScaffoldKey = GlobalKey<ScaffoldState>();
   GoogleMapController mapController;
+  Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
+  MarkerId selectedMarker;
+  int _markerIdCounter = 1;
   List<PlacesSearchResult> places = [];
   bool isLoading = false;
   var selectedProvider = '';
@@ -47,8 +52,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
         key: homeScaffoldKey,
         appBar: AppBar(
           centerTitle: true,
-          backgroundColor: Color.fromRGBO(35, 179, 232, 1),
-          title: const Text("Select Provider"),
+          title: const Text('Select Provider'),
           actions: <Widget>[
             isLoading
                 ? IconButton(
@@ -69,15 +73,15 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
             ),
           ],
         ),
-        bottomNavigationBar: new FlatButton(
+        bottomNavigationBar: FlatButton(
           padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
-          color: Color.fromRGBO(35, 179, 232, 1),
+          color: Theme.of(context).colorScheme.primary,
           onPressed: () {
             if (selectedProvider.length > 0) {
               Navigator.pushNamed(
                 context,
                 '/questionsHistory',
-                arguments: selectedProvider,
+                arguments: widget.data,
               );
             } else {
               _showMessageDialog();
@@ -86,7 +90,6 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
           child: Text(
             'CONTINUE',
             style: TextStyle(
-              color: Colors.white,
               letterSpacing: 2,
             ),
           ),
@@ -95,13 +98,14 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
           children: <Widget>[
             Container(
               child: SizedBox(
-                  height: 200.0,
+                  height: 400.0,
                   child: GoogleMap(
                       onMapCreated: _onMapCreated,
-                      options: GoogleMapOptions(
-                          myLocationEnabled: true,
-                          cameraPosition:
-                              const CameraPosition(target: LatLng(0.0, 0.0))))),
+                      myLocationEnabled: true,
+                      markers: Set<Marker>.of(markers.values),
+                      initialCameraPosition: CameraPosition(
+                        target: LatLng(0.0, 0.0),
+                      ))),
             ),
             Expanded(child: expandedChild)
           ],
@@ -111,8 +115,8 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
   void _showMessageDialog() {
     showAlert(
         context: context,
-        title: "Notice",
-        body: "Please select one of the providers in order to continue");
+        title: 'Notice',
+        body: 'Please select one of the providers in order to continue');
   }
 
   void refresh() async {
@@ -167,19 +171,26 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
     // ]);
     setState(() {
       this.isLoading = false;
-      if (practice0.status == "OK" &&
-          practice1.status == "OK" &&
-          practice2.status == "OK") {
+      if (practice0.status == 'OK' &&
+          practice1.status == 'OK' &&
+          practice2.status == 'OK') {
         var newResults = practice0;
         newResults.results.add(practice1.results[0]);
         newResults.results.add(practice2.results[0]);
         this.places = newResults.results;
         newResults.results.forEach((f) {
-          final markerOptions = MarkerOptions(
-              position:
-                  LatLng(f.geometry.location.lat, f.geometry.location.lng),
-              infoWindowText: InfoWindowText("${f.name}", "${f.types?.first}"));
-          mapController.addMarker(markerOptions);
+          final String markerIdVal = 'marker_id_$_markerIdCounter';
+          _markerIdCounter++;
+          final MarkerId markerId = MarkerId(markerIdVal);
+
+          final Marker marker = Marker(
+            markerId: markerId,
+            position: LatLng(f.geometry.location.lat, f.geometry.location.lng),
+            infoWindow:
+                InfoWindow(title: '${f.name}', snippet: '${f.types?.first}'),
+          );
+          markers[markerId] = marker;
+        
           mapController.animateCamera(CameraUpdate.newCameraPosition(
               CameraPosition(
                   target:
@@ -209,7 +220,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
           apiKey: kGoogleApiKey,
           onError: onError,
           mode: Mode.fullscreen,
-          language: "en",
+          language: 'en',
           location: center == null
               ? null
               : Location(center.latitude, center.longitude),
@@ -255,6 +266,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
             child: FlatButton(
               onPressed: () {
                 setState(() {
+                  widget.data.provider = doctorNames[places.indexOf(f)];
                   _selectProvider(doctorNames[places.indexOf(f)]);
                 });
               },
@@ -267,13 +279,14 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 10,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
                   Icon(
                       selectedProvider == doctorNames[places.indexOf(f)]
                           ? Icons.radio_button_checked
                           : Icons.radio_button_unchecked,
-                      color: Colors.grey,
+                      color: Theme.of(context).colorScheme.primary,
                       size: 20.0)
                 ],
               ),
@@ -283,7 +296,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
             doctorNames[places.indexOf(f)],
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
-          // subtitle: Text("Intermediate", style: TextStyle(color: Colors.white)),
+          // subtitle: Text('Intermediate', style: TextStyle(color: Colors.white)),
 
           subtitle: Column(
             children: <Widget>[
@@ -306,25 +319,6 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
           ),
         ),
       ];
-      // if (f.formattedAddress != null) {
-      //   list.add(Padding(
-      //     padding: EdgeInsets.only(bottom: 2.0),
-      //     child: Text(
-      //       f.formattedAddress,
-      //       style: Theme.of(context).textTheme.subtitle,
-      //     ),
-      //   ));
-      // }
-
-      // if (f.vicinity != null) {
-      //   list.add(Padding(
-      //     padding: EdgeInsets.only(bottom: 2.0),
-      //     child: Text(
-      //       f.vicinity,
-      //       style: Theme.of(context).textTheme.body1,
-      //     ),
-      //   ));
-      // }
 
       return Padding(
         padding: EdgeInsets.only(top: 4.0, bottom: 4.0, left: 8.0, right: 8.0),
@@ -333,8 +327,6 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
             onTap: () {
               showDetailPlace(f.placeId);
             },
-            highlightColor: Colors.lightBlueAccent,
-            splashColor: Colors.red,
             child: Padding(
               padding: EdgeInsets.all(8.0),
               child: Column(

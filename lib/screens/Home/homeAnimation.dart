@@ -3,21 +3,21 @@ import 'package:flutter/scheduler.dart' show timeDilation;
 
 class StaggerAnimation extends StatelessWidget {
   StaggerAnimation({Key key, this.buttonController})
-      : buttonZoomOutAnimation = new Tween(
+      : buttonZoomOutAnimation = Tween(
           begin: 60.0,
           end: 1000.0,
         )
             .animate(
-          new CurvedAnimation(parent: buttonController, curve: Curves.easeOut),
+          CurvedAnimation(parent: buttonController, curve: Curves.easeOut),
         ),
-        buttonBottomtoCenterAnimation = new AlignmentTween(
+        buttonBottomtoCenterAnimation = AlignmentTween(
           begin: Alignment.center,
           end: Alignment.center,
         )
             .animate(
-          new CurvedAnimation(
+          CurvedAnimation(
             parent: buttonController,
-            curve: new Interval(
+            curve: Interval(
               0.0,
               0.200,
               curve: Curves.easeOut,
@@ -33,23 +33,23 @@ class StaggerAnimation extends StatelessWidget {
   Widget _buildAnimation(BuildContext context, Widget child) {
     timeDilation = 0.4;
 
-    return (new Padding(
+    return (Padding(
         padding: buttonZoomOutAnimation.value < 400
-            ? new EdgeInsets.all(20.0)
-            : new EdgeInsets.all(0.0),
-        child: new Container(
+            ? EdgeInsets.all(20.0)
+            : EdgeInsets.all(0.0),
+        child: Container(
             alignment: buttonBottomtoCenterAnimation.value,
-            child: new InkWell(
-              child: new Container(
+            child: InkWell(
+              child: Container(
                 width: buttonZoomOutAnimation.value,
                 height: buttonZoomOutAnimation.value,
                 alignment: buttonBottomtoCenterAnimation.value,
-                decoration: new BoxDecoration(
+                decoration: BoxDecoration(
                     color: const Color.fromRGBO(0, 0, 0, 0),
                     shape: buttonZoomOutAnimation.value < 400
                         ? BoxShape.circle
                         : BoxShape.rectangle),
-                child: new Icon(
+                child: Icon(
                   Icons.add,
                   size: buttonZoomOutAnimation.value < 50
                       ? buttonZoomOutAnimation.value
@@ -63,13 +63,13 @@ class StaggerAnimation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     buttonController.addListener(() {
-      // if (controller.isCompleted) Navigator.pushNamed(context, "/login");    //options
+      // if (controller.isCompleted) Navigator.pushNamed(context, '/login');    //options
       // if (controller.isCompleted) Navigator.of(context).pop();       //options
       if (buttonController.isCompleted) {
-        Navigator.pushReplacementNamed(context, "/login");
+        Navigator.pushReplacementNamed(context, '/login');
       }
     });
-    return new AnimatedBuilder(
+    return AnimatedBuilder(
       builder: _buildAnimation,
       animation: buttonController,
     );

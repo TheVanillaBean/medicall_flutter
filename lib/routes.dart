@@ -1,3 +1,5 @@
+import 'package:Medicall/screens/ConfirmConsult/index.dart';
+import 'package:Medicall/screens/Registration/RegistrationType/index.dart';
 import 'package:flutter/material.dart';
 import 'package:Medicall/screens/Login/index.dart';
 import 'package:Medicall/screens/Home/index.dart';
@@ -15,6 +17,7 @@ import 'package:Medicall/screens/OtpVerification/index.dart';
 import 'package:Medicall/screens/Terms/index.dart';
 import 'package:Medicall/screens/Privacy/index.dart';
 import 'package:oktoast/oktoast.dart';
+import 'package:Medicall/models/medicall_user.dart';
 
 // import 'package:Medicall/mutations/addStar.dart' as mutations;
 // import 'package:Medicall/queries/readRepositories.dart' as queries;
@@ -27,121 +30,155 @@ class MyCustomRoute<T> extends MaterialPageRoute<T> {
 class Routes extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    const Color background = Color(0xFFFFFFFF);
+    const Color primaryColor = Color(0xFF2F97C1);
+    const Color onPrimary = Color(0xFFFFFFFF);
+    const Color primaryVariant = Color(0xFF48ACF0);
+    const Color secondaryColor = Color.fromRGBO(241, 100, 119, 1);
+    const Color onSecondary = Color(0xFF0E202C);
+
+    const Color secondaryVariant = Color(0xFF47E5BC);
+    const Color accentColor = Color(0xFF48ACF0);
+    final ColorScheme colorScheme = const ColorScheme.dark().copyWith(
+      primary: primaryColor,
+      onPrimary: onPrimary,
+      background: background,
+      secondary: secondaryColor,
+      onSecondary: onSecondary,
+      primaryVariant: primaryVariant,
+      secondaryVariant: secondaryVariant,
+    );
     return OKToast(
       child: MaterialApp(
-          title: 'Medicall',
-          debugShowCheckedModeBanner: false,
-          theme: new ThemeData(
-              highlightColor: Color.fromRGBO(35, 179, 232, 0),
-              splashColor: Colors.transparent,
-              scaffoldBackgroundColor: Colors.white,
-              toggleableActiveColor: Color.fromRGBO(241, 100, 119, 1),
-              textSelectionColor: Color.fromRGBO(241, 100, 119, 0.5),
-              textSelectionHandleColor: Color.fromRGBO(35, 179, 232, 1),
-              cursorColor: Color.fromRGBO(35, 179, 232, 1),
-              // inputDecorationTheme: InputDecorationTheme(
-              //   border: const OutlineInputBorder(
-              //     borderSide: BorderSide(color: Color.fromRGBO(241, 100, 119, 1)),
-              //   ),
-              //   enabledBorder: OutlineInputBorder(
-              //     borderSide: BorderSide(color: Colors.black.withOpacity(0.1)),
-              //   ),
-              //   focusedBorder: const OutlineInputBorder(
-              //     borderSide: BorderSide(color: Color.fromRGBO(241, 100, 119, 1)),
-              //   ),
-              //   labelStyle: const TextStyle(
-              //     color: Color.fromRGBO(35, 179, 232, 1),
-              //   ),
-              // ),
-              backgroundColor: Colors.white),
-          home: new LoginPage(),
-          onGenerateRoute: (RouteSettings settings) {
-            switch (settings.name) {
-              case '/login':
-                return new MyCustomRoute(
-                  builder: (_) => new LoginPage(),
-                  settings: settings,
-                );
-              case '/verification':
-                return new MyCustomRoute(
-                  builder: (_) => new OtpVerificationScreen(),
-                  settings: settings,
-                );
-              case '/registrationProvider':
-                return new MyCustomRoute(
-                  builder: (_) => new RegistrationProviderScreen(),
-                  settings: settings,
-                );
-              case '/registrationPatient':
-                return new MyCustomRoute(
-                  builder: (_) => new RegistrationPatientScreen(),
-                  settings: settings,
-                );
-              case '/terms':
-                return new MyCustomRoute(
-                  builder: (_) => new TermsScreen(),
-                  settings: settings,
-                );
-              case '/privacy':
-                return new MyCustomRoute(
-                  builder: (_) => new PrivacyScreen(),
-                  settings: settings,
-                );
-              case '/home':
-                return new MyCustomRoute(
-                  builder: (_) => new HomeScreen(),
-                  settings: settings,
-                );
-              case '/doctors':
-                return new MyCustomRoute(
-                  builder: (_) => new DoctorsScreen(),
-                  settings: settings,
-                );
-              case '/questionsScreening':
-                return new MyCustomRoute(
-                  builder: (_) => new QuestionsScreeningScreen(
-                      consultType: settings.arguments),
-                  settings: settings,
-                );
-              case '/selectProvider':
-                return new MyCustomRoute(
-                  builder: (_) =>
-                      new SelectProviderScreen(questions: settings.arguments),
-                  settings: settings,
-                );
-              case '/questionsHistory':
-                return new MyCustomRoute(
-                  builder: (_) => new QuestionsHistoryScreen(
-                        selectedProvider: settings.arguments,
-                      ),
-                  settings: settings,
-                );
-              case '/questionsUpload':
-                return new MyCustomRoute(
-                  builder: (_) => new QuestionsUploadScreen(),
-                  settings: settings,
-                );
-              case '/chat':
-                return new MyCustomRoute(
-                  builder: (_) => new ChatScreen(),
-                  settings: settings,
-                );
-              case '/history':
-                return new MyCustomRoute(
-                  builder: (_) => new HistoryScreen(),
-                  settings: settings,
-                );
-              case '/settings':
-                return new MyCustomRoute(
-                  builder: (_) => new SettingsScreen(),
-                  settings: settings,
-                );
-            }
-          },
-          // routes: <String, WidgetBuilder> {
-          //   '/about': (BuildContext context) => new _aboutPage.About(),
-          // }
-        ),
+        title: 'Medicall',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+            primaryColor: primaryColor,
+            accentColor: accentColor,
+            colorScheme: colorScheme,
+            canvasColor: onPrimary,
+            buttonTheme: ButtonThemeData(
+              colorScheme: colorScheme,
+              shape: new RoundedRectangleBorder(
+                  borderRadius: new BorderRadius.circular(0.0)),
+              textTheme: ButtonTextTheme.primary,
+            ),
+            highlightColor: Color.fromRGBO(35, 179, 232, 0),
+            splashColor: Colors.transparent,
+            scaffoldBackgroundColor: Theme.of(context).colorScheme.onPrimary,
+            toggleableActiveColor: Color.fromRGBO(241, 100, 119, 1),
+            textSelectionColor: Color.fromRGBO(241, 100, 119, 0.5),
+            textSelectionHandleColor: Color.fromRGBO(35, 179, 232, 1),
+            cursorColor: Color.fromRGBO(35, 179, 232, 1),
+            // inputDecorationTheme: InputDecorationTheme(
+            //   border: const OutlineInputBorder(
+            //     borderSide: BorderSide(color: Color.fromRGBO(241, 100, 119, 1)),
+            //   ),
+            //   enabledBorder: OutlineInputBorder(
+            //     borderSide: BorderSide(color: Colors.black.withOpacity(0.1)),
+            //   ),
+            //   focusedBorder: const OutlineInputBorder(
+            //     borderSide: BorderSide(color: Color.fromRGBO(241, 100, 119, 1)),
+            //   ),
+            //   labelStyle: const TextStyle(
+            //     color: Color.fromRGBO(35, 179, 232, 1),
+            //   ),
+            // ),
+            backgroundColor: Theme.of(context).colorScheme.onPrimary),
+        home: LoginPage(),
+        onGenerateRoute: (RouteSettings settings) {
+          switch (settings.name) {
+            case '/login':
+              return MyCustomRoute(
+                builder: (_) => LoginPage(medicallUser: settings.arguments),
+                settings: settings,
+              );
+            case '/verification':
+              return MyCustomRoute(
+                builder: (_) => OtpVerificationScreen(),
+                settings: settings,
+              );
+            case '/registrationType':
+              return MyCustomRoute(
+                builder: (_) => RegistrationTypeScreen(),
+                settings: settings,
+              );
+            case '/registrationProvider':
+              return MyCustomRoute(
+                builder: (_) => RegistrationProviderScreen(),
+                settings: settings,
+              );
+            case '/registrationPatient':
+              return MyCustomRoute(
+                builder: (_) => RegistrationPatientScreen(),
+                settings: settings,
+              );
+            case '/terms':
+              return MyCustomRoute(
+                builder: (_) => TermsScreen(),
+                settings: settings,
+              );
+            case '/privacy':
+              return MyCustomRoute(
+                builder: (_) => PrivacyScreen(),
+                settings: settings,
+              );
+            case '/home':
+              return MyCustomRoute(
+                builder: (_) => HomeScreen(),
+                settings: settings,
+              );
+            case '/doctors':
+              return MyCustomRoute(
+                builder: (_) => DoctorsScreen(),
+                settings: settings,
+              );
+            case '/questionsScreening':
+              return MyCustomRoute(
+                builder: (_) =>
+                    QuestionsScreeningScreen(data: settings.arguments),
+                settings: settings,
+              );
+            case '/selectProvider':
+              return MyCustomRoute(
+                builder: (_) => SelectProviderScreen(data: settings.arguments),
+                settings: settings,
+              );
+            case '/questionsHistory':
+              return MyCustomRoute(
+                builder: (_) => QuestionsHistoryScreen(
+                      data: settings.arguments,
+                    ),
+                settings: settings,
+              );
+            case '/questionsUpload':
+              return MyCustomRoute(
+                builder: (_) => QuestionsUploadScreen(data: settings.arguments),
+                settings: settings,
+              );
+            case '/chat':
+              return MyCustomRoute(
+                builder: (_) => ChatScreen(),
+                settings: settings,
+              );
+            case '/consultReview':
+              return MyCustomRoute(
+                builder: (_) => ConfirmConsultScreen(data: settings.arguments),
+                settings: settings,
+              );
+            case '/history':
+              return MyCustomRoute(
+                builder: (_) => HistoryScreen(data: settings.arguments),
+                settings: settings,
+              );
+            case '/settings':
+              return MyCustomRoute(
+                builder: (_) => SettingsScreen(),
+                settings: settings,
+              );
+          }
+        },
+      ),
     );
   }
 }

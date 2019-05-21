@@ -21,13 +21,13 @@ class ImageBackground extends StatelessWidget {
     Size screenSize = MediaQuery.of(context).size;
     final Orientation orientation = MediaQuery.of(context).orientation;
     bool isLandscape = orientation == Orientation.landscape;
-    return (new Container(
+    return (Container(
         width: screenSize.width,
         height: screenSize.height / 2.5,
-        decoration: new BoxDecoration(image: backgroundImage),
-        child: new Container(
-          decoration: new BoxDecoration(
-              gradient: new LinearGradient(
+        decoration: BoxDecoration(image: backgroundImage),
+        child: Container(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
             colors: <Color>[
               const Color.fromRGBO(110, 101, 103, 0.6),
               const Color.fromRGBO(51, 51, 63, 0.9),
@@ -37,25 +37,25 @@ class ImageBackground extends StatelessWidget {
             end: const FractionalOffset(0.0, 1.0),
           )),
           child: isLandscape
-              ? new ListView(
+              ? ListView(
                   children: <Widget>[
-                    new Flex(
+                    Flex(
                       direction: Axis.vertical,
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
-                        new Text(
-                          "Good Morning!",
-                          style: new TextStyle(
+                        Text(
+                          'Good Morning!',
+                          style: TextStyle(
                               fontSize: 30.0,
                               letterSpacing: 1.2,
                               fontWeight: FontWeight.w300,
                               color: Colors.white),
                         ),
-                        new ProfileNotification(
+                        ProfileNotification(
                           containerGrowAnimation: containerGrowAnimation,
                           profileImage: profileImage,
                         ),
-                        new MonthView(
+                        MonthView(
                           month: month,
                           selectbackward: selectbackward,
                           selectforward: selectforward,
@@ -64,22 +64,22 @@ class ImageBackground extends StatelessWidget {
                     )
                   ],
                 )
-              : new Column(
+              : Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
-                    new Text(
-                      "Good Morning!",
-                      style: new TextStyle(
+                    Text(
+                      'Good Morning!',
+                      style: TextStyle(
                           fontSize: 30.0,
                           letterSpacing: 1.2,
                           fontWeight: FontWeight.w300,
                           color: Colors.white),
                     ),
-                    new ProfileNotification(
+                    ProfileNotification(
                       containerGrowAnimation: containerGrowAnimation,
                       profileImage: profileImage,
                     ),
-                    new MonthView(
+                    MonthView(
                       month: month,
                       selectbackward: selectbackward,
                       selectforward: selectforward,

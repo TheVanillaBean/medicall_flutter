@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
 
 class AppUtil {
-  static final AppUtil _instance = new AppUtil.internal();
+  static final AppUtil _instance = AppUtil.internal();
   static bool networkStatus;
 
   AppUtil.internal();
@@ -18,7 +18,7 @@ class AppUtil {
 
   void showAlert(String msg) {
     showToast(
-      "$msg",
+      '$msg',
       duration: Duration(seconds: 2),
       textPadding: EdgeInsets.all(10),
       position: ToastPosition.top,

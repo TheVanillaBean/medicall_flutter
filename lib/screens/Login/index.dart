@@ -1,186 +1,6 @@
-// import 'package:flutter/material.dart';
-// import 'styles.dart';
-// import 'package:flutter/foundation.dart';
-// import 'dart:async';
-// import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
-
-// import 'package:google_sign_in/google_sign_in.dart';
-// import 'package:flutter/services.dart';
-// import 'package:flutter/scheduler.dart' show timeDilation;
-// import 'package:Medicall/presentation/medicall_app_icons.dart' as CustomIcons;
-// import 'package:Medicall/globals.dart' as globals;
-
-// class LoginScreen extends StatefulWidget {
-//   const LoginScreen({Key key}) : super(key: key);
-//   @override
-//   LoginScreenState createState() => new LoginScreenState();
-// }
-
-// class LoginScreenState extends State<LoginScreen>
-//     with TickerProviderStateMixin {
-//   //AnimationController _loginButtonController;
-//   var animationStatus = 0;
-//   GoogleSignIn _googleSignIn = new GoogleSignIn(
-//     scopes: [
-//       'email',
-//       'https://www.googleapis.com/auth/contacts.readonly',
-//     ],
-//   );
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     // _loginButtonController = new AnimationController(
-//     //     duration: new Duration(milliseconds: 3000), vsync: this);
-//     _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount account) {
-//       setState(() {
-//         globals.currentUser = account;
-//       });
-//       if (globals.currentUser != null) {
-//         //_handleGetContact();
-//       }
-//     });
-//     //_googleSignIn.signInSilently();
-//   }
-
-//   @override
-//   void dispose() {
-//     //_loginButtonController.dispose();
-//     super.dispose();
-//   }
-
-//   // Future<Null> _playAnimation() async {
-//   //   try {
-//   //     await _loginButtonController.forward();
-//   //     await _loginButtonController.reverse();
-//   //   } on TickerCanceled {}
-//   // }
-
-//   Future<void> _handleSignIn() async {
-//     try {
-//       await _googleSignIn.signIn();
-//       Navigator.pushNamed(context, '/registration');
-//       //animationStatus = 1;
-//       //_playAnimation();
-//     } catch (error) {
-//       print(error);
-//     }
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     timeDilation = 0.4;
-//     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
-//     return new Scaffold(
-//         body: new Container(
-//             decoration: new BoxDecoration(
-//               image: backgroundImage,
-//             ),
-//             child: new Container(
-//                 decoration: new BoxDecoration(
-//                     gradient: new LinearGradient(
-//                   colors: <Color>[
-//                     const Color.fromRGBO(35, 179, 232, 0.8),
-//                     const Color.fromRGBO(50, 50, 50, 1),
-//                   ],
-//                   stops: [0.2, 1.0],
-//                   begin: const FractionalOffset(0.0, 0.0),
-//                   end: const FractionalOffset(0.0, 1.0),
-//                 )),
-//                 child: new Column(
-//                   mainAxisAlignment: MainAxisAlignment.center,
-//                   crossAxisAlignment: CrossAxisAlignment.center,
-//                   children: <Widget>[
-//                     new Padding(
-//                       padding: EdgeInsets.only(top: 80),
-//                       child: new Row(
-//                         mainAxisAlignment: MainAxisAlignment.center,
-//                         children: <Widget>[
-//                           new Column(
-
-//                             children: <Widget>[
-//                               new Padding(
-//                                 padding: EdgeInsets.only(right: 10),
-//                                 child: new Icon(CustomIcons.MedicallApp.logo_m,
-//                                   size: 45.0, color: Color.fromRGBO(255, 255, 255, 0.6)),
-//                               )
-//                             ],
-//                           ),
-//                           new Column(
-//                             children: <Widget>[
-//                               new Text('Medicall',
-//                                   style: TextStyle(
-//                                       fontSize: 24.0,
-//                                       letterSpacing: 1.5,
-//                                       color: Colors.white)),
-//                             ],
-//                           ),
-//                         ],
-//                       ),
-//                     ),
-//                     new Expanded(
-//                       flex: 1,
-//                       child: new Column(
-//                         mainAxisAlignment: MainAxisAlignment.center,
-//                         crossAxisAlignment: CrossAxisAlignment.center,
-//                         children: <Widget>[
-//                           GoogleSignInButton(
-//                               onPressed: () {
-//                                 setState(() {
-//                                   //animationStatus = 1;
-//                                   _handleSignIn();
-//                                 });
-//                               },
-//                               darkMode: true)
-//                         ],
-//                       ),
-//                     )
-//                   ],
-//                 ))));
-//   }
-// }
-
-// // child: new Column(
-// //                   mainAxisAlignment: MainAxisAlignment.start,
-// //                   crossAxisAlignment: CrossAxisAlignment.center,
-// //                   children: <Widget>[
-// //                     new Row(
-// //                       mainAxisAlignment: MainAxisAlignment.start,
-// //                       crossAxisAlignment: CrossAxisAlignment.center,
-// //                       children: <Widget>[
-// //                         new Column(
-// //                           children: <Widget>[
-// //                             new Icon(CustomIcons.MedicallApp.logo,
-// //                                 size: 45.0, color: Colors.white),
-// //                           ],
-// //                         ),
-// //                         new Column(
-// //                           children: <Widget>[
-// //                             new Text('Medicall',
-// //                                 style: TextStyle(
-// //                                     fontSize: 24.0,
-// //                                     letterSpacing: 1.5,
-// //                                     color: Colors.white)),
-// //                           ],
-// //                         ),
-// //                       ],
-// //                     ),
-// //                     new Column(
-// //                       mainAxisAlignment: MainAxisAlignment.center,
-// //                       crossAxisAlignment: CrossAxisAlignment.center,
-// //                         children: <Widget>[
-// //                           GoogleSignInButton(
-// //                             onPressed: () {
-// //                               setState(() {
-// //                                 //animationStatus = 1;
-// //                                 _handleSignIn();
-// //                               });
-// //                             },
-// //                             darkMode: true)
-// //                         ],
-// //                     )],
-// //                 ))));
+import 'package:Medicall/models/medicall_user.dart';
 import 'package:Medicall/screens/Login/styles.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:Medicall/util/app_util.dart';
@@ -194,13 +14,14 @@ import 'package:Medicall/screens/Registration/RegistrationType/index.dart';
 import 'package:Medicall/screens/Auth/index.dart';
 import 'package:Medicall/util/firebase_notification_handler.dart';
 import 'package:flutter/cupertino.dart';
-//import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:Medicall/presentation/medicall_app_icons.dart' as CustomIcons;
 import 'package:Medicall/globals.dart' as globals;
 
 class LoginPage extends StatefulWidget {
+  final MedicallUser medicallUser;
+
+  const LoginPage({Key key, this.medicallUser}) : super(key: key);
   @override
-  _LoginScreenState createState() => new _LoginScreenState();
+  _LoginScreenState createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginPage>
@@ -209,22 +30,20 @@ class _LoginScreenState extends State<LoginPage>
   bool _isGoogleAuthEnable = false;
   bool _isEmailAuthEnable = true;
   bool _isLoading = false;
-
-  var data;
   bool autoValidate = true;
   bool readOnly = false;
   bool showSegmentedControl = true;
   //GlobalKey<FormBuilderState> _fbKey = GlobalKey();
 
-  final _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final _teMobileEmail = TextEditingController();
   final _teCountryCode = TextEditingController();
   final _tePassword = TextEditingController();
 
-  FocusNode _focusNodeMobileEmail = new FocusNode();
-  FocusNode _focusNodeCountryCode = new FocusNode();
-  FocusNode _focusNodePassword = new FocusNode();
+  FocusNode _focusNodeMobileEmail = FocusNode();
+  FocusNode _focusNodeCountryCode = FocusNode();
+  FocusNode _focusNodePassword = FocusNode();
 
   FirebasePhoneUtil firebasePhoneUtil;
   FirebaseGoogleUtil firebaseGoogleUtil;
@@ -242,6 +61,36 @@ class _LoginScreenState extends State<LoginPage>
 
     firebaseAnonymouslyUtil = FirebaseAnonymouslyUtil();
     firebaseAnonymouslyUtil.setScreenListener(this);
+  }
+
+  Future<void> _getUserType(String id) async {
+    final DocumentReference documentReference =
+        Firestore.instance.document("users/" + id);
+    await documentReference.get().then((datasnapshot) {
+      if (datasnapshot.data['type'] != null) {
+        medicallUser.type = datasnapshot.data['type'];
+      }
+    }).catchError((e) => print(e));
+  }
+
+  Future<void> _getTerms(String id) async {
+    final DocumentReference documentReference =
+        Firestore.instance.document("users/" + id);
+    await documentReference.get().then((datasnapshot) {
+      if (datasnapshot.data['terms'] != null) {
+        medicallUser.terms = true;
+      }
+    }).catchError((e) => print(e));
+  }
+
+  Future<void> _getPolicy(String id) async {
+    final DocumentReference documentReference =
+        Firestore.instance.document("users/" + id);
+    await documentReference.get().then((datasnapshot) {
+      if (datasnapshot.data['policy'] != null) {
+        medicallUser.terms = true;
+      }
+    }).catchError((e) => print(e));
   }
 
   void _submit() {
@@ -268,7 +117,7 @@ class _LoginScreenState extends State<LoginPage>
   String validateEmail(String value) {
     String pattern =
         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-    RegExp regExp = new RegExp(pattern);
+    RegExp regExp = RegExp(pattern);
     if (value.length == 0) {
       AppUtil().showAlert("Email is Required");
       return "Email is Required";
@@ -280,15 +129,37 @@ class _LoginScreenState extends State<LoginPage>
     }
   }
 
-  void moveUserDashboardScreen(FirebaseUser currentUser) {
+  Future moveUserDashboardScreen(FirebaseUser currentUser) async {
     eMailTabEnable();
     closeLoader();
     globals.currentFirebaseUser = currentUser;
+    
+    medicallUser = MedicallUser(id: currentUser.uid);
+    await _getUserType(currentUser.uid);
+    await _getTerms(currentUser.uid);
+    await _getPolicy(currentUser.uid);
+    //medicallUser = MedicallUser(id: currentUser.uid);
     //Navigator.pushNamed(context, '/registration');
-    if (globals.currentFirebaseUser.phoneNumber != null) {
-      Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => RegistrationTypeScreen(),
-      ));
+
+    //TO-DO delete more hacks to bypass terms/ registration for development
+    //medicallUser.terms = true;
+    //medicallUser.policy = true;
+
+    if (currentUser.isEmailVerified == true &&
+        currentUser.phoneNumber != null) {
+      if (medicallUser.terms == true && medicallUser.policy == true) {
+        Navigator.pushNamed(context, '/doctors');
+      } else {
+        if (medicallUser.type == 'patient') {
+          Navigator.pushNamed(context, '/registrationPatient');
+        }
+        if (medicallUser.type == 'provider') {
+          Navigator.pushNamed(context, '/registrationProvider');
+        }
+        if (medicallUser.type == null) {
+          Navigator.pushNamed(context, '/registrationType');
+        }
+      }
     } else {
       Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => AuthScreen(),
@@ -296,7 +167,7 @@ class _LoginScreenState extends State<LoginPage>
     }
 
     // Navigator.of(context).push<String>(
-    //   new MaterialPageRoute(
+    //    MaterialPageRoute(
     //     settings: RouteSettings(name: '/home_screen'),
     //     builder: (context) => UserDashboardScreen(currentUser),
     //   ),
@@ -305,11 +176,11 @@ class _LoginScreenState extends State<LoginPage>
 
   @override
   Widget build(BuildContext context) {
-    new FirebaseNotifications().setUpFirebase();
-    new Row(
+    FirebaseNotifications().setUpFirebase();
+    Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        new GestureDetector(
+        GestureDetector(
           onTap: () {
             phoneTabEnable();
           },
@@ -318,22 +189,23 @@ class _LoginScreenState extends State<LoginPage>
               Icon(
                 Icons.phone,
                 size: 30,
-                color: Colors.tealAccent,
+                color: Theme.of(context).accentColor,
               ),
               Text(
                 'Phone',
-                style: TextStyle(color: Colors.white),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onPrimary),
               )
             ],
           ),
         ),
-        new SizedBox(
+        SizedBox(
           width: 20.0,
         ),
-        new SizedBox(
+        SizedBox(
           width: 20.0,
         ),
-        new GestureDetector(
+        GestureDetector(
           onTap: () {
             eMailTabEnable();
           },
@@ -342,11 +214,12 @@ class _LoginScreenState extends State<LoginPage>
               Icon(
                 Icons.alternate_email,
                 size: 30,
-                color: Colors.cyanAccent,
+                color: Theme.of(context).colorScheme.onSecondary,
               ),
               Text(
                 'Email/Password',
-                style: TextStyle(color: Colors.cyan[50]),
+                style: TextStyle(
+                    color: Theme.of(context).colorScheme.secondaryVariant),
               )
             ],
           ),
@@ -354,7 +227,7 @@ class _LoginScreenState extends State<LoginPage>
       ],
     );
 
-    var phoneAuthForm = new Column(
+    var phoneAuthForm = Column(
       children: <Widget>[
         // FormBuilder(
         //   context,
@@ -374,62 +247,70 @@ class _LoginScreenState extends State<LoginPage>
         //   ],
         // ),
 
-        new Row(
+        Row(
           children: <Widget>[
-            new Expanded(
-              child: new TextFormField(
+            Expanded(
+              child: TextFormField(
                 controller: _teCountryCode,
                 focusNode: _focusNodeCountryCode,
-                style: TextStyle(color: Colors.white),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onPrimary),
                 decoration: InputDecoration(
-                  border: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.cyanAccent),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(
+                        color: Theme.of(context).colorScheme.secondary),
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.cyan),
+                    borderSide: BorderSide(
+                        color: Theme.of(context).colorScheme.secondaryVariant),
                   ),
-                  focusedBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                        color: Theme.of(context).colorScheme.onPrimary),
                   ),
-                  labelStyle: const TextStyle(
-                    color: Colors.cyanAccent,
+                  labelStyle: TextStyle(
+                    color: Theme.of(context).colorScheme.secondary,
                   ),
                   labelText: "+1",
                   hintText: "+1",
-                  hintStyle: TextStyle(color: Colors.cyan),
-                  fillColor: new Color(0xFF2CB044),
+                  hintStyle: TextStyle(
+                      color: Theme.of(context).colorScheme.secondaryVariant),
                 ),
               ),
               flex: 1,
             ),
-            new SizedBox(
+            SizedBox(
               width: 10.0,
             ),
-            new Expanded(
-              child: new TextFormField(
+            Expanded(
+              child: TextFormField(
                 controller: _teMobileEmail,
                 focusNode: _focusNodeMobileEmail,
                 keyboardType: TextInputType.number,
-                style: TextStyle(color: Colors.white),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onPrimary),
                 decoration: InputDecoration(
-                  border: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.cyanAccent),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(
+                        color: Theme.of(context).colorScheme.secondary),
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.cyan),
+                    borderSide: BorderSide(
+                        color: Theme.of(context).colorScheme.secondaryVariant),
                   ),
-                  focusedBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                        color: Theme.of(context).colorScheme.onPrimary),
                   ),
-                  labelStyle: const TextStyle(
-                    color: Colors.cyanAccent,
+                  labelStyle: TextStyle(
+                    color: Theme.of(context).colorScheme.secondary,
                   ),
                   hintText: "Mobile number",
-                  hintStyle: TextStyle(color: Colors.cyan),
-                  fillColor: new Color(0xFF2CB044),
-                  prefixIcon: new Icon(
+                  hintStyle: TextStyle(
+                      color: Theme.of(context).colorScheme.secondaryVariant),
+                  prefixIcon: Icon(
                     Icons.mobile_screen_share,
-                    color: Colors.tealAccent,
+                    color: Theme.of(context).colorScheme.secondaryVariant,
                   ),
                 ),
               ),
@@ -437,141 +318,148 @@ class _LoginScreenState extends State<LoginPage>
             ),
           ],
         ),
-        new SizedBox(
+        SizedBox(
           height: 40.0,
         ),
       ],
     );
 
-    var anonymouslyForm = new Column(
+    var anonymouslyForm = Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: <Widget>[
         _isEmailAuthEnable
-            ? new SizedBox(
+            ? SizedBox(
                 height: 20.0,
               )
-            : new SizedBox(
+            : SizedBox(
                 height: 0.0,
               ),
-        new TextFormField(
+        TextFormField(
           controller: _teMobileEmail,
           focusNode: _focusNodeMobileEmail,
-          style: new TextStyle(color: Colors.white),
+          style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
           decoration: InputDecoration(
-            border: const OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.cyanAccent),
+            border: OutlineInputBorder(
+              borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.secondaryVariant),
             ),
             enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.cyan),
+              borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.secondaryVariant),
             ),
-            focusedBorder: const OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.white),
+            focusedBorder: OutlineInputBorder(
+              borderSide:
+                  BorderSide(color: Theme.of(context).colorScheme.onPrimary),
             ),
-            labelStyle: const TextStyle(
-              color: Colors.cyanAccent,
+            labelStyle: TextStyle(
+              color: Theme.of(context).colorScheme.secondaryVariant,
             ),
             hintText: "Email",
-            hintStyle: TextStyle(color: Colors.cyan),
-            fillColor: new Color(0xFF2CB044),
-            prefixIcon: new Icon(
+            hintStyle: TextStyle(
+                color: Theme.of(context).colorScheme.secondaryVariant),
+            prefixIcon: Icon(
               Icons.email,
-              color: Colors.cyanAccent,
+              color: Theme.of(context).colorScheme.background,
             ),
           ),
         ),
-        new SizedBox(
+        SizedBox(
           height: 10.0,
         ),
-        new TextFormField(
+        TextFormField(
           controller: _tePassword,
           focusNode: _focusNodePassword,
-          style: new TextStyle(color: Colors.white),
           obscureText: true,
+          style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
           decoration: InputDecoration(
-            border: const OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.cyanAccent),
+            border: OutlineInputBorder(
+              borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.secondaryVariant),
             ),
             enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.cyan),
+              borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.secondaryVariant),
             ),
-            focusedBorder: const OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.white),
+            focusedBorder: OutlineInputBorder(
+              borderSide:
+                  BorderSide(color: Theme.of(context).colorScheme.onPrimary),
             ),
-            labelStyle: const TextStyle(
-              color: Colors.cyanAccent,
+            labelStyle: TextStyle(
+              color: Theme.of(context).colorScheme.secondaryVariant,
             ),
             hintText: "Password",
-            hintStyle: TextStyle(color: Colors.cyan),
-            fillColor: new Color(0xFF2CB044),
-            prefixIcon: new Icon(
-              Icons.account_box,
-              color: Colors.cyanAccent,
+            hintStyle: TextStyle(
+                color: Theme.of(context).colorScheme.secondaryVariant),
+            prefixIcon: Icon(
+              Icons.verified_user,
+              color: Theme.of(context).colorScheme.background,
             ),
           ),
         ),
-        new SizedBox(
+        SizedBox(
           height: 30.0,
         ),
       ],
     );
 
-    new Column(
+    Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: <Widget>[
-        new SizedBox(
+        SizedBox(
           height: 20.0,
         ),
-        new Center(
-          child: new CircularProgressIndicator(
-            valueColor: new AlwaysStoppedAnimation<Color>(Colors.green),
+        Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
           ),
         ),
-        new SizedBox(
+        SizedBox(
           height: 40.0,
         ),
       ],
     );
 
-    var screenRoot =
-        //new Container(
-        // height: double.maxFinite,
-        // alignment: FractionalOffset.center,
-        // child: new SingleChildScrollView(
-        //   child: new Center(
-        //     child: loginForm,
-        //   ),
-        // ),
-        new Column(
+    var screenRoot = Column(
       children: <Widget>[
-        new Expanded(
+        Expanded(
           flex: 1,
           child: Padding(
             padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                new Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    new Column(
+                    Stack(
+                      alignment: Alignment.center,
                       children: <Widget>[
-                        new Padding(
-                          padding: EdgeInsets.only(right: 10),
-                          child: new Icon(CustomIcons.MedicallApp.logo_m,
-                              size: 45.0,
-                              color: Color.fromRGBO(255, 255, 255, 0.6)),
-                        )
+                        Container(
+                          width: 70,
+                          height: 70,
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                image: ExactAssetImage(
+                                    'assets/icon/logo_back.png'),
+                              )),
+                        ),
+                        Container(
+                          width: 100,
+                          height: 100,
+                          child: Image.asset(
+                            'assets/icon/logo_fore.png',
+                          ),
+                        ),
                       ],
                     ),
-                    new Column(
-                      children: <Widget>[
-                        new Text('Medicall',
-                            style: TextStyle(
-                                fontSize: 24.0,
-                                letterSpacing: 1.5,
-                                color: Colors.white)),
-                      ],
-                    ),
+                    Text('Medicall',
+                        style: TextStyle(
+                            fontSize: 26.0,
+                            height: 1.08,
+                            letterSpacing: 2.5,
+                            fontWeight: FontWeight.w600,
+                            color: Theme.of(context).colorScheme.onPrimary)),
                   ],
                 ),
                 //tabs,
@@ -580,57 +468,43 @@ class _LoginScreenState extends State<LoginPage>
                     : _isEmailAuthEnable ? anonymouslyForm : anonymouslyForm,
                 Column(
                   children: <Widget>[
-                    new GestureDetector(
-                      onTap: () {
-                        _submit();
-                      },
-                      child: new Container(
-                        padding: EdgeInsets.all(10.0),
-                        alignment: FractionalOffset.center,
-                        width: 220,
-                        decoration: new BoxDecoration(
-                          color: Colors.tealAccent,
-                          borderRadius:
-                              new BorderRadius.all(const Radius.circular(3.0)),
-                        ),
+                    ButtonTheme(
+                      minWidth: 225.0,
+                      height: 50.0,
+                      child: RaisedButton(
+                        color: Theme.of(context).colorScheme.primaryVariant,
+                        onPressed: () {
+                          _submit();
+                        },
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4)),
                         child: Text(
-                          _isEmailAuthEnable
-                              ? "LOGIN"
-                              : _isPhoneAuthEnable ? "LOGIN" : "SUBMIT",
-                          style: new TextStyle(
-                              color: Colors.teal,
-                              fontSize: 18.0,
-                              fontWeight: FontWeight.w500),
+                          "Sign In",
+                          style: TextStyle(letterSpacing: 1.3),
                         ),
                       ),
                     ),
-                    _isEmailAuthEnable
-                        ? new GestureDetector(
-                            onTap: () {
-                              _signUp();
-                            },
-                            child: new Container(
-                              margin: EdgeInsets.only(top: 5.0),
-                              padding: EdgeInsets.all(10.0),
-                              width: 220,
-                              alignment: FractionalOffset.center,
-                              decoration: new BoxDecoration(
-                                color: Colors.teal,
-                                borderRadius: new BorderRadius.all(
-                                    const Radius.circular(3.0)),
-                              ),
-                              child: Text(
-                                "REGISTER",
-                                style: new TextStyle(
-                                    color: Colors.tealAccent,
-                                    fontSize: 18.0,
-                                    fontWeight: FontWeight.w500),
-                              ),
-                            ),
-                          )
-                        : SizedBox(
-                            height: 0,
-                          ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    ButtonTheme(
+                      minWidth: 225.0,
+                      height: 50.0,
+                      child: RaisedButton(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4)),
+                        onPressed: () {
+                          _signUp();
+                        },
+                        child: Text(
+                          "Register",
+                          style: TextStyle(letterSpacing: 1.3),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
                     GoogleSignInButton(
                         onPressed: () {
                           gMailTabEnable();
@@ -645,16 +519,16 @@ class _LoginScreenState extends State<LoginPage>
       ],
     );
 
-    return new Scaffold(
+    return Scaffold(
       appBar: null,
       key: _scaffoldKey,
-      body: new Container(
-        decoration: new BoxDecoration(
+      body: Container(
+        decoration: BoxDecoration(
           image: backgroundImage,
         ),
-        child: new Container(
-          decoration: new BoxDecoration(
-              gradient: new LinearGradient(
+        child: Container(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
             colors: <Color>[
               const Color.fromRGBO(35, 179, 232, 0.8),
               const Color.fromRGBO(50, 50, 50, 1),
@@ -666,7 +540,7 @@ class _LoginScreenState extends State<LoginPage>
           child: ProgressHUD(
             child: screenRoot,
             inAsyncCall: _isLoading,
-            valueColor: new AlwaysStoppedAnimation<Color>(Colors.indigo),
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.indigo),
             opacity: 0.0,
           ),
         ),

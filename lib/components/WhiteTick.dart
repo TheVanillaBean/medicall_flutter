@@ -5,11 +5,11 @@ class Tick extends StatelessWidget {
   Tick({this.image});
   @override
   Widget build(BuildContext context) {
-    return (new Container(
+    return (Container(
       width: 250.0,
       height: 250.0,
       alignment: Alignment.center,
-      decoration: new BoxDecoration(
+      decoration: BoxDecoration(
         image: image,
       ),
     ));

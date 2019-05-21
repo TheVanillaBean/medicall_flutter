@@ -7,12 +7,12 @@ class FadeBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
-    return (new Hero(
-        tag: "fade",
-        child: new Container(
+    return (Hero(
+        tag: 'fade',
+        child: Container(
           width: containerGrowAnimation.value < 1 ? screenSize.width : 0.0,
           height: containerGrowAnimation.value < 1 ? screenSize.height : 0.0,
-          decoration: new BoxDecoration(
+          decoration: BoxDecoration(
             color: fadeScreenAnimation.value,
           ),
         )));

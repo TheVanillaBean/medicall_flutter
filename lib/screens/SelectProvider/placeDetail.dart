@@ -2,8 +2,11 @@ import 'package:google_maps_webservice/places.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-const kGoogleApiKey = "AIzaSyBx8brcoVisQ4_5FUD-xJlS1i4IwjSS-Hc";
+const kGoogleApiKey = 'AIzaSyBx8brcoVisQ4_5FUD-xJlS1i4IwjSS-Hc';
 GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
+Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
+MarkerId selectedMarker;
+int _markerIdCounter = 1;
 
 class PlaceDetailWidget extends StatefulWidget {
   String placeId;
@@ -35,14 +38,14 @@ class PlaceDetailState extends State<PlaceDetailWidget> {
     Widget bodyChild;
     String title;
     if (isLoading) {
-      title = "Loading";
+      title = 'Loading';
       bodyChild = Center(
         child: CircularProgressIndicator(
           value: null,
         ),
       );
     } else if (errorLoading != null) {
-      title = "";
+      title = '';
       bodyChild = Center(
         child: Text(errorLoading),
       );
@@ -62,10 +65,10 @@ class PlaceDetailState extends State<PlaceDetailWidget> {
               child: SizedBox(
             height: 200.0,
             child: GoogleMap(
-              onMapCreated: _onMapCreated,
-              options: GoogleMapOptions(
-                  myLocationEnabled: true,
-                  cameraPosition: CameraPosition(target: center, zoom: 15.0)),
+              //onMapCreated: _onMapCreated,
+              markers: Set<Marker>.of(markers.values),
+              myLocationEnabled: true,
+              initialCameraPosition: CameraPosition(target: center, zoom: 15.0),
             ),
           )),
           Expanded(
@@ -78,7 +81,6 @@ class PlaceDetailState extends State<PlaceDetailWidget> {
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          backgroundColor: Color.fromRGBO(35, 179, 232, 1),
           title: Text(title),
         ),
         body: bodyChild);
@@ -96,7 +98,7 @@ class PlaceDetailState extends State<PlaceDetailWidget> {
     if (mounted) {
       setState(() {
         this.isLoading = false;
-        if (place.status == "OK") {
+        if (place.status == 'OK') {
           this.place = place;
         } else {
           this.errorLoading = place.errorMessage;
@@ -106,23 +108,38 @@ class PlaceDetailState extends State<PlaceDetailWidget> {
   }
 
   void _onMapCreated(GoogleMapController controller) {
-    mapController = controller;
-    final placeDetail = place.result;
-    final location = place.result.geometry.location;
-    final lat = location.lat;
-    final lng = location.lng;
-    final center = LatLng(lat, lng);
-    var markerOptions = MarkerOptions(
-        position: center,
-        infoWindowText: InfoWindowText(
-            "${placeDetail.name}", "${placeDetail.formattedAddress}"));
-    mapController.addMarker(markerOptions);
-    mapController.animateCamera(CameraUpdate.newCameraPosition(
-        CameraPosition(target: center, zoom: 15.0)));
+    //mapController = controller;
+    // final placeDetail = place.result;
+    // final location = place.result.geometry.location;
+    // final lat = location.lat;
+    // final lng = location.lng;
+    // final center = LatLng(lat, lng);
+    // var markerOptions = MarkerOptions(
+    //     position: center,
+    //     infoWindowText: InfoWindowText(
+    //         '${placeDetail.name}', '${placeDetail.formattedAddress}'));
+    // mapController.addMarker(markerOptions);
+    // var markerIdVal = this.widget.placeId;
+    // final MarkerId markerId = MarkerId(markerIdVal);
+    // final Marker marker = Marker(
+    //   markerId: markerId,
+    //   position: center,
+    //   infoWindow: InfoWindow(
+    //       title: '${placeDetail.name}',
+    //       snippet: '${placeDetail.formattedAddress}'),
+    // );
+
+    // setState(() {
+    //   // adding a new marker to map
+    //   markers[markerId] = marker;
+    // });
+
+    // mapController.animateCamera(CameraUpdate.newCameraPosition(
+    //     CameraPosition(target: center, zoom: 15.0)));
   }
 
   String buildPhotoURL(String photoReference) {
-    return "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photoReference&key=$kGoogleApiKey";
+    return 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=$photoReference&key=$kGoogleApiKey';
   }
 
   ListView buildPlaceDetailList(PlaceDetails placeDetail) {
@@ -228,7 +245,7 @@ class PlaceDetailState extends State<PlaceDetailWidget> {
     //         padding:
     //             EdgeInsets.only(top: 0.0, left: 8.0, right: 8.0, bottom: 4.0),
     //         child: Text(
-    //           "Rating: ${placeDetail.rating}",
+    //           'Rating: ${placeDetail.rating}',
     //           style: Theme.of(context).textTheme.caption,
     //         )),
     //   );

@@ -1,8 +1,12 @@
+import 'package:Medicall/models/medicall_user.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:Medicall/globals.dart' as globals;
+import 'package:intl/intl.dart';
 
 class RegistrationProviderScreen extends StatefulWidget {
   final GoogleSignInAccount googleUser;
@@ -18,29 +22,62 @@ class RegistrationProviderScreen extends StatefulWidget {
 
 class _RegistrationProviderScreenState
     extends State<RegistrationProviderScreen> {
-  GlobalKey<FormBuilderState> _userRegKey = GlobalKey();
+  final GlobalKey<FormBuilderState> _userRegKey = GlobalKey<FormBuilderState>();
+  ValueChanged _onChanged = (val) => print(val);
   var data;
   bool autoValidate = true;
   bool readOnly = false;
+  double formSpacing = 20;
   bool showSegmentedControl = true;
+  final DocumentReference documentReference =
+      Firestore.instance.document("users/" + medicallUser.id);
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  void _updateUserTerms() {
+    Map<String, bool> data = <String, bool>{
+      "terms": true,
+    };
+    documentReference.updateData(data).whenComplete(() {
+      print("Document Added");
+    }).catchError((e) => print(e));
+  }
+
+  void _updateUserPolicy() {
+    Map<String, bool> data = <String, bool>{
+      "policy": true,
+    };
+    documentReference.updateData(data).whenComplete(() {
+      print("Document Added");
+    }).catchError((e) => print(e));
+  }
+
   @override
   Widget build(BuildContext context) {
+    medicallUser = MedicallUser(
+        firstName: globals.currentFirebaseUser.displayName.split(' ')[0],
+        lastName: globals.currentFirebaseUser.displayName.split(' ')[1],
+        email: globals.currentFirebaseUser.email,
+        phoneNumber: globals.currentFirebaseUser.phoneNumber);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: Color.fromRGBO(35, 179, 232, 1),
         title: Text('Provider Registration'),
-        leading: new Text('', style: TextStyle(color: Colors.black26)),
       ),
-      bottomNavigationBar: new FlatButton(
+      bottomNavigationBar: FlatButton(
+        color: Theme.of(context).colorScheme.primary,
         padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
-        color: Color.fromRGBO(35, 179, 232, 1),
         onPressed: () {
+          _updateUserPolicy();
+          _updateUserTerms();
           _userRegKey.currentState.save();
           if (_userRegKey.currentState.validate()) {
             print('validationSucceded');
             print(_userRegKey.currentState.value);
-            Navigator.pushNamed(context, '/home');
+            Navigator.pushNamed(context, '/doctors');
           } else {
             print('External FormValidation failed');
           }
@@ -49,7 +86,7 @@ class _RegistrationProviderScreenState
         child: Text(
           'SUBMIT',
           style: TextStyle(
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.onPrimary,
             letterSpacing: 2,
           ),
         ),
@@ -57,266 +94,149 @@ class _RegistrationProviderScreenState
       body: Container(
         child: SingleChildScrollView(
           padding: EdgeInsets.fromLTRB(15, 20, 15, 20),
-          child: Column(
-            children: <Widget>[
-              FormBuilder(
-                context,
-                key: _userRegKey,
-                autovalidate: autoValidate,
-                readonly: readOnly,
-                controls: [
-                  FormBuilderInput.textField(
-                    type: FormBuilderInput.TYPE_TEXT,
-                    attribute: 'First name',
-                    validator: (value) {
-                      if (value.isEmpty) {
-                        return 'First name is required';
-                      }
-                    },
-                    decoration: InputDecoration(
-                        labelText: 'First Name',
-                        prefixText: '    ',
-                        suffixText: '    ',
-                        fillColor: Color.fromRGBO(35, 179, 232, 0.1),
-                        filled: true,
-                        enabledBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Colors.black.withOpacity(0.1)),
-                        ),
-                        counterStyle:
-                            TextStyle(color: Color.fromRGBO(241, 100, 119, 1))),
-                    value: globals.currentFirebaseUser.email != null
-                        ? ''
-                        : globals.currentFirebaseUser.phoneNumber.length > 0
-                            ? ''
-                            : widget.googleUser.displayName.split(' ')[0],
-                    require: true,
-                    min: 3,
-                  ),
-                  FormBuilderInput.textField(
-                    type: FormBuilderInput.TYPE_TEXT,
-                    attribute: 'spacer',
-                    decoration: InputDecoration.collapsed(
-                        hintText: '', enabled: false, border: InputBorder.none),
-                    value: '',
-                    validator: (value) {},
-                    readonly: true,
-                    require: false,
-                  ),
-                  FormBuilderInput.textField(
-                    type: FormBuilderInput.TYPE_TEXT,
-                    attribute: 'Last name',
-                    validator: (value) {
-                      if (value.isEmpty) {
-                        return 'Last name is required';
-                      }
-                    },
-                    decoration: InputDecoration(
-                        prefixText: '    ',
-                        suffixText: '    ',
-                        fillColor: Color.fromRGBO(35, 179, 232, 0.1),
-                        filled: true,
-                        enabledBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Colors.black.withOpacity(0.1)),
-                        ),
-                        labelText: 'Last Name'),
-                    value: globals.currentFirebaseUser.email != null
-                        ? ''
-                        : globals.currentFirebaseUser.phoneNumber.length > 0
-                            ? ''
-                            : widget.googleUser.displayName.split(' ')[1],
-                    require: true,
-                    min: 3,
-                  ),
-                  FormBuilderInput.textField(
-                    type: FormBuilderInput.TYPE_TEXT,
-                    attribute: 'spacer',
-                    decoration: InputDecoration.collapsed(
-                        hintText: '', enabled: false, border: InputBorder.none),
-                    value: '',
-                    readonly: true,
-                    validator: (value) {},
-                    require: false,
-                  ),
-
-                  // FormBuilderInput.typeAhead(
-                  //   value: '',
-                  //   getImmediateSuggestions: true,
-                  //   validator: (value) {
-                  //     if (value.isEmpty) {
-                  //       return 'Country is required';
-                  //     }
-                  //   },
-                  //   require: true,
-                  //   autovalidate: true,
-                  //   decoration: InputDecoration(
-                  //       fillColor: Color.fromRGBO(35, 179, 232, 0.1),
-                  //       filled: true,
-                  //       enabledBorder: OutlineInputBorder(
-                  //         borderSide:
-                  //             BorderSide(color: Colors.black.withOpacity(0.1)),
-                  //       ),
-                  //       labelText: 'Country'),
-                  //   attribute: 'Country',
-                  //   itemBuilder: (context, country) {
-                  //     return ListTile(
-                  //       title: Text(country),
-                  //     );
-                  //   },
-                  //   suggestionsCallback: (query) {
-                  //     if (query.length != 0) {
-                  //       var lowercaseQuery = query.toLowerCase();
-                  //       return allCountries.where((country) {
-                  //         return country.toLowerCase().contains(lowercaseQuery);
-                  //       }).toList(growable: false)
-                  //         ..sort((a, b) => a
-                  //             .toLowerCase()
-                  //             .indexOf(lowercaseQuery)
-                  //             .compareTo(
-                  //                 b.toLowerCase().indexOf(lowercaseQuery)));
-                  //     } else {
-                  //       return allCountries;
-                  //     }
-                  //   },
-                  // ),
-                  // FormBuilderInput.textField(
-                  //   type: FormBuilderInput.TYPE_TEXT,
-                  //   attribute: 'spacer',
-                  //   decoration: InputDecoration.collapsed(
-                  //       hintText: '', enabled: false, border: InputBorder.none),
-                  //   value: '',
-                  //   readonly: true,
-                  //   require: false,
-                  // ),
-                  FormBuilderInput.textField(
-                    type: FormBuilderInput.TYPE_EMAIL,
-                    attribute: 'Email',
-                    decoration: InputDecoration(
-                      prefixText: '    ',
-                      suffixText: '    ',
+          child: FormBuilder(
+            key: _userRegKey,
+            autovalidate: true,
+            child: Column(
+              children: <Widget>[
+                FormBuilderTextField(
+                  attribute: "First name",
+                  initialValue: medicallUser.firstName,
+                  decoration: InputDecoration(
+                      labelText: 'First Name',
                       fillColor: Color.fromRGBO(35, 179, 232, 0.1),
                       filled: true,
-                      enabledBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: Colors.black.withOpacity(0.1)),
-                      ),
+                      disabledBorder: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      border: InputBorder.none),
+                  onChanged: _onChanged,
+                  validators: [
+                    FormBuilderValidators.required(),
+                  ],
+                ),
+                SizedBox(
+                  height: formSpacing,
+                ),
+                FormBuilderTextField(
+                  attribute: "Last name",
+                  initialValue: medicallUser.lastName,
+                  decoration: InputDecoration(
+                      labelText: 'Last Name',
+                      fillColor: Color.fromRGBO(35, 179, 232, 0.1),
+                      filled: true,
+                      disabledBorder: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      border: InputBorder.none),
+                  onChanged: _onChanged,
+                  validators: [
+                    FormBuilderValidators.required(),
+                  ],
+                ),
+                SizedBox(
+                  height: formSpacing,
+                ),
+                FormBuilderTextField(
+                  attribute: "Email",
+                  initialValue: medicallUser.email,
+                  decoration: InputDecoration(
                       labelText: 'Email',
-                    ),
-                    require: true,
-                    validator: (value) {
-                      if (value.isEmpty) {
-                        return 'Last name is required';
-                      }
-                    },
-                    value: globals.currentFirebaseUser.email != null
-                        ? globals.currentFirebaseUser.email
-                        : globals.currentFirebaseUser.phoneNumber.length > 0
-                            ? ''
-                            : widget.googleUser.email,
-                  ),
-                  FormBuilderInput.textField(
-                    type: FormBuilderInput.TYPE_TEXT,
-                    attribute: 'spacer',
-                    decoration: InputDecoration.collapsed(
-                        hintText: '', enabled: false, border: InputBorder.none),
-                    value: '',
-                    validator: (value) {},
-                    readonly: true,
-                    require: false,
-                  ),
-                  FormBuilderInput.datePicker(
-                    require: true,
-                    decoration: InputDecoration(
-                      prefixText: '    ',
-                      suffixText: '    ',
                       fillColor: Color.fromRGBO(35, 179, 232, 0.1),
                       filled: true,
-                      enabledBorder: OutlineInputBorder(
-                        borderSide:
-                            BorderSide(color: Colors.black.withOpacity(0.1)),
-                      ),
+                      disabledBorder: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      border: InputBorder.none),
+                  onChanged: _onChanged,
+                  validators: [
+                    FormBuilderValidators.email(),
+                    FormBuilderValidators.required(),
+                  ],
+                ),
+                SizedBox(
+                  height: formSpacing,
+                ),
+                FormBuilderDateTimePicker(
+                  attribute: "Date of birth",
+                  onChanged: _onChanged,
+                  inputType: InputType.date,
+                  format: DateFormat("yyyy-MM-dd"),
+                  decoration: InputDecoration(
                       labelText: 'Date of Birth',
-                    ),
-                    attribute: 'Date of birth',
-                    validator: (value) {},
-                  ),
-                  FormBuilderInput.textField(
-                    type: FormBuilderInput.TYPE_TEXT,
-                    attribute: 'spacer',
-                    decoration: InputDecoration.collapsed(
-                        hintText: '', enabled: false, border: InputBorder.none),
-                    value: '',
-                    validator: (value) {},
-                    readonly: true,
-                    require: false,
-                  ),
-                  FormBuilderInput.textField(
-                    type: FormBuilderInput.TYPE_PHONE,
-                    attribute: 'Phone',
-                    require: true,
-                    value: globals.currentFirebaseUser.phoneNumber != null
-                        ? globals.currentFirebaseUser.phoneNumber
-                        : '',
-                    validator: (value) {},
-                    decoration: InputDecoration(
-                        prefixText: '    ',
-                        suffixText: '    ',
-                        fillColor: Color.fromRGBO(35, 179, 232, 0.1),
-                        filled: true,
-                        enabledBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Colors.black.withOpacity(0.1)),
-                        ),
-                        labelText: 'Phone Number'),
-                    //require: true,
-                  ),
-                  FormBuilderInput.checkbox(
-                      require: true,
-                      decoration: InputDecoration(
-                          disabledBorder: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          border: InputBorder.none),
-                      label: FlatButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/terms');
-                        },
-                        child: Text('Terms & Conditions',
-                            style: TextStyle(
-                              decoration: TextDecoration.underline,
-                              color: Colors.blue,
-                            )),
-                      ),
-                      attribute: 'Terms and conditions',
-                      value: false,
-                      validator: (value) {
-                        if (!value)
-                          return 'Terms and Conditions must be accepted';
-                      }),
-                  FormBuilderInput.checkbox(
-                      require: true,
-                      decoration: InputDecoration(
-                          disabledBorder: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          border: InputBorder.none),
-                      label: FlatButton(
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/privacy');
-                        },
-                        child: Text('Privacy Policy',
-                            style: TextStyle(
-                              decoration: TextDecoration.underline,
-                              color: Colors.blue,
-                            )),
-                      ),
-                      attribute: 'accept_privacy_switch',
-                      value: false,
-                      validator: (value) {
-                        if (!value) return 'Privacy policy must be accepted';
-                      }),
-                ],
-              ),
-            ],
+                      fillColor: Color.fromRGBO(35, 179, 232, 0.1),
+                      filled: true,
+                      disabledBorder: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      border: InputBorder.none),
+                  readonly: false,
+                ),
+                SizedBox(
+                  height: formSpacing,
+                ),
+                FormBuilderTextField(
+                  attribute: "Phone",
+                  initialValue: medicallUser.phoneNumber,
+                  onChanged: _onChanged,
+                  keyboardType: TextInputType.phone,
+                  decoration: InputDecoration(
+                      labelText: 'Phone Number',
+                      fillColor: Color.fromRGBO(35, 179, 232, 0.1),
+                      filled: true,
+                      disabledBorder: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      border: InputBorder.none),
+                  validators: [
+                    FormBuilderValidators.required(),
+                  ],
+                  readonly: false,
+                ),
+                SizedBox(
+                  height: formSpacing,
+                ),
+                FormBuilderCheckbox(
+                  attribute: 'Terms and conditions',
+                  initialValue: false,
+                  leadingInput: true,
+                  decoration: InputDecoration(
+                      disabledBorder: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      border: InputBorder.none),
+                  label: FlatButton(
+                      padding: EdgeInsets.fromLTRB(0, 0, 62, 0),
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/terms');
+                      },
+                      child: Text('Terms & Conditions',
+                          style: TextStyle(
+                            decoration: TextDecoration.underline,
+                            color: Colors.blue,
+                          ))),
+                  validators: [
+                    FormBuilderValidators.required(),
+                  ],
+                ),
+                FormBuilderCheckbox(
+                  attribute: 'accept_privacy_switch',
+                  initialValue: false,
+                  leadingInput: true,
+                  decoration: InputDecoration(
+                      disabledBorder: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      border: InputBorder.none),
+                  label: FlatButton(
+                      padding: EdgeInsets.fromLTRB(0, 0, 62, 0),
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/privacy');
+                      },
+                      child: Text('Privacy Policy',
+                          style: TextStyle(
+                            decoration: TextDecoration.underline,
+                            color: Colors.blue,
+                          ))),
+                  validators: [
+                    FormBuilderValidators.required(),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

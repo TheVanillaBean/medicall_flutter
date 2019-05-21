@@ -24,7 +24,7 @@ class MaskedTextField extends StatefulWidget {
       this.textAlign,
       this.maskedTextFieldController,
       this.onSubmitted,
-      this.escapeCharacter: "x",
+      this.escapeCharacter: 'x',
       this.maxLength: 100,
       this.keyboardType: TextInputType.text,
       this.inputDecoration: const InputDecoration()})
@@ -39,7 +39,7 @@ class MaskedTextFieldState extends State<MaskedTextField> {
   Widget build(BuildContext context) {
     var lastTextSize = 0;
 
-    return new TextField(
+    return TextField(
       controller: widget.maskedTextFieldController,
       maxLength: widget.maxLength,
       keyboardType: widget.keyboardType,
@@ -52,7 +52,7 @@ class MaskedTextFieldState extends State<MaskedTextField> {
         if (text.length < lastTextSize) {
           if (widget.mask[text.length] != widget.escapeCharacter) {
             widget.maskedTextFieldController.selection =
-                new TextSelection.fromPosition(new TextPosition(
+                TextSelection.fromPosition(TextPosition(
                     offset: widget.maskedTextFieldController.text.length));
           }
         } else {
@@ -67,8 +67,8 @@ class MaskedTextFieldState extends State<MaskedTextField> {
 
             if (widget.mask[position] != widget.escapeCharacter)
               widget.maskedTextFieldController.text =
-                  "${widget.maskedTextFieldController.text}${widget
-                  .mask[position]}";
+                  '${widget.maskedTextFieldController.text}${widget
+                  .mask[position]}';
           }
 
           // Android's onChange resets cursor position (cursor goes to 0)
@@ -77,7 +77,7 @@ class MaskedTextFieldState extends State<MaskedTextField> {
           if (widget.maskedTextFieldController.selection.start <
               widget.maskedTextFieldController.text.length) {
             widget.maskedTextFieldController.selection =
-                new TextSelection.fromPosition(new TextPosition(
+                TextSelection.fromPosition(TextPosition(
                     offset: widget.maskedTextFieldController.text.length));
           }
         }
@@ -89,7 +89,7 @@ class MaskedTextFieldState extends State<MaskedTextField> {
   }
 
   String _buildText(String text) {
-    var result = "";
+    var result = '';
 
     for (int i = 0; i < text.length - 1; i++) {
       result += text[i];
@@ -103,11 +103,11 @@ class MaskedTextFieldState extends State<MaskedTextField> {
 
   String get unmaskedText {
     final filteredMasks = widget.mask
-        .splitMapJoin(widget.escapeCharacter, onMatch: (m) => "")
-        .split("");
+        .splitMapJoin(widget.escapeCharacter, onMatch: (m) => '')
+        .split('');
     String text = widget.maskedTextFieldController.text.trim();
     for (String character in filteredMasks) {
-      text = text.replaceAll(character, "");
+      text = text.replaceAll(character, '');
     }
     return text;
   }

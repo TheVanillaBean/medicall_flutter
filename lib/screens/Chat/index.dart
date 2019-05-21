@@ -8,13 +8,13 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
+    return Scaffold(
+      appBar: AppBar(
         centerTitle: true,
         backgroundColor: Color.fromRGBO(35, 179, 232, 1),
-        title: new Text(
+        title: Text(
           'Pictures',
-          style: new TextStyle(
+          style: TextStyle(
             fontSize:
                 Theme.of(context).platform == TargetPlatform.iOS ? 17.0 : 20.0,
           ),

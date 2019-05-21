@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:Medicall/models/medicall_user.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +24,7 @@ class AuthScreen extends StatefulWidget {
 class _AuthScreenState extends State<AuthScreen> {
   static const String TAG = "AUTH";
   AuthStatus status = AuthStatus.PHONE_AUTH;
+  StreamSubscription<DocumentSnapshot> subscription;
 
   // Keys
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -50,6 +53,27 @@ class _AuthScreenState extends State<AuthScreen> {
 
   GoogleSignInAccount _googleUser;
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // subscription = documentReference.snapshots().listen((datasnapshot) {
+    //   if (datasnapshot.exists) {
+    //     setState(() {
+    //       //myText = datasnapshot.data['desc'];
+    //     });
+    //   }
+    // });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _codeTimer?.cancel();
+    super.dispose();
+    subscription?.cancel();
+  }
+
   // PhoneVerificationCompleted
   // verificationCompleted(FirebaseUser user) async {
   //   Logger.log(TAG, message: "onVerificationCompleted, user: $user");
@@ -72,10 +96,21 @@ class _AuthScreenState extends State<AuthScreen> {
             'onVerificationFailed, code: ${authException.code}, message: ${authException.message}');
   }
 
+  void _add(MedicallUser user) {
+    final DocumentReference documentReference =
+        Firestore.instance.document("users/" + user.id);
+    Map<String, String> data = <String, String>{
+      "name": user.displayName,
+      "email": user.email,
+      "phone": user.phoneNumber
+    };
+    documentReference.setData(data).whenComplete(() {
+      print("Document Added");
+    }).catchError((e) => print(e));
+  }
+
   // PhoneCodeSent
   codeSent(String verificationId, [int forceResendingToken]) async {
-    globals.medicallUser =
-        globals.MedicallUser(phoneNumber: phoneNumberController.text);
     Logger.log(TAG,
         message:
             "Verification code sent to number ${phoneNumberController.text}");
@@ -106,12 +141,6 @@ class _AuthScreenState extends State<AuthScreen> {
 
   final decorationStyle = TextStyle(color: Colors.grey[50], fontSize: 16.0);
   final hintStyle = TextStyle(color: Colors.white24);
-
-  @override
-  void dispose() {
-    _codeTimer?.cancel();
-    super.dispose();
-  }
 
   // async
 
@@ -298,7 +327,12 @@ class _AuthScreenState extends State<AuthScreen> {
         // Google and phone number methods
         // Example: authenticate with your own API, use the data gathered
         // to post your profile/user, etc.
-
+        medicallUser = MedicallUser(
+            phoneNumber: user.phoneNumber,
+            email: user.email,
+            displayName: user.displayName,
+            id: user.uid);
+        _add(medicallUser);
         Navigator.of(context).pushReplacement(CupertinoPageRoute(
           builder: (context) => RegistrationTypeScreen(),
         ));
@@ -355,10 +389,10 @@ class _AuthScreenState extends State<AuthScreen> {
           .subhead
           .copyWith(fontSize: 18.0, color: Colors.white),
       inputDecoration: InputDecoration(
-        border: new UnderlineInputBorder(
-            borderSide: new BorderSide(color: Colors.tealAccent)),
-        enabledBorder: new UnderlineInputBorder(
-            borderSide: new BorderSide(color: Colors.tealAccent)),
+        border: UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.tealAccent)),
+        enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.tealAccent)),
         isDense: false,
         enabled: this.status == AuthStatus.PHONE_AUTH,
         counterText: "",
@@ -422,10 +456,10 @@ class _AuthScreenState extends State<AuthScreen> {
                   color: enabled ? Colors.white : Theme.of(context).buttonColor,
                 ),
             decoration: InputDecoration(
-              border: new UnderlineInputBorder(
-                  borderSide: new BorderSide(color: Colors.tealAccent)),
-              enabledBorder: new UnderlineInputBorder(
-                  borderSide: new BorderSide(color: Colors.tealAccent)),
+              border: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.tealAccent)),
+              enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.tealAccent)),
               counterText: "",
               enabled: enabled,
               hintText: "--- ---",

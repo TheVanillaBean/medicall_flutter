@@ -1,3 +1,4 @@
+import 'package:Medicall/models/medicall_user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/animation.dart';
@@ -12,11 +13,10 @@ class HomeScreen extends StatefulWidget {
   const HomeScreen({Key key}) : super(key: key);
 
   @override
-  HomeScreenState createState() => new HomeScreenState();
+  HomeScreenState createState() => HomeScreenState();
 }
 
 class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
-  
   Animation<double> containerGrowAnimation;
   AnimationController _screenController;
   AnimationController _buttonController;
@@ -31,27 +31,27 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    
-    _screenController = new AnimationController(
-        duration: new Duration(milliseconds: 2000), vsync: this);
-    _buttonController = new AnimationController(
-        duration: new Duration(milliseconds: 1500), vsync: this);
 
-    fadeScreenAnimation = new ColorTween(
+    _screenController = AnimationController(
+        duration: Duration(milliseconds: 2000), vsync: this);
+    _buttonController = AnimationController(
+        duration: Duration(milliseconds: 1500), vsync: this);
+
+    fadeScreenAnimation = ColorTween(
       begin: const Color.fromRGBO(255, 255, 255, 1.0),
       end: const Color.fromRGBO(255, 255, 255, 0.0),
     ).animate(
-      new CurvedAnimation(
+      CurvedAnimation(
         parent: _screenController,
         curve: Curves.ease,
       ),
     );
-    containerGrowAnimation = new CurvedAnimation(
+    containerGrowAnimation = CurvedAnimation(
       parent: _screenController,
       curve: Curves.easeIn,
     );
 
-    buttonGrowAnimation = new CurvedAnimation(
+    buttonGrowAnimation = CurvedAnimation(
       parent: _screenController,
       curve: Curves.easeOut,
     );
@@ -60,13 +60,13 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     });
     containerGrowAnimation.addStatusListener((AnimationStatus status) {});
 
-    listTileWidth = new Tween<double>(
+    listTileWidth = Tween<double>(
       begin: 1000.0,
       end: 600.0,
     ).animate(
-      new CurvedAnimation(
+      CurvedAnimation(
         parent: _screenController,
-        curve: new Interval(
+        curve: Interval(
           0.225,
           0.600,
           curve: Curves.easeIn,
@@ -74,39 +74,39 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       ),
     );
 
-    listSlideAnimation = new AlignmentTween(
+    listSlideAnimation = AlignmentTween(
       begin: Alignment.center,
       end: Alignment.center,
     ).animate(
-      new CurvedAnimation(
+      CurvedAnimation(
         parent: _screenController,
-        curve: new Interval(
+        curve: Interval(
           0.325,
           0.700,
           curve: Curves.ease,
         ),
       ),
     );
-    buttonSwingAnimation = new AlignmentTween(
+    buttonSwingAnimation = AlignmentTween(
       begin: Alignment.center,
       end: Alignment.center,
     ).animate(
-      new CurvedAnimation(
+      CurvedAnimation(
         parent: _screenController,
-        curve: new Interval(
+        curve: Interval(
           0.225,
           0.600,
           curve: Curves.ease,
         ),
       ),
     );
-    listSlidePosition = new EdgeInsetsTween(
+    listSlidePosition = EdgeInsetsTween(
       begin: const EdgeInsets.only(bottom: 16.0),
       end: const EdgeInsets.only(bottom: 80.0),
     ).animate(
-      new CurvedAnimation(
+      CurvedAnimation(
         parent: _screenController,
-        curve: new Interval(
+        curve: Interval(
           0.325,
           0.800,
           curve: Curves.ease,
@@ -128,17 +128,16 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     timeDilation = 0.3;
     Size screenSize = MediaQuery.of(context).size;
 
-    return (new WillPopScope(
+    return (WillPopScope(
       onWillPop: () async {
         return true;
       },
-      child: new Scaffold(
-        appBar: new AppBar(
+      child: Scaffold(
+        appBar: AppBar(
           centerTitle: true,
-          backgroundColor: Color.fromRGBO(35, 179, 232, 1),
-          title: new Text(
+          title: Text(
             'Welcome to Medicall',
-            style: new TextStyle(
+            style: TextStyle(
               fontSize: Theme.of(context).platform == TargetPlatform.iOS
                   ? 17.0
                   : 20.0,
@@ -146,38 +145,37 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           ),
           elevation:
               Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
-          leading: new Text('', style: TextStyle(color: Colors.black26)),
+          leading: Text('', style: TextStyle(color: Colors.black26)),
         ),
-        drawer: new DrawerMenu(),
+        drawer: DrawerMenu(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: Builder(builder: (BuildContext context) {
-          return new FloatingActionButton(
-            child: new Icon(
+          return FloatingActionButton(
+            child: Icon(
               CustomIcons.MedicallApp.logo_m,
               size: 35.0,
             ),
             onPressed: () {
               Scaffold.of(context).openDrawer();
             },
-            backgroundColor: Color.fromRGBO(241, 100, 119, 0.8),
-            foregroundColor: Colors.white,
+            backgroundColor: Theme.of(context).colorScheme.secondary,
+            foregroundColor: Theme.of(context).colorScheme.onPrimary,
           );
         }),
-        body: new Container(
+        body: Container(
           width: screenSize.width,
           height: screenSize.height,
-          child: new Stack(
+          child: Stack(
             alignment: Alignment.center,
             children: <Widget>[
               Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  new Icon(Icons.find_in_page,
-                      size: 150.0, color: Colors.black12),
-                  new Text(globals.medicallUser.firstName +
+                  Icon(Icons.find_in_page, size: 150.0, color: Colors.black12),
+                  Text(medicallUser.firstName +
                       ' ' +
-                      globals.medicallUser.lastName)
+                      medicallUser.lastName)
                 ],
               ),
             ],

@@ -17,117 +17,117 @@ class DrawerMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return (new Drawer(
-        child: new Stack(
+    return (Drawer(
+        child: Stack(
       children: <Widget>[
-        new Container(
-          height: 88.0,
-          child: new DrawerHeader(
-              padding: new EdgeInsets.fromLTRB(0, 0, 50, 0),
-              decoration: new BoxDecoration(
-                color: Color.fromRGBO(35, 179, 232, 1),
+        Container(
+          height: 108.0,
+          child: DrawerHeader(
+              padding: EdgeInsets.fromLTRB(0, 0, 50, 0),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primaryVariant,
               ),
-              child: new Row(
+              child: Row(
                 children: <Widget>[
-                  new Expanded(
-                    child: new Icon(CustomIcons.MedicallApp.logo,
-                        size: 40.0, color: Colors.white),
+                  Expanded(
+                    child: Icon(CustomIcons.MedicallApp.logo,
+                        size: 40.0, color: Theme.of(context).colorScheme.onPrimary),
                   ),
-                  new Expanded(
+                  Expanded(
                       flex: 4,
                       child: Padding(
                         padding: EdgeInsets.fromLTRB(21, 0, 0, 0),
-                        child: new Text(
+                        child: Text(
                           'MEDICALL',
                           style: TextStyle(
                             fontSize: 18.0,
                             letterSpacing: 1.5,
-                            color: Colors.white,
+                            color: Theme.of(context).colorScheme.onPrimary,
                           ),
                         ),
                       ))
                 ],
               )),
         ),
-        new ListView(
+        ListView(
           
           children: <Widget>[
-            new ListTile(
+            ListTile(
               dense: true,
-              contentPadding: EdgeInsets.fromLTRB(16, 60, 0, 0),
-                leading: new Icon(
+              contentPadding: EdgeInsets.fromLTRB(16, 80, 0, 0),
+                leading: Icon(
                   Icons.local_hospital,
-                  color: Color.fromRGBO(35, 179, 232, 1),
+                  color: Theme.of(context).colorScheme.primaryVariant,
                 ),
-                title: new Text(
+                title: Text(
                   'Find A Doctor',
                   style: TextStyle(
-                    color: Colors.blueGrey,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
                 onTap: () {
                   Navigator.pop(context);
                   Navigator.of(context).pushNamed('/doctors');
                 }),
-            new ListTile(
-                leading: new Icon(
+            ListTile(
+                leading: Icon(
                   Icons.chat,
-                  color: Color.fromRGBO(35, 179, 232, 1),
+                  color: Theme.of(context).colorScheme.primaryVariant,
                 ),
-                title: new Text(
+                title: Text(
                   'Chat',
                   style: TextStyle(
-                    color: Colors.blueGrey,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
                 onTap: () {
                   Navigator.pop(context);
                   Navigator.of(context).pushNamed('/chat');
                 }),
-            new ListTile(
-                leading: new Icon(
+            ListTile(
+                leading: Icon(
                   Icons.folder_shared,
-                  color: Color.fromRGBO(35, 179, 232, 1),
+                  color: Theme.of(context).colorScheme.primaryVariant,
                 ),
-                title: new Text(
+                title: Text(
                   'History',
                   style: TextStyle(
-                    color: Colors.blueGrey,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
                 onTap: () {
                   Navigator.pop(context);
                   Navigator.of(context).pushNamed('/history');
                 }),
-            new ListTile(
-                leading: new Icon(
+            ListTile(
+                leading: Icon(
                   Icons.settings_applications,
-                  color: Color.fromRGBO(35, 179, 232, 1),
+                  color: Theme.of(context).colorScheme.primaryVariant,
                 ),
-                title: new Text(
+                title: Text(
                   'Settings',
                   style: TextStyle(
-                    color: Colors.blueGrey,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
                 onTap: () {
                   Navigator.pop(context);
                   Navigator.of(context).pushNamed('/settings');
                 }),
-            new Divider(
+            Divider(
               height: 0,
               color: Colors.grey[400],
             ),
-            new ListTile(
+            ListTile(
               
-                leading: new Icon(
+                leading: Icon(
                   Icons.exit_to_app,
-                  color: Color.fromRGBO(241, 100, 119, 1),
+                  color: Theme.of(context).colorScheme.secondary,
                 ),
-                title: new Text(
+                title: Text(
                   'Sign Out',
                   style: TextStyle(
-                    color: Color.fromRGBO(241, 100, 119, 1),
+                    color: Theme.of(context).colorScheme.secondary,
                   ),
                 ),
                 onTap: () {

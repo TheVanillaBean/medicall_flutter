@@ -9,41 +9,41 @@ class ListData extends StatelessWidget {
   ListData({this.margin, this.subtitle, this.title, this.width, this.image});
   @override
   Widget build(BuildContext context) {
-    return (new Container(
+    return (Container(
       alignment: Alignment.center,
       margin: margin,
       width: width,
-      decoration: new BoxDecoration(
+      decoration: BoxDecoration(
         color: Colors.white,
-        border: new Border(
-          top: new BorderSide(
+        border: Border(
+          top: BorderSide(
               width: 1.0, color: const Color.fromRGBO(204, 204, 204, 0.3)),
-          bottom: new BorderSide(
+          bottom: BorderSide(
               width: 1.0, color: const Color.fromRGBO(204, 204, 204, 0.3)),
         ),
       ),
-      child: new Row(
+      child: Row(
         children: <Widget>[
-          new Container(
-              margin: new EdgeInsets.only(
+          Container(
+              margin: EdgeInsets.only(
                   left: 20.0, top: 10.0, bottom: 10.0, right: 20.0),
               width: 60.0,
               height: 60.0,
               decoration:
-                  new BoxDecoration(shape: BoxShape.circle, image: image)),
-          new Column(
+                  BoxDecoration(shape: BoxShape.circle, image: image)),
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              new Text(
+              Text(
                 title,
                 style:
-                    new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w400),
+                    TextStyle(fontSize: 18.0, fontWeight: FontWeight.w400),
               ),
-              new Padding(
-                padding: new EdgeInsets.only(top: 5.0),
-                child: new Text(
+              Padding(
+                padding: EdgeInsets.only(top: 5.0),
+                child: Text(
                   subtitle,
-                  style: new TextStyle(
+                  style: TextStyle(
                       color: Colors.grey,
                       fontSize: 14.0,
                       fontWeight: FontWeight.w300),

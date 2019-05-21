@@ -1,15 +1,16 @@
+import 'package:Medicall/models/medicall_user.dart';
 import 'package:flutter/material.dart';
 import 'package:Medicall/globals.dart' as globals;
 
 class SettingsScreen extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => new Scaffold(
+  Widget build(BuildContext context) => Scaffold(
         //App Bar
-        appBar: new AppBar(
+        appBar: AppBar(
           centerTitle: true,
-          title: new Text(
+          title: Text(
             'Settings',
-            style: new TextStyle(
+            style: TextStyle(
               fontSize: Theme.of(context).platform == TargetPlatform.iOS
                   ? 17.0
                   : 20.0,
@@ -20,26 +21,26 @@ class SettingsScreen extends StatelessWidget {
         ),
 
         //Content of tabs
-        body: new PageView(
+        body: PageView(
           children: <Widget>[
-            new Column(
+            Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                new Container(
+                Container(
                     width: 190.0,
                     height: 190.0,
-                    decoration: new BoxDecoration(
+                    decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         image: globals.currentUser != null
-                            ? new DecorationImage(
+                            ? DecorationImage(
                                 fit: BoxFit.fill,
                                 image: globals.currentUser.photoUrl != null
-                                    ? new NetworkImage(
+                                    ? NetworkImage(
                                         globals.currentUser.photoUrl)
                                     : null)
                             : null)),
-                new Text(globals.medicallUser.firstName,
+                Text(medicallUser.firstName,
                     textScaleFactor: 1.5)
               ],
             )

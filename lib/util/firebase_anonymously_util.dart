@@ -5,7 +5,7 @@ import 'package:Medicall/util/firebase_listenter.dart';
 
 class FirebaseAnonymouslyUtil {
   static final FirebaseAnonymouslyUtil _instance =
-      new FirebaseAnonymouslyUtil.internal();
+      FirebaseAnonymouslyUtil.internal();
 
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   FirebaseAuthListener _view;

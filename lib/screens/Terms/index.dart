@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-String terms = """
+String terms = '''
 
 
 Welcome to Medicall! 
@@ -137,7 +137,7 @@ LAST REVISED
 
 January 1, 2019
 
-""";
+''';
 
 class TermsScreen extends StatelessWidget {
   @override

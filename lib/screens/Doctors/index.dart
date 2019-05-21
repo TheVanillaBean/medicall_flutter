@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/presentation/medicall_app_icons.dart' as CustomIcons;
 import 'package:Medicall/screens/QuestionsScreening/index.dart';
+import 'package:Medicall/globals.dart' as globals;
 
 class DoctorsScreen extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => new Scaffold(
+  Widget build(BuildContext context) => Scaffold(
         //App Bar
-        appBar: new AppBar(
-          leading: new BackButton(),
+        appBar: AppBar(
+          leading: Text('', style: TextStyle(color: Colors.black26)),
           centerTitle: true,
-          backgroundColor: Color.fromRGBO(35, 179, 232, 1),
-          title: new Text(
+          title: Text(
             'Find a Doctor',
-            style: new TextStyle(
+            style: TextStyle(
               fontSize: Theme.of(context).platform == TargetPlatform.iOS
                   ? 17.0
                   : 20.0,
@@ -22,25 +22,24 @@ class DoctorsScreen extends StatelessWidget {
           elevation:
               Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
         ),
-        drawer: new DrawerMenu(),
+        drawer: DrawerMenu(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: Builder(builder: (BuildContext context) {
-          return new FloatingActionButton(
-            child: new Icon(
-              CustomIcons.MedicallApp.logo_m,
-              size: 35.0,
-            ),
-            onPressed: () {
-              Scaffold.of(context).openDrawer();
-            },
-            backgroundColor: Color.fromRGBO(241, 100, 119, 1),
-            foregroundColor: Colors.white,
-          );
+          return FloatingActionButton(
+              child: Icon(
+                CustomIcons.MedicallApp.logo_m,
+                size: 35.0,
+              ),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+              backgroundColor: Theme.of(context).colorScheme.secondary,
+              foregroundColor: Theme.of(context).colorScheme.onPrimary);
         }),
         //Content of tabs
-        body: new Stack(
+        body: Stack(
           children: <Widget>[
-            new OrientationBuilder(
+            OrientationBuilder(
               builder: (BuildContext context, Orientation orientation) {
                 return Container(
                   child: GridView.count(
@@ -59,60 +58,63 @@ class DoctorsScreen extends StatelessWidget {
                           textScaleFactor:
                               orientation == Orientation.portrait ? 1 : 0.8,
                           semanticsLabel: 'Acne',
-                          style: TextStyle(
-                            color: Colors.black26,
-                          ),
+                          style: TextStyle(),
                         ),
                         onPressed: () {
                           // Perform some action
                         },
                       ),
                       RaisedButton(
-                        child: Text('Hair Loss',
-                            semanticsLabel: 'Hair Loss',
-                            textScaleFactor:
-                                orientation == Orientation.portrait ? 1 : 0.8,
-                            style: TextStyle(color: Colors.black26)),
+                        child: Text(
+                          'Hair Loss',
+                          semanticsLabel: 'Hair Loss',
+                          textScaleFactor:
+                              orientation == Orientation.portrait ? 1 : 0.8,
+                        ),
                         onPressed: () {
                           // Perform some action
                         },
                       ),
                       RaisedButton(
-                        child: Text('Cold Sore',
-                            semanticsLabel: 'Cold Sore',
-                            textScaleFactor:
-                                orientation == Orientation.portrait ? 1 : 0.8,
-                            style: TextStyle(color: Colors.black26)),
+                        child: Text(
+                          'Cold Sore',
+                          semanticsLabel: 'Cold Sore',
+                          textScaleFactor:
+                              orientation == Orientation.portrait ? 1 : 0.8,
+                        ),
                         onPressed: () {
                           // Perform some action
                         },
                       ),
                       RaisedButton(
-                        child: Text('Cosmetic',
-                            semanticsLabel: 'Cosmetic',
-                            textScaleFactor:
-                                orientation == Orientation.portrait ? 1 : 0.8,
-                            style: TextStyle(color: Colors.black26)),
+                        child: Text(
+                          'Cosmetic',
+                          semanticsLabel: 'Cosmetic',
+                          textScaleFactor:
+                              orientation == Orientation.portrait ? 1 : 0.8,
+                        ),
                         onPressed: () {
                           // Perform some action
                         },
                       ),
                       RaisedButton(
-                        child: Text('Anti-Aging',
-                            semanticsLabel: 'Anti-Aging',
-                            textScaleFactor:
-                                orientation == Orientation.portrait ? 1 : 0.8,
-                            style: TextStyle(color: Colors.black26)),
+                        child: Text(
+                          'Anti-Aging',
+                          semanticsLabel: 'Anti-Aging',
+                          textScaleFactor:
+                              orientation == Orientation.portrait ? 1 : 0.8,
+                        ),
                         onPressed: () {
                           // Perform some action
                         },
                       ),
                       RaisedButton(
-                        child: Text('Nail',
-                            semanticsLabel: 'Nail',
-                            textScaleFactor:
-                                orientation == Orientation.portrait ? 1 : 0.8,
-                            style: TextStyle(color: Colors.black26)),
+                        child: Text(
+                          'Nail',
+                          semanticsLabel: 'Nail',
+                          textScaleFactor:
+                              orientation == Orientation.portrait ? 1 : 0.8,
+                        ),
                         onPressed: () {
                           // Perform some action
                         },
@@ -126,29 +128,31 @@ class DoctorsScreen extends StatelessWidget {
                               orientation == Orientation.portrait ? 1 : 0.8,
                           style: TextStyle(color: Colors.white),
                         ),
-                        onPressed: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  QuestionsScreeningScreen(consultType: 'Lesion',),
-                            )),
+                        onPressed: () => Navigator.pushNamed(
+                              context,
+                              '/questionsScreening',
+                              arguments:
+                                  globals.ConsultData(consultType: 'Lesion'),
+                            ),
                       ),
                       RaisedButton(
-                        child: Text('Rash',
-                            semanticsLabel: 'Rash',
-                            textScaleFactor:
-                                orientation == Orientation.portrait ? 1 : 0.8,
-                            style: TextStyle(color: Colors.black26)),
+                        child: Text(
+                          'Rash',
+                          semanticsLabel: 'Rash',
+                          textScaleFactor:
+                              orientation == Orientation.portrait ? 1 : 0.8,
+                        ),
                         onPressed: () {
                           // Perform some action
                         },
                       ),
                       RaisedButton(
-                        child: Text('Other',
-                            semanticsLabel: 'Other',
-                            textScaleFactor:
-                                orientation == Orientation.portrait ? 1 : 0.8,
-                            style: TextStyle(color: Colors.black26)),
+                        child: Text(
+                          'Other',
+                          semanticsLabel: 'Other',
+                          textScaleFactor:
+                              orientation == Orientation.portrait ? 1 : 0.8,
+                        ),
                         onPressed: () {
                           // Perform some action
                         },
@@ -163,9 +167,7 @@ class DoctorsScreen extends StatelessWidget {
                 return Container(
                   child: Container(
                       alignment: Alignment.topCenter,
-                      color: Color.fromRGBO(255, 255, 255, 0.8),
-                      height: orientation == Orientation.portrait
-                          ? 60 : 20,
+                      height: orientation == Orientation.portrait ? 60 : 20,
                       padding: orientation == Orientation.portrait
                           ? EdgeInsets.fromLTRB(0, 20, 0, 0)
                           : EdgeInsets.fromLTRB(0, 5, 0, 0),

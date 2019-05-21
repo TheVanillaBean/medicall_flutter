@@ -6,21 +6,21 @@ class ProfileNotification extends StatelessWidget {
   ProfileNotification({this.containerGrowAnimation, this.profileImage});
   @override
   Widget build(BuildContext context) {
-    return (new Container(
-        child: new Column(
+    return (Container(
+        child: Column(
           children: [
-            new Container(
+            Container(
                 width: containerGrowAnimation.value * 35,
                 height: containerGrowAnimation.value * 35,
-                margin: new EdgeInsets.only(left: 80.0),
-                child: new Center(
-                  child: new Text("3",
-                      style: new TextStyle(
+                margin: EdgeInsets.only(left: 80.0),
+                child: Center(
+                  child: Text('3',
+                      style: TextStyle(
                           fontSize: containerGrowAnimation.value * 15,
                           fontWeight: FontWeight.w400,
                           color: Colors.white)),
                 ),
-                decoration: new BoxDecoration(
+                decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: const Color.fromRGBO(80, 210, 194, 1.0),
                 )),
@@ -28,7 +28,7 @@ class ProfileNotification extends StatelessWidget {
         ),
         width: containerGrowAnimation.value * 120,
         height: containerGrowAnimation.value * 120,
-        decoration: new BoxDecoration(
+        decoration: BoxDecoration(
           shape: BoxShape.circle,
           image: profileImage,
         )));

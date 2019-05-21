@@ -4,17 +4,17 @@ class SignIn extends StatelessWidget {
   SignIn();
   @override
   Widget build(BuildContext context) {
-    return (new Container(
+    return (Container(
       width: 320.0,
       height: 60.0,
       alignment: FractionalOffset.center,
-      decoration: new BoxDecoration(
+      decoration: BoxDecoration(
         color: const Color.fromRGBO(241, 100, 119, 1.0),
-        borderRadius: new BorderRadius.all(const Radius.circular(30.0)),
+        borderRadius: BorderRadius.all(const Radius.circular(30.0)),
       ),
-      child: new Text(
-        "Sign In",
-        style: new TextStyle(
+      child: Text(
+        'Sign In',
+        style: TextStyle(
           color: Colors.white,
           fontSize: 20.0,
           fontWeight: FontWeight.w300,

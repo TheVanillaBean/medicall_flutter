@@ -1,7 +1,7 @@
 
 library countdown.base;
 
-import "dart:async";
+import 'dart:async';
 
 class CountDown {
 
@@ -23,7 +23,7 @@ class CountDown {
     _everyTick = everyTick;
 
     this._duration = duration;
-    _controller = new StreamController<Duration>(onListen: _onListen, onPause: _onPause, onResume: _onResume, onCancel: _onCancel);
+    _controller = StreamController<Duration>(onListen: _onListen, onPause: _onPause, onResume: _onResume, onCancel: _onCancel);
   }
 
   Stream<Duration> get stream => _controller.stream;
@@ -32,8 +32,8 @@ class CountDown {
   /// invoke when the first subscriber has subscribe and not before to avoid leak of memory
   _onListen() {
     // reference point
-    _begin = new DateTime.now();
-    _timer = new Timer.periodic(_refresh, _tick);
+    _begin = DateTime.now();
+    _timer = Timer.periodic(_refresh, _tick);
   }
 
   /// the remaining time is set at '_refresh' ms accurate
@@ -43,15 +43,15 @@ class CountDown {
     _timer = null;
   }
 
-  /// ...restart the timer with the new duration
+  /// ...restart the timer with the duration
   _onResume() {
-    _begin = new DateTime.now();
+    _begin = DateTime.now();
 
     _duration = this.remainingTime;
     isPaused = false;
 
     //  lance le timer
-    _timer = new Timer.periodic(_refresh, _tick);
+    _timer = Timer.periodic(_refresh, _tick);
   }
 
   _onCancel() {
@@ -60,12 +60,12 @@ class CountDown {
       _timer.cancel();
       _timer = null;
     }
-    // _controller.close(); // close automatically the "pipe" when the sub close it by sub.cancel()
+    // _controller.close(); // close automatically the 'pipe' when the sub close it by sub.cancel()
   }
 
   void _tick(Timer timer) {
     counter++;
-    Duration alreadyConsumed = new DateTime.now().difference(_begin);
+    Duration alreadyConsumed = DateTime.now().difference(_begin);
     this.remainingTime = this._duration - alreadyConsumed;
     if (this.remainingTime.isNegative) {
       timer.cancel();

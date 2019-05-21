@@ -7,27 +7,27 @@ class MonthView extends StatelessWidget {
   MonthView({this.selectbackward, this.selectforward, this.month});
   @override
   Widget build(BuildContext context) {
-    return (new Row(
+    return (Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        new IconButton(
-          icon: new Icon(
+        IconButton(
+          icon: Icon(
             Icons.arrow_back_ios,
             color: Colors.white,
           ),
           onPressed: selectbackward,
         ),
-        new Text(
+        Text(
           month.toUpperCase(),
           textAlign: TextAlign.center,
-          style: new TextStyle(
+          style: TextStyle(
               fontSize: 18.0,
               letterSpacing: 1.2,
               fontWeight: FontWeight.w300,
               color: Colors.white),
         ),
-        new IconButton(
-          icon: new Icon(
+        IconButton(
+          icon: Icon(
             Icons.arrow_forward_ios,
             color: Colors.white,
           ),

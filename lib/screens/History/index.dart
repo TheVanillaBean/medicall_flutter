@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/presentation/medicall_app_icons.dart' as CustomIcons;
+import 'package:Medicall/globals.dart' as globals;
+
 //import 'package:Medicall/globals.dart' as globals;
 // import 'package:graphql_flutter/graphql_flutter.dart';
 // import 'package:Medicall/queries/readRepositories.dart' as queries;
 // import 'package:Medicall/mutations/addStar.dart' as mutations;
 
 class HistoryScreen extends StatefulWidget {
+  final globals.ConsultData data;
+
+  const HistoryScreen({Key key, @required this.data}) : super(key: key);
+
   @override
   _HistoryScreenState createState() => _HistoryScreenState();
 }
@@ -16,24 +22,23 @@ class _HistoryScreenState extends State<HistoryScreen> {
   Widget build(BuildContext context) {
     //Size screenSize = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: new AppBar(
+      appBar: AppBar(
         centerTitle: true,
-        backgroundColor: Color.fromRGBO(35, 179, 232, 1),
-        title: new Text(
+        title: Text(
           'History',
-          style: new TextStyle(
+          style: TextStyle(
             fontSize:
                 Theme.of(context).platform == TargetPlatform.iOS ? 17.0 : 20.0,
           ),
         ),
         elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
-        leading: new Text('', style: TextStyle(color: Colors.black26)),
+        leading: Text('', style: TextStyle(color: Colors.black26)),
       ),
-      drawer: new DrawerMenu(),
+      drawer: DrawerMenu(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: Builder(builder: (BuildContext context) {
-        return new FloatingActionButton(
-          child: new Icon(
+        return FloatingActionButton(
+          child: Icon(
             CustomIcons.MedicallApp.logo_m,
             size: 35.0,
           ),
@@ -44,6 +49,22 @@ class _HistoryScreenState extends State<HistoryScreen> {
           foregroundColor: Colors.white,
         );
       }),
+      body: Column(
+        children: <Widget>[
+          ListTile(
+            title: Text(widget.data.consultType),
+            subtitle: Text(widget.data.provider),
+            trailing: IconButton(
+              icon: Icon(Icons.input),
+              onPressed: () {},
+            ),
+            leading: Icon(
+              Icons.account_circle,
+              size: 50,
+            ),
+          ),
+        ],
+      ),
       // body: Query(
       //   queries.readRepositories,
       //   pollInterval: 1,

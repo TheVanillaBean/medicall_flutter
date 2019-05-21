@@ -23,15 +23,15 @@ class FirebaseNotifications {
             .replaceAll('\}', '');
 
         AppUtil().showAlert('\n \n    ' + msg + '\n \n');
-        print("onMessage: $message");
+        print('onMessage: $message');
         //_showItemDialog(message);
       },
       onLaunch: (Map<String, dynamic> message) async {
-        print("onLaunch: $message");
+        print('onLaunch: $message');
         //_navigateToItemDetail(message);
       },
       onResume: (Map<String, dynamic> message) async {
-        print("onResume: $message");
+        print('onResume: $message');
         //_navigateToItemDetail(message);
       },
     );
@@ -39,7 +39,7 @@ class FirebaseNotifications {
         const IosNotificationSettings(sound: true, badge: true, alert: true));
     _firebaseMessaging.onIosSettingsRegistered
         .listen((IosNotificationSettings settings) {
-      print("Settings registered: $settings");
+      print('Settings registered: $settings');
     });
     _firebaseMessaging.getToken().then((String token) {
       assert(token != null);
@@ -52,7 +52,7 @@ class FirebaseNotifications {
         IosNotificationSettings(sound: true, badge: true, alert: true));
     _firebaseMessaging.onIosSettingsRegistered
         .listen((IosNotificationSettings settings) {
-      print("Settings registered: $settings");
+      print('Settings registered: $settings');
     });
   }
 }

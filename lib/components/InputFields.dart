@@ -7,22 +7,22 @@ class InputFieldArea extends StatelessWidget {
   InputFieldArea({this.hint, this.obscure, this.icon});
   @override
   Widget build(BuildContext context) {
-    return (new Container(
-      decoration: new BoxDecoration(
-        border: new Border(
-          bottom: new BorderSide(
+    return (Container(
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
             width: 0.5,
             color: Colors.white24,
           ),
         ),
       ),
-      child: new TextFormField(
+      child: TextFormField(
         obscureText: obscure,
         style: const TextStyle(
           color: Colors.white,
         ),
-        decoration: new InputDecoration(
-          icon: new Icon(
+        decoration: InputDecoration(
+          icon: Icon(
             icon,
             color: Colors.white,
           ),
