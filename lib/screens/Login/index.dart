@@ -17,9 +17,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:Medicall/globals.dart' as globals;
 
 class LoginPage extends StatefulWidget {
-  final MedicallUser medicallUser;
-
-  const LoginPage({Key key, this.medicallUser}) : super(key: key);
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -63,9 +60,9 @@ class _LoginScreenState extends State<LoginPage>
     firebaseAnonymouslyUtil.setScreenListener(this);
   }
 
-  Future<void> _getUserType(String id) async {
+  Future<void> _getUserType() async {
     final DocumentReference documentReference =
-        Firestore.instance.document("users/" + id);
+        Firestore.instance.document("users/" + medicallUser.id);
     await documentReference.get().then((datasnapshot) {
       if (datasnapshot.data['type'] != null) {
         medicallUser.type = datasnapshot.data['type'];
@@ -73,22 +70,26 @@ class _LoginScreenState extends State<LoginPage>
     }).catchError((e) => print(e));
   }
 
-  Future<void> _getTerms(String id) async {
+  Future<void> _getTerms() async {
     final DocumentReference documentReference =
-        Firestore.instance.document("users/" + id);
+        Firestore.instance.document("users/" + medicallUser.id);
     await documentReference.get().then((datasnapshot) {
       if (datasnapshot.data['terms'] != null) {
-        medicallUser.terms = true;
+        medicallUser.terms = datasnapshot.data['terms'];
+      } else {
+        medicallUser.terms = false;
       }
     }).catchError((e) => print(e));
   }
 
-  Future<void> _getPolicy(String id) async {
+  Future<void> _getPolicy() async {
     final DocumentReference documentReference =
-        Firestore.instance.document("users/" + id);
+        Firestore.instance.document("users/" + medicallUser.id);
     await documentReference.get().then((datasnapshot) {
       if (datasnapshot.data['policy'] != null) {
-        medicallUser.terms = true;
+        medicallUser.policy = datasnapshot.data['policy'];
+      } else {
+        medicallUser.policy = false;
       }
     }).catchError((e) => print(e));
   }
@@ -133,31 +134,27 @@ class _LoginScreenState extends State<LoginPage>
     eMailTabEnable();
     closeLoader();
     globals.currentFirebaseUser = currentUser;
-    
-    medicallUser = MedicallUser(id: currentUser.uid);
-    await _getUserType(currentUser.uid);
-    await _getTerms(currentUser.uid);
-    await _getPolicy(currentUser.uid);
-    //medicallUser = MedicallUser(id: currentUser.uid);
-    //Navigator.pushNamed(context, '/registration');
-
-    //TO-DO delete more hacks to bypass terms/ registration for development
-    //medicallUser.terms = true;
-    //medicallUser.policy = true;
+    medicallUser = MedicallUser(
+      id: currentUser.uid,
+      displayName: currentUser.displayName,
+    );
+    await _getUserType();
+    await _getTerms();
+    await _getPolicy();
 
     if (currentUser.isEmailVerified == true &&
         currentUser.phoneNumber != null) {
       if (medicallUser.terms == true && medicallUser.policy == true) {
-        Navigator.pushNamed(context, '/doctors');
-      } else {
-        if (medicallUser.type == 'patient') {
-          Navigator.pushNamed(context, '/registrationPatient');
-        }
         if (medicallUser.type == 'provider') {
-          Navigator.pushNamed(context, '/registrationProvider');
+          Navigator.pushNamed(context, '/history');
+        } else {
+          Navigator.pushNamed(context, '/doctors');
         }
+      } else {
         if (medicallUser.type == null) {
           Navigator.pushNamed(context, '/registrationType');
+        } else {
+          Navigator.pushNamed(context, '/registration');
         }
       }
     } else {
@@ -165,13 +162,6 @@ class _LoginScreenState extends State<LoginPage>
         builder: (context) => AuthScreen(),
       ));
     }
-
-    // Navigator.of(context).push<String>(
-    //    MaterialPageRoute(
-    //     settings: RouteSettings(name: '/home_screen'),
-    //     builder: (context) => UserDashboardScreen(currentUser),
-    //   ),
-    // );
   }
 
   @override
@@ -229,24 +219,6 @@ class _LoginScreenState extends State<LoginPage>
 
     var phoneAuthForm = Column(
       children: <Widget>[
-        // FormBuilder(
-        //   context,
-        //   key: _fbKey,
-        //   autovalidate: autoValidate,
-        //   readonly: readOnly,
-        //   /*onChanged: (formValue) {
-        //             print(formValue);
-        //           },*/
-        //   controls: [
-        //     FormBuilderInput.textField(
-        //       type: FormBuilderInput.TYPE_PHONE,
-        //       attribute: "phone",
-        //       decoration: InputDecoration(labelText: "Phone Number"),
-        //       //require: true,
-        //     ),
-        //   ],
-        // ),
-
         Row(
           children: <Widget>[
             Expanded(
@@ -391,7 +363,7 @@ class _LoginScreenState extends State<LoginPage>
             hintStyle: TextStyle(
                 color: Theme.of(context).colorScheme.secondaryVariant),
             prefixIcon: Icon(
-              Icons.verified_user,
+              Icons.lock,
               color: Theme.of(context).colorScheme.background,
             ),
           ),

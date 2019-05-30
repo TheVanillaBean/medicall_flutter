@@ -16,6 +16,7 @@ class _RegistrationTypeScreenState extends State<RegistrationTypeScreen> {
     Map<String, String> data = <String, String>{
       "type": type,
     };
+    medicallUser.type = type;
     documentReference.updateData(data).whenComplete(() {
       print("Document Added");
     }).catchError((e) => print(e));
@@ -67,7 +68,7 @@ class _RegistrationTypeScreenState extends State<RegistrationTypeScreen> {
               ),
               onPressed: () {
                 _add(medicallUser, 'patient');
-                Navigator.pushNamed(context, '/registrationPatient');
+                Navigator.pushNamed(context, '/registration');
               },
             ),
             Expanded(
@@ -95,7 +96,7 @@ class _RegistrationTypeScreenState extends State<RegistrationTypeScreen> {
               ),
               onPressed: () {
                 _add(medicallUser, 'provider');
-                Navigator.pushNamed(context, '/registrationProvider');
+                Navigator.pushNamed(context, '/registration');
               },
             ),
             Expanded(

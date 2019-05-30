@@ -1,82 +1,72 @@
 import 'package:Medicall/models/medicall_user.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:Medicall/globals.dart' as globals;
 import 'package:intl/intl.dart';
-//import 'package:localstorage/localstorage.dart';
 
-class RegistrationPatientScreen extends StatefulWidget {
-  final GoogleSignInAccount googleUser;
-  final FirebaseUser firebaseUser;
-
-  const RegistrationPatientScreen({Key key, this.googleUser, this.firebaseUser})
-      : super(key: key);
+class RegistrationScreen extends StatefulWidget {
+  const RegistrationScreen({Key key}) : super(key: key);
   @override
-  _RegistrationPatientScreenState createState() =>
-      _RegistrationPatientScreenState();
+  _RegistrationScreenState createState() => _RegistrationScreenState();
 }
 
-class _RegistrationPatientScreenState extends State<RegistrationPatientScreen> {
+class _RegistrationScreenState extends State<RegistrationScreen> {
   final GlobalKey<FormBuilderState> _userRegKey = GlobalKey<FormBuilderState>();
+  var data;
   bool autoValidate = true;
   bool readOnly = false;
   double formSpacing = 20;
   bool showSegmentedControl = true;
-  Function _setTerms = () {
-    medicallUser.terms = true;
-  };
-  Function _setPolicy = () {
-    medicallUser.policy = true;
-  };
-  //final LocalStorage storage = LocalStorage('medicallStor');
-  ValueChanged _onChanged = (val) => print(val);
+  final DocumentReference documentReference =
+      Firestore.instance.document("users/" + medicallUser.id);
 
   @override
   void initState() {
     super.initState();
   }
 
+  void _updateUser() {
+    medicallUser.dob = DateFormat('MM-dd-yyyy')
+        .format(_userRegKey.currentState.value['Date of birth'])
+        .toString();
+    medicallUser.terms = _userRegKey.currentState.value['Terms and conditions'];
+    medicallUser.policy =
+        _userRegKey.currentState.value['accept_privacy_switch'];
+    Map<String, dynamic> data = <String, dynamic>{
+      "dob": medicallUser.dob,
+      "terms": medicallUser.terms,
+      "policy": medicallUser.policy,
+      "registered": true,
+    };
+    documentReference.updateData(data).whenComplete(() {
+      print("Document Added");
+    }).catchError((e) => print(e));
+  }
+
   @override
   Widget build(BuildContext context) {
-    medicallUser = MedicallUser(
-        firstName: globals.currentFirebaseUser.displayName.split(' ')[0],
-        lastName: globals.currentFirebaseUser.displayName.split(' ')[1],
-        email: globals.currentFirebaseUser.email,
-        phoneNumber: globals.currentFirebaseUser.phoneNumber);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text('Patient Registration'),
+        title: Text(
+            '${medicallUser.type != null ? medicallUser.type[0].toUpperCase() : ''}${medicallUser.type != null ? medicallUser.type.substring(1) : ''}' +
+                ' Registration'),
       ),
       bottomNavigationBar: FlatButton(
-        padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
         color: Theme.of(context).colorScheme.primary,
+        padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
         onPressed: () {
           _userRegKey.currentState.save();
           if (_userRegKey.currentState.validate()) {
-            medicallUser.firstName =
-                _userRegKey.currentState.value['First name'];
-            medicallUser.lastName =
-                _userRegKey.currentState.value['Last name'];
-            medicallUser.email =
-                _userRegKey.currentState.value['Email'];
-            medicallUser.phoneNumber =
-                _userRegKey.currentState.value['Phone'];
-            medicallUser.dob = DateFormat('yyyy-MM-dd')
-                .format(_userRegKey.currentState.value['Date of birth']);
-            medicallUser.terms =
-                _userRegKey.currentState.value['Terms and conditions'];
-            medicallUser.policy =
-                _userRegKey.currentState.value['accept_privacy_switch'];
-            //storage.setItem('user', [].toJSONEncodable());
-            //medicallUser data = storage.getItem('user');
             print('validationSucceded');
             print(_userRegKey.currentState.value);
-            Navigator.pushNamed(context, '/doctors');
+            _updateUser();
+            if (medicallUser.type == "provider") {
+              Navigator.pushNamed(context, '/history');
+            } else {
+              Navigator.pushNamed(context, '/doctors');
+            }
           } else {
             print('External FormValidation failed');
           }
@@ -95,6 +85,7 @@ class _RegistrationPatientScreenState extends State<RegistrationPatientScreen> {
           padding: EdgeInsets.fromLTRB(15, 20, 15, 20),
           child: FormBuilder(
             key: _userRegKey,
+            autovalidate: true,
             child: Column(
               children: <Widget>[
                 FormBuilderTextField(
@@ -107,7 +98,6 @@ class _RegistrationPatientScreenState extends State<RegistrationPatientScreen> {
                       disabledBorder: InputBorder.none,
                       enabledBorder: InputBorder.none,
                       border: InputBorder.none),
-                  onChanged: _onChanged,
                   validators: [
                     FormBuilderValidators.required(),
                   ],
@@ -125,7 +115,6 @@ class _RegistrationPatientScreenState extends State<RegistrationPatientScreen> {
                       disabledBorder: InputBorder.none,
                       enabledBorder: InputBorder.none,
                       border: InputBorder.none),
-                  onChanged: _onChanged,
                   validators: [
                     FormBuilderValidators.required(),
                   ],
@@ -143,7 +132,6 @@ class _RegistrationPatientScreenState extends State<RegistrationPatientScreen> {
                       disabledBorder: InputBorder.none,
                       enabledBorder: InputBorder.none,
                       border: InputBorder.none),
-                  onChanged: _onChanged,
                   validators: [
                     FormBuilderValidators.email(),
                     FormBuilderValidators.required(),
@@ -154,9 +142,8 @@ class _RegistrationPatientScreenState extends State<RegistrationPatientScreen> {
                 ),
                 FormBuilderDateTimePicker(
                   attribute: "Date of birth",
-                  onChanged: _onChanged,
                   inputType: InputType.date,
-                  format: DateFormat("yyyy-MM-dd"),
+                  format: DateFormat("dd-MM-yyyy hh:mm a"),
                   decoration: InputDecoration(
                       labelText: 'Date of Birth',
                       fillColor: Color.fromRGBO(35, 179, 232, 0.1),
@@ -172,7 +159,6 @@ class _RegistrationPatientScreenState extends State<RegistrationPatientScreen> {
                 FormBuilderTextField(
                   attribute: "Phone",
                   initialValue: medicallUser.phoneNumber,
-                  onChanged: _onChanged,
                   keyboardType: TextInputType.phone,
                   decoration: InputDecoration(
                       labelText: 'Phone Number',
@@ -191,8 +177,7 @@ class _RegistrationPatientScreenState extends State<RegistrationPatientScreen> {
                 ),
                 FormBuilderCheckbox(
                   attribute: 'Terms and conditions',
-                  initialValue: false,
-                  onChanged: _setTerms(),
+                  initialValue: medicallUser.terms,
                   leadingInput: true,
                   decoration: InputDecoration(
                       disabledBorder: InputBorder.none,
@@ -214,8 +199,7 @@ class _RegistrationPatientScreenState extends State<RegistrationPatientScreen> {
                 ),
                 FormBuilderCheckbox(
                   attribute: 'accept_privacy_switch',
-                  initialValue: false,
-                  onChanged: _setPolicy(),
+                  initialValue: medicallUser.policy,
                   leadingInput: true,
                   decoration: InputDecoration(
                       disabledBorder: InputBorder.none,

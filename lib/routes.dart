@@ -1,23 +1,22 @@
 import 'package:Medicall/screens/ConfirmConsult/index.dart';
+import 'package:Medicall/screens/History/historyDetail.dart';
+import 'package:Medicall/screens/Questions/medicalHistory.dart';
+import 'package:Medicall/screens/Questions/symptomScreening.dart';
 import 'package:Medicall/screens/Registration/RegistrationType/index.dart';
 import 'package:flutter/material.dart';
 import 'package:Medicall/screens/Login/index.dart';
 import 'package:Medicall/screens/Home/index.dart';
 import 'package:Medicall/screens/Doctors/index.dart';
-import 'package:Medicall/screens/QuestionsScreening/index.dart';
 import 'package:Medicall/screens/SelectProvider/index.dart';
-import 'package:Medicall/screens/QuestionsHistory/index.dart';
 import 'package:Medicall/screens/QuestionsUpload/index.dart';
 import 'package:Medicall/screens/Chat/index.dart';
 import 'package:Medicall/screens/History/index.dart';
 import 'package:Medicall/screens/Settings/index.dart';
-import 'package:Medicall/screens/Registration/Provider/index.dart';
-import 'package:Medicall/screens/Registration/Patient/index.dart';
+import 'package:Medicall/screens/Registration/index.dart';
 import 'package:Medicall/screens/OtpVerification/index.dart';
 import 'package:Medicall/screens/Terms/index.dart';
 import 'package:Medicall/screens/Privacy/index.dart';
 import 'package:oktoast/oktoast.dart';
-import 'package:Medicall/models/medicall_user.dart';
 
 // import 'package:Medicall/mutations/addStar.dart' as mutations;
 // import 'package:Medicall/queries/readRepositories.dart' as queries;
@@ -90,7 +89,7 @@ class Routes extends StatelessWidget {
           switch (settings.name) {
             case '/login':
               return MyCustomRoute(
-                builder: (_) => LoginPage(medicallUser: settings.arguments),
+                builder: (_) => LoginPage(),
                 settings: settings,
               );
             case '/verification':
@@ -103,14 +102,9 @@ class Routes extends StatelessWidget {
                 builder: (_) => RegistrationTypeScreen(),
                 settings: settings,
               );
-            case '/registrationProvider':
+            case '/registration':
               return MyCustomRoute(
-                builder: (_) => RegistrationProviderScreen(),
-                settings: settings,
-              );
-            case '/registrationPatient':
-              return MyCustomRoute(
-                builder: (_) => RegistrationPatientScreen(),
+                builder: (_) => RegistrationScreen(),
                 settings: settings,
               );
             case '/terms':
@@ -136,7 +130,7 @@ class Routes extends StatelessWidget {
             case '/questionsScreening':
               return MyCustomRoute(
                 builder: (_) =>
-                    QuestionsScreeningScreen(data: settings.arguments),
+                    SymptomQuestionsScreen(data: settings.arguments),
                 settings: settings,
               );
             case '/selectProvider':
@@ -146,7 +140,7 @@ class Routes extends StatelessWidget {
               );
             case '/questionsHistory':
               return MyCustomRoute(
-                builder: (_) => QuestionsHistoryScreen(
+                builder: (_) => MedHistoryQuestionsScreen(
                       data: settings.arguments,
                     ),
                 settings: settings,
@@ -169,6 +163,11 @@ class Routes extends StatelessWidget {
             case '/history':
               return MyCustomRoute(
                 builder: (_) => HistoryScreen(data: settings.arguments),
+                settings: settings,
+              );
+            case '/historyDetail':
+              return MyCustomRoute(
+                builder: (_) => HistoryDetailScreen(data: settings.arguments),
                 settings: settings,
               );
             case '/settings':

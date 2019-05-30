@@ -36,12 +36,10 @@ class SettingsScreen extends StatelessWidget {
                             ? DecorationImage(
                                 fit: BoxFit.fill,
                                 image: globals.currentUser.photoUrl != null
-                                    ? NetworkImage(
-                                        globals.currentUser.photoUrl)
+                                    ? NetworkImage(globals.currentUser.photoUrl)
                                     : null)
                             : null)),
-                Text(medicallUser.firstName,
-                    textScaleFactor: 1.5)
+                Text('medicallUser.displayName', textScaleFactor: 1.5)
               ],
             )
           ],

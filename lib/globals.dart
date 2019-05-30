@@ -9,15 +9,19 @@ FirebaseUser currentFirebaseUser;
 
 class ConsultData {
   String consultType;
-  List<String> screeningQuestions;
+  List<dynamic> screeningQuestions;
+  List<dynamic> stringListQuestions;
   String provider;
-  List<String> historyQuestions;
+  String providerId;
+  List<dynamic> historyQuestions;
   List<Asset> media;
 
   ConsultData({
     this.consultType,
     this.screeningQuestions,
+    this.stringListQuestions,
     this.provider,
+    this.providerId,
     this.historyQuestions,
     this.media,
   });

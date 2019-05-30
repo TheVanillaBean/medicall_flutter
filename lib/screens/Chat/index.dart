@@ -11,9 +11,8 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: Color.fromRGBO(35, 179, 232, 1),
         title: Text(
-          'Pictures',
+          'Chat',
           style: TextStyle(
             fontSize:
                 Theme.of(context).platform == TargetPlatform.iOS ? 17.0 : 20.0,
@@ -29,7 +28,7 @@ class _ChatScreenState extends State<ChatScreen> {
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                'Please make sure the pictures are taken in bright daylight and that the area of concern is centered in the photo.',
+                '',
               ),
             ),
           ),

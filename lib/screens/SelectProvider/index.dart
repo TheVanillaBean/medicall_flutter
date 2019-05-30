@@ -1,3 +1,5 @@
+import 'package:Medicall/models/medicall_user.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 // import 'package:Medicall/presentation/medicall_app_icons.dart' as CustomIcons;
 // import 'package:Medicall/models/providers_model.dart';
@@ -11,15 +13,13 @@ import 'package:location/location.dart' as LocationManager;
 import 'package:Medicall/screens/SelectProvider/placeDetail.dart';
 import 'package:Medicall/globals.dart' as globals;
 
-
 const kGoogleApiKey = 'AIzaSyBx8brcoVisQ4_5FUD-xJlS1i4IwjSS-Hc';
 GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
 
 class SelectProviderScreen extends StatefulWidget {
   final globals.ConsultData data;
 
-  const SelectProviderScreen({Key key, @required this.data})
-      : super(key: key);
+  const SelectProviderScreen({Key key, @required this.data}) : super(key: key);
   @override
   _SelectProviderScreenState createState() => _SelectProviderScreenState();
 }
@@ -31,6 +31,8 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
   MarkerId selectedMarker;
   int _markerIdCounter = 1;
   List<PlacesSearchResult> places = [];
+  List<String> addresses = [];
+  List<String> providers = [];
   bool isLoading = false;
   var selectedProvider = '';
   String errorMessage;
@@ -47,7 +49,6 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
     } else {
       expandedChild = buildPlacesList();
     }
-
     return Scaffold(
         key: homeScaffoldKey,
         appBar: AppBar(
@@ -98,7 +99,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
           children: <Widget>[
             Container(
               child: SizedBox(
-                  height: 400.0,
+                  height: 300.0,
                   child: GoogleMap(
                       onMapCreated: _onMapCreated,
                       myLocationEnabled: true,
@@ -107,7 +108,76 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
                         target: LatLng(0.0, 0.0),
                       ))),
             ),
-            Expanded(child: expandedChild)
+            Expanded(
+                child: StreamBuilder(
+                    stream: Firestore.instance.collection('users').snapshots(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return new Text("Loading");
+                      }
+                      addresses = [];
+                      var userDocuments = snapshot.data.documents;
+                      List<Widget> historyList = [];
+                      for (var i = 0; i < userDocuments.length; i++) {
+                        if (userDocuments[i].data['type'] == 'provider') {
+                          providers.add(userDocuments[i].data['name']);
+                          if (!addresses.contains(
+                              userDocuments[i].data['address'].toString())) {
+                            addresses.add(
+                                userDocuments[i].data['address'].toString());
+                          }
+                          historyList.add(ListTile(
+                            title:
+                                Text(userDocuments[i].data['name'].toString()),
+                            subtitle: Text(
+                                userDocuments[i].data['address'].toString()),
+                            trailing: Container(
+                              child: FlatButton(
+                                onPressed: () {
+                                  setState(() {
+                                    widget.data.provider =
+                                        userDocuments[i].data['name'];
+                                    widget.data.providerId = userDocuments[i].documentID;
+                                    _selectProvider(
+                                        userDocuments[i].data['name']);
+                                  });
+                                },
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Text(
+                                      'Select',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                      ),
+                                    ),
+                                    Icon(
+                                        selectedProvider ==
+                                                userDocuments[i].data['name']
+                                            ? Icons.radio_button_checked
+                                            : Icons.radio_button_unchecked,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                        size: 20.0)
+                                  ],
+                                ),
+                              ),
+                            ),
+                            leading: Icon(
+                              Icons.account_circle,
+                              size: 50,
+                            ),
+                          ));
+                        }
+                      }
+                      return Column(children: historyList);
+                    }))
           ],
         ));
   }
@@ -156,53 +226,48 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
       this.isLoading = true;
       this.errorMessage = null;
     });
+    var placesList = [];
+    for (var i = 0; i < addresses.length; i++) {
+      placesList.add(await _places.searchByText(addresses[i]));
+      setState(() {
+        this.isLoading = false;
+        if (placesList[i].status == 'OK') {
+          //this.places = newResults.results
+          placesList[i].results.first.types.first = providers[i];
+          this.places.add(placesList[i].results.first);
+          placesList[i].results.forEach((f) {
+            final String markerIdVal = 'marker_id_$_markerIdCounter';
+            _markerIdCounter++;
+            final MarkerId markerId = MarkerId(markerIdVal);
 
-    final practice0 =
-        await _places.searchByText('281 Lincoln Street Worchester, MA');
-    final practice1 =
-        await _places.searchByText('1493 Cambridge Street, Cambridge MA');
-    final practice2 =
-        await _places.searchByText('1244 Boyston Street, Chestnut Hill, MA');
+            final Marker marker = Marker(
+              markerId: markerId,
+              position:
+                  LatLng(f.geometry.location.lat, f.geometry.location.lng),
+              infoWindow:
+                  InfoWindow(title: '${f.name}', snippet: '${f.types?.first}'),
+            );
+            markers[markerId] = marker;
+
+            mapController.animateCamera(CameraUpdate.newCameraPosition(
+                CameraPosition(
+                    target: LatLng(
+                        f.geometry.location.lat, f.geometry.location.lng),
+                    zoom: 8.0)));
+          });
+        } else {
+          // this.errorMessage = practice0.errorMessage +
+          //     practice1.errorMessage +
+          //     practice2.errorMessage;
+        }
+      });
+    }
     //final location = Location(center.latitude, center.longitude);
     //final result = await _places.searchByText('281 Lincoln Street Worchester, MA ; ');
     // final result = Future.wait([
     //   _places.searchByText('281 Lincoln Street Worchester, MA'),
     //   _places.searchByText('281 Lincoln Street Worchester, MA'),
     // ]);
-    setState(() {
-      this.isLoading = false;
-      if (practice0.status == 'OK' &&
-          practice1.status == 'OK' &&
-          practice2.status == 'OK') {
-        var newResults = practice0;
-        newResults.results.add(practice1.results[0]);
-        newResults.results.add(practice2.results[0]);
-        this.places = newResults.results;
-        newResults.results.forEach((f) {
-          final String markerIdVal = 'marker_id_$_markerIdCounter';
-          _markerIdCounter++;
-          final MarkerId markerId = MarkerId(markerIdVal);
-
-          final Marker marker = Marker(
-            markerId: markerId,
-            position: LatLng(f.geometry.location.lat, f.geometry.location.lng),
-            infoWindow:
-                InfoWindow(title: '${f.name}', snippet: '${f.types?.first}'),
-          );
-          markers[markerId] = marker;
-        
-          mapController.animateCamera(CameraUpdate.newCameraPosition(
-              CameraPosition(
-                  target:
-                      LatLng(f.geometry.location.lat, f.geometry.location.lng),
-                  zoom: 8.0)));
-        });
-      } else {
-        this.errorMessage = practice0.errorMessage +
-            practice1.errorMessage +
-            practice2.errorMessage;
-      }
-    });
   }
 
   void onError(PlacesAutocompleteResponse response) {

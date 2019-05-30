@@ -11,7 +11,6 @@ import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
 import 'package:Medicall/components/logger.dart';
 import 'package:Medicall/screens/Registration/RegistrationType/index.dart';
 import 'package:Medicall/components/masked_text.dart';
-import 'package:Medicall/globals.dart' as globals;
 import 'package:Medicall/components/reactive_refresh_indicator.dart';
 
 enum AuthStatus { PHONE_AUTH, SMS_AUTH, PROFILE_AUTH }
@@ -74,19 +73,6 @@ class _AuthScreenState extends State<AuthScreen> {
     subscription?.cancel();
   }
 
-  // PhoneVerificationCompleted
-  // verificationCompleted(FirebaseUser user) async {
-  //   Logger.log(TAG, message: "onVerificationCompleted, user: $user");
-  //   if (await _onCodeVerified(user)) {
-  //     await _finishSignIn(user);
-  //   } else {
-  //     setState(() {
-  //       this.status = AuthStatus.SMS_AUTH;
-  //       Logger.log(TAG, message: "Changed status to $status");
-  //     });
-  //   }
-  // }
-
   // PhoneVerificationFailed
   verificationFailed(AuthException authException) {
     _showErrorSnackbar(
@@ -96,11 +82,21 @@ class _AuthScreenState extends State<AuthScreen> {
             'onVerificationFailed, code: ${authException.code}, message: ${authException.message}');
   }
 
-  void _add(MedicallUser user) {
+  void _add(user) {
+    medicallUser = MedicallUser(
+      id: user.uid,
+      displayName: user.displayName,
+      firstName: user.displayName != null ? user.displayName.split(' ')[0] : '',
+      lastName: user.displayName != null ? user.displayName.split(' ')[1] : '',
+      email: user.email,
+      phoneNumber: user.phoneNumber,
+    );
     final DocumentReference documentReference =
-        Firestore.instance.document("users/" + user.id);
+        Firestore.instance.document("users/" + user.uid);
     Map<String, String> data = <String, String>{
       "name": user.displayName,
+      "first_name": medicallUser.firstName,
+      "last_name": medicallUser.lastName,
       "email": user.email,
       "phone": user.phoneNumber
     };
@@ -327,12 +323,7 @@ class _AuthScreenState extends State<AuthScreen> {
         // Google and phone number methods
         // Example: authenticate with your own API, use the data gathered
         // to post your profile/user, etc.
-        medicallUser = MedicallUser(
-            phoneNumber: user.phoneNumber,
-            email: user.email,
-            displayName: user.displayName,
-            id: user.uid);
-        _add(medicallUser);
+        _add(user);
         Navigator.of(context).pushReplacement(CupertinoPageRoute(
           builder: (context) => RegistrationTypeScreen(),
         ));

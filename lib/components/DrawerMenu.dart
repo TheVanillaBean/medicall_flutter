@@ -1,3 +1,4 @@
+import 'package:Medicall/models/medicall_user.dart';
 import 'package:flutter/material.dart';
 //import 'package:flutter/animation.dart';
 import 'package:Medicall/presentation/medicall_app_icons.dart' as CustomIcons;
@@ -31,7 +32,8 @@ class DrawerMenu extends StatelessWidget {
                 children: <Widget>[
                   Expanded(
                     child: Icon(CustomIcons.MedicallApp.logo,
-                        size: 40.0, color: Theme.of(context).colorScheme.onPrimary),
+                        size: 40.0,
+                        color: Theme.of(context).colorScheme.onPrimary),
                   ),
                   Expanded(
                       flex: 4,
@@ -50,24 +52,27 @@ class DrawerMenu extends StatelessWidget {
               )),
         ),
         ListView(
-          
           children: <Widget>[
             ListTile(
-              dense: true,
-              contentPadding: EdgeInsets.fromLTRB(16, 80, 0, 0),
+                dense: true,
+                contentPadding: EdgeInsets.fromLTRB(16, 80, 0, 0),
                 leading: Icon(
                   Icons.local_hospital,
                   color: Theme.of(context).colorScheme.primaryVariant,
                 ),
                 title: Text(
-                  'Find A Doctor',
+                  medicallUser.type == 'provider'
+                      ? 'Patients'
+                      : 'Find A Doctor',
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
                 onTap: () {
                   Navigator.pop(context);
-                  Navigator.of(context).pushNamed('/doctors');
+                  medicallUser.type == 'provider'
+                      ? Navigator.of(context).pushNamed('/history')
+                      : Navigator.of(context).pushNamed('/doctors');
                 }),
             ListTile(
                 leading: Icon(
@@ -84,21 +89,23 @@ class DrawerMenu extends StatelessWidget {
                   Navigator.pop(context);
                   Navigator.of(context).pushNamed('/chat');
                 }),
-            ListTile(
-                leading: Icon(
-                  Icons.folder_shared,
-                  color: Theme.of(context).colorScheme.primaryVariant,
-                ),
-                title: Text(
-                  'History',
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.of(context).pushNamed('/history');
-                }),
+            medicallUser.type == 'patient'
+                ? ListTile(
+                    leading: Icon(
+                      Icons.folder_shared,
+                      color: Theme.of(context).colorScheme.primaryVariant,
+                    ),
+                    title: Text(
+                      'History',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.of(context).pushNamed('/history');
+                    })
+                : SizedBox(),
             ListTile(
                 leading: Icon(
                   Icons.settings_applications,
@@ -119,7 +126,6 @@ class DrawerMenu extends StatelessWidget {
               color: Colors.grey[400],
             ),
             ListTile(
-              
                 leading: Icon(
                   Icons.exit_to_app,
                   color: Theme.of(context).colorScheme.secondary,

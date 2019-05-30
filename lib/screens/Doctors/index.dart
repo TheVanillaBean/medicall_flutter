@@ -1,7 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/presentation/medicall_app_icons.dart' as CustomIcons;
-import 'package:Medicall/screens/QuestionsScreening/index.dart';
 import 'package:Medicall/globals.dart' as globals;
 
 class DoctorsScreen extends StatelessWidget {
@@ -120,21 +120,22 @@ class DoctorsScreen extends StatelessWidget {
                         },
                       ),
                       RaisedButton(
-                        color: Color.fromRGBO(35, 179, 232, 1),
-                        child: Text(
-                          'Lesion',
-                          semanticsLabel: 'Lesion',
-                          textScaleFactor:
-                              orientation == Orientation.portrait ? 1 : 0.8,
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        onPressed: () => Navigator.pushNamed(
+                          color: Color.fromRGBO(35, 179, 232, 1),
+                          child: Text(
+                            'Lesion',
+                            semanticsLabel: 'Lesion',
+                            textScaleFactor:
+                                orientation == Orientation.portrait ? 1 : 0.8,
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          onPressed: () {
+                            Navigator.pushNamed(
                               context,
                               '/questionsScreening',
                               arguments:
                                   globals.ConsultData(consultType: 'Lesion'),
-                            ),
-                      ),
+                            );
+                          }),
                       RaisedButton(
                         child: Text(
                           'Rash',
