@@ -5,8 +5,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
 
 import 'package:Medicall/components/logger.dart';
 import 'package:Medicall/screens/Registration/RegistrationType/index.dart';
@@ -48,13 +46,12 @@ class _AuthScreenState extends State<AuthScreen> {
   // Firebase
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  //final GoogleSignIn _googleSignIn = GoogleSignIn();
 
-  GoogleSignInAccount _googleUser;
+  //GoogleSignInAccount _googleUser;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     // subscription = documentReference.snapshots().listen((datasnapshot) {
     //   if (datasnapshot.exists) {
@@ -67,9 +64,10 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     _codeTimer?.cancel();
     super.dispose();
+    smsCodeController.dispose();
+    phoneNumberController.dispose();
     subscription?.cancel();
   }
 
@@ -160,41 +158,41 @@ class _AuthScreenState extends State<AuthScreen> {
     );
   }
 
-  Future<Null> _signIn() async {
-    GoogleSignInAccount user = _googleSignIn.currentUser;
-    Logger.log(TAG, message: "Just got user as: $user");
+  // Future<Null> _signIn() async {
+  //   GoogleSignInAccount user = _googleSignIn.currentUser;
+  //   Logger.log(TAG, message: "Just got user as: $user");
 
-    final onError = (exception, stacktrace) {
-      Logger.log(TAG, message: "Error from _signIn: $exception");
-      _showErrorSnackbar(
-          "Couldn't log in with your Google account, please try again!");
-      user = null;
-    };
+  //   final onError = (exception, stacktrace) {
+  //     Logger.log(TAG, message: "Error from _signIn: $exception");
+  //     _showErrorSnackbar(
+  //         "Couldn't log in with your Google account, please try again!");
+  //     user = null;
+  //   };
 
-    if (user == null) {
-      user = await _googleSignIn.signIn().catchError(onError);
-      Logger.log(TAG, message: "Received $user");
-      final GoogleSignInAuthentication googleAuth = await user.authentication;
-      Logger.log(TAG, message: "Added googleAuth: $googleAuth");
-      await _auth
-          .signInWithCredential(GoogleAuthProvider.getCredential(
-            accessToken: googleAuth.accessToken,
-            idToken: googleAuth.idToken,
-          ))
-          .catchError(onError);
-    }
+  //   if (user == null) {
+  //     user = await _googleSignIn.signIn().catchError(onError);
+  //     Logger.log(TAG, message: "Received $user");
+  //     final GoogleSignInAuthentication googleAuth = await user.authentication;
+  //     Logger.log(TAG, message: "Added googleAuth: $googleAuth");
+  //     await _auth
+  //         .signInWithCredential(GoogleAuthProvider.getCredential(
+  //           accessToken: googleAuth.accessToken,
+  //           idToken: googleAuth.idToken,
+  //         ))
+  //         .catchError(onError);
+  //   }
 
-    if (user != null) {
-      _updateRefreshing(false);
-      this._googleUser = user;
-      setState(() {
-        this.status = AuthStatus.PHONE_AUTH;
-        Logger.log(TAG, message: "Changed status to $status");
-      });
-      return null;
-    }
-    return null;
-  }
+  //   if (user != null) {
+  //     _updateRefreshing(false);
+  //     this._googleUser = user;
+  //     setState(() {
+  //       this.status = AuthStatus.PHONE_AUTH;
+  //       Logger.log(TAG, message: "Changed status to $status");
+  //     });
+  //     return null;
+  //   }
+  //   return null;
+  // }
 
   Future<Null> _submitPhoneNumber() async {
     final error = _phoneInputValidator();
@@ -338,21 +336,6 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   // Widgets
-
-  Widget _buildSocialLoginBody() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          SizedBox(height: 24.0),
-          GoogleSignInButton(
-            onPressed: () => _updateRefreshing(true),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildConfirmInputButton() {
     final theme = Theme.of(context);

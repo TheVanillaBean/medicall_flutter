@@ -1,8 +1,5 @@
-import 'package:Medicall/models/medicall_user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-// import 'package:Medicall/presentation/medicall_app_icons.dart' as CustomIcons;
-// import 'package:Medicall/models/providers_model.dart';
 import 'package:flutter_alert/flutter_alert.dart';
 
 import 'dart:async';
@@ -39,16 +36,16 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Widget expandedChild;
-    if (isLoading) {
-      expandedChild = Center(child: CircularProgressIndicator(value: null));
-    } else if (errorMessage != null) {
-      expandedChild = Center(
-        child: Text(errorMessage),
-      );
-    } else {
-      expandedChild = buildPlacesList();
-    }
+    // Widget expandedChild;
+    // if (isLoading) {
+    //   expandedChild = Center(child: CircularProgressIndicator(value: null));
+    // } else if (errorMessage != null) {
+    //   expandedChild = Center(
+    //     child: Text(errorMessage),
+    //   );
+    // } else {
+    //   expandedChild = buildPlacesList();
+    // }
     return Scaffold(
         key: homeScaffoldKey,
         appBar: AppBar(
@@ -97,18 +94,17 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
         ),
         body: Column(
           children: <Widget>[
-            Container(
-              child: SizedBox(
-                  height: 300.0,
-                  child: GoogleMap(
-                      onMapCreated: _onMapCreated,
-                      myLocationEnabled: true,
-                      markers: Set<Marker>.of(markers.values),
-                      initialCameraPosition: CameraPosition(
-                        target: LatLng(0.0, 0.0),
-                      ))),
-            ),
             Expanded(
+                flex: 2,
+                child: GoogleMap(
+                    onMapCreated: _onMapCreated,
+                    myLocationEnabled: false,
+                    markers: Set<Marker>.of(markers.values),
+                    initialCameraPosition: CameraPosition(
+                      target: LatLng(0.0, 0.0),
+                    ))),
+            Expanded(
+                flex: 1,
                 child: StreamBuilder(
                     stream: Firestore.instance.collection('users').snapshots(),
                     builder: (context, snapshot) {
@@ -137,7 +133,8 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
                                   setState(() {
                                     widget.data.provider =
                                         userDocuments[i].data['name'];
-                                    widget.data.providerId = userDocuments[i].documentID;
+                                    widget.data.providerId =
+                                        userDocuments[i].documentID;
                                     _selectProvider(
                                         userDocuments[i].data['name']);
                                   });

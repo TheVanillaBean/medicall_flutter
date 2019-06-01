@@ -267,8 +267,10 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
       setState(() {
         int sec = d.inSeconds % 60;
         otpWaitTimeLabel = d.inMinutes.toString() + ':' + sec.toString();
-      });
+      }
+      );
     });
+    sub.cancel();
   }
 
   @override

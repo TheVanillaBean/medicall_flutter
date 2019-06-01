@@ -10,7 +10,6 @@ import 'package:Medicall/util/firebase_listenter.dart';
 import 'package:Medicall/util/firebase_phone_util.dart';
 import 'package:Medicall/components/progress_hud.dart';
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
-import 'package:Medicall/screens/Registration/RegistrationType/index.dart';
 import 'package:Medicall/screens/Auth/index.dart';
 import 'package:Medicall/util/firebase_notification_handler.dart';
 import 'package:flutter/cupertino.dart';
@@ -24,7 +23,6 @@ class LoginPage extends StatefulWidget {
 class _LoginScreenState extends State<LoginPage>
     implements FirebaseAuthListener {
   bool _isPhoneAuthEnable = false;
-  bool _isGoogleAuthEnable = false;
   bool _isEmailAuthEnable = true;
   bool _isLoading = false;
   bool autoValidate = true;
@@ -49,6 +47,7 @@ class _LoginScreenState extends State<LoginPage>
   @override
   void initState() {
     super.initState();
+    FirebaseNotifications().setUpFirebase();
     _teCountryCode.text = '+1';
     firebasePhoneUtil = FirebasePhoneUtil();
     firebasePhoneUtil.setScreenListener(this);
@@ -542,7 +541,6 @@ class _LoginScreenState extends State<LoginPage>
     setState(() {
       _isPhoneAuthEnable = true;
       _isEmailAuthEnable = false;
-      _isGoogleAuthEnable = false;
       _teMobileEmail.text = "";
     });
   }
@@ -551,7 +549,6 @@ class _LoginScreenState extends State<LoginPage>
     setState(() {
       _isPhoneAuthEnable = false;
       _isEmailAuthEnable = false;
-      _isGoogleAuthEnable = true;
       _teMobileEmail.text = "";
       firebaseGoogleUtil.signInWithGoogle();
     });
@@ -562,7 +559,6 @@ class _LoginScreenState extends State<LoginPage>
       _teMobileEmail.text = "";
       _isPhoneAuthEnable = false;
       _isEmailAuthEnable = true;
-      _isGoogleAuthEnable = false;
     });
   }
 

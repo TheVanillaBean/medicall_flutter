@@ -1,13 +1,11 @@
 import 'dart:typed_data';
 
 import 'package:Medicall/models/medicall_user.dart';
-import 'package:Medicall/screens/QuestionsUpload/asset_view.dart';
 import 'package:flutter/material.dart';
 import 'package:Medicall/globals.dart' as globals;
 import 'package:intl/intl.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class ConfirmConsultScreen extends StatefulWidget {
@@ -18,83 +16,94 @@ class ConfirmConsultScreen extends StatefulWidget {
   _ConfirmConsultScreenState createState() => _ConfirmConsultScreenState();
 }
 
-class _ConfirmConsultScreenState extends State<ConfirmConsultScreen> {
+class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
+    with SingleTickerProviderStateMixin {
+  bool isLoading = false;
+  TabController controller;
+  @override
+  void initState() {
+    super.initState();
+    controller = TabController(length: 3, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    // Dispose of the Tab Controller
+    controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    var combinedQuestions = [
-      {'Symptom Questions': widget.data.screeningQuestions},
-      {'Medical History Questions': widget.data.historyQuestions},
-      {'Pictures': widget.data.media},
-    ];
     return Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: Text(
-            'Consult Review',
-            style: TextStyle(
-              fontSize: Theme.of(context).platform == TargetPlatform.iOS
-                  ? 17.0
-                  : 20.0,
-            ),
-          ),
-          elevation:
-              Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        bottomNavigationBar: FlatButton(
-          padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
-          color: Theme.of(context).colorScheme.primaryVariant,
-          onPressed: () async {
-            Center(
-              child: CircularProgressIndicator(
-                value: null,
-              ),
-            );
-            await _addConsult();
-            await _addProviderConsult();
-            Navigator.pushNamed(context, '/history', arguments: widget.data);
-          },
-          //Navigator.pushNamed(context, '/history'), // Switch tabs
-          child: Text(
-            'CONFIRM',
-            style: TextStyle(
-              color: Colors.white,
-              letterSpacing: 2,
-            ),
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text(
+          'Consult Review',
+          style: TextStyle(
+            fontSize:
+                Theme.of(context).platform == TargetPlatform.iOS ? 17.0 : 20.0,
           ),
         ),
-        body: Column(
-          children: <Widget>[
-            Container(
-                child: Text(
-              widget.data.consultType,
-              style: Theme.of(context).textTheme.headline,
-            )),
-            Container(child: Text(widget.data.provider)),
-            Expanded(
-              child: ListView.builder(
-                itemCount: combinedQuestions.length,
-                itemBuilder: (context, i) {
-                  return ExpansionTile(
-                    initiallyExpanded: true,
-                    title: Text(
-                      combinedQuestions[i].keys.first,
-                      style: TextStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.bold,
-                          fontStyle: FontStyle.italic),
-                    ),
-                    children: <Widget>[
-                      Column(
-                        children: _buildExpandableContent(combinedQuestions[i]),
-                      ),
-                    ],
-                  );
-                },
+        bottom: TabBar(
+          tabs: <Tab>[
+            Tab(
+              // set icon to the tab
+              text: 'Symptom',
+              icon: Icon(Icons.local_pharmacy),
+            ),
+            Tab(
+              text: 'History',
+              icon: Icon(Icons.assignment_ind),
+            ),
+            Tab(
+              text: 'Pictures',
+              icon: Icon(Icons.perm_media),
+            ),
+          ],
+          // setup the controller
+          controller: controller,
+        ),
+        elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      bottomNavigationBar: !isLoading
+          ? FlatButton(
+              padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
+              color: Theme.of(context).colorScheme.primaryVariant,
+              onPressed: () async {
+                setState(() {
+                  isLoading = true;
+                });
+                await _addConsult();
+                await _addProviderConsult();
+                setState(() {
+                  isLoading = false;
+                });
+                Navigator.pushNamed(context, '/history',
+                    arguments: widget.data);
+              },
+              //Navigator.pushNamed(context, '/history'), // Switch tabs
+              child: Text(
+                'CONFIRM',
+                style: TextStyle(
+                  color: Colors.white,
+                  letterSpacing: 2,
+                ),
               ),
             )
-          ],
-        ));
+          : Text(''),
+      body: TabBarView(
+        // Add tabs as widgets
+        children: <Widget>[
+          _buildTab(widget.data.screeningQuestions),
+          _buildTab(widget.data.historyQuestions),
+          _buildTab(widget.data.media),
+        ],
+        // set the controller
+        controller: controller,
+      ),
+    );
   }
 
   Future _addConsult() async {
@@ -154,55 +163,61 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen> {
     return allMediaList;
   }
 
-  _buildExpandableContent(dynamic question) {
-    List<Widget> columnContent = [];
-    for (var i = 0; i < question.values.first.length; i++) {
-      if (question.values.first[i] is Map) {
-        if (question.values.first[i]['answers'] is String) {
-          columnContent.add(
-            ListTile(
-              title: Text(
-                question.values.first[i]['answers'],
-                style: TextStyle(fontSize: 18.0),
-              ),
-              subtitle: Text(question.values.first[i]['question']),
-              leading: Icon(Icons.linear_scale),
-            ),
-          );
-        } else {
-          columnContent.add(
-            ListTile(
-              title: Text(
-                question.values.first[i]['answers']
-                    .toString()
-                    .replaceAll(']', '')
-                    .replaceAll('[', '')
-                    .replaceFirst(', ', ''),
-                style: TextStyle(fontSize: 18.0),
-              ),
-              subtitle: Text(question.values.first[i]['question']),
-              leading: Icon(Icons.linear_scale),
-            ),
-          );
-        }
-      } else {
-        if (question.values.first[i].name is String) {
-          columnContent.add(
-            ListTile(
-              title: Text(
-                question.values.first[i].name,
-                style: TextStyle(fontSize: 18.0),
-              ),
-              leading: AssetView(
-                i,
-                question.values.first[i],
-              ),
-            ),
-          );
-        } else {}
-      }
-    }
-
-    return columnContent;
+  _buildTab(questions) {
+    return Scaffold(
+      body: Container(
+        child: questions[0].runtimeType == Asset
+            ? GridView.count(
+                crossAxisCount: 2,
+                children: List.generate(questions.length, (index) {
+                  Asset asset = questions[index];
+                  return AssetThumb(
+                    asset: asset,
+                    width: 300,
+                    height: 300,
+                  );
+                }),
+              )
+            : ListView.builder(
+                itemCount: questions.length,
+                itemBuilder: (context, i) {
+                  if (questions[i]['answers'] is String) {
+                    return ListTile(
+                      title: Text(
+                        questions[i]['question'],
+                        style: TextStyle(fontSize: 14.0),
+                      ),
+                      subtitle: Text(
+                        questions[i]['answers'],
+                        style: TextStyle(
+                            height: 1.2,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.secondary),
+                      ),
+                      leading: Text((i + 1).toString() + '.'),
+                    );
+                  } else {
+                    return ListTile(
+                      title: Text(
+                        questions[i]['question'],
+                        style: TextStyle(fontSize: 14.0),
+                      ),
+                      subtitle: Text(
+                        questions[i]['answers']
+                            .toString()
+                            .replaceAll(']', '')
+                            .replaceAll('[', '')
+                            .replaceFirst(', ', ''),
+                        style: TextStyle(
+                            height: 1.2,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.secondary),
+                      ),
+                      leading: Text((i + 1).toString() + '.'),
+                    );
+                  }
+                }),
+      ),
+    );
   }
 }

@@ -33,6 +33,7 @@ dependencies:
   graphql_flutter: ^1.0.0+4
   #camera/images
   multi_image_picker: ^4.0.3
+  carousel_pro: ^0.0.13
   #notifications
   flutter_alert: ^0.4.0
   oktoast: ^2.1.7

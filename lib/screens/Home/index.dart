@@ -7,7 +7,6 @@ import 'package:flutter/animation.dart';
 import 'package:Medicall/presentation/medicall_app_icons.dart' as CustomIcons;
 import 'package:flutter/scheduler.dart' show timeDilation;
 import 'package:Medicall/components/DrawerMenu.dart';
-import 'package:Medicall/globals.dart' as globals;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key key}) : super(key: key);
