@@ -6,6 +6,7 @@ import 'package:multi_image_picker/multi_image_picker.dart';
 
 GoogleSignInAccount currentUser;
 FirebaseUser currentFirebaseUser;
+String devToken = '';
 
 class ConsultData {
   String consultType;
@@ -13,6 +14,8 @@ class ConsultData {
   List<dynamic> stringListQuestions;
   String provider;
   String providerId;
+  List<dynamic> patientDevTokens;
+  List<dynamic> providerDevTokens;
   List<dynamic> historyQuestions;
   List<Asset> media;
 
@@ -22,6 +25,8 @@ class ConsultData {
     this.stringListQuestions,
     this.provider,
     this.providerId,
+    this.patientDevTokens,
+    this.providerDevTokens,
     this.historyQuestions,
     this.media,
   });

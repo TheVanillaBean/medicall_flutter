@@ -52,21 +52,30 @@ class DoctorsScreen extends StatelessWidget {
                     // Generate 100 Widgets that display their index in the List
                     children: [
                       RaisedButton(
+                        color: Theme.of(context).disabledColor.withAlpha(10),
                         child: Text(
                           'Acne',
                           textScaleFactor:
                               orientation == Orientation.portrait ? 1 : 0.8,
                           semanticsLabel: 'Acne',
-                          style: TextStyle(),
+                          style: TextStyle(
+                              color: Theme.of(context)
+                                  .disabledColor
+                                  .withAlpha(50)),
                         ),
                         onPressed: () {
                           // Perform some action
                         },
                       ),
                       RaisedButton(
+                        color: Theme.of(context).disabledColor.withAlpha(10),
                         child: Text(
                           'Hair Loss',
                           semanticsLabel: 'Hair Loss',
+                          style: TextStyle(
+                              color: Theme.of(context)
+                                  .disabledColor
+                                  .withAlpha(50)),
                           textScaleFactor:
                               orientation == Orientation.portrait ? 1 : 0.8,
                         ),
@@ -75,9 +84,14 @@ class DoctorsScreen extends StatelessWidget {
                         },
                       ),
                       RaisedButton(
+                        color: Theme.of(context).disabledColor.withAlpha(10),
                         child: Text(
                           'Cold Sore',
                           semanticsLabel: 'Cold Sore',
+                          style: TextStyle(
+                              color: Theme.of(context)
+                                  .disabledColor
+                                  .withAlpha(50)),
                           textScaleFactor:
                               orientation == Orientation.portrait ? 1 : 0.8,
                         ),
@@ -86,9 +100,14 @@ class DoctorsScreen extends StatelessWidget {
                         },
                       ),
                       RaisedButton(
+                        color: Theme.of(context).disabledColor.withAlpha(10),
                         child: Text(
                           'Cosmetic',
                           semanticsLabel: 'Cosmetic',
+                          style: TextStyle(
+                              color: Theme.of(context)
+                                  .disabledColor
+                                  .withAlpha(50)),
                           textScaleFactor:
                               orientation == Orientation.portrait ? 1 : 0.8,
                         ),
@@ -97,9 +116,14 @@ class DoctorsScreen extends StatelessWidget {
                         },
                       ),
                       RaisedButton(
+                        color: Theme.of(context).disabledColor.withAlpha(10),
                         child: Text(
                           'Anti-Aging',
                           semanticsLabel: 'Anti-Aging',
+                          style: TextStyle(
+                              color: Theme.of(context)
+                                  .disabledColor
+                                  .withAlpha(50)),
                           textScaleFactor:
                               orientation == Orientation.portrait ? 1 : 0.8,
                         ),
@@ -108,9 +132,14 @@ class DoctorsScreen extends StatelessWidget {
                         },
                       ),
                       RaisedButton(
+                        color: Theme.of(context).disabledColor.withAlpha(10),
                         child: Text(
                           'Nail',
                           semanticsLabel: 'Nail',
+                          style: TextStyle(
+                              color: Theme.of(context)
+                                  .disabledColor
+                                  .withAlpha(50)),
                           textScaleFactor:
                               orientation == Orientation.portrait ? 1 : 0.8,
                         ),
@@ -136,9 +165,14 @@ class DoctorsScreen extends StatelessWidget {
                             );
                           }),
                       RaisedButton(
+                        color: Theme.of(context).disabledColor.withAlpha(10),
                         child: Text(
                           'Rash',
                           semanticsLabel: 'Rash',
+                          style: TextStyle(
+                              color: Theme.of(context)
+                                  .disabledColor
+                                  .withAlpha(50)),
                           textScaleFactor:
                               orientation == Orientation.portrait ? 1 : 0.8,
                         ),
@@ -147,9 +181,14 @@ class DoctorsScreen extends StatelessWidget {
                         },
                       ),
                       RaisedButton(
+                        color: Theme.of(context).disabledColor.withAlpha(10),
                         child: Text(
                           'Other',
                           semanticsLabel: 'Other',
+                          style: TextStyle(
+                              color: Theme.of(context)
+                                  .disabledColor
+                                  .withAlpha(50)),
                           textScaleFactor:
                               orientation == Orientation.portrait ? 1 : 0.8,
                         ),
@@ -173,6 +212,8 @@ class DoctorsScreen extends StatelessWidget {
                           : EdgeInsets.fromLTRB(0, 5, 0, 0),
                       child: Text(
                         'Please select why you need a doctor,',
+                        style:
+                            TextStyle(color: Theme.of(context).disabledColor),
                         textAlign: TextAlign.center,
                       )),
                 );

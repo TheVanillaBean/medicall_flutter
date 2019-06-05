@@ -53,7 +53,7 @@ class _SymptomQuestionsScreenState extends State<SymptomQuestionsScreen> {
           screeningFormKey.currentState.save();
           if (screeningFormKey.currentState.validate()) {
             print('validationSucceded');
-            print(screeningFormKey.currentState.value);
+            //print(screeningFormKey.currentState.value);
             var listThis = screeningFormKey.currentState.value.values.toList();
             widget.data.screeningQuestions = [];
             for (var i = 0; i < listThis.length; i++) {
@@ -86,8 +86,20 @@ class _SymptomQuestionsScreenState extends State<SymptomQuestionsScreen> {
                   case ConnectionState.none:
                     return Text('Press button to start');
                   case ConnectionState.waiting:
-                    return Center(
-                      child: CircularProgressIndicator(),
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Container(
+                          height: MediaQuery.of(context).size.height * 0.85,
+                        ),
+                        Container(
+                          height: 50,
+                          alignment: Alignment.center,
+                          width: 50,
+                          padding: EdgeInsets.all(10),
+                          child: CircularProgressIndicator(),
+                        )
+                      ],
                     );
                   default:
                     if (snapshot.hasError)

@@ -47,7 +47,6 @@ class _LoginScreenState extends State<LoginPage>
   @override
   void initState() {
     super.initState();
-    FirebaseNotifications().setUpFirebase();
     _teCountryCode.text = '+1';
     firebasePhoneUtil = FirebasePhoneUtil();
     firebasePhoneUtil.setScreenListener(this);
@@ -59,37 +58,70 @@ class _LoginScreenState extends State<LoginPage>
     firebaseAnonymouslyUtil.setScreenListener(this);
   }
 
-  Future<void> _getUserType() async {
-    final DocumentReference documentReference =
-        Firestore.instance.document("users/" + medicallUser.id);
-    await documentReference.get().then((datasnapshot) {
-      if (datasnapshot.data['type'] != null) {
-        medicallUser.type = datasnapshot.data['type'];
-      }
-    }).catchError((e) => print(e));
+  @override
+  void dispose() {
+    super.dispose();
   }
 
-  Future<void> _getTerms() async {
+  Future<void> _getUser() async {
     final DocumentReference documentReference =
-        Firestore.instance.document("users/" + medicallUser.id);
+        Firestore.instance.document("users/" + globals.currentFirebaseUser.uid);
     await documentReference.get().then((datasnapshot) {
-      if (datasnapshot.data['terms'] != null) {
-        medicallUser.terms = datasnapshot.data['terms'];
-      } else {
-        medicallUser.terms = false;
+      String currDevToken = globals.devToken;
+      List<dynamic> dbDevTokens = datasnapshot.data['dev_tokens'];
+      List<String> finalDevTokenList = [
+        ...dbDevTokens,
+      ];
+      if (!finalDevTokenList.contains(currDevToken)) {
+        finalDevTokenList.add(currDevToken);
       }
-    }).catchError((e) => print(e));
-  }
-
-  Future<void> _getPolicy() async {
-    final DocumentReference documentReference =
-        Firestore.instance.document("users/" + medicallUser.id);
-    await documentReference.get().then((datasnapshot) {
-      if (datasnapshot.data['policy'] != null) {
-        medicallUser.policy = datasnapshot.data['policy'];
+      if (datasnapshot.data != null) {
+        medicallUser = MedicallUser(
+          id: globals.currentFirebaseUser.uid,
+          displayName: datasnapshot.data['name'],
+          firstName: datasnapshot.data['first_name'],
+          lastName: datasnapshot.data['last_name'],
+          dob: datasnapshot.data['dob'],
+          policy: datasnapshot.data['policy'],
+          terms: datasnapshot.data['terms'],
+          type: datasnapshot.data['type'],
+          email: datasnapshot.data['email'],
+          phoneNumber: datasnapshot.data['phone'],
+          devTokens: finalDevTokenList,
+        );
       } else {
-        medicallUser.policy = false;
+        medicallUser = MedicallUser(
+          id: globals.currentFirebaseUser.uid,
+          displayName: globals.currentFirebaseUser.displayName,
+          firstName: globals.currentFirebaseUser.displayName.split(' ')[0],
+          lastName: globals.currentFirebaseUser.displayName.split(' ')[1],
+          policy: false,
+          terms: false,
+          email: globals.currentFirebaseUser.email,
+          phoneNumber: globals.currentFirebaseUser.phoneNumber,
+        );
+        Map<String, dynamic> data = <String, dynamic>{
+          "name": globals.currentFirebaseUser.displayName,
+          "first_name": globals.currentFirebaseUser.displayName.split(' ')[0],
+          "last_name": globals.currentFirebaseUser.displayName.split(' ')[1],
+          "email": globals.currentFirebaseUser.email,
+          "phone": globals.currentFirebaseUser.phoneNumber,
+          "dob": null,
+          "policy": false,
+          "terms": false,
+          "type": null,
+          "dev_tokens": finalDevTokenList,
+        };
+        documentReference.setData(data).whenComplete(() {
+          print("Document Added");
+        }).catchError((e) => print(e));
       }
+      Map<String, dynamic> data = <String, dynamic>{
+        "dev_tokens": finalDevTokenList,
+      };
+      documentReference.updateData(data).whenComplete(() {
+        print("Document Added");
+      }).catchError((e) => print(e));
     }).catchError((e) => print(e));
   }
 
@@ -133,13 +165,7 @@ class _LoginScreenState extends State<LoginPage>
     eMailTabEnable();
     closeLoader();
     globals.currentFirebaseUser = currentUser;
-    medicallUser = MedicallUser(
-      id: currentUser.uid,
-      displayName: currentUser.displayName,
-    );
-    await _getUserType();
-    await _getTerms();
-    await _getPolicy();
+    await _getUser();
 
     if (currentUser.isEmailVerified == true &&
         currentUser.phoneNumber != null) {
@@ -187,12 +213,6 @@ class _LoginScreenState extends State<LoginPage>
               )
             ],
           ),
-        ),
-        SizedBox(
-          width: 20.0,
-        ),
-        SizedBox(
-          width: 20.0,
         ),
         GestureDetector(
           onTap: () {
@@ -250,9 +270,6 @@ class _LoginScreenState extends State<LoginPage>
               ),
               flex: 1,
             ),
-            SizedBox(
-              width: 10.0,
-            ),
             Expanded(
               child: TextFormField(
                 controller: _teMobileEmail,
@@ -289,22 +306,11 @@ class _LoginScreenState extends State<LoginPage>
             ),
           ],
         ),
-        SizedBox(
-          height: 40.0,
-        ),
       ],
     );
 
     var anonymouslyForm = Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
       children: <Widget>[
-        _isEmailAuthEnable
-            ? SizedBox(
-                height: 20.0,
-              )
-            : SizedBox(
-                height: 0.0,
-              ),
         TextFormField(
           controller: _teMobileEmail,
           focusNode: _focusNodeMobileEmail,
@@ -335,7 +341,7 @@ class _LoginScreenState extends State<LoginPage>
           ),
         ),
         SizedBox(
-          height: 10.0,
+          height: MediaQuery.of(context).size.height * 0.01,
         ),
         TextFormField(
           controller: _tePassword,
@@ -368,7 +374,7 @@ class _LoginScreenState extends State<LoginPage>
           ),
         ),
         SizedBox(
-          height: 30.0,
+          height: MediaQuery.of(context).size.height * 0.02,
         ),
       ],
     );
@@ -376,16 +382,10 @@ class _LoginScreenState extends State<LoginPage>
     Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: <Widget>[
-        SizedBox(
-          height: 20.0,
-        ),
         Center(
           child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
           ),
-        ),
-        SizedBox(
-          height: 40.0,
         ),
       ],
     );
@@ -395,7 +395,7 @@ class _LoginScreenState extends State<LoginPage>
         Expanded(
           flex: 1,
           child: Padding(
-            padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+            padding: EdgeInsets.fromLTRB(70, 0, 60, 0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
@@ -437,51 +437,72 @@ class _LoginScreenState extends State<LoginPage>
                 _isPhoneAuthEnable
                     ? phoneAuthForm
                     : _isEmailAuthEnable ? anonymouslyForm : anonymouslyForm,
-                Column(
-                  children: <Widget>[
-                    ButtonTheme(
-                      minWidth: 225.0,
-                      height: 50.0,
-                      child: RaisedButton(
-                        color: Theme.of(context).colorScheme.primaryVariant,
-                        onPressed: () {
-                          _submit();
-                        },
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4)),
-                        child: Text(
-                          "Sign In",
-                          style: TextStyle(letterSpacing: 1.3),
-                        ),
+                Container(
+                  padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
+                  child: Column(
+                    children: <Widget>[
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: ButtonTheme(
+                              height: 50.0,
+                              child: RaisedButton(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .primaryVariant,
+                                onPressed: () {
+                                  _submit();
+                                },
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4)),
+                                child: Text(
+                                  "Sign In",
+                                  style: TextStyle(letterSpacing: 1.3),
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
                       ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    ButtonTheme(
-                      minWidth: 225.0,
-                      height: 50.0,
-                      child: RaisedButton(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4)),
-                        onPressed: () {
-                          _signUp();
-                        },
-                        child: Text(
-                          "Register",
-                          style: TextStyle(letterSpacing: 1.3),
-                        ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.01,
                       ),
-                    ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    GoogleSignInButton(
-                        onPressed: () {
-                          gMailTabEnable();
-                        },
-                        darkMode: false),
-                  ],
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: ButtonTheme(
+                              height: 50.0,
+                              child: RaisedButton(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4)),
+                                onPressed: () {
+                                  _signUp();
+                                },
+                                child: Text(
+                                  "Register",
+                                  style: TextStyle(letterSpacing: 1.3),
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.01,
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: GoogleSignInButton(
+                                onPressed: () {
+                                  gMailTabEnable();
+                                },
+                                darkMode: false),
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
                 )
               ],
             ),
@@ -511,7 +532,7 @@ class _LoginScreenState extends State<LoginPage>
           child: ProgressHUD(
             child: screenRoot,
             inAsyncCall: _isLoading,
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.indigo),
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
             opacity: 0.0,
           ),
         ),

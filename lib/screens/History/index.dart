@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/presentation/medicall_app_icons.dart' as CustomIcons;
 import 'package:Medicall/globals.dart' as globals;
+import 'package:flutter/painting.dart';
 
 class HistoryScreen extends StatefulWidget {
   final globals.ConsultData data;
@@ -21,7 +22,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
         appBar: AppBar(
           centerTitle: true,
           title: Text(
-            medicallUser.type == 'provider' ? 'Patients' : 'History',
+            medicallUser.type == 'provider' ? 'Patients' : 'Consult History',
             style: TextStyle(
               fontSize: Theme.of(context).platform == TargetPlatform.iOS
                   ? 17.0
@@ -49,42 +50,86 @@ class _HistoryScreenState extends State<HistoryScreen> {
         }),
         body: SingleChildScrollView(
           child: StreamBuilder(
-              stream: Firestore.instance
-                  .collection('users')
-                  .document(medicallUser.id)
-                  .collection('consults')
-                  .snapshots(),
+              stream: medicallUser.type == 'patient'
+                  ? Firestore.instance
+                      .collection('consults')
+                      .where('patient_id', isEqualTo: medicallUser.id)
+                      .snapshots()
+                  : Firestore.instance
+                      .collection('consults')
+                      .where('provider_id', isEqualTo: medicallUser.id)
+                      .snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
-                  return Center(
-                    child: CircularProgressIndicator(
-                      value: null,
-                    ),
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Container(
+                        height: MediaQuery.of(context).size.height * 0.85,
+                      ),
+                      Container(
+                        height: 50,
+                        alignment: Alignment.center,
+                        width: 50,
+                        padding: EdgeInsets.all(10),
+                        child: CircularProgressIndicator(),
+                      )
+                    ],
                   );
                 }
                 var userDocuments = snapshot.data.documents;
                 List<Widget> historyList = [];
                 for (var i = 0; i < userDocuments.length; i++) {
-                  historyList.add(ListTile(
-                    onTap: () {
-                      Navigator.pushNamed(context, '/historyDetail',
-                          arguments: userDocuments[i].documentID);
-                    },
-                    title: Text(medicallUser.type == 'provider'
-                        ? userDocuments[i].data['patient'].toString()
-                        : userDocuments[i].data['provider'].toString()),
-                    subtitle: Text(userDocuments[i].data['date'].toString() +
-                        '\n' +
-                        userDocuments[i].data['type'].toString()),
-                    trailing: IconButton(
-                      icon: Icon(Icons.input),
-                      onPressed: () {},
-                    ),
-                    leading: Icon(
-                      Icons.account_circle,
-                      size: 50,
-                    ),
-                  ));
+                  historyList.add(FlatButton(
+                      padding: EdgeInsets.all(0),
+                      splashColor:
+                          Theme.of(context).colorScheme.secondary.withAlpha(70),
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/historyDetail',
+                            arguments: userDocuments[i].documentID);
+                      },
+                      child: Container(
+                        decoration: new BoxDecoration(
+                            border: new Border(
+                                bottom: BorderSide(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .secondary
+                                        .withAlpha(70)))),
+                        child: ListTile(
+                          dense: true,
+                          isThreeLine: true,
+                          title: Text(
+                            medicallUser.type == 'provider'
+                                ? userDocuments[i].data['patient'].toString()
+                                : userDocuments[i].data['provider'].toString(),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1.1,
+                                color: Theme.of(context).colorScheme.primary),
+                          ),
+                          subtitle: Text(
+                              userDocuments[i].data['date'].toString() +
+                                  '\n' +
+                                  userDocuments[i].data['type'].toString()),
+                          trailing: IconButton(
+                            icon: Icon(Icons.input),
+                            color: Theme.of(context)
+                                .colorScheme
+                                .primary
+                                .withAlpha(150),
+                            onPressed: () {},
+                          ),
+                          leading: Icon(
+                            Icons.account_circle,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .secondary
+                                .withAlpha(170),
+                            size: 50,
+                          ),
+                        ),
+                      )));
                 }
                 return Column(children: historyList.reversed.toList());
               }),

@@ -1,10 +1,10 @@
 library medicall_user;
 
-
 MedicallUser medicallUser;
 
 class MedicallUser {
   String id;
+  List<String> devTokens;
   String type;
   String displayName;
   String firstName;
@@ -15,8 +15,10 @@ class MedicallUser {
   bool terms;
   bool policy;
 
+
   MedicallUser({
     this.id,
+    this.devTokens,
     this.type,
     this.displayName,
     this.firstName,

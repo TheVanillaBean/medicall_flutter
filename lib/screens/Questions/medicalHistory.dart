@@ -53,7 +53,7 @@ class _MedHistoryQuestionsScreenState extends State<MedHistoryQuestionsScreen> {
           historyFormKey.currentState.save();
           if (historyFormKey.currentState.validate()) {
             print('validationSucceded');
-            print(historyFormKey.currentState.value);
+            //print(historyFormKey.currentState.value);
             var listThis = historyFormKey.currentState.value.values.toList();
             widget.data.historyQuestions = [];
             for (var i = 0; i < listThis.length; i++) {
@@ -86,8 +86,20 @@ class _MedHistoryQuestionsScreenState extends State<MedHistoryQuestionsScreen> {
                   case ConnectionState.none:
                     return Text('Press button to start');
                   case ConnectionState.waiting:
-                    return Center(
-                      child: CircularProgressIndicator(),
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Container(
+                          height: MediaQuery.of(context).size.height * 0.85,
+                        ),
+                        Container(
+                          height: 50,
+                          alignment: Alignment.center,
+                          width: 50,
+                          padding: EdgeInsets.all(10),
+                          child: CircularProgressIndicator(),
+                        )
+                      ],
                     );
                   default:
                     if (snapshot.hasError)

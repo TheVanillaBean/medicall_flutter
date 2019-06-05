@@ -18,14 +18,14 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
   String _error = '';
   @override
   void initState() {
-    if(widget.data.media != null && widget.data.media.length > 0){
+    if (widget.data.media != null && widget.data.media.length > 0) {
       images = widget.data.media;
     }
     super.initState();
   }
 
   Widget buildGridView() {
-    widget.data.media = images;
+    //widget.data.media = images;
     return GridView.count(
         crossAxisCount: 2,
         padding: EdgeInsets.all(10),
@@ -33,7 +33,7 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
         mainAxisSpacing: 10,
         children: List.generate(images.length, (index) {
           Asset asset = images[index];
-          
+
           return Container(
             child: AssetView(
               index,

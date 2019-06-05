@@ -10,6 +10,7 @@ import 'package:Medicall/components/logger.dart';
 import 'package:Medicall/screens/Registration/RegistrationType/index.dart';
 import 'package:Medicall/components/masked_text.dart';
 import 'package:Medicall/components/reactive_refresh_indicator.dart';
+import 'package:Medicall/globals.dart' as globals;
 
 enum AuthStatus { PHONE_AUTH, SMS_AUTH, PROFILE_AUTH }
 
@@ -45,21 +46,11 @@ class _AuthScreenState extends State<AuthScreen> {
 
   // Firebase
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
-  //final GoogleSignIn _googleSignIn = GoogleSignIn();
-
-  //GoogleSignInAccount _googleUser;
+  FirebaseUser _firebaseUser;
 
   @override
   void initState() {
     super.initState();
-    // subscription = documentReference.snapshots().listen((datasnapshot) {
-    //   if (datasnapshot.exists) {
-    //     setState(() {
-    //       //myText = datasnapshot.data['desc'];
-    //     });
-    //   }
-    // });
   }
 
   @override
@@ -174,7 +165,7 @@ class _AuthScreenState extends State<AuthScreen> {
   //     Logger.log(TAG, message: "Received $user");
   //     final GoogleSignInAuthentication googleAuth = await user.authentication;
   //     Logger.log(TAG, message: "Added googleAuth: $googleAuth");
-  //     await _auth
+  //     _firebaseUser = await _auth
   //         .signInWithCredential(GoogleAuthProvider.getCredential(
   //           accessToken: googleAuth.accessToken,
   //           idToken: googleAuth.idToken,
@@ -184,7 +175,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
   //   if (user != null) {
   //     _updateRefreshing(false);
-  //     this._googleUser = user;
+  //     _googleUser = user;
   //     setState(() {
   //       this.status = AuthStatus.PHONE_AUTH;
   //       Logger.log(TAG, message: "Changed status to $status");

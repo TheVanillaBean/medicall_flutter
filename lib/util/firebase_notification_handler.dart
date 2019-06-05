@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:Medicall/globals.dart' as globals;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:Medicall/util/app_util.dart';
 
@@ -43,7 +44,8 @@ class FirebaseNotifications {
     });
     _firebaseMessaging.getToken().then((String token) {
       assert(token != null);
-      print(token);
+      //print(token);
+      globals.devToken = token;
     });
   }
 

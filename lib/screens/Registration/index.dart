@@ -60,7 +60,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           _userRegKey.currentState.save();
           if (_userRegKey.currentState.validate()) {
             print('validationSucceded');
-            print(_userRegKey.currentState.value);
+            //print(_userRegKey.currentState.value);
             _updateUser();
             if (medicallUser.type == "provider") {
               Navigator.pushNamed(context, '/history');
@@ -143,7 +143,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 FormBuilderDateTimePicker(
                   attribute: "Date of birth",
                   inputType: InputType.date,
-                  format: DateFormat("dd-MM-yyyy hh:mm a"),
+                  format: DateFormat("MM-dd-yyyy"),
                   decoration: InputDecoration(
                       labelText: 'Date of Birth',
                       fillColor: Color.fromRGBO(35, 179, 232, 0.1),

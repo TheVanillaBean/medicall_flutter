@@ -1,8 +1,10 @@
 import 'package:Medicall/models/medicall_user.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 //import 'package:flutter/animation.dart';
 import 'package:Medicall/presentation/medicall_app_icons.dart' as CustomIcons;
 import 'package:Medicall/screens/Login/index.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class DrawerMenu extends StatelessWidget {
   // Animation<double> containerGrowAnimation;
@@ -77,17 +79,17 @@ class DrawerMenu extends StatelessWidget {
             ListTile(
                 leading: Icon(
                   Icons.chat,
-                  color: Theme.of(context).colorScheme.primaryVariant,
+                  color: Theme.of(context).disabledColor,
                 ),
                 title: Text(
                   'Chat',
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
+                    color: Theme.of(context).disabledColor,
                   ),
                 ),
                 onTap: () {
-                  Navigator.pop(context);
-                  Navigator.of(context).pushNamed('/chat');
+                  // Navigator.pop(context);
+                  // Navigator.of(context).pushNamed('/chat');
                 }),
             medicallUser.type == 'patient'
                 ? ListTile(
@@ -109,17 +111,17 @@ class DrawerMenu extends StatelessWidget {
             ListTile(
                 leading: Icon(
                   Icons.settings_applications,
-                  color: Theme.of(context).colorScheme.primaryVariant,
+                  color: Theme.of(context).disabledColor,
                 ),
                 title: Text(
                   'Settings',
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
+                    color: Theme.of(context).disabledColor,
                   ),
                 ),
                 onTap: () {
-                  Navigator.pop(context);
-                  Navigator.of(context).pushNamed('/settings');
+                  // Navigator.pop(context);
+                  // Navigator.of(context).pushNamed('/settings');
                 }),
             Divider(
               height: 0,
@@ -136,7 +138,10 @@ class DrawerMenu extends StatelessWidget {
                     color: Theme.of(context).colorScheme.secondary,
                   ),
                 ),
-                onTap: () {
+                onTap: () async {
+                  await GoogleSignIn().signOut();
+                  await FirebaseAuth.instance.signOut();
+
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => LoginPage()),
