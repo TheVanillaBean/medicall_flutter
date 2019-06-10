@@ -1,8 +1,11 @@
-import 'package:Medicall/models/medicall_user.dart';
+import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class RegistrationTypeScreen extends StatefulWidget {
+  final data;
+
+  const RegistrationTypeScreen({Key key, this.data}) : super(key: key);
   @override
   _RegistrationTypeScreenState createState() => _RegistrationTypeScreenState();
 }
@@ -18,6 +21,12 @@ class _RegistrationTypeScreenState extends State<RegistrationTypeScreen> {
     documentReference.updateData(data).whenComplete(() {
       print("Document Added");
     }).catchError((e) => print(e));
+  }
+
+  @override
+  void initState() {
+    medicallUser = widget.data['user'];
+    super.initState();
   }
 
   @override
@@ -66,7 +75,8 @@ class _RegistrationTypeScreenState extends State<RegistrationTypeScreen> {
               ),
               onPressed: () {
                 _add(medicallUser, 'patient');
-                Navigator.pushNamed(context, '/registration');
+                Navigator.pushNamed(context, '/registration',
+                    arguments: widget.data);
               },
             ),
             Expanded(
@@ -94,7 +104,8 @@ class _RegistrationTypeScreenState extends State<RegistrationTypeScreen> {
               ),
               onPressed: () {
                 _add(medicallUser, 'provider');
-                Navigator.pushNamed(context, '/registration');
+                Navigator.pushNamed(context, '/registration',
+                    arguments: widget.data);
               },
             ),
             Expanded(

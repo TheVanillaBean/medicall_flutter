@@ -1,3 +1,5 @@
+import 'package:Medicall/models/consult_data_model.dart';
+import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_alert/flutter_alert.dart';
@@ -7,14 +9,12 @@ import 'package:google_maps_webservice/places.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as LocationManager;
-import 'package:Medicall/screens/SelectProvider/placeDetail.dart';
-import 'package:Medicall/globals.dart' as globals;
 
 const kGoogleApiKey = 'AIzaSyBx8brcoVisQ4_5FUD-xJlS1i4IwjSS-Hc';
 GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
 
 class SelectProviderScreen extends StatefulWidget {
-  final globals.ConsultData data;
+  final data;
 
   const SelectProviderScreen({Key key, @required this.data}) : super(key: key);
   @override
@@ -33,6 +33,14 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
   bool isLoading = false;
   var selectedProvider = '';
   String errorMessage;
+  ConsultData _consult;
+
+  @override
+  void initState() {
+    medicallUser = widget.data['user'];
+    _consult = widget.data['consult'];
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +87,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
               Navigator.pushNamed(
                 context,
                 '/questionsHistory',
-                arguments: widget.data,
+                arguments: {'consult': _consult, 'user': medicallUser},
               );
             } else {
               _showMessageDialog();
@@ -133,10 +141,11 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
                                 child: FlatButton(
                                   onPressed: () {
                                     setState(() {
-                                      widget.data.provider =
+                                      _consult.provider =
                                           userDocuments[i].data['name'];
-                                      widget.data.providerDevTokens = userDocuments[i].data['dev_tokens'];
-                                      widget.data.providerId =
+                                      _consult.providerDevTokens =
+                                          userDocuments[i].data['dev_tokens'];
+                                      _consult.providerId =
                                           userDocuments[i].documentID;
                                       _selectProvider(
                                           userDocuments[i].data['name']);
@@ -195,8 +204,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
     final center = await getUserLocation();
 
     mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-        target: center == null ? LatLng(0, 0) : center,
-        zoom: 15.0)));
+        target: center == null ? LatLng(0, 0) : center, zoom: 15.0)));
     getNearbyPlaces(center);
   }
 
@@ -291,10 +299,10 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
 
   Future<Null> showDetailPlace(String placeId) async {
     if (placeId != null) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => PlaceDetailWidget(placeId)),
-      );
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(builder: (context) => PlaceDetailWidget(placeId)),
+      // );
     }
   }
 
@@ -323,7 +331,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
             child: FlatButton(
               onPressed: () {
                 setState(() {
-                  widget.data.provider = doctorNames[places.indexOf(f)];
+                  _consult.provider = doctorNames[places.indexOf(f)];
                   _selectProvider(doctorNames[places.indexOf(f)]);
                 });
               },

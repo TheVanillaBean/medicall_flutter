@@ -1,11 +1,12 @@
+import 'package:Medicall/models/consult_data_model.dart';
+import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:Medicall/globals.dart' as globals;
 import 'package:Medicall/screens/Questions/buildQuestions.dart';
 
 class SymptomQuestionsScreen extends StatefulWidget {
-  final globals.ConsultData data;
+  final data;
 
   const SymptomQuestionsScreen({Key key, @required this.data})
       : super(key: key);
@@ -22,13 +23,16 @@ class _SymptomQuestionsScreenState extends State<SymptomQuestionsScreen> {
   var medicalHistoryQuestions;
   bool showSegmentedControl = true;
   Future _future;
+  ConsultData _consult;
 
   @override
   void initState() {
     super.initState();
+    _consult = widget.data['consult'];
+    medicallUser = widget.data['user'];
     _future = Firestore.instance
         .document('services/dermatology/symptoms/' +
-            widget.data.consultType.toLowerCase())
+            _consult.consultType.toLowerCase())
         .get();
   }
 
@@ -55,15 +59,15 @@ class _SymptomQuestionsScreenState extends State<SymptomQuestionsScreen> {
             print('validationSucceded');
             //print(screeningFormKey.currentState.value);
             var listThis = screeningFormKey.currentState.value.values.toList();
-            widget.data.screeningQuestions = [];
+            _consult.screeningQuestions = [];
             for (var i = 0; i < listThis.length; i++) {
-              widget.data.screeningQuestions.add({
-                'question': widget.data.stringListQuestions[i],
+              _consult.screeningQuestions.add({
+                'question': _consult.stringListQuestions[i],
                 'answers': listThis[i]
               });
             }
             Navigator.pushNamed(context, '/selectProvider',
-                arguments: widget.data);
+                arguments: {'consult': _consult, 'user': medicallUser});
           } else {
             print('External FormValidation failed');
           }

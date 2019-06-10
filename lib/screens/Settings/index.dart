@@ -1,5 +1,5 @@
+import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:flutter/material.dart';
-import 'package:Medicall/globals.dart' as globals;
 
 class SettingsScreen extends StatelessWidget {
   @override
@@ -27,18 +27,10 @@ class SettingsScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Container(
-                    width: 190.0,
-                    height: 190.0,
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: globals.currentUser != null
-                            ? DecorationImage(
-                                fit: BoxFit.fill,
-                                image: globals.currentUser.photoUrl != null
-                                    ? NetworkImage(globals.currentUser.photoUrl)
-                                    : null)
-                            : null)),
-                Text('medicallUser.displayName', textScaleFactor: 1.5)
+                  width: 190.0,
+                  height: 190.0,
+                ),
+                Text(medicallUser.displayName, textScaleFactor: 1.5)
               ],
             )
           ],

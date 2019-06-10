@@ -1,4 +1,4 @@
-import 'package:Medicall/models/medicall_user.dart';
+import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/animation.dart';
@@ -6,7 +6,7 @@ import 'package:flutter/animation.dart';
 // import 'homeAnimation.dart';
 import 'package:Medicall/presentation/medicall_app_icons.dart' as CustomIcons;
 import 'package:flutter/scheduler.dart' show timeDilation;
-import 'package:Medicall/components/DrawerMenu.dart';
+//import 'package:Medicall/components/DrawerMenu.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key key}) : super(key: key);
@@ -146,7 +146,7 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
           leading: Text('', style: TextStyle(color: Colors.black26)),
         ),
-        drawer: DrawerMenu(),
+        //drawer: DrawerMenu(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: Builder(builder: (BuildContext context) {
           return FloatingActionButton(

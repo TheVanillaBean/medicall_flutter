@@ -1,12 +1,13 @@
+import 'package:Medicall/models/consult_data_model.dart';
+import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
-import 'package:Medicall/globals.dart' as globals;
 import 'asset_view.dart';
 
 class QuestionsUploadScreen extends StatefulWidget {
-  final globals.ConsultData data;
+  final data;
 
   const QuestionsUploadScreen({Key key, @required this.data}) : super(key: key);
   @override
@@ -15,17 +16,20 @@ class QuestionsUploadScreen extends StatefulWidget {
 
 class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
   List<Asset> images = List<Asset>();
+  ConsultData _consult;
   String _error = '';
   @override
   void initState() {
-    if (widget.data.media != null && widget.data.media.length > 0) {
-      images = widget.data.media;
+    _consult = widget.data['consult'];
+    medicallUser = widget.data['user'];
+    if (_consult.media != null && _consult.media.length > 0) {
+      images = _consult.media;
     }
     super.initState();
   }
 
   Widget buildGridView() {
-    //widget.data.media = images;
+    //_consult.media = images;
     return GridView.count(
         crossAxisCount: 2,
         padding: EdgeInsets.all(10),
@@ -107,9 +111,9 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
         padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
         color: Theme.of(context).colorScheme.primary,
         onPressed: () {
-          widget.data.media = images;
+          _consult.media = images;
           Navigator.pushNamed(context, '/consultReview',
-              arguments: widget.data);
+              arguments: {'consult': _consult, 'user': medicallUser});
         },
         //Navigator.pushNamed(context, '/history'), // Switch tabs
 

@@ -1,12 +1,14 @@
-import 'package:Medicall/models/medicall_user.dart';
+import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:intl/intl.dart';
 
 class RegistrationScreen extends StatefulWidget {
-  const RegistrationScreen({Key key}) : super(key: key);
+  final data;
+  const RegistrationScreen({Key key, @required this.data}) : super(key: key);
   @override
   _RegistrationScreenState createState() => _RegistrationScreenState();
 }
@@ -18,11 +20,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   bool readOnly = false;
   double formSpacing = 20;
   bool showSegmentedControl = true;
+  FirebaseUser firebaseUser;
   final DocumentReference documentReference =
       Firestore.instance.document("users/" + medicallUser.id);
 
   @override
   void initState() {
+    medicallUser = widget.data['user'];
     super.initState();
   }
 
@@ -31,12 +35,23 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         .format(_userRegKey.currentState.value['Date of birth'])
         .toString();
     medicallUser.terms = _userRegKey.currentState.value['Terms and conditions'];
+    medicallUser.firstName = _userRegKey.currentState.value['First name'];
+    medicallUser.lastName = _userRegKey.currentState.value['Last name'];
+    medicallUser.displayName =
+        medicallUser.firstName + " " + medicallUser.lastName;
+    medicallUser.address = _userRegKey.currentState.value['Address'];
+    medicallUser.titles = _userRegKey.currentState.value['Medical Titles'];
     medicallUser.policy =
         _userRegKey.currentState.value['accept_privacy_switch'];
     Map<String, dynamic> data = <String, dynamic>{
+      "name": medicallUser.displayName,
+      "first_name": medicallUser.firstName,
+      "last_name": medicallUser.lastName,
       "dob": medicallUser.dob,
       "terms": medicallUser.terms,
       "policy": medicallUser.policy,
+      "address": medicallUser.address,
+      "titles": medicallUser.titles,
       "registered": true,
     };
     documentReference.updateData(data).whenComplete(() {
@@ -63,9 +78,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             //print(_userRegKey.currentState.value);
             _updateUser();
             if (medicallUser.type == "provider") {
-              Navigator.pushNamed(context, '/history');
+              Navigator.pushNamed(context, '/history', arguments: widget.data);
             } else {
-              Navigator.pushNamed(context, '/doctors');
+              Navigator.pushNamed(context, '/doctors', arguments: widget.data);
             }
           } else {
             print('External FormValidation failed');
@@ -119,9 +134,34 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     FormBuilderValidators.required(),
                   ],
                 ),
-                SizedBox(
-                  height: formSpacing,
-                ),
+                medicallUser.type == "provider"
+                    ? Column(
+                        children: <Widget>[
+                          SizedBox(
+                            height: formSpacing,
+                          ),
+                          FormBuilderTextField(
+                            attribute: "Medical Titles",
+                            initialValue: medicallUser.titles,
+                            decoration: InputDecoration(
+                                labelText: 'Medical Titles',
+                                fillColor: Color.fromRGBO(35, 179, 232, 0.1),
+                                filled: true,
+                                disabledBorder: InputBorder.none,
+                                enabledBorder: InputBorder.none,
+                                border: InputBorder.none),
+                            validators: [
+                              FormBuilderValidators.required(),
+                            ],
+                          ),
+                          SizedBox(
+                            height: formSpacing,
+                          ),
+                        ],
+                      )
+                    : SizedBox(
+                        height: formSpacing,
+                      ),
                 FormBuilderTextField(
                   attribute: "Email",
                   initialValue: medicallUser.email,
@@ -153,9 +193,34 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       border: InputBorder.none),
                   readonly: false,
                 ),
-                SizedBox(
-                  height: formSpacing,
-                ),
+                medicallUser.type == "provider"
+                    ? Column(
+                        children: <Widget>[
+                          SizedBox(
+                            height: formSpacing,
+                          ),
+                          FormBuilderTextField(
+                            attribute: "Address",
+                            initialValue: medicallUser.address,
+                            decoration: InputDecoration(
+                                labelText: 'Address',
+                                fillColor: Color.fromRGBO(35, 179, 232, 0.1),
+                                filled: true,
+                                disabledBorder: InputBorder.none,
+                                enabledBorder: InputBorder.none,
+                                border: InputBorder.none),
+                            validators: [
+                              FormBuilderValidators.required(),
+                            ],
+                          ),
+                          SizedBox(
+                            height: formSpacing,
+                          ),
+                        ],
+                      )
+                    : SizedBox(
+                        height: formSpacing,
+                      ),
                 FormBuilderTextField(
                   attribute: "Phone",
                   initialValue: medicallUser.phoneNumber,

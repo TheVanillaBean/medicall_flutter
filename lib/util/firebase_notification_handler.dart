@@ -1,18 +1,59 @@
 import 'dart:io';
-
-import 'package:Medicall/globals.dart' as globals;
+import 'package:Medicall/models/global_nav_key.dart';
+import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:Medicall/util/app_util.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FirebaseNotifications {
   FirebaseMessaging _firebaseMessaging;
+  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  FirebaseUser firebaseUser;
 
-  void setUpFirebase() {
+  setUpFirebase() {
     _firebaseMessaging = FirebaseMessaging();
     firebaseCloudMessagingListeners();
   }
 
-  void firebaseCloudMessagingListeners() {
+  _navigateToItemHistoryDetailOnLaunch(data) async {
+    //var decodedUser = json.decode(data['data'].toString());
+    var item = data['screen'].split('/');
+    final SharedPreferences prefs = await _prefs;
+    final String requestedRoute = item.toString();
+    //Navigator.pushReplacementNamed(scaffoldKey, '/login');
+    //showToast('LAUNCH:' + item.toString(), duration: Duration(seconds: 3));
+    prefs.setString("requestedRoute", requestedRoute).then((bool success) {
+      print('shared pref success');
+    });
+    return;
+  }
+
+  _navigateToItemHistoryDetailOnResume(data) async {
+    //var decodedUser = json.decode(data['data'].toString());
+    var item = data['screen'].split('/');
+    final SharedPreferences prefs = await _prefs;
+    final String requestedRoute = item.toString();
+    //Navigator.pushReplacementNamed(scaffoldKey, '/login');
+
+    //showToast('RESUME:' + item.toString(), duration: Duration(seconds: 3));
+    prefs.setString("requestedRoute", requestedRoute).then((bool success) {
+      print('shared pref success');
+    });
+    GlobalNavigatorKey.key.currentState.pushNamed('/' + item[0], arguments: {
+      'user': medicallUser,
+      'documentId': item[1],
+      'isRouted': true
+    });
+    return;
+
+    // showToast('RESUME:' + item.toString(), duration: Duration(seconds: 3));
+    // prefs.setString("requestedRoute", requestedRoute).then((bool success) {
+    //   print('shared pref success');
+    // });
+  }
+
+  firebaseCloudMessagingListeners() {
     if (Platform.isIOS) iOSPermission();
 
     _firebaseMessaging.configure(
@@ -29,11 +70,20 @@ class FirebaseNotifications {
       },
       onLaunch: (Map<String, dynamic> message) async {
         print('onLaunch: $message');
+        _navigateToItemHistoryDetailOnLaunch(message['data']);
         //_navigateToItemDetail(message);
+        //showToast('laucnhginhhhh', duration: Duration(seconds: 60));
+
+        //(message['data']);
       },
       onResume: (Map<String, dynamic> message) async {
         print('onResume: $message');
-        //_navigateToItemDetail(message);
+        if (medicallUser != null) {
+          _navigateToItemHistoryDetailOnResume(message['data']);
+        } else {
+          _navigateToItemHistoryDetailOnLaunch(message['data']);
+        }
+        //_navigateToItemHistoryDetail(message['data']);
       },
     );
     _firebaseMessaging.requestNotificationPermissions(
@@ -45,11 +95,12 @@ class FirebaseNotifications {
     _firebaseMessaging.getToken().then((String token) {
       assert(token != null);
       //print(token);
-      globals.devToken = token;
+      medicallUser = MedicallUser();
+      medicallUser.devTokens = [token];
     });
   }
 
-  void iOSPermission() {
+  iOSPermission() {
     _firebaseMessaging.requestNotificationPermissions(
         IosNotificationSettings(sound: true, badge: true, alert: true));
     _firebaseMessaging.onIosSettingsRegistered

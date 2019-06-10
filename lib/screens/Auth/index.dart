@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:Medicall/models/medicall_user.dart';
+import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,7 +10,6 @@ import 'package:Medicall/components/logger.dart';
 import 'package:Medicall/screens/Registration/RegistrationType/index.dart';
 import 'package:Medicall/components/masked_text.dart';
 import 'package:Medicall/components/reactive_refresh_indicator.dart';
-import 'package:Medicall/globals.dart' as globals;
 
 enum AuthStatus { PHONE_AUTH, SMS_AUTH, PROFILE_AUTH }
 
@@ -46,7 +45,6 @@ class _AuthScreenState extends State<AuthScreen> {
 
   // Firebase
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  FirebaseUser _firebaseUser;
 
   @override
   void initState() {
@@ -72,14 +70,14 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   void _add(user) {
-    medicallUser = MedicallUser(
-      id: user.uid,
-      displayName: user.displayName,
-      firstName: user.displayName != null ? user.displayName.split(' ')[0] : '',
-      lastName: user.displayName != null ? user.displayName.split(' ')[1] : '',
-      email: user.email,
-      phoneNumber: user.phoneNumber,
-    );
+    medicallUser.id = user.uid;
+    medicallUser.displayName = user.displayName;
+    medicallUser.firstName =
+        user.displayName != null ? user.displayName.split(' ')[0] : '';
+    medicallUser.lastName =
+        user.displayName != null ? user.displayName.split(' ')[1] : '';
+    medicallUser.email = user.email;
+    medicallUser.phoneNumber = user.phoneNumber;
     final DocumentReference documentReference =
         Firestore.instance.document("users/" + user.uid);
     Map<String, String> data = <String, String>{
@@ -90,6 +88,16 @@ class _AuthScreenState extends State<AuthScreen> {
       "phone": user.phoneNumber
     };
     documentReference.setData(data).whenComplete(() {
+      print("Document Added");
+    }).catchError((e) => print(e));
+
+    final DocumentReference docCardsRef =
+        Firestore.instance.document("cards/" + user.uid);
+    Map<String, String> newCardEntryData = <String, String>{
+      "custId": "new",
+      "email": user.email,
+    };
+    docCardsRef.setData(newCardEntryData).whenComplete(() {
       print("Document Added");
     }).catchError((e) => print(e));
   }
@@ -314,7 +322,9 @@ class _AuthScreenState extends State<AuthScreen> {
         // to post your profile/user, etc.
         _add(user);
         Navigator.of(context).pushReplacement(CupertinoPageRoute(
-          builder: (context) => RegistrationTypeScreen(),
+          builder: (context) => RegistrationTypeScreen(
+                data: {"user": medicallUser},
+              ),
         ));
       } else {
         setState(() {

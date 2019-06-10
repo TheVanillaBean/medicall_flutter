@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:Medicall/util/firebase_listenter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:Medicall/globals.dart' as globals;
 
 class FirebaseGoogleUtil {
   static final FirebaseGoogleUtil _instance = FirebaseGoogleUtil.internal();
@@ -36,7 +35,6 @@ class FirebaseGoogleUtil {
     assert(await user.getIdToken() != null);
 
     final FirebaseUser currentUser = await _auth.currentUser();
-    globals.currentUser = googleUser;
     if (!identical(user.uid, currentUser.uid)) {
       onLoginUserVerified(currentUser);
     } else {

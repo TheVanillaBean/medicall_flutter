@@ -1,10 +1,8 @@
-library medicall_user;
-
 MedicallUser medicallUser;
 
 class MedicallUser {
   String id;
-  List<String> devTokens;
+  List<dynamic> devTokens;
   String type;
   String displayName;
   String firstName;
@@ -12,9 +10,10 @@ class MedicallUser {
   String dob;
   String phoneNumber;
   String email;
+  String address;
+  String titles;
   bool terms;
   bool policy;
-
 
   MedicallUser({
     this.id,
@@ -26,6 +25,8 @@ class MedicallUser {
     this.dob,
     this.phoneNumber,
     this.email,
+    this.address,
+    this.titles,
     this.terms,
     this.policy,
   });

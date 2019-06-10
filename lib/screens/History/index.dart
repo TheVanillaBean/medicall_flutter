@@ -1,13 +1,12 @@
-import 'package:Medicall/models/medicall_user.dart';
+import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/presentation/medicall_app_icons.dart' as CustomIcons;
-import 'package:Medicall/globals.dart' as globals;
 import 'package:flutter/painting.dart';
 
 class HistoryScreen extends StatefulWidget {
-  final globals.ConsultData data;
+  final data;
 
   const HistoryScreen({Key key, @required this.data}) : super(key: key);
 
@@ -16,6 +15,13 @@ class HistoryScreen extends StatefulWidget {
 }
 
 class _HistoryScreenState extends State<HistoryScreen> {
+  //Tokens _tokens = Tokens();
+  @override
+  void initState() {
+    super.initState();
+    //_tokens.currentContext = context;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,7 +39,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
               Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
           leading: Text('', style: TextStyle(color: Colors.black26)),
         ),
-        drawer: DrawerMenu(),
+        drawer: DrawerMenu(
+          data: {'user': medicallUser},
+        ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: Builder(builder: (BuildContext context) {
           return FloatingActionButton(
@@ -86,7 +94,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           Theme.of(context).colorScheme.secondary.withAlpha(70),
                       onPressed: () {
                         Navigator.pushNamed(context, '/historyDetail',
-                            arguments: userDocuments[i].documentID);
+                            arguments: {
+                              'documentId': userDocuments[i].documentID,
+                              'user': medicallUser,
+                              'isRouted': false,
+                            });
                       },
                       child: Container(
                         decoration: new BoxDecoration(

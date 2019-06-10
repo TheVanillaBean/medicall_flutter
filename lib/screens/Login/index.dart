@@ -1,4 +1,4 @@
-import 'package:Medicall/models/medicall_user.dart';
+import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/Login/styles.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,26 +11,25 @@ import 'package:Medicall/util/firebase_phone_util.dart';
 import 'package:Medicall/components/progress_hud.dart';
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
 import 'package:Medicall/screens/Auth/index.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:Medicall/util/firebase_notification_handler.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:Medicall/globals.dart' as globals;
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({Key key}) : super(key: key);
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginPage>
     implements FirebaseAuthListener {
+  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   bool _isPhoneAuthEnable = false;
   bool _isEmailAuthEnable = true;
   bool _isLoading = false;
   bool autoValidate = true;
   bool readOnly = false;
   bool showSegmentedControl = true;
-  //GlobalKey<FormBuilderState> _fbKey = GlobalKey();
-
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final _teMobileEmail = TextEditingController();
   final _teCountryCode = TextEditingController();
@@ -43,6 +42,8 @@ class _LoginScreenState extends State<LoginPage>
   FirebasePhoneUtil firebasePhoneUtil;
   FirebaseGoogleUtil firebaseGoogleUtil;
   FirebaseAnonymouslyUtil firebaseAnonymouslyUtil;
+  FirebaseUser firebaseUser;
+  Future<String> _requestedRoute;
 
   @override
   void initState() {
@@ -56,6 +57,11 @@ class _LoginScreenState extends State<LoginPage>
 
     firebaseAnonymouslyUtil = FirebaseAnonymouslyUtil();
     firebaseAnonymouslyUtil.setScreenListener(this);
+
+    FirebaseNotifications().setUpFirebase();
+    _requestedRoute = _prefs.then((SharedPreferences prefs) {
+      return (prefs.getString('requestedRoute'));
+    });
   }
 
   @override
@@ -65,69 +71,69 @@ class _LoginScreenState extends State<LoginPage>
 
   Future<void> _getUser() async {
     final DocumentReference documentReference =
-        Firestore.instance.document("users/" + globals.currentFirebaseUser.uid);
+        Firestore.instance.document("users/" + firebaseUser.uid);
     await documentReference.get().then((datasnapshot) {
-      String currDevToken = globals.devToken;
-      List<dynamic> dbDevTokens = datasnapshot.data['dev_tokens'];
-      List<String> finalDevTokenList = [
-        ...dbDevTokens,
-      ];
-      if (!finalDevTokenList.contains(currDevToken)) {
-        finalDevTokenList.add(currDevToken);
-      }
+      //FirebaseNotifications().setUpFirebase(_tokens, context);
+      // String currDevToken = _tokens.currentDevToken;
+      // List<dynamic> dbDevTokens = datasnapshot.data['dev_tokens'];
+      // List<String> finalDevTokenList = [
+      //   currDevToken,
+      // ];
+      // if (!finalDevTokenList.contains(currDevToken) &&
+      //     currDevToken != null &&
+      //     currDevToken != '') {
+      //   finalDevTokenList.add(currDevToken);
+      // }
       if (datasnapshot.data != null) {
-        medicallUser = MedicallUser(
-          id: globals.currentFirebaseUser.uid,
-          displayName: datasnapshot.data['name'],
-          firstName: datasnapshot.data['first_name'],
-          lastName: datasnapshot.data['last_name'],
-          dob: datasnapshot.data['dob'],
-          policy: datasnapshot.data['policy'],
-          terms: datasnapshot.data['terms'],
-          type: datasnapshot.data['type'],
-          email: datasnapshot.data['email'],
-          phoneNumber: datasnapshot.data['phone'],
-          devTokens: finalDevTokenList,
-        );
+        medicallUser.id = firebaseUser.uid;
+        medicallUser.displayName = datasnapshot.data['name'];
+        medicallUser.firstName = datasnapshot.data['first_name'];
+        medicallUser.lastName = datasnapshot.data['last_name'];
+        medicallUser.dob = datasnapshot.data['dob'];
+        medicallUser.policy = datasnapshot.data['policy'];
+        medicallUser.terms = datasnapshot.data['terms'];
+        medicallUser.type = datasnapshot.data['type'];
+        medicallUser.email = datasnapshot.data['email'];
+        medicallUser.phoneNumber = datasnapshot.data['phone'];
       } else {
-        medicallUser = MedicallUser(
-          id: globals.currentFirebaseUser.uid,
-          displayName: globals.currentFirebaseUser.displayName,
-          firstName: globals.currentFirebaseUser.displayName.split(' ')[0],
-          lastName: globals.currentFirebaseUser.displayName.split(' ')[1],
-          policy: false,
-          terms: false,
-          email: globals.currentFirebaseUser.email,
-          phoneNumber: globals.currentFirebaseUser.phoneNumber,
-        );
+        medicallUser.id = medicallUser.displayName = firebaseUser.displayName;
+        medicallUser.firstName = firebaseUser.displayName.split(' ')[0];
+        medicallUser.lastName = firebaseUser.displayName.split(' ')[1];
+        medicallUser.policy = false;
+        medicallUser.terms = false;
+        medicallUser.email = firebaseUser.email;
+        medicallUser.phoneNumber = firebaseUser.phoneNumber;
         Map<String, dynamic> data = <String, dynamic>{
-          "name": globals.currentFirebaseUser.displayName,
-          "first_name": globals.currentFirebaseUser.displayName.split(' ')[0],
-          "last_name": globals.currentFirebaseUser.displayName.split(' ')[1],
-          "email": globals.currentFirebaseUser.email,
-          "phone": globals.currentFirebaseUser.phoneNumber,
+          "name": firebaseUser.displayName,
+          "first_name": firebaseUser.displayName.split(' ')[0],
+          "last_name": firebaseUser.displayName.split(' ')[1],
+          "email": firebaseUser.email,
+          "phone": firebaseUser.phoneNumber,
           "dob": null,
           "policy": false,
           "terms": false,
           "type": null,
-          "dev_tokens": finalDevTokenList,
         };
-        documentReference.setData(data).whenComplete(() {
+        documentReference.updateData(data).whenComplete(() {
           print("Document Added");
         }).catchError((e) => print(e));
       }
-      Map<String, dynamic> data = <String, dynamic>{
-        "dev_tokens": finalDevTokenList,
-      };
-      documentReference.updateData(data).whenComplete(() {
-        print("Document Added");
-      }).catchError((e) => print(e));
+      if (datasnapshot.data['dev_tokens'] == null ||
+          datasnapshot.data['dev_tokens'][0] != medicallUser.devTokens[0]) {
+        Map<String, dynamic> data = <String, dynamic>{
+          "dev_tokens": medicallUser.devTokens,
+        };
+        documentReference.updateData(data).whenComplete(() {
+          print("Document Added");
+        }).catchError((e) => print(e));
+      }
     }).catchError((e) => print(e));
   }
 
   void _submit() {
     {
       setState(() {
+        //FirebaseNotifications().setUpFirebase(_tokens, context);
         if (_isPhoneAuthEnable) {
           if (_teMobileEmail.text.isEmpty) {
             showAlert("Enter valid mobile number");
@@ -164,34 +170,61 @@ class _LoginScreenState extends State<LoginPage>
   Future moveUserDashboardScreen(FirebaseUser currentUser) async {
     eMailTabEnable();
     closeLoader();
-    globals.currentFirebaseUser = currentUser;
+    firebaseUser = currentUser;
     await _getUser();
+    final SharedPreferences prefs = await _prefs;
+    await _requestedRoute.then((onValue) {
+      if (onValue != null && onValue != "") {
+        String newValue = onValue
+            .replaceAll("[", "")
+            .replaceAll("]", "")
+            .replaceAll(RegExp(r"/\s/g"), "")
+            .trim();
+        List<String> finalValue = newValue.split(",");
+        finalValue[1] = finalValue[1].trim();
+        Navigator.pushReplacementNamed(context, '/' + finalValue[0],
+            arguments: {
+              'user': medicallUser,
+              'documentId': finalValue[1],
+              'isRouted': true,
+            });
+        prefs.setString("requestedRoute", "").then((bool success) {
+          print('shared pref success');
+        });
+        return;
+      }
+      if (currentUser.isEmailVerified == true &&
+          currentUser.phoneNumber != null) {
+        //print(widget.requestedRoute.toString());
 
-    if (currentUser.isEmailVerified == true &&
-        currentUser.phoneNumber != null) {
-      if (medicallUser.terms == true && medicallUser.policy == true) {
-        if (medicallUser.type == 'provider') {
-          Navigator.pushNamed(context, '/history');
+        if (medicallUser.terms == true && medicallUser.policy == true) {
+          if (medicallUser.type == 'provider') {
+            Navigator.pushNamed(context, '/history',
+                arguments: {'user': medicallUser});
+          } else {
+            Navigator.pushNamed(context, '/doctors',
+                arguments: {'user': medicallUser});
+          }
         } else {
-          Navigator.pushNamed(context, '/doctors');
+          if (medicallUser.type == null) {
+            Navigator.pushNamed(context, '/registrationType',
+                arguments: {'user': medicallUser});
+          } else {
+            Navigator.pushNamed(context, '/registration',
+                arguments: {'user': medicallUser});
+          }
         }
       } else {
-        if (medicallUser.type == null) {
-          Navigator.pushNamed(context, '/registrationType');
-        } else {
-          Navigator.pushNamed(context, '/registration');
-        }
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => AuthScreen(),
+        ));
       }
-    } else {
-      Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => AuthScreen(),
-      ));
-    }
+    });
+    //showToast(_requestedRoute.toString(), duration: Duration(minutes: 1));
   }
 
   @override
   Widget build(BuildContext context) {
-    FirebaseNotifications().setUpFirebase();
     Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -311,6 +344,19 @@ class _LoginScreenState extends State<LoginPage>
 
     var anonymouslyForm = Column(
       children: <Widget>[
+        // FutureBuilder<String>(
+        //     future: _requestedRoute,
+        //     builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+        //       switch (snapshot.connectionState) {
+        //         case ConnectionState.waiting:
+        //           return const CircularProgressIndicator();
+        //         default:
+        //           if (snapshot.hasError)
+        //             return Text('Error: ${snapshot.error}');
+        //           else
+        //             return Text('${snapshot.data}\n\n');
+        //       }
+        //     }),
         TextFormField(
           controller: _teMobileEmail,
           focusNode: _focusNodeMobileEmail,
@@ -513,7 +559,6 @@ class _LoginScreenState extends State<LoginPage>
 
     return Scaffold(
       appBar: null,
-      key: _scaffoldKey,
       body: Container(
         decoration: BoxDecoration(
           image: backgroundImage,

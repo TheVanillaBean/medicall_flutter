@@ -1,4 +1,4 @@
-import 'package:Medicall/models/medicall_user.dart';
+import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_pro/carousel_pro.dart';
@@ -17,13 +17,16 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
   TabController controller;
   GlobalKey<FormBuilderState> _consultFormKey = GlobalKey();
   bool isLoading = true;
+  String documentId;
 
   var snapshot;
   @override
   initState() {
     super.initState();
-    _getConsultDetail();
+    documentId = widget.data['documentId'];
+    medicallUser = widget.data['user'];
     controller = TabController(length: 3, vsync: this);
+    _getConsultDetail();
   }
 
   @override
@@ -35,7 +38,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
 
   Future<void> _getConsultDetail() async {
     final DocumentReference documentReference =
-        Firestore.instance.collection('consults').document(widget.data);
+        Firestore.instance.collection('consults').document(documentId);
     await documentReference.get().then((datasnapshot) {
       if (datasnapshot.data != null) {
         setState(() {
@@ -47,7 +50,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
 
   Future<void> _updateConsult() async {
     final DocumentReference documentReference =
-        Firestore.instance.collection('consults').document(widget.data);
+        Firestore.instance.collection('consults').document(documentId);
     Map<String, String> data = <String, String>{
       "consult": _consultFormKey.currentState.value['docInput'],
     };
@@ -93,6 +96,14 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
           controller: controller,
         ),
         elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
+        leading: WillPopScope(
+          onWillPop: () async {
+            Navigator.pushNamed(context, '/history',
+                arguments: {'user': medicallUser});
+            return false;
+          },
+          child: BackButton(),
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       bottomNavigationBar: medicallUser.type == 'provider'

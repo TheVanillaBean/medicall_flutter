@@ -5,8 +5,6 @@ import 'package:Medicall/util/count/countdown_base.dart';
 import 'package:Medicall/util/firebase_listenter.dart';
 import 'package:Medicall/util/firebase_phone_util.dart';
 import 'package:Medicall/components/progress_hud.dart';
-//import 'package:Medicall/screens/Registration/index.dart';
-import 'package:Medicall/globals.dart' as globals;
 
 class OtpVerificationScreen extends StatefulWidget {
   OtpVerificationScreen({Key key}) : super(key: key);
@@ -299,7 +297,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
   @override
   onLoginUserVerified(FirebaseUser currentUser) async {
     //Navigator.pushNamed(context, '/registration');
-    globals.currentFirebaseUser = currentUser;
     Navigator.pushNamed(context, '/registration');
   }
 }

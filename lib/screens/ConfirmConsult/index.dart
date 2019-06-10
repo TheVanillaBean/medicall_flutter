@@ -1,8 +1,8 @@
 import 'dart:typed_data';
-
-import 'package:Medicall/models/medicall_user.dart';
+import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/util/stripe_payment_handler.dart';
 import 'package:flutter/material.dart';
-import 'package:Medicall/globals.dart' as globals;
+import 'package:Medicall/models/consult_data_model.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -11,7 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:stripe_payment/stripe_payment.dart';
 
 class ConfirmConsultScreen extends StatefulWidget {
-  final globals.ConsultData data;
+  final data;
 
   const ConfirmConsultScreen({Key key, @required this.data}) : super(key: key);
   @override
@@ -21,10 +21,14 @@ class ConfirmConsultScreen extends StatefulWidget {
 class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
     with SingleTickerProviderStateMixin {
   bool isLoading = false;
+  double price = 39.00;
+  ConsultData _consult;
   TabController controller;
   @override
   void initState() {
     super.initState();
+    _consult = widget.data['consult'];
+    medicallUser = widget.data['user'];
     controller = TabController(length: 3, vsync: this);
     StripeSource.setPublishableKey(
         "pk_test_SY5CUKXzjYT67upOTiLGuoVD00INR5IkJL");
@@ -43,7 +47,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          'Consult with ' + widget.data.provider,
+          'Consult with ' + _consult.provider,
           style: TextStyle(
             fontSize:
                 Theme.of(context).platform == TargetPlatform.iOS ? 17.0 : 17.0,
@@ -79,7 +83,13 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                   child: FlatButton(
                     padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
                     color: Theme.of(context).colorScheme.primary,
-                    onPressed: () {},
+                    onPressed: () {
+                      PaymentService().chargePayment(
+                          price,
+                          _consult.consultType +
+                              ' consult with ' +
+                              _consult.provider);
+                    },
                     child: Text('Total: \$39'),
                   ),
                 ),
@@ -96,12 +106,14 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                       setState(() {
                         isLoading = false;
                       });
-                      // print("Ready: ${StripeSource.ready}");
-                      // StripeSource.addSource().then((String token) {
-                      //   _addSource(token);
+                      print("Ready: ${StripeSource.ready}");
+                      StripeSource.addSource().then((String token) {
+                        PaymentService().addCard(token);
+                      });
+                      // Navigator.pushNamed(context, '/history', arguments: {
+                      //   'consult': _consult,
+                      //   'user': medicallUser
                       // });
-                      Navigator.pushNamed(context, '/history',
-                          arguments: widget.data);
                     },
                     child: Text(
                       'Submit Payment',
@@ -125,9 +137,9 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
       body: TabBarView(
         // Add tabs as widgets
         children: <Widget>[
-          _buildTab(widget.data.screeningQuestions),
-          _buildTab(widget.data.historyQuestions),
-          _buildTab(widget.data.media),
+          _buildTab(_consult.screeningQuestions),
+          _buildTab(_consult.historyQuestions),
+          _buildTab(_consult.media),
         ],
         // set the controller
         controller: controller,
@@ -137,18 +149,18 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
 
   Future _addConsult() async {
     var ref = Firestore.instance.collection('consults').document();
-    var imagesList = await saveImages(widget.data.media, ref.documentID);
+    var imagesList = await saveImages(_consult.media, ref.documentID);
     Map<String, dynamic> data = <String, dynamic>{
-      "screening_questions": widget.data.screeningQuestions,
-      "medical_history_questions": widget.data.historyQuestions,
-      "type": widget.data.consultType,
+      "screening_questions": _consult.screeningQuestions,
+      "medical_history_questions": _consult.historyQuestions,
+      "type": _consult.consultType,
       "date": DateFormat('MM-dd-yyyy hh:mm a').format(DateTime.now()),
       "consult": "",
-      "provider": widget.data.provider,
+      "provider": _consult.provider,
       "patient": medicallUser.displayName,
-      "provider_id": widget.data.providerId,
+      "provider_id": _consult.providerId,
       "patient_id": medicallUser.id,
-      "media": widget.data.media.length > 0 ? imagesList : "",
+      "media": _consult.media.length > 0 ? imagesList : "",
     };
     ref.setData(data).whenComplete(() {
       print("Document Added");
@@ -161,7 +173,9 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
     for (var i = 0; i < assets.length; i++) {
       ByteData byteData = await assets[i].requestOriginal();
       List<int> imageData = byteData.buffer.asUint8List();
-      StorageReference ref = FirebaseStorage.instance.ref().child("consults/" + consultId + "/" + assets[i].name);
+      StorageReference ref = FirebaseStorage.instance
+          .ref()
+          .child("consults/" + consultId + "/" + assets[i].name);
       StorageUploadTask uploadTask = ref.putData(imageData);
 
       allMediaList
