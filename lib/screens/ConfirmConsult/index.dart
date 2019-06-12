@@ -8,6 +8,7 @@ import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart';
+import 'package:oktoast/oktoast.dart';
 import 'package:stripe_payment/stripe_payment.dart';
 
 class ConfirmConsultScreen extends StatefulWidget {
@@ -83,13 +84,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                   child: FlatButton(
                     padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
                     color: Theme.of(context).colorScheme.primary,
-                    onPressed: () {
-                      PaymentService().chargePayment(
-                          price,
-                          _consult.consultType +
-                              ' consult with ' +
-                              _consult.provider);
-                    },
+                    onPressed: () {},
                     child: Text('Total: \$39'),
                   ),
                 ),
@@ -107,9 +102,39 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                         isLoading = false;
                       });
                       print("Ready: ${StripeSource.ready}");
-                      StripeSource.addSource().then((String token) {
-                        PaymentService().addCard(token);
+                      Firestore.instance
+                          .collection('cards')
+                          .document(medicallUser.id)
+                          .collection('sources')
+                          .getDocuments()
+                          .then((snap) {
+                        if (snap.documents.length == 0) {
+                          StripeSource.addSource().then((String token) async {
+                            PaymentService().addCard(token);
+                            showToast('Card has been added and charged charged',
+                                duration: Duration(seconds: 3));
+                            return Navigator.pushNamed(context, '/history',
+                                arguments: {
+                                  'consult': _consult,
+                                  'user': medicallUser
+                                });
+                          });
+                        } else {
+                          PaymentService().chargePayment(
+                              price,
+                              _consult.consultType +
+                                  ' consult with ' +
+                                  _consult.provider);
+                          showToast('Card has been charged',
+                              duration: Duration(seconds: 3));
+                          return Navigator.pushNamed(context, '/history',
+                              arguments: {
+                                'consult': _consult,
+                                'user': medicallUser
+                              });
+                        }
                       });
+
                       // Navigator.pushNamed(context, '/history', arguments: {
                       //   'consult': _consult,
                       //   'user': medicallUser

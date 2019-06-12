@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:stripe_payment/stripe_payment.dart';
 
 class PaymentService {
   addCard(token) {
@@ -10,6 +11,19 @@ class PaymentService {
           .collection('tokens')
           .add({'tokenId': token}).then((val) {
         print("token saved");
+      });
+    });
+  }
+
+  removeCard(id) {
+    FirebaseAuth.instance.currentUser().then((user) {
+      Firestore.instance
+          .collection('cards')
+          .document(user.uid)
+          .collection('sources')
+          .document(id).delete()
+          .then((docs) {
+        print("card deleted");
       });
     });
   }

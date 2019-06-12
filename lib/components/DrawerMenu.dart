@@ -115,18 +115,18 @@ class _DrawerMenuState extends State<DrawerMenu> {
                 : SizedBox(),
             ListTile(
                 leading: Icon(
-                  Icons.settings_applications,
-                  color: Theme.of(context).disabledColor,
+                  Icons.account_circle,
+                  color: Theme.of(context).primaryColor,
                 ),
                 title: Text(
-                  'Settings',
+                  'Account',
                   style: TextStyle(
-                    color: Theme.of(context).disabledColor,
+                    color: Theme.of(context).primaryColor,
                   ),
                 ),
                 onTap: () {
-                  // Navigator.pop(context);
-                  // Navigator.of(context).pushNamed('/settings');
+                  Navigator.pop(context);
+                  Navigator.of(context).pushNamed('/account');
                 }),
             Divider(
               height: 0,

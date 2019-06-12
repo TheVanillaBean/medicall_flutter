@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:Medicall/models/global_nav_key.dart';
+import 'package:Medicall/screens/Account/paymentDetail.dart';
 import 'package:Medicall/screens/Chat/index.dart';
 import 'package:Medicall/screens/ConfirmConsult/index.dart';
 import 'package:Medicall/screens/Doctors/index.dart';
@@ -14,12 +17,37 @@ import 'package:Medicall/screens/QuestionsUpload/index.dart';
 import 'package:Medicall/screens/Registration/RegistrationType/index.dart';
 import 'package:Medicall/screens/Registration/index.dart';
 import 'package:Medicall/screens/SelectProvider/index.dart';
-import 'package:Medicall/screens/Settings/index.dart';
+import 'package:Medicall/screens/Account/index.dart';
 import 'package:Medicall/screens/Terms/index.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_crashlytics/flutter_crashlytics.dart';
 import 'package:oktoast/oktoast.dart';
 
-void main() => runApp(MedicallApp());
+void main() async {
+  bool isInDebugMode = false;
+
+  FlutterError.onError = (FlutterErrorDetails details) {
+    if (isInDebugMode) {
+      // In development mode simply print to console.
+      FlutterError.dumpErrorToConsole(details);
+    } else {
+      // In production mode report to the application zone to report to
+      // Crashlytics.
+      Zone.current.handleUncaughtError(details.exception, details.stack);
+    }
+  };
+
+  await FlutterCrashlytics().initialize();
+
+  runZoned<Future<Null>>(() async {
+    runApp(MedicallApp());
+  }, onError: (error, stackTrace) async {
+    // Whenever an error occurs, call the `reportCrash` function. This will send
+    // Dart errors to our dev console or Crashlytics depending on the environment.
+    await FlutterCrashlytics()
+        .reportCrash(error, stackTrace, forceCrash: false);
+  });
+}
 
 class MedicallApp extends StatefulWidget {
   MedicallApp({Key key}) : super(key: key);
@@ -173,9 +201,14 @@ class _MedicallAppState extends State<MedicallApp> {
                 builder: (_) => HistoryDetailScreen(data: settings.arguments),
                 settings: settings,
               );
-            case '/settings':
+            case '/account':
               return MyCustomRoute(
-                builder: (_) => SettingsScreen(),
+                builder: (_) => AccountScreen(),
+                settings: settings,
+              );
+            case '/paymentDetail':
+              return MyCustomRoute(
+                builder: (_) => PaymentDetail(),
                 settings: settings,
               );
           }

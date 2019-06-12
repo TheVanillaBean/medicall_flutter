@@ -101,8 +101,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                             });
                       },
                       child: Container(
-                        decoration: new BoxDecoration(
-                            border: new Border(
+                        decoration: BoxDecoration(
+                            border: Border(
                                 bottom: BorderSide(
                                     color: Theme.of(context)
                                         .colorScheme
