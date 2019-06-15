@@ -484,7 +484,7 @@ class _LoginScreenState extends State<LoginPage>
                     ? phoneAuthForm
                     : _isEmailAuthEnable ? anonymouslyForm : anonymouslyForm,
                 Container(
-                  padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
+                  padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
                   child: Column(
                     children: <Widget>[
                       Row(
