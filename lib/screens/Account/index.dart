@@ -1,4 +1,3 @@
-import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:flutter/material.dart';
 
 class AccountScreen extends StatelessWidget {
