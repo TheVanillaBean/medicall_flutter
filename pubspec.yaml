@@ -70,14 +70,13 @@ flutter:
   # included with your application, so that you can use the icons in
   # the Icons class.
   uses-material-design: true
-  # fonts:
-  #   - family:  MedicallApp
-  #     fonts:
-  #       - asset: assets/fonts/MedicallApp.ttf
+  fonts:
+    - family:  MedicallApp
+      fonts:
+        - asset: assets/fonts/MedicallApp.ttf
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - assets/images/
-  #   - assets/icon/
+  assets:
+    - assets/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/.
