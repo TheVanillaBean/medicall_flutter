@@ -1,5 +1,5 @@
 <br/>
-<img src="https://flutter.io/images/flutter-mark-square-100.png" width="70">
+<img src="http://medicall.com/wp-content/uploads/2019/03/Asset-1.svg" width="270">
 <br/>
 
 ## Medicall (v0.1)
