@@ -18,3 +18,4 @@ pubspec.lock
 .flutter-plugins
 ios/Runner/GeneratedPluginRegistrant.h
 ios/Runner/GeneratedPluginRegistrant.m
+**/*/res/values/secrets.xml
