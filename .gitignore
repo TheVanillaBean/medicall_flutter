@@ -16,3 +16,5 @@ android/*
 packages
 pubspec.lock
 .flutter-plugins
+ios/Runner/GeneratedPluginRegistrant.h
+ios/Runner/GeneratedPluginRegistrant.m
