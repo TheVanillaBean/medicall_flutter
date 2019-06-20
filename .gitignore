@@ -79,3 +79,7 @@ android/.settings/org.eclipse.buildship.core.prefs
 ios/Runner.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist
 ios/Runner.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings
 android/.gitignore
+android/app/.settings/org.eclipse.buildship.core.prefs
+android/app/.project
+android/.project
+android/app/.classpath
