@@ -83,3 +83,4 @@ android/app/.settings/org.eclipse.buildship.core.prefs
 android/app/.project
 android/.project
 android/app/.classpath
+android/key.properties
