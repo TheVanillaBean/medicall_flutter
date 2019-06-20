@@ -53,7 +53,7 @@ android {
         targetSdkVersion 28
         multiDexEnabled true
         //codemagic auto versioning, change main version for major builds
-        if (System.getenv("CI")) {
+        if (System.getenv()["CI"]) {
             def buildNumber = System.getenv("BUILD_NUMBER")
             versionName = "1.0." + buildNumber 
             versionCode = Integer.valueOf(buildNumber)
