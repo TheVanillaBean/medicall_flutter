@@ -84,3 +84,4 @@ android/app/.project
 android/.project
 android/app/.classpath
 android/key.properties
+android/app/release/app.aab
