@@ -83,6 +83,9 @@ android {
            signingConfig signingConfigs.release
            minifyEnabled false
            useProguard false
+           ndk {
+                abiFilters 'armeabi-v7a'
+            }
        }
        debug{
            signingConfig signingConfigs.debug
