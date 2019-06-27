@@ -67,6 +67,7 @@ class _LoginScreenState extends State<LoginPage>
   @override
   void dispose() {
     super.dispose();
+    _tePassword.text = "";
   }
 
   Future<void> _getUser() async {
