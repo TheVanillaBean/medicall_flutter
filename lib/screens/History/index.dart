@@ -43,22 +43,24 @@ class _HistoryScreenState extends State<HistoryScreen>
                 Theme.of(context).platform == TargetPlatform.iOS ? 17.0 : 20.0,
           ),
         ),
-        bottom: TabBar(
-          indicatorColor: Colors.white,
-          tabs: <Tab>[
-            Tab(
-              // set icon to the tab
-              text: 'Consults',
-              icon: Icon(Icons.local_pharmacy),
-            ),
-            Tab(
-              text: 'Patients',
-              icon: Icon(Icons.assignment_ind),
-            ),
-          ],
-          // setup the controller
-          controller: controller,
-        ),
+        bottom: medicallUser.type == 'provider'
+            ? TabBar(
+                indicatorColor: Colors.white,
+                tabs: <Tab>[
+                  Tab(
+                    // set icon to the tab
+                    text: 'Consults',
+                    icon: Icon(Icons.local_pharmacy),
+                  ),
+                  Tab(
+                    text: 'Patients',
+                    icon: Icon(Icons.assignment_ind),
+                  ),
+                ],
+                // setup the controller
+                controller: controller,
+              )
+            : null,
         elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
         leading: Text('', style: TextStyle(color: Colors.black26)),
       ),
@@ -79,15 +81,103 @@ class _HistoryScreenState extends State<HistoryScreen>
           foregroundColor: Colors.white,
         );
       }),
-      body: TabBarView(
-        // Add tabs as widgets
-        children: <Widget>[
-          _buildTab("consults"),
-          _buildTab("patients"),
-        ],
-        // set the controller
-        controller: controller,
-      ),
+      body: medicallUser.type == 'provider'
+          ? TabBarView(
+              // Add tabs as widgets
+              children: <Widget>[
+                _buildTab("consults"),
+                _buildTab("patients"),
+              ],
+              // set the controller
+              controller: controller,
+            )
+          : SingleChildScrollView(
+              child: StreamBuilder(
+                  stream: Firestore.instance
+                      .collection('consults')
+                      .where('patient_id', isEqualTo: medicallUser.id)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Container(
+                            height: MediaQuery.of(context).size.height * 0.85,
+                          ),
+                          Container(
+                            height: 50,
+                            alignment: Alignment.center,
+                            width: 50,
+                            padding: EdgeInsets.all(10),
+                            child: CircularProgressIndicator(),
+                          )
+                        ],
+                      );
+                    }
+                    var userDocuments = snapshot.data.documents;
+                    List<Widget> historyList = [];
+                    for (var i = 0; i < userDocuments.length; i++) {
+                      historyList.add(FlatButton(
+                          padding: EdgeInsets.all(0),
+                          splashColor: Theme.of(context)
+                              .colorScheme
+                              .secondary
+                              .withAlpha(70),
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/historyDetail',
+                                arguments: {
+                                  'documentId': userDocuments[i].documentID,
+                                  'user': medicallUser,
+                                  'from': 'consults',
+                                  'isRouted': false,
+                                });
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                                border: Border(
+                                    bottom: BorderSide(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary
+                                            .withAlpha(70)))),
+                            child: ListTile(
+                              dense: true,
+                              isThreeLine: true,
+                              title: Text(
+                                userDocuments[i].data['provider'].toString(),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1.1,
+                                    color:
+                                        Theme.of(context).colorScheme.primary),
+                              ),
+                              subtitle: Text(
+                                  userDocuments[i].data['date'].toString() +
+                                      '\n' +
+                                      userDocuments[i].data['type'].toString()),
+                              trailing: IconButton(
+                                icon: Icon(Icons.input),
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .primary
+                                    .withAlpha(150),
+                                onPressed: () {},
+                              ),
+                              leading: Icon(
+                                Icons.account_circle,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .secondary
+                                    .withAlpha(170),
+                                size: 50,
+                              ),
+                            ),
+                          )));
+                    }
+                    return Column(children: historyList.reversed.toList());
+                  }),
+            ),
     );
   }
 

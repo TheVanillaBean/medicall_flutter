@@ -35,12 +35,19 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         .format(_userRegKey.currentState.value['Date of birth'])
         .toString();
     medicallUser.terms = _userRegKey.currentState.value['Terms and conditions'];
-    medicallUser.firstName = '${_userRegKey.currentState.value['First name'][0].toUpperCase()}${_userRegKey.currentState.value['First name'].substring(1)}';
-    medicallUser.lastName = '${_userRegKey.currentState.value['Last name'][0].toUpperCase()}${_userRegKey.currentState.value['Last name'].substring(1)}';
+    medicallUser.firstName =
+        '${_userRegKey.currentState.value['First name'][0].toUpperCase()}${_userRegKey.currentState.value['First name'].substring(1)}';
+    medicallUser.lastName =
+        '${_userRegKey.currentState.value['Last name'][0].toUpperCase()}${_userRegKey.currentState.value['Last name'].substring(1)}';
     medicallUser.displayName =
         medicallUser.firstName + " " + medicallUser.lastName;
-    medicallUser.address = _userRegKey.currentState.value['Address'];
-    medicallUser.titles = _userRegKey.currentState.value['Medical Titles'].toUpperCase();
+
+    medicallUser.address = medicallUser.type == "provider"
+        ? _userRegKey.currentState.value['Address']
+        : '';
+    medicallUser.titles = medicallUser.type == "provider"
+        ? _userRegKey.currentState.value['Medical Titles'].toUpperCase()
+        : '';
     medicallUser.policy =
         _userRegKey.currentState.value['accept_privacy_switch'];
     Map<String, dynamic> data = <String, dynamic>{

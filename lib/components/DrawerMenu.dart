@@ -79,24 +79,7 @@ class _DrawerMenuState extends State<DrawerMenu> {
                     // Navigator.pop(context);
                     // Navigator.of(context).pushNamed('/chat');
                   }),
-              medicallUser.type == 'patient'
-                  ? ListTile(
-                      leading: Icon(
-                        Icons.folder_shared,
-                        color: Theme.of(context).colorScheme.primaryVariant,
-                      ),
-                      title: Text(
-                        'History',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
-                      onTap: () {
-                        Navigator.pop(context);
-                        Navigator.of(context).pushNamed('/history',
-                            arguments: {'user': medicallUser});
-                      })
-                  : SizedBox(),
+              
               ListTile(
                   leading: Icon(
                     Icons.account_circle,
