@@ -20,6 +20,7 @@ class _MedHistoryQuestionsScreenState extends State<MedHistoryQuestionsScreen> {
   GlobalKey<FormBuilderState> historyFormKey = GlobalKey();
   bool autoValidate = true;
   bool readOnly = false;
+  var _buildClass = BuildQuestions();
   double formSpacing = 20;
   bool showSegmentedControl = true;
   Future _future;
@@ -66,7 +67,7 @@ class _MedHistoryQuestionsScreenState extends State<MedHistoryQuestionsScreen> {
                 'answers': listThis[i]
               });
             }
-            Navigator.pushNamed(context, '/questionsUpload',
+            Navigator.pushReplacementNamed(context, '/questionsUpload',
                 arguments: {'consult': _consult, 'user': medicallUser});
           } else {
             print('External FormValidation failed');
@@ -114,7 +115,7 @@ class _MedHistoryQuestionsScreenState extends State<MedHistoryQuestionsScreen> {
                           return FormBuilder(
                               key: historyFormKey,
                               child: Column(
-                                  children: BuildQuestions().buildQuestions(
+                                  children: _buildClass.buildQuestions(
                                       snapshot.data.data,
                                       'medical_history_questions',
                                       _consult.provider,

@@ -16,8 +16,12 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
     with SingleTickerProviderStateMixin {
   TabController controller;
   GlobalKey<FormBuilderState> _consultFormKey = GlobalKey();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  PersistentBottomSheetController _controller;
   bool isLoading = true;
+  bool isConsultOpen = false;
   String documentId;
+  String from;
 
   var snapshot;
   @override
@@ -25,6 +29,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
     super.initState();
     documentId = widget.data['documentId'];
     medicallUser = widget.data['user'];
+    from = widget.data['from'];
     controller = TabController(length: 3, vsync: this);
     _getConsultDetail();
   }
@@ -62,14 +67,14 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          snapshot != null && snapshot['provider'] != null
-              ? 'Consult with ' + snapshot['provider']
-              : snapshot != null && snapshot['patient'] != null
-                  ? 'Consult with ' + snapshot['patient']
-                  : '',
+          snapshot != null && from == 'consults'
+              ? snapshot['provider']
+              : snapshot != null && from == 'patients'
+              ? snapshot['patient'] : '',
           style: TextStyle(
             fontSize:
                 Theme.of(context).platform == TargetPlatform.iOS ? 17.0 : 20.0,
@@ -106,21 +111,8 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      bottomNavigationBar: medicallUser.type == 'provider'
+      bottomNavigationBar: !isConsultOpen
           ? FlatButton(
-              child: Text(
-                'Edit Consult',
-                style: TextStyle(
-                    letterSpacing: 1.2,
-                    color: Theme.of(context).colorScheme.onBackground),
-              ),
-              padding: EdgeInsets.all(20),
-              color: Theme.of(context).colorScheme.secondary,
-              onPressed: () {
-                _settingModalBottomSheet(context);
-              },
-            )
-          : FlatButton(
               child: Text(
                 'Show Consult',
                 style: TextStyle(
@@ -128,9 +120,23 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                     color: Theme.of(context).colorScheme.onBackground),
               ),
               padding: EdgeInsets.all(20),
+              color: Theme.of(context).colorScheme.primary,
+              onPressed: _providerModalBottomSheet,
+            )
+          : FlatButton(
+              child: Text(
+                'Close Consult',
+                style: TextStyle(
+                    letterSpacing: 1.2,
+                    color: Theme.of(context).colorScheme.onBackground),
+              ),
+              padding: EdgeInsets.all(20),
               color: Theme.of(context).colorScheme.secondary,
               onPressed: () {
-                _patientModalBottomSheet(context);
+                _controller.close();
+                setState(() {
+                  isConsultOpen = false;
+                });
               },
             ),
       body: snapshot != null
@@ -148,26 +154,39 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
     );
   }
 
-  void _settingModalBottomSheet(context) {
-    showModalBottomSheet(
-        context: context,
-        builder: (BuildContext bc) {
-          return Container(
-            padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+  void _providerModalBottomSheet() {
+    setState(() {
+      isConsultOpen = true;
+    });
+    _controller = _scaffoldKey.currentState.showBottomSheet(
+      (BuildContext bc) {
+        return Container(
+          color: Theme.of(context).colorScheme.secondary.withAlpha(50),
+          padding: EdgeInsets.all(10),
+          child: SingleChildScrollView(
             child: FormBuilder(
               key: _consultFormKey,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   Container(
-                    color: Theme.of(context).colorScheme.primary.withAlpha(30),
+                    color: Colors.white,
                     child: ListTile(
-                      title: Text(
-                        'Notes To ' + snapshot['patient'],
-                        style: TextStyle(
-                            fontSize: 24,
-                            color: Theme.of(context).colorScheme.secondary),
-                      ),
+                      title: medicallUser.type == 'provider' && from == "patients"
+                          ? Text(
+                              'Notes To ' + snapshot['patient'],
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  color:
+                                      Theme.of(context).colorScheme.secondary),
+                            )
+                          : Text(
+                              'Notes From ' + snapshot['provider'],
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  color:
+                                      Theme.of(context).colorScheme.secondary),
+                            ),
                       leading: Icon(
                         Icons.local_hospital,
                         size: 40,
@@ -178,45 +197,74 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                       ),
                     ),
                   ),
-                  FormBuilderTextField(
-                    initialValue: snapshot['consult'],
-                    attribute: 'docInput',
-                    maxLines: 10,
-                    decoration: InputDecoration(
-                        fillColor: Color.fromRGBO(35, 179, 232, 0.1),
-                        filled: true,
-                        disabledBorder: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        border: InputBorder.none),
-                    validators: [
-                      //FormBuilderValidators.required(),
-                    ],
+                  SizedBox(
+                    height: 10,
                   ),
-                  Container(
-                    child: Text('- ' + medicallUser.displayName),
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: FlatButton(
-                          padding: EdgeInsets.all(20),
-                          onPressed: () {
-                            _consultFormKey.currentState.save();
-                            _updateConsult();
-                            Navigator.pop(context);
-                            _previewModalBottomSheet(context);
-                          },
-                          color: Theme.of(context).primaryColor,
-                          child: Text(isLoading ? 'Update Consult' : ''),
+                  medicallUser.type == 'provider' && from == 'patients'
+                      ? FormBuilderTextField(
+                          initialValue: snapshot['consult'],
+                          attribute: 'docInput',
+                          maxLines: 8,
+                          decoration: InputDecoration(
+                              fillColor: Color.fromRGBO(255, 255, 255, 0.9),
+                              filled: true,
+                              disabledBorder: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              border: InputBorder.none),
+                          validators: [
+                            //FormBuilderValidators.required(),
+                          ],
+                        )
+                      : FormBuilderTextField(
+                          initialValue: snapshot['consult'],
+                          attribute: 'docInput',
+                          readonly: true,
+                          maxLines: 8,
+                          decoration: InputDecoration(
+                              fillColor: Color.fromRGBO(255, 255, 255, 0.9),
+                              filled: true,
+                              disabledBorder: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              border: InputBorder.none),
+                          validators: [
+                            //FormBuilderValidators.required(),
+                          ],
                         ),
-                      )
-                    ],
-                  )
+                  medicallUser.type == 'provider' && from == 'patients'
+                      ? Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: FlatButton(
+                                padding: EdgeInsets.all(20),
+                                onPressed: () {
+                                  _consultFormKey.currentState.save();
+                                  _updateConsult();
+                                  Navigator.pop(context);
+                                  _previewModalBottomSheet(context);
+                                },
+                                color: Theme.of(context).primaryColor,
+                                child: Text(isLoading ? 'Update Consult' : ''),
+                              ),
+                            )
+                          ],
+                        )
+                      : SizedBox(
+                          height: 10,
+                        )
                 ],
               ),
             ),
-          );
+          ),
+        );
+      },
+    );
+    _controller.closed.whenComplete(() {
+      if (mounted) {
+        setState(() {
+          isConsultOpen = false;
         });
+      }
+    });
   }
 
   Future _previewModalBottomSheet(context) async {
@@ -284,48 +332,6 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                 ],
               ),
             ),
-          );
-        });
-  }
-
-  void _patientModalBottomSheet(context) {
-    showModalBottomSheet(
-        context: context,
-        builder: (BuildContext bc) {
-          return Column(
-            children: <Widget>[
-              Container(
-                color: Theme.of(context).colorScheme.primary.withAlpha(30),
-                child: ListTile(
-                  title: Text(
-                    'Doctor Notes',
-                    style: TextStyle(
-                        fontSize: 24,
-                        color: Theme.of(context).colorScheme.secondary),
-                  ),
-                  leading: Icon(
-                    Icons.local_hospital,
-                    size: 40,
-                    color:
-                        Theme.of(context).colorScheme.secondary.withAlpha(150),
-                  ),
-                ),
-              ),
-              Container(
-                  height: 300,
-                  alignment: Alignment.topLeft,
-                  padding: EdgeInsets.fromLTRB(30, 20, 30, 20),
-                  child: Text(
-                    snapshot['consult'] != null && snapshot['consult'] != ''
-                        ? snapshot['consult']
-                        : 'Waiting on Doctor response, please check back later',
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.secondary),
-                  )),
-              Container(
-                child: Text('- ' + snapshot['provider']),
-              )
-            ],
           );
         });
   }

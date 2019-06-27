@@ -1,17 +1,17 @@
 import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/secrets.dart' as secrets;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_alert/flutter_alert.dart';
+import 'package:flutter_google_places/flutter_google_places.dart';
 
 import 'dart:async';
 import 'package:google_maps_webservice/places.dart';
-import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as LocationManager;
 
-const kGoogleApiKey = 'AIzaSyBx8brcoVisQ4_5FUD-xJlS1i4IwjSS-Hc';
-GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
+GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: secrets.kGoogleApiKey);
 
 class SelectProviderScreen extends StatefulWidget {
   final data;
@@ -37,9 +37,22 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
 
   @override
   void initState() {
+    super.initState();
     medicallUser = widget.data['user'];
     _consult = widget.data['consult'];
-    super.initState();
+    getAddresses();
+  }
+
+  Future getAddresses() async {
+    addresses = [];
+    Firestore.instance
+        .collection('users')
+        .where("type", isEqualTo: "provider")
+        .snapshots()
+        .listen((data) => data.documents.forEach((doc) =>
+            medicallUser.displayName != doc.data["name"]
+                ? addresses.add(doc.data["address"])
+                : null));
   }
 
   @override
@@ -84,7 +97,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
           color: Theme.of(context).colorScheme.primary,
           onPressed: () {
             if (selectedProvider.length > 0) {
-              Navigator.pushNamed(
+              Navigator.pushReplacementNamed(
                 context,
                 '/questionsHistory',
                 arguments: {'consult': _consult, 'user': medicallUser},
@@ -121,20 +134,18 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
                         if (!snapshot.hasData) {
                           return new Text("Loading");
                         }
-                        addresses = [];
                         var userDocuments = snapshot.data.documents;
                         List<Widget> historyList = [];
                         for (var i = 0; i < userDocuments.length; i++) {
-                          if (userDocuments[i].data['type'] == 'provider') {
+                          if (userDocuments[i].data['type'] == 'provider' &&
+                              medicallUser.displayName !=
+                                  userDocuments[i].data['name']) {
                             providers.add(userDocuments[i].data['name']);
-                            if (!addresses.contains(
-                                userDocuments[i].data['address'].toString())) {
-                              addresses.add(
-                                  userDocuments[i].data['address'].toString());
-                            }
                             historyList.add(ListTile(
                               title: Text(
-                                  userDocuments[i].data['name'].toString()),
+                                  '${userDocuments[i].data['name'].split(" ")[0][0].toUpperCase()}${userDocuments[i].data['name'].split(" ")[0].substring(1)} ${userDocuments[i].data['name'].split(" ")[1][0].toUpperCase()}${userDocuments[i].data['name'].split(" ")[1].substring(1)}' +
+                                      " " +
+                                      userDocuments[i].data['titles']),
                               subtitle: Text(
                                   userDocuments[i].data['address'].toString()),
                               trailing: Container(
@@ -201,7 +212,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
   }
 
   void refresh() async {
-    final center = await getUserLocation();
+    final center = null;
 
     mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
         target: center == null ? LatLng(0, 0) : center, zoom: 15.0)));
@@ -282,8 +293,8 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
       Prediction p = await PlacesAutocomplete.show(
           context: context,
           strictbounds: center == null ? false : true,
-          apiKey: kGoogleApiKey,
           onError: onError,
+          apiKey: secrets.kGoogleApiKey,
           mode: Mode.fullscreen,
           language: 'en',
           location: center == null

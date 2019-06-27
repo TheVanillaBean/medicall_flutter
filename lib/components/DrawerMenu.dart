@@ -26,6 +26,119 @@ class _DrawerMenuState extends State<DrawerMenu> {
         child: Stack(
       children: <Widget>[
         Container(
+          color: Colors.white,
+          child: ListView(
+            children: <Widget>[
+              ListTile(
+                  dense: true,
+                  contentPadding: EdgeInsets.fromLTRB(16, 80, 0, 0),
+                  leading: Icon(
+                    Icons.local_hospital,
+                    color: Theme.of(context).colorScheme.primaryVariant,
+                  ),
+                  title: Text(
+                    'Find A Doctor',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.of(context).pushNamed('/doctors',
+                        arguments: {'user': medicallUser});
+                  }),
+              ListTile(
+                  dense: true,
+                  leading: Icon(
+                    Icons.recent_actors,
+                    color: Theme.of(context).colorScheme.primaryVariant,
+                  ),
+                  title: Text(
+                    'History',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.of(context).pushNamed('/history',
+                        arguments: {'user': medicallUser});
+                  }),
+              ListTile(
+                  leading: Icon(
+                    Icons.chat,
+                    color: Theme.of(context).disabledColor,
+                  ),
+                  title: Text(
+                    'Chat',
+                    style: TextStyle(
+                      color: Theme.of(context).disabledColor,
+                    ),
+                  ),
+                  onTap: () {
+                    // Navigator.pop(context);
+                    // Navigator.of(context).pushNamed('/chat');
+                  }),
+              medicallUser.type == 'patient'
+                  ? ListTile(
+                      leading: Icon(
+                        Icons.folder_shared,
+                        color: Theme.of(context).colorScheme.primaryVariant,
+                      ),
+                      title: Text(
+                        'History',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.of(context).pushNamed('/history',
+                            arguments: {'user': medicallUser});
+                      })
+                  : SizedBox(),
+              ListTile(
+                  leading: Icon(
+                    Icons.account_circle,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                  title: Text(
+                    'Account',
+                    style: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.of(context).pushNamed('/account');
+                  }),
+              Divider(
+                height: 0,
+                color: Colors.grey[400],
+              ),
+              ListTile(
+                  leading: Icon(
+                    Icons.exit_to_app,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                  title: Text(
+                    'Sign Out',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                  ),
+                  onTap: () async {
+                    await GoogleSignIn().signOut();
+                    await FirebaseAuth.instance.signOut();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginPage()),
+                    );
+                  }),
+            ],
+          ),
+        ),
+        Container(
           height: 108.0,
           child: DrawerHeader(
               padding: EdgeInsets.fromLTRB(0, 0, 50, 0),
@@ -55,104 +168,6 @@ class _DrawerMenuState extends State<DrawerMenu> {
                 ],
               )),
         ),
-        ListView(
-          children: <Widget>[
-            ListTile(
-                dense: true,
-                contentPadding: EdgeInsets.fromLTRB(16, 80, 0, 0),
-                leading: Icon(
-                  Icons.local_hospital,
-                  color: Theme.of(context).colorScheme.primaryVariant,
-                ),
-                title: Text(
-                  medicallUser.type == 'provider'
-                      ? 'Patients'
-                      : 'Find A Doctor',
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  medicallUser.type == 'provider'
-                      ? Navigator.of(context).pushNamed('/history',
-                          arguments: {'user': medicallUser})
-                      : Navigator.of(context).pushNamed('/doctors',
-                          arguments: {'user': medicallUser});
-                }),
-            ListTile(
-                leading: Icon(
-                  Icons.chat,
-                  color: Theme.of(context).disabledColor,
-                ),
-                title: Text(
-                  'Chat',
-                  style: TextStyle(
-                    color: Theme.of(context).disabledColor,
-                  ),
-                ),
-                onTap: () {
-                  // Navigator.pop(context);
-                  // Navigator.of(context).pushNamed('/chat');
-                }),
-            medicallUser.type == 'patient'
-                ? ListTile(
-                    leading: Icon(
-                      Icons.folder_shared,
-                      color: Theme.of(context).colorScheme.primaryVariant,
-                    ),
-                    title: Text(
-                      'History',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    ),
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.of(context).pushNamed('/history',
-                          arguments: {'user': medicallUser});
-                    })
-                : SizedBox(),
-            ListTile(
-                leading: Icon(
-                  Icons.account_circle,
-                  color: Theme.of(context).primaryColor,
-                ),
-                title: Text(
-                  'Account',
-                  style: TextStyle(
-                    color: Theme.of(context).primaryColor,
-                  ),
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.of(context).pushNamed('/account');
-                }),
-            Divider(
-              height: 0,
-              color: Colors.grey[400],
-            ),
-            ListTile(
-                leading: Icon(
-                  Icons.exit_to_app,
-                  color: Theme.of(context).colorScheme.secondary,
-                ),
-                title: Text(
-                  'Sign Out',
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
-                ),
-                onTap: () async {
-                  await GoogleSignIn().signOut();
-                  await FirebaseAuth.instance.signOut();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => LoginPage()),
-                  );
-                }),
-          ],
-        )
       ],
     )));
   }

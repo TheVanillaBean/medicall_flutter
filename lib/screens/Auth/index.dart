@@ -90,16 +90,6 @@ class _AuthScreenState extends State<AuthScreen> {
     documentReference.setData(data).whenComplete(() {
       print("Document Added");
     }).catchError((e) => print(e));
-
-    final DocumentReference docCardsRef =
-        Firestore.instance.document("cards/" + user.uid);
-    Map<String, String> newCardEntryData = <String, String>{
-      "custId": "new",
-      "email": user.email,
-    };
-    docCardsRef.setData(newCardEntryData).whenComplete(() {
-      print("Document Added");
-    }).catchError((e) => print(e));
   }
 
   // PhoneCodeSent

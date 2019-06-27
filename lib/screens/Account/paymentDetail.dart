@@ -1,4 +1,5 @@
 import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/secrets.dart';
 import 'package:Medicall/util/stripe_payment_handler.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +17,7 @@ class _PaymentDetailState extends State<PaymentDetail> {
   void initState() {
     super.initState();
     StripeSource.setPublishableKey(
-        "pk_test_SY5CUKXzjYT67upOTiLGuoVD00INR5IkJL");
+        stripeKey);
   }
 
   @override
@@ -114,7 +115,7 @@ class _PaymentDetailState extends State<PaymentDetail> {
                                 color: Theme.of(context).disabledColor,
                               ),
                               SizedBox(
-                                width: 20,
+                                width: 10,
                               ),
                               Icon(
                                 Icons.trip_origin,
@@ -137,7 +138,7 @@ class _PaymentDetailState extends State<PaymentDetail> {
                                 color: Theme.of(context).disabledColor,
                               ),
                               SizedBox(
-                                width: 20,
+                                width: 10,
                               ),
                               Icon(
                                 Icons.trip_origin,
@@ -160,7 +161,7 @@ class _PaymentDetailState extends State<PaymentDetail> {
                                 color: Theme.of(context).disabledColor,
                               ),
                               SizedBox(
-                                width: 20,
+                                width: 10,
                               ),
                               Text(snapshot
                                   .data.documents[i].data['card']['last4']

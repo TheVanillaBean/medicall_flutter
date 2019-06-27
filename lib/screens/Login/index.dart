@@ -540,6 +540,7 @@ class _LoginScreenState extends State<LoginPage>
                         children: <Widget>[
                           Expanded(
                             child: GoogleSignInButton(
+                              text: "Google Sign In",
                                 onPressed: () {
                                   gMailTabEnable();
                                 },

@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/secrets.dart';
 import 'package:Medicall/util/stripe_payment_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:Medicall/models/consult_data_model.dart';
@@ -32,7 +33,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
     medicallUser = widget.data['user'];
     controller = TabController(length: 3, vsync: this);
     StripeSource.setPublishableKey(
-        "pk_test_SY5CUKXzjYT67upOTiLGuoVD00INR5IkJL");
+        stripeKey);
   }
 
   @override
@@ -96,7 +97,6 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                       setState(() {
                         isLoading = true;
                       });
-                      await _addConsult();
                       //await _addProviderConsult();
                       setState(() {
                         isLoading = false;
@@ -107,12 +107,13 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                           .document(medicallUser.id)
                           .collection('sources')
                           .getDocuments()
-                          .then((snap) {
+                          .then((snap) async {
                         if (snap.documents.length == 0) {
                           StripeSource.addSource().then((String token) async {
                             PaymentService().addCard(token);
                             showToast('Card has been added and charged charged',
                                 duration: Duration(seconds: 3));
+                            await _addConsult();
                             return Navigator.pushNamed(context, '/history',
                                 arguments: {
                                   'consult': _consult,
@@ -127,6 +128,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                   _consult.provider);
                           showToast('Card has been charged',
                               duration: Duration(seconds: 3));
+                          await _addConsult();
                           return Navigator.pushNamed(context, '/history',
                               arguments: {
                                 'consult': _consult,
@@ -141,7 +143,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                       // });
                     },
                     child: Text(
-                      'Submit Payment',
+                      'Pay',
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
                         letterSpacing: 1.2,
@@ -174,23 +176,29 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
 
   Future _addConsult() async {
     var ref = Firestore.instance.collection('consults').document();
-    var imagesList = await saveImages(_consult.media, ref.documentID);
-    Map<String, dynamic> data = <String, dynamic>{
-      "screening_questions": _consult.screeningQuestions,
-      "medical_history_questions": _consult.historyQuestions,
-      "type": _consult.consultType,
-      "date": DateFormat('MM-dd-yyyy hh:mm a').format(DateTime.now()),
-      "consult": "",
-      "provider": _consult.provider,
-      "patient": medicallUser.displayName,
-      "provider_id": _consult.providerId,
-      "patient_id": medicallUser.id,
-      "media": _consult.media.length > 0 ? imagesList : "",
-    };
-    ref.setData(data).whenComplete(() {
-      print("Document Added");
-      //_addProviderConsult(ref.documentID, imagesList);
-    }).catchError((e) => print(e));
+    Firestore.instance
+        .collection('users')
+        .document(_consult.providerId)
+        .get()
+        .then((snap) async {
+      var imagesList = await saveImages(_consult.media, ref.documentID);
+      Map<String, dynamic> data = <String, dynamic>{
+        "screening_questions": _consult.screeningQuestions,
+        "medical_history_questions": _consult.historyQuestions,
+        "type": _consult.consultType,
+        "date": DateFormat('MM-dd-yyyy hh:mm a').format(DateTime.now()),
+        "consult": "",
+        "provider": _consult.provider,
+        "patient": medicallUser.displayName,
+        "provider_id": _consult.providerId,
+        "patient_id": medicallUser.id,
+        "media": _consult.media.length > 0 ? imagesList : "",
+      };
+      ref.setData(data).whenComplete(() {
+        print("Document Added");
+        //_addProviderConsult(ref.documentID, imagesList);
+      }).catchError((e) => print(e));
+    });
   }
 
   Future saveImages(assets, consultId) async {

@@ -35,12 +35,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         .format(_userRegKey.currentState.value['Date of birth'])
         .toString();
     medicallUser.terms = _userRegKey.currentState.value['Terms and conditions'];
-    medicallUser.firstName = _userRegKey.currentState.value['First name'];
-    medicallUser.lastName = _userRegKey.currentState.value['Last name'];
+    medicallUser.firstName = '${_userRegKey.currentState.value['First name'][0].toUpperCase()}${_userRegKey.currentState.value['First name'].substring(1)}';
+    medicallUser.lastName = '${_userRegKey.currentState.value['Last name'][0].toUpperCase()}${_userRegKey.currentState.value['Last name'].substring(1)}';
     medicallUser.displayName =
         medicallUser.firstName + " " + medicallUser.lastName;
     medicallUser.address = _userRegKey.currentState.value['Address'];
-    medicallUser.titles = _userRegKey.currentState.value['Medical Titles'];
+    medicallUser.titles = _userRegKey.currentState.value['Medical Titles'].toUpperCase();
     medicallUser.policy =
         _userRegKey.currentState.value['accept_privacy_switch'];
     Map<String, dynamic> data = <String, dynamic>{
@@ -203,7 +203,21 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             attribute: "Address",
                             initialValue: medicallUser.address,
                             decoration: InputDecoration(
-                                labelText: 'Address',
+                                labelText: 'Street Address',
+                                fillColor: Color.fromRGBO(35, 179, 232, 0.1),
+                                filled: true,
+                                disabledBorder: InputBorder.none,
+                                enabledBorder: InputBorder.none,
+                                border: InputBorder.none),
+                            validators: [
+                              FormBuilderValidators.required(),
+                            ],
+                          ),
+                          FormBuilderTextField(
+                            attribute: "State",
+                            initialValue: medicallUser.address,
+                            decoration: InputDecoration(
+                                labelText: 'State',
                                 fillColor: Color.fromRGBO(35, 179, 232, 0.1),
                                 filled: true,
                                 disabledBorder: InputBorder.none,

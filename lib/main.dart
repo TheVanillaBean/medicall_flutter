@@ -86,7 +86,7 @@ class _MedicallAppState extends State<MedicallApp> {
             primaryColor: primaryColor,
             accentColor: accentColor,
             colorScheme: colorScheme,
-            canvasColor: onPrimary,
+            canvasColor: Color.fromARGB(1000, 200, 200, 200),
             buttonTheme: ButtonThemeData(
               colorScheme: colorScheme,
               shape: new RoundedRectangleBorder(

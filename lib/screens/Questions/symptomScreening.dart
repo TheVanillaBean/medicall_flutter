@@ -17,6 +17,7 @@ class SymptomQuestionsScreen extends StatefulWidget {
 class _SymptomQuestionsScreenState extends State<SymptomQuestionsScreen> {
   GlobalKey<FormBuilderState> screeningFormKey = GlobalKey();
   bool autoValidate = true;
+  var _buildClass = BuildQuestions();
   bool readOnly = false;
   double formSpacing = 20;
   var screeningQuestions;
@@ -34,6 +35,10 @@ class _SymptomQuestionsScreenState extends State<SymptomQuestionsScreen> {
         .document('services/dermatology/symptoms/' +
             _consult.consultType.toLowerCase())
         .get();
+  }
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -66,7 +71,7 @@ class _SymptomQuestionsScreenState extends State<SymptomQuestionsScreen> {
                 'answers': listThis[i]
               });
             }
-            Navigator.pushNamed(context, '/selectProvider',
+            Navigator.pushReplacementNamed(context, '/selectProvider',
                 arguments: {'consult': _consult, 'user': medicallUser});
           } else {
             print('External FormValidation failed');
@@ -114,7 +119,7 @@ class _SymptomQuestionsScreenState extends State<SymptomQuestionsScreen> {
                           return FormBuilder(
                               key: screeningFormKey,
                               child: Column(
-                                children: BuildQuestions().buildQuestions(
+                                children: _buildClass.buildQuestions(
                                     snapshot.data.data,
                                     'screening_questions',
                                     null,
