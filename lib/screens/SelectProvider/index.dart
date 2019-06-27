@@ -97,7 +97,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
           color: Theme.of(context).colorScheme.primary,
           onPressed: () {
             if (selectedProvider.length > 0) {
-              Navigator.pushReplacementNamed(
+              Navigator.pushNamed(
                 context,
                 '/questionsHistory',
                 arguments: {'consult': _consult, 'user': medicallUser},

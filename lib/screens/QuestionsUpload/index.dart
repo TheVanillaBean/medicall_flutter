@@ -112,7 +112,7 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
         color: Theme.of(context).colorScheme.primary,
         onPressed: () {
           _consult.media = images;
-          Navigator.pushReplacementNamed(context, '/consultReview',
+          Navigator.pushNamed(context, '/consultReview',
               arguments: {'consult': _consult, 'user': medicallUser});
         },
         //Navigator.pushNamed(context, '/history'), // Switch tabs

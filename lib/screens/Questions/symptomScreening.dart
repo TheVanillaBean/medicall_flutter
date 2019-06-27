@@ -71,7 +71,7 @@ class _SymptomQuestionsScreenState extends State<SymptomQuestionsScreen> {
                 'answers': listThis[i]
               });
             }
-            Navigator.pushReplacementNamed(context, '/selectProvider',
+            Navigator.popAndPushNamed(context, '/selectProvider',
                 arguments: {'consult': _consult, 'user': medicallUser});
           } else {
             print('External FormValidation failed');

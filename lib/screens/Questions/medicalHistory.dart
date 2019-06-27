@@ -67,7 +67,7 @@ class _MedHistoryQuestionsScreenState extends State<MedHistoryQuestionsScreen> {
                 'answers': listThis[i]
               });
             }
-            Navigator.pushReplacementNamed(context, '/questionsUpload',
+            Navigator.popAndPushNamed(context, '/questionsUpload',
                 arguments: {'consult': _consult, 'user': medicallUser});
           } else {
             print('External FormValidation failed');
