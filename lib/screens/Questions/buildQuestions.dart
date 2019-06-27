@@ -19,7 +19,7 @@ class BuildQuestions {
       }
       stringList.add(question);
       List<dynamic> answers = questions[i]['answers'];
-      if (answers[0] == 'Yes') {
+      if (answers != null && answers[0] == 'Yes') {
         _onChanged = (val) {
           if (val.length > 2 && val[1] == 'Yes') {
             val.removeAt(1);
@@ -47,7 +47,7 @@ class BuildQuestions {
                 ),
               ),
             ),
-            type == 'dropdown'
+            type == 'dropdown' && answers != null
                 ? DropdownButtonHideUnderline(
                     child: FormBuilderDropdown(
                       initialValue: answers[0],
@@ -67,7 +67,7 @@ class BuildQuestions {
                       readonly: false,
                     ),
                   )
-                : type == 'checkbox'
+                : type == 'checkbox' && answers != null
                     ? FormBuilderCheckboxList(
                         leadingInput: true,
                         attribute: 'question' + i.toString(),
@@ -110,9 +110,7 @@ class BuildQuestions {
         ),
       );
     }
-    _consult.stringListQuestions = [];
-    _consult.stringListQuestions = stringList;
-    return returnList;
+    return [returnList, stringList];
     //turn the snapshot to a list of widget as you like...
   }
 }

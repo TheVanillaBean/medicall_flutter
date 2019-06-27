@@ -36,6 +36,7 @@ class _SymptomQuestionsScreenState extends State<SymptomQuestionsScreen> {
             _consult.consultType.toLowerCase())
         .get();
   }
+
   @override
   void dispose() {
     super.dispose();
@@ -116,14 +117,16 @@ class _SymptomQuestionsScreenState extends State<SymptomQuestionsScreen> {
                     else {
                       if (snapshot.hasData) {
                         if (snapshot.data != null) {
+                          var questionWidget = _buildClass.buildQuestions(
+                              snapshot.data.data,
+                              'screening_questions',
+                              null,
+                              widget);
+                          _consult.stringListQuestions = questionWidget[1];
                           return FormBuilder(
                               key: screeningFormKey,
                               child: Column(
-                                children: _buildClass.buildQuestions(
-                                    snapshot.data.data,
-                                    'screening_questions',
-                                    null,
-                                    widget),
+                                children: questionWidget[0],
                               ));
                         }
                       }

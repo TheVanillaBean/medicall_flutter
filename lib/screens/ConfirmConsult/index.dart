@@ -164,7 +164,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
         // Add tabs as widgets
         children: <Widget>[
           _buildTab(_consult.screeningQuestions),
-          _buildTab2(_consult.historyQuestions),
+          _buildTab(_consult.historyQuestions),
           _buildTab(_consult.media),
         ],
         // set the _confirmTabCntrl
@@ -283,52 +283,5 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
       );
     }
   }
-
-  _buildTab2(questions) {
-    if (questions.length > 0 && questions[0]["question"].toString().contains('Have you previously seen')) {
-      return Scaffold(
-        body: Container(
-          child: ListView.builder(
-              itemCount: questions.length,
-              itemBuilder: (context, i) {
-                if (questions[i]['answers'] is String) {
-                  return ListTile(
-                    title: Text(
-                      questions[i]['question'],
-                      style: TextStyle(fontSize: 14.0),
-                    ),
-                    subtitle: Text(
-                      questions[i]['answers'],
-                      style: TextStyle(
-                          height: 1.2,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.secondary),
-                    ),
-                    leading: Text((i + 1).toString() + '.'),
-                  );
-                } else {
-                  return ListTile(
-                    title: Text(
-                      questions[i]['question'],
-                      style: TextStyle(fontSize: 14.0),
-                    ),
-                    subtitle: Text(
-                      questions[i]['answers']
-                          .toString()
-                          .replaceAll(']', '')
-                          .replaceAll('[', '')
-                          .replaceFirst(', ', ''),
-                      style: TextStyle(
-                          height: 1.2,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.secondary),
-                    ),
-                    leading: Text((i + 1).toString() + '.'),
-                  );
-                }
-              }),
-        ),
-      );
-    }
-  }
+  
 }
