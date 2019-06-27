@@ -25,21 +25,20 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
   bool isLoading = false;
   double price = 39.00;
   ConsultData _consult;
-  TabController controller;
+  TabController _confirmTabCntrl;
   @override
   void initState() {
     super.initState();
     _consult = widget.data['consult'];
     medicallUser = widget.data['user'];
-    controller = TabController(length: 3, vsync: this);
-    StripeSource.setPublishableKey(
-        stripeKey);
+    _confirmTabCntrl = TabController(length: 3, vsync: this);
+    StripeSource.setPublishableKey(stripeKey);
   }
 
   @override
   void dispose() {
-    // Dispose of the Tab Controller
-    controller.dispose();
+    // Dispose of the Tab _confirmTabCntrl
+    _confirmTabCntrl.dispose();
     super.dispose();
   }
 
@@ -72,8 +71,8 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
               icon: Icon(Icons.perm_media),
             ),
           ],
-          // setup the controller
-          controller: controller,
+          // setup the _confirmTabCntrl
+          controller: _confirmTabCntrl,
         ),
         elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
       ),
@@ -168,8 +167,8 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
           _buildTab(_consult.historyQuestions),
           _buildTab(_consult.media),
         ],
-        // set the controller
-        controller: controller,
+        // set the _confirmTabCntrl
+        controller: _confirmTabCntrl,
       ),
     );
   }
