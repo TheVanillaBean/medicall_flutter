@@ -1,3 +1,4 @@
+import 'package:Medicall/models/consult_data_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 
@@ -5,6 +6,7 @@ class BuildQuestions {
   buildQuestions(data, questionIndex, dynamicAdd, widget) {
     List<Widget> returnList = [];
     ValueChanged _onChanged;
+    ConsultData _consult = widget.data['consult'];
     var questions = data[questionIndex];
     var stringList = [];
 
@@ -17,7 +19,7 @@ class BuildQuestions {
       }
       stringList.add(question);
       List<dynamic> answers = questions[i]['answers'];
-      if (answers != null && answers[0] == 'Yes') {
+      if (answers[0] == 'Yes') {
         _onChanged = (val) {
           if (val.length > 2 && val[1] == 'Yes') {
             val.removeAt(1);
@@ -45,7 +47,7 @@ class BuildQuestions {
                 ),
               ),
             ),
-            type == 'dropdown' && answers != null
+            type == 'dropdown'
                 ? DropdownButtonHideUnderline(
                     child: FormBuilderDropdown(
                       initialValue: answers[0],
@@ -65,7 +67,7 @@ class BuildQuestions {
                       readonly: false,
                     ),
                   )
-                : type == 'checkbox' && answers != null
+                : type == 'checkbox'
                     ? FormBuilderCheckboxList(
                         leadingInput: true,
                         attribute: 'question' + i.toString(),
@@ -108,7 +110,9 @@ class BuildQuestions {
         ),
       );
     }
-    return [returnList, stringList];
+    _consult.stringListQuestions = [];
+    _consult.stringListQuestions = stringList;
+    return returnList;
     //turn the snapshot to a list of widget as you like...
   }
 }

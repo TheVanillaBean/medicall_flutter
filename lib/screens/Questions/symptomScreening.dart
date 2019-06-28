@@ -17,7 +17,6 @@ class SymptomQuestionsScreen extends StatefulWidget {
 class _SymptomQuestionsScreenState extends State<SymptomQuestionsScreen> {
   GlobalKey<FormBuilderState> screeningFormKey = GlobalKey();
   bool autoValidate = true;
-  var _buildClass = BuildQuestions();
   bool readOnly = false;
   double formSpacing = 20;
   var screeningQuestions;
@@ -35,11 +34,6 @@ class _SymptomQuestionsScreenState extends State<SymptomQuestionsScreen> {
         .document('services/dermatology/symptoms/' +
             _consult.consultType.toLowerCase())
         .get();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   @override
@@ -65,15 +59,13 @@ class _SymptomQuestionsScreenState extends State<SymptomQuestionsScreen> {
             print('validationSucceded');
             //print(screeningFormKey.currentState.value);
             var listThis = screeningFormKey.currentState.value.values.toList();
-            var finalQuestionList = [];
-
+            _consult.screeningQuestions = [];
             for (var i = 0; i < listThis.length; i++) {
-              finalQuestionList.add({
+              _consult.screeningQuestions.add({
                 'question': _consult.stringListQuestions[i],
                 'answers': listThis[i]
               });
             }
-            _consult.screeningQuestions = finalQuestionList;
             Navigator.pushNamed(context, '/selectProvider',
                 arguments: {'consult': _consult, 'user': medicallUser});
           } else {
@@ -119,16 +111,14 @@ class _SymptomQuestionsScreenState extends State<SymptomQuestionsScreen> {
                     else {
                       if (snapshot.hasData) {
                         if (snapshot.data != null) {
-                          var questionWidget = _buildClass.buildQuestions(
-                              snapshot.data.data,
-                              'screening_questions',
-                              null,
-                              widget);
-                          _consult.stringListQuestions = questionWidget[1];
                           return FormBuilder(
                               key: screeningFormKey,
                               child: Column(
-                                children: questionWidget[0],
+                                children: BuildQuestions().buildQuestions(
+                                    snapshot.data.data,
+                                    'screening_questions',
+                                    null,
+                                    widget),
                               ));
                         }
                       }

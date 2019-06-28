@@ -20,7 +20,6 @@ class _MedHistoryQuestionsScreenState extends State<MedHistoryQuestionsScreen> {
   GlobalKey<FormBuilderState> historyFormKey = GlobalKey();
   bool autoValidate = true;
   bool readOnly = false;
-  var _buildClass = BuildQuestions();
   double formSpacing = 20;
   bool showSegmentedControl = true;
   Future _future;
@@ -35,6 +34,11 @@ class _MedHistoryQuestionsScreenState extends State<MedHistoryQuestionsScreen> {
         .document('services/dermatology/symptoms/' +
             _consult.consultType.toLowerCase())
         .get();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -59,21 +63,14 @@ class _MedHistoryQuestionsScreenState extends State<MedHistoryQuestionsScreen> {
           if (historyFormKey.currentState.validate()) {
             print('validationSucceded');
             //print(historyFormKey.currentState.value);
-            //_consult.historyQuestions = [];
-            // for (var i = 0; i < historyFormKey.currentState.value.length; i++) {
-            //   _consult.historyQuestions[i]["answers"] =
-            //       historyFormKey.currentState.value[i];
-            // }
             var listThis = historyFormKey.currentState.value.values.toList();
-
-            var finalQuestionList = [];
+            _consult.historyQuestions = [];
             for (var i = 0; i < listThis.length; i++) {
-              finalQuestionList.add({
+              _consult.historyQuestions.add({
                 'question': _consult.stringListQuestions[i],
                 'answers': listThis[i]
               });
             }
-            _consult.historyQuestions = finalQuestionList;
             Navigator.pushNamed(context, '/questionsUpload',
                 arguments: {'consult': _consult, 'user': medicallUser});
           } else {
@@ -119,17 +116,14 @@ class _MedHistoryQuestionsScreenState extends State<MedHistoryQuestionsScreen> {
                     else {
                       if (snapshot.hasData) {
                         if (snapshot.data != null) {
-                          // _consult.historyQuestions =
-                          //     snapshot.data.data["medical_history_questions"];
-                          var questionWidget = _buildClass.buildQuestions(
-                              snapshot.data.data,
-                              'medical_history_questions',
-                              _consult.provider,
-                              widget);
-                          _consult.stringListQuestions = questionWidget[1];
                           return FormBuilder(
                               key: historyFormKey,
-                              child: Column(children: questionWidget[0]));
+                              child: Column(
+                                  children: BuildQuestions().buildQuestions(
+                                      snapshot.data.data,
+                                      'medical_history_questions',
+                                      _consult.provider,
+                                      widget)));
                         }
                       }
                     }
