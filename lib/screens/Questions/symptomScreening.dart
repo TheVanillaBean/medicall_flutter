@@ -65,13 +65,15 @@ class _SymptomQuestionsScreenState extends State<SymptomQuestionsScreen> {
             print('validationSucceded');
             //print(screeningFormKey.currentState.value);
             var listThis = screeningFormKey.currentState.value.values.toList();
-            _consult.screeningQuestions = [];
+            var finalQuestionList = [];
+
             for (var i = 0; i < listThis.length; i++) {
-              _consult.screeningQuestions.add({
+              finalQuestionList.add({
                 'question': _consult.stringListQuestions[i],
                 'answers': listThis[i]
               });
             }
+            _consult.screeningQuestions = finalQuestionList;
             Navigator.pushNamed(context, '/selectProvider',
                 arguments: {'consult': _consult, 'user': medicallUser});
           } else {

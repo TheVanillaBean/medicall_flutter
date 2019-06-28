@@ -65,13 +65,15 @@ class _MedHistoryQuestionsScreenState extends State<MedHistoryQuestionsScreen> {
             //       historyFormKey.currentState.value[i];
             // }
             var listThis = historyFormKey.currentState.value.values.toList();
-            _consult.historyQuestions = [];
+
+            var finalQuestionList = [];
             for (var i = 0; i < listThis.length; i++) {
-              _consult.historyQuestions.add({
+              finalQuestionList.add({
                 'question': _consult.stringListQuestions[i],
                 'answers': listThis[i]
               });
             }
+            _consult.historyQuestions = finalQuestionList;
             Navigator.pushNamed(context, '/questionsUpload',
                 arguments: {'consult': _consult, 'user': medicallUser});
           } else {
