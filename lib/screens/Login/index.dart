@@ -200,18 +200,18 @@ class _LoginScreenState extends State<LoginPage>
 
         if (medicallUser.terms == true && medicallUser.policy == true) {
           if (medicallUser.type == 'provider') {
-            Navigator.pushNamed(context, '/history',
+            Navigator.pushReplacementNamed(context, '/history',
                 arguments: {'user': medicallUser});
           } else {
-            Navigator.pushNamed(context, '/doctors',
+            Navigator.pushReplacementNamed(context, '/doctors',
                 arguments: {'user': medicallUser});
           }
         } else {
           if (medicallUser.type == null) {
-            Navigator.pushNamed(context, '/registrationType',
+            Navigator.pushReplacementNamed(context, '/registrationType',
                 arguments: {'user': medicallUser});
           } else {
-            Navigator.pushNamed(context, '/registration',
+            Navigator.pushReplacementNamed(context, '/registration',
                 arguments: {'user': medicallUser});
           }
         }

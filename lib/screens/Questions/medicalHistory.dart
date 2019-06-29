@@ -119,7 +119,7 @@ class _MedHistoryQuestionsScreenState extends State<MedHistoryQuestionsScreen> {
                           return FormBuilder(
                               key: historyFormKey,
                               child: Column(
-                                  children: buildQuestions(
+                                  children: buildQuestions1(
                                       snapshot.data.data,
                                       'medical_history_questions',
                                       _consult.provider,
