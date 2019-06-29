@@ -217,6 +217,8 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
   }
 
   _buildTab(questions) {
+    print(_consult.historyQuestions);
+    print( _consult.screeningQuestions);
     if (questions.length > 0) {
       return Scaffold(
         body: Container(
