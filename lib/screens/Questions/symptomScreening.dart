@@ -114,7 +114,7 @@ class _SymptomQuestionsScreenState extends State<SymptomQuestionsScreen> {
                           return FormBuilder(
                               key: screeningFormKey,
                               child: Column(
-                                children: BuildQuestions().buildQuestions(
+                                children: buildQuestions(
                                     snapshot.data.data,
                                     'screening_questions',
                                     null,
