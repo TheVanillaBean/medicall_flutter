@@ -164,7 +164,7 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
             ),
           ),
           Container(
-            height: 350,
+            height: MediaQuery.of(context).size.height - 210,
             child: Stack(
               children: <Widget>[
                 GridView.count(
