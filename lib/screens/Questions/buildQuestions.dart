@@ -1,12 +1,10 @@
-import 'package:Medicall/models/consult_data_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 
-buildQuestions(data, questionIndex, dynamicAdd, widget) {
+buildQuestions(data, questionIndex, dynamicAdd, widget, key) {
   List<Widget> returnList = [];
   ValueChanged _onChanged;
-  ConsultData _consult = widget.data['consult'];
-  var questions = data[questionIndex];
+  var questions = data;
   var stringList = [];
 
   for (var i = 0; i < questions.length; i++) {
@@ -17,17 +15,39 @@ buildQuestions(data, questionIndex, dynamicAdd, widget) {
       question = question + dynamicAdd;
     }
     stringList.add(question);
-    List<dynamic> answers = questions[i]['answers'];
-    if (answers[0] == 'Yes') {
+    List<dynamic> options = questions[i]['options'];
+    if (options != null) {
       _onChanged = (val) {
-        if (val.length > 2 && val[1] == 'Yes') {
-          val.removeAt(1);
-        }
-        if (val.length > 2 && val[1] == 'No') {
-          val.removeAt(1);
-        }
+        Map fields = key.currentState.fields;
+        fields.forEach((k, v) {
+          if (fields[k].currentState.value == val) {
+            data[int.parse(k.substring(k.length - 1))]["answer"] = val;
+          }
+        });
       };
+      if (options[1] == 'Yes') {
+        _onChanged = (val) {
+          if (val.length > 2 && val[1] == 'Yes') {
+            val.removeAt(1);
+          }
+          if (val.length > 2 && val[1] == 'No') {
+            val.removeAt(1);
+          }
+          Map fields = key.currentState.fields;
+          fields.forEach((k, v) {
+            if (fields[k].currentState.value == val) {
+              if (val[0] == "") {
+                val[0] = null;
+              }
+              data[int.parse(k.substring(k.length - 1))]["answer"] = val;
+            }
+          });
+        };
+      }
+    } else {
+      options = [""];
     }
+
     String type = questions[i]['type'];
     returnList.add(
       Column(
@@ -49,7 +69,14 @@ buildQuestions(data, questionIndex, dynamicAdd, widget) {
           type == 'dropdown'
               ? DropdownButtonHideUnderline(
                   child: FormBuilderDropdown(
-                    initialValue: answers[0],
+                    initialValue: data[i]['answer'] != null
+                        ? data[i]['answer'].runtimeType == List &&
+                                data[i]['answer'].length > 0
+                            ? data[i]['answer'][1]
+                            : data[i]['answer'].runtimeType == String
+                                ? data[i]['answer']
+                                : data[i]['answer'][0]
+                        : options[0],
                     attribute: 'question' + i.toString(),
                     decoration: InputDecoration(
                         fillColor: Color.fromRGBO(35, 179, 232, 0.1),
@@ -59,7 +86,8 @@ buildQuestions(data, questionIndex, dynamicAdd, widget) {
                     validators: [
                       FormBuilderValidators.required(),
                     ],
-                    items: answers
+                    onChanged: _onChanged,
+                    items: options
                         .map((lang) =>
                             DropdownMenuItem(value: lang, child: Text(lang)))
                         .toList(),
@@ -69,13 +97,13 @@ buildQuestions(data, questionIndex, dynamicAdd, widget) {
               : type == 'checkbox'
                   ? FormBuilderCheckboxList(
                       leadingInput: true,
+                      initialValue: data[i]['answer'],
                       attribute: 'question' + i.toString(),
-                      initialValue: [''],
                       validators: [
                         FormBuilderValidators.required(),
                       ],
                       onChanged: _onChanged,
-                      options: answers
+                      options: options
                           .map((lang) => FormBuilderFieldOption(value: lang))
                           .toList(),
                     )
@@ -92,15 +120,8 @@ buildQuestions(data, questionIndex, dynamicAdd, widget) {
                           ),
                         )
                       : FormBuilderTextField(
-                          initialValue: '',
+                          initialValue: data[i]['answer'],
                           attribute: 'question' + i.toString(),
-                          maxLines: 6,
-                          decoration: InputDecoration(
-                              fillColor: Color.fromRGBO(35, 179, 232, 0.1),
-                              filled: true,
-                              disabledBorder: InputBorder.none,
-                              enabledBorder: InputBorder.none,
-                              border: InputBorder.none),
                           validators: [
                             //FormBuilderValidators.required(),
                           ],
@@ -109,121 +130,11 @@ buildQuestions(data, questionIndex, dynamicAdd, widget) {
       ),
     );
   }
-  _consult.stringListQuestions = [];
-  _consult.stringListQuestions = stringList;
-  return returnList;
-  //turn the snapshot to a list of widget as you like...
-}
 
-buildQuestions1(data, questionIndex, dynamicAdd, widget) {
-  List<Widget> returnList = [];
-  ValueChanged _onChanged;
-  ConsultData _consult = widget.data['consult'];
-  var questions = data[questionIndex];
-  var stringList = [];
-
-  for (var i = 0; i < questions.length; i++) {
-    String question = questions[i]['question'];
-    if (questionIndex == 'medical_history_questions' &&
-        i == 0 &&
-        dynamicAdd != null) {
-      question = question + dynamicAdd;
-    }
-    stringList.add(question);
-    List<dynamic> answers = questions[i]['answers'];
-    if (answers[0] == 'Yes') {
-      _onChanged = (val) {
-        if (val.length > 2 && val[1] == 'Yes') {
-          val.removeAt(1);
-        }
-        if (val.length > 2 && val[1] == 'No') {
-          val.removeAt(1);
-        }
-      };
-    }
-    String type = questions[i]['type'];
-    returnList.add(
-      Column(
-        children: <Widget>[
-          i != 0
-              ? SizedBox(
-                  height: 20,
-                )
-              : SizedBox(height: 0),
-          Padding(
-            padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                question,
-              ),
-            ),
-          ),
-          type == 'dropdown'
-              ? DropdownButtonHideUnderline(
-                  child: FormBuilderDropdown(
-                    initialValue: answers[0],
-                    attribute: 'question' + i.toString(),
-                    decoration: InputDecoration(
-                        fillColor: Color.fromRGBO(35, 179, 232, 0.1),
-                        filled: true,
-                        contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                        border: InputBorder.none),
-                    validators: [
-                      FormBuilderValidators.required(),
-                    ],
-                    items: answers
-                        .map((lang) =>
-                            DropdownMenuItem(value: lang, child: Text(lang)))
-                        .toList(),
-                    readonly: false,
-                  ),
-                )
-              : type == 'checkbox'
-                  ? FormBuilderCheckboxList(
-                      leadingInput: true,
-                      attribute: 'question' + i.toString(),
-                      initialValue: [''],
-                      validators: [
-                        FormBuilderValidators.required(),
-                      ],
-                      onChanged: _onChanged,
-                      options: answers
-                          .map((lang) => FormBuilderFieldOption(value: lang))
-                          .toList(),
-                    )
-                  : type == 'switch'
-                      ? DropdownButtonHideUnderline(
-                          child: FormBuilderSwitch(
-                            decoration: InputDecoration(
-                                contentPadding:
-                                    EdgeInsets.fromLTRB(10, 10, 10, 10),
-                                border: InputBorder.none),
-                            label: Text(''),
-                            attribute: 'question' + i.toString(),
-                            initialValue: false,
-                          ),
-                        )
-                      : FormBuilderTextField(
-                          initialValue: '',
-                          attribute: 'question' + i.toString(),
-                          maxLines: 6,
-                          decoration: InputDecoration(
-                              fillColor: Color.fromRGBO(35, 179, 232, 0.1),
-                              filled: true,
-                              disabledBorder: InputBorder.none,
-                              enabledBorder: InputBorder.none,
-                              border: InputBorder.none),
-                          validators: [
-                            //FormBuilderValidators.required(),
-                          ],
-                        ),
-        ],
-      ),
-    );
-  }
-  _consult.stringListQuestions = [];
-  _consult.stringListQuestions = stringList;
-  return returnList;
+  return FormBuilder(
+      key: key,
+      child: Column(
+        children: returnList,
+      ));
   //turn the snapshot to a list of widget as you like...
 }

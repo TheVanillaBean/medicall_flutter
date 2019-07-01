@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/presentation/medicall_app_icons.dart' as CustomIcons;
 import 'package:Medicall/models/consult_data_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DoctorsScreen extends StatefulWidget {
   final data;
@@ -12,6 +16,7 @@ class DoctorsScreen extends StatefulWidget {
 }
 
 class _DoctorsScreenState extends State<DoctorsScreen> {
+  ConsultData _consult;
   @override
   void initState() {
     super.initState();
@@ -162,14 +167,35 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
                               orientation == Orientation.portrait ? 1 : 0.8,
                           style: TextStyle(color: Colors.white),
                         ),
-                        onPressed: () {
+                        onPressed: () async {
+                          _consult = ConsultData();
+                          _consult.consultType = 'Lesion';
+                          _consult.provider = '';
+                          _consult.providerId = '';
+                          _consult.patientDevTokens = [];
+                          _consult.providerDevTokens = [];
+                          _consult.screeningQuestions = [];
+                          _consult.stringListQuestions = [];
+                          _consult.historyQuestions = [];
+                          _consult.media = [];
+
+                          SharedPreferences _thisConsult =
+                              await SharedPreferences.getInstance();
+                          var consultQuestions = await Firestore.instance
+                              .document('services/dermatology/symptoms/' +
+                                  _consult.consultType.toLowerCase())
+                              .get();
+                          _consult.screeningQuestions =
+                              consultQuestions.data["screening_questions"];
+                          _consult.historyQuestions = consultQuestions
+                              .data["medical_history_questions"];
+                          String currentConsultString = jsonEncode(_consult);
+                          await _thisConsult.setString(
+                              "consult", currentConsultString);
                           Navigator.pushNamed(
                             context,
                             '/questionsScreening',
-                            arguments: {
-                              'consult': ConsultData(consultType: 'Lesion'),
-                              'user': medicallUser
-                            },
+                            arguments: {'user': medicallUser},
                           );
                         }),
                     RaisedButton(

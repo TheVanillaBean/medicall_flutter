@@ -24,6 +24,7 @@ class LoginPage extends StatefulWidget {
 class _LoginScreenState extends State<LoginPage>
     implements FirebaseAuthListener {
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+
   bool _isPhoneAuthEnable = false;
   bool _isEmailAuthEnable = true;
   bool _isLoading = false;
@@ -541,7 +542,7 @@ class _LoginScreenState extends State<LoginPage>
                         children: <Widget>[
                           Expanded(
                             child: GoogleSignInButton(
-                              text: "Google Sign In",
+                                text: "Google Sign In",
                                 onPressed: () {
                                   gMailTabEnable();
                                 },

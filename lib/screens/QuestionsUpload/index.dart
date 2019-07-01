@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'asset_view.dart';
 
 class QuestionsUploadScreen extends StatefulWidget {
@@ -16,16 +19,32 @@ class QuestionsUploadScreen extends StatefulWidget {
 
 class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
   List<Asset> images = List<Asset>();
-  ConsultData _consult;
+  ConsultData _consult = ConsultData();
   String _error = '';
   @override
   void initState() {
-    _consult = widget.data['consult'];
-    medicallUser = widget.data['user'];
-    if (_consult.media != null && _consult.media.length > 0) {
-      images = _consult.media;
-    }
     super.initState();
+    medicallUser = widget.data['user'];
+    getConsult();
+  }
+
+  Future getConsult() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    var perfConsult = jsonDecode(pref.getString('consult'));
+    _consult.consultType = perfConsult["consultType"];
+    _consult.provider = perfConsult["provider"];
+    _consult.providerId = perfConsult["providerId"];
+    _consult.screeningQuestions = perfConsult["screeningQuestions"];
+    _consult.historyQuestions = perfConsult["historyQuestions"];
+    _consult.media = perfConsult["media"];
+  }
+
+  setConsult() async {
+    SharedPreferences _thisConsult = await SharedPreferences.getInstance();
+    _consult.media = images;
+    String currentConsultString = jsonEncode(_consult);
+    await _thisConsult.setString("consult", currentConsultString);
+    return;
   }
 
   Widget buildGridView() {
@@ -106,11 +125,20 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
         ),
         elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: loadAssets,
+        child: Icon(
+          Icons.camera_alt,
+          color: Theme.of(context).colorScheme.onBackground,
+          size: 30,
+        ),
+      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       bottomNavigationBar: FlatButton(
         padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
         color: Theme.of(context).colorScheme.primary,
-        onPressed: () {
+        onPressed: () async {
+          //await setConsult();
           _consult.media = images;
           Navigator.pushNamed(context, '/consultReview',
               arguments: {'consult': _consult, 'user': medicallUser});
@@ -135,7 +163,8 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
               ),
             ),
           ),
-          Expanded(
+          Container(
+            height: 350,
             child: Stack(
               children: <Widget>[
                 GridView.count(
@@ -161,56 +190,6 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
             ),
           ),
           Center(child: _error.length > 0 ? Text('Error: $_error') : Text('')),
-          Row(
-            children: <Widget>[
-              Expanded(
-                flex: 1,
-                child: FlatButton(
-                  padding: EdgeInsets.all(10),
-                  onPressed: loadAssets,
-                  child: Column(
-                    children: <Widget>[
-                      Icon(
-                        Icons.camera_alt,
-                        color: Theme.of(context).colorScheme.secondary,
-                        size: 40,
-                      ),
-                      Text(
-                        'Camera/Album',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.secondary,
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              images.length > 0
-                  ? Expanded(
-                      flex: 1,
-                      child: FlatButton(
-                        padding: EdgeInsets.all(10),
-                        child: Column(
-                          children: <Widget>[
-                            Icon(
-                              Icons.clear,
-                              color: Theme.of(context).colorScheme.secondary,
-                              size: 40,
-                            ),
-                            Text(
-                              'Delete All',
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.secondary,
-                              ),
-                            )
-                          ],
-                        ),
-                        onPressed: deleteAssets,
-                      ),
-                    )
-                  : Container(),
-            ],
-          ),
         ],
       ),
     );

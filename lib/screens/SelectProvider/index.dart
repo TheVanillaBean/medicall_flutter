@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/secrets.dart' as secrets;
@@ -10,6 +12,7 @@ import 'dart:async';
 import 'package:google_maps_webservice/places.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as LocationManager;
+import 'package:shared_preferences/shared_preferences.dart';
 
 GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: secrets.kGoogleApiKey);
 
@@ -32,20 +35,39 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
   List<String> providers = [];
   bool isLoading = false;
   var selectedProvider = '';
+  var providerTitles = '';
   String errorMessage;
-  ConsultData _consult;
+  ConsultData _consult = ConsultData();
 
   @override
   void initState() {
     super.initState();
     medicallUser = widget.data['user'];
-    _consult = widget.data['consult'];
     getAddresses();
+    getConsult();
+  }
+
+  Future getConsult() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    var perfConsult = jsonDecode(pref.getString('consult'));
+    _consult.consultType = perfConsult["consultType"];
+    _consult.screeningQuestions = perfConsult["screeningQuestions"];
+    _consult.historyQuestions = perfConsult["historyQuestions"];
+  }
+
+  setConsult() async {
+    SharedPreferences _thisConsult = await SharedPreferences.getInstance();
+    _consult.provider =
+        '${selectedProvider.split(" ")[0][0].toUpperCase()}${selectedProvider.split(" ")[0].substring(1)} ${selectedProvider.split(" ")[1][0].toUpperCase()}${selectedProvider.split(" ")[1].substring(1)}' +
+            " " +
+            providerTitles;
+    String currentConsultString = jsonEncode(_consult);
+    await _thisConsult.setString("consult", currentConsultString);
   }
 
   Future getAddresses() async {
     addresses = [];
-    Firestore.instance
+    return Firestore.instance
         .collection('users')
         .where("type", isEqualTo: "provider")
         .snapshots()
@@ -95,12 +117,13 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
         bottomNavigationBar: FlatButton(
           padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
           color: Theme.of(context).colorScheme.primary,
-          onPressed: () {
+          onPressed: () async {
+            await setConsult();
             if (selectedProvider.length > 0) {
               Navigator.pushNamed(
                 context,
                 '/questionsHistory',
-                arguments: {'consult': _consult, 'user': medicallUser},
+                arguments: {'user': medicallUser},
               );
             } else {
               _showMessageDialog();
@@ -159,7 +182,8 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
                                       _consult.providerId =
                                           userDocuments[i].documentID;
                                       _selectProvider(
-                                          userDocuments[i].data['name']);
+                                          userDocuments[i].data['name'],
+                                          userDocuments[i].data['titles']);
                                     });
                                   },
                                   child: Column(
@@ -224,8 +248,9 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
     refresh();
   }
 
-  void _selectProvider(provider) {
+  void _selectProvider(provider, titles) {
     selectedProvider = provider;
+    providerTitles = titles;
   }
 
   Future<LatLng> getUserLocation() async {
@@ -340,12 +365,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
           ),
           trailing: Container(
             child: FlatButton(
-              onPressed: () {
-                setState(() {
-                  _consult.provider = doctorNames[places.indexOf(f)];
-                  _selectProvider(doctorNames[places.indexOf(f)]);
-                });
-              },
+              onPressed: () {},
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,

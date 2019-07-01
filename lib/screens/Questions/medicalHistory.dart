@@ -1,9 +1,11 @@
+import 'dart:convert';
+
 import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/Questions/buildQuestions.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MedHistoryQuestionsScreen extends StatefulWidget {
   final data;
@@ -22,23 +24,43 @@ class _MedHistoryQuestionsScreenState extends State<MedHistoryQuestionsScreen> {
   bool readOnly = false;
   double formSpacing = 20;
   bool showSegmentedControl = true;
-  Future _future;
-  ConsultData _consult;
+  ConsultData _consult = ConsultData();
 
   @override
   void initState() {
     super.initState();
-    _consult = widget.data['consult'];
     medicallUser = widget.data['user'];
-    _future = Firestore.instance
-        .document('services/dermatology/symptoms/' +
-            _consult.consultType.toLowerCase())
-        .get();
   }
 
   @override
   void dispose() {
     super.dispose();
+  }
+
+  Future getConsult() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    var perfConsult = jsonDecode(pref.getString('consult'));
+    _consult.consultType = perfConsult["consultType"];
+    _consult.screeningQuestions = perfConsult["screeningQuestions"];
+    _consult.historyQuestions = perfConsult["historyQuestions"];
+    _consult.provider = perfConsult["provider"];
+    _consult.providerId = perfConsult["providerId"];
+    _consult.historyQuestions[0]["question"] =
+        _consult.historyQuestions[0]["question"] + " " + _consult.provider;
+    return _consult.screeningQuestions;
+  }
+
+  setConsult() async {
+    SharedPreferences _thisConsult = await SharedPreferences.getInstance();
+    int index = 0;
+    historyFormKey.currentState.value.forEach((k, v) {
+      _consult.historyQuestions[index]["answer"] =
+          historyFormKey.currentState.value[k];
+      index++;
+    });
+    String currentConsultString = jsonEncode(_consult);
+    await _thisConsult.setString("consult", currentConsultString);
+    return jsonDecode(_thisConsult.getString('consult'));
   }
 
   @override
@@ -58,21 +80,14 @@ class _MedHistoryQuestionsScreenState extends State<MedHistoryQuestionsScreen> {
       bottomNavigationBar: FlatButton(
         padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
         color: Theme.of(context).colorScheme.primary,
-        onPressed: () {
+        onPressed: () async {
           historyFormKey.currentState.save();
           if (historyFormKey.currentState.validate()) {
             print('validationSucceded');
             //print(historyFormKey.currentState.value);
-            var listThis = historyFormKey.currentState.value.values.toList();
-            _consult.historyQuestions = [];
-            for (var i = 0; i < listThis.length; i++) {
-              _consult.historyQuestions.add({
-                'question': _consult.stringListQuestions[i],
-                'answers': listThis[i]
-              });
-            }
+            await setConsult();
             Navigator.pushNamed(context, '/questionsUpload',
-                arguments: {'consult': _consult, 'user': medicallUser});
+                arguments: {'user': medicallUser});
           } else {
             print('External FormValidation failed');
           }
@@ -89,41 +104,23 @@ class _MedHistoryQuestionsScreenState extends State<MedHistoryQuestionsScreen> {
         child: SingleChildScrollView(
           padding: EdgeInsets.fromLTRB(15, 20, 15, 20),
           child: FutureBuilder(
-              future: _future,
+              future: getConsult(),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 switch (snapshot.connectionState) {
                   case ConnectionState.none:
                     return Text('Press button to start');
-                  case ConnectionState.waiting:
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Container(
-                          height: MediaQuery.of(context).size.height * 0.85,
-                        ),
-                        Container(
-                          height: 50,
-                          alignment: Alignment.center,
-                          width: 50,
-                          padding: EdgeInsets.all(10),
-                          child: CircularProgressIndicator(),
-                        )
-                      ],
-                    );
                   default:
                     if (snapshot.hasError)
                       return Text('Error: ${snapshot.error}');
                     else {
                       if (snapshot.hasData) {
                         if (snapshot.data != null) {
-                          return FormBuilder(
-                              key: historyFormKey,
-                              child: Column(
-                                  children: buildQuestions1(
-                                      snapshot.data.data,
-                                      'medical_history_questions',
-                                      _consult.provider,
-                                      widget)));
+                          return buildQuestions(
+                              _consult.historyQuestions,
+                              'screening_questions',
+                              null,
+                              widget,
+                              historyFormKey);
                         }
                       }
                     }

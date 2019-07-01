@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/secrets.dart';
@@ -10,6 +11,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart';
 import 'package:oktoast/oktoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stripe_payment/stripe_payment.dart';
 
 class ConfirmConsultScreen extends StatefulWidget {
@@ -35,6 +37,16 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
     StripeSource.setPublishableKey(stripeKey);
   }
 
+  Future getConsult() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    var perfConsult = jsonDecode(pref.getString('consult'));
+    _consult.consultType = perfConsult["consultType"];
+    _consult.provider = perfConsult["provider"];
+    _consult.screeningQuestions = perfConsult["screeningQuestions"];
+    _consult.historyQuestions = perfConsult["historyQuestions"];
+    return _consult;
+  }
+
   @override
   void dispose() {
     // Dispose of the Tab _confirmTabCntrl
@@ -44,133 +56,169 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(
-          'Consult with ' + _consult.provider,
-          style: TextStyle(
-            fontSize:
-                Theme.of(context).platform == TargetPlatform.iOS ? 17.0 : 17.0,
-          ),
-        ),
-        bottom: TabBar(
-          indicatorColor: Colors.white,
-          tabs: <Tab>[
-            Tab(
-              // set icon to the tab
-              text: 'Symptom',
-              icon: Icon(Icons.local_pharmacy),
-            ),
-            Tab(
-              text: 'History',
-              icon: Icon(Icons.assignment_ind),
-            ),
-            Tab(
-              text: 'Pictures',
-              icon: Icon(Icons.perm_media),
-            ),
-          ],
-          // setup the _confirmTabCntrl
-          controller: _confirmTabCntrl,
-        ),
-        elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      bottomNavigationBar: !isLoading
-          ? Row(
-              children: <Widget>[
-                Expanded(
-                  child: FlatButton(
-                    padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
-                    color: Theme.of(context).colorScheme.primary,
-                    onPressed: () {},
-                    child: Text('Total: \$39'),
-                  ),
-                ),
-                Expanded(
-                  child: FlatButton(
-                    padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
-                    color: Theme.of(context).colorScheme.secondaryVariant,
-                    onPressed: () async {
-                      setState(() {
-                        isLoading = true;
-                      });
-                      //await _addProviderConsult();
-                      setState(() {
-                        isLoading = false;
-                      });
-                      print("Ready: ${StripeSource.ready}");
-                      Firestore.instance
-                          .collection('cards')
-                          .document(medicallUser.id)
-                          .collection('sources')
-                          .getDocuments()
-                          .then((snap) async {
-                        if (snap.documents.length == 0) {
-                          StripeSource.addSource().then((String token) async {
-                            PaymentService().addCard(token);
-                            showToast('Card has been added and charged charged',
-                                duration: Duration(seconds: 3));
-                            await _addConsult();
-                            return Navigator.pushNamed(context, '/history',
-                                arguments: {
-                                  'consult': _consult,
-                                  'user': medicallUser
-                                });
-                          });
-                        } else {
-                          PaymentService().chargePayment(
-                              price,
-                              _consult.consultType +
-                                  ' consult with ' +
-                                  _consult.provider);
-                          showToast('Card has been charged',
-                              duration: Duration(seconds: 3));
-                          await _addConsult();
-                          return Navigator.pushNamed(context, '/history',
-                              arguments: {
-                                'consult': _consult,
-                                'user': medicallUser
-                              });
-                        }
-                      });
-
-                      // Navigator.pushNamed(context, '/history', arguments: {
-                      //   'consult': _consult,
-                      //   'user': medicallUser
-                      // });
-                    },
-                    child: Text(
-                      'Pay',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
-                        letterSpacing: 1.2,
+    return FutureBuilder(
+        future: getConsult(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+              return Text('Press button to start');
+            case ConnectionState.waiting:
+              break;
+            default:
+              if (snapshot.hasError)
+                return Text('Error: ${snapshot.error}');
+              else {
+                if (snapshot.hasData) {
+                  if (snapshot.data != null) {
+                    return Scaffold(
+                      appBar: AppBar(
+                        centerTitle: true,
+                        title: Text(
+                          'Consult with ' + _consult.provider,
+                          style: TextStyle(
+                            fontSize:
+                                Theme.of(context).platform == TargetPlatform.iOS
+                                    ? 17.0
+                                    : 17.0,
+                          ),
+                        ),
+                        bottom: TabBar(
+                          indicatorColor: Colors.white,
+                          tabs: <Tab>[
+                            Tab(
+                              // set icon to the tab
+                              text: 'Symptom',
+                              icon: Icon(Icons.local_pharmacy),
+                            ),
+                            Tab(
+                              text: 'History',
+                              icon: Icon(Icons.assignment_ind),
+                            ),
+                            Tab(
+                              text: 'Pictures',
+                              icon: Icon(Icons.perm_media),
+                            ),
+                          ],
+                          // setup the _confirmTabCntrl
+                          controller: _confirmTabCntrl,
+                        ),
+                        elevation:
+                            Theme.of(context).platform == TargetPlatform.iOS
+                                ? 0.0
+                                : 4.0,
                       ),
-                    ),
-                  ),
-                )
-              ],
-            )
-          : FlatButton(
-              padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
-              color: Theme.of(context).colorScheme.primary,
-              onPressed: () {},
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-              ),
-            ),
-      body: TabBarView(
-        // Add tabs as widgets
-        children: <Widget>[
-          _buildTab(_consult.screeningQuestions),
-          _buildTab(_consult.historyQuestions),
-          _buildTab(_consult.media),
-        ],
-        // set the _confirmTabCntrl
-        controller: _confirmTabCntrl,
-      ),
-    );
+                      floatingActionButtonLocation:
+                          FloatingActionButtonLocation.centerFloat,
+                      bottomNavigationBar: !isLoading
+                          ? Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: FlatButton(
+                                    padding:
+                                        EdgeInsets.fromLTRB(40, 20, 40, 20),
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                    onPressed: () {},
+                                    child: Text('Total: \$39'),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: FlatButton(
+                                    padding:
+                                        EdgeInsets.fromLTRB(40, 20, 40, 20),
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .secondaryVariant,
+                                    onPressed: () async {
+                                      setState(() {
+                                        isLoading = true;
+                                      });
+                                      //await _addProviderConsult();
+                                      setState(() {
+                                        isLoading = false;
+                                      });
+                                      Firestore.instance
+                                          .collection('cards')
+                                          .document(medicallUser.id)
+                                          .collection('sources')
+                                          .getDocuments()
+                                          .then((snap) async {
+                                        if (snap.documents.length == 0) {
+                                          StripeSource.addSource()
+                                              .then((String token) async {
+                                            PaymentService().addCard(token);
+                                            showToast(
+                                                'Card has been added and charged charged',
+                                                duration: Duration(seconds: 3));
+                                            await _addConsult();
+                                            return Navigator
+                                                .pushReplacementNamed(
+                                                    context, '/history',
+                                                    arguments: {
+                                                  'consult': _consult,
+                                                  'user': medicallUser
+                                                });
+                                          });
+                                        } else {
+                                          PaymentService().chargePayment(
+                                              price,
+                                              _consult.consultType +
+                                                  ' consult with ' +
+                                                  _consult.provider);
+                                          showToast('Card has been charged',
+                                              duration: Duration(seconds: 3));
+                                          await _addConsult();
+                                          return Navigator.pushReplacementNamed(
+                                              context, '/history', arguments: {
+                                            'consult': _consult,
+                                            'user': medicallUser
+                                          });
+                                        }
+                                      });
+
+                                      // Navigator.pushNamed(context, '/history', arguments: {
+                                      //   'consult': _consult,
+                                      //   'user': medicallUser
+                                      // });
+                                    },
+                                    child: Text(
+                                      'Pay',
+                                      style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                        letterSpacing: 1.2,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            )
+                          : FlatButton(
+                              padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
+                              color: Theme.of(context).colorScheme.primary,
+                              onPressed: () {},
+                              child: CircularProgressIndicator(
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(Colors.white),
+                              ),
+                            ),
+                      body: TabBarView(
+                        // Add tabs as widgets
+                        children: <Widget>[
+                          _buildTab(_consult.screeningQuestions),
+                          _buildTab(_consult.historyQuestions),
+                          _buildTab(_consult.media),
+                        ],
+                        // set the _confirmTabCntrl
+                        controller: _confirmTabCntrl,
+                      ),
+                    );
+                  }
+                }
+              }
+          }
+        });
   }
 
   Future _addConsult() async {
@@ -217,8 +265,6 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
   }
 
   _buildTab(questions) {
-    print(_consult.historyQuestions);
-    print( _consult.screeningQuestions);
     if (questions.length > 0) {
       return Scaffold(
         body: Container(
@@ -237,14 +283,14 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
               : ListView.builder(
                   itemCount: questions.length,
                   itemBuilder: (context, i) {
-                    if (questions[i]['answers'] is String) {
+                    if (questions[i]['options'] is String) {
                       return ListTile(
                         title: Text(
                           questions[i]['question'],
                           style: TextStyle(fontSize: 14.0),
                         ),
                         subtitle: Text(
-                          questions[i]['answers'],
+                          questions[i]['answer'],
                           style: TextStyle(
                               height: 1.2,
                               fontWeight: FontWeight.bold,
@@ -259,10 +305,11 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                           style: TextStyle(fontSize: 14.0),
                         ),
                         subtitle: Text(
-                          questions[i]['answers']
+                          questions[i]['answer']
                               .toString()
                               .replaceAll(']', '')
                               .replaceAll('[', '')
+                              .replaceAll('null', '')
                               .replaceFirst(', ', ''),
                           style: TextStyle(
                               height: 1.2,
@@ -285,5 +332,4 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
       );
     }
   }
-  
 }

@@ -74,7 +74,8 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
           snapshot != null && from == 'consults'
               ? snapshot['provider']
               : snapshot != null && from == 'patients'
-              ? snapshot['patient'] : '',
+                  ? snapshot['patient']
+                  : '',
           style: TextStyle(
             fontSize:
                 Theme.of(context).platform == TargetPlatform.iOS ? 17.0 : 20.0,
@@ -161,7 +162,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
     _controller = _scaffoldKey.currentState.showBottomSheet(
       (BuildContext bc) {
         return Container(
-          color: Theme.of(context).colorScheme.secondary.withAlpha(50),
+          color: Theme.of(context).colorScheme.primary.withAlpha(50),
           padding: EdgeInsets.all(10),
           child: SingleChildScrollView(
             child: FormBuilder(
@@ -172,7 +173,8 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                   Container(
                     color: Colors.white,
                     child: ListTile(
-                      title: medicallUser.type == 'provider' && from == "patients"
+                      title: medicallUser.type == 'provider' &&
+                              from == "patients"
                           ? Text(
                               'Notes To ' + snapshot['patient'],
                               style: TextStyle(
@@ -352,14 +354,14 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
               : ListView.builder(
                   itemCount: questions.length,
                   itemBuilder: (context, i) {
-                    if (questions[i]['answers'] is String) {
+                    if (questions[i]['options'] is String) {
                       return ListTile(
                         title: Text(
                           questions[i]['question'],
                           style: TextStyle(fontSize: 14.0),
                         ),
                         subtitle: Text(
-                          questions[i]['answers'],
+                          questions[i]['answer'],
                           style: TextStyle(
                               height: 1.2,
                               fontWeight: FontWeight.bold,
@@ -374,10 +376,11 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                           style: TextStyle(fontSize: 14.0),
                         ),
                         subtitle: Text(
-                          questions[i]['answers']
+                          questions[i]['answer']
                               .toString()
                               .replaceAll(']', '')
                               .replaceAll('[', '')
+                              .replaceAll('null', '')
                               .replaceFirst(', ', ''),
                           style: TextStyle(
                               height: 1.2,
