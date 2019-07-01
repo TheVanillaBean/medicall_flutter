@@ -120,6 +120,7 @@ buildQuestions(data, questionIndex, dynamicAdd, widget, key) {
                           ),
                         )
                       : FormBuilderTextField(
+                          onChanged: _onChanged,
                           initialValue: data[i]['answer'],
                           attribute: 'question' + i.toString(),
                           validators: [

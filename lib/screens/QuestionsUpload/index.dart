@@ -36,7 +36,6 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
     _consult.providerId = perfConsult["providerId"];
     _consult.screeningQuestions = perfConsult["screeningQuestions"];
     _consult.historyQuestions = perfConsult["historyQuestions"];
-    _consult.media = perfConsult["media"];
   }
 
   setConsult() async {
