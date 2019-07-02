@@ -37,17 +37,18 @@ buildQuestions(data, questionIndex, dynamicAdd, widget, key) {
             }
           });
         };
+      } else {
+        _onChanged = (val) {
+          Map fields = key.currentState.fields;
+          fields.forEach((k, v) {
+            if (fields[k].currentState.value == val) {
+              data[int.parse(k.substring(k.length - 1))]["answer"] = val;
+            }
+          });
+        };
       }
     } else {
       options = [""];
-      _onChanged = (val) {
-        Map fields = key.currentState.fields;
-        fields.forEach((k, v) {
-          if (fields[k].currentState.value == val) {
-            data[int.parse(k.substring(k.length - 1))]["answer"] = val;
-          }
-        });
-      };
     }
 
     String type = questions[i]['type'];
