@@ -42,6 +42,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
     var perfConsult = jsonDecode(pref.getString('consult'));
     _consult.consultType = perfConsult["consultType"];
     _consult.provider = perfConsult["provider"];
+    _consult.providerTitles = perfConsult["providerTitles"];
     _consult.screeningQuestions = perfConsult["screeningQuestions"];
     _consult.historyQuestions = perfConsult["historyQuestions"];
     return _consult;
@@ -60,6 +61,22 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
         future: getConsult(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                    height: MediaQuery.of(context).size.height * 0.85,
+                  ),
+                  Container(
+                    height: 50,
+                    alignment: Alignment.center,
+                    width: 50,
+                    padding: EdgeInsets.all(10),
+                    child: CircularProgressIndicator(),
+                  )
+                ],
+              );
             case ConnectionState.none:
               return Text('Press button to start');
             case ConnectionState.waiting:
@@ -74,7 +91,9 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                       appBar: AppBar(
                         centerTitle: true,
                         title: Text(
-                          'Consult with ' + _consult.provider,
+                          'Consult with ' +
+                              '${_consult.provider.split(" ")[0][0].toUpperCase()}${_consult.provider.split(" ")[0].substring(1)} ${_consult.provider.split(" ")[1][0].toUpperCase()}${_consult.provider.split(" ")[1].substring(1)} ' +
+                              _consult.providerTitles,
                           style: TextStyle(
                             fontSize:
                                 Theme.of(context).platform == TargetPlatform.iOS
@@ -242,6 +261,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
         "date": DateFormat('MM-dd-yyyy hh:mm a').format(DateTime.now()),
         "consult": "",
         "provider": _consult.provider,
+        "providerTitles": _consult.providerTitles,
         "patient": medicallUser.displayName,
         "provider_id": _consult.providerId,
         "patient_id": medicallUser.id,

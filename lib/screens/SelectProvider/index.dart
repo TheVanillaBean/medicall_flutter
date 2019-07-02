@@ -50,10 +50,12 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
   Future getConsult() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     var perfConsult = jsonDecode(pref.getString('consult'));
+    _consult.consultType = perfConsult["consultType"];
     _consult.provider = perfConsult["provider"];
+    _consult.providerTitles = perfConsult["providerTitles"];
+
     if (_consult.provider != null && _consult.provider.length > 0) {
-      var test = _consult.provider.split(' ');
-      selectedProvider = test[0] + ' ' + test[1];
+      selectedProvider = _consult.provider;
     }
     _consult.screeningQuestions = perfConsult["screeningQuestions"];
     _consult.historyQuestions = perfConsult["historyQuestions"];
@@ -61,10 +63,8 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
 
   setConsult() async {
     SharedPreferences _thisConsult = await SharedPreferences.getInstance();
-    _consult.provider =
-        '${selectedProvider.split(" ")[0][0].toUpperCase()}${selectedProvider.split(" ")[0].substring(1)} ${selectedProvider.split(" ")[1][0].toUpperCase()}${selectedProvider.split(" ")[1].substring(1)}' +
-            " " +
-            providerTitles;
+    _consult.provider = selectedProvider;
+    _consult.providerTitles = providerTitles;
     String currentConsultString = jsonEncode(_consult);
     await _thisConsult.setString("consult", currentConsultString);
   }
@@ -122,7 +122,6 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
           padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
           color: Theme.of(context).colorScheme.primary,
           onPressed: () {
-            //wait setConsult();
             if (selectedProvider.length > 0) {
               Navigator.pushNamed(
                 context,
@@ -182,6 +181,8 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
                                     setState(() {
                                       _consult.provider =
                                           userDocuments[i].data['name'];
+                                      _consult.providerTitles =
+                                          userDocuments[i].data['titles'];
                                       _consult.providerDevTokens =
                                           userDocuments[i].data['dev_tokens'];
                                       _consult.providerId =

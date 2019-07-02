@@ -169,18 +169,10 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
                         ),
                         onPressed: () async {
                           _consult = ConsultData();
-                          _consult.consultType = 'Lesion';
-                          _consult.provider = '';
-                          _consult.providerId = '';
-                          _consult.patientDevTokens = [];
-                          _consult.providerDevTokens = [];
-                          _consult.screeningQuestions = [];
-                          _consult.stringListQuestions = [];
-                          _consult.historyQuestions = [];
-                          _consult.media = [];
 
                           SharedPreferences _thisConsult =
                               await SharedPreferences.getInstance();
+                          _consult.consultType = 'Lesion';
                           var consultQuestions = await Firestore.instance
                               .document('services/dermatology/symptoms/' +
                                   _consult.consultType.toLowerCase())

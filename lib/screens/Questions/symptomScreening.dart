@@ -30,16 +30,20 @@ class _SymptomQuestionsScreenState extends State<SymptomQuestionsScreen> {
   void initState() {
     super.initState();
     medicallUser = widget.data['user'];
+    getConsult().then((onValue) {
+      setState(() {
+        _consult.consultType = onValue["consultType"];
+        _consult.provider = onValue["provider"];
+        _consult.providerTitles = onValue["providerTitles"];
+        _consult.screeningQuestions = onValue["screeningQuestions"];
+        _consult.historyQuestions = onValue["historyQuestions"];
+      });
+    });
   }
 
   Future getConsult() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    var perfConsult = jsonDecode(pref.getString('consult'));
-    _consult.consultType = perfConsult["consultType"];
-    _consult.provider = perfConsult["provider"];
-    _consult.screeningQuestions = perfConsult["screeningQuestions"];
-    _consult.historyQuestions = perfConsult["historyQuestions"];
-    return _consult.screeningQuestions;
+    return jsonDecode(pref.getString('consult'));
   }
 
   setConsult() async {
@@ -95,31 +99,9 @@ class _SymptomQuestionsScreenState extends State<SymptomQuestionsScreen> {
       ),
       body: Container(
         child: SingleChildScrollView(
-          padding: EdgeInsets.fromLTRB(15, 20, 15, 20),
-          child: FutureBuilder(
-              future: getConsult(),
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                switch (snapshot.connectionState) {
-                  case ConnectionState.none:
-                    return Text('Press button to start');
-                  default:
-                    if (snapshot.hasError)
-                      return Text('Error: ${snapshot.error}');
-                    else {
-                      if (snapshot.hasData) {
-                        if (snapshot.data != null) {
-                          return buildQuestions(
-                              _consult.screeningQuestions,
-                              'screening_questions',
-                              null,
-                              widget,
-                              screeningFormKey);
-                        }
-                      }
-                    }
-                }
-              }),
-        ),
+            padding: EdgeInsets.fromLTRB(15, 20, 15, 20),
+            child: buildQuestions(_consult.screeningQuestions,
+                'screening_questions', null, widget, screeningFormKey)),
       ),
     );
   }

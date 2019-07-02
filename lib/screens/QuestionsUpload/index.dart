@@ -33,6 +33,7 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
     var perfConsult = jsonDecode(pref.getString('consult'));
     _consult.consultType = perfConsult["consultType"];
     _consult.provider = perfConsult["provider"];
+    _consult.providerTitles = perfConsult["providerTitles"];
     _consult.providerId = perfConsult["providerId"];
     _consult.screeningQuestions = perfConsult["screeningQuestions"];
     _consult.historyQuestions = perfConsult["historyQuestions"];

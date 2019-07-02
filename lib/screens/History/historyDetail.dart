@@ -72,7 +72,8 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
         centerTitle: true,
         title: Text(
           snapshot != null && from == 'consults'
-              ? snapshot['provider']
+              ? '${snapshot['provider'].split(" ")[0][0].toUpperCase()}${snapshot['provider'].split(" ")[0].substring(1)} ${snapshot['provider'].split(" ")[1][0].toUpperCase()}${snapshot['provider'].split(" ")[1].substring(1)} ' +
+                  snapshot['providerTitles']
               : snapshot != null && from == 'patients'
                   ? snapshot['patient']
                   : '',

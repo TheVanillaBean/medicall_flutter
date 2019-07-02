@@ -5,6 +5,7 @@ class ConsultData {
   List<dynamic> screeningQuestions;
   List<dynamic> stringListQuestions;
   String provider;
+  String providerTitles;
   String providerId;
   List<dynamic> patientDevTokens;
   List<dynamic> providerDevTokens;
@@ -16,6 +17,7 @@ class ConsultData {
     this.screeningQuestions,
     this.stringListQuestions,
     this.provider,
+    this.providerTitles,
     this.providerId,
     this.patientDevTokens,
     this.providerDevTokens,
@@ -26,6 +28,7 @@ class ConsultData {
   ConsultData.fromJson(Map<List, dynamic> json)
       : consultType = json['consultType'],
         provider = json['provider'],
+        providerTitles = json['providerTitles'],
         providerId = json['providerId'],
         patientDevTokens = json['patientDevTokens'],
         providerDevTokens = json['providerDevTokens'],
@@ -37,6 +40,7 @@ class ConsultData {
   Map<String, dynamic> toJson() => {
         'consultType': consultType,
         'provider': provider,
+        'providerTitles': providerTitles,
         'providerId': providerId,
         'patientDevTokens': patientDevTokens,
         'providerDevTokens': providerDevTokens,
