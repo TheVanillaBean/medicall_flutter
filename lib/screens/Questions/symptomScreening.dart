@@ -36,6 +36,7 @@ class _SymptomQuestionsScreenState extends State<SymptomQuestionsScreen> {
     SharedPreferences pref = await SharedPreferences.getInstance();
     var perfConsult = jsonDecode(pref.getString('consult'));
     _consult.consultType = perfConsult["consultType"];
+    _consult.provider = perfConsult["provider"];
     _consult.screeningQuestions = perfConsult["screeningQuestions"];
     _consult.historyQuestions = perfConsult["historyQuestions"];
     return _consult.screeningQuestions;
@@ -87,6 +88,7 @@ class _SymptomQuestionsScreenState extends State<SymptomQuestionsScreen> {
         child: Text(
           'CONTINUE',
           style: TextStyle(
+            color: Theme.of(context).colorScheme.onPrimary,
             letterSpacing: 2,
           ),
         ),

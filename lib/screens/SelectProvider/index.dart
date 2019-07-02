@@ -50,7 +50,11 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
   Future getConsult() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     var perfConsult = jsonDecode(pref.getString('consult'));
-    _consult.consultType = perfConsult["consultType"];
+    _consult.provider = perfConsult["provider"];
+    if (_consult.provider != null && _consult.provider.length > 0) {
+      var test = _consult.provider.split(' ');
+      selectedProvider = test[0] + ' ' + test[1];
+    }
     _consult.screeningQuestions = perfConsult["screeningQuestions"];
     _consult.historyQuestions = perfConsult["historyQuestions"];
   }
@@ -117,8 +121,8 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
         bottomNavigationBar: FlatButton(
           padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
           color: Theme.of(context).colorScheme.primary,
-          onPressed: () async {
-            await setConsult();
+          onPressed: () {
+            //wait setConsult();
             if (selectedProvider.length > 0) {
               Navigator.pushNamed(
                 context,
@@ -132,6 +136,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
           child: Text(
             'CONTINUE',
             style: TextStyle(
+              color: Theme.of(context).colorScheme.onPrimary,
               letterSpacing: 2,
             ),
           ),
@@ -202,8 +207,11 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
                                         ),
                                       ),
                                       Icon(
-                                          selectedProvider ==
-                                                  userDocuments[i].data['name']
+                                          selectedProvider.toLowerCase() ==
+                                                  userDocuments[i]
+                                                      .data['name']
+                                                      .toString()
+                                                      .toLowerCase()
                                               ? Icons.radio_button_checked
                                               : Icons.radio_button_unchecked,
                                           color: Theme.of(context)
@@ -248,9 +256,10 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
     refresh();
   }
 
-  void _selectProvider(provider, titles) {
+  Future _selectProvider(provider, titles) async {
     selectedProvider = provider;
     providerTitles = titles;
+    await setConsult();
   }
 
   Future<LatLng> getUserLocation() async {

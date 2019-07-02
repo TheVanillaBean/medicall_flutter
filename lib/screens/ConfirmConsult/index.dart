@@ -119,7 +119,13 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                     color:
                                         Theme.of(context).colorScheme.primary,
                                     onPressed: () {},
-                                    child: Text('Total: \$39'),
+                                    child: Text(
+                                      'Total: \$39',
+                                      style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onPrimary),
+                                    ),
                                   ),
                                 ),
                                 Expanded(
@@ -283,42 +289,25 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
               : ListView.builder(
                   itemCount: questions.length,
                   itemBuilder: (context, i) {
-                    if (questions[i]['options'] is String) {
-                      return ListTile(
-                        title: Text(
-                          questions[i]['question'],
-                          style: TextStyle(fontSize: 14.0),
-                        ),
-                        subtitle: Text(
-                          questions[i]['answer'],
-                          style: TextStyle(
-                              height: 1.2,
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.secondary),
-                        ),
-                        leading: Text((i + 1).toString() + '.'),
-                      );
-                    } else {
-                      return ListTile(
-                        title: Text(
-                          questions[i]['question'],
-                          style: TextStyle(fontSize: 14.0),
-                        ),
-                        subtitle: Text(
-                          questions[i]['answer']
-                              .toString()
-                              .replaceAll(']', '')
-                              .replaceAll('[', '')
-                              .replaceAll('null', '')
-                              .replaceFirst(', ', ''),
-                          style: TextStyle(
-                              height: 1.2,
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.secondary),
-                        ),
-                        leading: Text((i + 1).toString() + '.'),
-                      );
-                    }
+                    return ListTile(
+                      title: Text(
+                        questions[i]['question'],
+                        style: TextStyle(fontSize: 14.0),
+                      ),
+                      subtitle: Text(
+                        questions[i]['answer']
+                            .toString()
+                            .replaceAll(']', '')
+                            .replaceAll('[', '')
+                            .replaceAll('null', '')
+                            .replaceFirst(', ', ''),
+                        style: TextStyle(
+                            height: 1.2,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.secondary),
+                      ),
+                      leading: Text((i + 1).toString() + '.'),
+                    );
                   }),
         ),
       );

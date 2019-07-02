@@ -147,6 +147,7 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
         child: Text(
           'CONTINUE',
           style: TextStyle(
+            color: Theme.of(context).colorScheme.onPrimary,
             letterSpacing: 2,
           ),
         ),

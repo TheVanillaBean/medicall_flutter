@@ -96,6 +96,7 @@ class _MedHistoryQuestionsScreenState extends State<MedHistoryQuestionsScreen> {
         child: Text(
           'CONTINUE',
           style: TextStyle(
+            color: Theme.of(context).colorScheme.onPrimary,
             letterSpacing: 2,
           ),
         ),
