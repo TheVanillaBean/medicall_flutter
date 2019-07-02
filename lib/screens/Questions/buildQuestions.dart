@@ -40,6 +40,7 @@ buildQuestions(data, questionIndex, dynamicAdd, widget, key) {
                 val[0] = null;
               }
               data[int.parse(k.substring(k.length - 1))]["answer"] = val;
+              print(val);
             }
           });
         };
