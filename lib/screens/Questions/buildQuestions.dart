@@ -16,14 +16,7 @@ buildQuestions(data, questionIndex, dynamicAdd, widget, key) {
     }
     stringList.add(question);
     List<dynamic> options = questions[i]['options'];
-    _onChanged = (val) {
-      Map fields = key.currentState.fields;
-      fields.forEach((k, v) {
-        if (fields[k].currentState.value == val) {
-          data[int.parse(k.substring(k.length - 1))]["answer"] = val;
-        }
-      });
-    };
+
     if (options != null) {
       if (options[1] == 'Yes') {
         _onChanged = (val) {
@@ -47,6 +40,14 @@ buildQuestions(data, questionIndex, dynamicAdd, widget, key) {
       }
     } else {
       options = [""];
+      _onChanged = (val) {
+        Map fields = key.currentState.fields;
+        fields.forEach((k, v) {
+          if (fields[k].currentState.value == val) {
+            data[int.parse(k.substring(k.length - 1))]["answer"] = val;
+          }
+        });
+      };
     }
 
     String type = questions[i]['type'];
