@@ -237,7 +237,8 @@ class _HistoryScreenState extends State<HistoryScreen>
                           dense: true,
                           isThreeLine: true,
                           title: Text(
-                            userDocuments[i].data['provider'].toString(),
+                            '${userDocuments[i].data['provider'].split(" ")[0][0].toUpperCase()}${userDocuments[i].data['provider'].split(" ")[0].substring(1)} ${userDocuments[i].data['provider'].split(" ")[1][0].toUpperCase()}${userDocuments[i].data['provider'].split(" ")[1].substring(1)} ' +
+                                userDocuments[i].data['providerTitles'],
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 1.1,
