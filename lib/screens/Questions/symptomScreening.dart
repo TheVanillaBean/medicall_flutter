@@ -51,7 +51,6 @@ class _SymptomQuestionsScreenState extends State<SymptomQuestionsScreen> {
     });
     String currentConsultString = jsonEncode(_consult);
     await _thisConsult.setString("consult", currentConsultString);
-    return jsonDecode(_thisConsult.getString('consult'));
   }
 
   @override
