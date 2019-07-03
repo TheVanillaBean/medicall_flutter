@@ -68,7 +68,7 @@ class _LoginScreenState extends State<LoginPage>
   @override
   void dispose() {
     super.dispose();
-    _tePassword.text = "";
+    _tePassword.clear();
   }
 
   Future<void> _getUser() async {
@@ -98,8 +98,10 @@ class _LoginScreenState extends State<LoginPage>
         medicallUser.email = datasnapshot.data['email'];
         medicallUser.phoneNumber = datasnapshot.data['phone'];
       } else {
-        medicallUser.id = medicallUser.displayName = firebaseUser.displayName;
-        medicallUser.firstName = firebaseUser.displayName.split(' ')[0];
+        if (firebaseUser.displayName != null) {
+          medicallUser.id = medicallUser.displayName = firebaseUser.displayName;
+          medicallUser.firstName = firebaseUser.displayName.split(' ')[0];
+        }
         medicallUser.lastName = firebaseUser.displayName.split(' ')[1];
         medicallUser.policy = false;
         medicallUser.terms = false;
@@ -500,6 +502,7 @@ class _LoginScreenState extends State<LoginPage>
                                     .primaryVariant,
                                 onPressed: () {
                                   _submit();
+                                  _tePassword.clear();
                                 },
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(4)),
@@ -525,6 +528,7 @@ class _LoginScreenState extends State<LoginPage>
                                     borderRadius: BorderRadius.circular(4)),
                                 onPressed: () {
                                   _signUp();
+                                  _tePassword.clear();
                                 },
                                 child: Text(
                                   "Register",
@@ -545,6 +549,7 @@ class _LoginScreenState extends State<LoginPage>
                                 text: "Google Sign In",
                                 onPressed: () {
                                   gMailTabEnable();
+                                  _tePassword.clear();
                                 },
                                 darkMode: false),
                           )

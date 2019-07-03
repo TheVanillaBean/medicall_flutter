@@ -246,9 +246,13 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                                   _previewModalBottomSheet(context);
                                 },
                                 color: Theme.of(context).primaryColor,
-                                child: Text(isLoading ? 'Update Consult' : ''),
+                                child: Text(isLoading ? 'Update Consult' : '',
+                                    style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onBackground)),
                               ),
-                            )
+                            ),
                           ],
                         )
                       : SizedBox(

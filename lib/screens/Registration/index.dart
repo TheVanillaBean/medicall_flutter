@@ -43,7 +43,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         medicallUser.firstName + " " + medicallUser.lastName;
 
     medicallUser.address = medicallUser.type == "provider"
-        ? _userRegKey.currentState.value['Address']
+        ? _userRegKey.currentState.value['Address'] +
+            " " +
+            _userRegKey.currentState.value['City'] +
+            " " +
+            _userRegKey.currentState.value['State']
         : '';
     medicallUser.titles = medicallUser.type == "provider"
         ? _userRegKey.currentState.value['Medical Titles'].toUpperCase()
@@ -125,7 +129,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   ],
                 ),
                 SizedBox(
-                  height: formSpacing,
+                  height: 5,
                 ),
                 FormBuilderTextField(
                   attribute: "Last name",
@@ -170,10 +174,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         height: formSpacing,
                       ),
                 FormBuilderTextField(
-                  attribute: "Email",
+                  attribute: "UserEmail",
                   initialValue: medicallUser.email,
                   decoration: InputDecoration(
-                      labelText: 'Email',
+                      labelText: 'UserEmail',
                       fillColor: Color.fromRGBO(35, 179, 232, 0.1),
                       filled: true,
                       disabledBorder: InputBorder.none,
@@ -220,9 +224,27 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               FormBuilderValidators.required(),
                             ],
                           ),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          FormBuilderTextField(
+                            attribute: "City",
+                            decoration: InputDecoration(
+                                labelText: 'City',
+                                fillColor: Color.fromRGBO(35, 179, 232, 0.1),
+                                filled: true,
+                                disabledBorder: InputBorder.none,
+                                enabledBorder: InputBorder.none,
+                                border: InputBorder.none),
+                            validators: [
+                              FormBuilderValidators.required(),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 5,
+                          ),
                           FormBuilderTextField(
                             attribute: "State",
-                            initialValue: medicallUser.address,
                             decoration: InputDecoration(
                                 labelText: 'State',
                                 fillColor: Color.fromRGBO(35, 179, 232, 0.1),

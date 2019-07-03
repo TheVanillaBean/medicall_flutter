@@ -114,6 +114,7 @@ class _AuthScreenState extends State<AuthScreen> {
   codeAutoRetrievalTimeout(String verificationId) {
     Logger.log(TAG, message: "onCodeTimeout");
     _updateRefreshing(false);
+    if (!mounted) return;
     setState(() {
       this._verificationId = verificationId;
       this._codeTimedOut = true;
@@ -131,6 +132,7 @@ class _AuthScreenState extends State<AuthScreen> {
     Logger.log(TAG,
         message: "Setting _isRefreshing ($_isRefreshing) to $isRefreshing");
     if (_isRefreshing) {
+      if (!mounted) return;
       setState(() {
         this._isRefreshing = false;
       });
