@@ -22,6 +22,8 @@ import 'package:Medicall/screens/Terms/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_crashlytics/flutter_crashlytics.dart';
 import 'package:oktoast/oktoast.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 
 void main() async {
   bool isInDebugMode = false;
@@ -75,6 +77,10 @@ final ColorScheme colorScheme = const ColorScheme.dark().copyWith(
 );
 
 class _MedicallAppState extends State<MedicallApp> {
+  static FirebaseAnalytics analytics = FirebaseAnalytics();
+  static FirebaseAnalyticsObserver observer =
+      FirebaseAnalyticsObserver(analytics: analytics);
+
   @override
   Widget build(BuildContext context) {
     return OKToast(
@@ -82,6 +88,7 @@ class _MedicallAppState extends State<MedicallApp> {
         title: 'Medicall',
         debugShowCheckedModeBanner: false,
         navigatorKey: GlobalNavigatorKey.key,
+        navigatorObservers: <NavigatorObserver>[observer],
         theme: ThemeData(
             primaryColor: primaryColor,
             accentColor: accentColor,
@@ -93,7 +100,6 @@ class _MedicallAppState extends State<MedicallApp> {
                   borderRadius: new BorderRadius.circular(0.0)),
               textTheme: ButtonTextTheme.accent,
             ),
-            
             highlightColor: Color.fromRGBO(35, 179, 232, 0),
             splashColor: Colors.transparent,
             scaffoldBackgroundColor: Theme.of(context).colorScheme.onPrimary,

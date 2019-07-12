@@ -600,6 +600,9 @@ class _LoginScreenState extends State<LoginPage>
 
   @override
   onLoginUserVerified(FirebaseUser currentUser) {
+    setState(() {
+      _isLoading = false;
+    });
     moveUserDashboardScreen(currentUser);
   }
 
@@ -621,6 +624,7 @@ class _LoginScreenState extends State<LoginPage>
 
   void gMailTabEnable() {
     setState(() {
+      _isLoading = true;
       _isPhoneAuthEnable = false;
       _isEmailAuthEnable = false;
       _teMobileEmail.text = "";
