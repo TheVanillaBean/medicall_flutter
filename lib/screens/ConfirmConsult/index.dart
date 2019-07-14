@@ -199,12 +199,12 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                             'user': medicallUser
                                           });
                                         }
+                                        return Navigator.pushNamed(
+                                            context, '/history', arguments: {
+                                          'consult': _consult,
+                                          'user': medicallUser
+                                        });
                                       });
-
-                                      // Navigator.pushNamed(context, '/history', arguments: {
-                                      //   'consult': _consult,
-                                      //   'user': medicallUser
-                                      // });
                                     },
                                     child: Text(
                                       'Pay',

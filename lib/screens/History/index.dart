@@ -49,11 +49,11 @@ class _HistoryScreenState extends State<HistoryScreen>
                 tabs: <Tab>[
                   Tab(
                     // set icon to the tab
-                    text: 'Consults',
+                    text: 'Doctor Consults',
                     icon: Icon(Icons.local_pharmacy),
                   ),
                   Tab(
-                    text: 'Patients',
+                    text: 'Patient Requests',
                     icon: Icon(Icons.assignment_ind),
                   ),
                 ],
