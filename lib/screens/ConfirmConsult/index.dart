@@ -243,6 +243,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                 }
               }
           }
+          return Text('Press button to start');
         });
   }
 
