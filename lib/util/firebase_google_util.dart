@@ -28,7 +28,8 @@ class FirebaseGoogleUtil {
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
-    final FirebaseUser user = await _auth.signInWithCredential(credential);
+    final AuthResult authResult = await _auth.signInWithCredential(credential);
+    final FirebaseUser user = authResult.user;
     assert(user.email != null);
     assert(user.displayName != null);
     assert(!user.isAnonymous);

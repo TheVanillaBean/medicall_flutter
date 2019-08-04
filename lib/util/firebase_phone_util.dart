@@ -65,7 +65,8 @@ class FirebasePhoneUtil {
       verificationId: verificationId,
       smsCode: smsCode,
     );
-    final FirebaseUser user = await _auth.signInWithCredential(credential);
+    final AuthResult authResult = await _auth.signInWithCredential(credential);
+    final FirebaseUser user = authResult.user;
 
     final FirebaseUser currentUser = await _auth.currentUser();
     if (!identical(user.uid, currentUser.uid)) {

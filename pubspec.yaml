@@ -10,18 +10,18 @@ dependencies:
   flutter:
     sdk: flutter
   #firebase
-  firebase_core: ^0.4.0
-  firebase_auth: ^0.11.1+5
-  cloud_firestore: ^0.12.2
-  firebase_messaging: ^5.0.2
-  cloud_functions: ^0.4.0
-  firebase_analytics: ^3.0.3
-  firebase_storage: ^3.0.1
+  firebase_core: ^0.4.0+8
+  firebase_auth: ^0.14.0
+  cloud_firestore: ^0.12.9
+  firebase_messaging: ^5.1.2
+  cloud_functions: ^0.4.1
+  firebase_analytics: ^4.0.2
+  firebase_storage: ^3.0.4
   flutter_crashlytics: ^1.0.0
   #google
-  google_sign_in: ^4.0.1+3
-  google_maps_flutter: ^0.5.15
-  flutter_google_places: ^0.2.2
+  google_sign_in: ^4.0.6
+  google_maps_flutter: ^0.5.20+1
+  flutter_google_places: ^0.2.3
   #utils
   cupertino_icons: ^0.1.0
   url_launcher: ^5.0.2
@@ -33,13 +33,11 @@ dependencies:
   shared_preferences: ^0.5.3+1
   #bubble_tab_indicator: ^0.1.4
   flutter_auth_buttons: ^0.3.1
-  flutter_form_builder: 3.1.1
-  #graphql
-  graphql_flutter: ^1.0.0+4
+  flutter_form_builder: ^3.3.1
   #camera/images
-  multi_image_picker: ^4.0.3
-  carousel_pro: ^0.0.13
-  cached_network_image: ^0.8.0
+  multi_image_picker: ^4.3.6
+  carousel_pro: ^1.0.0
+  cached_network_image: ^1.1.0
   #notifications
   flutter_alert: ^0.4.0
   oktoast: ^2.1.7
@@ -53,7 +51,7 @@ dev_dependencies:
   screenshots:
   intl_translation: ^0.17.2
   flutter_driver:
-    sdk: flutter 
+    sdk: flutter
 
 flutter_icons:
   image_path_android: "assets/icon/logo_image.png"
@@ -74,26 +72,26 @@ flutter:
   # the Icons class.
   uses-material-design: true
   fonts:
-    - family:  MedicallApp
-      fonts:
-        - asset: assets/fonts/MedicallApp.ttf
+  - family:  MedicallApp
+    fonts:
+    - asset: assets/fonts/MedicallApp.ttf
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/images/
-    - assets/icon/
+  - assets/images/
+  - assets/icon/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/.
 
   # For details regarding adding assets from package dependencies, see
   # https://flutter.io/assets-and-images/
-  
+
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  
+
   # fonts:
   #   - family: Schyler
   #     fonts:

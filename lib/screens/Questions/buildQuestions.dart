@@ -94,7 +94,6 @@ buildQuestions(data, questionIndex, dynamicAdd, widget, key) {
                           .map((lang) =>
                               DropdownMenuItem(value: lang, child: Text(lang)))
                           .toList(),
-                      readonly: false,
                     ),
                   )
                 : type == 'checkbox'

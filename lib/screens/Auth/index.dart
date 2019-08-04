@@ -268,7 +268,8 @@ class _AuthScreenState extends State<AuthScreen> {
         smsCode: smsCodeController.text,
       ),
     )
-        .then((user) async {
+        .then((authResult) async {
+      final user = authResult.user;
       await _onCodeVerified(user).then((codeVerified) async {
         this._codeVerified = codeVerified;
         Logger.log(
@@ -315,8 +316,8 @@ class _AuthScreenState extends State<AuthScreen> {
         _add(user);
         Navigator.of(context).pushReplacement(CupertinoPageRoute(
           builder: (context) => RegistrationTypeScreen(
-                data: {"user": medicallUser},
-              ),
+            data: {"user": medicallUser},
+          ),
         ));
       } else {
         setState(() {

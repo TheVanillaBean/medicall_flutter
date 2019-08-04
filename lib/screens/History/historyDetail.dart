@@ -221,7 +221,6 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                       : FormBuilderTextField(
                           initialValue: snapshot['consult'],
                           attribute: 'docInput',
-                          readonly: true,
                           maxLines: 8,
                           decoration: InputDecoration(
                               fillColor: Color.fromRGBO(255, 255, 255, 0.9),
@@ -308,7 +307,6 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                         ? snapshot['consult']
                         : 'Waiting on Doctor response, please check back later',
                     attribute: 'docInput',
-                    readonly: true,
                     maxLines: 10,
                     decoration: InputDecoration(
                         disabledBorder: InputBorder.none,
