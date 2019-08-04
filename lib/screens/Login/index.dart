@@ -101,8 +101,8 @@ class _LoginScreenState extends State<LoginPage>
         if (firebaseUser.displayName != null) {
           medicallUser.id = medicallUser.displayName = firebaseUser.displayName;
           medicallUser.firstName = firebaseUser.displayName.split(' ')[0];
+          medicallUser.lastName = firebaseUser.displayName.split(' ')[1];
         }
-        medicallUser.lastName = firebaseUser.displayName.split(' ')[1];
         medicallUser.policy = false;
         medicallUser.terms = false;
         medicallUser.email = firebaseUser.email;

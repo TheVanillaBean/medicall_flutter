@@ -1,6 +1,5 @@
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -202,7 +201,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       disabledBorder: InputBorder.none,
                       enabledBorder: InputBorder.none,
                       border: InputBorder.none),
-                  readonly: false,
                 ),
                 medicallUser.type == "provider"
                     ? Column(
@@ -278,7 +276,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   validators: [
                     FormBuilderValidators.required(),
                   ],
-                  readonly: false,
                 ),
                 SizedBox(
                   height: formSpacing,

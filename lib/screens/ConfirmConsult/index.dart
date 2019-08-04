@@ -172,17 +172,13 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                           StripeSource.addSource()
                                               .then((String token) async {
                                             PaymentService().addCard(token);
+                                            setState(() {
+                                              isLoading = true;
+                                            });
                                             showToast(
-                                                'Card has been added and charged charged',
-                                                duration: Duration(seconds: 3));
-                                            await _addConsult();
-                                            return Navigator
-                                                .pushReplacementNamed(
-                                                    context, '/history',
-                                                    arguments: {
-                                                  'consult': _consult,
-                                                  'user': medicallUser
-                                                });
+                                                'Please wait while we process your request.',
+                                                duration: Duration(seconds: 5));
+                                            return await _addConsult();
                                           });
                                         } else {
                                           PaymentService().chargePayment(
@@ -190,14 +186,13 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                               _consult.consultType +
                                                   ' consult with ' +
                                                   _consult.provider);
-                                          showToast('Card has been charged',
-                                              duration: Duration(seconds: 3));
-                                          await _addConsult();
-                                          return Navigator.pushReplacementNamed(
-                                              context, '/history', arguments: {
-                                            'consult': _consult,
-                                            'user': medicallUser
+                                          setState(() {
+                                            isLoading = true;
                                           });
+                                          showToast(
+                                              'Please wait while we process your request.',
+                                              duration: Duration(seconds: 5));
+                                          return await _addConsult();
                                         }
                                         return Navigator.pushNamed(
                                             context, '/history', arguments: {
@@ -270,6 +265,8 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
       };
       ref.setData(data).whenComplete(() {
         print("Document Added");
+        return Navigator.pushReplacementNamed(context, '/history',
+            arguments: {'consult': _consult, 'user': medicallUser});
         //_addProviderConsult(ref.documentID, imagesList);
       }).catchError((e) => print(e));
     });
