@@ -31,6 +31,7 @@ dependencies:
   stripe_payment: ^0.1.0
   json_serializable: ^2.2.1
   shared_preferences: ^0.5.3+1
+  keyboard_visibility: ^0.5.6
   #bubble_tab_indicator: ^0.1.4
   flutter_auth_buttons: ^0.3.1
   flutter_form_builder: ^3.3.1
