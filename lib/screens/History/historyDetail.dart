@@ -70,17 +70,37 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
       key: _scaffoldKey,
       appBar: AppBar(
         centerTitle: true,
-        title: Text(
-          snapshot != null && from == 'consults'
-              ? '${snapshot['provider'].split(" ")[0][0].toUpperCase()}${snapshot['provider'].split(" ")[0].substring(1)} ${snapshot['provider'].split(" ")[1][0].toUpperCase()}${snapshot['provider'].split(" ")[1].substring(1)} ' +
-                  snapshot['providerTitles']
-              : snapshot != null && from == 'patients'
-                  ? snapshot['patient']
-                  : '',
-          style: TextStyle(
-            fontSize:
-                Theme.of(context).platform == TargetPlatform.iOS ? 17.0 : 20.0,
-          ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              snapshot != null && from == 'consults'
+                  ? snapshot['type'] +
+                      ' Consult'
+                  : snapshot != null && from == 'patients'
+                      ? snapshot['patient']
+                      : '',
+              style: TextStyle(
+                fontSize: Theme.of(context).platform == TargetPlatform.iOS
+                    ? 17.0
+                    : 20.0,
+              ),
+            ),
+            Text(
+              snapshot != null && from == 'consults'
+                  ? '${snapshot['provider'].split(" ")[0][0].toUpperCase()}${snapshot['provider'].split(" ")[0].substring(1)} ${snapshot['provider'].split(" ")[1][0].toUpperCase()}${snapshot['provider'].split(" ")[1].substring(1)} ' +
+                      snapshot['providerTitles']
+                  : snapshot != null && from == 'patients'
+                      ? snapshot['patient']
+                      : '',
+              style: TextStyle(
+                fontSize: Theme.of(context).platform == TargetPlatform.iOS
+                    ? 12.0
+                    : 14.0,
+              ),
+            )
+          ],
         ),
         bottom: TabBar(
           indicatorColor: Colors.white,
@@ -184,7 +204,9 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                                       Theme.of(context).colorScheme.secondary),
                             )
                           : Text(
-                              'Notes From ' + snapshot['provider'],
+                              'Notes - ' +
+                                  '${snapshot['provider'].split(" ")[0][0].toUpperCase()}${snapshot['provider'].split(" ")[0].substring(1)} ${snapshot['provider'].split(" ")[1][0].toUpperCase()}${snapshot['provider'].split(" ")[1].substring(1)} ' +
+                                  snapshot['providerTitles'],
                               style: TextStyle(
                                   fontSize: 18,
                                   color:
@@ -205,7 +227,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                   ),
                   medicallUser.type == 'provider' && from == 'patients'
                       ? FormBuilderTextField(
-                          initialValue: snapshot['consult'],
+                          initialValue: snapshot['consult'].length > 0 ? snapshot['consult'] : "This is where you fill in the detailed consult response to the patient. The patient will be notified of any changes as soon as you update the consult.",
                           attribute: 'docInput',
                           maxLines: 8,
                           decoration: InputDecoration(
@@ -219,9 +241,10 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                           ],
                         )
                       : FormBuilderTextField(
-                          initialValue: snapshot['consult'],
+                          initialValue: snapshot['consult'].length > 0 ? snapshot['consult'] : "Please wait while the doctor gets back to you. This is where you will see the doctor's notes once they reply to your consult.",
                           attribute: 'docInput',
                           maxLines: 8,
+                          readOnly: true,
                           decoration: InputDecoration(
                               fillColor: Color.fromRGBO(255, 255, 255, 0.9),
                               filled: true,
