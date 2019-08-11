@@ -90,16 +90,34 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                     return Scaffold(
                       appBar: AppBar(
                         centerTitle: true,
-                        title: Text(
-                          'Consult with ' +
-                              '${_consult.provider.split(" ")[0][0].toUpperCase()}${_consult.provider.split(" ")[0].substring(1)} ${_consult.provider.split(" ")[1][0].toUpperCase()}${_consult.provider.split(" ")[1].substring(1)} ' +
-                              _consult.providerTitles,
-                          style: TextStyle(
-                            fontSize:
-                                Theme.of(context).platform == TargetPlatform.iOS
+                        title: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              snapshot != null
+                                  ? _consult.consultType + ' Consult'
+                                  : snapshot != null ? _consult.provider : '',
+                              style: TextStyle(
+                                fontSize: Theme.of(context).platform ==
+                                        TargetPlatform.iOS
                                     ? 17.0
-                                    : 17.0,
-                          ),
+                                    : 20.0,
+                              ),
+                            ),
+                            Text(
+                              snapshot != null
+                                  ? '${_consult.provider.split(" ")[0][0].toUpperCase()}${_consult.provider.split(" ")[0].substring(1)} ${_consult.provider.split(" ")[1][0].toUpperCase()}${_consult.provider.split(" ")[1].substring(1)} ' +
+                                      _consult.providerTitles
+                                  : snapshot != null ? _consult.provider : '',
+                              style: TextStyle(
+                                fontSize: Theme.of(context).platform ==
+                                        TargetPlatform.iOS
+                                    ? 12.0
+                                    : 14.0,
+                              ),
+                            )
+                          ],
                         ),
                         bottom: TabBar(
                           indicatorColor: Colors.white,
@@ -169,29 +187,23 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                           .getDocuments()
                                           .then((snap) async {
                                         if (snap.documents.length == 0) {
-                                          StripeSource.addSource()
+                                          await StripeSource.addSource()
                                               .then((String token) async {
                                             PaymentService().addCard(token);
                                             setState(() {
                                               isLoading = true;
                                             });
-                                            showToast(
-                                                'Please wait while we process your request.',
-                                                duration: Duration(seconds: 5));
                                             return await _addConsult();
                                           });
                                         } else {
-                                          PaymentService().chargePayment(
+                                          setState(() {
+                                            isLoading = true;
+                                          });
+                                          await PaymentService().chargePayment(
                                               price,
                                               _consult.consultType +
                                                   ' consult with ' +
                                                   _consult.provider);
-                                          setState(() {
-                                            isLoading = true;
-                                          });
-                                          showToast(
-                                              'Please wait while we process your request.',
-                                              duration: Duration(seconds: 5));
                                           return await _addConsult();
                                         }
                                         return Navigator.pushNamed(
@@ -243,6 +255,8 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
   }
 
   Future _addConsult() async {
+    showToast('Please wait while we process your request.',
+        duration: Duration(seconds: 5));
     var ref = Firestore.instance.collection('consults').document();
     Firestore.instance
         .collection('users')

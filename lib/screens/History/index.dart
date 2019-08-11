@@ -95,7 +95,7 @@ class _HistoryScreenState extends State<HistoryScreen>
               child: StreamBuilder(
                   stream: Firestore.instance
                       .collection('consults')
-                      .where('patient_id', isEqualTo: medicallUser.id)
+                      .where('patient_id', isEqualTo: medicallUser.id).orderBy("date")
                       .snapshots(),
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
@@ -267,7 +267,7 @@ class _HistoryScreenState extends State<HistoryScreen>
                         ),
                       )));
                 }
-                return Column(children: historyList.reversed.toList());
+                return Column(children: historyList.toList());
               }),
         ),
       );
@@ -355,7 +355,7 @@ class _HistoryScreenState extends State<HistoryScreen>
                         ),
                       )));
                 }
-                return Column(children: historyList.reversed.toList());
+                return Column(children: historyList.toList());
               }),
         ),
       );
