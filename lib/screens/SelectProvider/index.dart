@@ -112,12 +112,6 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
                       refresh();
                     },
                   ),
-            IconButton(
-              icon: Icon(Icons.search),
-              onPressed: () {
-                _handlePressButton();
-              },
-            ),
           ],
         ),
         bottomNavigationBar: FlatButton(
