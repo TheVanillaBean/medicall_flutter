@@ -75,10 +75,12 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
         .collection('users')
         .where("type", isEqualTo: "provider")
         .snapshots()
-        .listen((data) => data.documents.forEach((doc) =>
-            medicallUser.displayName != doc.data["name"]
-                ? addresses.add(doc.data["address"])
-                : null));
+        .forEach((snap) {
+      snap.documents.forEach((doc) =>
+          medicallUser.displayName != doc.data["name"]
+              ? addresses.add(doc.data["address"])
+              : null);
+    });
   }
 
   @override
@@ -143,7 +145,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
         body: Column(
           children: <Widget>[
             Expanded(
-                flex: 2,
+                flex: 1,
                 child: GoogleMap(
                     onMapCreated: _onMapCreated,
                     myLocationEnabled: false,
@@ -168,15 +170,18 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
                               medicallUser.displayName !=
                                   userDocuments[i].data['name']) {
                             providers.add(userDocuments[i].data['name']);
-                            historyList.add(ListTile(
-                              title: Text(
-                                  '${userDocuments[i].data['name'].split(" ")[0][0].toUpperCase()}${userDocuments[i].data['name'].split(" ")[0].substring(1)} ${userDocuments[i].data['name'].split(" ")[1][0].toUpperCase()}${userDocuments[i].data['name'].split(" ")[1].substring(1)}' +
-                                      " " +
-                                      userDocuments[i].data['titles']),
-                              subtitle: Text(
-                                  userDocuments[i].data['address'].toString()),
-                              trailing: Container(
-                                child: FlatButton(
+                            historyList.add(Container(
+                              height: 75,
+                              child: ListTile(
+                                dense: true,
+                                title: Text(
+                                    '${userDocuments[i].data['name'].split(" ")[0][0].toUpperCase()}${userDocuments[i].data['name'].split(" ")[0].substring(1)} ${userDocuments[i].data['name'].split(" ")[1][0].toUpperCase()}${userDocuments[i].data['name'].split(" ")[1].substring(1)}' +
+                                        " " +
+                                        userDocuments[i].data['titles']),
+                                subtitle: Text(userDocuments[i]
+                                    .data['address']
+                                    .toString()),
+                                trailing: FlatButton(
                                   onPressed: () {
                                     setState(() {
                                       _consult.provider =
@@ -222,10 +227,10 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
                                     ],
                                   ),
                                 ),
-                              ),
-                              leading: Icon(
-                                Icons.account_circle,
-                                size: 50,
+                                leading: Icon(
+                                  Icons.account_circle,
+                                  size: 50,
+                                ),
                               ),
                             ));
                           }
@@ -284,6 +289,11 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
       this.errorMessage = null;
     });
     var placesList = [];
+    double minLat = 9999.9;
+    double minLng = 9999.9;
+    double maxLat = -9999.9;
+    double maxLng = -9999.9;
+
     for (var i = 0; i < addresses.length; i++) {
       placesList.add(await _places.searchByText(addresses[i]));
       setState(() {
@@ -292,6 +302,18 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
           placesList[i].results.first.types.first = providers[i];
           this.places.add(placesList[i].results.first);
           placesList[i].results.forEach((f) {
+            if (f.geometry.location.lat < minLat) {
+              minLat = f.geometry.location.lat;
+            }
+            if (f.geometry.location.lng < minLng) {
+              minLng = f.geometry.location.lng;
+            }
+            if (f.geometry.location.lat > maxLat) {
+              maxLat = f.geometry.location.lat;
+            }
+            if (f.geometry.location.lng > maxLng) {
+              maxLng = f.geometry.location.lng;
+            }
             final String markerIdVal = 'marker_id_$_markerIdCounter';
             _markerIdCounter++;
             final MarkerId markerId = MarkerId(markerIdVal);
@@ -305,15 +327,33 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
             );
             markers[markerId] = marker;
 
-            mapController.animateCamera(CameraUpdate.newCameraPosition(
-                CameraPosition(
-                    target: LatLng(
-                        f.geometry.location.lat, f.geometry.location.lng),
-                    zoom: 8.0)));
+            // mapController.animateCamera(CameraUpdate.newCameraPosition(
+            //     CameraPosition(
+            //         target: LatLng(
+            //             f.geometry.location.lat, f.geometry.location.lng),
+            //         zoom: 8.0)));
           });
         }
       });
     }
+    LatLng latLng_1 = LatLng(minLat, minLng);
+    LatLng latLng_2 = LatLng(maxLat, maxLng);
+    LatLngBounds bound = LatLngBounds(southwest: latLng_1, northeast: latLng_2);
+    CameraUpdate u2 = CameraUpdate.newLatLngBounds(bound, 50);
+    this.mapController.animateCamera(u2).then((void v) {
+      check(u2, this.mapController);
+    });
+  }
+
+  void check(CameraUpdate u, GoogleMapController c) async {
+    c.animateCamera(u);
+    mapController.animateCamera(u);
+    LatLngBounds l1 = await c.getVisibleRegion();
+    LatLngBounds l2 = await c.getVisibleRegion();
+    print(l1.toString());
+    print(l2.toString());
+    if (l1.southwest.latitude == -90 || l2.southwest.latitude == -90)
+      check(u, c);
   }
 
   void onError(PlacesAutocompleteResponse response) {
@@ -350,102 +390,5 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
       //   MaterialPageRoute(builder: (context) => PlaceDetailWidget(placeId)),
       // );
     }
-  }
-
-  ListView buildPlacesList() {
-    final doctorNames = [
-      'Dr. Omar Badri',
-      'Dr. Jeffery Dover',
-      'Dr. Robert Stavert'
-    ];
-    final displayNames = [
-      'University of Massachusetts',
-      'Cambridge Health Alliance',
-      'Skincare Physicians'
-    ];
-    final placesWidget = places.map((f) {
-      List<Widget> list = [
-        ListTile(
-          dense: true,
-          contentPadding: EdgeInsets.all(0),
-          leading: Icon(
-            Icons.account_circle,
-            color: Colors.blue,
-            size: 50,
-          ),
-          trailing: Container(
-            child: FlatButton(
-              onPressed: () {},
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    'Select',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                  Icon(
-                      selectedProvider == doctorNames[places.indexOf(f)]
-                          ? Icons.radio_button_checked
-                          : Icons.radio_button_unchecked,
-                      color: Theme.of(context).colorScheme.primary,
-                      size: 20.0)
-                ],
-              ),
-            ),
-          ),
-          title: Text(
-            doctorNames[places.indexOf(f)],
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          // subtitle: Text('Intermediate', style: TextStyle(color: Colors.white)),
-
-          subtitle: Column(
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  Text(
-                    displayNames[places.indexOf(f)],
-                  ),
-                ],
-              ),
-              Row(
-                children: <Widget>[
-                  Text(
-                    f.formattedAddress.split(',')[0] +
-                        f.formattedAddress.split(',')[1],
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ];
-
-      return Padding(
-        padding: EdgeInsets.only(top: 4.0, bottom: 4.0, left: 8.0, right: 8.0),
-        child: Card(
-          child: InkWell(
-            onTap: () {
-              showDetailPlace(f.placeId);
-            },
-            child: Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: list,
-              ),
-            ),
-          ),
-        ),
-      );
-    }).toList();
-
-    return ListView(shrinkWrap: true, children: placesWidget);
   }
 }

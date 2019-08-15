@@ -88,7 +88,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
               ),
             ),
             Text(
-              snapshot != null && from == 'consults'
+              snapshot != null && from == 'consults' && medicallUser.type == 'patient'
                   ? '${snapshot['provider'].split(" ")[0][0].toUpperCase()}${snapshot['provider'].split(" ")[0].substring(1)} ${snapshot['provider'].split(" ")[1][0].toUpperCase()}${snapshot['provider'].split(" ")[1].substring(1)} ' +
                       snapshot['providerTitles']
                   : snapshot != null && from == 'patients'
@@ -227,12 +227,13 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                   ),
                   medicallUser.type == 'provider' && from == 'patients'
                       ? FormBuilderTextField(
-                          initialValue: snapshot['consult'].length > 0 ? snapshot['consult'] : "This is where you fill in the detailed consult response to the patient. The patient will be notified of any changes as soon as you update the consult.",
+                          initialValue: snapshot['consult'],
                           attribute: 'docInput',
                           maxLines: 8,
                           decoration: InputDecoration(
                               fillColor: Color.fromRGBO(255, 255, 255, 0.9),
                               filled: true,
+                              hintText: "This is where you fill in the detailed consult response to the patient. The patient will be notified of any changes as soon as you update the consult.",
                               disabledBorder: InputBorder.none,
                               enabledBorder: InputBorder.none,
                               border: InputBorder.none),
@@ -241,13 +242,14 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                           ],
                         )
                       : FormBuilderTextField(
-                          initialValue: snapshot['consult'].length > 0 ? snapshot['consult'] : "Please wait while the doctor gets back to you. This is where you will see the doctor's notes once they reply to your consult.",
+                          initialValue: snapshot['consult'],
                           attribute: 'docInput',
                           maxLines: 8,
                           readOnly: true,
                           decoration: InputDecoration(
                               fillColor: Color.fromRGBO(255, 255, 255, 0.9),
                               filled: true,
+                              hintText: "Please wait while the doctor gets back to you. This is where you will see the doctor's notes once they reply to your consult.",
                               disabledBorder: InputBorder.none,
                               enabledBorder: InputBorder.none,
                               border: InputBorder.none),

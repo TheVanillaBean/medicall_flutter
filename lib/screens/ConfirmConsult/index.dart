@@ -177,9 +177,6 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                         isLoading = true;
                                       });
                                       //await _addProviderConsult();
-                                      setState(() {
-                                        isLoading = false;
-                                      });
                                       Firestore.instance
                                           .collection('cards')
                                           .document(medicallUser.id)
@@ -258,32 +255,27 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
     showToast('Please wait while we process your request.',
         duration: Duration(seconds: 5));
     var ref = Firestore.instance.collection('consults').document();
-    Firestore.instance
-        .collection('users')
-        .document(_consult.providerId)
-        .get()
-        .then((snap) async {
-      var imagesList = await saveImages(_consult.media, ref.documentID);
-      Map<String, dynamic> data = <String, dynamic>{
-        "screening_questions": _consult.screeningQuestions,
-        "medical_history_questions": _consult.historyQuestions,
-        "type": _consult.consultType,
-        "date": DateFormat('MM-dd-yyyy hh:mm a').format(DateTime.now()),
-        "consult": "",
-        "provider": _consult.provider,
-        "providerTitles": _consult.providerTitles,
-        "patient": medicallUser.displayName,
-        "provider_id": _consult.providerId,
-        "patient_id": medicallUser.id,
-        "media": _consult.media.length > 0 ? imagesList : "",
-      };
-      ref.setData(data).whenComplete(() {
-        print("Document Added");
-        return Navigator.pushReplacementNamed(context, '/history',
-            arguments: {'consult': _consult, 'user': medicallUser});
-        //_addProviderConsult(ref.documentID, imagesList);
-      }).catchError((e) => print(e));
-    });
+
+    var imagesList = await saveImages(_consult.media, ref.documentID);
+    Map<String, dynamic> data = <String, dynamic>{
+      "screening_questions": _consult.screeningQuestions,
+      "medical_history_questions": _consult.historyQuestions,
+      "type": _consult.consultType,
+      "date": DateFormat('MM-dd-yyyy hh:mm a').format(DateTime.now()),
+      "consult": "",
+      "provider": _consult.provider,
+      "providerTitles": _consult.providerTitles,
+      "patient": medicallUser.displayName,
+      "provider_id": _consult.providerId,
+      "patient_id": medicallUser.id,
+      "media": _consult.media.length > 0 ? imagesList : "",
+    };
+    ref.setData(data).whenComplete(() {
+      print("Document Added");
+      return Navigator.pushReplacementNamed(context, '/history',
+          arguments: {'consult': _consult, 'user': medicallUser});
+      //_addProviderConsult(ref.documentID, imagesList);
+    }).catchError((e) => print(e));
   }
 
   Future saveImages(assets, consultId) async {
@@ -291,9 +283,12 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
     for (var i = 0; i < assets.length; i++) {
       ByteData byteData = await assets[i].requestOriginal();
       List<int> imageData = byteData.buffer.asUint8List();
-      StorageReference ref = FirebaseStorage.instance
-          .ref()
-          .child("consults/" + consultId + "/" + assets[i].name);
+      StorageReference ref = FirebaseStorage.instance.ref().child("consults/" +
+          medicallUser.id +
+          '/' +
+          consultId +
+          "/" +
+          assets[i].name);
       StorageUploadTask uploadTask = ref.putData(imageData);
 
       allMediaList
