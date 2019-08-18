@@ -6,7 +6,6 @@ import 'package:Medicall/secrets.dart' as secrets;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_alert/flutter_alert.dart';
-import 'package:flutter_google_places/flutter_google_places.dart';
 
 import 'dart:async';
 import 'package:google_maps_webservice/places.dart';
@@ -354,27 +353,6 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
     homeScaffoldKey.currentState.showSnackBar(
       SnackBar(content: Text(response.errorMessage)),
     );
-  }
-
-  Future<void> _handlePressButton() async {
-    try {
-      final center = await getUserLocation();
-      Prediction p = await PlacesAutocomplete.show(
-          context: context,
-          strictbounds: center == null ? false : true,
-          onError: onError,
-          apiKey: secrets.kGoogleApiKey,
-          mode: Mode.fullscreen,
-          language: 'en',
-          location: center == null
-              ? null
-              : Location(center.latitude, center.longitude),
-          radius: center == null ? null : 10000);
-
-      showDetailPlace(p.placeId);
-    } catch (e) {
-      return;
-    }
   }
 
   Future<Null> showDetailPlace(String placeId) async {

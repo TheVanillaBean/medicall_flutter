@@ -261,6 +261,8 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
       "screening_questions": _consult.screeningQuestions,
       "medical_history_questions": _consult.historyQuestions,
       "type": _consult.consultType,
+      "chat": [{"date":DateTime.now()}],
+      "state": "new",
       "date": DateFormat('MM-dd-yyyy hh:mm a').format(DateTime.now()),
       "consult": "",
       "provider": _consult.provider,

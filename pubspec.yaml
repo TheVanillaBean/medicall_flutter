@@ -42,6 +42,8 @@ dependencies:
   #notifications
   flutter_alert: ^0.4.0
   oktoast: ^2.1.7
+  fluttertoast: ^3.1.0
+  image_picker: ^0.6.1+3
 
 dev_dependencies:
   flutter_test:

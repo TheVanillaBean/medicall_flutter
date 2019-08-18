@@ -179,8 +179,8 @@ class _MedicallAppState extends State<MedicallApp> {
             case '/questionsHistory':
               return MyCustomRoute(
                 builder: (_) => MedHistoryQuestionsScreen(
-                      data: settings.arguments,
-                    ),
+                  data: settings.arguments,
+                ),
                 settings: settings,
               );
             case '/questionsUpload':

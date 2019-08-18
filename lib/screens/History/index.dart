@@ -96,7 +96,6 @@ class _HistoryScreenState extends State<HistoryScreen>
                   stream: Firestore.instance
                       .collection('consults')
                       .where('patient_id', isEqualTo: medicallUser.id)
-                      .orderBy("date")
                       .snapshots(),
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
@@ -150,7 +149,7 @@ class _HistoryScreenState extends State<HistoryScreen>
                                           .data['date']
                                           .toString() +
                                       '\n' +
-                                      userDocuments[i].data['type'].toString()),
+                                      userDocuments[i].data['type'].toString() + '    ' + userDocuments[i].data['state'].toString()),
                                   trailing: IconButton(
                                     icon: Icon(Icons.input),
                                     color: Theme.of(context)

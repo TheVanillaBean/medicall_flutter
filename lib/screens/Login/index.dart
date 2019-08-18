@@ -60,6 +60,7 @@ class _LoginScreenState extends State<LoginPage>
     firebaseAnonymouslyUtil.setScreenListener(this);
 
     FirebaseNotifications().setUpFirebase();
+    
     _requestedRoute = _prefs.then((SharedPreferences prefs) {
       return (prefs.getString('requestedRoute'));
     });
@@ -86,6 +87,7 @@ class _LoginScreenState extends State<LoginPage>
       //     currDevToken != '') {
       //   finalDevTokenList.add(currDevToken);
       // }
+      medicallUser = MedicallUser();
       if (datasnapshot.data != null) {
         medicallUser.id = firebaseUser.uid;
         medicallUser.displayName = datasnapshot.data['name'];
