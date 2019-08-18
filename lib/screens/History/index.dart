@@ -220,6 +220,7 @@ class _HistoryScreenState extends State<HistoryScreen>
                   var userDocuments = snapshot.data.documents;
                   List<Widget> historyList = [];
                   for (var i = 0; i < userDocuments.length; i++) {
+                    Timestamp timestamp = userDocuments[i].data['date'];
                     historyList.add(FlatButton(
                         padding: EdgeInsets.all(0),
                         splashColor: Theme.of(context)
@@ -254,10 +255,13 @@ class _HistoryScreenState extends State<HistoryScreen>
                                   letterSpacing: 1.1,
                                   color: Theme.of(context).colorScheme.primary),
                             ),
-                            subtitle: Text(
-                                userDocuments[i].data['date'].toString() +
-                                    '\n' +
-                                    userDocuments[i].data['type'].toString()),
+                            subtitle: Text(DateFormat('dd MMM h:mm a')
+                                    .format(timestamp.toDate())
+                                    .toString() +
+                                '\n' +
+                                userDocuments[i].data['type'].toString() +
+                                '      Status: ' +
+                                userDocuments[i].data['state'].toString()),
                             trailing: IconButton(
                               icon: Icon(Icons.input),
                               color: Theme.of(context)
@@ -296,6 +300,7 @@ class _HistoryScreenState extends State<HistoryScreen>
               stream: Firestore.instance
                   .collection('consults')
                   .where('provider_id', isEqualTo: medicallUser.id)
+                  .orderBy('date', descending: true)
                   .snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
@@ -319,6 +324,7 @@ class _HistoryScreenState extends State<HistoryScreen>
                   var userDocuments = snapshot.data.documents;
                   List<Widget> historyList = [];
                   for (var i = 0; i < userDocuments.length; i++) {
+                    Timestamp timestamp = userDocuments[i].data['date'];
                     historyList.add(FlatButton(
                         padding: EdgeInsets.all(0),
                         splashColor: Theme.of(context)
@@ -352,10 +358,13 @@ class _HistoryScreenState extends State<HistoryScreen>
                                   letterSpacing: 1.1,
                                   color: Theme.of(context).colorScheme.primary),
                             ),
-                            subtitle: Text(
-                                userDocuments[i].data['date'].toString() +
-                                    '\n' +
-                                    userDocuments[i].data['type'].toString()),
+                            subtitle: Text(DateFormat('dd MMM h:mm a')
+                                    .format(timestamp.toDate())
+                                    .toString() +
+                                '\n' +
+                                userDocuments[i].data['type'].toString() +
+                                '      Status: ' +
+                                userDocuments[i].data['state'].toString()),
                             trailing: IconButton(
                               icon: Icon(Icons.input),
                               color: Theme.of(context)
