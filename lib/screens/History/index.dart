@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/presentation/medicall_app_icons.dart' as CustomIcons;
 import 'package:flutter/painting.dart';
+import 'package:intl/intl.dart';
 
 class HistoryScreen extends StatefulWidget {
   final data;
@@ -100,15 +101,16 @@ class _HistoryScreenState extends State<HistoryScreen>
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
                       return Center(
-                          heightFactor: 40,
-                          child: Text("You have no consult history yet.",
-                              textAlign: TextAlign.center),
-                        );
+                        heightFactor: 40,
+                        child: Text("You have no consult history yet.",
+                            textAlign: TextAlign.center),
+                      );
                     } else {
                       if (snapshot.data.documents.length > 0) {
                         var userDocuments = snapshot.data.documents;
                         List<Widget> historyList = [];
                         for (var i = 0; i < userDocuments.length; i++) {
+                          Timestamp timestamp = userDocuments[i].data['date'];
                           historyList.add(FlatButton(
                               padding: EdgeInsets.all(0),
                               splashColor: Theme.of(context)
@@ -145,11 +147,15 @@ class _HistoryScreenState extends State<HistoryScreen>
                                             .colorScheme
                                             .primary),
                                   ),
-                                  subtitle: Text(userDocuments[i]
-                                          .data['date']
+                                  subtitle: Text(DateFormat('dd MMM h:mm a')
+                                          .format(timestamp.toDate())
                                           .toString() +
                                       '\n' +
-                                      userDocuments[i].data['type'].toString() + '    ' + userDocuments[i].data['state'].toString()),
+                                      userDocuments[i].data['type'].toString() +
+                                      '      Status: ' +
+                                      userDocuments[i]
+                                          .data['state']
+                                          .toString()),
                                   trailing: IconButton(
                                     icon: Icon(Icons.input),
                                     color: Theme.of(context)

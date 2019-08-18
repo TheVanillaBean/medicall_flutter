@@ -144,8 +144,8 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
   }
 
   _buildTab(questions, i) {
-    if (questions.length > 0) {
-      if (i != 0) {
+    if (i != 0) {
+      if (questions.length > 0) {
         return Scaffold(
           body: Container(
             child: questions[0].toString().contains('https')
@@ -200,18 +200,18 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
           ),
         );
       } else {
-        return Chat(
-          peerId: documentId,
-          peerAvatar: '',
+        return Center(
+          child: Icon(
+            Icons.broken_image,
+            size: 140,
+            color: Theme.of(context).colorScheme.secondary.withAlpha(90),
+          ),
         );
       }
     } else {
-      return Center(
-        child: Icon(
-          Icons.broken_image,
-          size: 140,
-          color: Theme.of(context).colorScheme.secondary.withAlpha(90),
-        ),
+      return Chat(
+        peerId: documentId,
+        peerAvatar: '',
       );
     }
   }
