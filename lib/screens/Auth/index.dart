@@ -1,15 +1,15 @@
 import 'dart:async';
 
+import 'package:Medicall/components/logger.dart';
+import 'package:Medicall/components/masked_text.dart';
+import 'package:Medicall/components/reactive_refresh_indicator.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/screens/Registration/RegistrationType/index.dart';
+import 'package:Medicall/util/app_util.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-import 'package:Medicall/components/logger.dart';
-import 'package:Medicall/screens/Registration/RegistrationType/index.dart';
-import 'package:Medicall/components/masked_text.dart';
-import 'package:Medicall/components/reactive_refresh_indicator.dart';
 
 enum AuthStatus { PHONE_AUTH, SMS_AUTH, PROFILE_AUTH }
 
@@ -314,6 +314,11 @@ class _AuthScreenState extends State<AuthScreen> {
         // Example: authenticate with your own API, use the data gathered
         // to post your profile/user, etc.
         _add(user);
+        if (!user.isEmailVerified) {
+          showAlert(
+              "Your email is not verified. Please verify your email before continuing.");
+        }
+
         Navigator.of(context).pushReplacement(CupertinoPageRoute(
           builder: (context) => RegistrationTypeScreen(
             data: {"user": medicallUser},
@@ -562,5 +567,11 @@ class _AuthScreenState extends State<AuthScreen> {
         ),
       ),
     );
+  }
+
+  void showAlert(String msg) {
+    setState(() {
+      AppUtil().showAlert(msg);
+    });
   }
 }

@@ -1,19 +1,20 @@
+import 'package:Medicall/components/progress_hud.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/screens/Auth/index.dart';
 import 'package:Medicall/screens/Login/styles.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:Medicall/util/firebase_anonymously_util.dart';
+import 'package:Medicall/util/firebase_auth_codes.dart';
 import 'package:Medicall/util/firebase_google_util.dart';
 import 'package:Medicall/util/firebase_listenter.dart';
-import 'package:Medicall/util/firebase_phone_util.dart';
-import 'package:Medicall/components/progress_hud.dart';
-import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
-import 'package:Medicall/screens/Auth/index.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:Medicall/util/firebase_notification_handler.dart';
+import 'package:Medicall/util/firebase_phone_util.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key key}) : super(key: key);
@@ -60,6 +61,7 @@ class _LoginScreenState extends State<LoginPage>
     firebaseAnonymouslyUtil.setScreenListener(this);
 
     FirebaseNotifications().setUpFirebase();
+
     _requestedRoute = _prefs.then((SharedPreferences prefs) {
       return (prefs.getString('requestedRoute'));
     });
@@ -75,17 +77,7 @@ class _LoginScreenState extends State<LoginPage>
     final DocumentReference documentReference =
         Firestore.instance.document("users/" + firebaseUser.uid);
     await documentReference.get().then((datasnapshot) {
-      //FirebaseNotifications().setUpFirebase(_tokens, context);
-      // String currDevToken = _tokens.currentDevToken;
-      // List<dynamic> dbDevTokens = datasnapshot.data['dev_tokens'];
-      // List<String> finalDevTokenList = [
-      //   currDevToken,
-      // ];
-      // if (!finalDevTokenList.contains(currDevToken) &&
-      //     currDevToken != null &&
-      //     currDevToken != '') {
-      //   finalDevTokenList.add(currDevToken);
-      // }
+      medicallUser = MedicallUser();
       if (datasnapshot.data != null) {
         medicallUser.id = firebaseUser.uid;
         medicallUser.displayName = datasnapshot.data['name'];
@@ -197,25 +189,28 @@ class _LoginScreenState extends State<LoginPage>
         });
         return;
       }
-      if (currentUser.isEmailVerified == true &&
-          currentUser.phoneNumber != null) {
-        //print(widget.requestedRoute.toString());
-
-        if (medicallUser.terms == true && medicallUser.policy == true) {
-          if (medicallUser.type == 'provider') {
-            Navigator.pushReplacementNamed(context, '/history',
-                arguments: {'user': medicallUser});
-          } else {
-            Navigator.pushReplacementNamed(context, '/doctors',
-                arguments: {'user': medicallUser});
-          }
+      if (currentUser.phoneNumber != null) {
+        if (currentUser.isEmailVerified != true) {
+          showAlert(
+              "Your email is not verified. Please verify your email before continuing.");
         } else {
-          if (medicallUser.type == null) {
-            Navigator.pushReplacementNamed(context, '/registrationType',
-                arguments: {'user': medicallUser});
+          if (medicallUser.terms == true && medicallUser.policy == true) {
+            if (medicallUser.type == 'provider') {
+              Navigator.pushReplacementNamed(context, '/history',
+                  arguments: {'user': medicallUser});
+            } else {
+              Navigator.pushReplacementNamed(context, '/doctors',
+                  arguments: {'user': medicallUser});
+            }
           } else {
-            Navigator.pushReplacementNamed(context, '/registration',
-                arguments: {'user': medicallUser});
+            if (medicallUser.type == null) {
+              Navigator.pushReplacementNamed(context, '/registrationType',
+                  arguments: {'user': medicallUser});
+            } else {
+              showAlert("Please fill out the regisration before continuing.");
+              Navigator.pushReplacementNamed(context, '/registration',
+                  arguments: {'user': medicallUser});
+            }
           }
         }
       } else {
@@ -224,7 +219,6 @@ class _LoginScreenState extends State<LoginPage>
         ));
       }
     });
-    //showToast(_requestedRoute.toString(), duration: Duration(minutes: 1));
   }
 
   @override
@@ -642,7 +636,7 @@ class _LoginScreenState extends State<LoginPage>
 
   loginError(e) {
     setState(() {
-      AppUtil().showAlert(e.message);
+      AppUtil().showAlert(e);
       _isLoading = false;
     });
   }
@@ -656,19 +650,32 @@ class _LoginScreenState extends State<LoginPage>
     setState(() {
       if (_isEmailAuthEnable && validateEmail(_teMobileEmail.text) == null) {
         _isLoading = true;
+        String password = _tePassword.text;
         firebaseAnonymouslyUtil
-            .createUser(_teMobileEmail.text, _tePassword.text)
-            .then((String user) => login(_teMobileEmail.text, _tePassword.text))
-            .catchError((e) => loginError(e));
+            .createUser(_teMobileEmail.text, password)
+            .then((String user) => login(_teMobileEmail.text, password))
+            .catchError((e) => loginError(getErrorMessage(error: e)));
       }
     });
   }
 
   login(String email, String pass) {
     firebaseAnonymouslyUtil
-        .signIn(_teMobileEmail.text, _tePassword.text)
+        .signIn(email, pass)
         .then((FirebaseUser user) => moveUserDashboardScreen(user))
-        .catchError((e) => loginError(e));
+        .catchError((e) => loginError(getErrorMessage(error: e)));
+  }
+
+  String getErrorMessage({dynamic error}) {
+    if (error.code == FirebaseAuthCodes.ERROR_USER_NOT_FOUND) {
+      return "A user with this email does not exist. Register first.";
+    } else if (error.code == FirebaseAuthCodes.ERROR_USER_DISABLED) {
+      return "This user account has been disabled.";
+    } else if (error.code == FirebaseAuthCodes.ERROR_USER_TOKEN_EXPIRED) {
+      return "A password change is in the process.";
+    } else {
+      return error.message;
+    }
   }
 
   void onLoginError(String errorTxt) {
