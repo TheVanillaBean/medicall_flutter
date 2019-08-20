@@ -5,7 +5,6 @@ import 'package:Medicall/secrets.dart';
 import 'package:Medicall/util/stripe_payment_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:Medicall/models/consult_data_model.dart';
-import 'package:intl/intl.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
