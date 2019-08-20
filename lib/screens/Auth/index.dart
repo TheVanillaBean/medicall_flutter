@@ -339,8 +339,8 @@ class _AuthScreenState extends State<AuthScreen> {
   Widget _buildConfirmInputButton() {
     final theme = Theme.of(context);
     return IconButton(
-      icon: Icon(Icons.check),
-      color: Colors.white,
+      icon: Icon(Icons.check_circle),
+      color: theme.colorScheme.secondary,
       disabledColor: theme.buttonColor,
       onPressed: (this.status == AuthStatus.PROFILE_AUTH)
           ? null

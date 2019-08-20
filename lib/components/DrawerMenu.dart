@@ -66,22 +66,6 @@ class _DrawerMenuState extends State<DrawerMenu> {
                   }),
               ListTile(
                   leading: Icon(
-                    Icons.chat,
-                    color: Theme.of(context).disabledColor,
-                  ),
-                  title: Text(
-                    'Chat',
-                    style: TextStyle(
-                      color: Theme.of(context).disabledColor,
-                    ),
-                  ),
-                  onTap: () {
-                    // Navigator.pop(context);
-                    // Navigator.of(context).pushNamed('/chat');
-                  }),
-              
-              ListTile(
-                  leading: Icon(
                     Icons.account_circle,
                     color: Theme.of(context).primaryColor,
                   ),

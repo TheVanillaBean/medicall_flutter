@@ -68,7 +68,7 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
   }
 
   Future<void> deleteAssets() async {
-    await MultiImagePicker.deleteImages(assets: images);
+    //await MultiImagePicker.deleteImages(assets: images);
     setState(() {
       images = List<Asset>();
     });

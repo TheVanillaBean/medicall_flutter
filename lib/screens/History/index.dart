@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/presentation/medicall_app_icons.dart' as CustomIcons;
 import 'package:flutter/painting.dart';
+import 'package:intl/intl.dart';
 
 class HistoryScreen extends StatefulWidget {
   final data;
@@ -95,88 +96,94 @@ class _HistoryScreenState extends State<HistoryScreen>
               child: StreamBuilder(
                   stream: Firestore.instance
                       .collection('consults')
-                      .where('patient_id', isEqualTo: medicallUser.id).orderBy("date")
+                      .where('patient_id', isEqualTo: medicallUser.id)
                       .snapshots(),
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Container(
-                            height: MediaQuery.of(context).size.height * 0.85,
-                          ),
-                          Container(
-                            height: 50,
-                            alignment: Alignment.center,
-                            width: 50,
-                            padding: EdgeInsets.all(10),
-                            child: CircularProgressIndicator(),
-                          )
-                        ],
+                      return Center(
+                        heightFactor: 40,
+                        child: Text("You have no consult history yet.",
+                            textAlign: TextAlign.center),
                       );
-                    }
-                    var userDocuments = snapshot.data.documents;
-                    List<Widget> historyList = [];
-                    for (var i = 0; i < userDocuments.length; i++) {
-                      historyList.add(FlatButton(
-                          padding: EdgeInsets.all(0),
-                          splashColor: Theme.of(context)
-                              .colorScheme
-                              .secondary
-                              .withAlpha(70),
-                          onPressed: () {
-                            Navigator.pushNamed(context, '/historyDetail',
-                                arguments: {
-                                  'documentId': userDocuments[i].documentID,
-                                  'user': medicallUser,
-                                  'from': 'consults',
-                                  'isRouted': false,
-                                });
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                                border: Border(
-                                    bottom: BorderSide(
+                    } else {
+                      if (snapshot.data.documents.length > 0) {
+                        var userDocuments = snapshot.data.documents;
+                        List<Widget> historyList = [];
+                        for (var i = 0; i < userDocuments.length; i++) {
+                          Timestamp timestamp = userDocuments[i].data['date'];
+                          historyList.add(FlatButton(
+                              padding: EdgeInsets.all(0),
+                              splashColor: Theme.of(context)
+                                  .colorScheme
+                                  .secondary
+                                  .withAlpha(70),
+                              onPressed: () {
+                                Navigator.pushNamed(context, '/historyDetail',
+                                    arguments: {
+                                      'documentId': userDocuments[i].documentID,
+                                      'user': medicallUser,
+                                      'from': 'consults',
+                                      'isRouted': false,
+                                    });
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                        bottom: BorderSide(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .secondary
+                                                .withAlpha(70)))),
+                                child: ListTile(
+                                  dense: true,
+                                  isThreeLine: true,
+                                  title: Text(
+                                    '${userDocuments[i].data['provider'].split(" ")[0][0].toUpperCase()}${userDocuments[i].data['provider'].split(" ")[0].substring(1)} ${userDocuments[i].data['provider'].split(" ")[1][0].toUpperCase()}${userDocuments[i].data['provider'].split(" ")[1].substring(1)} ' +
+                                        userDocuments[i].data['providerTitles'],
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        letterSpacing: 1.1,
                                         color: Theme.of(context)
                                             .colorScheme
-                                            .secondary
-                                            .withAlpha(70)))),
-                            child: ListTile(
-                              dense: true,
-                              isThreeLine: true,
-                              title: Text(
-                                '${userDocuments[i].data['provider'].split(" ")[0][0].toUpperCase()}${userDocuments[i].data['provider'].split(" ")[0].substring(1)} ${userDocuments[i].data['provider'].split(" ")[1][0].toUpperCase()}${userDocuments[i].data['provider'].split(" ")[1].substring(1)} ' +
-                                    userDocuments[i].data['providerTitles'],
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 1.1,
-                                    color:
-                                        Theme.of(context).colorScheme.primary),
-                              ),
-                              subtitle: Text(
-                                  userDocuments[i].data['date'].toString() +
+                                            .primary),
+                                  ),
+                                  subtitle: Text(DateFormat('dd MMM h:mm a')
+                                          .format(timestamp.toDate())
+                                          .toString() +
                                       '\n' +
-                                      userDocuments[i].data['type'].toString()),
-                              trailing: IconButton(
-                                icon: Icon(Icons.input),
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .primary
-                                    .withAlpha(150),
-                                onPressed: () {},
-                              ),
-                              leading: Icon(
-                                Icons.account_circle,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .secondary
-                                    .withAlpha(170),
-                                size: 50,
-                              ),
-                            ),
-                          )));
+                                      userDocuments[i].data['type'].toString() +
+                                      '      Status: ' +
+                                      userDocuments[i]
+                                          .data['state']
+                                          .toString()),
+                                  trailing: IconButton(
+                                    icon: Icon(Icons.input),
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .primary
+                                        .withAlpha(150),
+                                    onPressed: () {},
+                                  ),
+                                  leading: Icon(
+                                    Icons.account_circle,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .secondary
+                                        .withAlpha(170),
+                                    size: 50,
+                                  ),
+                                ),
+                              )));
+                        }
+                        return Column(children: historyList.reversed.toList());
+                      } else {
+                        return Center(
+                          heightFactor: 40,
+                          child: Text("You have no consult history yet.",
+                              textAlign: TextAlign.center),
+                        );
+                      }
                     }
-                    return Column(children: historyList.reversed.toList());
                   }),
             ),
     );
@@ -209,65 +216,79 @@ class _HistoryScreenState extends State<HistoryScreen>
                     ],
                   );
                 }
-                var userDocuments = snapshot.data.documents;
-                List<Widget> historyList = [];
-                for (var i = 0; i < userDocuments.length; i++) {
-                  historyList.add(FlatButton(
-                      padding: EdgeInsets.all(0),
-                      splashColor:
-                          Theme.of(context).colorScheme.secondary.withAlpha(70),
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/historyDetail',
-                            arguments: {
-                              'documentId': userDocuments[i].documentID,
-                              'user': medicallUser,
-                              'from': 'consults',
-                              'isRouted': false,
-                            });
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                            border: Border(
-                                bottom: BorderSide(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .secondary
-                                        .withAlpha(70)))),
-                        child: ListTile(
-                          dense: true,
-                          isThreeLine: true,
-                          title: Text(
-                            '${userDocuments[i].data['provider'].split(" ")[0][0].toUpperCase()}${userDocuments[i].data['provider'].split(" ")[0].substring(1)} ${userDocuments[i].data['provider'].split(" ")[1][0].toUpperCase()}${userDocuments[i].data['provider'].split(" ")[1].substring(1)} ' +
-                                userDocuments[i].data['providerTitles'],
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 1.1,
-                                color: Theme.of(context).colorScheme.primary),
+                if (snapshot.data.documents.length > 0) {
+                  var userDocuments = snapshot.data.documents;
+                  List<Widget> historyList = [];
+                  for (var i = 0; i < userDocuments.length; i++) {
+                    Timestamp timestamp = userDocuments[i].data['date'];
+                    historyList.add(FlatButton(
+                        padding: EdgeInsets.all(0),
+                        splashColor: Theme.of(context)
+                            .colorScheme
+                            .secondary
+                            .withAlpha(70),
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/historyDetail',
+                              arguments: {
+                                'documentId': userDocuments[i].documentID,
+                                'user': medicallUser,
+                                'from': 'consults',
+                                'isRouted': false,
+                              });
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                              border: Border(
+                                  bottom: BorderSide(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary
+                                          .withAlpha(70)))),
+                          child: ListTile(
+                            dense: true,
+                            isThreeLine: true,
+                            title: Text(
+                              '${userDocuments[i].data['provider'].split(" ")[0][0].toUpperCase()}${userDocuments[i].data['provider'].split(" ")[0].substring(1)} ${userDocuments[i].data['provider'].split(" ")[1][0].toUpperCase()}${userDocuments[i].data['provider'].split(" ")[1].substring(1)} ' +
+                                  userDocuments[i].data['providerTitles'],
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.1,
+                                  color: Theme.of(context).colorScheme.primary),
+                            ),
+                            subtitle: Text(DateFormat('dd MMM h:mm a')
+                                    .format(timestamp.toDate())
+                                    .toString() +
+                                '\n' +
+                                userDocuments[i].data['type'].toString() +
+                                '      Status: ' +
+                                userDocuments[i].data['state'].toString()),
+                            trailing: IconButton(
+                              icon: Icon(Icons.input),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .primary
+                                  .withAlpha(150),
+                              onPressed: () {},
+                            ),
+                            leading: Icon(
+                              Icons.account_circle,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .secondary
+                                  .withAlpha(170),
+                              size: 50,
+                            ),
                           ),
-                          subtitle: Text(
-                              userDocuments[i].data['date'].toString() +
-                                  '\n' +
-                                  userDocuments[i].data['type'].toString()),
-                          trailing: IconButton(
-                            icon: Icon(Icons.input),
-                            color: Theme.of(context)
-                                .colorScheme
-                                .primary
-                                .withAlpha(150),
-                            onPressed: () {},
-                          ),
-                          leading: Icon(
-                            Icons.account_circle,
-                            color: Theme.of(context)
-                                .colorScheme
-                                .secondary
-                                .withAlpha(170),
-                            size: 50,
-                          ),
-                        ),
-                      )));
+                        )));
+                  }
+                  return Column(children: historyList.toList());
+                } else {
+                  return Center(
+                    heightFactor: 35,
+                    child: Text("You have no doctor consult history yet.",
+                        textAlign: TextAlign.center),
+                  );
                 }
-                return Column(children: historyList.toList());
               }),
         ),
       );
@@ -279,6 +300,7 @@ class _HistoryScreenState extends State<HistoryScreen>
               stream: Firestore.instance
                   .collection('consults')
                   .where('provider_id', isEqualTo: medicallUser.id)
+                  .orderBy('date', descending: true)
                   .snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
@@ -298,64 +320,78 @@ class _HistoryScreenState extends State<HistoryScreen>
                     ],
                   );
                 }
-                var userDocuments = snapshot.data.documents;
-                List<Widget> historyList = [];
-                for (var i = 0; i < userDocuments.length; i++) {
-                  historyList.add(FlatButton(
-                      padding: EdgeInsets.all(0),
-                      splashColor:
-                          Theme.of(context).colorScheme.secondary.withAlpha(70),
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/historyDetail',
-                            arguments: {
-                              'documentId': userDocuments[i].documentID,
-                              'user': medicallUser,
-                              'from': 'patients',
-                              'isRouted': false,
-                            });
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                            border: Border(
-                                bottom: BorderSide(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .secondary
-                                        .withAlpha(70)))),
-                        child: ListTile(
-                          dense: true,
-                          isThreeLine: true,
-                          title: Text(
-                            userDocuments[i].data['patient'].toString(),
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 1.1,
-                                color: Theme.of(context).colorScheme.primary),
+                if (snapshot.data.documents.length > 0) {
+                  var userDocuments = snapshot.data.documents;
+                  List<Widget> historyList = [];
+                  for (var i = 0; i < userDocuments.length; i++) {
+                    Timestamp timestamp = userDocuments[i].data['date'];
+                    historyList.add(FlatButton(
+                        padding: EdgeInsets.all(0),
+                        splashColor: Theme.of(context)
+                            .colorScheme
+                            .secondary
+                            .withAlpha(70),
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/historyDetail',
+                              arguments: {
+                                'documentId': userDocuments[i].documentID,
+                                'user': medicallUser,
+                                'from': 'patients',
+                                'isRouted': false,
+                              });
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                              border: Border(
+                                  bottom: BorderSide(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary
+                                          .withAlpha(70)))),
+                          child: ListTile(
+                            dense: true,
+                            isThreeLine: true,
+                            title: Text(
+                              userDocuments[i].data['patient'].toString(),
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.1,
+                                  color: Theme.of(context).colorScheme.primary),
+                            ),
+                            subtitle: Text(DateFormat('dd MMM h:mm a')
+                                    .format(timestamp.toDate())
+                                    .toString() +
+                                '\n' +
+                                userDocuments[i].data['type'].toString() +
+                                '      Status: ' +
+                                userDocuments[i].data['state'].toString()),
+                            trailing: IconButton(
+                              icon: Icon(Icons.input),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .primary
+                                  .withAlpha(150),
+                              onPressed: () {},
+                            ),
+                            leading: Icon(
+                              Icons.account_circle,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .secondary
+                                  .withAlpha(170),
+                              size: 50,
+                            ),
                           ),
-                          subtitle: Text(
-                              userDocuments[i].data['date'].toString() +
-                                  '\n' +
-                                  userDocuments[i].data['type'].toString()),
-                          trailing: IconButton(
-                            icon: Icon(Icons.input),
-                            color: Theme.of(context)
-                                .colorScheme
-                                .primary
-                                .withAlpha(150),
-                            onPressed: () {},
-                          ),
-                          leading: Icon(
-                            Icons.account_circle,
-                            color: Theme.of(context)
-                                .colorScheme
-                                .secondary
-                                .withAlpha(170),
-                            size: 50,
-                          ),
-                        ),
-                      )));
+                        )));
+                  }
+                  return Column(children: historyList.toList());
+                } else {
+                  return Center(
+                    heightFactor: 35,
+                    child: Text("You have no patient requests yet.",
+                        textAlign: TextAlign.center),
+                  );
                 }
-                return Column(children: historyList.toList());
               }),
         ),
       );

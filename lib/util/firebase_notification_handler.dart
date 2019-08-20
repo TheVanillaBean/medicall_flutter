@@ -55,7 +55,7 @@ class FirebaseNotifications {
 
   firebaseCloudMessagingListeners() {
     if (Platform.isIOS) iOSPermission();
-
+    
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
         var msg = message.values.first
@@ -95,7 +95,6 @@ class FirebaseNotifications {
     _firebaseMessaging.getToken().then((String token) {
       assert(token != null);
       //print(token);
-      medicallUser = MedicallUser();
       medicallUser.devTokens = [token];
     });
   }
