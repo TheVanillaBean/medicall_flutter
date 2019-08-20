@@ -200,20 +200,10 @@ class _HistoryScreenState extends State<HistoryScreen>
                   .snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Container(
-                        height: MediaQuery.of(context).size.height * 0.85,
-                      ),
-                      Container(
-                        height: 50,
-                        alignment: Alignment.center,
-                        width: 50,
-                        padding: EdgeInsets.all(10),
-                        child: CircularProgressIndicator(),
-                      )
-                    ],
+                  return Center(
+                    heightFactor: 35,
+                    child: Text("You have no doctor consult history yet.",
+                        textAlign: TextAlign.center),
                   );
                 }
                 if (snapshot.data.documents.length > 0) {
@@ -304,20 +294,10 @@ class _HistoryScreenState extends State<HistoryScreen>
                   .snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Container(
-                        height: MediaQuery.of(context).size.height * 0.85,
-                      ),
-                      Container(
-                        height: 50,
-                        alignment: Alignment.center,
-                        width: 50,
-                        padding: EdgeInsets.all(10),
-                        child: CircularProgressIndicator(),
-                      )
-                    ],
+                  return Center(
+                    heightFactor: 35,
+                    child: Text("You have no patient requests yet.",
+                        textAlign: TextAlign.center),
                   );
                 }
                 if (snapshot.data.documents.length > 0) {
