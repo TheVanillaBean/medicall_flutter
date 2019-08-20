@@ -4,6 +4,7 @@ import 'package:Medicall/components/logger.dart';
 import 'package:Medicall/components/masked_text.dart';
 import 'package:Medicall/components/reactive_refresh_indicator.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/screens/Login/index.dart';
 import 'package:Medicall/screens/Registration/RegistrationType/index.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -314,16 +315,20 @@ class _AuthScreenState extends State<AuthScreen> {
         // Example: authenticate with your own API, use the data gathered
         // to post your profile/user, etc.
         _add(user);
-        if (!user.isEmailVerified) {
+        if (user.isEmailVerified) {
+          Navigator.of(context).pushReplacement(CupertinoPageRoute(
+            builder: (context) => RegistrationTypeScreen(
+              data: {"user": medicallUser},
+            ),
+          ));
+        } else {
           showAlert(
               "Your email is not verified. Please verify your email before continuing.");
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => LoginPage()),
+          );
         }
-
-        Navigator.of(context).pushReplacement(CupertinoPageRoute(
-          builder: (context) => RegistrationTypeScreen(
-            data: {"user": medicallUser},
-          ),
-        ));
       } else {
         setState(() {
           this.status = AuthStatus.SMS_AUTH;
@@ -339,8 +344,8 @@ class _AuthScreenState extends State<AuthScreen> {
   Widget _buildConfirmInputButton() {
     final theme = Theme.of(context);
     return IconButton(
-      icon: Icon(Icons.check_circle),
-      color: theme.colorScheme.secondary,
+      icon: Icon(Icons.check),
+      color: Colors.white,
       disabledColor: theme.buttonColor,
       onPressed: (this.status == AuthStatus.PROFILE_AUTH)
           ? null

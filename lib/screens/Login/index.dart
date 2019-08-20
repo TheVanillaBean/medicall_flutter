@@ -2,6 +2,8 @@ import 'package:Medicall/components/progress_hud.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/Auth/index.dart';
 import 'package:Medicall/screens/Login/styles.dart';
+import 'package:Medicall/screens/Registration/RegistrationType/index.dart';
+import 'package:Medicall/screens/Registration/index.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:Medicall/util/firebase_anonymously_util.dart';
 import 'package:Medicall/util/firebase_auth_codes.dart';
@@ -129,7 +131,6 @@ class _LoginScreenState extends State<LoginPage>
   void _submit() {
     {
       setState(() {
-        //FirebaseNotifications().setUpFirebase(_tokens, context);
         if (_isPhoneAuthEnable) {
           if (_teMobileEmail.text.isEmpty) {
             showAlert("Enter valid mobile number");
@@ -204,12 +205,18 @@ class _LoginScreenState extends State<LoginPage>
             }
           } else {
             if (medicallUser.type == null) {
-              Navigator.pushReplacementNamed(context, '/registrationType',
-                  arguments: {'user': medicallUser});
+              showAlert("Please fill out the registration before continuing.");
+              Navigator.of(context).pushReplacement(CupertinoPageRoute(
+                builder: (context) => RegistrationScreen(
+                  data: {"user": medicallUser},
+                ),
+              ));
             } else {
-              showAlert("Please fill out the regisration before continuing.");
-              Navigator.pushReplacementNamed(context, '/registration',
-                  arguments: {'user': medicallUser});
+              Navigator.of(context).pushReplacement(CupertinoPageRoute(
+                builder: (context) => RegistrationTypeScreen(
+                  data: {"user": medicallUser},
+                ),
+              ));
             }
           }
         }
