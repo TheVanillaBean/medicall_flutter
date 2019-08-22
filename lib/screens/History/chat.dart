@@ -361,7 +361,7 @@ class ChatScreenState extends State<ChatScreen> {
                   color: primaryColor,
                   fontSize: 15.0,
                 ),
-                enabled: this.peerAvatar,
+                enabled: !this.peerAvatar,
                 controller: textEditingController,
                 decoration: InputDecoration.collapsed(
                   hintText: !this.peerAvatar

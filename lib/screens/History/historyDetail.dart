@@ -192,6 +192,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
         bottom: TabBar(
           indicatorColor: Theme.of(context).colorScheme.primary,
           indicatorWeight: 3,
+          labelStyle: TextStyle(fontSize: 12),
           tabs: <Tab>[
             Tab(
               // set icon to the tab
