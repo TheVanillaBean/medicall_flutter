@@ -17,15 +17,15 @@ final greyColor2 = Color(0xffE8E8E8);
 
 class Chat extends StatelessWidget {
   final String peerId;
-  final String peerAvatar;
+  final bool peerAvatar;
 
   Chat({Key key, @required this.peerId, @required this.peerAvatar})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      body: new ChatScreen(
+    return  Scaffold(
+      body:  ChatScreen(
         peerId: peerId,
         peerAvatar: peerAvatar,
       ),
@@ -35,21 +35,21 @@ class Chat extends StatelessWidget {
 
 class ChatScreen extends StatefulWidget {
   final String peerId;
-  final String peerAvatar;
+  final bool peerAvatar;
 
   ChatScreen({Key key, @required this.peerId, @required this.peerAvatar})
       : super(key: key);
 
   @override
   State createState() =>
-      new ChatScreenState(peerId: peerId, peerAvatar: peerAvatar);
+       ChatScreenState(peerId: peerId, peerAvatar: peerAvatar);
 }
 
 class ChatScreenState extends State<ChatScreen> {
   ChatScreenState({Key key, @required this.peerId, @required this.peerAvatar});
 
   String peerId;
-  String peerAvatar;
+  bool peerAvatar;
   String id;
 
   var listMessage;
@@ -62,9 +62,9 @@ class ChatScreenState extends State<ChatScreen> {
   String imageUrl;
 
   final TextEditingController textEditingController =
-      new TextEditingController();
-  final ScrollController listScrollController = new ScrollController();
-  final FocusNode focusNode = new FocusNode();
+       TextEditingController();
+  final ScrollController listScrollController =  ScrollController();
+  final FocusNode focusNode =  FocusNode();
 
   @override
   void initState() {
@@ -98,10 +98,10 @@ class ChatScreenState extends State<ChatScreen> {
       groupChatId = '$peerId-$id';
     }
 
-    Firestore.instance
-        .collection('users')
-        .document(id)
-        .updateData({'chattingWith': peerId});
+    // Firestore.instance
+    //     .collection('users')
+    //     .document(id)
+    //     .updateData({'chattingWith': peerId});
 
     setState(() {});
   }
@@ -144,7 +144,7 @@ class ChatScreenState extends State<ChatScreen> {
     });
   }
 
-  void onSendMessage(String content, int type) {
+  onSendMessage(String content, int type) {
     // type: 0 = text, 1 = image, 2 = sticker
     if (content.trim() != '') {
       textEditingController.clear();
@@ -160,9 +160,26 @@ class ChatScreenState extends State<ChatScreen> {
           }
         ])
       };
+      documentReference.snapshots().forEach((snap) {
+        if (snap.data['provider_id'] == medicallUser.id &&
+            snap.data['state'] == 'new') {
+          Map<String, dynamic> consultStateData = {'state': 'in progress'};
+          documentReference.updateData(consultStateData).whenComplete(() {
+            print("Document Added");
+          }).catchError((e) => print(e));
+        }
+      });
+      // if(medicallUser.id == ){
+
+      // }
       documentReference.updateData(data).whenComplete(() {
         print("Document Added");
       }).catchError((e) => print(e));
+
+      // Map<String, dynamic> consultStateData = {'state': 'In progress'};
+      // documentReference.updateData(consultStateData).whenComplete(() {
+      //   print("Document Added");
+      // }).catchError((e) => print(e));
 
       listScrollController.animateTo(0.0,
           duration: Duration(milliseconds: 300), curve: Curves.easeOut);
@@ -278,10 +295,10 @@ class ChatScreenState extends State<ChatScreen> {
         isShowSticker = false;
       });
     } else {
-      Firestore.instance
-          .collection('users')
-          .document(id)
-          .updateData({'chattingWith': null});
+      // Firestore.instance
+      //     .collection('users')
+      //     .document(id)
+      //     .updateData({'chattingWith': null});
       Navigator.pop(context);
     }
 
@@ -291,24 +308,27 @@ class ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      child: Stack(
-        children: <Widget>[
-          Column(
-            children: <Widget>[
-              // List of messages
-              buildListMessage(),
+      child: Container(
+        color: Theme.of(context).primaryColor.withOpacity(0.05),
+        child: Stack(
+          children: <Widget>[
+            Column(
+              children: <Widget>[
+                // List of messages
+                buildListMessage(),
 
-              // Sticker
-              //(isShowSticker ? buildSticker() : Container()),
+                // Sticker
+                //(isShowSticker ? buildSticker() : Container()),
 
-              // Input content
-              buildInput(),
-            ],
-          ),
+                // Input content
+                buildInput(),
+              ],
+            ),
 
-          // Loading
-          buildLoading()
-        ],
+            // Loading
+            buildLoading()
+          ],
+        ),
       ),
       onWillPop: onBackPress,
     );
@@ -341,9 +361,12 @@ class ChatScreenState extends State<ChatScreen> {
                   color: primaryColor,
                   fontSize: 15.0,
                 ),
+                enabled: this.peerAvatar,
                 controller: textEditingController,
                 decoration: InputDecoration.collapsed(
-                  hintText: 'Type your message...',
+                  hintText: !this.peerAvatar
+                      ? 'Type your message...'
+                      : 'This consult has finished, chat disabled.',
                   hintStyle: TextStyle(color: greyColor),
                 ),
                 focusNode: focusNode,
@@ -353,24 +376,28 @@ class ChatScreenState extends State<ChatScreen> {
 
           // Button send message
           Material(
-            child: new Container(
-              margin: new EdgeInsets.symmetric(horizontal: 8.0),
-              child: new IconButton(
-                icon: new Icon(Icons.send),
-                onPressed: () => onSendMessage(textEditingController.text, 0),
-                color: primaryColor,
+            child:  Container(
+              margin:  EdgeInsets.symmetric(horizontal: 8.0),
+              child:  IconButton(
+                icon:  Icon(Icons.send),
+                onPressed: () {
+                  if (!this.peerAvatar) {
+                    onSendMessage(textEditingController.text, 0);
+                  }
+                },
+                color: !this.peerAvatar ? primaryColor : greyColor,
               ),
             ),
-            color: Colors.white,
+            color: !peerAvatar ? Colors.white : greyColor2,
           ),
         ],
       ),
       width: double.infinity,
       height: 50.0,
-      decoration: new BoxDecoration(
+      decoration:  BoxDecoration(
           border:
-              new Border(top: new BorderSide(color: greyColor2, width: 0.5)),
-          color: Colors.white),
+               Border(top: BorderSide(color: greyColor2, width: 0.5)),
+          color: !peerAvatar ? Colors.white : greyColor2),
     );
   }
 

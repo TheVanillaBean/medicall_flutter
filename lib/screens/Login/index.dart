@@ -65,7 +65,11 @@ class _LoginScreenState extends State<LoginPage>
     FirebaseNotifications().setUpFirebase();
 
     _requestedRoute = _prefs.then((SharedPreferences prefs) {
-      return (prefs.getString('requestedRoute'));
+      if (prefs.containsKey('requestedRoute') && prefs.getString('requestedRoute').length > 0) {
+        return (prefs.getString('requestedRoute'));
+      } else {
+        return null;
+      }
     });
   }
 
@@ -79,7 +83,6 @@ class _LoginScreenState extends State<LoginPage>
     final DocumentReference documentReference =
         Firestore.instance.document("users/" + firebaseUser.uid);
     await documentReference.get().then((datasnapshot) {
-      medicallUser = MedicallUser();
       if (datasnapshot.data != null) {
         medicallUser.id = firebaseUser.uid;
         medicallUser.displayName = datasnapshot.data['name'];

@@ -62,6 +62,7 @@ class _HistoryScreenState extends State<HistoryScreen>
                 controller: controller,
               )
             : null,
+        //new, in progress, finished
         elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
         leading: Text('', style: TextStyle(color: Colors.black26)),
       ),
@@ -97,6 +98,7 @@ class _HistoryScreenState extends State<HistoryScreen>
                   stream: Firestore.instance
                       .collection('consults')
                       .where('patient_id', isEqualTo: medicallUser.id)
+                      .orderBy('date', descending: true)
                       .snapshots(),
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) {
@@ -151,17 +153,48 @@ class _HistoryScreenState extends State<HistoryScreen>
                                           .format(timestamp.toDate())
                                           .toString() +
                                       '\n' +
-                                      userDocuments[i].data['type'].toString() +
-                                      '      Status: ' +
-                                      userDocuments[i]
-                                          .data['state']
-                                          .toString()),
-                                  trailing: IconButton(
-                                    icon: Icon(Icons.input),
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .primary
-                                        .withAlpha(150),
+                                      userDocuments[i].data['type'].toString()),
+                                  trailing: FlatButton(
+                                    splashColor: Colors.transparent,
+                                    highlightColor: Colors.transparent,
+                                    focusColor: Colors.transparent,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: <Widget>[
+                                        userDocuments[i]
+                                                    .data['state']
+                                                    .toString() ==
+                                                'done'
+                                            ? Icon(
+                                                Icons.assignment_turned_in,
+                                                color: Colors.green,
+                                              )
+                                            : userDocuments[i]
+                                                        .data['state']
+                                                        .toString() ==
+                                                    'in progress'
+                                                ? Icon(
+                                                    Icons.assignment,
+                                                    color: Colors.blue,
+                                                  )
+                                                : Icon(
+                                                    Icons.assignment_ind,
+                                                    color: Colors.amber,
+                                                  ),
+                                        Text(
+                                          userDocuments[i]
+                                              .data['state']
+                                              .toString(),
+                                          style: TextStyle(
+                                              fontSize: 10,
+                                              color: Theme.of(context)
+                                                  .primaryColor),
+                                        ),
+                                      ],
+                                    ),
                                     onPressed: () {},
                                   ),
                                   leading: Icon(
@@ -175,7 +208,7 @@ class _HistoryScreenState extends State<HistoryScreen>
                                 ),
                               )));
                         }
-                        return Column(children: historyList.reversed.toList());
+                        return Column(children: historyList);
                       } else {
                         return Center(
                           heightFactor: 40,
@@ -197,6 +230,7 @@ class _HistoryScreenState extends State<HistoryScreen>
               stream: Firestore.instance
                   .collection('consults')
                   .where('patient_id', isEqualTo: medicallUser.id)
+                  .orderBy('date', descending: true)
                   .snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
@@ -249,15 +283,41 @@ class _HistoryScreenState extends State<HistoryScreen>
                                     .format(timestamp.toDate())
                                     .toString() +
                                 '\n' +
-                                userDocuments[i].data['type'].toString() +
-                                '      Status: ' +
-                                userDocuments[i].data['state'].toString()),
-                            trailing: IconButton(
-                              icon: Icon(Icons.input),
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .primary
-                                  .withAlpha(150),
+                                userDocuments[i].data['type'].toString()),
+                            trailing: FlatButton(
+                              splashColor: Colors.transparent,
+                              highlightColor: Colors.transparent,
+                              focusColor: Colors.transparent,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  userDocuments[i].data['state'].toString() ==
+                                          'done'
+                                      ? Icon(
+                                          Icons.assignment_turned_in,
+                                          color: Colors.green,
+                                        )
+                                      : userDocuments[i]
+                                                  .data['state']
+                                                  .toString() ==
+                                              'in progress'
+                                          ? Icon(
+                                              Icons.assignment,
+                                              color: Colors.blue,
+                                            )
+                                          : Icon(
+                                              Icons.assignment_ind,
+                                              color: Colors.amber,
+                                            ),
+                                  Text(
+                                    userDocuments[i].data['state'].toString(),
+                                    style: TextStyle(
+                                        fontSize: 10,
+                                        color: Theme.of(context).primaryColor),
+                                  ),
+                                ],
+                              ),
                               onPressed: () {},
                             ),
                             leading: Icon(
@@ -342,15 +402,41 @@ class _HistoryScreenState extends State<HistoryScreen>
                                     .format(timestamp.toDate())
                                     .toString() +
                                 '\n' +
-                                userDocuments[i].data['type'].toString() +
-                                '      Status: ' +
-                                userDocuments[i].data['state'].toString()),
-                            trailing: IconButton(
-                              icon: Icon(Icons.input),
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .primary
-                                  .withAlpha(150),
+                                userDocuments[i].data['type'].toString()),
+                            trailing: FlatButton(
+                              splashColor: Colors.transparent,
+                              highlightColor: Colors.transparent,
+                              focusColor: Colors.transparent,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  userDocuments[i].data['state'].toString() ==
+                                          'done'
+                                      ? Icon(
+                                          Icons.assignment_turned_in,
+                                          color: Colors.green,
+                                        )
+                                      : userDocuments[i]
+                                                  .data['state']
+                                                  .toString() ==
+                                              'in progress'
+                                          ? Icon(
+                                              Icons.assignment,
+                                              color: Colors.blue,
+                                            )
+                                          : Icon(
+                                              Icons.assignment_ind,
+                                              color: Colors.amber,
+                                            ),
+                                  Text(
+                                    userDocuments[i].data['state'].toString(),
+                                    style: TextStyle(
+                                        fontSize: 10,
+                                        color: Theme.of(context).primaryColor),
+                                  ),
+                                ],
+                              ),
                               onPressed: () {},
                             ),
                             leading: Icon(

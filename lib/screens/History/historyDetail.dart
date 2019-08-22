@@ -15,8 +15,10 @@ class HistoryDetailScreen extends StatefulWidget {
 class _HistoryDetailScreenState extends State<HistoryDetailScreen>
     with SingleTickerProviderStateMixin {
   TabController controller;
+  int _currentIndex = 0;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool isLoading = true;
+  bool isDone = false;
   bool isConsultOpen = false;
   String documentId;
   String from;
@@ -29,7 +31,14 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
     medicallUser = widget.data['user'];
     from = widget.data['from'];
     controller = TabController(length: 4, vsync: this);
+    controller.addListener(_handleTabSelection);
     _getConsultDetail();
+  }
+
+  _handleTabSelection() {
+    setState(() {
+      _currentIndex = controller.index;
+    });
   }
 
   @override
@@ -46,6 +55,11 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
       if (datasnapshot.data != null) {
         setState(() {
           snapshot = datasnapshot.data;
+          if (snapshot['state'] == 'done') {
+            isDone = true;
+          } else {
+            isDone = false;
+          }
         });
       }
     }).catchError((e) => print(e));
@@ -56,38 +70,123 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        centerTitle: true,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+        actions: <Widget>[
+          Container(
+            padding: EdgeInsets.fromLTRB(0, 5, 10, 0),
+            width: 40,
+            child: medicallUser.type == 'provider' && from != 'consults'
+                ? GestureDetector(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        snapshot != null && isDone
+                            ? Icon(Icons.assignment_turned_in)
+                            : Icon(Icons.check_box_outline_blank),
+                        Text(
+                          'Done',
+                          style: TextStyle(fontSize: 10),
+                        )
+                      ],
+                    ),
+                    onTap: () {
+                      final DocumentReference documentReference = Firestore
+                          .instance
+                          .collection('consults')
+                          .document(documentId);
+                      documentReference.get().then((snap) {
+                        if (snap.documentID == documentId &&
+                            snap.data['provider_id'] == medicallUser.id) {
+                          Map<String, dynamic> consultStateData = {
+                            'state': 'done'
+                          };
+                          if (snap.data['state'] == 'done') {
+                            consultStateData = {'state': 'in progress'};
+                          }
+
+                          documentReference
+                              .updateData(consultStateData)
+                              .whenComplete(() {
+                            setState(() {
+                              if (consultStateData['state'] == 'done') {
+                                isDone = true;
+                                if (_currentIndex != 0) {
+                                  Future.delayed(
+                                      const Duration(milliseconds: 100), () {
+                                    controller.index = 0;
+                                  });
+                                } else {
+                                  Navigator.pop(context);
+                                }
+                              } else {
+                                isDone = false;
+                                if (_currentIndex != 0) {
+                                  Future.delayed(
+                                      const Duration(milliseconds: 100), () {
+                                    controller.index = 0;
+                                  });
+                                } else {
+                                  controller.index = 3;
+                                  Future.delayed(
+                                      const Duration(milliseconds: 500), () {
+                                    controller.index = 0;
+                                  });
+                                }
+                              }
+                            });
+                            print("Document Added");
+                          }).catchError((e) => print(e));
+                        }
+                      });
+                    },
+                  )
+                : FlatButton(
+                    onPressed: () {},
+                    child: Text(''),
+                  ),
+          ),
+        ],
+        title: Row(
+          mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              snapshot != null && from == 'consults'
-                  ? snapshot['type'] + ' Consult'
-                  : snapshot != null && from == 'patients'
-                      ? snapshot['patient']
-                      : '',
-              style: TextStyle(
-                fontSize: Theme.of(context).platform == TargetPlatform.iOS
-                    ? 17.0
-                    : 20.0,
-              ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  snapshot != null && from == 'consults'
+                      ? snapshot['type'] + ' Consult'
+                      : snapshot != null && from == 'patients'
+                          ? snapshot['patient']
+                          : '',
+                  style: TextStyle(
+                    fontSize: Theme.of(context).platform == TargetPlatform.iOS
+                        ? 17.0
+                        : 20.0,
+                  ),
+                ),
+                Text(
+                  snapshot != null &&
+                          from == 'consults' &&
+                          medicallUser.type == 'patient'
+                      ? '${snapshot['provider'].split(" ")[0][0].toUpperCase()}${snapshot['provider'].split(" ")[0].substring(1)} ${snapshot['provider'].split(" ")[1][0].toUpperCase()}${snapshot['provider'].split(" ")[1].substring(1)} ' +
+                          snapshot['providerTitles']
+                      : snapshot != null &&
+                              from == 'consults' &&
+                              medicallUser.type == 'provider'
+                          ? '${snapshot['provider'].split(" ")[0][0].toUpperCase()}${snapshot['provider'].split(" ")[0].substring(1)} ${snapshot['provider'].split(" ")[1][0].toUpperCase()}${snapshot['provider'].split(" ")[1].substring(1)} ' +
+                              snapshot['providerTitles']
+                          : snapshot != null && from == 'patients'
+                              ? snapshot['type'] + ' Consult'
+                              : '',
+                  style: TextStyle(
+                    fontSize: Theme.of(context).platform == TargetPlatform.iOS
+                        ? 12.0
+                        : 14.0,
+                  ),
+                ),
+              ],
             ),
-            Text(
-              snapshot != null &&
-                      from == 'consults' &&
-                      medicallUser.type == 'patient'
-                  ? '${snapshot['provider'].split(" ")[0][0].toUpperCase()}${snapshot['provider'].split(" ")[0].substring(1)} ${snapshot['provider'].split(" ")[1][0].toUpperCase()}${snapshot['provider'].split(" ")[1].substring(1)} ' +
-                      snapshot['providerTitles']
-                  : snapshot != null && from == 'patients'
-                      ? snapshot['patient']
-                      : '',
-              style: TextStyle(
-                fontSize: Theme.of(context).platform == TargetPlatform.iOS
-                    ? 12.0
-                    : 14.0,
-              ),
-            )
           ],
         ),
         bottom: TabBar(
@@ -126,7 +225,6 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
           child: BackButton(),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: snapshot != null
           ? TabBarView(
               // Add tabs as widgets
@@ -211,7 +309,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
     } else {
       return Chat(
         peerId: documentId,
-        peerAvatar: '',
+        peerAvatar: isDone,
       );
     }
   }
