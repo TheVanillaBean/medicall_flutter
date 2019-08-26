@@ -43,6 +43,10 @@ class FirebaseGoogleUtil {
     }
   }
 
+  Future<void> signOutWithGoogle() async {
+    await _googleSignIn.signOut();
+  }
+
   void onLoginUserVerified(FirebaseUser currentUser) {
     _view.onLoginUserVerified(currentUser);
   }

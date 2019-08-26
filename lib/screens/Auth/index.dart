@@ -88,7 +88,7 @@ class _AuthScreenState extends State<AuthScreen> {
       "email": user.email,
       "phone": user.phoneNumber
     };
-    documentReference.setData(data).whenComplete(() {
+    documentReference.updateData(data).whenComplete(() {
       print("Document Added");
     }).catchError((e) => print(e));
   }
@@ -344,7 +344,7 @@ class _AuthScreenState extends State<AuthScreen> {
   Widget _buildConfirmInputButton() {
     final theme = Theme.of(context);
     return IconButton(
-      icon: Icon(Icons.check),
+      icon: Icon(Icons.check_circle),
       color: Colors.white,
       disabledColor: theme.buttonColor,
       onPressed: (this.status == AuthStatus.PROFILE_AUTH)

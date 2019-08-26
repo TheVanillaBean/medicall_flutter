@@ -114,17 +114,9 @@ class _LoginScreenState extends State<LoginPage>
           "policy": false,
           "terms": false,
           "type": null,
-        };
-        documentReference.updateData(data).whenComplete(() {
-          print("Document Added");
-        }).catchError((e) => print(e));
-      }
-      if (datasnapshot.data['dev_tokens'] == null ||
-          datasnapshot.data['dev_tokens'][0] != medicallUser.devTokens[0]) {
-        Map<String, dynamic> data = <String, dynamic>{
           "dev_tokens": medicallUser.devTokens,
         };
-        documentReference.updateData(data).whenComplete(() {
+        documentReference.setData(data).whenComplete(() {
           print("Document Added");
         }).catchError((e) => print(e));
       }

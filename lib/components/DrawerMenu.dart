@@ -1,10 +1,9 @@
 import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:Medicall/util/firebase_anonymously_util.dart';
+import 'package:Medicall/util/firebase_google_util.dart';
 import 'package:flutter/material.dart';
-//import 'package:flutter/animation.dart';
 import 'package:Medicall/presentation/medicall_app_icons.dart' as CustomIcons;
 import 'package:Medicall/screens/Login/index.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 class DrawerMenu extends StatefulWidget {
   final data;
@@ -95,8 +94,8 @@ class _DrawerMenuState extends State<DrawerMenu> {
                     ),
                   ),
                   onTap: () async {
-                    await GoogleSignIn().signOut();
-                    await FirebaseAuth.instance.signOut();
+                    FirebaseAnonymouslyUtil().signOut();
+                    FirebaseGoogleUtil().signOutWithGoogle();
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => LoginPage()),
