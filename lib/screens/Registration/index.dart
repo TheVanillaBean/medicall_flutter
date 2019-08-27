@@ -3,7 +3,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:google_maps_webservice/places.dart';
 import 'package:intl/intl.dart';
+import 'package:Medicall/secrets.dart' as secrets;
+
+GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: secrets.kGoogleApiKey);
 
 class RegistrationScreen extends StatefulWidget {
   final data;
@@ -27,6 +31,19 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   void initState() {
     medicallUser = widget.data['user'];
     super.initState();
+  }
+
+  getNearbyPlaces(addresses) async {
+    var placesList = [];
+
+    for (var i = 0; i < addresses.length; i++) {
+      placesList.add(await _places.searchByText(addresses[i]));
+      if (placesList[i].status == 'OK') {
+        return true;
+      } else {
+        return false;
+      }
+    }
   }
 
   void _updateUser() {
@@ -87,7 +104,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             print('validationSucceded');
             //print(_userRegKey.currentState.value);
             _updateUser();
+
             if (medicallUser.type == "provider") {
+              getNearbyPlaces([
+                _userRegKey.currentState.value['Address'] +
+                    " " +
+                    _userRegKey.currentState.value['City'] +
+                    " " +
+                    _userRegKey.currentState.value['State']
+              ]);
               Navigator.pushNamed(context, '/history', arguments: widget.data);
             } else {
               Navigator.pushNamed(context, '/doctors', arguments: widget.data);

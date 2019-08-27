@@ -44,6 +44,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
     medicallUser = widget.data['user'];
     getAddresses();
     getConsult();
+    
   }
 
   Future getConsult() async {
@@ -94,6 +95,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
     // } else {
     //   expandedChild = buildPlacesList();
     // }
+    getNearbyPlaces(null);
     return Scaffold(
         key: homeScaffoldKey,
         appBar: AppBar(
@@ -247,12 +249,12 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
 
     mapController.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
         target: center == null ? LatLng(0, 0) : center, zoom: 15.0)));
-    getNearbyPlaces(center);
+    
   }
 
   void _onMapCreated(GoogleMapController controller) async {
     mapController = controller;
-    refresh();
+    //refresh();
   }
 
   Future _selectProvider(provider, titles) async {
@@ -333,9 +335,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
     LatLng latLng_2 = LatLng(maxLat, maxLng);
     LatLngBounds bound = LatLngBounds(southwest: latLng_1, northeast: latLng_2);
     CameraUpdate u2 = CameraUpdate.newLatLngBounds(bound, 50);
-    this.mapController.animateCamera(u2).then((void v) {
-      check(u2, this.mapController);
-    });
+    this.mapController.animateCamera(u2);
   }
 
   void check(CameraUpdate u, GoogleMapController c) async {
