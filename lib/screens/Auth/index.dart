@@ -88,7 +88,7 @@ class _AuthScreenState extends State<AuthScreen> {
       "email": user.email,
       "phone": user.phoneNumber
     };
-    documentReference.updateData(data).whenComplete(() {
+    documentReference.setData(data).whenComplete(() {
       print("Document Added");
     }).catchError((e) => print(e));
   }

@@ -3,7 +3,6 @@ import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/Auth/index.dart';
 import 'package:Medicall/screens/Login/styles.dart';
 import 'package:Medicall/screens/Registration/RegistrationType/index.dart';
-import 'package:Medicall/screens/Registration/index.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:Medicall/util/firebase_anonymously_util.dart';
 import 'package:Medicall/util/firebase_auth_codes.dart';
@@ -82,7 +81,7 @@ class _LoginScreenState extends State<LoginPage>
 
   Future<void> _getUser() async {
     final DocumentReference documentReference =
-        Firestore.instance.document("users/" + firebaseUser.uid);
+        Firestore.instance.collection("users").document(firebaseUser.uid);
     await documentReference.get().then((datasnapshot) {
       if (datasnapshot.data != null) {
         medicallUser.id = firebaseUser.uid;
@@ -97,10 +96,11 @@ class _LoginScreenState extends State<LoginPage>
         medicallUser.phoneNumber = datasnapshot.data['phone'];
       } else {
         if (firebaseUser.displayName != null) {
-          medicallUser.id = medicallUser.displayName = firebaseUser.displayName;
+          medicallUser.displayName = firebaseUser.displayName;
           medicallUser.firstName = firebaseUser.displayName.split(' ')[0];
           medicallUser.lastName = firebaseUser.displayName.split(' ')[1];
         }
+        medicallUser.id = firebaseUser.uid;
         medicallUser.policy = false;
         medicallUser.terms = false;
         medicallUser.email = firebaseUser.email;
@@ -200,20 +200,11 @@ class _LoginScreenState extends State<LoginPage>
                   arguments: {'user': medicallUser});
             }
           } else {
-            if (medicallUser.type == null) {
-              showAlert("Please fill out the registration before continuing.");
-              Navigator.of(context).pushReplacement(CupertinoPageRoute(
-                builder: (context) => RegistrationScreen(
-                  data: {"user": medicallUser},
-                ),
-              ));
-            } else {
-              Navigator.of(context).pushReplacement(CupertinoPageRoute(
-                builder: (context) => RegistrationTypeScreen(
-                  data: {"user": medicallUser},
-                ),
-              ));
-            }
+            Navigator.of(context).pushReplacement(CupertinoPageRoute(
+              builder: (context) => RegistrationTypeScreen(
+                data: {"user": medicallUser},
+              ),
+            ));
           }
         }
       } else {
