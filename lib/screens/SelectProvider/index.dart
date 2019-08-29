@@ -323,9 +323,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
             LatLngBounds bound =
                 LatLngBounds(southwest: latLng_1, northeast: latLng_2);
             CameraUpdate u2 = CameraUpdate.newLatLngBounds(bound, 50);
-            this.mapController.animateCamera(u2).then((void v) {
-              check(u2, this.mapController);
-            });
+            this.mapController.animateCamera(u2);
           });
         }
       });
