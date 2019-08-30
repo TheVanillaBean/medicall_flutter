@@ -71,7 +71,6 @@ class _LoginScreenState extends State<LoginPage>
         return null;
       }
     });
-    _isLoading = false;
   }
 
   @override
@@ -539,6 +538,12 @@ class _LoginScreenState extends State<LoginPage>
                                 onPressed: () {
                                   gMailTabEnable();
                                   _tePassword.clear();
+                                  Future.delayed(
+                                      const Duration(milliseconds: 1000), () {
+                                    setState(() {
+                                      _isLoading = false;
+                                    });
+                                  });
                                 },
                                 darkMode: false),
                           )
