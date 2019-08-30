@@ -71,6 +71,7 @@ class _LoginScreenState extends State<LoginPage>
         return null;
       }
     });
+    _isLoading = false;
   }
 
   @override
@@ -616,9 +617,7 @@ class _LoginScreenState extends State<LoginPage>
       _isPhoneAuthEnable = false;
       _isEmailAuthEnable = false;
       _teMobileEmail.text = "";
-      firebaseGoogleUtil.signInWithGoogle().then(((val) {
-        _isLoading = false;
-      }));
+      firebaseGoogleUtil.signInWithGoogle();
     });
   }
 
@@ -650,10 +649,7 @@ class _LoginScreenState extends State<LoginPage>
         firebaseAnonymouslyUtil
             .createUser(_teMobileEmail.text, password)
             .then((String user) => login(_teMobileEmail.text, password))
-            .catchError((e) => loginError(getErrorMessage(error: e)))
-            .then((val) {
-          _isLoading = false;
-        });
+            .catchError((e) => loginError(getErrorMessage(error: e)));
       }
     });
   }
@@ -662,12 +658,7 @@ class _LoginScreenState extends State<LoginPage>
     firebaseAnonymouslyUtil
         .signIn(email, pass)
         .then((FirebaseUser user) => moveUserDashboardScreen(user))
-        .catchError((e) => loginError(getErrorMessage(error: e)))
-        .then((val) {
-      setState(() {
-        _isLoading = false;
-      });
-    });
+        .catchError((e) => loginError(getErrorMessage(error: e)));
   }
 
   String getErrorMessage({dynamic error}) {

@@ -64,7 +64,7 @@ class FirebaseNotifications {
             .replaceAll(', body: ', '\n \n')
             .replaceAll('\}', '');
 
-        AppUtil().showAlert('\n \n    ' + msg + '\n \n');
+        //AppUtil().showAlert('\n \n    ' + msg + '\n \n');
         print('onMessage: $message');
         //_showItemDialog(message);
       },
