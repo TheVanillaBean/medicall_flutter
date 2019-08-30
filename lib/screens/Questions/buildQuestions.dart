@@ -16,7 +16,7 @@ buildQuestions(data, questionIndex, dynamicAdd, widget, key) {
       if (questionIndex == 'medical_history_questions' &&
           i == 0 &&
           dynamicAdd != null) {
-        question = question + dynamicAdd;
+        question = question + ' ' + dynamicAdd;
       }
       stringList.add(question);
       options = questions[i]['options'];

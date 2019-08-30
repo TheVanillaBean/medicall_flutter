@@ -113,7 +113,7 @@ class _MedHistoryQuestionsScreenState extends State<MedHistoryQuestionsScreen> {
         child: SingleChildScrollView(
             padding: EdgeInsets.fromLTRB(15, 20, 15, 20),
             child: buildQuestions(_consult.historyQuestions,
-                'medical_history_questions', null, widget, historyFormKey)),
+                'medical_history_questions', _consult.providerTitles, widget, historyFormKey)),
       ),
     );
   }

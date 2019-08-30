@@ -3,7 +3,6 @@ import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:Medicall/util/app_util.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FirebaseNotifications {
@@ -58,11 +57,6 @@ class FirebaseNotifications {
 
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
-        var msg = message.values.first
-            .toString()
-            .replaceAll('{title: ', '')
-            .replaceAll(', body: ', '\n \n')
-            .replaceAll('\}', '');
 
         //AppUtil().showAlert('\n \n    ' + msg + '\n \n');
         print('onMessage: $message');
