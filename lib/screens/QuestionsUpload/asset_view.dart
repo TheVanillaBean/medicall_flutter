@@ -29,8 +29,7 @@ class AssetState extends State<AssetView> {
     _loadImage();
   }
 
-
-   void _loadImage() async {
+  void _loadImage() async {
     byteData = await this._asset.getByteData(quality: 100);
 
     if (this.mounted) {
@@ -48,9 +47,13 @@ class AssetState extends State<AssetView> {
       );
     }
 
-    return Text(
-      '${this._index}',
-      style: Theme.of(context).textTheme.headline,
+    return Padding(
+      padding: EdgeInsets.all(100),
+      child: SizedBox(
+        height: 30,
+        width: 30,
+        child: CircularProgressIndicator(),
+      ),
     );
   }
 }

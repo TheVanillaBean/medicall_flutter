@@ -25,18 +25,28 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
   void initState() {
     super.initState();
     medicallUser = widget.data['user'];
-    getConsult();
+    getConsult().then((onValue) {
+      setState(() {
+        _consult.consultType = onValue["consultType"];
+        _consult.screeningQuestions = onValue["screeningQuestions"];
+        _consult.uploadQuestions = onValue["uploadQuestions"];
+        _consult.historyQuestions = onValue["historyQuestions"];
+        _consult.provider = onValue["provider"];
+        _consult.providerTitles = onValue["providerTitles"];
+        _consult.providerId = onValue["providerId"];
+        if (_consult.provider != null && _consult.provider.length > 0) {
+          _consult.historyQuestions[0]["question"] =
+              _consult.historyQuestions[0]["question"] +
+                  " " +
+                  _consult.provider;
+        }
+      });
+    });
   }
 
   Future getConsult() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    var perfConsult = jsonDecode(pref.getString('consult'));
-    _consult.consultType = perfConsult["consultType"];
-    _consult.provider = perfConsult["provider"];
-    _consult.providerTitles = perfConsult["providerTitles"];
-    _consult.providerId = perfConsult["providerId"];
-    _consult.screeningQuestions = perfConsult["screeningQuestions"];
-    _consult.historyQuestions = perfConsult["historyQuestions"];
+    return jsonDecode(pref.getString('consult'));
   }
 
   setConsult() async {
@@ -47,24 +57,14 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
     return;
   }
 
-  Widget buildGridView() {
-    //_consult.media = images;
-    return GridView.count(
-        crossAxisCount: 2,
-        padding: EdgeInsets.all(10),
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
-        children: List.generate(images.length, (index) {
-          Asset asset = images[index];
-
-          return Container(
-            child: AssetView(
-              index,
-              asset,
-              key: UniqueKey(),
-            ),
-          );
-        }));
+  Widget buildGridView(index, asset) {
+    return Container(
+      child: AssetView(
+        index,
+        asset,
+        key: UniqueKey(),
+      ),
+    );
   }
 
   Future<void> deleteAssets() async {
@@ -75,16 +75,13 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
   }
 
   Future<void> loadAssets() async {
-    // setState(() {
-    //   images = List<Asset>();
-    // });
-
     List<Asset> resultList = List<Asset>();
     String error = '';
 
     try {
       resultList = await MultiImagePicker.pickImages(
-          maxImages: 4,
+          selectedAssets: images,
+          maxImages: widget.data['consult'].uploadQuestions.length - 1,
           enableCamera: true,
           cupertinoOptions: CupertinoOptions(takePhotoIcon: 'chat'),
           materialOptions: MaterialOptions(
@@ -125,14 +122,6 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
         ),
         elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: loadAssets,
-        child: Icon(
-          Icons.camera_alt,
-          color: Theme.of(context).colorScheme.onBackground,
-          size: 30,
-        ),
-      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       bottomNavigationBar: FlatButton(
         padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
@@ -153,46 +142,43 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
           ),
         ),
       ),
-      body: Column(
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Please make sure the pictures are taken in bright daylight and that the area of concern is centered in the photo.',
-              ),
-            ),
-          ),
-          Container(
-            height: MediaQuery.of(context).size.height - 240,
-            child: Stack(
+      body: ListView.builder(
+          itemCount: widget.data['consult'].uploadQuestions.length,
+          itemBuilder: (BuildContext ctxt, int index) {
+            return Column(
               children: <Widget>[
-                GridView.count(
-                    crossAxisCount: 2,
-                    padding: EdgeInsets.all(10),
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    children: List.generate(4, (index) {
-                      return Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.black12)),
-                        child: Container(
-                          child: Icon(
-                            Icons.photo,
-                            size: 110,
-                            color: Colors.black12,
-                          ),
+                Padding(
+                  padding: index == 0
+                      ? EdgeInsets.fromLTRB(20, 10, 20, 0)
+                      : EdgeInsets.fromLTRB(20, 10, 20, 10),
+                  child: Text(
+                    widget.data['consult'].uploadQuestions[index]['question'],
+                    style: index == 0
+                        ? TextStyle(fontSize: 14, color: Colors.red)
+                        : TextStyle(fontSize: 12),
+                  ),
+                ),
+                index != 0
+                    ? FlatButton(
+                        onPressed: loadAssets,
+                        child: Column(
+                          children: <Widget>[
+                            images.length > 0 && (images.length) >= index
+                                ? buildGridView(index, images[index - 1])
+                                : Container(
+                                    child: Image.network(
+                                    widget.data['consult']
+                                        .uploadQuestions[index]['media'],
+                                  ))
+                          ],
                         ),
-                      );
-                    })),
-                buildGridView(),
+                      )
+                    : SizedBox(
+                        height: 0,
+                      ),
               ],
-            ),
-          ),
-          Center(child: _error.length > 0 ? Text('Error: $_error') : Text('')),
-        ],
-      ),
+            );
+          }),
     );
   }
 }

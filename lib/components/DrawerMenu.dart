@@ -28,24 +28,28 @@ class _DrawerMenuState extends State<DrawerMenu> {
           color: Colors.white,
           child: ListView(
             children: <Widget>[
-              ListTile(
-                  dense: true,
-                  contentPadding: EdgeInsets.fromLTRB(16, 80, 0, 0),
-                  leading: Icon(
-                    Icons.local_hospital,
-                    color: Theme.of(context).colorScheme.primaryVariant,
-                  ),
-                  title: Text(
-                    'Find A Doctor',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.of(context).pushNamed('/doctors',
-                        arguments: {'user': medicallUser});
-                  }),
+              medicallUser.type == 'provider'
+                  ? SizedBox(
+                      height: 80,
+                    )
+                  : ListTile(
+                      dense: true,
+                      contentPadding: EdgeInsets.fromLTRB(16, 80, 0, 0),
+                      leading: Icon(
+                        Icons.local_hospital,
+                        color: Theme.of(context).colorScheme.primaryVariant,
+                      ),
+                      title: Text(
+                        'Find A Doctor',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.of(context).pushNamed('/doctors',
+                            arguments: {'user': medicallUser});
+                      }),
               ListTile(
                   dense: true,
                   leading: Icon(
@@ -53,7 +57,9 @@ class _DrawerMenuState extends State<DrawerMenu> {
                     color: Theme.of(context).colorScheme.primaryVariant,
                   ),
                   title: Text(
-                    'History',
+                    medicallUser.type == 'provider'
+                        ? 'Your Patients'
+                        : 'Consults',
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.primary,
                     ),

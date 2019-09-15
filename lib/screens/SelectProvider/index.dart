@@ -58,6 +58,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
       selectedProvider = _consult.provider;
     }
     _consult.screeningQuestions = perfConsult["screeningQuestions"];
+    _consult.uploadQuestions = perfConsult["uploadQuestions"];
     _consult.historyQuestions = perfConsult["historyQuestions"];
   }
 
@@ -122,7 +123,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
               Navigator.pushNamed(
                 context,
                 '/questionsHistory',
-                arguments: {'user': medicallUser},
+                arguments: {'user': medicallUser, 'dynamicAdd': _consult.providerTitles},
               );
             } else {
               _showMessageDialog();

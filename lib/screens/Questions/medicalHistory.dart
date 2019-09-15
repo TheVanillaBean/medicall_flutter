@@ -34,6 +34,7 @@ class _MedHistoryQuestionsScreenState extends State<MedHistoryQuestionsScreen> {
       setState(() {
         _consult.consultType = onValue["consultType"];
         _consult.screeningQuestions = onValue["screeningQuestions"];
+        _consult.uploadQuestions = onValue["uploadQuestions"];
         _consult.historyQuestions = onValue["historyQuestions"];
         _consult.provider = onValue["provider"];
         _consult.providerTitles = onValue["providerTitles"];
@@ -95,7 +96,7 @@ class _MedHistoryQuestionsScreenState extends State<MedHistoryQuestionsScreen> {
             //print(historyFormKey.currentState.value);
             await setConsult();
             Navigator.pushNamed(context, '/questionsUpload',
-                arguments: {'user': medicallUser});
+                arguments: {'user': medicallUser, 'consult': _consult});
           } else {
             print('External FormValidation failed');
           }
@@ -112,8 +113,15 @@ class _MedHistoryQuestionsScreenState extends State<MedHistoryQuestionsScreen> {
       body: Container(
         child: SingleChildScrollView(
             padding: EdgeInsets.fromLTRB(15, 20, 15, 20),
-            child: buildQuestions(_consult.historyQuestions,
-                'medical_history_questions', _consult.providerTitles, widget, historyFormKey)),
+            child: BuildQuestions(
+              data: {
+                'data': _consult.historyQuestions,
+                'questionIndex': 'medical_history_questions',
+                'dynamicAdd': widget.data['dynamicAdd'],
+                'widget': widget,
+                'key': historyFormKey
+              },
+            )),
       ),
     );
   }

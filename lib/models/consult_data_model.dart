@@ -3,6 +3,7 @@ import 'package:multi_image_picker/multi_image_picker.dart';
 class ConsultData {
   String consultType;
   List<dynamic> screeningQuestions;
+  List<dynamic> uploadQuestions;
   List<dynamic> stringListQuestions;
   String provider;
   String providerTitles;
@@ -15,6 +16,7 @@ class ConsultData {
   ConsultData({
     this.consultType,
     this.screeningQuestions,
+    this.uploadQuestions,
     this.stringListQuestions,
     this.provider,
     this.providerTitles,
@@ -34,6 +36,7 @@ class ConsultData {
         providerDevTokens = json['providerDevTokens'],
         stringListQuestions = json['stringListQuestions'],
         screeningQuestions = json['screeningQuestions'],
+        uploadQuestions = json['uploadQuestions'],
         historyQuestions = json['historyQuestions'],
         media = json['media'];
 
@@ -46,6 +49,7 @@ class ConsultData {
         'providerDevTokens': providerDevTokens,
         'stringListQuestions': stringListQuestions,
         'screeningQuestions': screeningQuestions,
+        'uploadQuestions': uploadQuestions,
         'historyQuestions': historyQuestions,
         'media': media,
       };

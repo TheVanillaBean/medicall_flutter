@@ -248,18 +248,28 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
         return Scaffold(
           body: Container(
             child: questions[0].toString().contains('https')
-                ? Carousel(
-                    autoplay: false,
-                    dotColor: Theme.of(context).colorScheme.primary,
-                    dotBgColor: Colors.white70,
-                    images: questions
-                        .map((f) => (CachedNetworkImageProvider(f)))
-                        .toList(),
+                ? Container(
+                  color: Colors.black,
+                    child: Carousel(
+                      autoplay: false,
+                      overlayShadowColors:
+                          Theme.of(context).colorScheme.primary,
+                      dotIncreasedColor:
+                          Theme.of(context).colorScheme.secondary,
+                      overlayShadow: true,
+                      boxFit: BoxFit.contain,
+                      dotColor: Theme.of(context).colorScheme.primary,
+                      dotBgColor: Colors.white70,
+                      images: questions
+                          .map((f) => (CachedNetworkImageProvider(f)))
+                          .toList(),
+                    ),
                   )
                 : ListView.builder(
                     itemCount: questions.length,
                     itemBuilder: (context, i) {
-                      if (questions[i]['options'] is String) {
+                      if (questions[i]['visible'] &&
+                          questions[i]['options'] is String) {
                         return ListTile(
                           title: Text(
                             questions[i]['question'],
@@ -272,28 +282,30 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                                 fontWeight: FontWeight.bold,
                                 color: Theme.of(context).colorScheme.secondary),
                           ),
-                          leading: Text((i + 1).toString() + '.'),
                         );
                       } else {
-                        return ListTile(
-                          title: Text(
-                            questions[i]['question'],
-                            style: TextStyle(fontSize: 14.0),
-                          ),
-                          subtitle: Text(
-                            questions[i]['answer']
-                                .toString()
-                                .replaceAll(']', '')
-                                .replaceAll('[', '')
-                                .replaceAll('null', '')
-                                .replaceFirst(', ', ''),
-                            style: TextStyle(
-                                height: 1.2,
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).colorScheme.secondary),
-                          ),
-                          leading: Text((i + 1).toString() + '.'),
-                        );
+                        return questions[i]['visible']
+                            ? ListTile(
+                                title: Text(
+                                  questions[i]['question'],
+                                  style: TextStyle(fontSize: 14.0),
+                                ),
+                                subtitle: Text(
+                                  questions[i]['answer']
+                                      .toString()
+                                      .replaceAll(']', '')
+                                      .replaceAll('[', '')
+                                      .replaceAll('null', '')
+                                      .replaceFirst(', ', ''),
+                                  style: TextStyle(
+                                      height: 1.2,
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary),
+                                ),
+                              )
+                            : SizedBox();
                       }
                     }),
           ),

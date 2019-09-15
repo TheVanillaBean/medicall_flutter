@@ -37,6 +37,7 @@ class _SymptomQuestionsScreenState extends State<SymptomQuestionsScreen> {
         _consult.providerTitles = onValue["providerTitles"];
         _consult.screeningQuestions = onValue["screeningQuestions"];
         _consult.historyQuestions = onValue["historyQuestions"];
+        _consult.uploadQuestions = onValue["uploadQuestions"];
       });
     });
   }
@@ -64,7 +65,9 @@ class _SymptomQuestionsScreenState extends State<SymptomQuestionsScreen> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          'Screening Questions',
+          _consult.consultType != null
+              ? _consult.consultType + ' Questions'
+              : ' Questions',
           style: TextStyle(
             fontSize:
                 Theme.of(context).platform == TargetPlatform.iOS ? 17.0 : 20.0,
@@ -100,8 +103,15 @@ class _SymptomQuestionsScreenState extends State<SymptomQuestionsScreen> {
       body: Container(
         child: SingleChildScrollView(
             padding: EdgeInsets.fromLTRB(15, 20, 15, 20),
-            child: buildQuestions(_consult.screeningQuestions,
-                'screening_questions', null, widget, screeningFormKey)),
+            child: BuildQuestions(
+              data: {
+                'data': _consult.screeningQuestions,
+                'questionIndex': 'screening_questions',
+                'dynamicAdd': null,
+                'widget': widget,
+                'key': screeningFormKey
+              },
+            )),
       ),
     );
   }

@@ -84,18 +84,39 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
                       },
                     ),
                     RaisedButton(
-                      color: Theme.of(context).disabledColor.withAlpha(10),
+                      color: Color.fromRGBO(35, 179, 232, 1),
                       child: Text(
                         'Hair Loss',
                         semanticsLabel: 'Hair Loss',
                         style: TextStyle(
-                            color:
-                                Theme.of(context).disabledColor.withAlpha(50)),
+                            color: Theme.of(context).colorScheme.onBackground),
                         textScaleFactor:
                             orientation == Orientation.portrait ? 1 : 0.8,
                       ),
-                      onPressed: () {
-                        // Perform some action
+                      onPressed: () async {
+                        _consult = ConsultData();
+
+                        SharedPreferences _thisConsult =
+                            await SharedPreferences.getInstance();
+                        _consult.consultType = 'Hairloss';
+                        var consultQuestions = await Firestore.instance
+                            .document('services/dermatology/symptoms/' +
+                                _consult.consultType.toLowerCase())
+                            .get();
+                        _consult.screeningQuestions =
+                            consultQuestions.data["screening_questions"];
+                        _consult.historyQuestions =
+                            consultQuestions.data["medical_history_questions"];
+                        _consult.uploadQuestions =
+                            consultQuestions.data["upload_questions"];
+                        String currentConsultString = jsonEncode(_consult);
+                        await _thisConsult.setString(
+                            "consult", currentConsultString);
+                        Navigator.pushNamed(
+                          context,
+                          '/questionsScreening',
+                          arguments: {'user': medicallUser},
+                        );
                       },
                     ),
                     RaisedButton(

@@ -22,7 +22,7 @@ class _HistoryScreenState extends State<HistoryScreen>
   @override
   void initState() {
     super.initState();
-    controller = TabController(length: 2, vsync: this);
+    controller = TabController(length: 1, vsync: this);
     //_tokens.currentContext = context;
   }
 
@@ -48,14 +48,13 @@ class _HistoryScreenState extends State<HistoryScreen>
             ? TabBar(
                 indicatorColor: Colors.white,
                 tabs: <Tab>[
+                  // Tab(
+                  //   // set icon to the tab
+                  //   text: 'Doctor Consults',
+                  //   icon: Icon(Icons.local_pharmacy),
+                  // ),
                   Tab(
-                    // set icon to the tab
-                    text: 'Doctor Consults',
-                    icon: Icon(Icons.local_pharmacy),
-                  ),
-                  Tab(
-                    text: 'Patient Requests',
-                    icon: Icon(Icons.assignment_ind),
+                    text: 'Your Patients'
                   ),
                 ],
                 // setup the controller
@@ -87,7 +86,7 @@ class _HistoryScreenState extends State<HistoryScreen>
           ? TabBarView(
               // Add tabs as widgets
               children: <Widget>[
-                _buildTab("consults"),
+                //_buildTab("consults"),
                 _buildTab("patients"),
               ],
               // set the controller

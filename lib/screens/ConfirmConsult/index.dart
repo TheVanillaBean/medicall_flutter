@@ -317,25 +317,27 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
               : ListView.builder(
                   itemCount: questions.length,
                   itemBuilder: (context, i) {
-                    return ListTile(
-                      title: Text(
-                        questions[i]['question'],
-                        style: TextStyle(fontSize: 14.0),
-                      ),
-                      subtitle: Text(
-                        questions[i]['answer']
-                            .toString()
-                            .replaceAll(']', '')
-                            .replaceAll('[', '')
-                            .replaceAll('null', '')
-                            .replaceFirst(', ', ''),
-                        style: TextStyle(
-                            height: 1.2,
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.secondary),
-                      ),
-                      leading: Text((i + 1).toString() + '.'),
-                    );
+                    return questions[i]['visible']
+                        ? ListTile(
+                            title: Text(
+                              questions[i]['question'],
+                              style: TextStyle(fontSize: 14.0),
+                            ),
+                            subtitle: Text(
+                              questions[i]['answer']
+                                  .toString()
+                                  .replaceAll(']', '')
+                                  .replaceAll('[', '')
+                                  .replaceAll('null', '')
+                                  .replaceFirst(', ', ''),
+                              style: TextStyle(
+                                  height: 1.2,
+                                  fontWeight: FontWeight.bold,
+                                  color:
+                                      Theme.of(context).colorScheme.secondary),
+                            ),
+                          )
+                        : SizedBox();
                   }),
         ),
       );

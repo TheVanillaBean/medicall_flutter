@@ -9,6 +9,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 final themeColor = Color(0xfff5a623);
 final primaryColor = Color(0xff203152);
@@ -24,8 +26,8 @@ class Chat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-      body:  ChatScreen(
+    return Scaffold(
+      body: ChatScreen(
         peerId: peerId,
         peerAvatar: peerAvatar,
       ),
@@ -42,7 +44,7 @@ class ChatScreen extends StatefulWidget {
 
   @override
   State createState() =>
-       ChatScreenState(peerId: peerId, peerAvatar: peerAvatar);
+      ChatScreenState(peerId: peerId, peerAvatar: peerAvatar);
 }
 
 class ChatScreenState extends State<ChatScreen> {
@@ -61,10 +63,9 @@ class ChatScreenState extends State<ChatScreen> {
   bool isShowSticker;
   String imageUrl;
 
-  final TextEditingController textEditingController =
-       TextEditingController();
-  final ScrollController listScrollController =  ScrollController();
-  final FocusNode focusNode =  FocusNode();
+  final TextEditingController textEditingController = TextEditingController();
+  final ScrollController listScrollController = ScrollController();
+  final FocusNode focusNode = FocusNode();
 
   @override
   void initState() {
@@ -197,9 +198,18 @@ class ChatScreenState extends State<ChatScreen> {
         Row(
           children: <Widget>[
             Container(
-              child: Text(
-                document['txt'],
+              child: Linkify(
+                onOpen: (link) async {
+                  if (await canLaunch(link.url)) {
+                    await launch(link.url);
+                  } else {
+                    throw 'Could not launch $link';
+                  }
+                },
+                text: document['txt'],
+                humanize: true,
                 style: TextStyle(color: primaryColor),
+                linkStyle: TextStyle(color: Colors.red),
               ),
               padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
               width: MediaQuery.of(context).size.width * 0.75,
@@ -229,9 +239,17 @@ class ChatScreenState extends State<ChatScreen> {
               children: <Widget>[
                 Material(
                   child: Container(
-                    child: Text(
-                      document['txt'],
+                    child: Linkify(
+                      onOpen: (link) async {
+                        if (await canLaunch(link.url)) {
+                          await launch(link.url);
+                        } else {
+                          throw 'Could not launch $link';
+                        }
+                      },
+                      text: document['txt'],
                       style: TextStyle(color: Colors.white),
+                      linkStyle: TextStyle(color: Colors.red),
                     ),
                     padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
                     width: MediaQuery.of(context).size.width * 0.75,
@@ -349,55 +367,58 @@ class ChatScreenState extends State<ChatScreen> {
   }
 
   Widget buildInput() {
-    return Container(
-      child: Row(
-        children: <Widget>[
-          // Edit text
-          Flexible(
-            child: Container(
-              padding: EdgeInsets.only(left: 10),
-              child: TextField(
-                style: TextStyle(
-                  color: primaryColor,
-                  fontSize: 15.0,
+    return SafeArea(
+      child: Container(
+        child: Row(
+          children: <Widget>[
+            // Edit text
+            Flexible(
+              child: Container(
+                padding: EdgeInsets.only(
+                  left: 10,
                 ),
-                enabled: !this.peerAvatar,
-                controller: textEditingController,
-                decoration: InputDecoration.collapsed(
-                  hintText: !this.peerAvatar
-                      ? 'Type your message...'
-                      : 'This consult has finished, chat disabled.',
-                  hintStyle: TextStyle(color: greyColor),
+                child: TextField(
+                  style: TextStyle(
+                    color: primaryColor,
+                    fontSize: 15.0,
+                  ),
+                  enabled: !this.peerAvatar,
+                  controller: textEditingController,
+                  decoration: InputDecoration.collapsed(
+                    hintText: !this.peerAvatar
+                        ? 'Type your message...'
+                        : 'This consult has finished, chat disabled.',
+                    hintStyle: TextStyle(color: greyColor),
+                  ),
+                  focusNode: focusNode,
                 ),
-                focusNode: focusNode,
               ),
             ),
-          ),
 
-          // Button send message
-          Material(
-            child:  Container(
-              margin:  EdgeInsets.symmetric(horizontal: 8.0),
-              child:  IconButton(
-                icon:  Icon(Icons.send),
-                onPressed: () {
-                  if (!this.peerAvatar) {
-                    onSendMessage(textEditingController.text, 0);
-                  }
-                },
-                color: !this.peerAvatar ? primaryColor : greyColor,
+            // Button send message
+            Material(
+              child: Container(
+                margin: EdgeInsets.symmetric(horizontal: 8.0),
+                child: IconButton(
+                  icon: Icon(Icons.send),
+                  onPressed: () {
+                    if (!this.peerAvatar) {
+                      onSendMessage(textEditingController.text, 0);
+                    }
+                  },
+                  color: !this.peerAvatar ? primaryColor : greyColor,
+                ),
               ),
+              color: !peerAvatar ? Colors.white : greyColor2,
             ),
-            color: !peerAvatar ? Colors.white : greyColor2,
-          ),
-        ],
+          ],
+        ),
+        width: double.infinity,
+        height: 50.0,
+        decoration: BoxDecoration(
+            border: Border(top: BorderSide(color: greyColor2, width: 0.5)),
+            color: !peerAvatar ? Colors.white : greyColor2),
       ),
-      width: double.infinity,
-      height: 50.0,
-      decoration:  BoxDecoration(
-          border:
-               Border(top: BorderSide(color: greyColor2, width: 0.5)),
-          color: !peerAvatar ? Colors.white : greyColor2),
     );
   }
 
@@ -421,6 +442,23 @@ class ChatScreenState extends State<ChatScreen> {
                 } else {
                   List listMessage = snapshot.data.data["chat"];
                   listMessage = listMessage.reversed.toList();
+                  if (listMessage.length == 0) {
+                    return Container(
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                          Container(
+                            child: Text(
+                              'Send a message, it will appear here',
+                              style: TextStyle(
+                                  color: greyColor,
+                                  fontSize: 16.0,
+                                  fontStyle: FontStyle.italic),
+                            ),
+                          )
+                        ]));
+                  }
                   return ListView.builder(
                     padding: EdgeInsets.all(10.0),
                     itemBuilder: (context, index) =>
