@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:oktoast/oktoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'asset_view.dart';
 
@@ -105,6 +106,7 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
     setState(() {
       images = resultList;
       _error = error;
+      showToast(_error);
     });
   }
 
