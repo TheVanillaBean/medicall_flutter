@@ -86,3 +86,4 @@ android/app/.classpath
 android/key.properties
 android/app/release/app.aab
 lib/secrets.dart
+ios/Flutter/flutter_export_environment.sh

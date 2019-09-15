@@ -35,7 +35,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
   bool isLoading = false;
   var selectedProvider = '';
   var providerTitles = '';
-  LatLng bounds;
+  LatLng bounds = LatLng(41.850033, -87.6500523);
   String errorMessage;
   ConsultData _consult = ConsultData();
 
@@ -123,7 +123,10 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
               Navigator.pushNamed(
                 context,
                 '/questionsHistory',
-                arguments: {'user': medicallUser, 'dynamicAdd': _consult.providerTitles},
+                arguments: {
+                  'user': medicallUser,
+                  'dynamicAdd': _consult.providerTitles
+                },
               );
             } else {
               _showMessageDialog();
@@ -146,7 +149,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
                     myLocationEnabled: false,
                     markers: Set<Marker>.of(markers.values),
                     initialCameraPosition: CameraPosition(
-                      target: LatLng(41.850033, -87.6500523),
+                      target: bounds,
                     ))),
             Expanded(
                 flex: 1,
@@ -285,6 +288,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
     double minLng = 9999.9;
     double maxLat = -9999.9;
     double maxLng = -9999.9;
+    LatLngBounds bound;
 
     for (var i = 0; i < addresses.length; i++) {
       placesList.add(await _places.searchByText(addresses[i]));
@@ -293,6 +297,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
         if (placesList[i].status == 'OK') {
           placesList[i].results.first.types.first = providers[i];
           this.places.add(placesList[i].results.first);
+
           placesList[i].results.forEach((f) {
             if (f.geometry.location.lat < minLat) {
               minLat = f.geometry.location.lat;
@@ -321,13 +326,12 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
 
             LatLng latLng_1 = LatLng(minLat, minLng);
             LatLng latLng_2 = LatLng(maxLat, maxLng);
-            LatLngBounds bound =
-                LatLngBounds(southwest: latLng_1, northeast: latLng_2);
-            CameraUpdate u2 = CameraUpdate.newLatLngBounds(bound, 50);
-            this.mapController.animateCamera(u2);
+            bound = LatLngBounds(southwest: latLng_1, northeast: latLng_2);
           });
         }
       });
+      CameraUpdate u2 = CameraUpdate.newLatLngBounds(bound, 50);
+      this.mapController.animateCamera(u2);
     }
   }
 

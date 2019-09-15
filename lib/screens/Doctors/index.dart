@@ -202,6 +202,8 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
                               consultQuestions.data["screening_questions"];
                           _consult.historyQuestions = consultQuestions
                               .data["medical_history_questions"];
+                          _consult.uploadQuestions =
+                              consultQuestions.data["upload_questions"];
                           String currentConsultString = jsonEncode(_consult);
                           await _thisConsult.setString(
                               "consult", currentConsultString);
