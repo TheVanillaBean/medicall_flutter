@@ -14,6 +14,7 @@ class MedicallUser {
   String titles;
   bool terms;
   bool policy;
+  bool consent;
 
   MedicallUser({
     this.id,
@@ -29,5 +30,6 @@ class MedicallUser {
     this.titles,
     this.terms,
     this.policy,
+    this.consent,
   });
 }

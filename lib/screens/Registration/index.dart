@@ -70,6 +70,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         : '';
     medicallUser.policy =
         _userRegKey.currentState.value['accept_privacy_switch'];
+    medicallUser.consent = _userRegKey.currentState.value['accept_consent'];
     Map<String, dynamic> data = <String, dynamic>{
       "name": medicallUser.displayName,
       "first_name": medicallUser.firstName,
@@ -77,6 +78,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       "dob": medicallUser.dob,
       "terms": medicallUser.terms,
       "policy": medicallUser.policy,
+      "consent": medicallUser.consent,
       "address": medicallUser.address,
       "titles": medicallUser.titles,
       "registered": true,
@@ -341,6 +343,28 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         Navigator.pushNamed(context, '/privacy');
                       },
                       child: Text('Privacy Policy',
+                          style: TextStyle(
+                            decoration: TextDecoration.underline,
+                            color: Colors.blue,
+                          ))),
+                  validators: [
+                    FormBuilderValidators.required(),
+                  ],
+                ),
+                FormBuilderCheckbox(
+                  attribute: 'accept_consent',
+                  initialValue: medicallUser.consent,
+                  leadingInput: true,
+                  decoration: InputDecoration(
+                      disabledBorder: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      border: InputBorder.none),
+                  label: FlatButton(
+                      padding: EdgeInsets.fromLTRB(0, 0, 62, 0),
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/consent');
+                      },
+                      child: Text('Telemedicine Consent',
                           style: TextStyle(
                             decoration: TextDecoration.underline,
                             color: Colors.blue,

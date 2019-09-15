@@ -90,6 +90,7 @@ class _LoginScreenState extends State<LoginPage>
         medicallUser.lastName = datasnapshot.data['last_name'];
         medicallUser.dob = datasnapshot.data['dob'];
         medicallUser.policy = datasnapshot.data['policy'];
+        medicallUser.consent = datasnapshot.data['consent'];
         medicallUser.terms = datasnapshot.data['terms'];
         medicallUser.type = datasnapshot.data['type'];
         medicallUser.email = datasnapshot.data['email'];
@@ -102,6 +103,7 @@ class _LoginScreenState extends State<LoginPage>
         }
         medicallUser.id = firebaseUser.uid;
         medicallUser.policy = false;
+        medicallUser.consent = false;
         medicallUser.terms = false;
         medicallUser.email = firebaseUser.email;
         medicallUser.phoneNumber = firebaseUser.phoneNumber;
@@ -113,6 +115,7 @@ class _LoginScreenState extends State<LoginPage>
           "phone": firebaseUser.phoneNumber,
           "dob": null,
           "policy": false,
+          "consent": false,
           "terms": false,
           "type": null,
           "dev_tokens": medicallUser.devTokens,
@@ -191,7 +194,7 @@ class _LoginScreenState extends State<LoginPage>
           showAlert(
               "Your email is not verified. Please verify your email before continuing.");
         } else {
-          if (medicallUser.terms == true && medicallUser.policy == true) {
+          if (medicallUser.terms == true && medicallUser.policy == true && medicallUser.consent == true) {
             if (medicallUser.type == 'provider') {
               Navigator.pushReplacementNamed(context, '/history',
                   arguments: {'user': medicallUser});

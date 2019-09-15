@@ -66,7 +66,9 @@ class _SymptomQuestionsScreenState extends State<SymptomQuestionsScreen> {
         centerTitle: true,
         title: Text(
           _consult.consultType != null
-              ? _consult.consultType + ' Questions'
+              ? _consult.consultType == 'Lesion'
+                  ? 'Spot Questions'
+                  : _consult.consultType + ' Questions'
               : ' Questions',
           style: TextStyle(
             fontSize:

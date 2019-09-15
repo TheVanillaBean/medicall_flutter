@@ -4,6 +4,7 @@ import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/screens/Account/paymentDetail.dart';
 import 'package:Medicall/screens/Chat/index.dart';
 import 'package:Medicall/screens/ConfirmConsult/index.dart';
+import 'package:Medicall/screens/Consent/index.dart';
 import 'package:Medicall/screens/Doctors/index.dart';
 import 'package:Medicall/screens/History/historyDetail.dart';
 import 'package:Medicall/screens/History/index.dart';
@@ -153,6 +154,11 @@ class _MedicallAppState extends State<MedicallApp> {
             case '/privacy':
               return MyCustomRoute(
                 builder: (_) => PrivacyScreen(),
+                settings: settings,
+              );
+              case '/consent':
+              return MyCustomRoute(
+                builder: (_) => ConsentScreen(),
                 settings: settings,
               );
             case '/home':

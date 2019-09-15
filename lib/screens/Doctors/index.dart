@@ -182,7 +182,7 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
                     RaisedButton(
                         color: Color.fromRGBO(35, 179, 232, 1),
                         child: Text(
-                          'Lesion',
+                          'Spot',
                           semanticsLabel: 'Lesion',
                           textScaleFactor:
                               orientation == Orientation.portrait ? 1 : 0.8,

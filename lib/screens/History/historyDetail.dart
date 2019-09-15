@@ -252,14 +252,11 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                   color: Colors.black,
                     child: Carousel(
                       autoplay: false,
-                      overlayShadowColors:
-                          Theme.of(context).colorScheme.primary,
                       dotIncreasedColor:
                           Theme.of(context).colorScheme.secondary,
-                      overlayShadow: true,
                       boxFit: BoxFit.contain,
                       dotColor: Theme.of(context).colorScheme.primary,
-                      dotBgColor: Colors.white70,
+                      dotBgColor: Colors.white.withAlpha(480),
                       images: questions
                           .map((f) => (CachedNetworkImageProvider(f)))
                           .toList(),
