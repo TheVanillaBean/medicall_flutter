@@ -59,7 +59,7 @@ class MedicallApp extends StatefulWidget {
 }
 
 const Color background = Color(0xFFFFFFFF);
-const Color primaryColor = Color(0xFF2F97C1);
+const Color primaryColor = Color.fromRGBO(241, 100, 119, 1);
 const Color onPrimary = Color(0xFFFFFFFF);
 const Color primaryVariant = Color(0xFF48ACF0);
 const Color secondaryColor = Color.fromRGBO(241, 100, 119, 1);

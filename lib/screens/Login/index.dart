@@ -1,7 +1,6 @@
 import 'package:Medicall/components/progress_hud.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/Auth/index.dart';
-import 'package:Medicall/screens/Login/styles.dart';
 import 'package:Medicall/screens/Registration/RegistrationType/index.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:Medicall/util/firebase_anonymously_util.dart';
@@ -565,17 +564,14 @@ class _LoginScreenState extends State<LoginPage>
     return Scaffold(
       appBar: null,
       body: Container(
-        decoration: BoxDecoration(
-          image: backgroundImage,
-        ),
         child: Container(
           decoration: BoxDecoration(
               gradient: LinearGradient(
             colors: <Color>[
-              const Color.fromRGBO(35, 179, 232, 0.8),
-              const Color.fromRGBO(50, 50, 50, 1),
+              const Color.fromRGBO(68, 158, 194, 0.8),
+              const Color.fromRGBO(230, 255, 255, 0.9),
             ],
-            stops: [0.2, 1.0],
+            stops: [0.01, 1],
             begin: const FractionalOffset(0.0, 0.0),
             end: const FractionalOffset(0.0, 1.0),
           )),

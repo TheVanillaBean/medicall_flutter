@@ -2,7 +2,6 @@ import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:Medicall/components/DrawerMenu.dart';
-import 'package:Medicall/presentation/medicall_app_icons.dart' as CustomIcons;
 import 'package:flutter/painting.dart';
 import 'package:intl/intl.dart';
 
@@ -19,6 +18,7 @@ class _HistoryScreenState extends State<HistoryScreen>
     with SingleTickerProviderStateMixin {
   //Tokens _tokens = Tokens();
   TabController controller;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   void initState() {
     super.initState();
@@ -35,8 +35,15 @@ class _HistoryScreenState extends State<HistoryScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         centerTitle: true,
+        leading: IconButton(
+          onPressed: () {
+            _scaffoldKey.currentState.openDrawer();
+          },
+          icon: Icon(Icons.menu),
+        ),
         title: Text(
           'History',
           style: TextStyle(
@@ -53,9 +60,7 @@ class _HistoryScreenState extends State<HistoryScreen>
                   //   text: 'Doctor Consults',
                   //   icon: Icon(Icons.local_pharmacy),
                   // ),
-                  Tab(
-                    text: 'Your Patients'
-                  ),
+                  Tab(text: 'Your Patients'),
                 ],
                 // setup the controller
                 controller: controller,
@@ -63,25 +68,24 @@ class _HistoryScreenState extends State<HistoryScreen>
             : null,
         //new, in progress, finished
         elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
-        leading: Text('', style: TextStyle(color: Colors.black26)),
       ),
       drawer: DrawerMenu(
         data: {'user': medicallUser},
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: Builder(builder: (BuildContext context) {
-        return FloatingActionButton(
-          child: Icon(
-            CustomIcons.MedicallApp.logo_m,
-            size: 35.0,
-          ),
-          onPressed: () {
-            Scaffold.of(context).openDrawer();
-          },
-          backgroundColor: Color.fromRGBO(241, 100, 119, 0.8),
-          foregroundColor: Colors.white,
-        );
-      }),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      // floatingActionButton: Builder(builder: (BuildContext context) {
+      //   return FloatingActionButton(
+      //     child: Icon(
+      //       CustomIcons.MedicallApp.logo_m,
+      //       size: 35.0,
+      //     ),
+      //     onPressed: () {
+      //       Scaffold.of(context).openDrawer();
+      //     },
+      //     backgroundColor: Color.fromRGBO(241, 100, 119, 0.8),
+      //     foregroundColor: Colors.white,
+      //   );
+      // }),
       body: medicallUser.type == 'provider'
           ? TabBarView(
               // Add tabs as widgets

@@ -4,7 +4,6 @@ import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:Medicall/components/DrawerMenu.dart';
-import 'package:Medicall/presentation/medicall_app_icons.dart' as CustomIcons;
 import 'package:Medicall/models/consult_data_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,6 +16,7 @@ class DoctorsScreen extends StatefulWidget {
 
 class _DoctorsScreenState extends State<DoctorsScreen> {
   ConsultData _consult;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   void initState() {
     super.initState();
@@ -26,8 +26,14 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
-        leading: Text('', style: TextStyle(color: Colors.black26)),
+        leading: IconButton(
+          onPressed: () {
+            _scaffoldKey.currentState.openDrawer();
+          },
+          icon: Icon(Icons.menu),
+        ),
         centerTitle: true,
         title: Text(
           'Find a Doctor',
@@ -39,19 +45,19 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
         elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
       ),
       drawer: DrawerMenu(data: {'user': medicallUser}),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: Builder(builder: (BuildContext context) {
-        return FloatingActionButton(
-            child: Icon(
-              CustomIcons.MedicallApp.logo_m,
-              size: 35.0,
-            ),
-            onPressed: () {
-              Scaffold.of(context).openDrawer();
-            },
-            backgroundColor: Theme.of(context).colorScheme.secondary,
-            foregroundColor: Theme.of(context).colorScheme.onPrimary);
-      }),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      // floatingActionButton: Builder(builder: (BuildContext context) {
+      //   return FloatingActionButton(
+      //       child: Icon(
+      //         CustomIcons.MedicallApp.logo_m,
+      //         size: 35.0,
+      //       ),
+      //       onPressed: () {
+      //         Scaffold.of(context).openDrawer();
+      //       },
+      //       backgroundColor: Theme.of(context).colorScheme.secondary,
+      //       foregroundColor: Theme.of(context).colorScheme.onPrimary);
+      // }),
       //Content of tabs
       body: Stack(
         children: <Widget>[

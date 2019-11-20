@@ -39,21 +39,9 @@ class AssetState extends State<AssetView> {
 
   @override
   Widget build(BuildContext context) {
-    if (null != byteData) {
-      return Image.memory(
+    return Image.memory(
         byteData.buffer.asUint8List(),
-        fit: BoxFit.cover,
-        gaplessPlayback: true,
+        fit: BoxFit.contain,
       );
-    }
-
-    return Padding(
-      padding: EdgeInsets.all(100),
-      child: SizedBox(
-        height: 30,
-        width: 30,
-        child: CircularProgressIndicator(),
-      ),
-    );
   }
 }
