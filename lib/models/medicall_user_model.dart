@@ -8,6 +8,7 @@ class MedicallUser {
   String firstName;
   String lastName;
   String dob;
+  String gender;
   String phoneNumber;
   String email;
   String address;
@@ -24,6 +25,7 @@ class MedicallUser {
     this.firstName,
     this.lastName,
     this.dob,
+    this.gender,
     this.phoneNumber,
     this.email,
     this.address,

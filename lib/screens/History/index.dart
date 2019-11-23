@@ -45,27 +45,27 @@ class _HistoryScreenState extends State<HistoryScreen>
           icon: Icon(Icons.menu),
         ),
         title: Text(
-          'History',
+          'Patients',
           style: TextStyle(
             fontSize:
                 Theme.of(context).platform == TargetPlatform.iOS ? 17.0 : 20.0,
           ),
         ),
-        bottom: medicallUser.type == 'provider'
-            ? TabBar(
-                indicatorColor: Colors.white,
-                tabs: <Tab>[
-                  // Tab(
-                  //   // set icon to the tab
-                  //   text: 'Doctor Consults',
-                  //   icon: Icon(Icons.local_pharmacy),
-                  // ),
-                  Tab(text: 'Your Patients'),
-                ],
-                // setup the controller
-                controller: controller,
-              )
-            : null,
+        // bottom: medicallUser.type == 'provider'
+        //     ? TabBar(
+        //         indicatorColor: Colors.white,
+        //         tabs: <Tab>[
+        //           // Tab(
+        //           //   // set icon to the tab
+        //           //   text: 'Doctor Consults',
+        //           //   icon: Icon(Icons.local_pharmacy),
+        //           // ),
+        //           Tab(text: '', ),
+        //         ],
+        //         // setup the controller
+        //         controller: controller,
+        //       )
+        //     : null,
         //new, in progress, finished
         elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
       ),

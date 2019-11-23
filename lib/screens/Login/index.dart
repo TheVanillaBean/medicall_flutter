@@ -139,7 +139,7 @@ class _LoginScreenState extends State<LoginPage>
             _isLoading = false;
           }
         } else if (_isEmailAuthEnable &&
-            validateEmail(_teMobileEmail.text) == null) {
+            validateEmail(_teMobileEmail.text, 'signin') == null) {
           _isLoading = true;
           login(_teMobileEmail.text, _tePassword.text);
         }
@@ -147,15 +147,21 @@ class _LoginScreenState extends State<LoginPage>
     }
   }
 
-  String validateEmail(String value) {
+  String validateEmail(String value, String from) {
     String pattern =
         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
     RegExp regExp = RegExp(pattern);
     if (value.length == 0) {
-      AppUtil().showAlert("Email is Required");
-      return "Email is Required";
+      if (from == 'signup') {
+        AppUtil().showAlert(
+            "If you are new to Medicall enter your email and desired password below, tap 'Create New Account', and we will take you to registration.",
+            7);
+      } else {
+        AppUtil().showAlert("Enter your email and password.", 7);
+      }
+      return "Please provide your email and enter a password.";
     } else if (!regExp.hasMatch(value)) {
-      AppUtil().showAlert("Invalid Email");
+      AppUtil().showAlert("Invalid Email", 10);
       return "Invalid Email";
     } else {
       return null;
@@ -165,56 +171,52 @@ class _LoginScreenState extends State<LoginPage>
   Future moveUserDashboardScreen(FirebaseUser currentUser) async {
     eMailTabEnable();
     closeLoader();
-    firebaseUser = currentUser;
-    await _getUser();
-    final SharedPreferences prefs = await _prefs;
-    await _requestedRoute.then((onValue) {
-      if (onValue != null && onValue != "") {
-        String newValue = onValue
-            .replaceAll("[", "")
-            .replaceAll("]", "")
-            .replaceAll(RegExp(r"/\s/g"), "")
-            .trim();
-        List<String> finalValue = newValue.split(",");
-        finalValue[1] = finalValue[1].trim();
-        Navigator.pushReplacementNamed(context, '/' + finalValue[0],
-            arguments: {
-              'user': medicallUser,
-              'documentId': finalValue[1],
-              'isRouted': true,
-            });
-        prefs.setString("requestedRoute", "").then((bool success) {
-          print('shared pref success');
-        });
-        return;
-      }
-      if (currentUser.phoneNumber != null) {
-        if (currentUser.isEmailVerified != true) {
-          showAlert(
-              "Your email is not verified. Please verify your email before continuing.");
-        } else {
-          if (medicallUser.terms == true && medicallUser.policy == true && medicallUser.consent == true) {
-            if (medicallUser.type == 'provider') {
-              Navigator.pushReplacementNamed(context, '/history',
-                  arguments: {'user': medicallUser});
-            } else {
-              Navigator.pushReplacementNamed(context, '/doctors',
-                  arguments: {'user': medicallUser});
-            }
-          } else {
-            Navigator.of(context).pushReplacement(CupertinoPageRoute(
-              builder: (context) => RegistrationTypeScreen(
-                data: {"user": medicallUser},
-              ),
-            ));
-          }
+    if (currentUser == null) {
+      Navigator.of(context).push(CupertinoPageRoute(
+        builder: (context) => RegistrationTypeScreen(
+          data: {"user": medicallUser},
+        ),
+      ));
+    } else {
+      firebaseUser = currentUser;
+      await _getUser();
+      final SharedPreferences prefs = await _prefs;
+      await _requestedRoute.then((onValue) {
+        _tePassword.clear();
+        if (onValue != null && onValue != "") {
+          String newValue = onValue
+              .replaceAll("[", "")
+              .replaceAll("]", "")
+              .replaceAll(RegExp(r"/\s/g"), "")
+              .trim();
+          List<String> finalValue = newValue.split(",");
+          finalValue[1] = finalValue[1].trim();
+          Navigator.pushReplacementNamed(context, '/' + finalValue[0],
+              arguments: {
+                'user': medicallUser,
+                'documentId': finalValue[1],
+                'isRouted': true,
+              });
+          prefs.setString("requestedRoute", "").then((bool success) {
+            print('shared pref success');
+          });
+          return;
         }
-      } else {
-        Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => AuthScreen(),
-        ));
-      }
-    });
+        if (currentUser.phoneNumber != null) {
+          if (medicallUser.type == 'provider') {
+            Navigator.pushReplacementNamed(context, '/history',
+                arguments: {'user': medicallUser});
+          } else {
+            Navigator.pushReplacementNamed(context, '/doctors',
+                arguments: {'user': medicallUser});
+          }
+        } else {
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => AuthScreen(),
+          ));
+        }
+      });
+    }
   }
 
   @override
@@ -336,33 +338,23 @@ class _LoginScreenState extends State<LoginPage>
       ],
     );
 
-    var anonymouslyForm = Column(
+    var anonymouslyForm = Flex(
+      direction: Axis.vertical,
       children: <Widget>[
-        // FutureBuilder<String>(
-        //     future: _requestedRoute,
-        //     builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-        //       switch (snapshot.connectionState) {
-        //         case ConnectionState.waiting:
-        //           return const CircularProgressIndicator();
-        //         default:
-        //           if (snapshot.hasError)
-        //             return Text('Error: ${snapshot.error}');
-        //           else
-        //             return Text('${snapshot.data}\n\n');
-        //       }
-        //     }),
         TextFormField(
           controller: _teMobileEmail,
           focusNode: _focusNodeMobileEmail,
-          style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+          style: TextStyle(color: Color.fromRGBO(80, 80, 80, 1)),
           decoration: InputDecoration(
             border: OutlineInputBorder(
               borderSide: BorderSide(
-                  color: Theme.of(context).colorScheme.secondaryVariant),
+                  color:
+                      Theme.of(context).colorScheme.onSurface.withAlpha(150)),
             ),
             enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(
-                  color: Theme.of(context).colorScheme.secondaryVariant),
+                  color:
+                      Theme.of(context).colorScheme.onSurface.withAlpha(150)),
             ),
             focusedBorder: OutlineInputBorder(
               borderSide:
@@ -372,11 +364,10 @@ class _LoginScreenState extends State<LoginPage>
               color: Theme.of(context).colorScheme.secondaryVariant,
             ),
             hintText: "Email",
-            hintStyle: TextStyle(
-                color: Theme.of(context).colorScheme.secondaryVariant),
+            hintStyle: TextStyle(color: Color.fromRGBO(100, 100, 100, 1)),
             prefixIcon: Icon(
               Icons.email,
-              color: Theme.of(context).colorScheme.background,
+              color: Theme.of(context).colorScheme.onSurface.withAlpha(150),
             ),
           ),
         ),
@@ -387,34 +378,35 @@ class _LoginScreenState extends State<LoginPage>
           controller: _tePassword,
           focusNode: _focusNodePassword,
           obscureText: true,
-          style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+          style: TextStyle(color: Color.fromRGBO(80, 80, 80, 1)),
           decoration: InputDecoration(
             border: OutlineInputBorder(
               borderSide: BorderSide(
-                  color: Theme.of(context).colorScheme.secondaryVariant),
+                  color:
+                      Theme.of(context).colorScheme.onSurface.withAlpha(150)),
             ),
             enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(
-                  color: Theme.of(context).colorScheme.secondaryVariant),
+                  color:
+                      Theme.of(context).colorScheme.onSurface.withAlpha(150)),
             ),
             focusedBorder: OutlineInputBorder(
               borderSide:
                   BorderSide(color: Theme.of(context).colorScheme.onPrimary),
             ),
             labelStyle: TextStyle(
-              color: Theme.of(context).colorScheme.secondaryVariant,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
             hintText: "Password",
-            hintStyle: TextStyle(
-                color: Theme.of(context).colorScheme.secondaryVariant),
+            hintStyle: TextStyle(color: Color.fromRGBO(100, 100, 100, 1)),
             prefixIcon: Icon(
               Icons.lock,
-              color: Theme.of(context).colorScheme.background,
+              color: Theme.of(context).colorScheme.onSurface.withAlpha(150),
             ),
           ),
         ),
         SizedBox(
-          height: MediaQuery.of(context).size.height * 0.02,
+          height: MediaQuery.of(context).size.height * 0.01,
         ),
       ],
     );
@@ -437,40 +429,38 @@ class _LoginScreenState extends State<LoginPage>
           child: Padding(
             padding: EdgeInsets.fromLTRB(70, 0, 60, 0),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Stack(
-                      alignment: Alignment.center,
-                      children: <Widget>[
-                        Container(
-                          width: 70,
-                          height: 70,
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              image: DecorationImage(
-                                image: ExactAssetImage(
-                                    'assets/icon/logo_back.png'),
-                              )),
-                        ),
-                        Container(
-                          width: 100,
-                          height: 100,
-                          child: Image.asset(
-                            'assets/icon/logo_fore.png',
-                          ),
-                        ),
-                      ],
+                    Container(
+                      transform: Matrix4.translationValues(12.0, 0.0, 0.0),
+                      child: Text('MEDI',
+                          style: TextStyle(
+                              fontSize: 26.0,
+                              height: 1.08,
+                              letterSpacing: 2.5,
+                              fontWeight: FontWeight.w700,
+                              color: Theme.of(context).colorScheme.secondary)),
                     ),
-                    Text('Medicall',
-                        style: TextStyle(
-                            fontSize: 26.0,
-                            height: 1.08,
-                            letterSpacing: 2.5,
-                            fontWeight: FontWeight.w600,
-                            color: Theme.of(context).colorScheme.onPrimary)),
+                    Container(
+                      width: 110,
+                      height: 110,
+                      child: Image.asset(
+                        'assets/icon/logo_fore.png',
+                      ),
+                    ),
+                    Container(
+                      transform: Matrix4.translationValues(-20.0, 0.0, 0.0),
+                      child: Text('CALL',
+                          style: TextStyle(
+                              fontSize: 26.0,
+                              height: 1.08,
+                              letterSpacing: 2.5,
+                              fontWeight: FontWeight.w700,
+                              color: Theme.of(context).colorScheme.primary)),
+                    )
                   ],
                 ),
                 //tabs,
@@ -487,12 +477,9 @@ class _LoginScreenState extends State<LoginPage>
                             child: ButtonTheme(
                               height: 50.0,
                               child: RaisedButton(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .primaryVariant,
+                                color: Theme.of(context).colorScheme.primary,
                                 onPressed: () {
                                   _submit();
-                                  _tePassword.clear();
                                 },
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(4)),
@@ -514,6 +501,10 @@ class _LoginScreenState extends State<LoginPage>
                             child: ButtonTheme(
                               height: 50.0,
                               child: RaisedButton(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .primaryVariant
+                                    .withBlue(3000),
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(4)),
                                 onPressed: () {
@@ -521,7 +512,7 @@ class _LoginScreenState extends State<LoginPage>
                                   _tePassword.clear();
                                 },
                                 child: Text(
-                                  "Register",
+                                  "Create New Account",
                                   style: TextStyle(letterSpacing: 1.3),
                                 ),
                               ),
@@ -530,7 +521,7 @@ class _LoginScreenState extends State<LoginPage>
                         ],
                       ),
                       SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.01,
+                        height: 3,
                       ),
                       Row(
                         children: <Widget>[
@@ -562,16 +553,17 @@ class _LoginScreenState extends State<LoginPage>
     );
 
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
       appBar: null,
       body: Container(
         child: Container(
           decoration: BoxDecoration(
               gradient: LinearGradient(
             colors: <Color>[
-              const Color.fromRGBO(68, 158, 194, 0.8),
-              const Color.fromRGBO(230, 255, 255, 0.9),
+              const Color.fromRGBO(220, 255, 255, 0.9),
+              const Color.fromRGBO(88, 178, 214, 0.8),
             ],
-            stops: [0.01, 1],
+            stops: [0.1, 1],
             begin: const FractionalOffset(0.0, 0.0),
             end: const FractionalOffset(0.0, 1.0),
           )),
@@ -635,7 +627,8 @@ class _LoginScreenState extends State<LoginPage>
 
   loginError(e) {
     setState(() {
-      AppUtil().showAlert(e);
+      AppUtil().showAlert(e, 10);
+      _tePassword.clear();
       _isLoading = false;
     });
   }
@@ -647,14 +640,9 @@ class _LoginScreenState extends State<LoginPage>
 
   void _signUp() {
     setState(() {
-      if (_isEmailAuthEnable && validateEmail(_teMobileEmail.text) == null) {
-        _isLoading = true;
-        String password = _tePassword.text;
-        firebaseAnonymouslyUtil
-            .createUser(_teMobileEmail.text, password)
-            .then((String user) => login(_teMobileEmail.text, password))
-            .catchError((e) => loginError(getErrorMessage(error: e)));
-      }
+      _isLoading = true;
+      FirebaseUser user;
+      moveUserDashboardScreen(user);
     });
   }
 
@@ -662,7 +650,9 @@ class _LoginScreenState extends State<LoginPage>
     firebaseAnonymouslyUtil
         .signIn(email, pass)
         .then((FirebaseUser user) => moveUserDashboardScreen(user))
-        .catchError((e) => loginError(getErrorMessage(error: e)));
+        .catchError((e) => e.code == 'ERROR_USER_NOT_FOUND'
+            ? _signUp()
+            : loginError(getErrorMessage(error: e)));
   }
 
   String getErrorMessage({dynamic error}) {
@@ -687,7 +677,7 @@ class _LoginScreenState extends State<LoginPage>
 
   void showAlert(String msg) {
     setState(() {
-      AppUtil().showAlert(msg);
+      AppUtil().showAlert(msg, 10);
     });
   }
 

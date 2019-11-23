@@ -34,6 +34,7 @@ class ProgressHUD extends StatelessWidget {
           Center(
             child: CircularProgressIndicator(
               valueColor: valueColor,
+              backgroundColor: Colors.white,
             ),
           ),
         ],

@@ -12,15 +12,17 @@ class RegistrationTypeScreen extends StatefulWidget {
 
 class _RegistrationTypeScreenState extends State<RegistrationTypeScreen> {
   void _add(MedicallUser user, String type) {
-    final DocumentReference documentReference =
-        Firestore.instance.document("users/" + user.id);
-    Map<String, String> data = <String, String>{
-      "type": type,
-    };
     medicallUser.type = type;
-    documentReference.updateData(data).whenComplete(() {
-      print("Document Added");
-    }).catchError((e) => print(e));
+    if (user.id != null) {
+      final DocumentReference documentReference =
+          Firestore.instance.document("users/" + user.id);
+      Map<String, String> data = <String, String>{
+        "type": type,
+      };
+      documentReference.updateData(data).whenComplete(() {
+        print("Document Added");
+      }).catchError((e) => print(e));
+    }
   }
 
   @override
@@ -32,15 +34,14 @@ class _RegistrationTypeScreenState extends State<RegistrationTypeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        resizeToAvoidBottomPadding: false,
         appBar: AppBar(
           centerTitle: true,
-          backgroundColor: Theme.of(context).colorScheme.onPrimary,
           elevation: 0,
           title: Text(
-            'Type of Registration',
-            style: TextStyle(color: Theme.of(context).colorScheme.primary),
+            'Create New Account',
+            style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
           ),
-          leading: Text('', style: TextStyle(color: Colors.black26)),
         ),
         body: Flex(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -49,7 +50,12 @@ class _RegistrationTypeScreenState extends State<RegistrationTypeScreen> {
           children: <Widget>[
             Expanded(
               child: RaisedButton(
-                color: Theme.of(context).primaryColor,
+                color: Theme.of(context)
+                    .colorScheme
+                    .primary
+                    .withRed(240)
+                    .withGreen(250)
+                    .withBlue(255),
                 padding: EdgeInsets.fromLTRB(15, 30, 15, 30),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -61,7 +67,7 @@ class _RegistrationTypeScreenState extends State<RegistrationTypeScreen> {
                         Icon(
                           Icons.person,
                           size: 40,
-                          color: Theme.of(context).colorScheme.onBackground,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       ],
                     ),
@@ -69,13 +75,13 @@ class _RegistrationTypeScreenState extends State<RegistrationTypeScreen> {
                       'Patient',
                       style: TextStyle(
                           fontSize: 20.0,
-                          color: Theme.of(context).backgroundColor),
+                          color: Theme.of(context).primaryColor),
                     ),
                     Text(
-                        'If you are looking to get a consult by a healthcare professional, tap below.',
+                        'If you are looking to get a consult by a healthcare professional, tap here.',
                         style: TextStyle(
                             fontSize: 14.0,
-                            color: Theme.of(context).backgroundColor),
+                            color: Theme.of(context).primaryColor),
                         textAlign: TextAlign.center),
                   ],
                 ),
@@ -88,7 +94,12 @@ class _RegistrationTypeScreenState extends State<RegistrationTypeScreen> {
             ),
             Expanded(
               child: RaisedButton(
-                color: Theme.of(context).accentColor,
+                color: Theme.of(context)
+                    .colorScheme
+                    .secondary
+                    .withBlue(250)
+                    .withGreen(250)
+                    .withRed(255),
                 padding: EdgeInsets.fromLTRB(15, 30, 15, 30),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -100,7 +111,7 @@ class _RegistrationTypeScreenState extends State<RegistrationTypeScreen> {
                         Icon(
                           Icons.local_hospital,
                           size: 40,
-                          color: Theme.of(context).colorScheme.onBackground,
+                          color: Theme.of(context).colorScheme.secondary,
                         ),
                       ],
                     ),
@@ -108,13 +119,13 @@ class _RegistrationTypeScreenState extends State<RegistrationTypeScreen> {
                       'Doctor',
                       style: TextStyle(
                           fontSize: 20.0,
-                          color: Theme.of(context).backgroundColor),
+                          color: Theme.of(context).colorScheme.secondary),
                     ),
                     Text(
-                        'If you are a healthcare professional looking to give consults, tap below.',
+                        'If you are a healthcare professional looking to give consults, tap here.',
                         style: TextStyle(
                             fontSize: 14.0,
-                            color: Theme.of(context).backgroundColor),
+                            color: Theme.of(context).colorScheme.secondary),
                         textAlign: TextAlign.center),
                   ],
                 ),

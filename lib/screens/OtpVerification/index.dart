@@ -187,7 +187,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
             child: screenRoot,
             inAsyncCall: _isLoading,
             valueColor: AlwaysStoppedAnimation<Color>(Colors.indigo),
-            opacity: 0.0,
+            opacity: 1,
           ),
         ));
   }
@@ -204,7 +204,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
 
   void showAlert(String msg) {
     setState(() {
-      AppUtil().showAlert(msg);
+      AppUtil().showAlert(msg, 5);
     });
   }
 

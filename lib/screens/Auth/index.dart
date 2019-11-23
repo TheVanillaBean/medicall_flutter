@@ -4,8 +4,6 @@ import 'package:Medicall/components/logger.dart';
 import 'package:Medicall/components/masked_text.dart';
 import 'package:Medicall/components/reactive_refresh_indicator.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:Medicall/screens/Login/index.dart';
-import 'package:Medicall/screens/Registration/RegistrationType/index.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -70,22 +68,20 @@ class _AuthScreenState extends State<AuthScreen> {
             'onVerificationFailed, code: ${authException.code}, message: ${authException.message}');
   }
 
-  void _add(user) {
-    medicallUser.id = user.uid;
-    medicallUser.displayName = user.displayName;
-    medicallUser.firstName =
-        user.displayName != null ? user.displayName.split(' ')[0] : '';
-    medicallUser.lastName =
-        user.displayName != null ? user.displayName.split(' ')[1] : '';
-    medicallUser.email = user.email;
-    medicallUser.phoneNumber = user.phoneNumber;
+  Future<Null> _add(user) async {
     final DocumentReference documentReference =
         Firestore.instance.document("users/" + user.uid);
-    Map<String, String> data = <String, String>{
-      "name": user.displayName,
+    Map<String, dynamic> data = <String, dynamic>{
+      "name": medicallUser.displayName,
       "first_name": medicallUser.firstName,
       "last_name": medicallUser.lastName,
       "email": user.email,
+      "gender": medicallUser.gender,
+      "address": medicallUser.address,
+      "terms": medicallUser.terms,
+      "policy": medicallUser.policy,
+      "consent": medicallUser.consent,
+      "dob": medicallUser.dob,
       "phone": user.phoneNumber
     };
     documentReference.setData(data).whenComplete(() {
@@ -307,28 +303,16 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   _finishSignIn(FirebaseUser user) async {
-    await _onCodeVerified(user).then((result) {
+    await _onCodeVerified(user).then((result) async {
       if (result) {
         // Here, instead of navigating to another screen, you should do whatever you want
         // as the user is already verified with Firebase from both
         // Google and phone number methods
         // Example: authenticate with your own API, use the data gathered
         // to post your profile/user, etc.
-        _add(user);
-        if (user.isEmailVerified) {
-          Navigator.of(context).pushReplacement(CupertinoPageRoute(
-            builder: (context) => RegistrationTypeScreen(
-              data: {"user": medicallUser},
-            ),
-          ));
-        } else {
-          showAlert(
-              "Your email is not verified. Please verify your email before continuing.");
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => LoginPage()),
-          );
-        }
+        await _add(user);
+        Navigator.pushReplacementNamed(context, '/doctors',
+            arguments: {'user': medicallUser});
       } else {
         setState(() {
           this.status = AuthStatus.SMS_AUTH;
@@ -394,7 +378,7 @@ class _AuthScreenState extends State<AuthScreen> {
         Padding(
           padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
           child: Text(
-            "We'll send an SMS message to verify your identity, please enter your code below!",
+            "We'll send an SMS message to verify your identity, please enter your phone number below!",
             style: decorationStyle,
             textAlign: TextAlign.center,
           ),
@@ -567,6 +551,8 @@ class _AuthScreenState extends State<AuthScreen> {
       body: Container(
         child: ReactiveRefreshIndicator(
           onRefresh: _onRefresh,
+          color: Theme.of(context).colorScheme.secondary,
+          backgroundColor: Theme.of(context).colorScheme.background,
           isRefreshing: _isRefreshing,
           child: Container(child: _buildBody()),
         ),
@@ -576,7 +562,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
   void showAlert(String msg) {
     setState(() {
-      AppUtil().showAlert(msg);
+      AppUtil().showAlert(msg, 5);
     });
   }
 }

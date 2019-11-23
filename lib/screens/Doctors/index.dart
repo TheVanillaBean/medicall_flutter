@@ -1,11 +1,7 @@
-import 'dart:convert';
-
 import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/consult_data_model.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class DoctorsScreen extends StatefulWidget {
   final data;
@@ -13,6 +9,8 @@ class DoctorsScreen extends StatefulWidget {
 
   _DoctorsScreenState createState() => _DoctorsScreenState();
 }
+
+var screenSize;
 
 class _DoctorsScreenState extends State<DoctorsScreen> {
   ConsultData _consult;
@@ -25,6 +23,7 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    screenSize = MediaQuery.of(context).size;
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -59,220 +58,74 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
       //       foregroundColor: Theme.of(context).colorScheme.onPrimary);
       // }),
       //Content of tabs
-      body: Stack(
-        children: <Widget>[
-          OrientationBuilder(
-            builder: (BuildContext context, Orientation orientation) {
-              return Container(
-                child: GridView.count(
-                  crossAxisCount: orientation == Orientation.portrait ? 3 : 6,
-                  childAspectRatio: 1.0,
-                  padding: orientation == Orientation.portrait
-                      ? EdgeInsets.fromLTRB(10, 60, 10, 10)
-                      : EdgeInsets.fromLTRB(10, 30, 10, 10),
-                  mainAxisSpacing: 10.0,
-                  crossAxisSpacing: 10.0,
-                  // Generate 100 Widgets that display their index in the List
-                  children: [
-                    RaisedButton(
-                      color: Theme.of(context).disabledColor.withAlpha(10),
-                      child: Text(
-                        'Acne',
-                        textScaleFactor:
-                            orientation == Orientation.portrait ? 1 : 0.8,
-                        semanticsLabel: 'Acne',
-                        style: TextStyle(
-                            color:
-                                Theme.of(context).disabledColor.withAlpha(50)),
-                      ),
-                      onPressed: () {
-                        // Perform some action
-                      },
-                    ),
-                    RaisedButton(
-                      color: Color.fromRGBO(35, 179, 232, 1),
-                      child: Text(
-                        'Hair Loss',
-                        semanticsLabel: 'Hair Loss',
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.onBackground),
-                        textScaleFactor:
-                            orientation == Orientation.portrait ? 1 : 0.8,
-                      ),
-                      onPressed: () async {
-                        _consult = ConsultData();
-
-                        SharedPreferences _thisConsult =
-                            await SharedPreferences.getInstance();
-                        _consult.consultType = 'Hairloss';
-                        var consultQuestions = await Firestore.instance
-                            .document('services/dermatology/symptoms/' +
-                                _consult.consultType.toLowerCase())
-                            .get();
-                        _consult.screeningQuestions =
-                            consultQuestions.data["screening_questions"];
-                        _consult.historyQuestions =
-                            consultQuestions.data["medical_history_questions"];
-                        _consult.uploadQuestions =
-                            consultQuestions.data["upload_questions"];
-                        String currentConsultString = jsonEncode(_consult);
-                        await _thisConsult.setString(
-                            "consult", currentConsultString);
-                        Navigator.pushNamed(
-                          context,
-                          '/questionsScreening',
-                          arguments: {'user': medicallUser},
-                        );
-                      },
-                    ),
-                    RaisedButton(
-                      color: Theme.of(context).disabledColor.withAlpha(10),
-                      child: Text(
-                        'Cold Sore',
-                        semanticsLabel: 'Cold Sore',
-                        style: TextStyle(
-                            color:
-                                Theme.of(context).disabledColor.withAlpha(50)),
-                        textScaleFactor:
-                            orientation == Orientation.portrait ? 1 : 0.8,
-                      ),
-                      onPressed: () {
-                        // Perform some action
-                      },
-                    ),
-                    RaisedButton(
-                      color: Theme.of(context).disabledColor.withAlpha(10),
-                      child: Text(
-                        'Cosmetic',
-                        semanticsLabel: 'Cosmetic',
-                        style: TextStyle(
-                            color:
-                                Theme.of(context).disabledColor.withAlpha(50)),
-                        textScaleFactor:
-                            orientation == Orientation.portrait ? 1 : 0.8,
-                      ),
-                      onPressed: () {
-                        // Perform some action
-                      },
-                    ),
-                    RaisedButton(
-                      color: Theme.of(context).disabledColor.withAlpha(10),
-                      child: Text(
-                        'Anti-Aging',
-                        semanticsLabel: 'Anti-Aging',
-                        style: TextStyle(
-                            color:
-                                Theme.of(context).disabledColor.withAlpha(50)),
-                        textScaleFactor:
-                            orientation == Orientation.portrait ? 1 : 0.8,
-                      ),
-                      onPressed: () {
-                        // Perform some action
-                      },
-                    ),
-                    RaisedButton(
-                      color: Theme.of(context).disabledColor.withAlpha(10),
-                      child: Text(
-                        'Nail',
-                        semanticsLabel: 'Nail',
-                        style: TextStyle(
-                            color:
-                                Theme.of(context).disabledColor.withAlpha(50)),
-                        textScaleFactor:
-                            orientation == Orientation.portrait ? 1 : 0.8,
-                      ),
-                      onPressed: () {
-                        // Perform some action
-                      },
-                    ),
-                    RaisedButton(
-                        color: Color.fromRGBO(35, 179, 232, 1),
-                        child: Text(
-                          'Spot',
-                          semanticsLabel: 'Lesion',
-                          textScaleFactor:
-                              orientation == Orientation.portrait ? 1 : 0.8,
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        onPressed: () async {
-                          _consult = ConsultData();
-
-                          SharedPreferences _thisConsult =
-                              await SharedPreferences.getInstance();
-                          _consult.consultType = 'Lesion';
-                          var consultQuestions = await Firestore.instance
-                              .document('services/dermatology/symptoms/' +
-                                  _consult.consultType.toLowerCase())
-                              .get();
-                          _consult.screeningQuestions =
-                              consultQuestions.data["screening_questions"];
-                          _consult.historyQuestions = consultQuestions
-                              .data["medical_history_questions"];
-                          _consult.uploadQuestions =
-                              consultQuestions.data["upload_questions"];
-                          String currentConsultString = jsonEncode(_consult);
-                          await _thisConsult.setString(
-                              "consult", currentConsultString);
-                          Navigator.pushNamed(
-                            context,
-                            '/questionsScreening',
-                            arguments: {'user': medicallUser},
-                          );
-                        }),
-                    RaisedButton(
-                      color: Theme.of(context).disabledColor.withAlpha(10),
-                      child: Text(
-                        'Rash',
-                        semanticsLabel: 'Rash',
-                        style: TextStyle(
-                            color:
-                                Theme.of(context).disabledColor.withAlpha(50)),
-                        textScaleFactor:
-                            orientation == Orientation.portrait ? 1 : 0.8,
-                      ),
-                      onPressed: () {
-                        // Perform some action
-                      },
-                    ),
-                    RaisedButton(
-                      color: Theme.of(context).disabledColor.withAlpha(10),
-                      child: Text(
-                        'Other',
-                        semanticsLabel: 'Other',
-                        style: TextStyle(
-                            color:
-                                Theme.of(context).disabledColor.withAlpha(50)),
-                        textScaleFactor:
-                            orientation == Orientation.portrait ? 1 : 0.8,
-                      ),
-                      onPressed: () {
-                        // Perform some action
-                      },
-                    )
-                  ],
-                ),
-              );
-            },
-          ),
-          OrientationBuilder(
-            builder: (BuildContext context, Orientation orientation) {
-              return Container(
-                child: Container(
-                    alignment: Alignment.topCenter,
-                    height: orientation == Orientation.portrait ? 60 : 20,
-                    padding: orientation == Orientation.portrait
-                        ? EdgeInsets.fromLTRB(0, 20, 0, 0)
-                        : EdgeInsets.fromLTRB(0, 5, 0, 0),
-                    child: Text(
-                      'Please select why you need a doctor,',
-                      style: TextStyle(color: Theme.of(context).disabledColor),
-                      textAlign: TextAlign.center,
-                    )),
-              );
-            },
-          ),
-        ],
+      body: ListView.builder(
+        itemBuilder: (BuildContext context, int index) =>
+            EntryItem(data[index]),
+        itemCount: data.length,
       ),
     );
+  }
+}
+
+class Entry {
+  Entry(this.title, this.subtitle, this.price,
+      [this.children = const <Entry>[]]);
+  final String title;
+  final String subtitle;
+  final String price;
+  final List<Entry> children;
+}
+
+// The entire multilevel list displayed by this app.
+final List<Entry> data = <Entry>[
+  Entry('Hairloss', '9 minutes to complete', '\$39', <Entry>[
+    Entry('Most cases of hair loss are hereditary and can be treated with both prescription and non-prescription medications. It takes the providers on Medicall usually 24 hours to make a diagnosis and get you the medications you need at a very low price.', '', '')
+  ]),
+];
+
+class EntryItem extends StatelessWidget {
+  const EntryItem(this.entry);
+  final Entry entry;
+
+  Widget _buildTiles(Entry root) {
+    if (root.children.isEmpty)
+      return Container(
+        alignment: Alignment.centerLeft,
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
+          child: Column(
+            children: <Widget>[
+              Text(
+                root.title,
+                textAlign: TextAlign.left,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  RaisedButton(
+                    onPressed: () {},
+                    child: Text('Start'),
+                  )
+                ],
+              )
+            ],
+          ),
+        ),
+        width: screenSize.width,
+      );
+    return ExpansionTile(
+      key: PageStorageKey<Entry>(root),
+      title: ListTile(
+        title: Text(root.title),
+        subtitle: Text(root.subtitle),
+        trailing: Text(root.price),
+      ),
+      children: root.children.map<Widget>(_buildTiles).toList(),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _buildTiles(entry);
   }
 }

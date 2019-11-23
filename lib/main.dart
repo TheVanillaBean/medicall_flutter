@@ -59,18 +59,20 @@ class MedicallApp extends StatefulWidget {
 }
 
 const Color background = Color(0xFFFFFFFF);
-const Color primaryColor = Color.fromRGBO(241, 100, 119, 1);
+const Color primaryColor = Color.fromRGBO(29, 164, 204, 1);
 const Color onPrimary = Color(0xFFFFFFFF);
 const Color primaryVariant = Color(0xFF48ACF0);
 const Color secondaryColor = Color.fromRGBO(241, 100, 119, 1);
 const Color onSecondary = Color(0xFF0E202C);
+const Color onSurface = Color.fromRGBO(33, 136, 181, 1);
 
 const Color secondaryVariant = Color(0xFF47E5BC);
-const Color accentColor = Color(0xFF48ACF0);
+const Color accentColor = Color.fromRGBO(241, 100, 119, 1);
 final ColorScheme colorScheme = const ColorScheme.dark().copyWith(
   primary: primaryColor,
   onPrimary: onPrimary,
   background: background,
+  onSurface: onSurface,
   secondary: secondaryColor,
   onSecondary: onSecondary,
   primaryVariant: primaryVariant,
@@ -94,12 +96,10 @@ class _MedicallAppState extends State<MedicallApp> {
             primaryColor: primaryColor,
             accentColor: accentColor,
             colorScheme: colorScheme,
-            canvasColor: Color.fromARGB(1000, 230, 248, 254),
+            canvasColor: Color.fromRGBO(29, 164, 204, 1),
             buttonTheme: ButtonThemeData(
-              colorScheme: colorScheme,
               shape: new RoundedRectangleBorder(
                   borderRadius: new BorderRadius.circular(0.0)),
-              textTheme: ButtonTextTheme.accent,
             ),
             highlightColor: Color.fromRGBO(35, 179, 232, 0),
             splashColor: Colors.transparent,
@@ -156,7 +156,7 @@ class _MedicallAppState extends State<MedicallApp> {
                 builder: (_) => PrivacyScreen(),
                 settings: settings,
               );
-              case '/consent':
+            case '/consent':
               return MyCustomRoute(
                 builder: (_) => ConsentScreen(),
                 settings: settings,

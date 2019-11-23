@@ -37,7 +37,7 @@ class _DrawerMenuState extends State<DrawerMenu> {
                       contentPadding: EdgeInsets.fromLTRB(16, 80, 0, 0),
                       leading: Icon(
                         Icons.local_hospital,
-                        color: Theme.of(context).colorScheme.primaryVariant,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                       title: Text(
                         'Find A Doctor',
@@ -54,11 +54,11 @@ class _DrawerMenuState extends State<DrawerMenu> {
                   dense: true,
                   leading: Icon(
                     Icons.recent_actors,
-                    color: Theme.of(context).colorScheme.primaryVariant,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                   title: Text(
                     medicallUser.type == 'provider'
-                        ? 'Your Patients'
+                        ? 'Patients'
                         : 'Consults',
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.primary,
@@ -115,7 +115,7 @@ class _DrawerMenuState extends State<DrawerMenu> {
           child: DrawerHeader(
               padding: EdgeInsets.fromLTRB(0, 0, 50, 0),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primaryVariant,
+                color: Theme.of(context).colorScheme.primary,
               ),
               child: Row(
                 children: <Widget>[
