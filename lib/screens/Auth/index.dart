@@ -71,6 +71,7 @@ class _AuthScreenState extends State<AuthScreen> {
   Future<Null> _add(user) async {
     final DocumentReference documentReference =
         Firestore.instance.document("users/" + user.uid);
+    medicallUser.phoneNumber = user.phoneNumber;
     Map<String, dynamic> data = <String, dynamic>{
       "name": medicallUser.displayName,
       "first_name": medicallUser.firstName,
@@ -82,7 +83,9 @@ class _AuthScreenState extends State<AuthScreen> {
       "policy": medicallUser.policy,
       "consent": medicallUser.consent,
       "dob": medicallUser.dob,
-      "phone": user.phoneNumber
+      "phone": user.phoneNumber,
+      "profile_pic": medicallUser.profilePic,
+      "gov_id": medicallUser.govId,
     };
     documentReference.setData(data).whenComplete(() {
       print("Document Added");
@@ -311,7 +314,7 @@ class _AuthScreenState extends State<AuthScreen> {
         // Example: authenticate with your own API, use the data gathered
         // to post your profile/user, etc.
         await _add(user);
-        Navigator.pushReplacementNamed(context, '/doctors',
+        Navigator.pushReplacementNamed(context, '/history',
             arguments: {'user': medicallUser});
       } else {
         setState(() {

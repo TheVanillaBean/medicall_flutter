@@ -96,11 +96,13 @@ class _MedicallAppState extends State<MedicallApp> {
             primaryColor: primaryColor,
             accentColor: accentColor,
             colorScheme: colorScheme,
-            canvasColor: Color.fromRGBO(29, 164, 204, 1),
             buttonTheme: ButtonThemeData(
               shape: new RoundedRectangleBorder(
                   borderRadius: new BorderRadius.circular(0.0)),
             ),
+            brightness: Brightness.light,
+            canvasColor: Colors.blue.shade200,
+            dialogBackgroundColor: onPrimary,
             highlightColor: Color.fromRGBO(35, 179, 232, 0),
             splashColor: Colors.transparent,
             scaffoldBackgroundColor: Theme.of(context).colorScheme.onPrimary,

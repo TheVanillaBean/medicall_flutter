@@ -203,13 +203,8 @@ class _LoginScreenState extends State<LoginPage>
           return;
         }
         if (currentUser.phoneNumber != null) {
-          if (medicallUser.type == 'provider') {
-            Navigator.pushReplacementNamed(context, '/history',
-                arguments: {'user': medicallUser});
-          } else {
-            Navigator.pushReplacementNamed(context, '/doctors',
-                arguments: {'user': medicallUser});
-          }
+          Navigator.pushReplacementNamed(context, '/history',
+              arguments: {'user': medicallUser});
         } else {
           Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => AuthScreen(),

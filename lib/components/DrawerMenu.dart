@@ -57,9 +57,7 @@ class _DrawerMenuState extends State<DrawerMenu> {
                     color: Theme.of(context).colorScheme.primary,
                   ),
                   title: Text(
-                    medicallUser.type == 'provider'
-                        ? 'Patients'
-                        : 'Consults',
+                    'History',
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.primary,
                     ),

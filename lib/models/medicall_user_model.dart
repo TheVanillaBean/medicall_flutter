@@ -13,6 +13,11 @@ class MedicallUser {
   String email;
   String address;
   String titles;
+  String medLicense;
+  String medLicenseState;
+  String npi;
+  String profilePic;
+  String govId;
   bool terms;
   bool policy;
   bool consent;
@@ -30,6 +35,11 @@ class MedicallUser {
     this.email,
     this.address,
     this.titles,
+    this.npi,
+    this.medLicense,
+    this.medLicenseState,
+    this.profilePic,
+    this.govId,
     this.terms,
     this.policy,
     this.consent,

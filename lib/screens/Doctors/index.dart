@@ -1,7 +1,14 @@
+import 'dart:convert';
+
+import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/consult_data_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+var screenSize;
 
 class DoctorsScreen extends StatefulWidget {
   final data;
@@ -9,8 +16,6 @@ class DoctorsScreen extends StatefulWidget {
 
   _DoctorsScreenState createState() => _DoctorsScreenState();
 }
-
-var screenSize;
 
 class _DoctorsScreenState extends State<DoctorsScreen> {
   ConsultData _consult;
@@ -79,13 +84,17 @@ class Entry {
 // The entire multilevel list displayed by this app.
 final List<Entry> data = <Entry>[
   Entry('Hairloss', '9 minutes to complete', '\$39', <Entry>[
-    Entry('Most cases of hair loss are hereditary and can be treated with both prescription and non-prescription medications. It takes the providers on Medicall usually 24 hours to make a diagnosis and get you the medications you need at a very low price.', '', '')
+    Entry(
+        'Most cases of hair loss are hereditary and can be treated with both prescription and non-prescription medications. It takes the providers on Medicall usually 24 hours to make a diagnosis and get you the medications you need at a very low price.',
+        '',
+        '')
   ]),
 ];
 
 class EntryItem extends StatelessWidget {
   const EntryItem(this.entry);
   final Entry entry;
+  static ConsultData _consult;
 
   Widget _buildTiles(Entry root) {
     if (root.children.isEmpty)
@@ -103,7 +112,29 @@ class EntryItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
                   RaisedButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      _consult = ConsultData();
+
+                      SharedPreferences _thisConsult =
+                          await SharedPreferences.getInstance();
+                      _consult.consultType = 'Hairloss';
+                      var consultQuestions = await Firestore.instance
+                          .document('services/dermatology/symptoms/' +
+                              _consult.consultType.toLowerCase())
+                          .get();
+                      _consult.screeningQuestions =
+                          consultQuestions.data["screening_questions"];
+                      _consult.historyQuestions =
+                          consultQuestions.data["medical_history_questions"];
+                      _consult.uploadQuestions =
+                          consultQuestions.data["upload_questions"];
+                      String currentConsultString = jsonEncode(_consult);
+                      await _thisConsult.setString(
+                          "consult", currentConsultString);
+                      GlobalNavigatorKey.key.currentState.pushNamed(
+                          '/questionsScreening',
+                          arguments: {'user': medicallUser});
+                    },
                     child: Text('Start'),
                   )
                 ],

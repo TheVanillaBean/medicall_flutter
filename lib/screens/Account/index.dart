@@ -1,4 +1,5 @@
 import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class AccountScreen extends StatelessWidget {
@@ -26,9 +27,25 @@ class AccountScreen extends StatelessWidget {
               padding: const EdgeInsets.all(15.0),
               child: Column(
                 children: <Widget>[
-                  Icon(
-                    Icons.account_circle,
-                    size: 100,
+                  Container(
+                    child: ClipRRect(
+                      borderRadius: new BorderRadius.circular(100.0),
+                      child: medicallUser.profilePic != null
+                          ? CachedNetworkImage(
+                              height: 100,
+                              width: 100,
+                              fit: BoxFit.cover,
+                              imageUrl: medicallUser.profilePic,
+                              placeholder: (context, url) =>
+                                  CircularProgressIndicator(),
+                              errorWidget: (context, url, error) =>
+                                  Icon(Icons.error),
+                            )
+                          : Icon(
+                              Icons.account_circle,
+                              size: 100,
+                            ),
+                    ),
                   ),
                   SizedBox(
                     height: 10,
@@ -87,7 +104,7 @@ class AccountScreen extends StatelessWidget {
                     ),
                   ),
                   child: ListTile(
-                    title: Text('User Type: Patient'),
+                    title: Text('Patient'),
                     leading: Icon(Icons.person),
                     onTap: () {},
                     contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
