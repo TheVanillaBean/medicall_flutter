@@ -17,6 +17,8 @@ class HistoryScreen extends StatefulWidget {
 }
 
 String currTab = 'Search History';
+Orientation currentOrientation;
+bool userHasConsults = false;
 
 class _HistoryScreenState extends State<HistoryScreen>
     with SingleTickerProviderStateMixin {
@@ -28,7 +30,7 @@ class _HistoryScreenState extends State<HistoryScreen>
   @override
   void initState() {
     super.initState();
-    controller = TabController(length: 2, vsync: this);
+    controller = TabController(length: 1, vsync: this);
     //_tokens.currentContext = context;
   }
 
@@ -40,6 +42,7 @@ class _HistoryScreenState extends State<HistoryScreen>
 
   @override
   Widget build(BuildContext context) {
+    currentOrientation = MediaQuery.of(context).orientation;
     return Scaffold(
       key: _scaffoldKey,
       resizeToAvoidBottomPadding: false,
@@ -56,11 +59,11 @@ class _HistoryScreenState extends State<HistoryScreen>
             Tab(
               text: 'History',
             ),
-            Tab(
-              text: 'Doctors',
-            ),
+            // Tab(
+            //   text: 'Doctors',
+            // ),
           ],
-          indicatorColor: Colors.white,
+          indicatorColor: Colors.transparent,
           labelStyle: TextStyle(
               fontSize: 16, letterSpacing: 1, fontWeight: FontWeight.w600),
           indicatorPadding: EdgeInsets.all(0),
@@ -78,15 +81,19 @@ class _HistoryScreenState extends State<HistoryScreen>
           controller: controller,
         ),
         actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.search),
-            onPressed: () {
-              showSearch(
-                context: context,
-                delegate: CustomSearchDelegate(),
-              );
-            },
-          ),
+          userHasConsults
+              ? IconButton(
+                  icon: Icon(Icons.search),
+                  onPressed: () {
+                    showSearch(
+                      context: context,
+                      delegate: CustomSearchDelegate(),
+                    );
+                  },
+                )
+              : SizedBox(
+                  width: 60,
+                ),
         ],
         elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
       ),
@@ -121,7 +128,7 @@ class _HistoryScreenState extends State<HistoryScreen>
               controller: controller,
               children: <Widget>[
                 _buildTab("consults"),
-                _buildTab("doctors"),
+                //_buildTab("doctors"),
               ],
             ),
     );
@@ -238,10 +245,161 @@ class _HistoryScreenState extends State<HistoryScreen>
                   }
                   return Column(children: historyList.toList());
                 } else {
-                  return Center(
-                    heightFactor: 35,
-                    child: Text("You have no doctor consult history yet.",
-                        textAlign: TextAlign.center),
+                  return Container(
+                    height: currentOrientation == Orientation.portrait
+                        ? MediaQuery.of(context).size.height - 80
+                        : MediaQuery.of(context).size.height - 50,
+                    child: Stack(
+                      children: <Widget>[
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: <Widget>[
+                            Expanded(
+                              child: CustomPaint(
+                                foregroundPainter: CurvePainter(),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Text(
+                                  'Connect with local doctors now!',
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Column(
+                                  children: <Widget>[
+                                    Icon(
+                                      CustomIcons.MedicallIcons.live_help,
+                                      size: 60,
+                                      color: Colors.purple.withAlpha(140),
+                                    ),
+                                    Text('Select medical \nconcern',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.black54,
+                                        ))
+                                  ],
+                                )
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: <Widget>[
+                                Column(
+                                  children: <Widget>[
+                                    Icon(
+                                      CustomIcons.MedicallIcons.medkit,
+                                      size: 60,
+                                      color: Colors.redAccent.withAlpha(200),
+                                    ),
+                                    Text(
+                                      'If needed meds\nare delivered',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontSize: 12, color: Colors.black54),
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  children: <Widget>[
+                                    Icon(
+                                      CustomIcons.MedicallIcons.clipboard_1,
+                                      size: 60,
+                                      color: Colors.green.withAlpha(200),
+                                    ),
+                                    Text(
+                                      'Answer\nquestions',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontSize: 12, color: Colors.black54),
+                                    )
+                                  ],
+                                ),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Column(
+                                  children: <Widget>[
+                                    Icon(
+                                      CustomIcons.MedicallIcons.stethoscope,
+                                      size: 60,
+                                      color: Colors.blueAccent.withAlpha(200),
+                                    ),
+                                    Text(
+                                      'Doctor reviews &\n provides diagnosis',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontSize: 12, color: Colors.black54),
+                                    ),
+                                    currentOrientation == Orientation.portrait
+                                        ? SizedBox(
+                                            height: 60,
+                                          )
+                                        : SizedBox(
+                                            height: 20,
+                                          ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        FlatButton(
+                                          onPressed: () {
+                                            Navigator.pushReplacementNamed(
+                                                context, '/doctors',
+                                                arguments: {
+                                                  'user': medicallUser
+                                                });
+                                          },
+                                          color: Colors.green,
+                                          child: Text('Start'),
+                                        ),
+                                        Text('  - or -  ',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: Theme.of(context)
+                                                  .primaryColor,
+                                            )),
+                                        FlatButton(
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      DoctorSearch()),
+                                            );
+                                          },
+                                          color: Colors.blueAccent,
+                                          child: Text('Find Doctor'),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   );
                 }
               }),
@@ -367,84 +525,151 @@ class _HistoryScreenState extends State<HistoryScreen>
         ),
       );
     }
-    if (questions == "doctors") {
-      return Scaffold(
-        body: SingleChildScrollView(
-          child: StreamBuilder(
-              stream: Firestore.instance.collection('users').snapshots(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return Center(
-                    heightFactor: 35,
-                    child: Text("You have no patient requests yet.",
-                        textAlign: TextAlign.center),
-                  );
-                }
-                if (snapshot.data.documents.length > 0) {
-                  var userDocuments = snapshot.data.documents;
-                  List<Widget> historyList = [];
-                  for (var i = 0; i < userDocuments.length; i++) {
-                    if (userDocuments[i].data['type'] == 'provider' &&
-                        medicallUser.displayName !=
-                            userDocuments[i].data['name']) {
-                      providers.add(userDocuments[i].data['name']);
-                      historyList.add(Container(
-                        height: 75,
-                        child: ListTile(
-                          dense: true,
-                          title: Text(
-                              '${userDocuments[i].data['name'].split(" ")[0][0].toUpperCase()}${userDocuments[i].data['name'].split(" ")[0].substring(1)} ${userDocuments[i].data['name'].split(" ")[1][0].toUpperCase()}${userDocuments[i].data['name'].split(" ")[1].substring(1)}' +
-                                  " " +
-                                  userDocuments[i].data['titles']),
-                          subtitle:
-                              Text(userDocuments[i].data['address'].toString()),
-                          trailing: FlatButton(
-                            onPressed: () {
-                              // setState(() {
-                              //   _consult.provider =
-                              //       userDocuments[i].data['name'];
-                              //   _consult.providerTitles =
-                              //       userDocuments[i].data['titles'];
-                              //   _consult.providerDevTokens =
-                              //       userDocuments[i].data['dev_tokens'];
-                              //   _consult.providerId =
-                              //       userDocuments[i].documentID;
-                              //   _selectProvider(
-                              //       userDocuments[i].data['name'],
-                              //       userDocuments[i].data['titles']);
-                              // });
-                            },
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Icon(
-                                  Icons.more_vert,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                              ],
+  }
+}
+
+class DoctorSearch extends StatelessWidget {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  @override
+  Widget build(BuildContext context) {
+    currTab = "Search Doctors";
+    return Scaffold(
+      key: _scaffoldKey,
+      resizeToAvoidBottomPadding: false,
+      appBar: AppBar(
+        centerTitle: true,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context, false),
+        ),
+        title: Text('Find your doctor'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () {
+              showSearch(
+                context: context,
+                delegate: CustomSearchDelegate(),
+              );
+            },
+          ),
+        ],
+        elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
+      ),
+      drawer: DrawerMenu(
+        data: {'user': medicallUser},
+      ),
+      body: SingleChildScrollView(
+        child: StreamBuilder(
+            stream: Firestore.instance.collection('users').snapshots(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return Center(
+                  heightFactor: 35,
+                  child: Text("You have no patient requests yet.",
+                      textAlign: TextAlign.center),
+                );
+              }
+              if (snapshot.data.documents.length > 0) {
+                var userDocuments = snapshot.data.documents;
+                List<Widget> historyList = [];
+                for (var i = 0; i < userDocuments.length; i++) {
+                  if (userDocuments[i].data['type'] == 'provider' &&
+                      medicallUser.displayName !=
+                          userDocuments[i].data['name']) {
+                    historyList.add(Container(
+                      height: 75,
+                      child: Stack(
+                        alignment: Alignment.centerRight,
+                        fit: StackFit.loose,
+                        children: <Widget>[
+                          ListTile(
+                            dense: true,
+                            title: Text(
+                                '${userDocuments[i].data['name'].split(" ")[0][0].toUpperCase()}${userDocuments[i].data['name'].split(" ")[0].substring(1)} ${userDocuments[i].data['name'].split(" ")[1][0].toUpperCase()}${userDocuments[i].data['name'].split(" ")[1].substring(1)}' +
+                                    " " +
+                                    userDocuments[i].data['titles']),
+                            subtitle: Text(
+                                userDocuments[i].data['address'].toString()),
+                            leading: Icon(
+                              Icons.account_circle,
+                              size: 50,
                             ),
                           ),
-                          leading: Icon(
-                            Icons.account_circle,
-                            size: 50,
+                          Container(
+                            padding: EdgeInsets.all(20),
+                            width: 120,
+                            child: DropdownButtonHideUnderline(
+                              child: Theme(
+                                data: Theme.of(context).copyWith(
+                                  canvasColor: Colors.blue[50],
+                                ),
+                                child: DropdownButton(
+                                  isExpanded: true,
+                                  icon: Icon(Icons.more_vert),
+                                  items: [
+                                    DropdownMenuItem(
+                                      value: 'New Request',
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        height: 60,
+                                        decoration: BoxDecoration(
+                                          border: Border(
+                                            bottom: BorderSide(
+                                              color: Colors.black26,
+                                              width: 1.0,
+                                            ),
+                                          ),
+                                        ),
+                                        child: Text(
+                                          'New Request',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              color: Theme.of(context)
+                                                  .primaryColor,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: 'Follow Up',
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        height: 60,
+                                        child: Text(
+                                          'Follow Up',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              color: Theme.of(context)
+                                                  .primaryColor,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                  onChanged: (String newVal) {},
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
-                      ));
-                    }
+                        ],
+                      ),
+                    ));
                   }
-                  return Column(children: historyList.toList());
-                } else {
-                  return Center(
-                    heightFactor: 35,
-                    child: Text("You have no patient requests yet.",
-                        textAlign: TextAlign.center),
-                  );
                 }
-              }),
-        ),
-      );
-    }
+                return Column(children: historyList.toList());
+              } else {
+                return Center(
+                  heightFactor: 35,
+                  child: Text("You have no patient requests yet.",
+                      textAlign: TextAlign.center),
+                );
+              }
+            }),
+      ),
+    );
   }
 }
 
@@ -465,9 +690,17 @@ class CurvePainter extends CustomPainter {
       ..strokeWidth = 2.0;
 
     /// Draw a single arrow.
+
     path = Path();
-    path.moveTo(size.width * 0.60, size.height * 0.09);
-    path.relativeCubicTo(15, 0, size.width * 0.19, 10, size.width * 0.19, 70);
+
+    if (currentOrientation == Orientation.portrait) {
+      path.moveTo(size.width * 0.6, size.height * 0.22);
+      path.relativeCubicTo(
+          10, 0, size.width * 0.19, 0, size.width * 0.165, 100);
+    } else {
+      path.moveTo(size.width * 0.57, size.height * 0.15);
+      path.relativeCubicTo(10, 0, size.width * 0.16, 0, size.width * 0.18, 55);
+    }
     path = AppUtils.ArrowPath.make(
       path: path,
       tipLength: 5,
@@ -475,8 +708,14 @@ class CurvePainter extends CustomPainter {
     canvas.drawPath(path, paint..color = Colors.blue.withAlpha(100));
 
     path1 = Path();
-    path1.moveTo(size.width * 0.79, size.height / 1.5);
-    path1.relativeCubicTo(0, 10, 0, 60, -60, 60);
+    if (currentOrientation == Orientation.portrait) {
+      path1.moveTo(size.width * 0.78, size.height / 1.8);
+      path1.relativeCubicTo(0, 60, 0, 110, -60, 120);
+    } else {
+      path1.moveTo(size.width * 0.76, size.height / 1.75);
+      path1.relativeCubicTo(0, 40, 0, 60, -120, 60);
+    }
+
     path1 = AppUtils.ArrowPath.make(
       path: path1,
       tipLength: 5,
@@ -484,8 +723,14 @@ class CurvePainter extends CustomPainter {
     canvas.drawPath(path1, paint..color = Colors.blue.withAlpha(100));
 
     path2 = Path();
-    path2.moveTo(size.width * 0.39, size.height / 1.15);
-    path2.relativeCubicTo(0, 0, -60, 0, -55, -62);
+    if (currentOrientation == Orientation.portrait) {
+      path2.moveTo(size.width * 0.36, size.height / 1.33);
+      path2.relativeCubicTo(0, 0, -70, 0, -55, -120);
+    } else {
+      path2.moveTo(size.width * 0.41, size.height / 1.36);
+      path2.relativeCubicTo(-40, 0, -100, 0, -100, -50);
+    }
+
     path2 = AppUtils.ArrowPath.make(
       path: path2,
       tipLength: 5,
@@ -563,6 +808,7 @@ class CustomSearchDelegate extends SearchDelegate {
                   );
                 }
                 if (snapshot.data.documents.length > 0) {
+                  userHasConsults = true;
                   var userDocuments = snapshot.data.documents;
                   List<Widget> historyList = [];
                   for (var i = 0; i < userDocuments.length; i++) {

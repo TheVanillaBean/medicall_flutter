@@ -34,6 +34,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   bool autoValidate = true;
   bool _isLoading = false;
   bool readOnly = false;
+  List<dynamic> _addressList = [];
   double formSpacing = 20;
   bool showSegmentedControl = true;
   FirebaseUser firebaseUser;
@@ -464,6 +465,19 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     borderRadius: BorderRadius.all(Radius.circular(5)),
                   ),
                   textFieldConfiguration: TextFieldConfiguration(
+                    onEditingComplete: () {
+                      if (_addressList.length == 0) {
+                        this._typeAheadController.clear();
+                      }
+                    },
+                    onSubmitted: (v) {
+                      if (_addressList.length == 0) {
+                        this._typeAheadController.clear();
+                      }
+                      if (_addressList.indexOf(v) == -1) {
+                        this._typeAheadController.clear();
+                      }
+                    },
                     controller: this._typeAheadController,
                     decoration: InputDecoration(
                         labelText: 'Street Address',
@@ -474,18 +488,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         border: InputBorder.none),
                   ),
                   suggestionsCallback: (pattern) async {
-                    List<dynamic> _list = [];
+                    _addressList = [];
                     if (pattern.length > 0) {
                       return await _places.searchByText(pattern).then((val) {
-                        if (val.results.length == 0) {
-                          this._typeAheadController.clear();
-                        } else {
-                          _list.add(val.results.first.formattedAddress);
-                        }
-                        return _list;
+                        _addressList.add(val.results.first.formattedAddress);
+                        return _addressList;
                       });
                     } else {
-                      return _list;
+                      return _addressList;
                     }
                   },
                   itemBuilder: (context, suggestion) {
@@ -503,7 +513,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     if (value.isEmpty) {
                       return 'Please enter valid address';
                     } else {
-                      medicallUser.address = value;
+                      if (_addressList.indexOf(value) == -1) {
+                        this._typeAheadController.clear();
+                      } else {
+                        medicallUser.address = value;
+                      }
                       return null;
                     }
                   },

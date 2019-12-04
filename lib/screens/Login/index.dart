@@ -341,20 +341,6 @@ class _LoginScreenState extends State<LoginPage>
           focusNode: _focusNodeMobileEmail,
           style: TextStyle(color: Color.fromRGBO(80, 80, 80, 1)),
           decoration: InputDecoration(
-            border: OutlineInputBorder(
-              borderSide: BorderSide(
-                  color:
-                      Theme.of(context).colorScheme.onSurface.withAlpha(150)),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                  color:
-                      Theme.of(context).colorScheme.onSurface.withAlpha(150)),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide:
-                  BorderSide(color: Theme.of(context).colorScheme.onPrimary),
-            ),
             labelStyle: TextStyle(
               color: Theme.of(context).colorScheme.secondaryVariant,
             ),
@@ -367,28 +353,15 @@ class _LoginScreenState extends State<LoginPage>
           ),
         ),
         SizedBox(
-          height: MediaQuery.of(context).size.height * 0.01,
+          height: MediaQuery.of(context).size.height * 0.02,
         ),
         TextFormField(
           controller: _tePassword,
           focusNode: _focusNodePassword,
           obscureText: true,
+          onEditingComplete: _submit,
           style: TextStyle(color: Color.fromRGBO(80, 80, 80, 1)),
           decoration: InputDecoration(
-            border: OutlineInputBorder(
-              borderSide: BorderSide(
-                  color:
-                      Theme.of(context).colorScheme.onSurface.withAlpha(150)),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                  color:
-                      Theme.of(context).colorScheme.onSurface.withAlpha(150)),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide:
-                  BorderSide(color: Theme.of(context).colorScheme.onPrimary),
-            ),
             labelStyle: TextStyle(
               color: Theme.of(context).colorScheme.onSurface,
             ),

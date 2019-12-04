@@ -67,9 +67,9 @@ class _SymptomQuestionsScreenState extends State<SymptomQuestionsScreen> {
         title: Text(
           _consult.consultType != null
               ? _consult.consultType == 'Lesion'
-                  ? 'Spot Questions'
-                  : _consult.consultType + ' Questions'
-              : ' Questions',
+                  ? 'Spot'
+                  : _consult.consultType
+              : '',
           style: TextStyle(
             fontSize:
                 Theme.of(context).platform == TargetPlatform.iOS ? 17.0 : 20.0,
