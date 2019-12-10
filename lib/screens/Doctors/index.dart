@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/screens/Questions/questionsScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:Medicall/components/DrawerMenu.dart';
@@ -40,7 +41,7 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
         ),
         centerTitle: true,
         title: Text(
-          'Find a Doctor',
+          'What can a doctor help you with?',
           style: TextStyle(
             fontSize:
                 Theme.of(context).platform == TargetPlatform.iOS ? 17.0 : 20.0,
@@ -89,6 +90,12 @@ final List<Entry> data = <Entry>[
         '',
         '')
   ]),
+  Entry('Spot', '7 minutes to complete', '\$45', <Entry>[
+    Entry(
+        'Most cases of hair loss are hereditary and can be treated with both prescription and non-prescription medications. It takes the providers on Medicall usually 24 hours to make a diagnosis and get you the medications you need at a very low price.',
+        '',
+        '')
+  ]),
 ];
 
 class EntryItem extends StatelessWidget {
@@ -100,58 +107,78 @@ class EntryItem extends StatelessWidget {
     if (root.children.isEmpty)
       return Container(
         alignment: Alignment.centerLeft,
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
-          child: Column(
-            children: <Widget>[
-              Text(
-                root.title,
-                textAlign: TextAlign.left,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  RaisedButton(
-                    onPressed: () async {
-                      _consult = ConsultData();
+        padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
+        child: Column(
+          children: <Widget>[
+            Text(
+              root.title,
+              textAlign: TextAlign.left,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                RaisedButton(
+                  onPressed: () async {
+                    _consult = ConsultData();
 
-                      SharedPreferences _thisConsult =
-                          await SharedPreferences.getInstance();
-                      _consult.consultType = 'Hairloss';
-                      var consultQuestions = await Firestore.instance
-                          .document('services/dermatology/symptoms/' +
-                              _consult.consultType.toLowerCase())
-                          .get();
-                      _consult.screeningQuestions =
-                          consultQuestions.data["screening_questions"];
-                      _consult.historyQuestions =
-                          consultQuestions.data["medical_history_questions"];
-                      _consult.uploadQuestions =
-                          consultQuestions.data["upload_questions"];
-                      String currentConsultString = jsonEncode(_consult);
-                      await _thisConsult.setString(
-                          "consult", currentConsultString);
-                      GlobalNavigatorKey.key.currentState.pushNamed(
-                          '/questionsScreening',
-                          arguments: {'user': medicallUser});
-                    },
-                    child: Text('Start'),
-                  )
-                ],
-              )
-            ],
-          ),
+                    SharedPreferences _thisConsult =
+                        await SharedPreferences.getInstance();
+                    _consult.consultType = 'Hairloss';
+                    var consultQuestions = await Firestore.instance
+                        .document('services/dermatology/symptoms/' +
+                            _consult.consultType.toLowerCase())
+                        .get();
+                    _consult.screeningQuestions =
+                        consultQuestions.data["screening_questions"];
+                    _consult.historyQuestions =
+                        consultQuestions.data["medical_history_questions"];
+                    _consult.uploadQuestions =
+                        consultQuestions.data["upload_questions"];
+                    String currentConsultString = jsonEncode(_consult);
+                    await _thisConsult.setString(
+                        "consult", currentConsultString);
+                    GlobalNavigatorKey.key.currentState.push(
+                      MaterialPageRoute(
+                          builder: (_) => QuestionsScreen(
+                                data: _consult,
+                              )),
+                    );
+                  },
+                  child: Text('Start'),
+                )
+              ],
+            )
+          ],
         ),
         width: screenSize.width,
       );
     return ExpansionTile(
-      key: PageStorageKey<Entry>(root),
-      title: ListTile(
-        title: Text(root.title),
-        subtitle: Text(root.subtitle),
-        trailing: Text(root.price),
+      backgroundColor: Colors.blue.withAlpha(15),
+      trailing: Padding(
+        padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+        child: Text(
+          root.price,
+          style: TextStyle(fontSize: 24),
+        ),
       ),
+      key: PageStorageKey<Entry>(root),
       children: root.children.map<Widget>(_buildTiles).toList(),
+      title: Container(
+        padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(root.title),
+            Text(
+              root.subtitle,
+              style: TextStyle(
+                fontSize: 12,
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 
