@@ -19,7 +19,7 @@ class DoctorsScreen extends StatefulWidget {
 }
 
 class _DoctorsScreenState extends State<DoctorsScreen> {
-  ConsultData _consult;
+  //ConsultData _consult;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   void initState() {
@@ -86,14 +86,14 @@ class Entry {
 final List<Entry> data = <Entry>[
   Entry('Hairloss', '9 minutes to complete', '\$39', <Entry>[
     Entry(
+        'Hairloss',
         'Most cases of hair loss are hereditary and can be treated with both prescription and non-prescription medications. It takes the providers on Medicall usually 24 hours to make a diagnosis and get you the medications you need at a very low price.',
-        '',
         '')
   ]),
   Entry('Spot', '7 minutes to complete', '\$45', <Entry>[
     Entry(
+        'Spot',
         'Most cases of hair loss are hereditary and can be treated with both prescription and non-prescription medications. It takes the providers on Medicall usually 24 hours to make a diagnosis and get you the medications you need at a very low price.',
-        '',
         '')
   ]),
 ];
@@ -104,86 +104,121 @@ class EntryItem extends StatelessWidget {
   static ConsultData _consult;
 
   Widget _buildTiles(Entry root) {
-    if (root.children.isEmpty)
-      return Container(
-        alignment: Alignment.centerLeft,
-        padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
-        child: Column(
-          children: <Widget>[
-            Text(
-              root.title,
-              textAlign: TextAlign.left,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                RaisedButton(
-                  onPressed: () async {
-                    _consult = ConsultData();
-
-                    SharedPreferences _thisConsult =
-                        await SharedPreferences.getInstance();
-                    _consult.consultType = 'Hairloss';
-                    var consultQuestions = await Firestore.instance
-                        .document('services/dermatology/symptoms/' +
-                            _consult.consultType.toLowerCase())
-                        .get();
-                    _consult.screeningQuestions =
-                        consultQuestions.data["screening_questions"];
-                    _consult.historyQuestions =
-                        consultQuestions.data["medical_history_questions"];
-                    _consult.uploadQuestions =
-                        consultQuestions.data["upload_questions"];
-                    String currentConsultString = jsonEncode(_consult);
-                    await _thisConsult.setString(
-                        "consult", currentConsultString);
-                    GlobalNavigatorKey.key.currentState.push(
-                      MaterialPageRoute(
-                          builder: (_) => QuestionsScreen(
-                                data: _consult,
-                              )),
-                    );
-                  },
-                  child: Text('Start'),
-                )
-              ],
-            )
-          ],
-        ),
-        width: screenSize.width,
-      );
-    return ExpansionTile(
-      backgroundColor: Colors.blue.withAlpha(15),
-      trailing: Padding(
-        padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-        child: Text(
-          root.price,
-          style: TextStyle(fontSize: 24),
-        ),
-      ),
-      key: PageStorageKey<Entry>(root),
-      children: root.children.map<Widget>(_buildTiles).toList(),
-      title: Container(
-        padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(root.title),
-            Text(
-              root.subtitle,
-              style: TextStyle(
-                fontSize: 12,
+    return Container(
+        margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+        padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+        decoration: root.children.isEmpty
+            ? BoxDecoration(
+                border: Border.all(color: Colors.transparent),
+              )
+            : BoxDecoration(
+                border: Border.all(
+                  color: Colors.blueAccent.withAlpha(150),
+                ),
+                borderRadius: BorderRadius.all(Radius.circular(10)),
               ),
-            )
-          ],
-        ),
-      ),
-    );
+        child: ClipRRect(
+          clipBehavior: Clip.antiAlias,
+          borderRadius: BorderRadius.circular(10),
+          child: Theme(
+            data: ThemeData(
+              dividerColor: Colors.transparent,
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+            ),
+            child: ExpansionTile(
+              backgroundColor: root.children.isEmpty
+                  ? Colors.transparent
+                  : Colors.blue.withAlpha(15),
+              trailing: Padding(
+                padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                child: Text(
+                  root.price,
+                  style: TextStyle(fontSize: 24),
+                ),
+              ),
+              key: PageStorageKey<Entry>(root),
+              children: root.children.map<Widget>(_buildTiles).toList(),
+              title: Container(
+                padding: root.children.isEmpty
+                    ? EdgeInsets.fromLTRB(0, 0, 0, 0)
+                    : EdgeInsets.fromLTRB(0, 20, 0, 20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    root.children.isEmpty ? SizedBox() : Text(root.title),
+                    root.children.isEmpty
+                        ? Container(
+                            padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
+                            child: Text(
+                              root.subtitle,
+                              style: TextStyle(
+                                fontSize: 12,
+                              ),
+                            ),
+                          )
+                        : Text(
+                            root.subtitle,
+                            style: TextStyle(
+                              fontSize: 12,
+                            ),
+                          ),
+                    root.children.isEmpty
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: <Widget>[
+                              RaisedButton(
+                                onPressed: () async {
+                                  _consult = ConsultData();
+
+                                  SharedPreferences _thisConsult =
+                                      await SharedPreferences.getInstance();
+                                  _consult.consultType = root.title == 'Spot'
+                                      ? 'Lesion'
+                                      : root.title;
+                                  var consultQuestions = await Firestore
+                                      .instance
+                                      .document(
+                                          'services/dermatology/symptoms/' +
+                                              _consult.consultType
+                                                  .toLowerCase())
+                                      .get();
+                                  _consult.screeningQuestions = consultQuestions
+                                      .data["screening_questions"];
+                                  _consult.historyQuestions = consultQuestions
+                                      .data["medical_history_questions"];
+                                  _consult.uploadQuestions =
+                                      consultQuestions.data["upload_questions"];
+                                  String currentConsultString =
+                                      jsonEncode(_consult);
+                                  await _thisConsult.setString(
+                                      "consult", currentConsultString);
+                                  GlobalNavigatorKey.key.currentState.push(
+                                    MaterialPageRoute(
+                                        builder: (_) => QuestionsScreen(
+                                              data: _consult,
+                                            )),
+                                  );
+                                },
+                                child: Text('Start'),
+                              )
+                            ],
+                          )
+                        : SizedBox(),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ));
   }
 
   @override
   Widget build(BuildContext context) {
-    return _buildTiles(entry);
+    return Padding(
+      padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+      child: _buildTiles(entry),
+    );
   }
 }

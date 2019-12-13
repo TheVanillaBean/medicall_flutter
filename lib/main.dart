@@ -27,6 +27,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   bool isInDebugMode = false;
 
   FlutterError.onError = (FlutterErrorDetails details) {
@@ -160,7 +161,7 @@ class _MedicallAppState extends State<MedicallApp> {
               );
             case '/consent':
               return MyCustomRoute(
-                builder: (_) => ConsentScreen(),
+                builder: (_) => ConsentScreen(data: settings.arguments),
                 settings: settings,
               );
             case '/home':

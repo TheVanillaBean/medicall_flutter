@@ -100,20 +100,6 @@ class _HistoryScreenState extends State<HistoryScreen>
       drawer: DrawerMenu(
         data: {'user': medicallUser},
       ),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      // floatingActionButton: Builder(builder: (BuildContext context) {
-      //   return FloatingActionButton(
-      //     child: Icon(
-      //       CustomIcons.MedicallApp.logo_m,
-      //       size: 35.0,
-      //     ),
-      //     onPressed: () {
-      //       Scaffold.of(context).openDrawer();
-      //     },
-      //     backgroundColor: Color.fromRGBO(241, 100, 119, 0.8),
-      //     foregroundColor: Colors.white,
-      //   );
-      // }),
       body: medicallUser.type == 'provider'
           ? TabBarView(
               // Add tabs as widgets
@@ -363,6 +349,12 @@ class _HistoryScreenState extends State<HistoryScreen>
                                       children: <Widget>[
                                         FlatButton(
                                           onPressed: () {
+                                            // _scaffoldKey.currentState
+                                            //     .showBottomSheet(
+                                            //         (context) => Container(
+                                            //               color: Colors.white.withAlpha(200),
+                                            //               height: 200,
+                                            //             ));
                                             Navigator.pushReplacementNamed(
                                                 context, '/doctors',
                                                 arguments: {

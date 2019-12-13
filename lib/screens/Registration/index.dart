@@ -184,22 +184,25 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 SizedBox(
                   height: 10,
                 ),
-                FormBuilderDateTimePicker(
-                  attribute: "Date of birth",
-                  inputType: InputType.date,
-                  initialDatePickerMode: DatePickerMode.year,
-                  initialDate: DateTime.utc(DateTime.now().year - 19, 1, 1),
-                  format: DateFormat("MM-dd-yyyy"),
-                  decoration: InputDecoration(
-                      labelText: 'Date of Birth',
-                      fillColor: Color.fromRGBO(35, 179, 232, 0.1),
-                      filled: true,
-                      disabledBorder: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                      border: InputBorder.none),
-                  validators: [
-                    FormBuilderValidators.required(),
-                  ],
+                Theme(
+                  data: ThemeData(buttonColor: Colors.blue),
+                  child: FormBuilderDateTimePicker(
+                    attribute: "Date of birth",
+                    inputType: InputType.date,
+                    initialDatePickerMode: DatePickerMode.year,
+                    initialDate: DateTime.utc(DateTime.now().year - 19, 1, 1),
+                    format: DateFormat("MM-dd-yyyy"),
+                    decoration: InputDecoration(
+                        labelText: 'Date of Birth',
+                        fillColor: Color.fromRGBO(35, 179, 232, 0.1),
+                        filled: true,
+                        disabledBorder: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        border: InputBorder.none),
+                    validators: [
+                      FormBuilderValidators.required(),
+                    ],
+                  ),
                 ),
                 SizedBox(
                   height: 10,
@@ -401,6 +404,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 FormBuilderTextField(
                   attribute: "Password",
                   initialValue: "",
+                  maxLines: 1,
                   obscureText: true,
                   decoration: InputDecoration(
                       hintText:
@@ -429,11 +433,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 FormBuilderTextField(
                   attribute: "ConfirmPassword",
                   initialValue: "",
+                  maxLines: 1,
                   obscureText: true,
                   decoration: InputDecoration(
                       hintText: 'Must match your password exactly',
-                      hintMaxLines: 2,
-                      errorMaxLines: 2,
                       hintStyle: TextStyle(fontSize: 12),
                       labelText: 'Confirm Password',
                       fillColor: Color.fromRGBO(35, 179, 232, 0.1),
@@ -564,29 +567,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         Navigator.pushNamed(context, '/privacy');
                       },
                       child: Text('Privacy Policy',
-                          style: TextStyle(
-                            decoration: TextDecoration.underline,
-                            color: Colors.blue,
-                          ))),
-                  validators: [
-                    FormBuilderValidators.required(),
-                  ],
-                ),
-                FormBuilderCheckbox(
-                  attribute: 'accept_consent',
-                  initialValue: medicallUser.consent,
-                  leadingInput: true,
-                  decoration: InputDecoration(
-                      contentPadding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                      disabledBorder: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                      border: InputBorder.none),
-                  label: FlatButton(
-                      padding: EdgeInsets.fromLTRB(0, 0, 62, 0),
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/consent');
-                      },
-                      child: Text('Telemedicine Consent',
                           style: TextStyle(
                             decoration: TextDecoration.underline,
                             color: Colors.blue,
@@ -829,9 +809,8 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
               _isLoading = true;
             });
             await _addUserImages();
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => AuthScreen(),
-            ));
+            Navigator.pushNamed(context, '/consent',
+                arguments: {'user': medicallUser});
           }
         },
         //Navigator.pushNamed(context, '/history'), // Switch tabs

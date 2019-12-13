@@ -59,30 +59,21 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
     return jsonDecode(pref.getString('consult'));
   }
 
-  setConsult() async {
+  setConsult(context) async {
     SharedPreferences _thisConsult = await SharedPreferences.getInstance();
-    int index = 0;
-    questionsFormKey.currentState.value.forEach((k, v) {
-      _consult.screeningQuestions[index]["answer"] =
-          questionsFormKey.currentState.value[k];
-      index++;
-    });
+    _consult = context.widget.data;
     String currentConsultString = jsonEncode(_consult);
     await _thisConsult.setString("consult", currentConsultString);
   }
 
-  void _onIntroEnd(context) {
+  Future<void> _onIntroEnd(context) async {
+    await setConsult(context);
+
     GlobalNavigatorKey.key.currentState
-        .pushNamed('/questionsScreening', arguments: {'user': medicallUser});
+        .pushNamed('/selectProvider', arguments: {'user': medicallUser});
   }
 
   void _checkQuestion(index, context) {
-    // for (var i = 0; i < widget.data.screeningQuestions.length; i++) {
-    //   if (widget.data.screeningQuestions[i]['parent_question'] ==
-    //       widget.data.screeningQuestions[index]['question']) {
-    //     globalKeyList['questionKey' + i.toString()] = GlobalKey();
-    //   }
-    // }
     var tabController = context.state.questionsFormKey.currentContext.state;
     var listKeys = [];
     this.globalKeyList.forEach((k, v) => listKeys.add({'key': k, 'value': v}));

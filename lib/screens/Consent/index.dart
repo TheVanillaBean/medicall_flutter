@@ -1,5 +1,15 @@
+import 'package:Medicall/screens/Auth/index.dart';
 import 'package:flutter/material.dart';
-String consent =''' 
+import 'package:intl/intl.dart';
+
+String _returnString(user) {
+  var fullName = user.displayName;
+  var loc = user.address;
+  var dob = user.dob;
+  var now = DateTime.now();
+  var formatter = DateFormat('MM-dd-yyyy');
+  String formatted = formatter.format(now);
+  String consent = ''' 
 Before we begin, we need your consent to provide medical services online.
 ____
 
@@ -56,23 +66,32 @@ Vermont: I understand that I have the right to receive a consult with a distant-
 If you have a concern about a medical professional, you may contact the Medical Board in your state regarding your concerns. For applicable contact information see the list available here.
 
 Patient’s Legal Name
-INSERT NAME
+$fullName
 
 Location
-INSERT ADDRESS
+$loc
 
 Date of birth
-INSERT DOB
+$dob
 
 Date of consent
-INSERT DATE/TIME
+$formatted
 ____
 By checking the box “I Agree” below, I understand and consent to the above and the Terms of Service and Privacy Policy.
 
 Thanks again for using Medicall!''';
+  return consent;
+}
 
+class ConsentScreen extends StatefulWidget {
+  final data;
+  ConsentScreen({Key key, @required this.data}) : super(key: key);
 
-class ConsentScreen extends StatelessWidget {
+  @override
+  _ConsentScreenState createState() => _ConsentScreenState();
+}
+
+class _ConsentScreenState extends State<ConsentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,14 +100,24 @@ class ConsentScreen extends StatelessWidget {
         backgroundColor: Color.fromRGBO(35, 179, 232, 1),
         title: Text('Telemedicine Consent'),
       ),
-      
       body: Container(
         child: SingleChildScrollView(
           padding: EdgeInsets.fromLTRB(15, 20, 15, 20),
-          child: Text(consent),
+          child: Column(
+            children: <Widget>[
+              Text(_returnString(this.widget.data['user'])),
+              FlatButton(
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => AuthScreen(),
+                  ));
+                },
+                child: Text('Continue'),
+              )
+            ],
+          ),
         ),
       ),
     );
   }
 }
-

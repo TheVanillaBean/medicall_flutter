@@ -90,7 +90,6 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
   //     print("Document Added");
   //   }).catchError((e) => print(e));
   // }
-  
 
   @override
   Widget build(BuildContext context) {
@@ -264,8 +263,6 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
           : null,
     );
   }
-
-  
 
   _buildTab(questions, i) {
     if (i != 1) {
@@ -565,7 +562,9 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                                 FormBuilderValidators.required(),
                               ],
                             ),
-                            SizedBox(height: 70,)
+                            SizedBox(
+                              height: 70,
+                            )
                           ],
                         ),
                       ))),
@@ -599,13 +598,192 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                 ],
               ));
         } else {
-          return Center(
-            child: Icon(
-              Icons.broken_image,
-              size: 140,
-              color: Theme.of(context).colorScheme.secondary.withAlpha(90),
-            ),
-          );
+          return Scaffold(
+              body: Container(
+                  child: SingleChildScrollView(
+                      padding: EdgeInsets.fromLTRB(15, 20, 15, 20),
+                      child: FormBuilder(
+                        key: _consultFormKey,
+                        autovalidate: true,
+                        child: Column(
+                          children: <Widget>[
+                            Container(
+                              alignment: Alignment.centerLeft,
+                              padding: EdgeInsets.all(15),
+                              child: Text(
+                                'Rx',
+                                style: TextStyle(
+                                    fontSize: 24, fontFamily: 'MedicallApp'),
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                              child: FormBuilderTextField(
+                                initialValue: snapshot['consult'].length > 0
+                                    ? snapshot['consult']
+                                    : 'This is where your presciption will show up.',
+                                attribute: 'docInput',
+                                maxLines: 10,
+                                readOnly: true,
+                                decoration: InputDecoration(
+                                  fillColor: Color.fromRGBO(35, 179, 232, 0.1),
+                                  filled: false,
+                                  border: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Colors.grey, width: 5.0),
+                                  ),
+                                ),
+                                validators: [
+                                  //FormBuilderValidators.required(),
+                                ],
+                              ),
+                            ),
+                            // Container(
+                            //   padding: EdgeInsets.fromLTRB(0, 10, 20, 10),
+                            //   child: FormBuilderCheckboxList(
+                            //     leadingInput: true,
+                            //     attribute: 'shipTo',
+                            //     validators: [
+                            //       FormBuilderValidators.required(),
+                            //     ],
+                            //     decoration: InputDecoration(
+                            //         border: InputBorder.none,
+                            //         disabledBorder: InputBorder.none,
+                            //         enabledBorder: InputBorder.none,
+                            //         focusedBorder: InputBorder.none,
+                            //         contentPadding:
+                            //             EdgeInsets.fromLTRB(0, 10, 0, 10)),
+                            //     onChanged: null,
+                            //     options: [
+                            //       FormBuilderFieldOption(
+                            //         value: 'pickup',
+                            //         child: Row(
+                            //           mainAxisAlignment:
+                            //               MainAxisAlignment.spaceBetween,
+                            //           children: <Widget>[
+                            //             Text(
+                            //               'Local pharmacy pickup',
+                            //               style: TextStyle(
+                            //                 fontSize: 16,
+                            //               ),
+                            //               softWrap: true,
+                            //             ),
+                            //             Text(
+                            //               '\$80',
+                            //               style: TextStyle(fontSize: 21),
+                            //             ),
+                            //           ],
+                            //         ),
+                            //       ),
+                            //       FormBuilderFieldOption(
+                            //         value: 'delivery',
+                            //         child: Row(
+                            //           mainAxisAlignment:
+                            //               MainAxisAlignment.spaceBetween,
+                            //           children: <Widget>[
+                            //             Text(
+                            //               'Ship directly to my door.',
+                            //               style: TextStyle(
+                            //                 fontSize: 16,
+                            //               ),
+                            //               softWrap: true,
+                            //             ),
+                            //             Text(
+                            //               '\$60',
+                            //               style: TextStyle(fontSize: 21),
+                            //             ),
+                            //           ],
+                            //         ),
+                            //       )
+                            //     ],
+                            //   ),
+                            // ),
+                            // Padding(
+                            //   padding: EdgeInsets.only(top: 10, bottom: 10),
+                            //   child: Text(
+                            //       'Please enter the address below where you want your prescription sent.'),
+                            // ),
+                            // FormBuilderTextField(
+                            //   attribute: "Address",
+                            //   initialValue: medicallUser.address,
+                            //   decoration: InputDecoration(
+                            //       labelText: 'Street Address',
+                            //       fillColor: Color.fromRGBO(35, 179, 232, 0.1),
+                            //       filled: true,
+                            //       disabledBorder: InputBorder.none,
+                            //       enabledBorder: InputBorder.none,
+                            //       border: InputBorder.none),
+                            //   validators: [
+                            //     FormBuilderValidators.required(),
+                            //   ],
+                            // ),
+                            // SizedBox(
+                            //   height: 5,
+                            // ),
+                            // FormBuilderTextField(
+                            //   attribute: "City",
+                            //   decoration: InputDecoration(
+                            //       labelText: 'City',
+                            //       fillColor: Color.fromRGBO(35, 179, 232, 0.1),
+                            //       filled: true,
+                            //       disabledBorder: InputBorder.none,
+                            //       enabledBorder: InputBorder.none,
+                            //       border: InputBorder.none),
+                            //   validators: [
+                            //     FormBuilderValidators.required(),
+                            //   ],
+                            // ),
+                            // SizedBox(
+                            //   height: 5,
+                            // ),
+                            // FormBuilderTextField(
+                            //   attribute: "State",
+                            //   decoration: InputDecoration(
+                            //       labelText: 'State',
+                            //       fillColor: Color.fromRGBO(35, 179, 232, 0.1),
+                            //       filled: true,
+                            //       disabledBorder: InputBorder.none,
+                            //       enabledBorder: InputBorder.none,
+                            //       border: InputBorder.none),
+                            //   validators: [
+                            //     FormBuilderValidators.required(),
+                            //   ],
+                            // ),
+                            // SizedBox(
+                            //   height: 70,
+                            // )
+                          ],
+                        ),
+                      ))),
+              bottomSheet: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Expanded(
+                      child: Container(
+                    decoration: BoxDecoration(
+                        border: Border(
+                            top: BorderSide(
+                                color: Colors.grey,
+                                width: 1,
+                                style: BorderStyle.solid))),
+                    child: FlatButton(
+                      padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
+                      color: Theme.of(context).colorScheme.secondary,
+                      onPressed: () {},
+                      child: Text(
+                        'Send Presciption',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Theme.of(context).colorScheme.onBackground,
+                          letterSpacing: 1.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ))
+                ],
+              ));
         }
       }
     } else {

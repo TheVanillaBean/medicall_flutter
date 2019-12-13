@@ -231,7 +231,6 @@ class _BuildQuestionsState extends State<BuildQuestions> {
           });
         };
         _onChangedCheckBox = (val) {
-          var indiciesToBeToggled = [];
           if (val.length >= 2 && val[1] == 'Yes') {
             val.removeAt(0);
           }

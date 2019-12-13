@@ -5,12 +5,11 @@ import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/secrets.dart' as secrets;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_alert/flutter_alert.dart';
-
 import 'dart:async';
 import 'package:google_maps_webservice/places.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as LocationManager;
+import 'package:oktoast/oktoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: secrets.kGoogleApiKey);
@@ -147,6 +146,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
                 child: GoogleMap(
                     onMapCreated: _onMapCreated,
                     myLocationEnabled: false,
+                    mapType: MapType.hybrid,
                     markers: Set<Marker>.of(markers.values),
                     initialCameraPosition: CameraPosition(
                       target: bounds,
@@ -241,10 +241,8 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
   }
 
   void _showMessageDialog() {
-    showAlert(
-        context: context,
-        title: 'Notice',
-        body: 'Please select one of the providers in order to continue');
+    showToast('Please select one of the providers in order to continue',
+        duration: Duration(seconds: 4), backgroundColor: Colors.deepOrange);
   }
 
   void refresh() async {
@@ -292,44 +290,41 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
 
     for (var i = 0; i < addresses.length; i++) {
       placesList.add(await _places.searchByText(addresses[i]));
-      setState(() {
-        this.isLoading = false;
-        if (placesList[i].status == 'OK') {
-          placesList[i].results.first.types.first = providers[i];
-          this.places.add(placesList[i].results.first);
+      this.isLoading = false;
+      if (placesList[i].status == 'OK') {
+        placesList[i].results.first.types.first = providers[i];
+        this.places.add(placesList[i].results.first);
 
-          placesList[i].results.forEach((f) {
-            if (f.geometry.location.lat < minLat) {
-              minLat = f.geometry.location.lat;
-            }
-            if (f.geometry.location.lng < minLng) {
-              minLng = f.geometry.location.lng;
-            }
-            if (f.geometry.location.lat > maxLat) {
-              maxLat = f.geometry.location.lat;
-            }
-            if (f.geometry.location.lng > maxLng) {
-              maxLng = f.geometry.location.lng;
-            }
-            final String markerIdVal = 'marker_id_$_markerIdCounter';
-            _markerIdCounter++;
-            final MarkerId markerId = MarkerId(markerIdVal);
+        placesList[i].results.forEach((f) {
+          if (f.geometry.location.lat < minLat) {
+            minLat = f.geometry.location.lat;
+          }
+          if (f.geometry.location.lng < minLng) {
+            minLng = f.geometry.location.lng;
+          }
+          if (f.geometry.location.lat > maxLat) {
+            maxLat = f.geometry.location.lat;
+          }
+          if (f.geometry.location.lng > maxLng) {
+            maxLng = f.geometry.location.lng;
+          }
+          final String markerIdVal = 'marker_id_$_markerIdCounter';
+          _markerIdCounter++;
+          final MarkerId markerId = MarkerId(markerIdVal);
 
-            final Marker marker = Marker(
-              markerId: markerId,
-              position:
-                  LatLng(f.geometry.location.lat, f.geometry.location.lng),
-              infoWindow:
-                  InfoWindow(title: '${f.name}', snippet: '${f.types?.first}'),
-            );
-            markers[markerId] = marker;
+          final Marker marker = Marker(
+            markerId: markerId,
+            position: LatLng(f.geometry.location.lat, f.geometry.location.lng),
+            infoWindow:
+                InfoWindow(title: '${f.name}', snippet: '${f.types?.first}'),
+          );
+          markers[markerId] = marker;
 
-            LatLng latLng_1 = LatLng(minLat, minLng);
-            LatLng latLng_2 = LatLng(maxLat, maxLng);
-            bound = LatLngBounds(southwest: latLng_1, northeast: latLng_2);
-          });
-        }
-      });
+          LatLng latLng_1 = LatLng(minLat, minLng);
+          LatLng latLng_2 = LatLng(maxLat, maxLng);
+          bound = LatLngBounds(southwest: latLng_1, northeast: latLng_2);
+        });
+      }
       CameraUpdate u2 = CameraUpdate.newLatLngBounds(bound, 50);
       this.mapController.animateCamera(u2);
     }
