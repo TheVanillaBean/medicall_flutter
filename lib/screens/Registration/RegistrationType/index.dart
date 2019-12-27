@@ -13,9 +13,9 @@ class RegistrationTypeScreen extends StatefulWidget {
 class _RegistrationTypeScreenState extends State<RegistrationTypeScreen> {
   void _add(MedicallUser user, String type) {
     medicallUser.type = type;
-    if (user.id != null) {
+    if (user.uid != null) {
       final DocumentReference documentReference =
-          Firestore.instance.document("users/" + user.id);
+          Firestore.instance.document("users/" + user.uid);
       Map<String, String> data = <String, String>{
         "type": type,
       };

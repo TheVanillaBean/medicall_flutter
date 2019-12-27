@@ -84,7 +84,7 @@ class _LoginScreenState extends State<LoginPage>
         Firestore.instance.collection("users").document(firebaseUser.uid);
     await documentReference.get().then((datasnapshot) {
       if (datasnapshot.data != null) {
-        medicallUser.id = firebaseUser.uid;
+        medicallUser.uid = firebaseUser.uid;
         medicallUser.displayName = datasnapshot.data['name'];
         medicallUser.firstName = datasnapshot.data['first_name'];
         medicallUser.lastName = datasnapshot.data['last_name'];
@@ -101,7 +101,7 @@ class _LoginScreenState extends State<LoginPage>
           medicallUser.firstName = firebaseUser.displayName.split(' ')[0];
           medicallUser.lastName = firebaseUser.displayName.split(' ')[1];
         }
-        medicallUser.id = firebaseUser.uid;
+        medicallUser.uid = firebaseUser.uid;
         medicallUser.policy = false;
         medicallUser.consent = false;
         medicallUser.terms = false;
@@ -217,50 +217,6 @@ class _LoginScreenState extends State<LoginPage>
 
   @override
   Widget build(BuildContext context) {
-    Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        GestureDetector(
-          onTap: () {
-            phoneTabEnable();
-          },
-          child: Row(
-            children: <Widget>[
-              Icon(
-                Icons.phone,
-                size: 30,
-                color: Theme.of(context).accentColor,
-              ),
-              Text(
-                'Phone',
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-              )
-            ],
-          ),
-        ),
-        GestureDetector(
-          onTap: () {
-            eMailTabEnable();
-          },
-          child: Row(
-            children: <Widget>[
-              Icon(
-                Icons.alternate_email,
-                size: 30,
-                color: Theme.of(context).colorScheme.onSecondary,
-              ),
-              Text(
-                'Email/Password',
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.secondaryVariant),
-              )
-            ],
-          ),
-        ),
-      ],
-    );
-
     var phoneAuthForm = Column(
       children: <Widget>[
         Row(

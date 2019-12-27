@@ -1,10 +1,10 @@
-import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:Medicall/components/DrawerMenu.dart';
-import 'package:flutter/painting.dart';
+import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/presentation/medicall_icons_icons.dart' as CustomIcons;
 import 'package:Medicall/util/app_util.dart' as AppUtils;
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:intl/intl.dart';
 
 class HistoryScreen extends StatefulWidget {
@@ -127,7 +127,7 @@ class _HistoryScreenState extends State<HistoryScreen>
           child: StreamBuilder(
               stream: Firestore.instance
                   .collection('consults')
-                  .where('patient_id', isEqualTo: medicallUser.id)
+                  .where('patient_id', isEqualTo: medicallUser.uid)
                   .orderBy('date', descending: true)
                   .snapshots(),
               builder: (context, snapshot) {
@@ -402,7 +402,7 @@ class _HistoryScreenState extends State<HistoryScreen>
           child: StreamBuilder(
               stream: Firestore.instance
                   .collection('consults')
-                  .where('provider_id', isEqualTo: medicallUser.id)
+                  .where('provider_id', isEqualTo: medicallUser.uid)
                   .orderBy('date', descending: true)
                   .snapshots(),
               builder: (context, snapshot) {
@@ -685,8 +685,7 @@ class CurvePainter extends CustomPainter {
 
     if (currentOrientation == Orientation.portrait) {
       path.moveTo(size.width * 0.6, size.height * 0.25);
-      path.relativeCubicTo(
-          10, 0, size.width * 0.19, 0, size.width * 0.165, 85);
+      path.relativeCubicTo(10, 0, size.width * 0.19, 0, size.width * 0.165, 85);
     } else {
       path.moveTo(size.width * 0.57, size.height * 0.15);
       path.relativeCubicTo(10, 0, size.width * 0.16, 0, size.width * 0.18, 55);
@@ -786,7 +785,7 @@ class CustomSearchDelegate extends SearchDelegate {
           child: StreamBuilder(
               stream: Firestore.instance
                   .collection('consults')
-                  .where('patient_id', isEqualTo: medicallUser.id)
+                  .where('patient_id', isEqualTo: medicallUser.uid)
                   .orderBy('date', descending: true)
                   .snapshots(),
               builder: (context, snapshot) {

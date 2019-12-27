@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
+
 MedicallUser medicallUser;
 
 class MedicallUser {
-  String id;
+  String uid;
   List<dynamic> devTokens;
   String type;
   String displayName;
@@ -23,7 +25,7 @@ class MedicallUser {
   bool consent;
 
   MedicallUser({
-    this.id,
+    @required this.uid,
     this.devTokens,
     this.type,
     this.displayName,
