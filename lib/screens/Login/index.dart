@@ -13,6 +13,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -521,25 +522,27 @@ class _LoginScreenState extends State<LoginPage>
     );
 
     return Scaffold(
-      resizeToAvoidBottomPadding: false,
       appBar: null,
-      body: Container(
+      body: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.dark,
         child: Container(
-          decoration: BoxDecoration(
-              gradient: LinearGradient(
-            colors: <Color>[
-              const Color.fromRGBO(220, 255, 255, 0.9),
-              const Color.fromRGBO(88, 178, 214, 0.8),
-            ],
-            stops: [0.1, 1],
-            begin: const FractionalOffset(0.0, 0.0),
-            end: const FractionalOffset(0.0, 1.0),
-          )),
-          child: ProgressHUD(
-            child: screenRoot,
-            inAsyncCall: _isLoading,
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-            opacity: 0.0,
+          child: Container(
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+              colors: <Color>[
+                const Color.fromRGBO(220, 255, 255, 0.9),
+                const Color.fromRGBO(88, 178, 214, 0.8),
+              ],
+              stops: [0.1, 1],
+              begin: const FractionalOffset(0.0, 0.0),
+              end: const FractionalOffset(0.0, 1.0),
+            )),
+            child: ProgressHUD(
+              child: screenRoot,
+              inAsyncCall: _isLoading,
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              opacity: 0.0,
+            ),
           ),
         ),
       ),
