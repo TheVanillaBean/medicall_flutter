@@ -162,9 +162,11 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
   bool _onScroll(ScrollNotification notification) {
     if (notification.metrics.runtimeType == PageMetrics) {
       final PageMetrics metrics = notification.metrics;
-      setState(() {
-        _currentPage = metrics.page;
-      });
+      Future.delayed(
+          Duration.zero,
+          () => setState(() {
+                _currentPage = metrics.page;
+              }));
     }
     return false;
   }
@@ -188,7 +190,7 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
       child: widget.done,
       onPressed: widget.onDone,
     );
-    
+
     return Scaffold(
       backgroundColor: widget.globalBackgroundColor,
       body: Stack(

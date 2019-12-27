@@ -1,5 +1,4 @@
 import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:Medicall/screens/Auth/index.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:Medicall/util/firebase_anonymously_util.dart';
 import 'package:Medicall/util/firebase_auth_codes.dart';

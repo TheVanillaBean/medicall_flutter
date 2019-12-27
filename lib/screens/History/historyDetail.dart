@@ -264,8 +264,8 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
     );
   }
 
-  _buildTab(questions, i) {
-    if (i != 1) {
+  _buildTab(questions, ind) {
+    if (ind != 1) {
       if (questions.length > 0) {
         return Scaffold(
           bottomNavigationBar: Container(
@@ -330,7 +330,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                           for (var y = 0;
                               y < this.snapshot['details'][x].length;
                               y++) {
-                            if (x != 2 && i == 0) {
+                            if (x != 2) {
                               if (this.snapshot['details'][x][y]['visible'] &&
                                   this.snapshot['details'][x][y]['options']
                                       is String) {
@@ -378,26 +378,31 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                                         : SizedBox());
                               }
                             } else {
-                              if (x == 2 && i == 0 && y == 0) {
-                                finalArray.add(Container(
-                                  color: Colors.black,
-                                  height: (MediaQuery.of(context).size.height -
-                                      300),
-                                  child: Carousel(
-                                    autoplay: false,
-                                    dotIncreasedColor:
-                                        Theme.of(context).colorScheme.secondary,
-                                    boxFit: BoxFit.scaleDown,
-                                    dotColor:
-                                        Theme.of(context).colorScheme.primary,
-                                    dotBgColor: Colors.white.withAlpha(480),
-                                    images: this
-                                        .snapshot['details'][x]
-                                        .map((f) =>
-                                            (CachedNetworkImageProvider(f)))
-                                        .toList(),
-                                  ),
-                                ));
+                              if (ind == i && y == 0) {
+                                if (_currentDetailsIndex == 2) {
+                                  print(this.snapshot['details'][x]);
+                                  finalArray.add(Container(
+                                    color: Colors.black,
+                                    height:
+                                        (MediaQuery.of(context).size.height -
+                                            300),
+                                    child: Carousel(
+                                      autoplay: false,
+                                      dotIncreasedColor: Theme.of(context)
+                                          .colorScheme
+                                          .secondary,
+                                      boxFit: BoxFit.scaleDown,
+                                      dotColor:
+                                          Theme.of(context).colorScheme.primary,
+                                      dotBgColor: Colors.white.withAlpha(480),
+                                      images: this
+                                          .snapshot['details'][x]
+                                          .map((f) =>
+                                              (CachedNetworkImageProvider(f)))
+                                          .toList(),
+                                    ),
+                                  ));
+                                }
                               }
                             }
                           }

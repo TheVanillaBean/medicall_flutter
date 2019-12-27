@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:oktoast/oktoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'asset_view.dart';
 
 class QuestionsUploadScreen extends StatefulWidget {
   final data;
@@ -58,10 +60,10 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
 
   Widget buildGridView(index, asset) {
     return Container(
-      child: AssetThumb(
-        asset: asset,
-        height: 300,
-        width: 340,
+      child: AssetView(
+        index,
+        asset,
+        key: UniqueKey(),
       ),
     );
   }
@@ -84,7 +86,6 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
           enableCamera: true,
           cupertinoOptions: CupertinoOptions(takePhotoIcon: 'chat'),
           materialOptions: MaterialOptions(
-              useDetailsView: true,
               actionBarColor:
                   '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
               statusBarColor:
@@ -101,12 +102,12 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
     // message was in flight, we want to discard the reply rather than calling
     // setState to update our non-existent appearance.
     if (!mounted) return;
-    
+
     setState(() {
       images = resultList;
-      if (error == null) _error = 'No Error Dectected';
+      _error = error;
+      showToast(_error);
     });
-    print(_error);
   }
 
   @override
@@ -121,14 +122,9 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
                 Theme.of(context).platform == TargetPlatform.iOS ? 17.0 : 20.0,
           ),
         ),
-        actions: <Widget>[
-          IconButton(
-            onPressed: loadAssets,
-            icon: Icon(Icons.camera_enhance),
-          ),
-        ],
         elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       bottomNavigationBar: FlatButton(
         padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
         color: Theme.of(context).colorScheme.primary,
@@ -160,21 +156,24 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
                   child: Text(
                     widget.data['consult'].uploadQuestions[index]['question'],
                     style: index == 0
-                        ? TextStyle(fontSize: 12, color: Colors.red)
+                        ? TextStyle(fontSize: 14, color: Colors.red)
                         : TextStyle(fontSize: 12),
                   ),
                 ),
                 index != 0
-                    ? Column(
-                        children: <Widget>[
-                          images.length > 0 && (images.length) >= index
-                              ? buildGridView(index, images[index - 1])
-                              : Container(
-                                  child: Image.network(
-                                  widget.data['consult'].uploadQuestions[index]
-                                      ['media'],
-                                ))
-                        ],
+                    ? FlatButton(
+                        onPressed: loadAssets,
+                        child: Column(
+                          children: <Widget>[
+                            images.length > 0 && (images.length) >= index
+                                ? buildGridView(index, images[index - 1])
+                                : Container(
+                                    child: Image.network(
+                                    widget.data['consult']
+                                        .uploadQuestions[index]['media'],
+                                  ))
+                          ],
+                        ),
                       )
                     : SizedBox(
                         height: 0,

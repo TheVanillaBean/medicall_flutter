@@ -26,22 +26,34 @@ class AssetState extends State<AssetView> {
   @override
   void initState() {
     super.initState();
-    _loadImage();
-  }
-
-  void _loadImage() async {
-    byteData = await this._asset.getByteData(quality: 100);
-
-    if (this.mounted) {
-      setState(() {});
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Image.memory(
-        byteData.buffer.asUint8List(),
-        fit: BoxFit.contain,
-      );
+    return FutureBuilder(
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          byteData = snapshot.data;
+          // YOUR CUSTOM CODE GOES HERE
+          return Image.memory(
+            byteData.buffer.asUint8List(),
+            fit: BoxFit.cover,
+          );
+        } else {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Container(
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+            ],
+          );
+        }
+      },
+      future: this._asset.getByteData(quality: 100),
+    );
   }
 }

@@ -237,16 +237,14 @@ class _HistoryScreenState extends State<HistoryScreen>
                         : MediaQuery.of(context).size.height - 50,
                     child: Stack(
                       children: <Widget>[
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: <Widget>[
-                            Expanded(
-                              child: CustomPaint(
-                                foregroundPainter: CurvePainter(),
-                              ),
-                            ),
-                          ],
+                        Container(
+                          height: currentOrientation == Orientation.portrait
+                              ? MediaQuery.of(context).size.height - 80
+                              : MediaQuery.of(context).size.height - 50,
+                          width: MediaQuery.of(context).size.width,
+                          child: CustomPaint(
+                            foregroundPainter: CurvePainter(),
+                          ),
                         ),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -686,9 +684,9 @@ class CurvePainter extends CustomPainter {
     path = Path();
 
     if (currentOrientation == Orientation.portrait) {
-      path.moveTo(size.width * 0.6, size.height * 0.22);
+      path.moveTo(size.width * 0.6, size.height * 0.25);
       path.relativeCubicTo(
-          10, 0, size.width * 0.19, 0, size.width * 0.165, 100);
+          10, 0, size.width * 0.19, 0, size.width * 0.165, 85);
     } else {
       path.moveTo(size.width * 0.57, size.height * 0.15);
       path.relativeCubicTo(10, 0, size.width * 0.16, 0, size.width * 0.18, 55);
@@ -701,8 +699,8 @@ class CurvePainter extends CustomPainter {
 
     path1 = Path();
     if (currentOrientation == Orientation.portrait) {
-      path1.moveTo(size.width * 0.78, size.height / 1.8);
-      path1.relativeCubicTo(0, 60, 0, 110, -60, 120);
+      path1.moveTo(size.width * 0.78, size.height / 1.70);
+      path1.relativeCubicTo(0, 60, 0, 110, -60, 110);
     } else {
       path1.moveTo(size.width * 0.76, size.height / 1.75);
       path1.relativeCubicTo(0, 40, 0, 60, -120, 60);
@@ -716,8 +714,8 @@ class CurvePainter extends CustomPainter {
 
     path2 = Path();
     if (currentOrientation == Orientation.portrait) {
-      path2.moveTo(size.width * 0.36, size.height / 1.33);
-      path2.relativeCubicTo(0, 0, -70, 0, -55, -120);
+      path2.moveTo(size.width * 0.36, size.height / 1.35);
+      path2.relativeCubicTo(0, 0, -70, 0, -55, -110);
     } else {
       path2.moveTo(size.width * 0.41, size.height / 1.36);
       path2.relativeCubicTo(-40, 0, -100, 0, -100, -50);

@@ -31,7 +31,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
   List<PlacesSearchResult> places = [];
   List<String> addresses = [];
   List<String> providers = [];
-  bool isLoading = false;
+  bool isLoading = true;
   var selectedProvider = '';
   var providerTitles = '';
   LatLng bounds = LatLng(41.850033, -87.6500523);
@@ -42,23 +42,15 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
   void initState() {
     super.initState();
     medicallUser = widget.data['user'];
+    _consult = widget.data['consult'];
     getAddresses();
     getConsult();
   }
 
   Future getConsult() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    var perfConsult = jsonDecode(pref.getString('consult'));
-    _consult.consultType = perfConsult["consultType"];
-    _consult.provider = perfConsult["provider"];
-    _consult.providerTitles = perfConsult["providerTitles"];
-
     if (_consult.provider != null && _consult.provider.length > 0) {
       selectedProvider = _consult.provider;
     }
-    _consult.screeningQuestions = perfConsult["screeningQuestions"];
-    _consult.uploadQuestions = perfConsult["uploadQuestions"];
-    _consult.historyQuestions = perfConsult["historyQuestions"];
   }
 
   setConsult() async {
@@ -100,33 +92,28 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
         appBar: AppBar(
           centerTitle: true,
           title: const Text('Select Provider'),
-          actions: <Widget>[
-            isLoading
-                ? IconButton(
-                    icon: Icon(Icons.timer),
-                    onPressed: () {},
-                  )
-                : IconButton(
-                    icon: Icon(Icons.refresh),
-                    onPressed: () {
-                      refresh();
-                    },
-                  ),
-          ],
+          // actions: <Widget>[
+          //   isLoading
+          //       ? IconButton(
+          //           icon: Icon(Icons.timer),
+          //           onPressed: () {},
+          //         )
+          //       : IconButton(
+          //           icon: Icon(Icons.refresh),
+          //           onPressed: () {
+          //             refresh();
+          //           },
+          //         ),
+          // ],
         ),
         bottomNavigationBar: FlatButton(
           padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
           color: Theme.of(context).colorScheme.primary,
-          onPressed: () {
+          onPressed: () async {
             if (selectedProvider.length > 0) {
-              Navigator.pushNamed(
-                context,
-                '/questionsHistory',
-                arguments: {
-                  'user': medicallUser,
-                  'dynamicAdd': _consult.providerTitles
-                },
-              );
+              //await setConsult();
+              Navigator.pushNamed(context, '/consultReview',
+                  arguments: {'consult': _consult, 'user': medicallUser});
             } else {
               _showMessageDialog();
             }
@@ -141,16 +128,15 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
         ),
         body: Column(
           children: <Widget>[
-            Expanded(
-                flex: 1,
-                child: GoogleMap(
-                    onMapCreated: _onMapCreated,
-                    myLocationEnabled: false,
-                    mapType: MapType.hybrid,
-                    markers: Set<Marker>.of(markers.values),
-                    initialCameraPosition: CameraPosition(
-                      target: bounds,
-                    ))),
+            // Expanded(
+            //     flex: 1,
+            //     child: GoogleMap(
+            //         onMapCreated: _onMapCreated,
+            //         myLocationEnabled: false,
+            //         markers: Set<Marker>.of(markers.values),
+            //         initialCameraPosition: CameraPosition(
+            //           target: bounds,
+            //         ))),
             Expanded(
                 flex: 1,
                 child: SingleChildScrollView(
@@ -250,15 +236,17 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
     getNearbyPlaces(center);
   }
 
-  void _onMapCreated(GoogleMapController controller) async {
-    mapController = controller;
-    refresh();
-  }
+  // void _onMapCreated(GoogleMapController controller) async {
+  //   mapController = controller;
+  //   refresh();
+  // }
 
   Future _selectProvider(provider, titles) async {
     selectedProvider = provider;
     providerTitles = titles;
-    await setConsult();
+    _consult.provider = selectedProvider;
+    _consult.providerTitles = providerTitles;
+    //await setConsult();
   }
 
   Future<LatLng> getUserLocation() async {
@@ -277,10 +265,6 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
   }
 
   void getNearbyPlaces(LatLng center) async {
-    setState(() {
-      this.isLoading = true;
-      this.errorMessage = null;
-    });
     var placesList = [];
     double minLat = 9999.9;
     double minLng = 9999.9;
@@ -290,7 +274,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
 
     for (var i = 0; i < addresses.length; i++) {
       placesList.add(await _places.searchByText(addresses[i]));
-      this.isLoading = false;
+
       if (placesList[i].status == 'OK') {
         placesList[i].results.first.types.first = providers[i];
         this.places.add(placesList[i].results.first);
@@ -323,11 +307,14 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
           LatLng latLng_1 = LatLng(minLat, minLng);
           LatLng latLng_2 = LatLng(maxLat, maxLng);
           bound = LatLngBounds(southwest: latLng_1, northeast: latLng_2);
+          CameraUpdate u2 = CameraUpdate.newLatLngBounds(bound, 50);
+          this.mapController.animateCamera(u2);
         });
       }
-      CameraUpdate u2 = CameraUpdate.newLatLngBounds(bound, 50);
-      this.mapController.animateCamera(u2);
     }
+    setState(() {
+      isLoading = false;
+    });
   }
 
   void check(CameraUpdate u, GoogleMapController c) async {

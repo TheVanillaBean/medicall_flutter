@@ -87,13 +87,13 @@ final List<Entry> data = <Entry>[
   Entry('Hairloss', '9 minutes to complete', '\$39', <Entry>[
     Entry(
         'Hairloss',
-        'Most cases of hair loss are hereditary and can be treated with both prescription and non-prescription medications. It takes the providers on Medicall usually 24 hours to make a diagnosis and get you the medications you need at a very low price.',
+        'Most cases of hair loss are hereditary and can be treated with both prescription and non-prescription medications. It takes the providers on Medicall usually 24 hours to make a diagnosis. Medications not included in the consultation fee. However, we offer some of the lowest prices in the nation with 90 day supply of Finasteride/Propecia costing \$12.99 with free shipping.',
         '')
   ]),
-  Entry('Spot', '7 minutes to complete', '\$45', <Entry>[
+  Entry('Spot', '7 minutes to complete', '\$35', <Entry>[
     Entry(
         'Spot',
-        'Most cases of hair loss are hereditary and can be treated with both prescription and non-prescription medications. It takes the providers on Medicall usually 24 hours to make a diagnosis and get you the medications you need at a very low price.',
+        'The provider will evaluate the photographs and information you provide to make a diagnosis within 24 hours. Most spots are not dangerous and do not require treatment. In some cases, such as in the case of skin cancer, the provider may need to see you in person to confirm the diagnosis (e.g. biopsy) or to provide treatment. These are additional services not included in the consultation fee.',
         '')
   ]),
 ];
@@ -174,6 +174,11 @@ class EntryItem extends StatelessWidget {
 
                                   SharedPreferences _thisConsult =
                                       await SharedPreferences.getInstance();
+                                  for (var i = 0; i < data.length; i++) {
+                                    if (data[i].title == root.title) {
+                                      _consult.price = data[i].price;
+                                    }
+                                  }
                                   _consult.consultType = root.title == 'Spot'
                                       ? 'Lesion'
                                       : root.title;
