@@ -8,9 +8,7 @@ import 'package:flutter/painting.dart';
 import 'package:intl/intl.dart';
 
 class HistoryScreen extends StatefulWidget {
-  final data;
-
-  const HistoryScreen({Key key, @required this.data}) : super(key: key);
+  const HistoryScreen({Key key}) : super(key: key);
 
   @override
   _HistoryScreenState createState() => _HistoryScreenState();
@@ -45,7 +43,7 @@ class _HistoryScreenState extends State<HistoryScreen>
     currentOrientation = MediaQuery.of(context).orientation;
     return Scaffold(
       key: _scaffoldKey,
-      resizeToAvoidBottomPadding: false,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         centerTitle: true,
         leading: IconButton(
