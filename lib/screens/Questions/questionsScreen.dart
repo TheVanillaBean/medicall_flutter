@@ -9,6 +9,7 @@ import 'package:Medicall/util/introduction_screen/model/page_view_model.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:oktoast/oktoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'buildQuestions.dart';
@@ -88,7 +89,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
         ['answer'];
     var currentState =
         listKeys[index != 0 ? index - 1 : index]['value'].currentState;
-    
+
     if (formAnswer != null &&
         currentState != null &&
         currentState.value['question0'] != formAnswer) {
@@ -127,6 +128,8 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
           duration: Duration(milliseconds: 200),
           curve: Curves.linear,
         );
+        showToast('Please fill out the required question.',
+            position: ToastPosition(align: Alignment.center));
       }
     }
   }
@@ -199,7 +202,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
               dotsFlex: 1,
               dotsDecorator: DotsDecorator(
                 size: Size(10.0, 10.0),
-                spacing: EdgeInsets.all(5),
+                spacing: EdgeInsets.all(1),
                 color: Colors.grey,
                 activeColor: Theme.of(context).colorScheme.primary,
                 activeSize: Size(22.0, 10.0),

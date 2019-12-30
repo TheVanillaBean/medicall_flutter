@@ -323,86 +323,80 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                     itemBuilder: (context, i) {
                       List<Widget> finalArray = [];
 
-                      for (var x = 0;
-                          x < this.snapshot['details'].length;
-                          x++) {
-                        if (_currentDetailsIndex == x) {
-                          for (var y = 0;
-                              y < this.snapshot['details'][x].length;
-                              y++) {
-                            if (x != 2) {
-                              if (this.snapshot['details'][x][y]['visible'] &&
-                                  this.snapshot['details'][x][y]['options']
-                                      is String) {
-                                finalArray.add(ListTile(
-                                  title: Text(
-                                    this.snapshot['details'][x][y]['question'],
-                                    style: TextStyle(fontSize: 14.0),
-                                  ),
-                                  subtitle: Text(
-                                    this.snapshot['details'][x][y]['answer'],
-                                    style: TextStyle(
-                                        height: 1.2,
-                                        fontWeight: FontWeight.bold,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .secondary),
+                      if (_currentDetailsIndex == i) {
+                        for (var y = 0;
+                            y < this.snapshot['details'][i].length;
+                            y++) {
+                          if (i != 2) {
+                            if (this.snapshot['details'][i][y]['visible'] &&
+                                this.snapshot['details'][i][y]['options']
+                                    is String) {
+                              finalArray.add(ListTile(
+                                title: Text(
+                                  this.snapshot['details'][i][y]['question'],
+                                  style: TextStyle(fontSize: 14.0),
+                                ),
+                                subtitle: Text(
+                                  this.snapshot['details'][i][y]['answer'],
+                                  style: TextStyle(
+                                      height: 1.2,
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary),
+                                ),
+                              ));
+                            } else {
+                              finalArray
+                                  .add(this.snapshot['details'][i][y]['visible']
+                                      ? ListTile(
+                                          title: Text(
+                                            this.snapshot['details'][i][y]
+                                                ['question'],
+                                            style: TextStyle(fontSize: 14.0),
+                                          ),
+                                          subtitle: Text(
+                                            this
+                                                .snapshot['details'][i][y]
+                                                    ['answer']
+                                                .toString()
+                                                .replaceAll(']', '')
+                                                .replaceAll('[', '')
+                                                .replaceAll('null', '')
+                                                .replaceFirst(', ', ''),
+                                            style: TextStyle(
+                                                height: 1.2,
+                                                fontWeight: FontWeight.bold,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .secondary),
+                                          ),
+                                        )
+                                      : SizedBox());
+                            }
+                          } else {
+                            if (ind == i && y == 0) {
+                              if (_currentDetailsIndex == 2) {
+                                //print(this.snapshot['details'][i]);
+                                finalArray.add(Container(
+                                  color: Colors.black,
+                                  height: (MediaQuery.of(context).size.height -
+                                      300),
+                                  child: Carousel(
+                                    autoplay: false,
+                                    dotIncreasedColor:
+                                        Theme.of(context).colorScheme.secondary,
+                                    boxFit: BoxFit.scaleDown,
+                                    dotColor:
+                                        Theme.of(context).colorScheme.primary,
+                                    dotBgColor: Colors.white.withAlpha(480),
+                                    images: this
+                                        .snapshot['details'][i]
+                                        .map((f) =>
+                                            (CachedNetworkImageProvider(f)))
+                                        .toList(),
                                   ),
                                 ));
-                              } else {
-                                finalArray.add(
-                                    this.snapshot['details'][x][y]['visible']
-                                        ? ListTile(
-                                            title: Text(
-                                              this.snapshot['details'][x][y]
-                                                  ['question'],
-                                              style: TextStyle(fontSize: 14.0),
-                                            ),
-                                            subtitle: Text(
-                                              this
-                                                  .snapshot['details'][x][y]
-                                                      ['answer']
-                                                  .toString()
-                                                  .replaceAll(']', '')
-                                                  .replaceAll('[', '')
-                                                  .replaceAll('null', '')
-                                                  .replaceFirst(', ', ''),
-                                              style: TextStyle(
-                                                  height: 1.2,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .secondary),
-                                            ),
-                                          )
-                                        : SizedBox());
-                              }
-                            } else {
-                              if (ind == i && y == 0) {
-                                if (_currentDetailsIndex == 2) {
-                                  print(this.snapshot['details'][x]);
-                                  finalArray.add(Container(
-                                    color: Colors.black,
-                                    height:
-                                        (MediaQuery.of(context).size.height -
-                                            300),
-                                    child: Carousel(
-                                      autoplay: false,
-                                      dotIncreasedColor: Theme.of(context)
-                                          .colorScheme
-                                          .secondary,
-                                      boxFit: BoxFit.scaleDown,
-                                      dotColor:
-                                          Theme.of(context).colorScheme.primary,
-                                      dotBgColor: Colors.white.withAlpha(480),
-                                      images: this
-                                          .snapshot['details'][x]
-                                          .map((f) =>
-                                              (CachedNetworkImageProvider(f)))
-                                          .toList(),
-                                    ),
-                                  ));
-                                }
                               }
                             }
                           }

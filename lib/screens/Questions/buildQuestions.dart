@@ -39,184 +39,207 @@ class _BuildQuestionsState extends State<BuildQuestions> {
               questions['image'] = images;
             }
 
-            returnList.add(SingleChildScrollView(
-                child: Visibility(
-                    visible: questions['visible'],
-                    child: Column(children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            question['question'],
-                          ),
-                        ),
-                      ),
-                      Column(
+            returnList.add(Visibility(
+                visible: questions['visible'],
+                child: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      question['question'],
+                    ),
+                  ),
+                  Container(
+                    alignment: Alignment.topCenter,
+                    height: MediaQuery.of(context).size.height - 180,
+                    padding: EdgeInsets.all(0),
+                    child: FlatButton(
+                      padding: EdgeInsets.all(0),
+                      onPressed: loadAssets,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          FlatButton(
-                            onPressed: loadAssets,
-                            child: Column(
-                              children: <Widget>[
-                                images.length > 0
-                                    ? buildGridView(images)
-                                    : Container(
-                                        child: question['media'].length > 0
-                                            ? Image.network(
-                                                question['media'],
-                                              )
-                                            : Column(
-                                                children: <Widget>[
-                                                  Row(
-                                                    children: <Widget>[
-                                                      Expanded(
-                                                        flex: 1,
-                                                        child: Container(
-                                                          height: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .height /
-                                                              4.5,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            border: Border(
-                                                              left: BorderSide(
-                                                                //                   <--- left side
-                                                                color:
-                                                                    Colors.grey,
-                                                                width: 1.0,
-                                                              ),
-                                                              top: BorderSide(
-                                                                //                    <--- top side
-                                                                color:
-                                                                    Colors.grey,
-                                                                width: 1.0,
-                                                              ),
-                                                            ),
-                                                          ),
+                          images.length > 0
+                              ? buildGridView(images)
+                              : Container(
+                                  child: question['media'].length > 0
+                                      ? Column(
+                                          children: <Widget>[
+                                            Image.network(
+                                              question['media'],
+                                            ),
+                                            Container(
+                                              transform:
+                                                  Matrix4.translationValues(
+                                                      0.0, -37.0, 0.0),
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(60.0),
+                                                child: Container(
+                                                  padding: EdgeInsets.all(15),
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .primary,
+                                                  child: Icon(
+                                                    Icons.camera_alt,
+                                                    size: 40,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        )
+                                      : Column(
+                                          children: <Widget>[
+                                            Row(
+                                              children: <Widget>[
+                                                Expanded(
+                                                  flex: 1,
+                                                  child: Container(
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height /
+                                                            4.2,
+                                                    decoration: BoxDecoration(
+                                                      border: Border(
+                                                        left: BorderSide(
+                                                          //                   <--- left side
+                                                          color: Colors.grey,
+                                                          width: 1.0,
+                                                        ),
+                                                        top: BorderSide(
+                                                          //                    <--- top side
+                                                          color: Colors.grey,
+                                                          width: 1.0,
                                                         ),
                                                       ),
-                                                      Expanded(
-                                                        flex: 1,
-                                                        child: Container(
-                                                          height: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .height /
-                                                              4.5,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            border: Border(
-                                                              right: BorderSide(
-                                                                //                   <--- left side
-                                                                color:
-                                                                    Colors.grey,
-                                                                width: 1.0,
-                                                              ),
-                                                              left: BorderSide(
-                                                                //                   <--- left side
-                                                                color:
-                                                                    Colors.grey,
-                                                                width: 1.0,
-                                                              ),
-                                                              top: BorderSide(
-                                                                //                    <--- top side
-                                                                color:
-                                                                    Colors.grey,
-                                                                width: 1.0,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      )
-                                                    ],
+                                                    ),
                                                   ),
-                                                  Row(
-                                                    children: <Widget>[
-                                                      Expanded(
-                                                        flex: 1,
-                                                        child: Container(
-                                                          height: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .height /
-                                                              4.5,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            border: Border(
-                                                              left: BorderSide(
-                                                                //                   <--- left side
-                                                                color:
-                                                                    Colors.grey,
-                                                                width: 1.0,
-                                                              ),
-                                                              top: BorderSide(
-                                                                //                    <--- top side
-                                                                color:
-                                                                    Colors.grey,
-                                                                width: 1.0,
-                                                              ),
-                                                              bottom:
-                                                                  BorderSide(
-                                                                //                    <--- top side
-                                                                color:
-                                                                    Colors.grey,
-                                                                width: 1.0,
-                                                              ),
-                                                            ),
-                                                          ),
+                                                ),
+                                                Expanded(
+                                                  flex: 1,
+                                                  child: Container(
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height /
+                                                            4.2,
+                                                    decoration: BoxDecoration(
+                                                      border: Border(
+                                                        right: BorderSide(
+                                                          //                   <--- left side
+                                                          color: Colors.grey,
+                                                          width: 1.0,
+                                                        ),
+                                                        left: BorderSide(
+                                                          //                   <--- left side
+                                                          color: Colors.grey,
+                                                          width: 1.0,
+                                                        ),
+                                                        top: BorderSide(
+                                                          //                    <--- top side
+                                                          color: Colors.grey,
+                                                          width: 1.0,
                                                         ),
                                                       ),
-                                                      Expanded(
-                                                        flex: 1,
-                                                        child: Container(
-                                                          height: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .height /
-                                                              4.5,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            border: Border(
-                                                              right: BorderSide(
-                                                                //                   <--- left side
-                                                                color:
-                                                                    Colors.grey,
-                                                                width: 1.0,
-                                                              ),
-                                                              left: BorderSide(
-                                                                //                   <--- left side
-                                                                color:
-                                                                    Colors.grey,
-                                                                width: 1.0,
-                                                              ),
-                                                              top: BorderSide(
-                                                                //                    <--- top side
-                                                                color:
-                                                                    Colors.grey,
-                                                                width: 1.0,
-                                                              ),
-                                                              bottom:
-                                                                  BorderSide(
-                                                                //                    <--- top side
-                                                                color:
-                                                                    Colors.grey,
-                                                                width: 1.0,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      )
-                                                    ],
+                                                    ),
                                                   ),
-                                                ],
-                                              ))
-                              ],
-                            ),
-                          ),
+                                                )
+                                              ],
+                                            ),
+                                            Row(
+                                              children: <Widget>[
+                                                Expanded(
+                                                  flex: 1,
+                                                  child: Container(
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height /
+                                                            4.2,
+                                                    decoration: BoxDecoration(
+                                                      border: Border(
+                                                        left: BorderSide(
+                                                          //                   <--- left side
+                                                          color: Colors.grey,
+                                                          width: 1.0,
+                                                        ),
+                                                        top: BorderSide(
+                                                          //                    <--- top side
+                                                          color: Colors.grey,
+                                                          width: 1.0,
+                                                        ),
+                                                        bottom: BorderSide(
+                                                          //                    <--- top side
+                                                          color: Colors.grey,
+                                                          width: 1.0,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  flex: 1,
+                                                  child: Container(
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height /
+                                                            4.2,
+                                                    decoration: BoxDecoration(
+                                                      border: Border(
+                                                        right: BorderSide(
+                                                          //                   <--- left side
+                                                          color: Colors.grey,
+                                                          width: 1.0,
+                                                        ),
+                                                        left: BorderSide(
+                                                          //                   <--- left side
+                                                          color: Colors.grey,
+                                                          width: 1.0,
+                                                        ),
+                                                        top: BorderSide(
+                                                          //                    <--- top side
+                                                          color: Colors.grey,
+                                                          width: 1.0,
+                                                        ),
+                                                        bottom: BorderSide(
+                                                          //                    <--- top side
+                                                          color: Colors.grey,
+                                                          width: 1.0,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                            Container(
+                                              transform:
+                                                  Matrix4.translationValues(
+                                                      0.0, -37.0, 0.0),
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(60.0),
+                                                child: Container(
+                                                  padding: EdgeInsets.all(15),
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .primary,
+                                                  child: Icon(
+                                                    Icons.camera_alt,
+                                                    size: 40,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ))
                         ],
                       ),
-                    ]))));
+                    ),
+                  ),
+                ])));
           } else {
             if (index == null) {
               String type = questions['type'];
@@ -553,6 +576,21 @@ class _BuildQuestionsState extends State<BuildQuestions> {
       ));
     }
 
+    returnList.add(Container(
+      transform: Matrix4.translationValues(0.0, -37.0, 0.0),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(60.0),
+        child: Container(
+          padding: EdgeInsets.all(15),
+          color: Theme.of(context).colorScheme.primary,
+          child: Icon(
+            Icons.camera_alt,
+            size: 40,
+          ),
+        ),
+      ),
+    ));
+
     return Column(
       children: returnList,
     );
@@ -574,6 +612,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
               statusBarColor:
                   '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
               lightStatusBar: false,
+              autoCloseOnSelectionLimit: true,
               startInAllView: true,
               actionBarTitle: 'Select Images',
               allViewTitle: 'All Photos'));
