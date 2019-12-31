@@ -14,22 +14,25 @@ class SocialSignInButton extends CustomRaisedButton {
   })  : assert(imgPath != null),
         assert(text != null),
         super(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Image.asset(imgPath),
-              Text(
-                text,
-                style: TextStyle(
-                  color: textColor,
-                  fontSize: 15.0,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Image.asset(imgPath),
+                Text(
+                  text,
+                  style: TextStyle(
+                    color: textColor,
+                    fontSize: 15.0,
+                  ),
                 ),
-              ),
-              Opacity(
-                opacity: 0,
-                child: Image.asset(imgPath),
-              ),
-            ],
+                Opacity(
+                  opacity: 0,
+                  child: Image.asset(imgPath),
+                ),
+              ],
+            ),
           ),
           color: color,
           onPressed: onPressed,

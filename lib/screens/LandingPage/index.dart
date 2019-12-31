@@ -1,4 +1,5 @@
 import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/screens/Auth/index.dart';
 import 'package:Medicall/screens/History/index.dart';
 import 'package:Medicall/screens/Login/index.dart';
 import 'package:Medicall/services/auth.dart';
@@ -15,7 +16,9 @@ class LandingPage extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.active) {
           MedicallUser user = snapshot.data;
           if (user == null) {
-            return LoginPage();
+            return LoginPage.create(context);
+          } else if (user.phoneNumber == null) {
+            return AuthScreen();
           }
           return HistoryScreen();
         } else {
@@ -23,6 +26,7 @@ class LandingPage extends StatelessWidget {
             body: Center(
               child: CircularProgressIndicator(),
             ),
+            backgroundColor: Colors.blue,
           );
         }
       },

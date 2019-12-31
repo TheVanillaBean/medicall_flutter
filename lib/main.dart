@@ -122,7 +122,7 @@ class _MedicallAppState extends State<MedicallApp> {
             switch (settings.name) {
               case '/login':
                 return MyCustomRoute(
-                  builder: (_) => LoginPage(),
+                  builder: (_) => LoginPage.create(context),
                   settings: settings,
                 );
               case '/verification':
@@ -223,7 +223,7 @@ class _MedicallAppState extends State<MedicallApp> {
                 );
             }
             return MyCustomRoute(
-              builder: (_) => LoginPage(),
+              builder: (_) => LoginPage.create(context),
               settings: settings,
             );
           },
