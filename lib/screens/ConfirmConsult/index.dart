@@ -427,10 +427,11 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
       if (!allFileNames.contains(assets[i].name)) {
         allFileNames.add(assets[i].name);
       } else {
-        assets[i].name = assets[i].name.split('.')[0] +
+        allFileNames.add(assets[i].name.split('.')[0] +
             '_' +
-            i.toString() + '.' +
-            assets[i].name.split('.')[1];
+            i.toString() +
+            '.' +
+            assets[i].name.split('.')[1]);
       }
     }
     for (var i = 0; i < assets.length; i++) {
@@ -441,7 +442,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
           '/' +
           consultId +
           "/" +
-          assets[i].name);
+          allFileNames[i]);
       StorageUploadTask uploadTask = ref.putData(imageData);
 
       allMediaList

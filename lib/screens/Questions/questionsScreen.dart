@@ -142,6 +142,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
       bodyTextStyle: bodyStyle,
       descriptionPadding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
       pageColor: Colors.white,
+      contentPadding: EdgeInsets.zero,
       imagePadding: EdgeInsets.zero,
     );
 

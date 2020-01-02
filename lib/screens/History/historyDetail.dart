@@ -180,11 +180,15 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  snapshot != null && from == 'consults'
+                  snapshot != null &&
+                          from == 'consults' &&
+                          snapshot['type'] != 'Lesion'
                       ? snapshot['type'] + ' Consult'
-                      : snapshot != null && from == 'patients'
-                          ? snapshot['patient']
-                          : '',
+                      : snapshot != null && snapshot['type'] == 'Lesion'
+                          ? 'Spot Consult'
+                          : snapshot != null && from == 'patients'
+                              ? snapshot['patient']
+                              : '',
                   style: TextStyle(
                     fontSize: Theme.of(context).platform == TargetPlatform.iOS
                         ? 17.0
@@ -269,37 +273,36 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
       if (questions.length > 0) {
         return Scaffold(
           bottomNavigationBar: Container(
-              padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
               child: Container(
-                padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
-                decoration: BoxDecoration(
-                  border: Border(
-                      top: BorderSide(color: Colors.grey[300], width: 1)),
+            padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+            decoration: BoxDecoration(
+              border:
+                  Border(top: BorderSide(color: Colors.grey[300], width: 1)),
+            ),
+            child: BottomNavigationBar(
+              onTap: _handleDetailsTabSelection,
+              elevation: 40.0,
+              backgroundColor: Colors.transparent,
+              unselectedItemColor: Colors.grey[500],
+              selectedItemColor: Theme.of(context).colorScheme.secondary,
+              currentIndex:
+                  _currentDetailsIndex, // this will be set when a new tab is tapped
+              items: [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.assignment_ind),
+                  title: Text('History'),
                 ),
-                child: BottomNavigationBar(
-                  onTap: _handleDetailsTabSelection,
-                  elevation: 40.0,
-                  backgroundColor: Colors.transparent,
-                  unselectedItemColor: Colors.grey[500],
-                  selectedItemColor: Theme.of(context).colorScheme.secondary,
-                  currentIndex:
-                      _currentDetailsIndex, // this will be set when a new tab is tapped
-                  items: [
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.assignment_ind),
-                      title: Text('History'),
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.local_pharmacy),
-                      title: Text('Symptom'),
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.perm_media),
-                      title: Text('Pictures'),
-                    )
-                  ],
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.local_pharmacy),
+                  title: Text('Symptom'),
                 ),
-              )),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.perm_media),
+                  title: Text('Pictures'),
+                )
+              ],
+            ),
+          )),
           body: Container(
             child: questions[0].toString().contains('https')
                 ? Container(
@@ -381,11 +384,11 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                                     .snapshot['details'][i]
                                     .map((f) => (CachedNetworkImageProvider(f)))
                                     .toList();
-                                print(this.snapshot['details'][i]);
+                                //print(this.snapshot['details'][i]);
                                 finalArray.add(Container(
                                   color: Colors.black,
                                   height: (MediaQuery.of(context).size.height -
-                                      300),
+                                      220),
                                   child: Carousel(
                                     autoplay: false,
                                     dotIncreasedColor:
@@ -433,13 +436,15 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                               child: FormBuilderTextField(
                                 initialValue: snapshot['consult'].length > 0
                                     ? snapshot['consult']
-                                    : 'This is where your presciption will show up.',
+                                    : 'This is where your presciption will show up. If a doctor prescribes something, you will be notified and asked here for their payment and shipment address.',
                                 attribute: 'docInput',
                                 maxLines: 10,
                                 readOnly: true,
                                 decoration: InputDecoration(
-                                  fillColor: Color.fromRGBO(35, 179, 232, 0.1),
-                                  filled: false,
+                                  fillColor: snapshot['prescription'].length > 0
+                                      ? Colors.green.withAlpha(30)
+                                      : Colors.grey.withAlpha(50),
+                                  filled: true,
                                   border: OutlineInputBorder(
                                     borderSide: BorderSide(
                                         color: Colors.grey, width: 5.0),
@@ -450,150 +455,169 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                                 ],
                               ),
                             ),
-                            Container(
-                              padding: EdgeInsets.fromLTRB(0, 10, 20, 10),
-                              child: FormBuilderCheckboxList(
-                                leadingInput: true,
-                                attribute: 'shipTo',
-                                validators: [
-                                  FormBuilderValidators.required(),
-                                ],
-                                decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    disabledBorder: InputBorder.none,
-                                    enabledBorder: InputBorder.none,
-                                    focusedBorder: InputBorder.none,
-                                    contentPadding:
-                                        EdgeInsets.fromLTRB(0, 10, 0, 10)),
-                                onChanged: null,
-                                options: [
-                                  FormBuilderFieldOption(
-                                    value: 'pickup',
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: <Widget>[
-                                        Text(
-                                          'Local pharmacy pickup',
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                          ),
-                                          softWrap: true,
+                            snapshot['prescription'].length > 0
+                                ? Column(
+                                    children: <Widget>[
+                                      Container(
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 10, 20, 10),
+                                        child: FormBuilderCheckboxList(
+                                          leadingInput: true,
+                                          attribute: 'shipTo',
+                                          validators: [
+                                            FormBuilderValidators.required(),
+                                          ],
+                                          decoration: InputDecoration(
+                                              border: InputBorder.none,
+                                              disabledBorder: InputBorder.none,
+                                              enabledBorder: InputBorder.none,
+                                              focusedBorder: InputBorder.none,
+                                              contentPadding:
+                                                  EdgeInsets.fromLTRB(
+                                                      0, 10, 0, 10)),
+                                          onChanged: null,
+                                          options: [
+                                            FormBuilderFieldOption(
+                                              value: 'pickup',
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: <Widget>[
+                                                  Text(
+                                                    'Local pharmacy pickup',
+                                                    style: TextStyle(
+                                                      fontSize: 16,
+                                                    ),
+                                                    softWrap: true,
+                                                  ),
+                                                  Text(
+                                                    '\$80',
+                                                    style:
+                                                        TextStyle(fontSize: 21),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            FormBuilderFieldOption(
+                                              value: 'delivery',
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: <Widget>[
+                                                  Text(
+                                                    'Ship directly to my door.',
+                                                    style: TextStyle(
+                                                      fontSize: 16,
+                                                    ),
+                                                    softWrap: true,
+                                                  ),
+                                                  Text(
+                                                    '\$60',
+                                                    style:
+                                                        TextStyle(fontSize: 21),
+                                                  ),
+                                                ],
+                                              ),
+                                            )
+                                          ],
                                         ),
-                                        Text(
-                                          '\$80',
-                                          style: TextStyle(fontSize: 21),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  FormBuilderFieldOption(
-                                    value: 'delivery',
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: <Widget>[
-                                        Text(
-                                          'Ship directly to my door.',
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                          ),
-                                          softWrap: true,
-                                        ),
-                                        Text(
-                                          '\$60',
-                                          style: TextStyle(fontSize: 21),
-                                        ),
-                                      ],
-                                    ),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                            top: 10, bottom: 10),
+                                        child: Text(
+                                            'Please enter the address below where you want your prescription sent.'),
+                                      ),
+                                      FormBuilderTextField(
+                                        attribute: "Address",
+                                        initialValue: medicallUser.address,
+                                        decoration: InputDecoration(
+                                            labelText: 'Street Address',
+                                            fillColor: Color.fromRGBO(
+                                                35, 179, 232, 0.1),
+                                            filled: true,
+                                            disabledBorder: InputBorder.none,
+                                            enabledBorder: InputBorder.none,
+                                            border: InputBorder.none),
+                                        validators: [
+                                          FormBuilderValidators.required(),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      FormBuilderTextField(
+                                        attribute: "City",
+                                        decoration: InputDecoration(
+                                            labelText: 'City',
+                                            fillColor: Color.fromRGBO(
+                                                35, 179, 232, 0.1),
+                                            filled: true,
+                                            disabledBorder: InputBorder.none,
+                                            enabledBorder: InputBorder.none,
+                                            border: InputBorder.none),
+                                        validators: [
+                                          FormBuilderValidators.required(),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      FormBuilderTextField(
+                                        attribute: "State",
+                                        decoration: InputDecoration(
+                                            labelText: 'State',
+                                            fillColor: Color.fromRGBO(
+                                                35, 179, 232, 0.1),
+                                            filled: true,
+                                            disabledBorder: InputBorder.none,
+                                            enabledBorder: InputBorder.none,
+                                            border: InputBorder.none),
+                                        validators: [
+                                          FormBuilderValidators.required(),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 70,
+                                      )
+                                    ],
                                   )
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 10, bottom: 10),
-                              child: Text(
-                                  'Please enter the address below where you want your prescription sent.'),
-                            ),
-                            FormBuilderTextField(
-                              attribute: "Address",
-                              initialValue: medicallUser.address,
-                              decoration: InputDecoration(
-                                  labelText: 'Street Address',
-                                  fillColor: Color.fromRGBO(35, 179, 232, 0.1),
-                                  filled: true,
-                                  disabledBorder: InputBorder.none,
-                                  enabledBorder: InputBorder.none,
-                                  border: InputBorder.none),
-                              validators: [
-                                FormBuilderValidators.required(),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            FormBuilderTextField(
-                              attribute: "City",
-                              decoration: InputDecoration(
-                                  labelText: 'City',
-                                  fillColor: Color.fromRGBO(35, 179, 232, 0.1),
-                                  filled: true,
-                                  disabledBorder: InputBorder.none,
-                                  enabledBorder: InputBorder.none,
-                                  border: InputBorder.none),
-                              validators: [
-                                FormBuilderValidators.required(),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            FormBuilderTextField(
-                              attribute: "State",
-                              decoration: InputDecoration(
-                                  labelText: 'State',
-                                  fillColor: Color.fromRGBO(35, 179, 232, 0.1),
-                                  filled: true,
-                                  disabledBorder: InputBorder.none,
-                                  enabledBorder: InputBorder.none,
-                                  border: InputBorder.none),
-                              validators: [
-                                FormBuilderValidators.required(),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 70,
-                            )
+                                : SizedBox()
                           ],
                         ),
                       ))),
               bottomSheet: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Expanded(
-                      child: Container(
-                    decoration: BoxDecoration(
-                        border: Border(
-                            top: BorderSide(
-                                color: Colors.grey,
-                                width: 1,
-                                style: BorderStyle.solid))),
-                    child: FlatButton(
-                      padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
-                      color: Theme.of(context).colorScheme.secondary,
-                      onPressed: () {},
-                      child: Text(
-                        'Pay for Presciption',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Theme.of(context).colorScheme.onBackground,
-                          letterSpacing: 1.0,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ))
+                  snapshot['prescription'].length > 0
+                      ? Expanded(
+                          child: Container(
+                          decoration: BoxDecoration(
+                              border: Border(
+                                  top: BorderSide(
+                                      color: Colors.grey,
+                                      width: 1,
+                                      style: BorderStyle.solid))),
+                          child: FlatButton(
+                            padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
+                            color: Theme.of(context).colorScheme.secondary,
+                            onPressed: () {},
+                            child: Text(
+                              'Pay for Presciption',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 18,
+                                color:
+                                    Theme.of(context).colorScheme.onBackground,
+                                letterSpacing: 1.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ))
+                      : SizedBox()
                 ],
               ));
         } else {

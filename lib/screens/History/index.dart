@@ -908,8 +908,7 @@ class CustomSearchDelegate extends SearchDelegate {
                 } else {
                   return Center(
                     heightFactor: 35,
-                    child: Text("You have no doctor consult history yet.",
-                        textAlign: TextAlign.center),
+                    child: CircularProgressIndicator(),
                   );
                 }
               }),
