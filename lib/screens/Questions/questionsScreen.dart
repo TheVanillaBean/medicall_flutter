@@ -102,7 +102,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
                     : "Continue to " + _consult.consultType + ' treatment'),
                 onPressed: () {
                   GlobalNavigatorKey.key.currentState.pop();
-                  GlobalNavigatorKey.key.currentState.pushNamed(
+                  GlobalNavigatorKey.key.currentState.pushReplacementNamed(
                       '/questionsScreen',
                       arguments: {'user': medicallUser, 'consult': _consult});
                 },
