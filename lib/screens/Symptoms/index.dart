@@ -11,14 +11,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 var screenSize;
 
-class DoctorsScreen extends StatefulWidget {
+class SymptomsScreen extends StatefulWidget {
   final data;
-  DoctorsScreen({Key key, @required this.data}) : super(key: key);
+  SymptomsScreen({Key key, @required this.data}) : super(key: key);
 
-  _DoctorsScreenState createState() => _DoctorsScreenState();
+  _SymptomsScreenState createState() => _SymptomsScreenState();
 }
 
-class _DoctorsScreenState extends State<DoctorsScreen> {
+class _SymptomsScreenState extends State<SymptomsScreen> {
   //ConsultData _consult;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   @override

@@ -5,7 +5,7 @@ import 'package:Medicall/screens/Account/paymentDetail.dart';
 import 'package:Medicall/screens/Chat/index.dart';
 import 'package:Medicall/screens/ConfirmConsult/index.dart';
 import 'package:Medicall/screens/Consent/index.dart';
-import 'package:Medicall/screens/Doctors/index.dart';
+import 'package:Medicall/screens/Symptoms/index.dart';
 import 'package:Medicall/screens/History/historyDetail.dart';
 import 'package:Medicall/screens/History/index.dart';
 import 'package:Medicall/screens/Home/index.dart';
@@ -170,7 +170,7 @@ class _MedicallAppState extends State<MedicallApp> {
               );
             case '/doctors':
               return MyCustomRoute(
-                builder: (_) => DoctorsScreen(data: settings.arguments),
+                builder: (_) => SymptomsScreen(data: settings.arguments),
                 settings: settings,
               );
             case '/questionsScreening':
