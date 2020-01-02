@@ -436,7 +436,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                               child: FormBuilderTextField(
                                 initialValue: snapshot['consult'].length > 0
                                     ? snapshot['consult']
-                                    : 'This is where your presciption will show up. If a doctor prescribes something, you will be notified and asked here for their payment and shipment address.',
+                                    : 'This is where your presciption will show up. If a doctor prescribes something, you will be notified and asked here for payment and shipment address.',
                                 attribute: 'docInput',
                                 maxLines: 10,
                                 readOnly: true,
@@ -644,7 +644,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                               child: FormBuilderTextField(
                                 initialValue: snapshot['consult'].length > 0
                                     ? snapshot['consult']
-                                    : 'This is where your presciption will show up.',
+                                    : 'This is where you can provide a prescription to your patient.',
                                 attribute: 'docInput',
                                 maxLines: 10,
                                 readOnly: true,

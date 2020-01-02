@@ -12,21 +12,22 @@ class AccountScreen extends StatefulWidget {
 }
 
 class _AccountScreenState extends State<AccountScreen> {
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  final _scaffoldKey1 = GlobalKey<ScaffoldState>();
   @override
   void initState() {
     super.initState();
     medicallUser = widget.data['user'];
   }
+
   @override
   Widget build(BuildContext context) => Scaffold(
         //App Bar
-        key: _scaffoldKey,
+        key: _scaffoldKey1,
         appBar: AppBar(
           centerTitle: true,
           leading: IconButton(
             onPressed: () {
-              _scaffoldKey.currentState.openDrawer();
+              _scaffoldKey1.currentState.openDrawer();
             },
             icon: Icon(Icons.home),
           ),

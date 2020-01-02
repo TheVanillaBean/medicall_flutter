@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/consult_data_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:simple_animations/simple_animations.dart';
 
 var screenSize;
 
@@ -98,125 +100,193 @@ final List<Entry> data = <Entry>[
   ]),
 ];
 
+class AnimatedBackground extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final tween = MultiTrackTween([
+      Track("color1").add(
+          Duration(seconds: 3),
+          ColorTween(
+              begin: Colors.lightBlue[100],
+              end: Colors.lightBlue.shade50.withAlpha(20))),
+      Track("color2").add(
+          Duration(seconds: 3),
+          ColorTween(
+              begin: Colors.lightBlue[50].withAlpha(20),
+              end: Colors.lightBlue.shade100))
+    ]);
+
+    return ControlledAnimation(
+      playback: Playback.MIRROR,
+      tween: tween,
+      duration: tween.duration,
+      builder: (context, animation) {
+        return Container(
+          margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+          padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [animation["color1"], animation["color2"]])),
+        );
+      },
+    );
+  }
+}
+
 class EntryItem extends StatelessWidget {
   const EntryItem(this.entry);
   final Entry entry;
   static ConsultData _consult;
 
-  Widget _buildTiles(Entry root) {
-    return Container(
-        margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
-        padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-        decoration: root.children.isEmpty
-            ? BoxDecoration(
-                border: Border.all(color: Colors.transparent),
-              )
-            : BoxDecoration(
-                border: Border.all(
-                  color: Colors.blueAccent.withAlpha(150),
-                ),
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-              ),
-        child: ClipRRect(
-          clipBehavior: Clip.antiAlias,
-          borderRadius: BorderRadius.circular(10),
-          child: Theme(
-            data: ThemeData(
-              dividerColor: Colors.transparent,
-              splashColor: Colors.transparent,
-              highlightColor: Colors.transparent,
-            ),
-            child: ExpansionTile(
-              backgroundColor: root.children.isEmpty
-                  ? Colors.transparent
-                  : Colors.blue.withAlpha(15),
-              trailing: Padding(
-                padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                child: Text(
-                  root.price,
-                  style: TextStyle(fontSize: 24),
-                ),
-              ),
-              key: PageStorageKey<Entry>(root),
-              children: root.children.map<Widget>(_buildTiles).toList(),
-              title: Container(
-                padding: root.children.isEmpty
-                    ? EdgeInsets.fromLTRB(0, 0, 0, 0)
-                    : EdgeInsets.fromLTRB(0, 20, 0, 20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    root.children.isEmpty ? SizedBox() : Text(root.title),
-                    root.children.isEmpty
-                        ? Container(
-                            padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
-                            child: Text(
-                              root.subtitle,
-                              style: TextStyle(
-                                fontSize: 12,
-                              ),
-                            ),
-                          )
-                        : Text(
-                            root.subtitle,
-                            style: TextStyle(
-                              fontSize: 12,
-                            ),
-                          ),
-                    root.children.isEmpty
-                        ? Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: <Widget>[
-                              RaisedButton(
-                                onPressed: () async {
-                                  _consult = ConsultData();
+  onBottom(Widget child) => Positioned.fill(
+        child: Align(
+          alignment: Alignment.bottomCenter,
+          child: child,
+        ),
+      );
 
-                                  SharedPreferences _thisConsult =
-                                      await SharedPreferences.getInstance();
-                                  for (var i = 0; i < data.length; i++) {
-                                    if (data[i].title == root.title) {
-                                      _consult.price = data[i].price;
-                                    }
-                                  }
-                                  _consult.consultType = root.title == 'Spot'
-                                      ? 'Lesion'
-                                      : root.title;
-                                  var consultQuestions = await Firestore
-                                      .instance
-                                      .document(
-                                          'services/dermatology/symptoms/' +
-                                              _consult.consultType
-                                                  .toLowerCase())
-                                      .get();
-                                  _consult.screeningQuestions = consultQuestions
-                                      .data["screening_questions"];
-                                  _consult.historyQuestions = consultQuestions
-                                      .data["medical_history_questions"];
-                                  _consult.uploadQuestions =
-                                      consultQuestions.data["upload_questions"];
-                                  String currentConsultString =
-                                      jsonEncode(_consult);
-                                  await _thisConsult.setString(
-                                      "consult", currentConsultString);
-                                  GlobalNavigatorKey.key.currentState.push(
-                                    MaterialPageRoute(
-                                        builder: (_) => QuestionsScreen(
-                                              data: _consult,
-                                            )),
-                                  );
-                                },
-                                child: Text('Start'),
+  Widget _buildTiles(Entry root) {
+    return Stack(
+      children: <Widget>[
+        root.price.length > 0
+            ? Positioned.fill(child: AnimatedBackground())
+            : SizedBox(),
+        onBottom(AnimatedWave(
+          height: 180,
+          speed: 0.6,
+        )),
+        onBottom(AnimatedWave(
+          height: 120,
+          speed: 0.9,
+          offset: pi,
+        )),
+        onBottom(AnimatedWave(
+          height: 220,
+          speed: 0.3,
+          offset: pi / 2,
+        )),
+        Container(
+            margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+            decoration: root.children.isEmpty
+                ? BoxDecoration(
+                    border: Border.all(color: Colors.transparent),
+                  )
+                : BoxDecoration(
+                    border: Border.all(
+                      color: Colors.blueAccent.withAlpha(150),
+                    ),
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+            child: ClipRRect(
+              clipBehavior: Clip.antiAlias,
+              borderRadius: BorderRadius.circular(10),
+              child: Theme(
+                data: ThemeData(
+                  dividerColor: Colors.transparent,
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                ),
+                child: ExpansionTile(
+                  backgroundColor: root.children.isEmpty
+                      ? Colors.transparent
+                      : Colors.blue.withAlpha(15),
+                  trailing: Padding(
+                    padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                    child: Text(
+                      root.price,
+                      style: TextStyle(fontSize: 24),
+                    ),
+                  ),
+                  key: PageStorageKey<Entry>(root),
+                  children: root.children.map<Widget>(_buildTiles).toList(),
+                  title: Container(
+                    padding: root.children.isEmpty
+                        ? EdgeInsets.fromLTRB(0, 0, 0, 0)
+                        : EdgeInsets.fromLTRB(0, 20, 0, 20),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        root.children.isEmpty ? SizedBox() : Text(root.title),
+                        root.children.isEmpty
+                            ? Container(
+                                padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
+                                child: Text(
+                                  root.subtitle,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                  ),
+                                ),
                               )
-                            ],
-                          )
-                        : SizedBox(),
-                  ],
+                            : Text(
+                                root.subtitle,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                ),
+                              ),
+                        root.children.isEmpty
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: <Widget>[
+                                  RaisedButton(
+                                    onPressed: () async {
+                                      _consult = ConsultData();
+
+                                      SharedPreferences _thisConsult =
+                                          await SharedPreferences.getInstance();
+                                      for (var i = 0; i < data.length; i++) {
+                                        if (data[i].title == root.title) {
+                                          _consult.price = data[i].price;
+                                        }
+                                      }
+                                      _consult.consultType =
+                                          root.title == 'Spot'
+                                              ? 'Lesion'
+                                              : root.title;
+                                      var consultQuestions = await Firestore
+                                          .instance
+                                          .document(
+                                              'services/dermatology/symptoms/' +
+                                                  _consult.consultType
+                                                      .toLowerCase())
+                                          .get();
+                                      _consult.screeningQuestions =
+                                          consultQuestions
+                                              .data["screening_questions"];
+                                      _consult.historyQuestions =
+                                          consultQuestions.data[
+                                              "medical_history_questions"];
+                                      _consult.uploadQuestions =
+                                          consultQuestions
+                                              .data["upload_questions"];
+                                      String currentConsultString =
+                                          jsonEncode(_consult);
+                                      await _thisConsult.setString(
+                                          "consult", currentConsultString);
+                                      GlobalNavigatorKey.key.currentState.push(
+                                        MaterialPageRoute(
+                                            builder: (_) => QuestionsScreen(
+                                                  data: _consult,
+                                                )),
+                                      );
+                                    },
+                                    child: Text('Start'),
+                                  )
+                                ],
+                              )
+                            : SizedBox(),
+                      ],
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
-        ));
+            ))
+      ],
+    );
   }
 
   @override
@@ -225,5 +295,65 @@ class EntryItem extends StatelessWidget {
       padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
       child: _buildTiles(entry),
     );
+  }
+}
+
+class AnimatedWave extends StatelessWidget {
+  final double height;
+  final double speed;
+  final double offset;
+
+  AnimatedWave({this.height, this.speed, this.offset = 0.0});
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(builder: (context, constraints) {
+      return Container(
+        height: height,
+        width: constraints.biggest.width,
+        child: ControlledAnimation(
+            playback: Playback.LOOP,
+            duration: Duration(milliseconds: (5000 / speed).round()),
+            tween: Tween(begin: 0.0, end: 2 * pi),
+            builder: (context, value) {
+              return CustomPaint(
+                foregroundPainter: CurvePainter(value + offset),
+              );
+            }),
+      );
+    });
+  }
+}
+
+class CurvePainter extends CustomPainter {
+  final double value;
+
+  CurvePainter(this.value);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final white = Paint()..color = Colors.white.withAlpha(60);
+    final path = Path();
+
+    final y1 = sin(value);
+    final y2 = sin(value + pi / 2);
+    final y3 = sin(value + pi);
+
+    final startPointY = size.height * (0.5 + 0.4 * y1);
+    final controlPointY = size.height * (0.5 + 0.4 * y2);
+    final endPointY = size.height * (0.5 + 0.4 * y3);
+
+    path.moveTo(size.width * 0, startPointY);
+    path.quadraticBezierTo(
+        size.width * 0.5, controlPointY, size.width, endPointY);
+    path.lineTo(size.width, size.height);
+    path.lineTo(0, size.height);
+    path.close();
+    canvas.drawPath(path, white);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return true;
   }
 }
