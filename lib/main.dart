@@ -173,7 +173,7 @@ class _MedicallAppState extends State<MedicallApp> {
                 builder: (_) => SymptomsScreen(data: settings.arguments),
                 settings: settings,
               );
-            case '/questionsScreening':
+            case '/questionsScreen':
               return MyCustomRoute(
                 builder: (_) => QuestionsScreen(data: settings.arguments),
                 settings: settings,

@@ -50,10 +50,18 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
         _consult.screeningQuestions = onValue["screeningQuestions"];
         _consult.historyQuestions = onValue["historyQuestions"];
         _consult.uploadQuestions = onValue["uploadQuestions"];
-        combinedList = [
-          ..._consult.screeningQuestions,
-          ..._consult.uploadQuestions
-        ];
+        if (medicallUser.hasMedicalHistory) {
+          combinedList = [
+            ..._consult.screeningQuestions,
+            ..._consult.uploadQuestions
+          ];
+        } else {
+          widget.data['consult'].consultType = "Medical History";
+          combinedList = [
+            ..._consult.historyQuestions,
+          ];
+        }
+
         for (var i = 0; i < combinedList.length; i++) {
           globalKeyList['questionKey' + i.toString()] = GlobalKey();
         }
@@ -75,9 +83,15 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
 
   Future<void> _onIntroEnd(context) async {
     //await setConsult(context);
-
-    GlobalNavigatorKey.key.currentState.pushNamed('/selectProvider',
-        arguments: {'user': medicallUser, 'consult': _consult});
+    if (widget.data['consult'].consultType == 'Medical History') {
+      medicallUser.hasMedicalHistory = true;
+      GlobalNavigatorKey.key.currentState.pushNamed('/questionsScreen',
+          arguments: {'user': medicallUser, 'consult': _consult});
+    } else {
+      widget.data['consult'].consultType = _consult.consultType;
+      GlobalNavigatorKey.key.currentState.pushNamed('/selectProvider',
+          arguments: {'user': medicallUser, 'consult': _consult});
+    }
   }
 
   void _checkQuestion(index, context) {
@@ -174,9 +188,9 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
           icon: Icon(Icons.close),
           onPressed: () => Navigator.pop(context, false),
         ),
-        title: Text(widget.data.consultType == 'Lesion'
+        title: Text(widget.data['consult'].consultType == 'Lesion'
             ? 'Spot'
-            : widget.data.consultType),
+            : widget.data['consult'].consultType),
       ),
       body: pageViewList.length > 0
           ? IntroductionScreen(

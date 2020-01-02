@@ -94,6 +94,7 @@ class _LoginScreenState extends State<LoginPage>
         medicallUser.type = datasnapshot.data['type'];
         medicallUser.email = datasnapshot.data['email'];
         medicallUser.phoneNumber = datasnapshot.data['phone'];
+        medicallUser.hasMedicalHistory = false;
       } else {
         if (firebaseUser.displayName != null) {
           medicallUser.displayName = firebaseUser.displayName;
@@ -104,6 +105,7 @@ class _LoginScreenState extends State<LoginPage>
         medicallUser.policy = false;
         medicallUser.consent = false;
         medicallUser.terms = false;
+        medicallUser.hasMedicalHistory = false;
         medicallUser.email = firebaseUser.email;
         medicallUser.phoneNumber = firebaseUser.phoneNumber;
         Map<String, dynamic> data = <String, dynamic>{

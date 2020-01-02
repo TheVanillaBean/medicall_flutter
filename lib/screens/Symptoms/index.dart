@@ -23,6 +23,7 @@ class SymptomsScreen extends StatefulWidget {
 class _SymptomsScreenState extends State<SymptomsScreen> {
   //ConsultData _consult;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   void initState() {
     super.initState();
@@ -32,6 +33,37 @@ class _SymptomsScreenState extends State<SymptomsScreen> {
   @override
   Widget build(BuildContext context) {
     screenSize = MediaQuery.of(context).size;
+
+    void _showDialog(ConsultData _consult) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          // return object of type Dialog
+          return AlertDialog(
+            title: Text("Your Medical History"),
+            content: Text(
+                "We noticed you have no medical history filled out, tap below to fillout the information needed and we will save it to your account for future use."),
+            actions: <Widget>[
+              // usually buttons at the bottom of the dialog
+              FlatButton(
+                color: Theme.of(context).colorScheme.primary,
+                child: Text("My Medical History"),
+                onPressed: () {
+                  GlobalNavigatorKey.key.currentState.pop();
+                  GlobalNavigatorKey.key.currentState.push(
+                    MaterialPageRoute(
+                        builder: (_) => QuestionsScreen(
+                              data: {'user': medicallUser, 'consult': _consult},
+                            )),
+                  );
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -68,7 +100,7 @@ class _SymptomsScreenState extends State<SymptomsScreen> {
       //Content of tabs
       body: ListView.builder(
         itemBuilder: (BuildContext context, int index) =>
-            EntryItem(data[index]),
+            EntryItem(data[index], _showDialog),
         itemCount: data.length,
       ),
     );
@@ -137,9 +169,10 @@ class AnimatedBackground extends StatelessWidget {
 }
 
 class EntryItem extends StatelessWidget {
-  const EntryItem(this.entry);
+  const EntryItem(this.entry, this._showDialog);
   final Entry entry;
   static ConsultData _consult;
+  final _showDialog;
 
   onBottom(Widget child) => Positioned.fill(
         child: Align(
@@ -267,12 +300,36 @@ class EntryItem extends StatelessWidget {
                                           jsonEncode(_consult);
                                       await _thisConsult.setString(
                                           "consult", currentConsultString);
-                                      GlobalNavigatorKey.key.currentState.push(
-                                        MaterialPageRoute(
-                                            builder: (_) => QuestionsScreen(
-                                                  data: _consult,
-                                                )),
-                                      );
+                                      // for (var i = 0;
+                                      //     i < _consult.historyQuestions.length;
+                                      //     i++) {
+                                      //   if (_consult
+                                      //           .historyQuestions[i]['answer']
+                                      //           .length ==
+                                      //       0) {
+                                      //     GlobalNavigatorKey.key.currentState
+                                      //         .push(
+                                      //       MaterialPageRoute(
+                                      //           builder: (_) => QuestionsScreen(
+                                      //                 data: _consult,
+                                      //               )),
+                                      //     );
+                                      //   }
+                                      // }
+                                      if (!medicallUser.hasMedicalHistory) {
+                                        _showDialog(_consult);
+                                      } else {
+                                        GlobalNavigatorKey.key.currentState
+                                            .push(
+                                          MaterialPageRoute(
+                                              builder: (_) => QuestionsScreen(
+                                                    data: {
+                                                      'user': medicallUser,
+                                                      'consult': _consult
+                                                    },
+                                                  )),
+                                        );
+                                      }
                                     },
                                     child: Text('Start'),
                                   )
@@ -293,7 +350,9 @@ class EntryItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-      child: _buildTiles(entry),
+      child: _buildTiles(
+        entry,
+      ),
     );
   }
 }
