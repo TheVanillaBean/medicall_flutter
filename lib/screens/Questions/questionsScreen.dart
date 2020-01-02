@@ -85,8 +85,32 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
     //await setConsult(context);
     if (widget.data['consult'].consultType == 'Medical History') {
       medicallUser.hasMedicalHistory = true;
-      GlobalNavigatorKey.key.currentState.pushNamed('/questionsScreen',
-          arguments: {'user': medicallUser, 'consult': _consult});
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          // return object of type Dialog
+          return AlertDialog(
+            title: Text("Medical History Complete"),
+            content: Text(
+                "Thank you for filling out your account medical history, this is now saved to your account, it will only need to be updated if you have changes in your medical history."),
+            actions: <Widget>[
+              // usually buttons at the bottom of the dialog
+              FlatButton(
+                color: Theme.of(context).colorScheme.primary,
+                child: Text("Continue to " + _consult.consultType == 'Lesion'
+                    ? 'Spot'
+                    : "Continue to " + _consult.consultType + ' treatment'),
+                onPressed: () {
+                  GlobalNavigatorKey.key.currentState.pop();
+                  GlobalNavigatorKey.key.currentState.pushNamed(
+                      '/questionsScreen',
+                      arguments: {'user': medicallUser, 'consult': _consult});
+                },
+              ),
+            ],
+          );
+        },
+      );
     } else {
       widget.data['consult'].consultType = _consult.consultType;
       GlobalNavigatorKey.key.currentState.pushNamed('/selectProvider',
