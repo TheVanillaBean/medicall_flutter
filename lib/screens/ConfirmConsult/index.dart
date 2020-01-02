@@ -121,7 +121,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                       top: BorderSide(
                           color: Theme.of(context).colorScheme.primary,
                           width: hasReviewed ? 2 : 0))),
-              height: hasReviewed ? 250 : 56,
+              height: hasReviewed ? 280 : 56,
               child: hasReviewed
                   ? Stack(
                       fit: StackFit.expand,
@@ -339,27 +339,25 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: <Widget>[
                         Expanded(
-                            child: SafeArea(
-                          child: OutlineButton(
-                            borderSide: BorderSide(
-                                color: Theme.of(context).colorScheme.primary,
-                                style: BorderStyle.solid,
-                                width: 2),
-                            padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
-                            color: Theme.of(context).colorScheme.background,
-                            onPressed: () async {
-                              setState(() {
-                                hasReviewed = true;
-                                //isLoading = true;
-                              });
-                            },
-                            child: Text(
-                              'REVIEW ORDER',
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.secondary,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 1.2,
-                              ),
+                            child: OutlineButton(
+                          borderSide: BorderSide(
+                              color: Theme.of(context).colorScheme.primary,
+                              style: BorderStyle.solid,
+                              width: 2),
+                          padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
+                          color: Theme.of(context).colorScheme.background,
+                          onPressed: () async {
+                            setState(() {
+                              hasReviewed = true;
+                              //isLoading = true;
+                            });
+                          },
+                          child: Text(
+                            'REVIEW ORDER',
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.secondary,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.2,
                             ),
                           ),
                         ))
@@ -424,6 +422,17 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
 
   Future saveImages(assets, consultId) async {
     var allMediaList = [];
+    var allFileNames = [];
+    for (var i = 0; i < assets.length; i++) {
+      if (!allFileNames.contains(assets[i].name)) {
+        allFileNames.add(assets[i].name);
+      } else {
+        assets[i].name = assets[i].name.split('.')[0] +
+            '_' +
+            i.toString() + '.' +
+            assets[i].name.split('.')[1];
+      }
+    }
     for (var i = 0; i < assets.length; i++) {
       ByteData byteData = await assets[i].requestOriginal();
       List<int> imageData = byteData.buffer.asUint8List();

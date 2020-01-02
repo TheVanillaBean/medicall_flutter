@@ -375,9 +375,13 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                                       : SizedBox());
                             }
                           } else {
-                            if (ind == i && y == 0) {
+                            if (ind == i && y == 0 && i == 2) {
                               if (_currentDetailsIndex == 2) {
-                                //print(this.snapshot['details'][i]);
+                                List<dynamic> thisList = this
+                                    .snapshot['details'][i]
+                                    .map((f) => (CachedNetworkImageProvider(f)))
+                                    .toList();
+                                print(this.snapshot['details'][i]);
                                 finalArray.add(Container(
                                   color: Colors.black,
                                   height: (MediaQuery.of(context).size.height -
@@ -390,11 +394,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                                     dotColor:
                                         Theme.of(context).colorScheme.primary,
                                     dotBgColor: Colors.white.withAlpha(480),
-                                    images: this
-                                        .snapshot['details'][i]
-                                        .map((f) =>
-                                            (CachedNetworkImageProvider(f)))
-                                        .toList(),
+                                    images: thisList,
                                   ),
                                 ));
                               }

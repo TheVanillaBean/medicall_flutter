@@ -87,3 +87,6 @@ android/key.properties
 android/app/release/app.aab
 lib/secrets.dart
 ios/Flutter/flutter_export_environment.sh
+ios/Flutter/Flutter.podspec
+ios/Runner.xcodeproj/project.pbxproj
+ios/Runner.xcodeproj/project.pbxproj
