@@ -388,7 +388,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                                 finalArray.add(Container(
                                   color: Colors.black,
                                   height: (MediaQuery.of(context).size.height -
-                                      220),
+                                      245),
                                   child: Carousel(
                                     autoplay: false,
                                     dotIncreasedColor:

@@ -52,7 +52,7 @@ class _HistoryScreenState extends State<HistoryScreen>
           onPressed: () {
             _scaffoldKey.currentState.openDrawer();
           },
-          icon: Icon(Icons.menu),
+          icon: Icon(Icons.home),
         ),
         title: TabBar(
           tabs: [
@@ -134,8 +134,7 @@ class _HistoryScreenState extends State<HistoryScreen>
                 if (!snapshot.hasData) {
                   return Center(
                     heightFactor: 35,
-                    child: Text("You have no doctor consult history yet.",
-                        textAlign: TextAlign.center),
+                    child: CircularProgressIndicator(),
                   );
                 }
                 if (snapshot.data.documents.length > 0) {
