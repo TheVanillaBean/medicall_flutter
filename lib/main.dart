@@ -210,7 +210,7 @@ class _MedicallAppState extends State<MedicallApp> {
               );
             case '/account':
               return MyCustomRoute(
-                builder: (_) => AccountScreen(),
+                builder: (_) => AccountScreen(data: settings.arguments),
                 settings: settings,
               );
             case '/paymentDetail':

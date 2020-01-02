@@ -37,7 +37,7 @@ class _SymptomsScreenState extends State<SymptomsScreen> {
           onPressed: () {
             _scaffoldKey.currentState.openDrawer();
           },
-          icon: Icon(Icons.menu),
+          icon: Icon(Icons.home),
         ),
         centerTitle: true,
         title: Text(
