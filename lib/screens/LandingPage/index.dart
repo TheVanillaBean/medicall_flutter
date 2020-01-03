@@ -1,7 +1,7 @@
 import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:Medicall/screens/Auth/index.dart';
 import 'package:Medicall/screens/History/index.dart';
 import 'package:Medicall/screens/Login/index.dart';
+import 'package:Medicall/screens/PhoneAuth/index.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -26,7 +26,7 @@ class LandingPage extends StatelessWidget {
             body: Center(
               child: CircularProgressIndicator(),
             ),
-            backgroundColor: Colors.blue,
+            backgroundColor: Colors.lightBlueAccent,
           );
         }
       },

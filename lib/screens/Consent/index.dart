@@ -1,4 +1,4 @@
-import 'package:Medicall/screens/Auth/index.dart';
+import 'package:Medicall/screens/PhoneAuth/index.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 

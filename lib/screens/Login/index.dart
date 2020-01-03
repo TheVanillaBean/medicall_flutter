@@ -33,8 +33,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginPage> {
-  static const REQUESTED_ROUTE = 'requestedRoute';
-
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final FocusNode _emailFocusNode = FocusNode();
@@ -73,12 +71,10 @@ class _LoginScreenState extends State<LoginPage> {
     try {
       await model.signInWithGoogle();
     } on PlatformException catch (e) {
-      if (e.code != 'ERROR_ABORTED_BY_USER') {
-        PlatformExceptionAlertDialog(
-          title: 'Sign in failed',
-          exception: e,
-        ).show(context);
-      }
+      PlatformExceptionAlertDialog(
+        title: 'Sign in failed',
+        exception: e,
+      ).show(context);
     }
   }
 
@@ -95,98 +91,6 @@ class _LoginScreenState extends State<LoginPage> {
         : _emailFocusNode;
     FocusScope.of(context).requestFocus(newFocus);
   }
-
-//  Future<void> _getUser() async {
-//    final DocumentReference documentReference =
-//        Firestore.instance.collection("users").document(firebaseUser.uid);
-//    await documentReference.get().then((datasnapshot) {
-//      if (datasnapshot.data != null) {
-//        medicallUser.uid = firebaseUser.uid;
-//        medicallUser.displayName = datasnapshot.data['name'];
-//        medicallUser.firstName = datasnapshot.data['first_name'];
-//        medicallUser.lastName = datasnapshot.data['last_name'];
-//        medicallUser.dob = datasnapshot.data['dob'];
-//        medicallUser.policy = datasnapshot.data['policy'];
-//        medicallUser.consent = datasnapshot.data['consent'];
-//        medicallUser.terms = datasnapshot.data['terms'];
-//        medicallUser.type = datasnapshot.data['type'];
-//        medicallUser.email = datasnapshot.data['email'];
-//        medicallUser.phoneNumber = datasnapshot.data['phone'];
-//      } else {
-//        if (firebaseUser.displayName != null) {
-//          medicallUser.displayName = firebaseUser.displayName;
-//          medicallUser.firstName = firebaseUser.displayName.split(' ')[0];
-//          medicallUser.lastName = firebaseUser.displayName.split(' ')[1];
-//        }
-//        medicallUser.uid = firebaseUser.uid;
-//        medicallUser.policy = false;
-//        medicallUser.consent = false;
-//        medicallUser.terms = false;
-//        medicallUser.email = firebaseUser.email;
-//        medicallUser.phoneNumber = firebaseUser.phoneNumber;
-//        Map<String, dynamic> data = <String, dynamic>{
-//          "name": firebaseUser.displayName,
-//          "first_name": firebaseUser.displayName.split(' ')[0],
-//          "last_name": firebaseUser.displayName.split(' ')[1],
-//          "email": firebaseUser.email,
-//          "phone": firebaseUser.phoneNumber,
-//          "dob": null,
-//          "policy": false,
-//          "consent": false,
-//          "terms": false,
-//          "type": null,
-//          "dev_tokens": medicallUser.devTokens,
-//        };
-//        documentReference.setData(data).whenComplete(() {
-//          print("Document Added");
-//        }).catchError((e) => print(e));
-//      }
-//    }).catchError((e) => print(e));
-//  }
-
-//  Future moveUserDashboardScreen(FirebaseUser currentUser) async {
-//    if (currentUser == null) {
-//      Navigator.of(context).push(CupertinoPageRoute(
-//        builder: (context) => RegistrationTypeScreen(
-//          data: {"user": medicallUser},
-//        ),
-//      ));
-//    } else {
-//      firebaseUser = currentUser;
-//      await _getUser();
-//      final SharedPreferences prefs = await _prefs;
-//      await _requestedRoute.then((onValue) {
-//        _passwordController.clear();
-//        if (onValue != null && onValue != "") {
-//          String newValue = onValue
-//              .replaceAll("[", "")
-//              .replaceAll("]", "")
-//              .replaceAll(RegExp(r"/\s/g"), "")
-//              .trim();
-//          List<String> finalValue = newValue.split(",");
-//          finalValue[1] = finalValue[1].trim();
-//          Navigator.pushReplacementNamed(context, '/' + finalValue[0],
-//              arguments: {
-//                'user': medicallUser,
-//                'documentId': finalValue[1],
-//                'isRouted': true,
-//              });
-//          prefs.setString("requestedRoute", "").then((bool success) {
-//            print('shared pref success');
-//          });
-//          return;
-//        }
-//        if (currentUser.phoneNumber != null) {
-//          Navigator.pushReplacementNamed(context, '/history',
-//              arguments: {'user': medicallUser});
-//        } else {
-//          Navigator.of(context).push(MaterialPageRoute(
-//            builder: (context) => AuthScreen(),
-//          ));
-//        }
-//      });
-//    }
-//  }
 
   @override
   Widget build(BuildContext context) {
@@ -263,8 +167,11 @@ class _LoginScreenState extends State<LoginPage> {
 
   Widget _buildHeader(BuildContext context) {
     if (model.isLoading) {
-      return Center(
-        child: CircularProgressIndicator(),
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 16.0),
+        child: Center(
+          child: CircularProgressIndicator(),
+        ),
       );
     }
     return Row(

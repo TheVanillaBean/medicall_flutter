@@ -22,7 +22,11 @@ class Auth implements AuthBase {
     if (user == null) {
       return null;
     }
-    return MedicallUser(uid: user.uid);
+    return MedicallUser(
+      uid: user.uid,
+      phoneNumber: user.phoneNumber,
+      email: user.email,
+    );
   }
 
   @override
@@ -85,7 +89,7 @@ class Auth implements AuthBase {
     } else {
       throw PlatformException(
         code: 'ERROR_ABORTED_BY_USER',
-        message: 'Sign in aborted by user',
+        message: 'Sign in canceled by user',
       );
     }
   }
