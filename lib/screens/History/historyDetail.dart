@@ -13,16 +13,22 @@ class HistoryDetailScreen extends StatefulWidget {
   _HistoryDetailScreenState createState() => _HistoryDetailScreenState();
 }
 
+bool isDone = false;
+
 class _HistoryDetailScreenState extends State<HistoryDetailScreen>
     with SingleTickerProviderStateMixin {
   GlobalKey<FormBuilderState> _consultFormKey = GlobalKey();
   TabController controller;
   int _currentIndex = 0;
   int _currentDetailsIndex = 0;
+  Choice _selectedChoice;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool isLoading = true;
-  bool isDone = false;
+
   bool isConsultOpen = false;
+  bool addedImages = false;
+  bool addedQuestions = false;
+  MedicallUser patientDetail;
   String documentId;
   String from;
 
@@ -44,9 +50,15 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
     });
   }
 
-  void _handleDetailsTabSelection(int index) {
+  _handleDetailsTabSelection(int index) {
     setState(() {
-      _currentDetailsIndex = index;
+      this._currentDetailsIndex = index;
+      if (index == 1) {
+        addedImages = false;
+      } else {
+        addedQuestions = false;
+        //_currentDetailsIndex = 1;
+      }
     });
   }
 
@@ -64,6 +76,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
       if (datasnapshot.data != null) {
         setState(() {
           snapshot = datasnapshot.data;
+          _getPatientDetail(snapshot['patient_id']);
           this.snapshot['details'] = [
             snapshot['medical_history_questions'],
             snapshot['screening_questions'],
@@ -80,6 +93,23 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
     }).catchError((e) => print(e));
   }
 
+  Future<void> _getPatientDetail(uid) async {
+    final DocumentReference documentReference =
+        Firestore.instance.collection('users').document(uid);
+    await documentReference.get().then((datasnapshot) {
+      if (datasnapshot.data != null) {
+        setState(() {
+          patientDetail = MedicallUser(
+              address: datasnapshot.data['address'],
+              displayName: datasnapshot.data['name'],
+              dob: datasnapshot.data['dob'],
+              gender: datasnapshot.data['gender'],
+              phoneNumber: datasnapshot.data['phone']);
+        });
+      }
+    }).catchError((e) => print(e));
+  }
+
   // Future<void> _updateConsult() async {
   //   final DocumentReference documentReference =
   //       Firestore.instance.collection('consults').document(documentId);
@@ -90,86 +120,104 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
   //     print("Document Added");
   //   }).catchError((e) => print(e));
   // }
+  void _select(Choice choice) {
+    // Causes the app to rebuild with the new _selectedChoice.
+    setState(() {
+      _selectedChoice = choice;
+      final DocumentReference documentReference =
+          Firestore.instance.collection('consults').document(documentId);
+      documentReference.get().then((snap) {
+        if (snap.documentID == documentId &&
+            snap.data['provider_id'] == medicallUser.id) {
+          Map<String, dynamic> consultStateData;
+          if (_selectedChoice.title == 'Done') {
+            _selectedChoice.icon = Icon(Icons.check_box, color: Colors.green);
+            consultStateData = {'state': 'done'};
+          } else {
+            _selectedChoice.icon = Icon(
+              Icons.check_box_outline_blank,
+              color: Colors.blue,
+            );
+            consultStateData = {'state': 'in progress'};
+          }
+          // if (snap.data['state'] == 'done') {
+          //   consultStateData = {'state': 'in progress'};
+          // }
+          Navigator.pop(context);
+          documentReference.updateData(consultStateData).whenComplete(() {
+            setState(() {
+              if (consultStateData['state'] == 'done') {
+                isDone = true;
+                if (_currentIndex != 0) {
+                  Future.delayed(const Duration(milliseconds: 100), () {
+                    controller.index = 0;
+                  });
+                }
+              } else {
+                isDone = false;
+                if (_currentIndex != 0) {
+                  Future.delayed(const Duration(milliseconds: 100), () {
+                    controller.index = 0;
+                  });
+                } else {
+                  //controller.index = 3;
+                  Future.delayed(const Duration(milliseconds: 500), () {
+                    controller.index = 0;
+                  });
+                }
+              }
+            });
+            print("Document Added");
+          }).catchError((e) => print(e));
+        }
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    List<Choice> choices = <Choice>[
+      Choice(
+          title: 'Done',
+          icon: isDone
+              ? Icon(Icons.check_box, color: Colors.green)
+              : Icon(
+                  Icons.check_box_outline_blank,
+                  color: Colors.blue,
+                )),
+      Choice(
+          title: 'Active',
+          icon: !isDone
+              ? Icon(Icons.check_box, color: Colors.green)
+              : Icon(
+                  Icons.check_box_outline_blank,
+                  color: Colors.blue,
+                )),
+    ];
+
+    // The app's "state".
+
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
         actions: <Widget>[
-          Container(
-            padding: EdgeInsets.fromLTRB(0, 5, 10, 0),
-            width: 40,
-            child: medicallUser.type == 'provider' && from != 'consults'
-                ? GestureDetector(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        snapshot != null && isDone
-                            ? Icon(Icons.assignment_turned_in)
-                            : Icon(Icons.check_box_outline_blank),
-                        Text(
-                          'Done',
-                          style: TextStyle(fontSize: 10),
-                        )
-                      ],
+          PopupMenuButton<Choice>(
+            onSelected: _select,
+            initialValue: _selectedChoice,
+            itemBuilder: (BuildContext context) {
+              return choices.map((Choice choice) {
+                return PopupMenuItem<Choice>(
+                  value: choice,
+                  child: Container(
+                    height: 70,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[Text(choice.title), choice.icon],
                     ),
-                    onTap: () {
-                      final DocumentReference documentReference = Firestore
-                          .instance
-                          .collection('consults')
-                          .document(documentId);
-                      documentReference.get().then((snap) {
-                        if (snap.documentID == documentId &&
-                            snap.data['provider_id'] == medicallUser.id) {
-                          Map<String, dynamic> consultStateData = {
-                            'state': 'done'
-                          };
-                          if (snap.data['state'] == 'done') {
-                            consultStateData = {'state': 'in progress'};
-                          }
-
-                          documentReference
-                              .updateData(consultStateData)
-                              .whenComplete(() {
-                            setState(() {
-                              if (consultStateData['state'] == 'done') {
-                                isDone = true;
-                                if (_currentIndex != 0) {
-                                  Future.delayed(
-                                      const Duration(milliseconds: 100), () {
-                                    controller.index = 0;
-                                  });
-                                } else {
-                                  Navigator.pop(context);
-                                }
-                              } else {
-                                isDone = false;
-                                if (_currentIndex != 0) {
-                                  Future.delayed(
-                                      const Duration(milliseconds: 100), () {
-                                    controller.index = 0;
-                                  });
-                                } else {
-                                  controller.index = 3;
-                                  Future.delayed(
-                                      const Duration(milliseconds: 500), () {
-                                    controller.index = 0;
-                                  });
-                                }
-                              }
-                            });
-                            print("Document Added");
-                          }).catchError((e) => print(e));
-                        }
-                      });
-                    },
-                  )
-                : FlatButton(
-                    onPressed: () {},
-                    child: Text(''),
                   ),
+                );
+              }).toList();
+            },
           ),
         ],
         title: Row(
@@ -184,10 +232,12 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                           from == 'consults' &&
                           snapshot['type'] != 'Lesion'
                       ? snapshot['type'] + ' Consult'
-                      : snapshot != null && snapshot['type'] == 'Lesion'
+                      : snapshot != null &&
+                              snapshot['type'] == 'Lesion' &&
+                              medicallUser.type == 'patient'
                           ? 'Spot Consult'
                           : snapshot != null && from == 'patients'
-                              ? snapshot['patient']
+                              ? '${snapshot['patient'].split(" ")[0][0].toUpperCase()}${snapshot['patient'].split(" ")[0].substring(1)} ${snapshot['patient'].split(" ")[1][0].toUpperCase()}${snapshot['patient'].split(" ")[1].substring(1)} '
                               : '',
                   style: TextStyle(
                     fontSize: Theme.of(context).platform == TargetPlatform.iOS
@@ -224,21 +274,33 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
           indicatorWeight: 3,
           labelStyle: TextStyle(fontSize: 12),
           tabs: <Tab>[
-            Tab(
-              // set icon to the tab
-              text: 'Prescription',
-              icon: Icon(Icons.local_hospital),
-            ),
+            medicallUser.type == 'patient'
+                ? Tab(
+                    // set icon to the tab
+                    text: 'Prescription',
+                    icon: Icon(Icons.local_hospital),
+                  )
+                : Tab(
+                    // set icon to the tab
+                    text: 'Details',
+                    icon: Icon(Icons.assignment),
+                  ),
             Tab(
               // set icon to the tab
               text: 'Chat',
               icon: Icon(Icons.chat_bubble_outline),
             ),
-            Tab(
-              // set icon to the tab
-              text: 'Details',
-              icon: Icon(Icons.assignment),
-            ),
+            medicallUser.type == 'patient'
+                ? Tab(
+                    // set icon to the tab
+                    text: 'Details',
+                    icon: Icon(Icons.assignment),
+                  )
+                : Tab(
+                    // set icon to the tab
+                    text: 'Prescription',
+                    icon: Icon(Icons.local_hospital),
+                  ),
           ],
           // setup the controller
           controller: controller,
@@ -256,11 +318,17 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
       body: snapshot != null
           ? TabBarView(
               // Add tabs as widgets
-              children: <Widget>[
-                _buildTab(snapshot['prescription'], 0),
-                _buildTab(snapshot['chat'], 1),
-                _buildTab(snapshot['details'], 2),
-              ],
+              children: medicallUser.type == 'patient'
+                  ? <Widget>[
+                      _buildTab(snapshot['prescription'], 0),
+                      _buildTab(snapshot['chat'], 1),
+                      _buildTab(snapshot['details'], 2),
+                    ]
+                  : <Widget>[
+                      _buildTab(snapshot['details'], 0),
+                      _buildTab(snapshot['chat'], 1),
+                      _buildTab(snapshot['prescription'], 2),
+                    ],
               // set the controller
               controller: controller,
             )
@@ -287,20 +355,31 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
               selectedItemColor: Theme.of(context).colorScheme.secondary,
               currentIndex:
                   _currentDetailsIndex, // this will be set when a new tab is tapped
-              items: [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.assignment_ind),
-                  title: Text('History'),
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.local_pharmacy),
-                  title: Text('Symptom'),
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.perm_media),
-                  title: Text('Pictures'),
-                )
-              ],
+              items: medicallUser.type == 'patient'
+                  ? [
+                      BottomNavigationBarItem(
+                        icon: Icon(Icons.assignment_ind),
+                        title: Text('History'),
+                      ),
+                      BottomNavigationBarItem(
+                        icon: Icon(Icons.local_pharmacy),
+                        title: Text('Symptom'),
+                      ),
+                      BottomNavigationBarItem(
+                        icon: Icon(Icons.perm_media),
+                        title: Text('Pictures'),
+                      )
+                    ]
+                  : [
+                      BottomNavigationBarItem(
+                        icon: Icon(Icons.assignment_ind),
+                        title: Text('Medical Note'),
+                      ),
+                      BottomNavigationBarItem(
+                        icon: Icon(Icons.perm_media),
+                        title: Text('Pictures'),
+                      )
+                    ],
             ),
           )),
           body: Container(
@@ -325,86 +404,181 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                         : 3,
                     itemBuilder: (context, i) {
                       List<Widget> finalArray = [];
-
-                      if (_currentDetailsIndex == i) {
-                        for (var y = 0;
-                            y < this.snapshot['details'][i].length;
-                            y++) {
-                          if (i != 2) {
-                            if (this.snapshot['details'][i][y]['visible'] &&
-                                this.snapshot['details'][i][y]['options']
-                                    is String) {
-                              finalArray.add(ListTile(
-                                title: Text(
-                                  this.snapshot['details'][i][y]['question'],
-                                  style: TextStyle(fontSize: 14.0),
-                                ),
-                                subtitle: Text(
-                                  this.snapshot['details'][i][y]['answer'],
-                                  style: TextStyle(
-                                      height: 1.2,
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondary),
-                                ),
-                              ));
-                            } else {
-                              finalArray
-                                  .add(this.snapshot['details'][i][y]['visible']
-                                      ? ListTile(
-                                          title: Text(
-                                            this.snapshot['details'][i][y]
-                                                ['question'],
-                                            style: TextStyle(fontSize: 14.0),
-                                          ),
-                                          subtitle: Text(
-                                            this
-                                                .snapshot['details'][i][y]
-                                                    ['answer']
-                                                .toString()
-                                                .replaceAll(']', '')
-                                                .replaceAll('[', '')
-                                                .replaceAll('null', '')
-                                                .replaceFirst(', ', ''),
-                                            style: TextStyle(
-                                                height: 1.2,
-                                                fontWeight: FontWeight.bold,
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .secondary),
-                                          ),
-                                        )
-                                      : SizedBox());
-                            }
-                          } else {
-                            if (ind == i && y == 0 && i == 2) {
-                              if (_currentDetailsIndex == 2) {
-                                List<dynamic> thisList = this
-                                    .snapshot['details'][i]
-                                    .map((f) => (CachedNetworkImageProvider(f)))
-                                    .toList();
-                                //print(this.snapshot['details'][i]);
-                                finalArray.add(Container(
-                                  color: Colors.black,
-                                  height: (MediaQuery.of(context).size.height -
-                                      245),
-                                  child: Carousel(
-                                    autoplay: false,
-                                    dotIncreasedColor:
-                                        Theme.of(context).colorScheme.secondary,
-                                    boxFit: BoxFit.scaleDown,
-                                    dotColor:
-                                        Theme.of(context).colorScheme.primary,
-                                    dotBgColor: Colors.white.withAlpha(480),
-                                    images: thisList,
+                      if (medicallUser.type == 'patient') {
+                        if (_currentDetailsIndex == i) {
+                          for (var y = 0;
+                              y < this.snapshot['details'][i].length;
+                              y++) {
+                            if (i != 2) {
+                              if (this.snapshot['details'][i][y]['visible'] &&
+                                  this.snapshot['details'][i][y]['options']
+                                      is String) {
+                                finalArray.add(ListTile(
+                                  title: Text(
+                                    this.snapshot['details'][i][y]['question'],
+                                    style: TextStyle(fontSize: 14.0),
+                                  ),
+                                  subtitle: Text(
+                                    this.snapshot['details'][i][y]['answer'],
+                                    style: TextStyle(
+                                        height: 1.2,
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary),
                                   ),
                                 ));
+                              } else {
+                                finalArray.add(
+                                    this.snapshot['details'][i][y]['visible']
+                                        ? ListTile(
+                                            title: Text(
+                                              this.snapshot['details'][i][y]
+                                                  ['question'],
+                                              style: TextStyle(fontSize: 14.0),
+                                            ),
+                                            subtitle: Text(
+                                              this
+                                                  .snapshot['details'][i][y]
+                                                      ['answer']
+                                                  .toString()
+                                                  .replaceAll(']', '')
+                                                  .replaceAll('[', '')
+                                                  .replaceAll('null', '')
+                                                  .replaceFirst(', ', ''),
+                                              style: TextStyle(
+                                                  height: 1.2,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .secondary),
+                                            ),
+                                          )
+                                        : SizedBox());
+                              }
+                            } else {
+                              if (ind == i && y == 0 && i == 2) {
+                                if (_currentDetailsIndex == 2) {
+                                  List<dynamic> thisList = this
+                                      .snapshot['details'][i]
+                                      .map((f) =>
+                                          (CachedNetworkImageProvider(f)))
+                                      .toList();
+                                  //print(this.snapshot['details'][i]);
+                                  finalArray.add(Container(
+                                    color: Colors.black,
+                                    height:
+                                        (MediaQuery.of(context).size.height -
+                                            245),
+                                    child: Carousel(
+                                      autoplay: false,
+                                      dotIncreasedColor: Theme.of(context)
+                                          .colorScheme
+                                          .secondary,
+                                      boxFit: BoxFit.scaleDown,
+                                      dotColor:
+                                          Theme.of(context).colorScheme.primary,
+                                      dotBgColor: Colors.white.withAlpha(480),
+                                      images: thisList,
+                                    ),
+                                  ));
+                                }
                               }
                             }
                           }
                         }
+                      } else {
+                        if (i == 0 && _currentDetailsIndex == 0) {
+                          finalArray.add(ListTile(
+                            title: Text(
+                              'CC: ' + this.snapshot['type'],
+                              style: TextStyle(fontSize: 14.0),
+                            ),
+                          ));
+                          finalArray.add(ListTile(
+                            title: Text(
+                              'HPI: ' +
+                                  (DateTime.now().year -
+                                          int.parse(this
+                                              .patientDetail
+                                              .dob
+                                              .split('-')[2]))
+                                      .toString() +
+                                  ' year old ' +
+                                  this.patientDetail.gender +
+                                  ' complains of ' +
+                                  this.snapshot['type'] +
+                                  '. This has been present for ' +
+                                  this.snapshot['screening_questions'][0]['answer'][0],
+                              style: TextStyle(fontSize: 14.0),
+                            ),
+                          ));
+                        }
+                        for (var y = 0;
+                            y < this.snapshot['details'][i].length;
+                            y++) {
+                          if (_currentDetailsIndex == 1 && !addedQuestions) {
+                            addedQuestions = true;
+                          }
+                          if (i != 2 &&
+                              this.snapshot['details'][i][y].runtimeType !=
+                                  String &&
+                              !addedQuestions) {
+                            // finalArray
+                            //     .add(this.snapshot['details'][i][y]['visible']
+                            //         ? ListTile(
+                            //             title: Text(
+                            //               this.snapshot['details'][i][y]
+                            //                   ['question'],
+                            //               style: TextStyle(fontSize: 14.0),
+                            //             ),
+                            //             subtitle: Text(
+                            //               this
+                            //                   .snapshot['details'][i][y]
+                            //                       ['answer']
+                            //                   .toString()
+                            //                   .replaceAll(']', '')
+                            //                   .replaceAll('[', '')
+                            //                   .replaceAll('null', '')
+                            //                   .replaceFirst(', ', ''),
+                            //               style: TextStyle(
+                            //                   height: 1.2,
+                            //                   fontWeight: FontWeight.bold,
+                            //                   color: Theme.of(context)
+                            //                       .colorScheme
+                            //                       .secondary),
+                            //             ),
+                            //           )
+                            //         : SizedBox());
+
+                          }
+                          if (i == 2 &&
+                              _currentDetailsIndex == 1 &&
+                              !addedImages) {
+                            List<dynamic> thisList = this
+                                .snapshot['details'][i]
+                                .map((f) => (CachedNetworkImageProvider(f)))
+                                .toList();
+                            //print(this.snapshot['details'][i]);
+                            finalArray.add(Container(
+                              color: Colors.black,
+                              height:
+                                  (MediaQuery.of(context).size.height - 245),
+                              child: Carousel(
+                                autoplay: false,
+                                dotIncreasedColor:
+                                    Theme.of(context).colorScheme.secondary,
+                                boxFit: BoxFit.scaleDown,
+                                dotColor: Theme.of(context).colorScheme.primary,
+                                dotBgColor: Colors.white.withAlpha(480),
+                                images: thisList,
+                              ),
+                            ));
+                            addedImages = true;
+                          }
+                        }
                       }
+
                       return Column(
                         children: finalArray,
                       );
@@ -647,10 +821,13 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                                     : 'This is where you can provide a prescription to your patient.',
                                 attribute: 'docInput',
                                 maxLines: 10,
-                                readOnly: true,
+                                readOnly:
+                                    snapshot['state'] == 'done' ? true : false,
                                 decoration: InputDecoration(
-                                  fillColor: Color.fromRGBO(35, 179, 232, 0.1),
-                                  filled: false,
+                                  fillColor: snapshot['state'] == 'done'
+                                      ? Colors.grey.withAlpha(30)
+                                      : Color.fromRGBO(35, 179, 232, 0.1),
+                                  filled: true,
                                   border: OutlineInputBorder(
                                     borderSide: BorderSide(
                                         color: Colors.grey, width: 5.0),
@@ -661,120 +838,6 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                                 ],
                               ),
                             ),
-                            // Container(
-                            //   padding: EdgeInsets.fromLTRB(0, 10, 20, 10),
-                            //   child: FormBuilderCheckboxList(
-                            //     leadingInput: true,
-                            //     attribute: 'shipTo',
-                            //     validators: [
-                            //       FormBuilderValidators.required(),
-                            //     ],
-                            //     decoration: InputDecoration(
-                            //         border: InputBorder.none,
-                            //         disabledBorder: InputBorder.none,
-                            //         enabledBorder: InputBorder.none,
-                            //         focusedBorder: InputBorder.none,
-                            //         contentPadding:
-                            //             EdgeInsets.fromLTRB(0, 10, 0, 10)),
-                            //     onChanged: null,
-                            //     options: [
-                            //       FormBuilderFieldOption(
-                            //         value: 'pickup',
-                            //         child: Row(
-                            //           mainAxisAlignment:
-                            //               MainAxisAlignment.spaceBetween,
-                            //           children: <Widget>[
-                            //             Text(
-                            //               'Local pharmacy pickup',
-                            //               style: TextStyle(
-                            //                 fontSize: 16,
-                            //               ),
-                            //               softWrap: true,
-                            //             ),
-                            //             Text(
-                            //               '\$80',
-                            //               style: TextStyle(fontSize: 21),
-                            //             ),
-                            //           ],
-                            //         ),
-                            //       ),
-                            //       FormBuilderFieldOption(
-                            //         value: 'delivery',
-                            //         child: Row(
-                            //           mainAxisAlignment:
-                            //               MainAxisAlignment.spaceBetween,
-                            //           children: <Widget>[
-                            //             Text(
-                            //               'Ship directly to my door.',
-                            //               style: TextStyle(
-                            //                 fontSize: 16,
-                            //               ),
-                            //               softWrap: true,
-                            //             ),
-                            //             Text(
-                            //               '\$60',
-                            //               style: TextStyle(fontSize: 21),
-                            //             ),
-                            //           ],
-                            //         ),
-                            //       )
-                            //     ],
-                            //   ),
-                            // ),
-                            // Padding(
-                            //   padding: EdgeInsets.only(top: 10, bottom: 10),
-                            //   child: Text(
-                            //       'Please enter the address below where you want your prescription sent.'),
-                            // ),
-                            // FormBuilderTextField(
-                            //   attribute: "Address",
-                            //   initialValue: medicallUser.address,
-                            //   decoration: InputDecoration(
-                            //       labelText: 'Street Address',
-                            //       fillColor: Color.fromRGBO(35, 179, 232, 0.1),
-                            //       filled: true,
-                            //       disabledBorder: InputBorder.none,
-                            //       enabledBorder: InputBorder.none,
-                            //       border: InputBorder.none),
-                            //   validators: [
-                            //     FormBuilderValidators.required(),
-                            //   ],
-                            // ),
-                            // SizedBox(
-                            //   height: 5,
-                            // ),
-                            // FormBuilderTextField(
-                            //   attribute: "City",
-                            //   decoration: InputDecoration(
-                            //       labelText: 'City',
-                            //       fillColor: Color.fromRGBO(35, 179, 232, 0.1),
-                            //       filled: true,
-                            //       disabledBorder: InputBorder.none,
-                            //       enabledBorder: InputBorder.none,
-                            //       border: InputBorder.none),
-                            //   validators: [
-                            //     FormBuilderValidators.required(),
-                            //   ],
-                            // ),
-                            // SizedBox(
-                            //   height: 5,
-                            // ),
-                            // FormBuilderTextField(
-                            //   attribute: "State",
-                            //   decoration: InputDecoration(
-                            //       labelText: 'State',
-                            //       fillColor: Color.fromRGBO(35, 179, 232, 0.1),
-                            //       filled: true,
-                            //       disabledBorder: InputBorder.none,
-                            //       enabledBorder: InputBorder.none,
-                            //       border: InputBorder.none),
-                            //   validators: [
-                            //     FormBuilderValidators.required(),
-                            //   ],
-                            // ),
-                            // SizedBox(
-                            //   height: 70,
-                            // )
                           ],
                         ),
                       ))),
@@ -816,4 +879,11 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
       );
     }
   }
+}
+
+class Choice {
+  Choice({this.title, this.icon});
+
+  final String title;
+  Icon icon;
 }

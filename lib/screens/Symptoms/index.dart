@@ -188,11 +188,11 @@ class EntryItem extends StatelessWidget {
             ? Positioned.fill(child: AnimatedBackground())
             : SizedBox(),
         onBottom(AnimatedWave(
-          height: 180,
+          height: 160,
           speed: 0.6,
         )),
         onBottom(AnimatedWave(
-          height: 120,
+          height: 100,
           speed: 0.9,
           offset: pi,
         )),
