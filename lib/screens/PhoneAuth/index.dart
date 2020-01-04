@@ -4,15 +4,34 @@ import 'package:Medicall/components/logger.dart';
 import 'package:Medicall/components/masked_text.dart';
 import 'package:Medicall/components/reactive_refresh_indicator.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/screens/PhoneAuth/phone_auth_state_model.dart';
+import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 enum AuthStatus { PHONE_AUTH, SMS_AUTH, PROFILE_AUTH }
 
 class AuthScreen extends StatefulWidget {
+  final PhoneAuthStateModel model;
+
+  const AuthScreen({@required this.model});
+
+  static Widget create(BuildContext context) {
+    final AuthBase auth = Provider.of<AuthBase>(context);
+    return ChangeNotifierProvider<PhoneAuthStateModel>(
+      create: (context) => PhoneAuthStateModel(auth: auth),
+      child: Consumer<PhoneAuthStateModel>(
+        builder: (_, model, __) => AuthScreen(
+          model: model,
+        ),
+      ),
+    );
+  }
+
   @override
   _AuthScreenState createState() => _AuthScreenState();
 }
@@ -30,6 +49,8 @@ class _AuthScreenState extends State<AuthScreen> {
   // Controllers
   TextEditingController smsCodeController = TextEditingController();
   TextEditingController phoneNumberController = TextEditingController();
+
+  PhoneAuthStateModel get model => widget.model;
 
   // Variables
   String _phoneNumber;
@@ -348,6 +369,7 @@ class _AuthScreenState extends State<AuthScreen> {
       maskedTextFieldController: phoneNumberController,
       maxLength: 14,
       onSubmitted: (text) => _updateRefreshing(true),
+      onChanged: model.updatePhoneNumber,
       textAlign: TextAlign.center,
       style: Theme.of(context)
           .textTheme
@@ -414,6 +436,7 @@ class _AuthScreenState extends State<AuthScreen> {
             enabled: enabled,
             textAlign: TextAlign.center,
             controller: smsCodeController,
+            onChanged: model.updateSMSCode,
             maxLength: 6,
             onSubmitted: (text) => _updateRefreshing(true),
             style: Theme.of(context).textTheme.subhead.copyWith(
@@ -422,9 +445,11 @@ class _AuthScreenState extends State<AuthScreen> {
                 ),
             decoration: InputDecoration(
               border: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.tealAccent)),
+                borderSide: BorderSide(color: Colors.tealAccent),
+              ),
               enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.tealAccent)),
+                borderSide: BorderSide(color: Colors.tealAccent),
+              ),
               counterText: "",
               enabled: enabled,
               hintText: "--- ---",

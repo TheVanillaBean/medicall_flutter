@@ -18,7 +18,7 @@ class LandingPage extends StatelessWidget {
           if (user == null) {
             return LoginPage.create(context);
           } else if (user.phoneNumber == null) {
-            return AuthScreen();
+            return AuthScreen.create(context);
           }
           return HistoryScreen();
         } else {

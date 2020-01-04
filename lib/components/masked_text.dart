@@ -17,18 +17,21 @@ class MaskedTextField extends StatefulWidget {
   final TextAlign textAlign;
   final TextStyle style;
 
-  const MaskedTextField(
-      {Key key,
-      this.mask,
-      this.style,
-      this.textAlign,
-      this.maskedTextFieldController,
-      this.onSubmitted,
-      this.escapeCharacter: 'x',
-      this.maxLength: 100,
-      this.keyboardType: TextInputType.text,
-      this.inputDecoration: const InputDecoration()})
-      : super(key: key);
+  final ValueSetter<String> onChanged;
+
+  const MaskedTextField({
+    Key key,
+    this.mask,
+    this.style,
+    this.textAlign,
+    this.maskedTextFieldController,
+    this.onSubmitted,
+    this.escapeCharacter: 'x',
+    this.maxLength: 100,
+    this.keyboardType: TextInputType.text,
+    this.inputDecoration: const InputDecoration(),
+    this.onChanged,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => MaskedTextFieldState();
@@ -67,8 +70,7 @@ class MaskedTextFieldState extends State<MaskedTextField> {
 
             if (widget.mask[position] != widget.escapeCharacter)
               widget.maskedTextFieldController.text =
-                  '${widget.maskedTextFieldController.text}${widget
-                  .mask[position]}';
+                  '${widget.maskedTextFieldController.text}${widget.mask[position]}';
           }
 
           // Android's onChange resets cursor position (cursor goes to 0)
@@ -84,6 +86,8 @@ class MaskedTextFieldState extends State<MaskedTextField> {
 
         // Updating cursor position
         lastTextSize = widget.maskedTextFieldController.text.length;
+
+        widget?.onChanged(text);
       },
     );
   }
