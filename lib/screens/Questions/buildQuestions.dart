@@ -64,6 +64,9 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                             child: images.length > 0
                                 ? buildGridView(images)
                                 : Container(
+                                    alignment: Alignment.center,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.68,
                                     child: question['media'].length > 0
                                         ? Stack(
                                             alignment: Alignment.bottomCenter,
@@ -74,7 +77,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                                               Container(
                                                 transform:
                                                     Matrix4.translationValues(
-                                                        0.0, -37.0, 0.0),
+                                                        0.0, 127.0, 0.0),
                                                 child: ClipRRect(
                                                   borderRadius:
                                                       BorderRadius.circular(
@@ -103,8 +106,8 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                                                       height:
                                                           MediaQuery.of(context)
                                                                   .size
-                                                                  .height -
-                                                              470,
+                                                                  .height *
+                                                              0.3,
                                                       decoration: BoxDecoration(
                                                         border: Border(
                                                           left: BorderSide(
@@ -127,8 +130,8 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                                                       height:
                                                           MediaQuery.of(context)
                                                                   .size
-                                                                  .height  -
-                                                              470,
+                                                                  .height *
+                                                              0.3,
                                                       decoration: BoxDecoration(
                                                         border: Border(
                                                           right: BorderSide(
@@ -160,8 +163,8 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                                                       height:
                                                           MediaQuery.of(context)
                                                                   .size
-                                                                  .height  -
-                                                              470,
+                                                                  .height *
+                                                              0.3,
                                                       decoration: BoxDecoration(
                                                         border: Border(
                                                           left: BorderSide(
@@ -189,8 +192,8 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                                                       height:
                                                           MediaQuery.of(context)
                                                                   .size
-                                                                  .height -
-                                                              470,
+                                                                  .height *
+                                                              0.3,
                                                       decoration: BoxDecoration(
                                                         border: Border(
                                                           right: BorderSide(
@@ -505,7 +508,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
               Expanded(
                 flex: 1,
                 child: Container(
-                  height: MediaQuery.of(context).size.height - 470,
+                  height: MediaQuery.of(context).size.height * .3,
                   child: AssetView(
                     i,
                     images[i],
@@ -516,7 +519,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
               Expanded(
                 flex: 1,
                 child: Container(
-                  height: MediaQuery.of(context).size.height - 470,
+                  height: MediaQuery.of(context).size.height * .3,
                   child: AssetView(
                     i + 1,
                     images[i + 1],
@@ -533,7 +536,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
               Expanded(
                 flex: 1,
                 child: Container(
-                  height: MediaQuery.of(context).size.height - 470,
+                  height: MediaQuery.of(context).size.height * .3,
                   child: AssetView(
                     i,
                     images[i],
@@ -550,7 +553,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
               Expanded(
                 flex: 1,
                 child: Container(
-                  height: MediaQuery.of(context).size.height - 470,
+                  height: MediaQuery.of(context).size.height * .3,
                   child: AssetView(
                     i,
                     images[i],
@@ -561,7 +564,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
               Expanded(
                 flex: 1,
                 child: Container(
-                  height: MediaQuery.of(context).size.height - 470,
+                  height: MediaQuery.of(context).size.height * .3,
                   child: AssetView(
                     i + 1,
                     images[i + 1],
@@ -574,10 +577,13 @@ class _BuildQuestionsState extends State<BuildQuestions> {
         }
       }
     } else {
-      returnList.add(AssetView(
-        0,
-        images[0],
-        key: UniqueKey(),
+      returnList.add(Container(
+        height: MediaQuery.of(context).size.height * .6,
+        child: AssetView(
+          0,
+          images[0],
+          key: UniqueKey(),
+        ),
       ));
     }
 
@@ -596,8 +602,11 @@ class _BuildQuestionsState extends State<BuildQuestions> {
       ),
     ));
 
-    return Column(
-      children: returnList,
+    return Container(
+      height: MediaQuery.of(context).size.height - 140,
+      child: Column(
+        children: returnList,
+      ),
     );
   }
 
@@ -621,8 +630,10 @@ class _BuildQuestionsState extends State<BuildQuestions> {
               startInAllView: true,
               actionBarTitle: 'Select Images',
               allViewTitle: 'All Photos'));
-    } on PlatformException catch (e) {
-      error = e.message;
+    } on Exception catch (e) {
+      if (e.toString() != 'The user has cancelled the selection') {
+        error = e.toString();
+      }
     }
 
     // If the widget was removed from the tree while the asynchronous platform

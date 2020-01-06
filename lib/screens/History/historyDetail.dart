@@ -496,22 +496,37 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                             ),
                           ));
                           finalArray.add(ListTile(
-                            title: Text(
-                              'HPI: ' +
-                                  (DateTime.now().year -
-                                          int.parse(this
-                                              .patientDetail
-                                              .dob
-                                              .split('-')[2]))
-                                      .toString() +
-                                  ' year old ' +
-                                  this.patientDetail.gender +
-                                  ' complains of ' +
-                                  this.snapshot['type'] +
-                                  '. This has been present for ' +
-                                  this.snapshot['screening_questions'][0]['answer'][0],
-                              style: TextStyle(fontSize: 14.0),
-                            ),
+                            title: this.patientDetail != null
+                                ? Text(
+                                    'HPI: ' +
+                                        (DateTime.now().year -
+                                                int.parse(this
+                                                    .patientDetail
+                                                    .dob
+                                                    .split('-')[2]))
+                                            .toString() +
+                                        ' year old ' +
+                                        this.patientDetail.gender +
+                                        ' complains of ' +
+                                        this.snapshot['type'] +
+                                        '. This has been present for ' +
+                                        this
+                                            .snapshot['screening_questions'][0]
+                                                ['answer']
+                                            .toString() +
+                                        '. The patient complains of ' +
+                                        this
+                                            .snapshot['screening_questions'][1]
+                                                ['answer']
+                                            .toString() +
+                                        '. The patient has tried ' +
+                                        this
+                                            .snapshot['screening_questions'][4]
+                                                ['answer']
+                                            .toString(),
+                                    style: TextStyle(fontSize: 14.0),
+                                  )
+                                : Container(),
                           ));
                         }
                         for (var y = 0;

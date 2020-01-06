@@ -27,6 +27,7 @@ class QuestionsScreen extends StatefulWidget {
 
 class _QuestionsScreenState extends State<QuestionsScreen> {
   Map globalKeyList = {};
+  int currentPage = 0;
   GlobalKey<FormBuilderState> questionsFormKey = GlobalKey();
   bool autoValidate = true;
   bool readOnly = false;
@@ -119,6 +120,9 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
   }
 
   void _checkQuestion(index, context) {
+    setState(() {
+      currentPage = index;
+    });
     var tabController = context.state.questionsFormKey.currentContext.state;
     var listKeys = [];
     this.globalKeyList.forEach((k, v) => listKeys.add({'key': k, 'value': v}));
@@ -214,7 +218,11 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
         ),
         title: Text(widget.data['consult'].consultType == 'Lesion'
             ? 'Spot'
-            : widget.data['consult'].consultType),
+            : widget.data['consult'].consultType +
+                ' Question: ' +
+                (currentPage + 1).toString() +
+                '/' +
+                pageViewList.length.toString()),
       ),
       body: pageViewList.length > 0
           ? IntroductionScreen(
