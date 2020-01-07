@@ -217,7 +217,11 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
           onPressed: () => Navigator.pop(context, false),
         ),
         title: Text(widget.data['consult'].consultType == 'Lesion'
-            ? 'Spot'
+            ? 'Spot' +
+                ' Question: ' +
+                (currentPage + 1).toString() +
+                '/' +
+                pageViewList.length.toString()
             : widget.data['consult'].consultType +
                 ' Question: ' +
                 (currentPage + 1).toString() +

@@ -1,4 +1,5 @@
 import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/screens/History/buildMedicalNote.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_pro/carousel_pro.dart';
@@ -489,83 +490,22 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                         }
                       } else {
                         if (i == 0 && _currentDetailsIndex == 0) {
-                          finalArray.add(ListTile(
-                            title: Text(
-                              'CC: ' + this.snapshot['type'],
-                              style: TextStyle(fontSize: 14.0),
-                            ),
-                          ));
-                          finalArray.add(ListTile(
-                            title: this.patientDetail != null
-                                ? Text(
-                                    'HPI: ' +
-                                        (DateTime.now().year -
-                                                int.parse(this
-                                                    .patientDetail
-                                                    .dob
-                                                    .split('-')[2]))
-                                            .toString() +
-                                        ' year old ' +
-                                        this.patientDetail.gender +
-                                        ' complains of ' +
-                                        this.snapshot['type'] +
-                                        '. This has been present for ' +
-                                        this
-                                            .snapshot['screening_questions'][0]
-                                                ['answer']
-                                            .toString() +
-                                        '. The patient complains of ' +
-                                        this
-                                            .snapshot['screening_questions'][1]
-                                                ['answer']
-                                            .toString() +
-                                        '. The patient has tried ' +
-                                        this
-                                            .snapshot['screening_questions'][4]
-                                                ['answer']
-                                            .toString(),
-                                    style: TextStyle(fontSize: 14.0),
-                                  )
-                                : Container(),
-                          ));
+                          if (this.patientDetail != null) {
+                            finalArray.add(ListTile(
+                              title: Text(
+                                buildMedicalNote(
+                                    this.snapshot, this.patientDetail),
+                                style: TextStyle(fontSize: 14.0),
+                              ),
+                            ));
+                          }
                         }
+
                         for (var y = 0;
                             y < this.snapshot['details'][i].length;
                             y++) {
                           if (_currentDetailsIndex == 1 && !addedQuestions) {
                             addedQuestions = true;
-                          }
-                          if (i != 2 &&
-                              this.snapshot['details'][i][y].runtimeType !=
-                                  String &&
-                              !addedQuestions) {
-                            // finalArray
-                            //     .add(this.snapshot['details'][i][y]['visible']
-                            //         ? ListTile(
-                            //             title: Text(
-                            //               this.snapshot['details'][i][y]
-                            //                   ['question'],
-                            //               style: TextStyle(fontSize: 14.0),
-                            //             ),
-                            //             subtitle: Text(
-                            //               this
-                            //                   .snapshot['details'][i][y]
-                            //                       ['answer']
-                            //                   .toString()
-                            //                   .replaceAll(']', '')
-                            //                   .replaceAll('[', '')
-                            //                   .replaceAll('null', '')
-                            //                   .replaceFirst(', ', ''),
-                            //               style: TextStyle(
-                            //                   height: 1.2,
-                            //                   fontWeight: FontWeight.bold,
-                            //                   color: Theme.of(context)
-                            //                       .colorScheme
-                            //                       .secondary),
-                            //             ),
-                            //           )
-                            //         : SizedBox());
-
                           }
                           if (i == 2 &&
                               _currentDetailsIndex == 1 &&

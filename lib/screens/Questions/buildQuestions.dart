@@ -64,20 +64,31 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                             child: images.length > 0
                                 ? buildGridView(images)
                                 : Container(
+                                    padding: EdgeInsets.fromLTRB(0, 0, 0, 40),
                                     alignment: Alignment.center,
-                                    height: MediaQuery.of(context).size.height *
-                                        0.68,
                                     child: question['media'].length > 0
                                         ? Stack(
                                             alignment: Alignment.bottomCenter,
                                             children: <Widget>[
-                                              Image.network(
-                                                question['media'],
+                                              Container(
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    0.6,
+                                                decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      width: 1,
+                                                      color: Colors.grey,
+                                                      style: BorderStyle.solid),
+                                                ),
+                                                child: Image.network(
+                                                  question['media'],
+                                                ),
                                               ),
                                               Container(
                                                 transform:
                                                     Matrix4.translationValues(
-                                                        0.0, 127.0, 0.0),
+                                                        0.0, 37.0, 0.0),
                                                 child: ClipRRect(
                                                   borderRadius:
                                                       BorderRadius.circular(
@@ -96,136 +107,183 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                                               ),
                                             ],
                                           )
-                                        : Column(
+                                        : Stack(
+                                            alignment: Alignment.bottomCenter,
                                             children: <Widget>[
-                                              Row(
+                                              Column(
                                                 children: <Widget>[
-                                                  Expanded(
-                                                    flex: 1,
-                                                    child: Container(
-                                                      height:
-                                                          MediaQuery.of(context)
+                                                  Row(
+                                                    children: <Widget>[
+                                                      Expanded(
+                                                        flex: 1,
+                                                        child: Container(
+                                                          child: Icon(
+                                                            Icons.image,
+                                                            size: 50,
+                                                          ),
+                                                          height: MediaQuery.of(
+                                                                      context)
                                                                   .size
                                                                   .height *
-                                                              0.3,
-                                                      decoration: BoxDecoration(
-                                                        border: Border(
-                                                          left: BorderSide(
-                                                            //                   <--- left side
-                                                            color: Colors.grey,
-                                                            width: 1.0,
-                                                          ),
-                                                          top: BorderSide(
-                                                            //                    <--- top side
-                                                            color: Colors.grey,
-                                                            width: 1.0,
+                                                              0.31,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: Colors.grey
+                                                                .withAlpha(100),
+                                                            border: Border(
+                                                              left: BorderSide(
+                                                                //                   <--- left side
+                                                                color:
+                                                                    Colors.grey,
+                                                                width: 1.0,
+                                                              ),
+                                                              top: BorderSide(
+                                                                //                    <--- top side
+                                                                color:
+                                                                    Colors.grey,
+                                                                width: 1.0,
+                                                              ),
+                                                            ),
                                                           ),
                                                         ),
                                                       ),
-                                                    ),
+                                                      Expanded(
+                                                        flex: 1,
+                                                        child: Container(
+                                                          child: Icon(
+                                                            Icons.image,
+                                                            size: 50,
+                                                          ),
+                                                          height: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .height *
+                                                              0.31,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: Colors.grey
+                                                                .withAlpha(100),
+                                                            border: Border(
+                                                              right: BorderSide(
+                                                                //                   <--- left side
+                                                                color:
+                                                                    Colors.grey,
+                                                                width: 1.0,
+                                                              ),
+                                                              left: BorderSide(
+                                                                //                   <--- left side
+                                                                color:
+                                                                    Colors.grey,
+                                                                width: 1.0,
+                                                              ),
+                                                              top: BorderSide(
+                                                                //                    <--- top side
+                                                                color:
+                                                                    Colors.grey,
+                                                                width: 1.0,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      )
+                                                    ],
                                                   ),
-                                                  Expanded(
-                                                    flex: 1,
-                                                    child: Container(
-                                                      height:
-                                                          MediaQuery.of(context)
+                                                  Row(
+                                                    children: <Widget>[
+                                                      Expanded(
+                                                        flex: 1,
+                                                        child: Container(
+                                                          child: Icon(
+                                                            Icons.image,
+                                                            size: 50,
+                                                          ),
+                                                          height: MediaQuery.of(
+                                                                      context)
                                                                   .size
                                                                   .height *
-                                                              0.3,
-                                                      decoration: BoxDecoration(
-                                                        border: Border(
-                                                          right: BorderSide(
-                                                            //                   <--- left side
-                                                            color: Colors.grey,
-                                                            width: 1.0,
-                                                          ),
-                                                          left: BorderSide(
-                                                            //                   <--- left side
-                                                            color: Colors.grey,
-                                                            width: 1.0,
-                                                          ),
-                                                          top: BorderSide(
-                                                            //                    <--- top side
-                                                            color: Colors.grey,
-                                                            width: 1.0,
+                                                              0.31,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: Colors.grey
+                                                                .withAlpha(100),
+                                                            border: Border(
+                                                              left: BorderSide(
+                                                                //                   <--- left side
+                                                                color:
+                                                                    Colors.grey,
+                                                                width: 1.0,
+                                                              ),
+                                                              top: BorderSide(
+                                                                //                    <--- top side
+                                                                color:
+                                                                    Colors.grey,
+                                                                width: 1.0,
+                                                              ),
+                                                              bottom:
+                                                                  BorderSide(
+                                                                //                    <--- top side
+                                                                color:
+                                                                    Colors.grey,
+                                                                width: 1.0,
+                                                              ),
+                                                            ),
                                                           ),
                                                         ),
                                                       ),
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                              Row(
-                                                children: <Widget>[
-                                                  Expanded(
-                                                    flex: 1,
-                                                    child: Container(
-                                                      height:
-                                                          MediaQuery.of(context)
+                                                      Expanded(
+                                                        flex: 1,
+                                                        child: Container(
+                                                          child: Icon(
+                                                            Icons.image,
+                                                            size: 50,
+                                                          ),
+                                                          height: MediaQuery.of(
+                                                                      context)
                                                                   .size
                                                                   .height *
-                                                              0.3,
-                                                      decoration: BoxDecoration(
-                                                        border: Border(
-                                                          left: BorderSide(
-                                                            //                   <--- left side
-                                                            color: Colors.grey,
-                                                            width: 1.0,
-                                                          ),
-                                                          top: BorderSide(
-                                                            //                    <--- top side
-                                                            color: Colors.grey,
-                                                            width: 1.0,
-                                                          ),
-                                                          bottom: BorderSide(
-                                                            //                    <--- top side
-                                                            color: Colors.grey,
-                                                            width: 1.0,
+                                                              0.31,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: Colors.grey
+                                                                .withAlpha(100),
+                                                            border: Border(
+                                                              right: BorderSide(
+                                                                //                   <--- left side
+                                                                color:
+                                                                    Colors.grey,
+                                                                width: 1.0,
+                                                              ),
+                                                              left: BorderSide(
+                                                                //                   <--- left side
+                                                                color:
+                                                                    Colors.grey,
+                                                                width: 1.0,
+                                                              ),
+                                                              top: BorderSide(
+                                                                //                    <--- top side
+                                                                color:
+                                                                    Colors.grey,
+                                                                width: 1.0,
+                                                              ),
+                                                              bottom:
+                                                                  BorderSide(
+                                                                //                    <--- top side
+                                                                color:
+                                                                    Colors.grey,
+                                                                width: 1.0,
+                                                              ),
+                                                            ),
                                                           ),
                                                         ),
-                                                      ),
-                                                    ),
+                                                      )
+                                                    ],
                                                   ),
-                                                  Expanded(
-                                                    flex: 1,
-                                                    child: Container(
-                                                      height:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .height *
-                                                              0.3,
-                                                      decoration: BoxDecoration(
-                                                        border: Border(
-                                                          right: BorderSide(
-                                                            //                   <--- left side
-                                                            color: Colors.grey,
-                                                            width: 1.0,
-                                                          ),
-                                                          left: BorderSide(
-                                                            //                   <--- left side
-                                                            color: Colors.grey,
-                                                            width: 1.0,
-                                                          ),
-                                                          top: BorderSide(
-                                                            //                    <--- top side
-                                                            color: Colors.grey,
-                                                            width: 1.0,
-                                                          ),
-                                                          bottom: BorderSide(
-                                                            //                    <--- top side
-                                                            color: Colors.grey,
-                                                            width: 1.0,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  )
                                                 ],
                                               ),
                                               Container(
                                                 transform:
                                                     Matrix4.translationValues(
-                                                        0.0, -37.0, 0.0),
+                                                        0.0, 37.0, 0.0),
                                                 child: ClipRRect(
                                                   borderRadius:
                                                       BorderRadius.circular(
