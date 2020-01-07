@@ -232,11 +232,11 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                   snapshot != null &&
                           from == 'consults' &&
                           snapshot['type'] != 'Lesion'
-                      ? snapshot['type'] + ' Consult'
+                      ? snapshot['type']
                       : snapshot != null &&
                               snapshot['type'] == 'Lesion' &&
                               medicallUser.type == 'patient'
-                          ? 'Spot Consult'
+                          ? 'Spot'
                           : snapshot != null && from == 'patients'
                               ? '${snapshot['patient'].split(" ")[0][0].toUpperCase()}${snapshot['patient'].split(" ")[0].substring(1)} ${snapshot['patient'].split(" ")[1][0].toUpperCase()}${snapshot['patient'].split(" ")[1].substring(1)} '
                               : '',
@@ -257,9 +257,15 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                               medicallUser.type == 'provider'
                           ? '${snapshot['provider'].split(" ")[0][0].toUpperCase()}${snapshot['provider'].split(" ")[0].substring(1)} ${snapshot['provider'].split(" ")[1][0].toUpperCase()}${snapshot['provider'].split(" ")[1].substring(1)} ' +
                               snapshot['providerTitles']
-                          : snapshot != null && from == 'patients'
-                              ? snapshot['type'] + ' Consult'
-                              : '',
+                          : snapshot != null &&
+                                  snapshot['type'] == 'Lesion' &&
+                                  from == 'patients'
+                              ? 'Spot'
+                              : snapshot != null &&
+                                      from == 'patients' &&
+                                      snapshot['type'] != 'Lesion'
+                                  ? snapshot['type']
+                                  : '',
                   style: TextStyle(
                     fontSize: Theme.of(context).platform == TargetPlatform.iOS
                         ? 12.0

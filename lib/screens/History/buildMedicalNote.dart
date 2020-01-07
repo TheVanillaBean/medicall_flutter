@@ -69,6 +69,41 @@ buildMedicalNote(snapshot, patientDetail) {
           snapshot['screening_questions'][15]['answer'].toString();
     }
   }
-
+  if (snapshot['type'] == 'Lesion') {
+    fullStr += '\nCC: Spot' +
+        '\n\n' +
+        'HPI: ' +
+        (DateTime.now().year - int.parse(patientDetail.dob.split('-')[2]))
+            .toString() +
+        ' year old ' +
+        patientDetail.gender +
+        ' complains of ' +
+        snapshot['type'] +
+        '.  This has been present for ' +
+        snapshot['screening_questions'][0]['answer'].toString();
+    if (patientDetail != null &&
+        snapshot['screening_questions'][1]['answer'] != null) {
+      fullStr += '.\n\nThe patient complains of ' +
+          snapshot['screening_questions'][1]['answer'].toString() +
+          '.\nThe patient has tried ' +
+          snapshot['screening_questions'][2]['answer'].toString();
+    }
+    if (patientDetail != null &&
+        snapshot['screening_questions'][3]['answer'] != null) {
+      fullStr += '.  Minoxidil or Rogaine used for: ' +
+          snapshot['screening_questions'][3]['answer'].toString();
+    }
+    if (patientDetail != null &&
+        snapshot['screening_questions'][4]['answer'] != null) {
+      fullStr += snapshot['screening_questions'][4]['answer'].toString();
+    }
+    if (patientDetail != null &&
+        snapshot['screening_questions'][5]['answer'] != null) {
+      fullStr += snapshot['screening_questions'][5]['answer'].toString();
+    }
+  }
+  fullStr += '\n\n Medications: ';
+  fullStr += '\n\n Allergies: ';
+  fullStr += '\n\n Past medical history: ';
   return fullStr;
 }
