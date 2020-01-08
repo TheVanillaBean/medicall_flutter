@@ -414,8 +414,7 @@ class _HistoryScreenState extends State<HistoryScreen>
               if (!snapshot.hasData) {
                 return Center(
                   heightFactor: 35,
-                  child: Text("You have no patient requests yet.",
-                      textAlign: TextAlign.center),
+                  child: CircularProgressIndicator(),
                 );
               }
               if (snapshot.data.documents.length > 0) {

@@ -41,7 +41,7 @@ dependencies:
   flutter_typeahead: ^1.7.0
   #camera/images
   multi_image_picker: ^4.6.0
-  carousel_pro: ^1.0.0
+  carousel_slider: ^1.4.0
   cached_network_image: ^2.0.0-rc.1
   #notifications
   #flutter_alert: ^0.4.0

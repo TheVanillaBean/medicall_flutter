@@ -1,8 +1,8 @@
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/History/buildMedicalNote.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:carousel_pro/carousel_pro.dart';
 import 'package:Medicall/Screens/History/chat.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -29,6 +29,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
   bool isConsultOpen = false;
   bool addedImages = false;
   bool addedQuestions = false;
+  String buttonTxt = "Send Prescription";
   MedicallUser patientDetail;
   String documentId;
   String from;
@@ -76,6 +77,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
     await documentReference.get().then((datasnapshot) {
       if (datasnapshot.data != null) {
         setState(() {
+          isLoading = false;
           snapshot = datasnapshot.data;
           _getPatientDetail(snapshot['patient_id']);
           this.snapshot['details'] = [
@@ -119,6 +121,15 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
           _consultFormKey.currentState.fields['docInput'].currentState.value,
     };
     await documentReference.updateData(data).whenComplete(() {
+      setState(() {
+        isLoading = false;
+        buttonTxt = 'Prescription Updated';
+      });
+      Future.delayed(const Duration(milliseconds: 2500), () {
+        setState(() {
+          buttonTxt = 'Send Prescription';
+        });
+      });
       print("Document Added");
     }).catchError((e) => print(e));
   }
@@ -392,18 +403,21 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
         )),
         body: Container(
           child: questions[0].toString().contains('https')
-              ? Container(
-                  color: Colors.black,
-                  child: Carousel(
-                    autoplay: false,
-                    dotIncreasedColor: Theme.of(context).colorScheme.secondary,
-                    boxFit: BoxFit.contain,
-                    dotColor: Theme.of(context).colorScheme.primary,
-                    dotBgColor: Colors.white.withAlpha(480),
-                    images: questions
-                        .map((f) => (CachedNetworkImageProvider(f)))
-                        .toList(),
-                  ),
+              ? CarouselSlider(
+                  height: 400.0,
+                  items: questions.map((i) {
+                    return Builder(
+                      builder: (BuildContext context) {
+                        return Container(
+                            width: MediaQuery.of(context).size.width,
+                            margin: EdgeInsets.symmetric(horizontal: 5.0),
+                            decoration: BoxDecoration(color: Colors.amber),
+                            child: Image(
+                              image: CachedNetworkImageProvider(i),
+                            ));
+                      },
+                    );
+                  }).toList(),
                 )
               : ListView.builder(
                   itemCount: this.snapshot['details'] != null
@@ -471,20 +485,26 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                                     .map((f) => (CachedNetworkImageProvider(f)))
                                     .toList();
                                 //print(this.snapshot['details'][i]);
-                                finalArray.add(Container(
-                                  color: Colors.black,
-                                  height: (MediaQuery.of(context).size.height -
-                                      245),
-                                  child: Carousel(
-                                    autoplay: false,
-                                    dotIncreasedColor:
-                                        Theme.of(context).colorScheme.secondary,
-                                    boxFit: BoxFit.scaleDown,
-                                    dotColor:
-                                        Theme.of(context).colorScheme.primary,
-                                    dotBgColor: Colors.white.withAlpha(480),
-                                    images: thisList,
-                                  ),
+                                finalArray.add(CarouselSlider(
+                                  height: 400.0,
+                                  items: thisList.map((i) {
+                                    return Builder(
+                                      builder: (BuildContext context) {
+                                        return Container(
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            margin: EdgeInsets.symmetric(
+                                                horizontal: 5.0),
+                                            decoration: BoxDecoration(
+                                                color: Colors.amber),
+                                            child: Text(
+                                              ' $i',
+                                              style: TextStyle(fontSize: 16.0),
+                                            ));
+                                      },
+                                    );
+                                  }).toList(),
                                 ));
                               }
                             }
@@ -513,23 +533,12 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                         if (i == 2 &&
                             _currentDetailsIndex == 1 &&
                             !addedImages) {
-                          List<dynamic> thisList = this
-                              .snapshot['details'][i]
-                              .map((f) => (CachedNetworkImageProvider(f)))
-                              .toList();
+                          List<String> urlImgs = [
+                            ...this.snapshot['details'][i]
+                          ];
                           //print(this.snapshot['details'][i]);
-                          finalArray.add(Container(
-                            color: Colors.black,
-                            height: (MediaQuery.of(context).size.height - 245),
-                            child: Carousel(
-                              autoplay: false,
-                              dotIncreasedColor:
-                                  Theme.of(context).colorScheme.secondary,
-                              boxFit: BoxFit.scaleDown,
-                              dotColor: Theme.of(context).colorScheme.primary,
-                              dotBgColor: Colors.white.withAlpha(480),
-                              images: thisList,
-                            ),
+                          finalArray.add(CarouselWithIndicator(
+                            imgList: urlImgs,
                           ));
                           addedImages = true;
                         }
@@ -537,6 +546,8 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                     }
 
                     return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: finalArray,
                     );
                   }),
@@ -818,20 +829,29 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                             style: BorderStyle.solid))),
                 child: FlatButton(
                   padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
-                  color: Theme.of(context).colorScheme.secondary,
+                  color: buttonTxt.contains('Send')
+                      ? Theme.of(context).colorScheme.secondary
+                      : Colors.green,
                   onPressed: () async {
+                    setState(() {
+                      isLoading = true;
+                    });
                     await _updatePrescription();
                   },
-                  child: Text(
-                    'Send Presciption',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Theme.of(context).colorScheme.onBackground,
-                      letterSpacing: 1.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  child: !isLoading
+                      ? Text(
+                          buttonTxt,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Theme.of(context).colorScheme.onBackground,
+                            letterSpacing: 1.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                      : CircularProgressIndicator(
+                          backgroundColor: Colors.white,
+                        ),
                 ),
               ))
             ],
@@ -851,4 +871,70 @@ class Choice {
 
   final String title;
   Icon icon;
+}
+
+List<T> map<T>(List list, Function handler) {
+  List<T> result = [];
+  for (var i = 0; i < list.length; i++) {
+    result.add(handler(i, list[i]));
+  }
+
+  return result;
+}
+
+class CarouselWithIndicator extends StatefulWidget {
+  final List<String> imgList;
+  CarouselWithIndicator({Key key, @required this.imgList}) : super(key: key);
+  @override
+  _CarouselWithIndicatorState createState() => _CarouselWithIndicatorState();
+}
+
+class _CarouselWithIndicatorState extends State<CarouselWithIndicator> {
+  int _current = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(children: [
+      CarouselSlider(
+        viewportFraction: 1.0,
+        items: widget.imgList.map(
+          (url) {
+            return Container(
+              child: ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(0.0)),
+                child: CachedNetworkImage(
+                  imageUrl: url,
+                ),
+              ),
+            );
+          },
+        ).toList(),
+        autoPlay: false,
+        enlargeCenterPage: true,
+        onPageChanged: (index) {
+          setState(() {
+            _current = index;
+          });
+        },
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: map<Widget>(
+          widget.imgList,
+          (index, url) {
+            return Container(
+              width: 8.0,
+              height: 8.0,
+              margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: _current == index
+                      ? Color.fromRGBO(0, 0, 0, 0.9)
+                      : Color.fromRGBO(0, 0, 0, 0.4)),
+            );
+          },
+        ),
+      ),
+    ]);
+  }
 }
