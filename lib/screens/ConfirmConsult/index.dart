@@ -396,7 +396,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
       "chat": [],
       "state": "new",
       "date": DateTime.now(),
-      "consult": "",
+      "prescription": "",
       "provider": _consult.provider,
       "providerTitles": _consult.providerTitles,
       "patient": medicallUser.displayName,
