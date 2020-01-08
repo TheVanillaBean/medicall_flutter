@@ -25,6 +25,7 @@ class _HistoryScreenState extends State<HistoryScreen>
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   List<String> providers = [];
+
   @override
   void initState() {
     super.initState();

@@ -51,6 +51,8 @@ class MaskedTextFieldState extends State<MaskedTextField> {
       style: widget.style ?? Theme.of(context).textTheme.subhead,
       onSubmitted: (String text) => widget?.onSubmitted(unmaskedText),
       onChanged: (String text) {
+        widget.onChanged(unmaskedText);
+
         // Deleting/removing
         if (text.length < lastTextSize) {
           if (widget.mask[text.length] != widget.escapeCharacter) {
@@ -59,8 +61,6 @@ class MaskedTextFieldState extends State<MaskedTextField> {
               TextPosition(
                   offset: widget.maskedTextFieldController.text.length),
             );
-
-            widget?.onChanged(unmaskedText);
           }
         } else {
           // Typing
@@ -76,8 +76,6 @@ class MaskedTextFieldState extends State<MaskedTextField> {
               widget.maskedTextFieldController.text =
                   '${widget.maskedTextFieldController.text}${widget.mask[position]}';
             }
-
-            widget.onChanged(unmaskedText);
           }
 
           // Android's onChange resets cursor position (cursor goes to 0)
@@ -93,8 +91,6 @@ class MaskedTextFieldState extends State<MaskedTextField> {
 
         // Updating cursor position
         lastTextSize = widget.maskedTextFieldController.text.length;
-
-        widget.onChanged(unmaskedText);
       },
     );
   }

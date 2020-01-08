@@ -23,6 +23,7 @@ class MedicallUser {
   bool terms;
   bool policy;
   bool consent;
+  bool hasMedicalHistory;
 
   MedicallUser({
     @required this.uid,
@@ -45,5 +46,6 @@ class MedicallUser {
     this.terms,
     this.policy,
     this.consent,
+    this.hasMedicalHistory,
   });
 }
