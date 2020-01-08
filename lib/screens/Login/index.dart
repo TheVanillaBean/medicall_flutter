@@ -3,8 +3,9 @@ import 'dart:ui' as ui;
 import 'package:Medicall/common_widgets/platform_exception_alert_dialog.dart';
 import 'package:Medicall/common_widgets/sign_in_button.dart';
 import 'package:Medicall/common_widgets/social_sign_in_button.dart';
+import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/Login/sign_in_state_model.dart';
-import 'package:Medicall/screens/Registration/index.dart';
+import 'package:Medicall/screens/Registration/RegistrationType/index.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/util/firebase_notification_handler.dart';
 import 'package:flutter/cupertino.dart';
@@ -79,9 +80,10 @@ class _LoginScreenState extends State<LoginPage> {
   }
 
   void _createAccountWithEmail(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute<void>(
-      fullscreenDialog: true,
-      builder: (context) => RegistrationScreen(data: null),
+    Navigator.of(context).push(CupertinoPageRoute(
+      builder: (context) => RegistrationTypeScreen(
+        data: {"user": medicallUser},
+      ),
     ));
   }
 

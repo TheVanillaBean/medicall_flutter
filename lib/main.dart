@@ -223,7 +223,7 @@ class _MedicallAppState extends State<MedicallApp> {
                 );
             }
             return MyCustomRoute(
-              builder: (_) => LoginPage.create(context),
+              builder: (_) => LandingPage(),
               settings: settings,
             );
           },

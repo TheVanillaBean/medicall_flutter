@@ -1,19 +1,13 @@
 import 'dart:async';
 
-import 'package:Medicall/components/logger.dart';
 import 'package:Medicall/components/masked_text.dart';
 import 'package:Medicall/components/reactive_refresh_indicator.dart';
-import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/PhoneAuth/phone_auth_state_model.dart';
 import 'package:Medicall/services/auth.dart';
-import 'package:Medicall/util/app_util.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-
-enum AuthStatus { PHONE_AUTH, SMS_AUTH, PROFILE_AUTH }
 
 class AuthScreen extends StatefulWidget {
   final PhoneAuthStateModel model;
@@ -36,339 +30,60 @@ class AuthScreen extends StatefulWidget {
   _AuthScreenState createState() => _AuthScreenState();
 }
 
-class _AuthScreenState extends State<AuthScreen> {
-  static const String TAG = "AUTH";
-  AuthStatus status = AuthStatus.PHONE_AUTH;
-  StreamSubscription<DocumentSnapshot> subscription;
-
-  // Keys
+class _AuthScreenState extends State<AuthScreen> with VerificationError {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final GlobalKey<MaskedTextFieldState> _maskedPhoneKey =
-      GlobalKey<MaskedTextFieldState>();
 
-  // Controllers
   TextEditingController smsCodeController = TextEditingController();
   TextEditingController phoneNumberController = TextEditingController();
 
   PhoneAuthStateModel get model => widget.model;
 
-  // Variables
-  String _phoneNumber;
-  String _errorMessage;
-  String _verificationId;
-  Timer _codeTimer;
-
-  bool _isRefreshing = false;
-  bool _codeTimedOut = false;
-  bool _codeVerified = false;
-  Duration _timeOut = const Duration(minutes: 1);
-
-  // Firebase
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
   @override
   void dispose() {
-    _codeTimer?.cancel();
-    super.dispose();
     smsCodeController.dispose();
     phoneNumberController.dispose();
-    subscription?.cancel();
-  }
-
-  // PhoneVerificationFailed
-  verificationFailed(AuthException authException) {
-    _showErrorSnackbar(
-        "We couldn't verify your code for now, please try again!");
-    Logger.log(TAG,
-        message:
-            'onVerificationFailed, code: ${authException.code}, message: ${authException.message}');
-  }
-
-  Future<Null> _add(user) async {
-    final DocumentReference documentReference =
-        Firestore.instance.document("users/" + user.uid);
-    medicallUser.phoneNumber = user.phoneNumber;
-    Map<String, dynamic> data = <String, dynamic>{
-      "name": medicallUser.displayName,
-      "first_name": medicallUser.firstName,
-      "last_name": medicallUser.lastName,
-      "email": user.email,
-      "gender": medicallUser.gender,
-      "address": medicallUser.address,
-      "terms": medicallUser.terms,
-      "policy": medicallUser.policy,
-      "consent": medicallUser.consent,
-      "dob": medicallUser.dob,
-      "phone": user.phoneNumber,
-      "profile_pic": medicallUser.profilePic,
-      "gov_id": medicallUser.govId,
-    };
-    documentReference.setData(data).whenComplete(() {
-      print("Document Added");
-    }).catchError((e) => print(e));
-  }
-
-  // PhoneCodeSent
-  codeSent(String verificationId, [int forceResendingToken]) async {
-    Logger.log(TAG,
-        message:
-            "Verification code sent to number ${phoneNumberController.text}");
-    _codeTimer = Timer(_timeOut, () {
-      setState(() {
-        _codeTimedOut = true;
-      });
-    });
-    _updateRefreshing(false);
-    setState(() {
-      this._verificationId = verificationId;
-      this.status = AuthStatus.SMS_AUTH;
-      Logger.log(TAG, message: "Changed status to $status");
-    });
-  }
-
-  // PhoneCodeAutoRetrievalTimeout
-  codeAutoRetrievalTimeout(String verificationId) {
-    Logger.log(TAG, message: "onCodeTimeout");
-    _updateRefreshing(false);
-    if (!mounted) return;
-    setState(() {
-      this._verificationId = verificationId;
-      this._codeTimedOut = true;
-    });
-  }
-
-  // Styling
-
-  final decorationStyle = TextStyle(color: Colors.grey[50], fontSize: 16.0);
-  final hintStyle = TextStyle(color: Colors.white24);
-
-  // async
-
-  Future<Null> _updateRefreshing(bool isRefreshing) async {
-    Logger.log(TAG,
-        message: "Setting _isRefreshing ($_isRefreshing) to $isRefreshing");
-    if (_isRefreshing) {
-      if (!mounted) return;
-      setState(() {
-        this._isRefreshing = false;
-      });
-    }
-    setState(() {
-      this._isRefreshing = isRefreshing;
-    });
+    super.dispose();
   }
 
   _showErrorSnackbar(String message) {
-    _updateRefreshing(false);
     _scaffoldKey.currentState.showSnackBar(
       SnackBar(content: Text(message)),
     );
   }
 
-  // Future<Null> _signIn() async {
-  //   GoogleSignInAccount user = _googleSignIn.currentUser;
-  //   Logger.log(TAG, message: "Just got user as: $user");
-
-  //   final onError = (exception, stacktrace) {
-  //     Logger.log(TAG, message: "Error from _signIn: $exception");
-  //     _showErrorSnackbar(
-  //         "Couldn't log in with your Google account, please try again!");
-  //     user = null;
-  //   };
-
-  //   if (user == null) {
-  //     user = await _googleSignIn.signIn().catchError(onError);
-  //     Logger.log(TAG, message: "Received $user");
-  //     final GoogleSignInAuthentication googleAuth = await user.authentication;
-  //     Logger.log(TAG, message: "Added googleAuth: $googleAuth");
-  //     _firebaseUser = await _auth
-  //         .signInWithCredential(GoogleAuthProvider.getCredential(
-  //           accessToken: googleAuth.accessToken,
-  //           idToken: googleAuth.idToken,
-  //         ))
-  //         .catchError(onError);
-  //   }
-
-  //   if (user != null) {
-  //     _updateRefreshing(false);
-  //     _googleUser = user;
-  //     setState(() {
-  //       this.status = AuthStatus.PHONE_AUTH;
-  //       Logger.log(TAG, message: "Changed status to $status");
-  //     });
-  //     return null;
-  //   }
-  //   return null;
-  // }
-
-  Future<Null> _submitPhoneNumber() async {
-    final error = _phoneInputValidator();
-    if (error != null) {
-      _updateRefreshing(false);
-      setState(() {
-        _errorMessage = error;
-      });
-      return null;
-    } else {
-      _updateRefreshing(false);
-      setState(() {
-        _errorMessage = null;
-      });
-      final result = await _verifyPhoneNumber();
-      Logger.log(TAG, message: "Returning $result from _submitPhoneNumber");
-      return result;
-    }
-  }
-
-  String get phoneNumber {
-    try {
-      String unmaskedText = _maskedPhoneKey.currentState?.unmaskedText;
-      if (unmaskedText != null) _phoneNumber = "+1$unmaskedText".trim();
-    } catch (error) {
-      Logger.log(TAG,
-          message: "Couldn't access state from _maskedPhoneKey: $error");
-    }
-    return _phoneNumber;
-  }
-
-  Future<Null> _verifyPhoneNumber() async {
-    FirebaseUser user = await _auth.currentUser();
-    final PhoneVerificationCompleted verificationCompleted =
-        (AuthCredential phoneAuthCredential) async {
-      Logger.log(TAG, message: "onVerificationCompleted, user: $user");
-      if (await _onCodeVerified(user)) {
-        await _finishSignIn(user);
-      } else {
-        setState(() {
-          this.status = AuthStatus.SMS_AUTH;
-          Logger.log(TAG, message: "Changed status to $status");
-        });
-      }
-    };
-    Logger.log(TAG, message: "Got phone number as: ${this.phoneNumber}");
-    await _auth.verifyPhoneNumber(
-        phoneNumber: this.phoneNumber,
-        timeout: _timeOut,
-        codeSent: codeSent,
-        codeAutoRetrievalTimeout: codeAutoRetrievalTimeout,
-        verificationCompleted: verificationCompleted,
-        verificationFailed: verificationFailed);
-    Logger.log(TAG, message: "Returning null from _verifyPhoneNumber");
-    return null;
-  }
-
-  Future<Null> _submitSmsCode() async {
-    final error = _smsInputValidator();
-    if (error != null) {
-      _updateRefreshing(false);
-      _showErrorSnackbar(error);
-      return null;
-    } else {
-      if (this._codeVerified) {
-        await _finishSignIn(await _auth.currentUser());
-      } else {
-        Logger.log(TAG, message: "_signInWithPhoneNumber called");
-        await _signInWithPhoneNumber();
-      }
-      return null;
-    }
-  }
-
-  Future<void> _signInWithPhoneNumber() async {
-    final errorMessage = "We couldn't verify your code, please try again!";
-    FirebaseUser user = await _auth.currentUser();
-    await user
-        .linkWithCredential(
-      PhoneAuthProvider.getCredential(
-        verificationId: _verificationId,
-        smsCode: smsCodeController.text,
-      ),
-    )
-        .then((authResult) async {
-      final user = authResult.user;
-      await _onCodeVerified(user).then((codeVerified) async {
-        this._codeVerified = codeVerified;
-        Logger.log(
-          TAG,
-          message: "Returning ${this._codeVerified} from _onCodeVerified",
-        );
-        if (this._codeVerified) {
-          await _finishSignIn(user);
-        } else {
-          _showErrorSnackbar(errorMessage);
-        }
-      });
-    }, onError: (error) {
-      print("Failed to verify SMS code: $error");
-      _showErrorSnackbar(error.message);
-    });
-  }
-
-  Future<bool> _onCodeVerified(FirebaseUser user) async {
-    final isUserValid = (user != null &&
-        (user.phoneNumber != null && user.phoneNumber.isNotEmpty));
-    if (isUserValid) {
-      setState(() {
-        // Here we change the status once more to guarantee that the SMS's
-        // text input isn't available while you do any other request
-        // with the gathered data
-        this.status = AuthStatus.PROFILE_AUTH;
-        Logger.log(TAG, message: "Changed status to $status");
-      });
-    } else {
-      _showErrorSnackbar("We couldn't verify your code, please try again!");
-    }
-    return isUserValid;
-  }
-
-  _finishSignIn(FirebaseUser user) async {
-    await _onCodeVerified(user).then((result) async {
-      if (result) {
-        // Here, instead of navigating to another screen, you should do whatever you want
-        // as the user is already verified with Firebase from both
-        // Google and phone number methods
-        // Example: authenticate with your own API, use the data gathered
-        // to post your profile/user, etc.
-        await _add(user);
-        Navigator.pushReplacementNamed(context, '/history',
-            arguments: {'user': medicallUser});
-      } else {
-        setState(() {
-          this.status = AuthStatus.SMS_AUTH;
-        });
-        _showErrorSnackbar(
-            "We couldn't create your profile for now, please try again later");
-      }
-    });
-  }
-
   // Widgets
+  final decorationStyle = TextStyle(color: Colors.grey[50], fontSize: 16.0);
+  final hintStyle = TextStyle(color: Colors.white24);
 
-  Widget _buildConfirmInputButton() {
-    final theme = Theme.of(context);
+  Widget _buildConfirmPhoneButton() {
     return IconButton(
       icon: Icon(Icons.check_circle),
       color: Colors.white,
-      disabledColor: theme.buttonColor,
-      onPressed: (this.status == AuthStatus.PROFILE_AUTH)
+      disabledColor: Theme.of(context).buttonColor,
+      onPressed: (model.status != AuthStatus.PHONE_AUTH)
           ? null
-          : () => _updateRefreshing(true),
+          : () => model.updateRefreshing(true, mounted),
+    );
+  }
+
+  Widget _buildConfirmSMSCodeButton() {
+    return IconButton(
+      icon: Icon(Icons.check_circle),
+      color: Colors.white,
+      disabledColor: Theme.of(context).buttonColor,
+      onPressed: (model.status != AuthStatus.SMS_AUTH)
+          ? null
+          : () => model.updateRefreshing(true, mounted),
     );
   }
 
   Widget _buildPhoneNumberInput() {
     return MaskedTextField(
-      key: _maskedPhoneKey,
       mask: "(xxx) xxx-xxxx",
       keyboardType: TextInputType.number,
       maskedTextFieldController: phoneNumberController,
       maxLength: 14,
-      onSubmitted: (text) => _updateRefreshing(true),
+      onSubmitted: (_) => model.updateRefreshing(true, mounted),
       onChanged: model.updatePhoneNumber,
       textAlign: TextAlign.center,
       style: Theme.of(context)
@@ -381,7 +96,6 @@ class _AuthScreenState extends State<AuthScreen> {
         enabledBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.tealAccent)),
         isDense: false,
-        enabled: this.status == AuthStatus.PHONE_AUTH,
         counterText: "",
         icon: const Icon(
           Icons.phone,
@@ -391,7 +105,8 @@ class _AuthScreenState extends State<AuthScreen> {
         labelStyle: decorationStyle,
         hintText: "(999) 999-9999",
         hintStyle: hintStyle,
-        errorText: _errorMessage,
+        errorText: model.phoneNumberErrorText,
+        enabled: model.status == AuthStatus.PHONE_AUTH,
       ),
     );
   }
@@ -414,8 +129,14 @@ class _AuthScreenState extends State<AuthScreen> {
             direction: Axis.horizontal,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              Flexible(flex: 5, child: _buildPhoneNumberInput()),
-              Flexible(flex: 1, child: _buildConfirmInputButton())
+              Flexible(
+                flex: 5,
+                child: _buildPhoneNumberInput(),
+              ),
+              Flexible(
+                flex: 1,
+                child: _buildConfirmPhoneButton(),
+              )
             ],
           ),
         ),
@@ -424,7 +145,7 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   Widget _buildSmsCodeInput() {
-    final enabled = this.status == AuthStatus.SMS_AUTH;
+    final enabled = model.status == AuthStatus.SMS_AUTH;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -433,12 +154,11 @@ class _AuthScreenState extends State<AuthScreen> {
           flex: 1,
           child: TextField(
             keyboardType: TextInputType.number,
-            enabled: enabled,
             textAlign: TextAlign.center,
             controller: smsCodeController,
             onChanged: model.updateSMSCode,
             maxLength: 6,
-            onSubmitted: (text) => _updateRefreshing(true),
+            onSubmitted: (_) => model.updateRefreshing(true, mounted),
             style: Theme.of(context).textTheme.subhead.copyWith(
                   fontSize: 32.0,
                   color: enabled ? Colors.white : Theme.of(context).buttonColor,
@@ -451,9 +171,10 @@ class _AuthScreenState extends State<AuthScreen> {
                 borderSide: BorderSide(color: Colors.tealAccent),
               ),
               counterText: "",
-              enabled: enabled,
               hintText: "--- ---",
               hintStyle: hintStyle.copyWith(fontSize: 42.0),
+              errorText: model.smsCodeErrorText,
+              enabled: enabled,
             ),
           ),
         )
@@ -464,8 +185,8 @@ class _AuthScreenState extends State<AuthScreen> {
   Widget _buildResendSmsWidget() {
     return InkWell(
       onTap: () async {
-        if (_codeTimedOut) {
-          await _verifyPhoneNumber();
+        if (model.codeTimedOut) {
+          await model.verifyPhoneNumber(mounted, this);
         } else {
           _showErrorSnackbar("You can't retry yet!");
         }
@@ -511,7 +232,7 @@ class _AuthScreenState extends State<AuthScreen> {
             //mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Flexible(flex: 10, child: _buildSmsCodeInput()),
-              Flexible(flex: 1, child: _buildConfirmInputButton())
+              Flexible(flex: 1, child: _buildConfirmSMSCodeButton())
             ],
           ),
         ),
@@ -523,50 +244,34 @@ class _AuthScreenState extends State<AuthScreen> {
     );
   }
 
-  String _phoneInputValidator() {
-    if (phoneNumberController.text.isEmpty) {
-      return "Your phone number can't be empty!";
-    } else if (phoneNumberController.text.length < 14) {
-      return "This phone number is invalid!";
-    }
-    return null;
-  }
-
-  String _smsInputValidator() {
-    if (smsCodeController.text.isEmpty) {
-      return "Your verification code can't be empty!";
-    } else if (smsCodeController.text.length < 6) {
-      return "This verification code is invalid!";
-    }
-    return null;
-  }
-
   Widget _buildBody() {
     Widget body;
-    switch (this.status) {
+    switch (model.status) {
       case AuthStatus.PHONE_AUTH:
         body = _buildPhoneAuthBody();
         break;
       case AuthStatus.SMS_AUTH:
         body = _buildSmsAuthBody();
         break;
-      case AuthStatus.PROFILE_AUTH:
-        body = _buildSmsAuthBody();
-        break;
     }
     return body;
   }
 
-  Future<Null> _onRefresh() async {
-    switch (this.status) {
-      case AuthStatus.PHONE_AUTH:
-        return await _submitPhoneNumber();
-        break;
-      case AuthStatus.SMS_AUTH:
-        return await _submitSmsCode();
-        break;
-      case AuthStatus.PROFILE_AUTH:
-        break;
+  Future<void> _onRefresh() async {
+    if (model.status == AuthStatus.PHONE_AUTH) {
+      try {
+        return await model.verifyPhoneNumber(mounted, this);
+      } on PlatformException catch (e) {
+        _showErrorSnackbar(e.message);
+      }
+    }
+
+    if (model.status == AuthStatus.SMS_AUTH) {
+      try {
+        return await model.signInWithPhoneNumber(mounted);
+      } on PlatformException catch (e) {
+        _showErrorSnackbar(e.message);
+      }
     }
   }
 
@@ -581,16 +286,17 @@ class _AuthScreenState extends State<AuthScreen> {
           onRefresh: _onRefresh,
           color: Theme.of(context).colorScheme.secondary,
           backgroundColor: Theme.of(context).colorScheme.background,
-          isRefreshing: _isRefreshing,
-          child: Container(child: _buildBody()),
+          isRefreshing: model.isRefreshing,
+          child: Container(
+            child: _buildBody(),
+          ),
         ),
       ),
     );
   }
 
-  void showAlert(String msg) {
-    setState(() {
-      AppUtil().showAlert(msg, 5);
-    });
+  @override
+  void onVerificationError(String msg) {
+    _showErrorSnackbar(msg);
   }
 }

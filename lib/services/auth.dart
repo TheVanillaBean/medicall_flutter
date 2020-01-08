@@ -12,6 +12,8 @@ abstract class AuthBase {
   Future<MedicallUser> createUserWithEmailAndPassword(
       String email, String password);
   Future<MedicallUser> signInWithGoogle();
+  Future<MedicallUser> signInWithPhoneNumber(
+      String verificationId, String smsCode);
   Future<void> signOut();
 }
 
@@ -53,6 +55,7 @@ class Auth implements AuthBase {
     final authResult = await _firebaseAuth.signInWithEmailAndPassword(
         email: email, password: password);
     final user = authResult.user;
+    user.sendEmailVerification();
     return _userFromFirebase(user);
   }
 
@@ -90,6 +93,36 @@ class Auth implements AuthBase {
       throw PlatformException(
         code: 'ERROR_ABORTED_BY_USER',
         message: 'Sign in canceled by user',
+      );
+    }
+  }
+
+  @override
+  Future<MedicallUser> signInWithPhoneNumber(
+    String verificationId,
+    String smsCode,
+  ) async {
+    final AuthCredential credential = PhoneAuthProvider.getCredential(
+      verificationId: verificationId,
+      smsCode: smsCode,
+    );
+
+    final FirebaseUser currentUser = await _firebaseAuth.currentUser();
+
+    final AuthResult authResult =
+        await currentUser.linkWithCredential(credential);
+
+    final MedicallUser currentMedicallUser = _userFromFirebase(authResult.user);
+
+    if (currentMedicallUser != null &&
+        currentMedicallUser.phoneNumber != null &&
+        currentMedicallUser.phoneNumber.isNotEmpty) {
+      await _firebaseAuth.signInWithCredential(credential);
+      return currentMedicallUser;
+    } else {
+      throw PlatformException(
+        code: 'ERROR_PHONE_AUTH_FAILED',
+        message: 'Phone Sign In Failed.',
       );
     }
   }
