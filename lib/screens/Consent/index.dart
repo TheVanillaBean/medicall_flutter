@@ -1,3 +1,4 @@
+import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/PhoneAuth/index.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';

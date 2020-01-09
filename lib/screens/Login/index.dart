@@ -59,7 +59,7 @@ class _LoginScreenState extends State<LoginPage> {
   Future<void> _submit() async {
     try {
       await model.submit();
-      Navigator.of(context).pop();
+      //Navigator.of(context).pop();
     } on PlatformException catch (e) {
       PlatformExceptionAlertDialog(
         title: 'Sign in failed',
@@ -114,7 +114,7 @@ class _LoginScreenState extends State<LoginPage> {
                     FocusScope.of(context).requestFocus(new FocusNode());
                   },
                   child: Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.fromLTRB(60, 15, 60, 15),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: _buildChildren(context),
@@ -210,28 +210,20 @@ class _LoginScreenState extends State<LoginPage> {
     );
   }
 
-  Card _buildEmailAuthForm(BuildContext context) {
-    return Card(
-      color: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(
-          Radius.circular(16.0),
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: <Widget>[
-            _buildEmailTextField(),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.02,
-            ),
-            _buildPasswordTextField(),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.02,
-            ),
-          ],
-        ),
+  Container _buildEmailAuthForm(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(0, 40, 0, 40),
+      child: Column(
+        children: <Widget>[
+          _buildEmailTextField(),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.02,
+          ),
+          _buildPasswordTextField(),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.02,
+          ),
+        ],
       ),
     );
   }

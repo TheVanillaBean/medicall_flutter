@@ -104,7 +104,7 @@ class ChatScreenState extends State<ChatScreen> {
     //     .document(id)
     //     .updateData({'chattingWith': peerId});
 
-    setState(() {});
+    //setState(() {});
   }
 
   Future getImage() async {
