@@ -80,7 +80,8 @@ class _DrawerMenuState extends State<DrawerMenu> {
                   ),
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.of(context).pushNamed('/account');
+                    Navigator.of(context).pushNamed('/account',
+                        arguments: {'user': medicallUser});
                   }),
               Divider(
                 height: 0,

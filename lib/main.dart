@@ -6,7 +6,6 @@ import 'package:Medicall/screens/Account/paymentDetail.dart';
 import 'package:Medicall/screens/Chat/index.dart';
 import 'package:Medicall/screens/ConfirmConsult/index.dart';
 import 'package:Medicall/screens/Consent/index.dart';
-import 'package:Medicall/screens/Doctors/index.dart';
 import 'package:Medicall/screens/History/historyDetail.dart';
 import 'package:Medicall/screens/History/index.dart';
 import 'package:Medicall/screens/Home/index.dart';
@@ -14,8 +13,6 @@ import 'package:Medicall/screens/LandingPage/index.dart';
 import 'package:Medicall/screens/Login/index.dart';
 import 'package:Medicall/screens/OtpVerification/index.dart';
 import 'package:Medicall/screens/Privacy/index.dart';
-import 'package:Medicall/screens/Questions/medicalHistory.dart';
-import 'package:Medicall/screens/Questions/symptomScreening.dart';
 import 'package:Medicall/screens/QuestionsUpload/index.dart';
 import 'package:Medicall/screens/Registration/RegistrationType/index.dart';
 import 'package:Medicall/screens/Registration/index.dart';
@@ -28,6 +25,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_crashlytics/flutter_crashlytics.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
+
+import 'screens/Questions/questionsScreen.dart';
+import 'screens/Symptoms/index.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -162,26 +162,18 @@ class _MedicallAppState extends State<MedicallApp> {
                 );
               case '/doctors':
                 return MyCustomRoute(
-                  builder: (_) => DoctorsScreen(data: settings.arguments),
+                  builder: (_) => SymptomsScreen(data: settings.arguments),
                   settings: settings,
                 );
-              case '/questionsScreening':
+              case '/questionsScreen':
                 return MyCustomRoute(
-                  builder: (_) =>
-                      SymptomQuestionsScreen(data: settings.arguments),
+                  builder: (_) => QuestionsScreen(data: settings.arguments),
                   settings: settings,
                 );
               case '/selectProvider':
                 return MyCustomRoute(
                   builder: (_) =>
                       SelectProviderScreen(data: settings.arguments),
-                  settings: settings,
-                );
-              case '/questionsHistory':
-                return MyCustomRoute(
-                  builder: (_) => MedHistoryQuestionsScreen(
-                    data: settings.arguments,
-                  ),
                   settings: settings,
                 );
               case '/questionsUpload':
@@ -213,7 +205,7 @@ class _MedicallAppState extends State<MedicallApp> {
                 );
               case '/account':
                 return MyCustomRoute(
-                  builder: (_) => AccountScreen(),
+                  builder: (_) => AccountScreen(data: settings.arguments),
                   settings: settings,
                 );
               case '/paymentDetail':

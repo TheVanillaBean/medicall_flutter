@@ -22,10 +22,8 @@ class _HistoryScreenState extends State<HistoryScreen>
     with SingleTickerProviderStateMixin {
   //Tokens _tokens = Tokens();
   TabController controller;
-
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   List<String> providers = [];
-
   @override
   void initState() {
     super.initState();
@@ -39,479 +37,500 @@ class _HistoryScreenState extends State<HistoryScreen>
     controller.dispose();
   }
 
+  // Future<void> _getHistory() async {
+  //   return this._memoizer.runOnce(() async {
+  //   return Firestore.instance
+  //       .collection('consults')
+  //       .where('patient_id', isEqualTo: medicallUser.id)
+  //       .orderBy('date', descending: true)
+  //       .snapshots();
+  //   });
+  // }
+
   @override
   Widget build(BuildContext context) {
     currentOrientation = MediaQuery.of(context).orientation;
-    return Scaffold(
-      key: _scaffoldKey,
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        centerTitle: true,
-        leading: IconButton(
-          onPressed: () {
-            _scaffoldKey.currentState.openDrawer();
-          },
-          icon: Icon(Icons.menu),
-        ),
-        title: TabBar(
-          tabs: [
-            Tab(
-              text: 'History',
-            ),
-            // Tab(
-            //   text: 'Doctors',
-            // ),
-          ],
-          indicatorColor: Colors.transparent,
-          labelStyle: TextStyle(
-              fontSize: 16, letterSpacing: 1, fontWeight: FontWeight.w600),
-          indicatorPadding: EdgeInsets.all(0),
-          indicatorSize: TabBarIndicatorSize.label,
-          unselectedLabelColor: Colors.blue.shade100,
-          indicatorWeight: 1,
-          labelPadding: EdgeInsets.all(0),
-          onTap: (val) {
-            if (val == 0) {
-              currTab = 'Search History';
-            } else {
-              currTab = 'Search Doctors';
-            }
-          },
-          controller: controller,
-        ),
-        actions: <Widget>[
-          userHasConsults
-              ? IconButton(
-                  icon: Icon(Icons.search),
-                  onPressed: () {
-                    showSearch(
-                      context: context,
-                      delegate: CustomSearchDelegate(),
-                    );
-                  },
-                )
-              : SizedBox(
-                  width: 60,
-                ),
-        ],
-        elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
-      ),
-      drawer: DrawerMenu(
-        data: {'user': medicallUser},
-      ),
-      body: medicallUser.type == 'provider'
-          ? TabBarView(
-              // Add tabs as widgets
-              children: <Widget>[
-                //_buildTab("consults"),
-                _buildTab("patients"),
+    return StreamBuilder(
+        stream: Firestore.instance
+            .collection('users')
+            .document(medicallUser.uid)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Center(
+              heightFactor: 35,
+              child: CircularProgressIndicator(),
+            );
+          }
+          MedicallUser.from(snapshot.data);
+          return Scaffold(
+            key: _scaffoldKey,
+            resizeToAvoidBottomPadding: false,
+            appBar: AppBar(
+              centerTitle: true,
+              leading: IconButton(
+                onPressed: () {
+                  _scaffoldKey.currentState.openDrawer();
+                },
+                icon: Icon(Icons.home),
+              ),
+              title: TabBar(
+                tabs: [
+                  Tab(
+                    text: 'History',
+                  ),
+                  // Tab(
+                  //   text: 'Doctors',
+                  // ),
+                ],
+                indicatorColor: Colors.transparent,
+                labelStyle: TextStyle(
+                    fontSize: 16,
+                    letterSpacing: 1,
+                    fontWeight: FontWeight.w600),
+                indicatorPadding: EdgeInsets.all(0),
+                indicatorSize: TabBarIndicatorSize.label,
+                unselectedLabelColor: Colors.blue.shade100,
+                indicatorWeight: 1,
+                labelPadding: EdgeInsets.all(0),
+                onTap: (val) {
+                  if (val == 0) {
+                    currTab = 'Search History';
+                  } else {
+                    currTab = 'Search Doctors';
+                  }
+                },
+                controller: controller,
+              ),
+              actions: <Widget>[
+                userHasConsults
+                    ? IconButton(
+                        icon: Icon(Icons.search),
+                        onPressed: () {
+                          showSearch(
+                            context: context,
+                            delegate: CustomSearchDelegate(),
+                          );
+                        },
+                      )
+                    : SizedBox(
+                        width: 60,
+                      ),
               ],
-              // set the controller
-              controller: controller,
-            )
-          : TabBarView(
-              controller: controller,
-              children: <Widget>[
-                _buildTab("consults"),
-                //_buildTab("doctors"),
-              ],
+              elevation:
+                  Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
             ),
-    );
+            drawer: DrawerMenu(
+              data: {'user': medicallUser},
+            ),
+            body: medicallUser.type == 'provider'
+                ? TabBarView(
+                    // Add tabs as widgets
+                    children: <Widget>[
+                      //_buildTab("consults"),
+                      _buildTab("patients"),
+                    ],
+                    // set the controller
+                    controller: controller,
+                  )
+                : TabBarView(
+                    controller: controller,
+                    children: <Widget>[
+                      _buildTab("consults"),
+                      //_buildTab("doctors"),
+                    ],
+                  ),
+          );
+        });
   }
 
   _buildTab(questions) {
     if (questions == "consults") {
-      return Scaffold(
-        body: SingleChildScrollView(
-          child: StreamBuilder(
-              stream: Firestore.instance
-                  .collection('consults')
-                  .where('patient_id', isEqualTo: medicallUser.uid)
-                  .orderBy('date', descending: true)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return Center(
-                    heightFactor: 35,
-                    child: Text("You have no doctor consult history yet.",
-                        textAlign: TextAlign.center),
-                  );
-                }
-                if (snapshot.data.documents.length > 0) {
-                  var userDocuments = snapshot.data.documents;
-                  List<Widget> historyList = [];
-                  for (var i = 0; i < userDocuments.length; i++) {
-                    Timestamp timestamp = userDocuments[i].data['date'];
-                    historyList.add(FlatButton(
-                        padding: EdgeInsets.all(0),
-                        splashColor: Theme.of(context)
-                            .colorScheme
-                            .secondary
-                            .withAlpha(70),
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/historyDetail',
-                              arguments: {
-                                'documentId': userDocuments[i].documentID,
-                                'user': medicallUser,
-                                'from': 'consults',
-                                'isRouted': false,
-                              });
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                              border: Border(
-                                  bottom: BorderSide(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondary
-                                          .withAlpha(70)))),
-                          child: ListTile(
-                            dense: true,
-                            isThreeLine: true,
-                            title: Text(
-                              '${userDocuments[i].data['provider'].split(" ")[0][0].toUpperCase()}${userDocuments[i].data['provider'].split(" ")[0].substring(1)} ${userDocuments[i].data['provider'].split(" ")[1][0].toUpperCase()}${userDocuments[i].data['provider'].split(" ")[1].substring(1)} ' +
-                                  userDocuments[i].data['providerTitles'],
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 1.1,
-                                  color: Theme.of(context).colorScheme.primary),
+      return SingleChildScrollView(
+        child: StreamBuilder(
+            stream: Firestore.instance
+                .collection('consults')
+                .where('patient_id', isEqualTo: medicallUser.uid)
+                .orderBy('date', descending: true)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return Center(
+                  heightFactor: 35,
+                  child: CircularProgressIndicator(),
+                );
+              }
+              if (snapshot.data.documents.length > 0) {
+                var userDocuments = snapshot.data.documents;
+                List<Widget> historyList = [];
+                for (var i = 0; i < userDocuments.length; i++) {
+                  Timestamp timestamp = userDocuments[i].data['date'];
+                  historyList.add(FlatButton(
+                      padding: EdgeInsets.all(0),
+                      splashColor:
+                          Theme.of(context).colorScheme.secondary.withAlpha(70),
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/historyDetail',
+                            arguments: {
+                              'documentId': userDocuments[i].documentID,
+                              'user': medicallUser,
+                              'from': 'consults',
+                              'isRouted': false,
+                            });
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                            border: Border(
+                                bottom: BorderSide(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .secondary
+                                        .withAlpha(70)))),
+                        child: ListTile(
+                          dense: true,
+                          isThreeLine: true,
+                          title: Text(
+                            '${userDocuments[i].data['provider'].split(" ")[0][0].toUpperCase()}${userDocuments[i].data['provider'].split(" ")[0].substring(1)} ${userDocuments[i].data['provider'].split(" ")[1][0].toUpperCase()}${userDocuments[i].data['provider'].split(" ")[1].substring(1)} ' +
+                                userDocuments[i].data['providerTitles'],
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1.1,
+                                color: Theme.of(context).colorScheme.primary),
+                          ),
+                          subtitle: Text(DateFormat('dd MMM h:mm a')
+                                  .format(timestamp.toDate())
+                                  .toString() +
+                              '\n' +
+                              userDocuments[i].data['type'].toString()),
+                          trailing: FlatButton(
+                            splashColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+                            focusColor: Colors.transparent,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                userDocuments[i].data['state'].toString() ==
+                                        'done'
+                                    ? Icon(
+                                        Icons.assignment_turned_in,
+                                        color: Colors.green,
+                                      )
+                                    : userDocuments[i]
+                                                .data['state']
+                                                .toString() ==
+                                            'in progress'
+                                        ? Icon(
+                                            Icons.assignment,
+                                            color: Colors.blue,
+                                          )
+                                        : Icon(
+                                            Icons.assignment_ind,
+                                            color: Colors.amber,
+                                          ),
+                                Text(
+                                  userDocuments[i].data['state'].toString(),
+                                  style: TextStyle(
+                                      fontSize: 10,
+                                      color: Theme.of(context).primaryColor),
+                                ),
+                              ],
                             ),
-                            subtitle: Text(DateFormat('dd MMM h:mm a')
-                                    .format(timestamp.toDate())
-                                    .toString() +
-                                '\n' +
-                                userDocuments[i].data['type'].toString()),
-                            trailing: FlatButton(
-                              splashColor: Colors.transparent,
-                              highlightColor: Colors.transparent,
-                              focusColor: Colors.transparent,
-                              child: Column(
+                            onPressed: () {},
+                          ),
+                          leading: Icon(
+                            Icons.account_circle,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .secondary
+                                .withAlpha(170),
+                            size: 50,
+                          ),
+                        ),
+                      )));
+                }
+                return Column(children: historyList.toList());
+              } else {
+                return Container(
+                  height: currentOrientation == Orientation.portrait
+                      ? MediaQuery.of(context).size.height - 80
+                      : MediaQuery.of(context).size.height - 50,
+                  child: Stack(
+                    children: <Widget>[
+                      Container(
+                        height: currentOrientation == Orientation.portrait
+                            ? MediaQuery.of(context).size.height - 80
+                            : MediaQuery.of(context).size.height - 50,
+                        width: MediaQuery.of(context).size.width,
+                        child: CustomPaint(
+                          foregroundPainter: CurvePainter(),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: <Widget>[
+                              Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
-                                  userDocuments[i].data['state'].toString() ==
-                                          'done'
-                                      ? Icon(
-                                          Icons.assignment_turned_in,
-                                          color: Colors.green,
-                                        )
-                                      : userDocuments[i]
-                                                  .data['state']
-                                                  .toString() ==
-                                              'in progress'
-                                          ? Icon(
-                                              Icons.assignment,
-                                              color: Colors.blue,
-                                            )
-                                          : Icon(
-                                              Icons.assignment_ind,
-                                              color: Colors.amber,
-                                            ),
                                   Text(
-                                    userDocuments[i].data['state'].toString(),
+                                    'Connect with local doctors now!',
                                     style: TextStyle(
-                                        fontSize: 10,
-                                        color: Theme.of(context).primaryColor),
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary),
                                   ),
                                 ],
                               ),
-                              onPressed: () {},
-                            ),
-                            leading: Icon(
-                              Icons.account_circle,
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .secondary
-                                  .withAlpha(170),
-                              size: 50,
-                            ),
-                          ),
-                        )));
-                  }
-                  return Column(children: historyList.toList());
-                } else {
-                  return Container(
-                    height: currentOrientation == Orientation.portrait
-                        ? MediaQuery.of(context).size.height - 80
-                        : MediaQuery.of(context).size.height - 50,
-                    child: Stack(
-                      children: <Widget>[
-                        Container(
-                          height: currentOrientation == Orientation.portrait
-                              ? MediaQuery.of(context).size.height - 80
-                              : MediaQuery.of(context).size.height - 50,
-                          width: MediaQuery.of(context).size.width,
-                          child: CustomPaint(
-                            foregroundPainter: CurvePainter(),
-                          ),
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: <Widget>[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Text(
-                                  'Connect with local doctors now!',
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .primary),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Column(
-                                  children: <Widget>[
-                                    Icon(
-                                      CustomIcons.MedicallIcons.live_help,
-                                      size: 60,
-                                      color: Colors.purple.withAlpha(140),
-                                    ),
-                                    Text('Select medical \nconcern',
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Column(
+                                    children: <Widget>[
+                                      Icon(
+                                        CustomIcons.MedicallIcons.live_help,
+                                        size: 60,
+                                        color: Colors.purple.withAlpha(140),
+                                      ),
+                                      Text('Select medical \nconcern',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.black54,
+                                          ))
+                                    ],
+                                  )
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: <Widget>[
+                                  Column(
+                                    children: <Widget>[
+                                      Icon(
+                                        CustomIcons.MedicallIcons.medkit,
+                                        size: 60,
+                                        color: Colors.redAccent.withAlpha(200),
+                                      ),
+                                      Text(
+                                        'If needed meds\nare delivered',
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.black54,
-                                        ))
-                                  ],
-                                )
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: <Widget>[
-                                Column(
-                                  children: <Widget>[
-                                    Icon(
-                                      CustomIcons.MedicallIcons.medkit,
-                                      size: 60,
-                                      color: Colors.redAccent.withAlpha(200),
-                                    ),
-                                    Text(
-                                      'If needed meds\nare delivered',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          fontSize: 12, color: Colors.black54),
-                                    ),
-                                  ],
-                                ),
-                                Column(
-                                  children: <Widget>[
-                                    Icon(
-                                      CustomIcons.MedicallIcons.clipboard_1,
-                                      size: 60,
-                                      color: Colors.green.withAlpha(200),
-                                    ),
-                                    Text(
-                                      'Answer\nquestions',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          fontSize: 12, color: Colors.black54),
-                                    )
-                                  ],
-                                ),
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Column(
-                                  children: <Widget>[
-                                    Icon(
-                                      CustomIcons.MedicallIcons.stethoscope,
-                                      size: 60,
-                                      color: Colors.blueAccent.withAlpha(200),
-                                    ),
-                                    Text(
-                                      'Doctor reviews &\n provides diagnosis',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          fontSize: 12, color: Colors.black54),
-                                    ),
-                                    currentOrientation == Orientation.portrait
-                                        ? SizedBox(
-                                            height: 60,
-                                          )
-                                        : SizedBox(
-                                            height: 20,
+                                            fontSize: 12,
+                                            color: Colors.black54),
+                                      ),
+                                    ],
+                                  ),
+                                  Column(
+                                    children: <Widget>[
+                                      Icon(
+                                        CustomIcons.MedicallIcons.clipboard_1,
+                                        size: 60,
+                                        color: Colors.green.withAlpha(200),
+                                      ),
+                                      Text(
+                                        'Answer\nquestions',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.black54),
+                                      )
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Column(
+                                    children: <Widget>[
+                                      Icon(
+                                        CustomIcons.MedicallIcons.stethoscope,
+                                        size: 60,
+                                        color: Colors.blueAccent.withAlpha(200),
+                                      ),
+                                      Text(
+                                        'Doctor reviews &\n provides diagnosis',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.black54),
+                                      ),
+                                      currentOrientation == Orientation.portrait
+                                          ? SizedBox(
+                                              height: 60,
+                                            )
+                                          : SizedBox(
+                                              height: 20,
+                                            ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          FlatButton(
+                                            onPressed: () {
+                                              // _scaffoldKey.currentState
+                                              //     .showBottomSheet(
+                                              //         (context) => Container(
+                                              //               color: Colors.white.withAlpha(200),
+                                              //               height: 200,
+                                              //             ));
+                                              Navigator.pushReplacementNamed(
+                                                  context, '/doctors',
+                                                  arguments: {
+                                                    'user': medicallUser
+                                                  });
+                                            },
+                                            color: Colors.green,
+                                            child: Text('Start'),
                                           ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: <Widget>[
-                                        FlatButton(
-                                          onPressed: () {
-                                            // _scaffoldKey.currentState
-                                            //     .showBottomSheet(
-                                            //         (context) => Container(
-                                            //               color: Colors.white.withAlpha(200),
-                                            //               height: 200,
-                                            //             ));
-                                            Navigator.pushReplacementNamed(
-                                                context, '/doctors',
-                                                arguments: {
-                                                  'user': medicallUser
-                                                });
-                                          },
-                                          color: Colors.green,
-                                          child: Text('Start'),
-                                        ),
-                                        Text('  - or -  ',
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color: Theme.of(context)
-                                                  .primaryColor,
-                                            )),
-                                        FlatButton(
-                                          onPressed: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      DoctorSearch()),
-                                            );
-                                          },
-                                          color: Colors.blueAccent,
-                                          child: Text('Find Doctor'),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                )
-                              ],
-                            ),
-                          ],
+                                          Text('  - or -  ',
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                color: Theme.of(context)
+                                                    .primaryColor,
+                                              )),
+                                          FlatButton(
+                                            onPressed: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        DoctorSearch()),
+                                              );
+                                            },
+                                            color: Colors.blueAccent,
+                                            child: Text('Find Doctor'),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                      ],
-                    ),
-                  );
-                }
-              }),
-        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+            }),
       );
     }
     if (questions == "patients") {
-      return Scaffold(
-        body: SingleChildScrollView(
-          child: StreamBuilder(
-              stream: Firestore.instance
-                  .collection('consults')
-                  .where('provider_id', isEqualTo: medicallUser.uid)
-                  .orderBy('date', descending: true)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return Center(
-                    heightFactor: 35,
-                    child: Text("You have no patient requests yet.",
-                        textAlign: TextAlign.center),
-                  );
-                }
-                if (snapshot.data.documents.length > 0) {
-                  var userDocuments = snapshot.data.documents;
-                  List<Widget> historyList = [];
-                  for (var i = 0; i < userDocuments.length; i++) {
-                    Timestamp timestamp = userDocuments[i].data['date'];
-                    historyList.add(FlatButton(
-                        padding: EdgeInsets.all(0),
-                        splashColor: Theme.of(context)
-                            .colorScheme
-                            .secondary
-                            .withAlpha(70),
-                        onPressed: () {
-                          Navigator.pushNamed(context, '/historyDetail',
-                              arguments: {
-                                'documentId': userDocuments[i].documentID,
-                                'user': medicallUser,
-                                'from': 'patients',
-                                'isRouted': false,
-                              });
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                              border: Border(
-                                  bottom: BorderSide(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondary
-                                          .withAlpha(70)))),
-                          child: ListTile(
-                            dense: true,
-                            isThreeLine: true,
-                            title: Text(
-                              userDocuments[i].data['patient'].toString(),
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 1.1,
-                                  color: Theme.of(context).colorScheme.primary),
-                            ),
-                            subtitle: Text(DateFormat('dd MMM h:mm a')
-                                    .format(timestamp.toDate())
-                                    .toString() +
-                                '\n' +
-                                userDocuments[i].data['type'].toString()),
-                            trailing: FlatButton(
-                              splashColor: Colors.transparent,
-                              highlightColor: Colors.transparent,
-                              focusColor: Colors.transparent,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  userDocuments[i].data['state'].toString() ==
-                                          'done'
-                                      ? Icon(
-                                          Icons.assignment_turned_in,
-                                          color: Colors.green,
-                                        )
-                                      : userDocuments[i]
-                                                  .data['state']
-                                                  .toString() ==
-                                              'in progress'
-                                          ? Icon(
-                                              Icons.assignment,
-                                              color: Colors.blue,
-                                            )
-                                          : Icon(
-                                              Icons.assignment_ind,
-                                              color: Colors.amber,
-                                            ),
-                                  Text(
-                                    userDocuments[i].data['state'].toString(),
-                                    style: TextStyle(
-                                        fontSize: 10,
-                                        color: Theme.of(context).primaryColor),
-                                  ),
-                                ],
-                              ),
-                              onPressed: () {},
-                            ),
-                            leading: Icon(
-                              Icons.account_circle,
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .secondary
-                                  .withAlpha(170),
-                              size: 50,
-                            ),
+      return SingleChildScrollView(
+        child: StreamBuilder(
+            stream: Firestore.instance
+                .collection('consults')
+                .where('provider_id', isEqualTo: medicallUser.uid)
+                .orderBy('date', descending: true)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return Center(
+                  heightFactor: 35,
+                  child: CircularProgressIndicator(),
+                );
+              }
+              if (snapshot.data.documents.length > 0) {
+                var userDocuments = snapshot.data.documents;
+                List<Widget> historyList = [];
+                for (var i = 0; i < userDocuments.length; i++) {
+                  Timestamp timestamp = userDocuments[i].data['date'];
+                  historyList.add(FlatButton(
+                      padding: EdgeInsets.all(0),
+                      splashColor:
+                          Theme.of(context).colorScheme.secondary.withAlpha(70),
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/historyDetail',
+                            arguments: {
+                              'documentId': userDocuments[i].documentID,
+                              'user': medicallUser,
+                              'from': 'patients',
+                              'isRouted': false,
+                            });
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                            border: Border(
+                                bottom: BorderSide(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .secondary
+                                        .withAlpha(70)))),
+                        child: ListTile(
+                          dense: true,
+                          isThreeLine: true,
+                          title: Text(
+                            userDocuments[i].data['patient'].toString(),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1.1,
+                                color: Theme.of(context).colorScheme.primary),
                           ),
-                        )));
-                  }
-                  return Column(children: historyList.toList());
-                } else {
-                  return Center(
-                    heightFactor: 35,
-                    child: Text("You have no patient requests yet.",
-                        textAlign: TextAlign.center),
-                  );
+                          subtitle: Text(DateFormat('dd MMM h:mm a')
+                                  .format(timestamp.toDate())
+                                  .toString() +
+                              '\n' +
+                              userDocuments[i].data['type'].toString()),
+                          trailing: FlatButton(
+                            splashColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+                            focusColor: Colors.transparent,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                userDocuments[i].data['state'].toString() ==
+                                        'done'
+                                    ? Icon(
+                                        Icons.assignment_turned_in,
+                                        color: Colors.green,
+                                      )
+                                    : userDocuments[i]
+                                                .data['state']
+                                                .toString() ==
+                                            'in progress'
+                                        ? Icon(
+                                            Icons.assignment,
+                                            color: Colors.blue,
+                                          )
+                                        : Icon(
+                                            Icons.assignment_ind,
+                                            color: Colors.amber,
+                                          ),
+                                Text(
+                                  userDocuments[i].data['state'].toString(),
+                                  style: TextStyle(
+                                      fontSize: 10,
+                                      color: Theme.of(context).primaryColor),
+                                ),
+                              ],
+                            ),
+                            onPressed: () {},
+                          ),
+                          leading: Icon(
+                            Icons.account_circle,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .secondary
+                                .withAlpha(170),
+                            size: 50,
+                          ),
+                        ),
+                      )));
                 }
-              }),
-        ),
+                return Column(children: historyList.toList());
+              } else {
+                return Center(
+                  heightFactor: 35,
+                  child: Text("You have no patient requests yet.",
+                      textAlign: TextAlign.center),
+                );
+              }
+            }),
       );
     }
   }
@@ -900,8 +919,7 @@ class CustomSearchDelegate extends SearchDelegate {
                 } else {
                   return Center(
                     heightFactor: 35,
-                    child: Text("You have no doctor consult history yet.",
-                        textAlign: TextAlign.center),
+                    child: CircularProgressIndicator(),
                   );
                 }
               }),

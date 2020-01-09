@@ -400,7 +400,10 @@ class ChatScreenState extends State<ChatScreen> {
               child: Container(
                 margin: EdgeInsets.symmetric(horizontal: 8.0),
                 child: IconButton(
-                  icon: Icon(Icons.send),
+                  icon: Icon(
+                    Icons.send,
+                    color: Colors.green,
+                  ),
                   onPressed: () {
                     if (!this.peerAvatar) {
                       onSendMessage(textEditingController.text, 0);

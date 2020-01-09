@@ -1,13 +1,36 @@
+import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
-class AccountScreen extends StatelessWidget {
+class AccountScreen extends StatefulWidget {
+  final data;
+  AccountScreen({Key key, @required this.data}) : super(key: key);
+
+  @override
+  _AccountScreenState createState() => _AccountScreenState();
+}
+
+class _AccountScreenState extends State<AccountScreen> {
+  final _scaffoldKey1 = GlobalKey<ScaffoldState>();
+  @override
+  void initState() {
+    super.initState();
+    medicallUser = widget.data['user'];
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
         //App Bar
+        key: _scaffoldKey1,
         appBar: AppBar(
           centerTitle: true,
+          leading: IconButton(
+            onPressed: () {
+              _scaffoldKey1.currentState.openDrawer();
+            },
+            icon: Icon(Icons.home),
+          ),
           title: Text(
             'Account',
             style: TextStyle(
@@ -19,7 +42,7 @@ class AccountScreen extends StatelessWidget {
           elevation:
               Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
         ),
-
+        drawer: DrawerMenu(data: {'user': medicallUser}),
         //Content of tabs
         body: Column(
           children: <Widget>[

@@ -208,8 +208,8 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
           ),
           Positioned(
             bottom: 16.0,
-            left: 16.0,
-            right: 16.0,
+            left: 0.0,
+            right: 0.0,
             child: SafeArea(
               child: Row(
                 children: [

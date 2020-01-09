@@ -1,6 +1,5 @@
 import 'package:Medicall/screens/QuestionsUpload/asset_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:oktoast/oktoast.dart';
@@ -39,46 +38,97 @@ class _BuildQuestionsState extends State<BuildQuestions> {
               questions['image'] = images;
             }
 
-            returnList.add(SingleChildScrollView(
-                child: Visibility(
-                    visible: questions['visible'],
-                    child: Column(children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            question['question'],
-                          ),
+            returnList.add(Visibility(
+                visible: questions['visible'],
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          question['question'],
                         ),
                       ),
-                      Column(
-                        children: <Widget>[
-                          FlatButton(
-                            onPressed: loadAssets,
-                            child: Column(
-                              children: <Widget>[
-                                images.length > 0
-                                    ? buildGridView(images)
-                                    : Container(
-                                        child: question['media'].length > 0
-                                            ? Image.network(
-                                                question['media'],
-                                              )
-                                            : Column(
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Container(
+                        alignment: Alignment.topCenter,
+                        padding: EdgeInsets.all(0),
+                        child: FlatButton(
+                          padding: EdgeInsets.all(0),
+                          onPressed: loadAssets,
+                          child: SingleChildScrollView(
+                            child: images.length > 0
+                                ? buildGridView(images)
+                                : Container(
+                                    padding: EdgeInsets.fromLTRB(0, 0, 0, 40),
+                                    alignment: Alignment.center,
+                                    child: question['media'].length > 0
+                                        ? Stack(
+                                            alignment: Alignment.bottomCenter,
+                                            children: <Widget>[
+                                              Container(
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    0.6,
+                                                decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      width: 1,
+                                                      color: Colors.grey,
+                                                      style: BorderStyle.solid),
+                                                ),
+                                                child: Image.network(
+                                                  question['media'],
+                                                ),
+                                              ),
+                                              Container(
+                                                transform:
+                                                    Matrix4.translationValues(
+                                                        0.0, 37.0, 0.0),
+                                                child: ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          60.0),
+                                                  child: Container(
+                                                    padding: EdgeInsets.all(15),
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .primary,
+                                                    child: Icon(
+                                                      Icons.camera_alt,
+                                                      size: 40,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                        : Stack(
+                                            alignment: Alignment.bottomCenter,
+                                            children: <Widget>[
+                                              Column(
                                                 children: <Widget>[
                                                   Row(
                                                     children: <Widget>[
                                                       Expanded(
                                                         flex: 1,
                                                         child: Container(
+                                                          child: Icon(
+                                                            Icons.image,
+                                                            size: 50,
+                                                          ),
                                                           height: MediaQuery.of(
                                                                       context)
                                                                   .size
-                                                                  .height /
-                                                              4.5,
+                                                                  .height *
+                                                              0.31,
                                                           decoration:
                                                               BoxDecoration(
+                                                            color: Colors.grey
+                                                                .withAlpha(100),
                                                             border: Border(
                                                               left: BorderSide(
                                                                 //                   <--- left side
@@ -99,13 +149,19 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                                                       Expanded(
                                                         flex: 1,
                                                         child: Container(
+                                                          child: Icon(
+                                                            Icons.image,
+                                                            size: 50,
+                                                          ),
                                                           height: MediaQuery.of(
                                                                       context)
                                                                   .size
-                                                                  .height /
-                                                              4.5,
+                                                                  .height *
+                                                              0.31,
                                                           decoration:
                                                               BoxDecoration(
+                                                            color: Colors.grey
+                                                                .withAlpha(100),
                                                             border: Border(
                                                               right: BorderSide(
                                                                 //                   <--- left side
@@ -136,13 +192,19 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                                                       Expanded(
                                                         flex: 1,
                                                         child: Container(
+                                                          child: Icon(
+                                                            Icons.image,
+                                                            size: 50,
+                                                          ),
                                                           height: MediaQuery.of(
                                                                       context)
                                                                   .size
-                                                                  .height /
-                                                              4.5,
+                                                                  .height *
+                                                              0.31,
                                                           decoration:
                                                               BoxDecoration(
+                                                            color: Colors.grey
+                                                                .withAlpha(100),
                                                             border: Border(
                                                               left: BorderSide(
                                                                 //                   <--- left side
@@ -170,13 +232,19 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                                                       Expanded(
                                                         flex: 1,
                                                         child: Container(
+                                                          child: Icon(
+                                                            Icons.image,
+                                                            size: 50,
+                                                          ),
                                                           height: MediaQuery.of(
                                                                       context)
                                                                   .size
-                                                                  .height /
-                                                              4.5,
+                                                                  .height *
+                                                              0.31,
                                                           decoration:
                                                               BoxDecoration(
+                                                            color: Colors.grey
+                                                                .withAlpha(100),
                                                             border: Border(
                                                               right: BorderSide(
                                                                 //                   <--- left side
@@ -210,13 +278,33 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                                                     ],
                                                   ),
                                                 ],
-                                              ))
-                              ],
-                            ),
+                                              ),
+                                              Container(
+                                                transform:
+                                                    Matrix4.translationValues(
+                                                        0.0, 37.0, 0.0),
+                                                child: ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          60.0),
+                                                  child: Container(
+                                                    padding: EdgeInsets.all(15),
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .primary,
+                                                    child: Icon(
+                                                      Icons.camera_alt,
+                                                      size: 40,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          )),
                           ),
-                        ],
+                        ),
                       ),
-                    ]))));
+                    ])));
           } else {
             if (index == null) {
               String type = questions['type'];
@@ -477,7 +565,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
               Expanded(
                 flex: 1,
                 child: Container(
-                  height: MediaQuery.of(context).size.height / 4,
+                  height: MediaQuery.of(context).size.height * .3,
                   child: AssetView(
                     i,
                     images[i],
@@ -488,7 +576,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
               Expanded(
                 flex: 1,
                 child: Container(
-                  height: MediaQuery.of(context).size.height / 4,
+                  height: MediaQuery.of(context).size.height * .3,
                   child: AssetView(
                     i + 1,
                     images[i + 1],
@@ -505,7 +593,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
               Expanded(
                 flex: 1,
                 child: Container(
-                  height: MediaQuery.of(context).size.height / 4,
+                  height: MediaQuery.of(context).size.height * .3,
                   child: AssetView(
                     i,
                     images[i],
@@ -522,7 +610,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
               Expanded(
                 flex: 1,
                 child: Container(
-                  height: MediaQuery.of(context).size.height / 4,
+                  height: MediaQuery.of(context).size.height * .3,
                   child: AssetView(
                     i,
                     images[i],
@@ -533,7 +621,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
               Expanded(
                 flex: 1,
                 child: Container(
-                  height: MediaQuery.of(context).size.height / 4,
+                  height: MediaQuery.of(context).size.height * .3,
                   child: AssetView(
                     i + 1,
                     images[i + 1],
@@ -546,15 +634,36 @@ class _BuildQuestionsState extends State<BuildQuestions> {
         }
       }
     } else {
-      returnList.add(AssetView(
-        0,
-        images[0],
-        key: UniqueKey(),
+      returnList.add(Container(
+        height: MediaQuery.of(context).size.height * .6,
+        child: AssetView(
+          0,
+          images[0],
+          key: UniqueKey(),
+        ),
       ));
     }
 
-    return Column(
-      children: returnList,
+    returnList.add(Container(
+      transform: Matrix4.translationValues(0.0, -37.0, 0.0),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(60.0),
+        child: Container(
+          padding: EdgeInsets.all(15),
+          color: Theme.of(context).colorScheme.primary,
+          child: Icon(
+            Icons.camera_alt,
+            size: 40,
+          ),
+        ),
+      ),
+    ));
+
+    return Container(
+      height: MediaQuery.of(context).size.height - 140,
+      child: Column(
+        children: returnList,
+      ),
     );
   }
 
@@ -574,11 +683,14 @@ class _BuildQuestionsState extends State<BuildQuestions> {
               statusBarColor:
                   '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
               lightStatusBar: false,
+              autoCloseOnSelectionLimit: true,
               startInAllView: true,
               actionBarTitle: 'Select Images',
               allViewTitle: 'All Photos'));
-    } on PlatformException catch (e) {
-      error = e.message;
+    } on Exception catch (e) {
+      if (e.toString() != 'The user has cancelled the selection') {
+        error = e.toString();
+      }
     }
 
     // If the widget was removed from the tree while the asynchronous platform
