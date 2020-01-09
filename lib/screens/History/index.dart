@@ -56,91 +56,102 @@ class _HistoryScreenState extends State<HistoryScreen>
             .document(medicallUser.uid)
             .snapshots(),
         builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return Center(
-              heightFactor: 35,
-              child: CircularProgressIndicator(),
+          if (snapshot.connectionState == ConnectionState.active) {
+            MedicallUser.from(snapshot.data);
+            return Scaffold(
+              key: _scaffoldKey,
+              resizeToAvoidBottomPadding: false,
+              appBar: AppBar(
+                centerTitle: true,
+                leading: IconButton(
+                  onPressed: () {
+                    _scaffoldKey.currentState.openDrawer();
+                  },
+                  icon: Icon(Icons.home),
+                ),
+                title: TabBar(
+                  tabs: [
+                    Tab(
+                      text: 'History',
+                    ),
+                    // Tab(
+                    //   text: 'Doctors',
+                    // ),
+                  ],
+                  indicatorColor: Colors.transparent,
+                  labelStyle: TextStyle(
+                      fontSize: 16,
+                      letterSpacing: 1,
+                      fontWeight: FontWeight.w600),
+                  indicatorPadding: EdgeInsets.all(0),
+                  indicatorSize: TabBarIndicatorSize.label,
+                  unselectedLabelColor: Colors.blue.shade100,
+                  indicatorWeight: 1,
+                  labelPadding: EdgeInsets.all(0),
+                  onTap: (val) {
+                    if (val == 0) {
+                      currTab = 'Search History';
+                    } else {
+                      currTab = 'Search Doctors';
+                    }
+                  },
+                  controller: controller,
+                ),
+                actions: <Widget>[
+                  userHasConsults
+                      ? IconButton(
+                          icon: Icon(Icons.search),
+                          onPressed: () {
+                            showSearch(
+                              context: context,
+                              delegate: CustomSearchDelegate(),
+                            );
+                          },
+                        )
+                      : SizedBox(
+                          width: 60,
+                        ),
+                ],
+                elevation: Theme.of(context).platform == TargetPlatform.iOS
+                    ? 0.0
+                    : 4.0,
+              ),
+              drawer: DrawerMenu(
+                data: {'user': medicallUser},
+              ),
+              body: medicallUser.type == 'provider'
+                  ? TabBarView(
+                      // Add tabs as widgets
+                      children: <Widget>[
+                        //_buildTab("consults"),
+                        _buildTab("patients"),
+                      ],
+                      // set the controller
+                      controller: controller,
+                    )
+                  : TabBarView(
+                      controller: controller,
+                      children: <Widget>[
+                        _buildTab("consults"),
+                        //_buildTab("doctors"),
+                      ],
+                    ),
+            );
+          } else if (snapshot.connectionState == ConnectionState.waiting) {
+            return Container(child: Center(child: CircularProgressIndicator()));
+          } else {
+            return Container(
+              child: Column(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Icon(Icons.warning),
+                  ),
+                  Text('Error in loading user data')
+                ],
+              ),
             );
           }
-          MedicallUser.from(snapshot.data);
-          return Scaffold(
-            key: _scaffoldKey,
-            resizeToAvoidBottomPadding: false,
-            appBar: AppBar(
-              centerTitle: true,
-              leading: IconButton(
-                onPressed: () {
-                  _scaffoldKey.currentState.openDrawer();
-                },
-                icon: Icon(Icons.home),
-              ),
-              title: TabBar(
-                tabs: [
-                  Tab(
-                    text: 'History',
-                  ),
-                  // Tab(
-                  //   text: 'Doctors',
-                  // ),
-                ],
-                indicatorColor: Colors.transparent,
-                labelStyle: TextStyle(
-                    fontSize: 16,
-                    letterSpacing: 1,
-                    fontWeight: FontWeight.w600),
-                indicatorPadding: EdgeInsets.all(0),
-                indicatorSize: TabBarIndicatorSize.label,
-                unselectedLabelColor: Colors.blue.shade100,
-                indicatorWeight: 1,
-                labelPadding: EdgeInsets.all(0),
-                onTap: (val) {
-                  if (val == 0) {
-                    currTab = 'Search History';
-                  } else {
-                    currTab = 'Search Doctors';
-                  }
-                },
-                controller: controller,
-              ),
-              actions: <Widget>[
-                userHasConsults
-                    ? IconButton(
-                        icon: Icon(Icons.search),
-                        onPressed: () {
-                          showSearch(
-                            context: context,
-                            delegate: CustomSearchDelegate(),
-                          );
-                        },
-                      )
-                    : SizedBox(
-                        width: 60,
-                      ),
-              ],
-              elevation:
-                  Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
-            ),
-            drawer: DrawerMenu(
-              data: {'user': medicallUser},
-            ),
-            body: medicallUser.type == 'provider'
-                ? TabBarView(
-                    // Add tabs as widgets
-                    children: <Widget>[
-                      //_buildTab("consults"),
-                      _buildTab("patients"),
-                    ],
-                    // set the controller
-                    controller: controller,
-                  )
-                : TabBarView(
-                    controller: controller,
-                    children: <Widget>[
-                      _buildTab("consults"),
-                      //_buildTab("doctors"),
-                    ],
-                  ),
-          );
         });
   }
 
