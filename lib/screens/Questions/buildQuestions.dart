@@ -74,6 +74,10 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                                                         .size
                                                         .height *
                                                     0.6,
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.85,
                                                 decoration: BoxDecoration(
                                                   border: Border.all(
                                                       width: 1,

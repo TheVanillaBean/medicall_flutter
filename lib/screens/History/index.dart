@@ -140,7 +140,9 @@ class _HistoryScreenState extends State<HistoryScreen>
               if (!snapshot.hasData) {
                 return Center(
                   heightFactor: 35,
-                  child: CircularProgressIndicator(),
+                  child: CircularProgressIndicator(
+                    backgroundColor: Colors.black,
+                  ),
                 );
               }
               if (snapshot.data.documents.length > 0) {

@@ -210,150 +210,154 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
     ];
 
     // The app's "state".
-
-    return Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(
-        actions: <Widget>[
-          PopupMenuButton<Choice>(
-            onSelected: _select,
-            initialValue: _selectedChoice,
-            itemBuilder: (BuildContext context) {
-              return choices.map((Choice choice) {
-                return PopupMenuItem<Choice>(
-                  value: choice,
-                  child: Container(
-                    height: 70,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[Text(choice.title), choice.icon],
+    if (_scaffoldKey != null) {
+      return Scaffold(
+        key: _scaffoldKey,
+        appBar: AppBar(
+          actions: <Widget>[
+            PopupMenuButton<Choice>(
+              onSelected: _select,
+              initialValue: _selectedChoice,
+              itemBuilder: (BuildContext context) {
+                return choices.map((Choice choice) {
+                  return PopupMenuItem<Choice>(
+                    value: choice,
+                    child: Container(
+                      height: 70,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[Text(choice.title), choice.icon],
+                      ),
+                    ),
+                  );
+                }).toList();
+              },
+            ),
+          ],
+          title: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    snapshot != null &&
+                            from == 'consults' &&
+                            snapshot['type'] != 'Lesion'
+                        ? snapshot['type']
+                        : snapshot != null &&
+                                snapshot['type'] == 'Lesion' &&
+                                medicallUser.type == 'patient'
+                            ? 'Spot'
+                            : snapshot != null && from == 'patients'
+                                ? '${snapshot['patient'].split(" ")[0][0].toUpperCase()}${snapshot['patient'].split(" ")[0].substring(1)} ${snapshot['patient'].split(" ")[1][0].toUpperCase()}${snapshot['patient'].split(" ")[1].substring(1)} '
+                                : '',
+                    style: TextStyle(
+                      fontSize: Theme.of(context).platform == TargetPlatform.iOS
+                          ? 17.0
+                          : 20.0,
                     ),
                   ),
-                );
-              }).toList();
-            },
+                  Text(
+                    snapshot != null &&
+                            from == 'consults' &&
+                            medicallUser.type == 'patient'
+                        ? '${snapshot['provider'].split(" ")[0][0].toUpperCase()}${snapshot['provider'].split(" ")[0].substring(1)} ${snapshot['provider'].split(" ")[1][0].toUpperCase()}${snapshot['provider'].split(" ")[1].substring(1)} ' +
+                            snapshot['providerTitles']
+                        : snapshot != null &&
+                                from == 'consults' &&
+                                medicallUser.type == 'provider'
+                            ? '${snapshot['provider'].split(" ")[0][0].toUpperCase()}${snapshot['provider'].split(" ")[0].substring(1)} ${snapshot['provider'].split(" ")[1][0].toUpperCase()}${snapshot['provider'].split(" ")[1].substring(1)} ' +
+                                snapshot['providerTitles']
+                            : snapshot != null &&
+                                    snapshot['type'] == 'Lesion' &&
+                                    from == 'patients'
+                                ? 'Spot'
+                                : snapshot != null &&
+                                        from == 'patients' &&
+                                        snapshot['type'] != 'Lesion'
+                                    ? snapshot['type']
+                                    : '',
+                    style: TextStyle(
+                      fontSize: Theme.of(context).platform == TargetPlatform.iOS
+                          ? 12.0
+                          : 14.0,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-        ],
-        title: Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  snapshot != null &&
-                          from == 'consults' &&
-                          snapshot['type'] != 'Lesion'
-                      ? snapshot['type']
-                      : snapshot != null &&
-                              snapshot['type'] == 'Lesion' &&
-                              medicallUser.type == 'patient'
-                          ? 'Spot'
-                          : snapshot != null && from == 'patients'
-                              ? '${snapshot['patient'].split(" ")[0][0].toUpperCase()}${snapshot['patient'].split(" ")[0].substring(1)} ${snapshot['patient'].split(" ")[1][0].toUpperCase()}${snapshot['patient'].split(" ")[1].substring(1)} '
-                              : '',
-                  style: TextStyle(
-                    fontSize: Theme.of(context).platform == TargetPlatform.iOS
-                        ? 17.0
-                        : 20.0,
-                  ),
-                ),
-                Text(
-                  snapshot != null &&
-                          from == 'consults' &&
-                          medicallUser.type == 'patient'
-                      ? '${snapshot['provider'].split(" ")[0][0].toUpperCase()}${snapshot['provider'].split(" ")[0].substring(1)} ${snapshot['provider'].split(" ")[1][0].toUpperCase()}${snapshot['provider'].split(" ")[1].substring(1)} ' +
-                          snapshot['providerTitles']
-                      : snapshot != null &&
-                              from == 'consults' &&
-                              medicallUser.type == 'provider'
-                          ? '${snapshot['provider'].split(" ")[0][0].toUpperCase()}${snapshot['provider'].split(" ")[0].substring(1)} ${snapshot['provider'].split(" ")[1][0].toUpperCase()}${snapshot['provider'].split(" ")[1].substring(1)} ' +
-                              snapshot['providerTitles']
-                          : snapshot != null &&
-                                  snapshot['type'] == 'Lesion' &&
-                                  from == 'patients'
-                              ? 'Spot'
-                              : snapshot != null &&
-                                      from == 'patients' &&
-                                      snapshot['type'] != 'Lesion'
-                                  ? snapshot['type']
-                                  : '',
-                  style: TextStyle(
-                    fontSize: Theme.of(context).platform == TargetPlatform.iOS
-                        ? 12.0
-                        : 14.0,
-                  ),
-                ),
-              ],
-            ),
-          ],
+          bottom: TabBar(
+            indicatorColor: Theme.of(context).colorScheme.primary,
+            indicatorWeight: 3,
+            labelStyle: TextStyle(fontSize: 12),
+            tabs: <Tab>[
+              medicallUser.type == 'patient'
+                  ? Tab(
+                      // set icon to the tab
+                      text: 'Prescription',
+                      icon: Icon(Icons.local_hospital),
+                    )
+                  : Tab(
+                      // set icon to the tab
+                      text: 'Details',
+                      icon: Icon(Icons.assignment),
+                    ),
+              Tab(
+                // set icon to the tab
+                text: 'Chat',
+                icon: Icon(Icons.chat_bubble_outline),
+              ),
+              medicallUser.type == 'patient'
+                  ? Tab(
+                      // set icon to the tab
+                      text: 'Details',
+                      icon: Icon(Icons.assignment),
+                    )
+                  : Tab(
+                      // set icon to the tab
+                      text: 'Prescription',
+                      icon: Icon(Icons.local_hospital),
+                    ),
+            ],
+            // setup the controller
+            controller: controller,
+          ),
+          elevation:
+              Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
+          leading: WillPopScope(
+            onWillPop: () async {
+              Navigator.pushNamed(context, '/history',
+                  arguments: {'user': medicallUser});
+              return false;
+            },
+            child: BackButton(),
+          ),
         ),
-        bottom: TabBar(
-          indicatorColor: Theme.of(context).colorScheme.primary,
-          indicatorWeight: 3,
-          labelStyle: TextStyle(fontSize: 12),
-          tabs: <Tab>[
-            medicallUser.type == 'patient'
-                ? Tab(
-                    // set icon to the tab
-                    text: 'Prescription',
-                    icon: Icon(Icons.local_hospital),
-                  )
-                : Tab(
-                    // set icon to the tab
-                    text: 'Details',
-                    icon: Icon(Icons.assignment),
-                  ),
-            Tab(
-              // set icon to the tab
-              text: 'Chat',
-              icon: Icon(Icons.chat_bubble_outline),
-            ),
-            medicallUser.type == 'patient'
-                ? Tab(
-                    // set icon to the tab
-                    text: 'Details',
-                    icon: Icon(Icons.assignment),
-                  )
-                : Tab(
-                    // set icon to the tab
-                    text: 'Prescription',
-                    icon: Icon(Icons.local_hospital),
-                  ),
-          ],
-          // setup the controller
-          controller: controller,
-        ),
-        elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
-        leading: WillPopScope(
-          onWillPop: () async {
-            Navigator.pushNamed(context, '/history',
-                arguments: {'user': medicallUser});
-            return false;
-          },
-          child: BackButton(),
-        ),
-      ),
-      body: snapshot != null
-          ? TabBarView(
-              // Add tabs as widgets
-              children: medicallUser.type == 'patient'
-                  ? <Widget>[
-                      _buildTab('prescription', 0),
-                      _buildTab('chat', 1),
-                      _buildTab('details', 2),
-                    ]
-                  : <Widget>[
-                      _buildTab('details', 0),
-                      _buildTab('chat', 1),
-                      _buildTab('prescription', 2),
-                    ],
-              // set the controller
-              controller: controller,
-            )
-          : null,
-    );
+        body: snapshot != null
+            ? TabBarView(
+                // Add tabs as widgets
+                children: medicallUser.type == 'patient'
+                    ? <Widget>[
+                        _buildTab('prescription', 0),
+                        _buildTab('chat', 1),
+                        _buildTab('details', 2),
+                      ]
+                    : <Widget>[
+                        _buildTab('details', 0),
+                        _buildTab('chat', 1),
+                        _buildTab('prescription', 2),
+                      ],
+                // set the controller
+                controller: controller,
+              )
+            : null,
+      );
+    } else {
+      return Container();
+    }
   }
 
   _buildTab(key, ind) {
@@ -403,21 +407,8 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
         )),
         body: Container(
           child: questions[0].toString().contains('https')
-              ? CarouselSlider(
-                  height: 400.0,
-                  items: questions.map((i) {
-                    return Builder(
-                      builder: (BuildContext context) {
-                        return Container(
-                            width: MediaQuery.of(context).size.width,
-                            margin: EdgeInsets.symmetric(horizontal: 5.0),
-                            decoration: BoxDecoration(color: Colors.amber),
-                            child: Image(
-                              image: CachedNetworkImageProvider(i),
-                            ));
-                      },
-                    );
-                  }).toList(),
+              ? CarouselWithIndicator(
+                  imgList: this.snapshot['details'],
                 )
               : ListView.builder(
                   itemCount: this.snapshot['details'] != null
@@ -480,31 +471,13 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                           } else {
                             if (ind == i && y == 0 && i == 2) {
                               if (_currentDetailsIndex == 2) {
-                                List<dynamic> thisList = this
-                                    .snapshot['details'][i]
-                                    .map((f) => (CachedNetworkImageProvider(f)))
-                                    .toList();
                                 //print(this.snapshot['details'][i]);
-                                finalArray.add(CarouselSlider(
-                                  height: 400.0,
-                                  items: thisList.map((i) {
-                                    return Builder(
-                                      builder: (BuildContext context) {
-                                        return Container(
-                                            width: MediaQuery.of(context)
-                                                .size
-                                                .width,
-                                            margin: EdgeInsets.symmetric(
-                                                horizontal: 5.0),
-                                            decoration: BoxDecoration(
-                                                color: Colors.amber),
-                                            child: Text(
-                                              ' $i',
-                                              style: TextStyle(fontSize: 16.0),
-                                            ));
-                                      },
-                                    );
-                                  }).toList(),
+                                List<String> urlImgs = [
+                                  ...this.snapshot['details'][i]
+                                ];
+                                //print(this.snapshot['details'][i]);
+                                finalArray.add(CarouselWithIndicator(
+                                  imgList: urlImgs,
                                 ));
                               }
                             }
@@ -762,7 +735,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
       return Scaffold(
           body: Container(
               child: SingleChildScrollView(
-                  padding: EdgeInsets.fromLTRB(15, 20, 15, 20),
+                  padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
                   child: FormBuilder(
                     key: _consultFormKey,
                     autovalidate: true,
@@ -770,10 +743,16 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                       children: <Widget>[
                         this.patientDetail != null
                             ? Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
-                                  Text(this.patientDetail.displayName + ' '),
-                                  Text(this.patientDetail.dob + ' '),
-                                  Text(this.patientDetail.address),
+                                  Text('Patient name: ' +
+                                      this.patientDetail.displayName +
+                                      ' '),
+                                  Text('Date of birth: ' +
+                                      this.patientDetail.dob +
+                                      ' '),
+                                  Text(
+                                      'Address: ' + this.patientDetail.address),
                                 ],
                               )
                             : Container(),
@@ -897,6 +876,7 @@ class _CarouselWithIndicatorState extends State<CarouselWithIndicator> {
     return Column(children: [
       CarouselSlider(
         viewportFraction: 1.0,
+        height: MediaQuery.of(context).size.height * 0.65,
         items: widget.imgList.map(
           (url) {
             return Container(
