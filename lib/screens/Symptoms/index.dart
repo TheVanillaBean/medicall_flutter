@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:Medicall/components/DrawerMenu.dart';
+import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/Questions/questionsScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:Medicall/components/DrawerMenu.dart';
-import 'package:Medicall/models/consult_data_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:simple_animations/simple_animations.dart';
 

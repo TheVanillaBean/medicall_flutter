@@ -1,4 +1,6 @@
 import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/presentation/medicall_icons_icons.dart' as CustomIcons;
+import 'package:Medicall/secrets.dart' as secrets;
 import 'package:Medicall/util/app_util.dart';
 import 'package:Medicall/util/firebase_anonymously_util.dart';
 import 'package:Medicall/util/firebase_auth_codes.dart';
@@ -11,8 +13,6 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:intl/intl.dart';
-import 'package:Medicall/secrets.dart' as secrets;
-import 'package:Medicall/presentation/medicall_icons_icons.dart' as CustomIcons;
 import 'package:multi_image_picker/multi_image_picker.dart';
 
 GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: secrets.kGoogleApiKey);
@@ -37,8 +37,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   double formSpacing = 20;
   bool showSegmentedControl = true;
   FirebaseUser firebaseUser;
-  DocumentReference documentReference = medicallUser.id != null
-      ? Firestore.instance.document("users/" + medicallUser.id)
+  DocumentReference documentReference = medicallUser.uid != null
+      ? Firestore.instance.document("users/" + medicallUser.uid)
       : null;
 
   @override
@@ -62,7 +62,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   Future moveUserDashboardScreen(FirebaseUser currentUser) async {
     _isLoading = false;
-    medicallUser.id = currentUser.uid;
+    medicallUser.uid = currentUser.uid;
     medicallUser.displayName = _userRegKey.currentState.value['First name'] +
         ' ' +
         _userRegKey.currentState.value['Last name'];
@@ -756,7 +756,7 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
   }
 
   Future _addUserImages() async {
-    var ref = Firestore.instance.document("users/" + medicallUser.id);
+    var ref = Firestore.instance.document("users/" + medicallUser.uid);
     var images = [...this.profileImage, ...this.govIdImage];
     var imagesList = await saveImages(images, ref.documentID);
     medicallUser.profilePic = imagesList[0];
@@ -770,7 +770,7 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
       List<int> imageData = byteData.buffer.asUint8List();
       StorageReference ref = FirebaseStorage.instance
           .ref()
-          .child("profile/" + medicallUser.id + '/' + assets[i].name);
+          .child("profile/" + medicallUser.uid + '/' + assets[i].name);
       StorageUploadTask uploadTask = ref.putData(imageData);
 
       allMediaList

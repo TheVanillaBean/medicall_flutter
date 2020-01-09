@@ -1,14 +1,15 @@
 import 'dart:typed_data';
+
+import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/ConfirmConsult/routeUserOrder.dart';
 import 'package:Medicall/secrets.dart';
 import 'package:Medicall/util/stripe_payment_handler.dart';
-import 'package:flutter/material.dart';
-import 'package:Medicall/models/consult_data_model.dart';
-import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:stripe_payment/stripe_payment.dart';
 
 class ConfirmConsultScreen extends StatefulWidget {
@@ -273,7 +274,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                           //await _addProviderConsult();
                                           Firestore.instance
                                               .collection('cards')
-                                              .document(medicallUser.id)
+                                              .document(medicallUser.uid)
                                               .collection('sources')
                                               .getDocuments()
                                               .then((snap) async {
@@ -401,7 +402,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
       "providerTitles": _consult.providerTitles,
       "patient": medicallUser.displayName,
       "provider_id": _consult.providerId,
-      "patient_id": medicallUser.id,
+      "patient_id": medicallUser.uid,
       "media": _consult.media.length > 0 ? imagesList : "",
     };
     ref.setData(data).whenComplete(() {
@@ -438,7 +439,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
       ByteData byteData = await assets[i].requestOriginal();
       List<int> imageData = byteData.buffer.asUint8List();
       StorageReference ref = FirebaseStorage.instance.ref().child("consults/" +
-          medicallUser.id +
+          medicallUser.uid +
           '/' +
           consultId +
           "/" +

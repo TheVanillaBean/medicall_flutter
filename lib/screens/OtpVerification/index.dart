@@ -1,10 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+import 'package:Medicall/components/progress_hud.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:Medicall/util/count/countdown_base.dart';
 import 'package:Medicall/util/firebase_listenter.dart';
 import 'package:Medicall/util/firebase_phone_util.dart';
-import 'package:Medicall/components/progress_hud.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
   OtpVerificationScreen({Key key}) : super(key: key);
@@ -265,8 +265,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
       setState(() {
         int sec = d.inSeconds % 60;
         otpWaitTimeLabel = d.inMinutes.toString() + ':' + sec.toString();
-      }
-      );
+      });
     });
     sub.cancel();
   }

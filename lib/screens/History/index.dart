@@ -1,10 +1,10 @@
-import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:Medicall/components/DrawerMenu.dart';
-import 'package:flutter/painting.dart';
+import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/presentation/medicall_icons_icons.dart' as CustomIcons;
 import 'package:Medicall/util/app_util.dart' as AppUtils;
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:intl/intl.dart';
 
 class HistoryScreen extends StatefulWidget {
@@ -50,81 +50,109 @@ class _HistoryScreenState extends State<HistoryScreen>
   @override
   Widget build(BuildContext context) {
     currentOrientation = MediaQuery.of(context).orientation;
-    return Scaffold(
-      key: _scaffoldKey,
-      resizeToAvoidBottomPadding: false,
-      appBar: AppBar(
-        centerTitle: true,
-        leading: IconButton(
-          onPressed: () {
-            _scaffoldKey.currentState.openDrawer();
-          },
-          icon: Icon(Icons.home),
-        ),
-        title: TabBar(
-          tabs: [
-            Tab(
-              text: 'History',
-            ),
-            // Tab(
-            //   text: 'Doctors',
-            // ),
-          ],
-          indicatorColor: Colors.transparent,
-          labelStyle: TextStyle(
-              fontSize: 16, letterSpacing: 1, fontWeight: FontWeight.w600),
-          indicatorPadding: EdgeInsets.all(0),
-          indicatorSize: TabBarIndicatorSize.label,
-          unselectedLabelColor: Colors.blue.shade100,
-          indicatorWeight: 1,
-          labelPadding: EdgeInsets.all(0),
-          onTap: (val) {
-            if (val == 0) {
-              currTab = 'Search History';
-            } else {
-              currTab = 'Search Doctors';
-            }
-          },
-          controller: controller,
-        ),
-        actions: <Widget>[
-          userHasConsults
-              ? IconButton(
-                  icon: Icon(Icons.search),
+    return StreamBuilder(
+        stream: Firestore.instance
+            .collection('users')
+            .document(medicallUser.uid)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.active) {
+            MedicallUser.from(snapshot.data);
+            return Scaffold(
+              key: _scaffoldKey,
+              resizeToAvoidBottomPadding: false,
+              appBar: AppBar(
+                centerTitle: true,
+                leading: IconButton(
                   onPressed: () {
-                    showSearch(
-                      context: context,
-                      delegate: CustomSearchDelegate(),
-                    );
+                    _scaffoldKey.currentState.openDrawer();
                   },
-                )
-              : SizedBox(
-                  width: 60,
+                  icon: Icon(Icons.home),
                 ),
-        ],
-        elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
-      ),
-      drawer: DrawerMenu(
-        data: {'user': medicallUser},
-      ),
-      body: medicallUser.type == 'provider'
-          ? TabBarView(
-              // Add tabs as widgets
-              children: <Widget>[
-                //_buildTab("consults"),
-                _buildTab("patients"),
-              ],
-              // set the controller
-              controller: controller,
-            )
-          : TabBarView(
-              controller: controller,
-              children: <Widget>[
-                _buildTab("consults"),
-                //_buildTab("doctors"),
-              ],
-            ),
-    );
+                title: TabBar(
+                  tabs: [
+                    Tab(
+                      text: 'History',
+                    ),
+                    // Tab(
+                    //   text: 'Doctors',
+                    // ),
+                  ],
+                  indicatorColor: Colors.transparent,
+                  labelStyle: TextStyle(
+                      fontSize: 16,
+                      letterSpacing: 1,
+                      fontWeight: FontWeight.w600),
+                  indicatorPadding: EdgeInsets.all(0),
+                  indicatorSize: TabBarIndicatorSize.label,
+                  unselectedLabelColor: Colors.blue.shade100,
+                  indicatorWeight: 1,
+                  labelPadding: EdgeInsets.all(0),
+                  onTap: (val) {
+                    if (val == 0) {
+                      currTab = 'Search History';
+                    } else {
+                      currTab = 'Search Doctors';
+                    }
+                  },
+                  controller: controller,
+                ),
+                actions: <Widget>[
+                  userHasConsults
+                      ? IconButton(
+                          icon: Icon(Icons.search),
+                          onPressed: () {
+                            showSearch(
+                              context: context,
+                              delegate: CustomSearchDelegate(),
+                            );
+                          },
+                        )
+                      : SizedBox(
+                          width: 60,
+                        ),
+                ],
+                elevation: Theme.of(context).platform == TargetPlatform.iOS
+                    ? 0.0
+                    : 4.0,
+              ),
+              drawer: DrawerMenu(
+                data: {'user': medicallUser},
+              ),
+              body: medicallUser.type == 'provider'
+                  ? TabBarView(
+                      // Add tabs as widgets
+                      children: <Widget>[
+                        //_buildTab("consults"),
+                        _buildTab("patients"),
+                      ],
+                      // set the controller
+                      controller: controller,
+                    )
+                  : TabBarView(
+                      controller: controller,
+                      children: <Widget>[
+                        _buildTab("consults"),
+                        //_buildTab("doctors"),
+                      ],
+                    ),
+            );
+          } else if (snapshot.connectionState == ConnectionState.waiting) {
+            return Container(child: Center(child: CircularProgressIndicator()));
+          } else {
+            return Container(
+              child: Column(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Icon(Icons.warning),
+                  ),
+                  Text('Error in loading user data')
+                ],
+              ),
+            );
+          }
+        });
   }
 
   _buildTab(questions) {
@@ -133,7 +161,7 @@ class _HistoryScreenState extends State<HistoryScreen>
         child: StreamBuilder(
             stream: Firestore.instance
                 .collection('consults')
-                .where('patient_id', isEqualTo: medicallUser.id)
+                .where('patient_id', isEqualTo: medicallUser.uid)
                 .orderBy('date', descending: true)
                 .snapshots(),
             builder: (context, snapshot) {
@@ -409,7 +437,7 @@ class _HistoryScreenState extends State<HistoryScreen>
         child: StreamBuilder(
             stream: Firestore.instance
                 .collection('consults')
-                .where('provider_id', isEqualTo: medicallUser.id)
+                .where('provider_id', isEqualTo: medicallUser.uid)
                 .orderBy('date', descending: true)
                 .snapshots(),
             builder: (context, snapshot) {
@@ -788,7 +816,7 @@ class CustomSearchDelegate extends SearchDelegate {
           child: StreamBuilder(
               stream: Firestore.instance
                   .collection('consults')
-                  .where('patient_id', isEqualTo: medicallUser.id)
+                  .where('patient_id', isEqualTo: medicallUser.uid)
                   .orderBy('date', descending: true)
                   .snapshots(),
               builder: (context, snapshot) {

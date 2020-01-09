@@ -5,11 +5,11 @@ import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 final themeColor = Color(0xfff5a623);
@@ -155,14 +155,14 @@ class ChatScreenState extends State<ChatScreen> {
       Map<String, dynamic> data = {
         'chat': FieldValue.arrayUnion([
           {
-            'user_id': medicallUser.id,
+            'user_id': medicallUser.uid,
             'date': DateTime.now(),
             'txt': content,
           }
         ])
       };
       documentReference.snapshots().forEach((snap) {
-        if (snap.data['provider_id'] == medicallUser.id &&
+        if (snap.data['provider_id'] == medicallUser.uid &&
             snap.data['state'] == 'new') {
           Map<String, dynamic> consultStateData = {'state': 'in progress'};
           documentReference.updateData(consultStateData).whenComplete(() {
@@ -191,7 +191,7 @@ class ChatScreenState extends State<ChatScreen> {
 
   Widget buildItem(int index, Map document) {
     Timestamp timestamp = document['date'];
-    if (document['user_id'] == medicallUser.id) {
+    if (document['user_id'] == medicallUser.uid) {
       // Right (my message)
       return Container(
           child: Column(children: <Widget>[
@@ -288,7 +288,7 @@ class ChatScreenState extends State<ChatScreen> {
   bool isLastMessageLeft(int index) {
     if ((index > 0 &&
             listMessage != null &&
-            listMessage[index - 1]['user_id'] == medicallUser.id) ||
+            listMessage[index - 1]['user_id'] == medicallUser.uid) ||
         index == 0) {
       return true;
     } else {
@@ -299,7 +299,7 @@ class ChatScreenState extends State<ChatScreen> {
   bool isLastMessageRight(int index) {
     if ((index > 0 &&
             listMessage != null &&
-            listMessage[index - 1]['user_id'] != medicallUser.id) ||
+            listMessage[index - 1]['user_id'] != medicallUser.uid) ||
         index == 0) {
       return true;
     } else {

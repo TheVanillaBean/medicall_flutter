@@ -1,10 +1,10 @@
+import 'package:Medicall/Screens/History/chat.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/History/buildMedicalNote.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:Medicall/Screens/History/chat.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 
 class HistoryDetailScreen extends StatefulWidget {
@@ -142,7 +142,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
           Firestore.instance.collection('consults').document(documentId);
       documentReference.get().then((snap) {
         if (snap.documentID == documentId &&
-            snap.data['provider_id'] == medicallUser.id) {
+            snap.data['provider_id'] == medicallUser.uid) {
           Map<String, dynamic> consultStateData;
           if (_selectedChoice.title == 'Done') {
             _selectedChoice.icon = Icon(Icons.check_box, color: Colors.green);
