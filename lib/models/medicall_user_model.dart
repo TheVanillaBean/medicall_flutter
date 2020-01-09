@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 MedicallUser medicallUser;
 
 class MedicallUser {
-  String id;
+  String uid;
   List<dynamic> devTokens;
   String type;
   String displayName;
@@ -21,9 +23,10 @@ class MedicallUser {
   bool terms;
   bool policy;
   bool consent;
+  bool hasMedicalHistory;
 
   MedicallUser({
-    this.id,
+    this.uid,
     this.devTokens,
     this.type,
     this.displayName,
@@ -43,5 +46,21 @@ class MedicallUser {
     this.terms,
     this.policy,
     this.consent,
+    this.hasMedicalHistory,
   });
+
+  factory MedicallUser.from(DocumentSnapshot datasnapshot) {
+    medicallUser.displayName = datasnapshot.data['name'];
+    medicallUser.firstName = datasnapshot.data['first_name'];
+    medicallUser.lastName = datasnapshot.data['last_name'];
+    medicallUser.dob = datasnapshot.data['dob'];
+    medicallUser.policy = datasnapshot.data['policy'];
+    medicallUser.consent = datasnapshot.data['consent'];
+    medicallUser.terms = datasnapshot.data['terms'];
+    medicallUser.type = datasnapshot.data['type'];
+    medicallUser.email = datasnapshot.data['email'];
+    medicallUser.phoneNumber = datasnapshot.data['phone'];
+    medicallUser.hasMedicalHistory = false;
+    return medicallUser;
+  }
 }

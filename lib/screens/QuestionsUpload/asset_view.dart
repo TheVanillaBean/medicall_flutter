@@ -37,7 +37,8 @@ class AssetState extends State<AssetView> {
           // YOUR CUSTOM CODE GOES HERE
           return Image.memory(
             byteData.buffer.asUint8List(),
-            fit: BoxFit.cover,
+            fit: BoxFit.fitWidth,
+            height: MediaQuery.of(context).size.height - 250,
           );
         } else {
           return Column(

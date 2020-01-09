@@ -16,8 +16,7 @@ class _PaymentDetailState extends State<PaymentDetail> {
   @override
   void initState() {
     super.initState();
-    StripeSource.setPublishableKey(
-        stripeKey);
+    StripeSource.setPublishableKey(stripeKey);
   }
 
   @override
@@ -51,7 +50,7 @@ class _PaymentDetailState extends State<PaymentDetail> {
       body: StreamBuilder(
           stream: Firestore.instance
               .collection('cards')
-              .document(medicallUser.id)
+              .document(medicallUser.uid)
               .collection('sources')
               .snapshots(),
           builder: (context, snapshot) {

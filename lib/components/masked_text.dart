@@ -17,18 +17,21 @@ class MaskedTextField extends StatefulWidget {
   final TextAlign textAlign;
   final TextStyle style;
 
-  const MaskedTextField(
-      {Key key,
-      this.mask,
-      this.style,
-      this.textAlign,
-      this.maskedTextFieldController,
-      this.onSubmitted,
-      this.escapeCharacter: 'x',
-      this.maxLength: 100,
-      this.keyboardType: TextInputType.text,
-      this.inputDecoration: const InputDecoration()})
-      : super(key: key);
+  final ValueSetter<String> onChanged;
+
+  const MaskedTextField({
+    Key key,
+    this.mask,
+    this.style,
+    this.textAlign,
+    this.maskedTextFieldController,
+    this.onSubmitted,
+    this.escapeCharacter: 'x',
+    this.maxLength: 100,
+    this.keyboardType: TextInputType.text,
+    this.inputDecoration: const InputDecoration(),
+    this.onChanged,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => MaskedTextFieldState();
@@ -46,14 +49,18 @@ class MaskedTextFieldState extends State<MaskedTextField> {
       decoration: widget.inputDecoration,
       textAlign: widget.textAlign ?? TextAlign.start,
       style: widget.style ?? Theme.of(context).textTheme.subhead,
-      onSubmitted: (String text) => widget?.onSubmitted(text),
+      onSubmitted: (String text) => widget?.onSubmitted(unmaskedText),
       onChanged: (String text) {
+        widget.onChanged(unmaskedText);
+
         // Deleting/removing
         if (text.length < lastTextSize) {
           if (widget.mask[text.length] != widget.escapeCharacter) {
             widget.maskedTextFieldController.selection =
-                TextSelection.fromPosition(TextPosition(
-                    offset: widget.maskedTextFieldController.text.length));
+                TextSelection.fromPosition(
+              TextPosition(
+                  offset: widget.maskedTextFieldController.text.length),
+            );
           }
         } else {
           // Typing
@@ -65,10 +72,10 @@ class MaskedTextFieldState extends State<MaskedTextField> {
               widget.maskedTextFieldController.text = _buildText(text);
             }
 
-            if (widget.mask[position] != widget.escapeCharacter)
+            if (widget.mask[position] != widget.escapeCharacter) {
               widget.maskedTextFieldController.text =
-                  '${widget.maskedTextFieldController.text}${widget
-                  .mask[position]}';
+                  '${widget.maskedTextFieldController.text}${widget.mask[position]}';
+            }
           }
 
           // Android's onChange resets cursor position (cursor goes to 0)
