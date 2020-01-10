@@ -17,11 +17,10 @@ class AssetView extends StatefulWidget {
 }
 
 class AssetState extends State<AssetView> {
-  int _index = 0;
   Asset _asset;
   ByteData byteData;
   List<int> imageData;
-  AssetState(this._index, this._asset);
+  AssetState(_index, _asset);
 
   @override
   void initState() {
@@ -54,7 +53,7 @@ class AssetState extends State<AssetView> {
           );
         }
       },
-      future: this._asset.getByteData(quality: 100),
+      future: widget._asset.getByteData(quality: 100),
     );
   }
 }

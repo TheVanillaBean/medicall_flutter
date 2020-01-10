@@ -1,5 +1,3 @@
-import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:Medicall/screens/PhoneAuth/index.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -109,9 +107,7 @@ class _ConsentScreenState extends State<ConsentScreen> {
               Text(_returnString(this.widget.data['user'])),
               FlatButton(
                 onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => AuthScreen(),
-                  ));
+                  Navigator.pushNamed(context, '/verification');
                 },
                 child: Text('Continue'),
               )

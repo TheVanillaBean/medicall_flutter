@@ -24,10 +24,12 @@ class _HistoryScreenState extends State<HistoryScreen>
   TabController controller;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   List<String> providers = [];
+  var historyList;
   @override
   void initState() {
     super.initState();
     controller = TabController(length: 1, vsync: this);
+    //_getHistory();
     //_tokens.currentContext = context;
   }
 
@@ -37,15 +39,16 @@ class _HistoryScreenState extends State<HistoryScreen>
     controller.dispose();
   }
 
-  // Future<void> _getHistory() async {
-  //   return this._memoizer.runOnce(() async {
-  //   return Firestore.instance
-  //       .collection('consults')
-  //       .where('patient_id', isEqualTo: medicallUser.id)
-  //       .orderBy('date', descending: true)
-  //       .snapshots();
-  //   });
-  // }
+  Future<void> _getHistory() async {
+    Firestore.instance
+        .collection('consults')
+        .where('patient_id', isEqualTo: medicallUser.uid)
+        .orderBy('date', descending: true)
+        .snapshots()
+        .listen((snap) {
+      print(snap);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

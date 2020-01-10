@@ -178,29 +178,6 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
     }
   }
 
-  Future<void> _getUser() async {
-    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-    FirebaseUser currentUser = await firebaseAuth.currentUser();
-    final DocumentReference documentReference =
-        Firestore.instance.collection("users").document(currentUser.uid);
-    await documentReference.get().then((datasnapshot) {
-      if (datasnapshot.data != null) {
-        medicallUser.uid = currentUser.uid;
-        medicallUser.displayName = datasnapshot.data['name'];
-        medicallUser.firstName = datasnapshot.data['first_name'];
-        medicallUser.lastName = datasnapshot.data['last_name'];
-        medicallUser.dob = datasnapshot.data['dob'];
-        medicallUser.policy = datasnapshot.data['policy'];
-        medicallUser.consent = datasnapshot.data['consent'];
-        medicallUser.terms = datasnapshot.data['terms'];
-        medicallUser.type = datasnapshot.data['type'];
-        medicallUser.email = datasnapshot.data['email'];
-        medicallUser.phoneNumber = datasnapshot.data['phone'];
-        medicallUser.hasMedicalHistory = false;
-      }
-    });
-  }
-
   void updateWith({
     AuthStatus status,
     String phoneNumber,
