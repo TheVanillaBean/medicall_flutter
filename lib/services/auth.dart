@@ -1,4 +1,5 @@
 import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -24,6 +25,13 @@ class Auth implements AuthBase {
     if (user == null) {
       return null;
     }
+    medicallUser = MedicallUser(
+      uid: user.uid,
+      phoneNumber: user.phoneNumber,
+      email: user.email,
+    );
+    //getMedicallUser(medicallUser.uid);
+    //medicallUser;
     return MedicallUser(
       uid: user.uid,
       phoneNumber: user.phoneNumber,

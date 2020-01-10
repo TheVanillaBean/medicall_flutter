@@ -20,7 +20,6 @@ class LandingPage extends StatelessWidget {
           } else if (user.phoneNumber == null) {
             return AuthScreen.create(context);
           }
-          medicallUser = user;
           return HistoryScreen();
         } else {
           return Scaffold(

@@ -21,6 +21,7 @@ import 'package:Medicall/screens/Terms/index.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_crashlytics/flutter_crashlytics.dart';
 import 'package:oktoast/oktoast.dart';
@@ -90,9 +91,11 @@ class _MedicallAppState extends State<MedicallApp> {
 
   @override
   Widget build(BuildContext context) {
-    return OKToast(
-      child: Provider<AuthBase>(
-        create: (_) => Auth(),
+    return MultiProvider(
+      providers: [
+        Provider<AuthBase>(create: (_) => Auth()),
+      ],
+      child: OKToast(
         child: MaterialApp(
           title: 'Medicall',
           debugShowCheckedModeBanner: false,
