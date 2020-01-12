@@ -36,9 +36,9 @@ class LandingPage extends StatelessWidget {
                 } else {
                   return Scaffold(
                     body: Center(
-                      child: CircularProgressIndicator(),
+                      child: Text('There was an error retrieving user data.'),
                     ),
-                    backgroundColor: Colors.lightBlueAccent,
+                    backgroundColor: Colors.white,
                   );
                 }
               });
