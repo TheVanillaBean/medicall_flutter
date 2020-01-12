@@ -42,7 +42,7 @@ class _AccountScreenState extends State<AccountScreen> {
           elevation:
               Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
         ),
-        drawer: DrawerMenu(data: {'user': medicallUser}),
+        drawer: DrawerMenu(),
         //Content of tabs
         body: Column(
           children: <Widget>[

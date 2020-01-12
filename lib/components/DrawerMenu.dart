@@ -5,22 +5,12 @@ import 'package:Medicall/services/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class DrawerMenu extends StatefulWidget {
-  final data;
-  DrawerMenu({Key key, @required this.data}) : super(key: key);
-
-  _DrawerMenuState createState() => _DrawerMenuState();
-}
-
-class _DrawerMenuState extends State<DrawerMenu> {
-  @override
-  void initState() {
-    medicallUser = widget.data['user'];
-    super.initState();
-  }
+class DrawerMenu extends StatelessWidget {
+  const DrawerMenu({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    medicallUser = Provider.of<MedicallUser>(context);
     return (Drawer(
         child: Stack(
       children: <Widget>[

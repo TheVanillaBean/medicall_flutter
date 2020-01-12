@@ -13,25 +13,12 @@ import 'package:simple_animations/simple_animations.dart';
 
 var screenSize;
 
-class SymptomsScreen extends StatefulWidget {
-  final data;
-  SymptomsScreen({Key key, @required this.data}) : super(key: key);
-
-  _SymptomsScreenState createState() => _SymptomsScreenState();
-}
-
-class _SymptomsScreenState extends State<SymptomsScreen> {
-  //ConsultData _consult;
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
-
-  @override
-  void initState() {
-    super.initState();
-    medicallUser = widget.data['user'];
-  }
+class SymptomsScreen extends StatelessWidget {
+  const SymptomsScreen({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final _scaffoldKey = GlobalKey<ScaffoldState>();
     screenSize = MediaQuery.of(context).size;
 
     void _showDialog(ConsultData _consult) {
@@ -83,7 +70,7 @@ class _SymptomsScreenState extends State<SymptomsScreen> {
         ),
         elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
       ),
-      drawer: DrawerMenu(data: {'user': medicallUser}),
+      drawer: DrawerMenu(),
       // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       // floatingActionButton: Builder(builder: (BuildContext context) {
       //   return FloatingActionButton(

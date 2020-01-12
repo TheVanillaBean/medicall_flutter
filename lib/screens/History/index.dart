@@ -18,8 +18,6 @@ var userDocuments;
 final _scaffoldKey = GlobalKey<ScaffoldState>();
 
 class HistoryScreen extends StatelessWidget {
-  const HistoryScreen({Key key}) : super(key: key);
-
   Future<void> _getUserHistory() async {
     final Future<QuerySnapshot> documentReference = Firestore.instance
         .collection('consults')
@@ -39,8 +37,9 @@ class HistoryScreen extends StatelessWidget {
     medicallUser = Provider.of<MedicallUser>(context);
 
     return Scaffold(
-      key: _scaffoldKey,
       resizeToAvoidBottomPadding: false,
+      key: _scaffoldKey,
+      drawer: DrawerMenu(),
       appBar: AppBar(
         centerTitle: true,
         leading: IconButton(
@@ -66,9 +65,6 @@ class HistoryScreen extends StatelessWidget {
                 ),
         ],
         elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
-      ),
-      drawer: DrawerMenu(
-        data: {'user': medicallUser},
       ),
       body: medicallUser.type == 'provider'
           ? _buildTab("patients")
@@ -505,9 +501,7 @@ class DoctorSearch extends StatelessWidget {
         ],
         elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
       ),
-      drawer: DrawerMenu(
-        data: {'user': medicallUser},
-      ),
+      drawer: DrawerMenu(),
       body: SingleChildScrollView(
         child: StreamBuilder(
             stream: Firestore.instance.collection('users').snapshots(),

@@ -128,7 +128,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
     }).catchError((e) => print(e));
   }
 
-  void _select(Choice choice) {
+  void _updateConsultStatus(Choice choice) {
     // Causes the app to rebuild with the new _selectedChoice.
     setState(() {
       _selectedChoice = choice;
@@ -219,7 +219,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                 appBar: AppBar(
                   actions: <Widget>[
                     PopupMenuButton<Choice>(
-                      onSelected: _select,
+                      onSelected: _updateConsultStatus,
                       initialValue: _selectedChoice,
                       itemBuilder: (BuildContext context) {
                         return choices.map((Choice choice) {

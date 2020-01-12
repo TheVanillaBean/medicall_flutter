@@ -21,7 +21,6 @@ import 'package:Medicall/screens/Terms/index.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_crashlytics/flutter_crashlytics.dart';
 import 'package:oktoast/oktoast.dart';
@@ -165,7 +164,7 @@ class _MedicallAppState extends State<MedicallApp> {
                 );
               case '/doctors':
                 return MyCustomRoute(
-                  builder: (_) => SymptomsScreen(data: settings.arguments),
+                  builder: (_) => SymptomsScreen(),
                   settings: settings,
                 );
               case '/questionsScreen':
