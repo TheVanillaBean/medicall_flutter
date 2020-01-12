@@ -64,8 +64,7 @@ class _DrawerMenuState extends State<DrawerMenu> {
                   ),
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.of(context).pushNamed('/history',
-                        arguments: {'user': medicallUser});
+                    Navigator.of(context).pushNamed('/history');
                   }),
               ListTile(
                   leading: Icon(

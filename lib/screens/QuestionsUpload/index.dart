@@ -129,12 +129,10 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
         padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
         color: Theme.of(context).colorScheme.primary,
         onPressed: () async {
-          //await setConsult();
           _consult.media = images;
           Navigator.pushNamed(context, '/consultReview',
               arguments: {'consult': _consult, 'user': medicallUser});
         },
-        //Navigator.pushNamed(context, '/history'), // Switch tabs
 
         child: Text(
           'CONTINUE',

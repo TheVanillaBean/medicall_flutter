@@ -799,10 +799,6 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
             ? Theme.of(context).colorScheme.primary
             : Colors.grey,
         onPressed: () async {
-          //await setConsult();
-          // _consult.media = images;
-          // Navigator.pushNamed(context, '/consultReview',
-          //     arguments: {'consult': _consult, 'user': medicallUser});
           if (profileImage.length == 1 && govIdImage.length == 1) {
             setState(() {
               _isLoading = true;
@@ -812,8 +808,6 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
                 arguments: {'user': medicallUser});
           }
         },
-        //Navigator.pushNamed(context, '/history'), // Switch tabs
-
         child: !_isLoading
             ? Text(
                 profileImage.length == 1 && govIdImage.length == 1

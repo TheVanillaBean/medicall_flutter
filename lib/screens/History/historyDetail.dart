@@ -23,7 +23,6 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
   int _currentIndex = 0;
   int _currentDetailsIndex = 0;
   Choice _selectedChoice;
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool isLoading = true;
 
   bool isConsultOpen = false;
@@ -43,7 +42,6 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
     from = widget.data['from'];
     controller = TabController(length: 3, vsync: this);
     controller.addListener(_handleTabSelection);
-    //_getConsultDetail();
   }
 
   _handleTabSelection() {
@@ -93,20 +91,18 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
     }).catchError((e) => print(e));
   }
 
-  Future<void> _getPatientDetail(uid) async {
-    final DocumentReference documentReference =
-        Firestore.instance.collection('users').document(uid);
+  Future<void> _getPatientDetail() async {
+    final DocumentReference documentReference = Firestore.instance
+        .collection('users')
+        .document(this.widget.data['patient_id']);
     await documentReference.get().then((datasnapshot) {
       if (datasnapshot.data != null) {
-        setState(() {
-          patientDetail = MedicallUser(
-              address: datasnapshot.data['address'],
-              displayName: datasnapshot.data['name'],
-              dob: datasnapshot.data['dob'],
-              gender: datasnapshot.data['gender'],
-              phoneNumber: datasnapshot.data['phone']);
-        });
-        return;
+        patientDetail = MedicallUser(
+            address: datasnapshot.data['address'],
+            displayName: datasnapshot.data['name'],
+            dob: datasnapshot.data['dob'],
+            gender: datasnapshot.data['gender'],
+            phoneNumber: datasnapshot.data['phone']);
       }
     }).catchError((e) => print(e));
   }
@@ -211,31 +207,10 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
     return FutureBuilder<List<void>>(
       future: Future.wait([
         _getConsultDetail(),
-        //_getPatientDetail(consultSnapshot['patient_id'])
+        _getPatientDetail(),
       ]), // a Future<String> or null
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
         switch (snapshot.connectionState) {
-          case ConnectionState.none:
-            return Text('Press button to start');
-          case ConnectionState.waiting:
-            return Scaffold(
-              appBar: AppBar(
-                leading: WillPopScope(
-                  onWillPop: () async {
-                    Navigator.pushNamed(context, '/history',
-                        arguments: {'user': medicallUser});
-                    return false;
-                  },
-                  child: BackButton(),
-                ),
-              ),
-              body: Center(
-                heightFactor: 35,
-                child: CircularProgressIndicator(
-                  backgroundColor: Colors.black,
-                ),
-              ),
-            );
           default:
             if (snapshot.hasError)
               return Text('Error: ${snapshot.error}');
@@ -373,8 +348,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                       : 4.0,
                   leading: WillPopScope(
                     onWillPop: () async {
-                      Navigator.pushNamed(context, '/history',
-                          arguments: {'user': medicallUser});
+                      Navigator.pushNamed(context, '/history');
                       return false;
                     },
                     child: BackButton(),
@@ -537,21 +511,12 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                       } else {
                         if (i == 0 && _currentDetailsIndex == 0 && ind == 0) {
                           if (this.patientDetail != null) {
-                            finalArray.add(FutureBuilder(
-                              future: _getPatientDetail(
-                                  consultSnapshot['patient_id']),
-                              builder: (BuildContext context,
-                                      AsyncSnapshot<void> futureResult) =>
-                                  futureResult.hasData
-                                      ? ListTile(
-                                          title: Text(
-                                            buildMedicalNote(
-                                                this.consultSnapshot,
-                                                this.patientDetail),
-                                            style: TextStyle(fontSize: 14.0),
-                                          ),
-                                        )
-                                      : CircularProgressIndicator(),
+                            finalArray.add(ListTile(
+                              title: Text(
+                                buildMedicalNote(
+                                    this.consultSnapshot, this.patientDetail),
+                                style: TextStyle(fontSize: 14.0),
+                              ),
                             ));
                           }
                         }
@@ -569,10 +534,13 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                               ...this.consultSnapshot['details'][i]
                             ];
                             //print(this.consultSnapshot['details'][i]);
-                            finalArray.add(CarouselWithIndicator(
-                              imgList: urlImgs,
-                            ));
-                            addedImages = true;
+                            if (y == 0) {
+                              finalArray.add(CarouselWithIndicator(
+                                imgList: urlImgs,
+                              ));
+                            }
+
+                            //addedImages = true;
                           }
                         }
                       }

@@ -33,6 +33,15 @@ class LandingPage extends StatelessWidget {
                       child: HistoryScreen(),
                     ),
                   );
+                }
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Container(
+                    color: Colors.white,
+                    child: Center(
+                      heightFactor: 35,
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
                 } else {
                   return Scaffold(
                     body: Center(

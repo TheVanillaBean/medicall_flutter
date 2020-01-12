@@ -8,42 +8,36 @@ import 'package:flutter/painting.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class HistoryScreen extends StatefulWidget {
-  const HistoryScreen({Key key}) : super(key: key);
-
-  @override
-  _HistoryScreenState createState() => _HistoryScreenState();
-}
-
 String currTab = 'Search History';
 Orientation currentOrientation;
 bool userHasConsults = false;
+List<String> providers = [];
+List<Widget> historyList = [];
+MedicallUser medicallUser;
+var userDocuments;
+final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-class _HistoryScreenState extends State<HistoryScreen>
-    with SingleTickerProviderStateMixin {
-  //Tokens _tokens = Tokens();
-  TabController controller;
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
-  List<String> providers = [];
-  var historyList;
+class HistoryScreen extends StatelessWidget {
+  const HistoryScreen({Key key}) : super(key: key);
 
-  MedicallUser medicallUser;
-  @override
-  void initState() {
-    super.initState();
-    controller = TabController(length: 1, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    controller.dispose();
+  Future<void> _getUserHistory() async {
+    final Future<QuerySnapshot> documentReference = Firestore.instance
+        .collection('consults')
+        .where('provider_id', isEqualTo: medicallUser.uid)
+        .orderBy('date', descending: true)
+        .getDocuments();
+    await documentReference.then((datasnapshot) {
+      if (datasnapshot.documents != null) {
+        userDocuments = datasnapshot.documents;
+      }
+    }).catchError((e) => print(e));
   }
 
   @override
   Widget build(BuildContext context) {
     currentOrientation = MediaQuery.of(context).orientation;
     medicallUser = Provider.of<MedicallUser>(context);
+
     return Scaffold(
       key: _scaffoldKey,
       resizeToAvoidBottomPadding: false,
@@ -55,32 +49,7 @@ class _HistoryScreenState extends State<HistoryScreen>
           },
           icon: Icon(Icons.home),
         ),
-        title: TabBar(
-          tabs: [
-            Tab(
-              text: 'History',
-            ),
-            // Tab(
-            //   text: 'Doctors',
-            // ),
-          ],
-          indicatorColor: Colors.transparent,
-          labelStyle: TextStyle(
-              fontSize: 16, letterSpacing: 1, fontWeight: FontWeight.w600),
-          indicatorPadding: EdgeInsets.all(0),
-          indicatorSize: TabBarIndicatorSize.label,
-          unselectedLabelColor: Colors.blue.shade100,
-          indicatorWeight: 1,
-          labelPadding: EdgeInsets.all(0),
-          onTap: (val) {
-            if (val == 0) {
-              currTab = 'Search History';
-            } else {
-              currTab = 'Search Doctors';
-            }
-          },
-          controller: controller,
-        ),
+        title: Text('History'),
         actions: <Widget>[
           userHasConsults
               ? IconButton(
@@ -102,22 +71,8 @@ class _HistoryScreenState extends State<HistoryScreen>
         data: {'user': medicallUser},
       ),
       body: medicallUser.type == 'provider'
-          ? TabBarView(
-              // Add tabs as widgets
-              children: <Widget>[
-                //_buildTab("consults"),
-                _buildTab("patients"),
-              ],
-              // set the controller
-              controller: controller,
-            )
-          : TabBarView(
-              controller: controller,
-              children: <Widget>[
-                _buildTab("consults"),
-                //_buildTab("doctors"),
-              ],
-            ),
+          ? _buildTab("patients")
+          : _buildTab("consults"),
     );
   }
 
@@ -127,7 +82,7 @@ class _HistoryScreenState extends State<HistoryScreen>
         child: StreamBuilder(
             stream: Firestore.instance
                 .collection('consults')
-                .where('patient_id', isEqualTo: this.medicallUser.uid)
+                .where('patient_id', isEqualTo: medicallUser.uid)
                 .orderBy('date', descending: true)
                 .snapshots(),
             builder: (context, snapshot) {
@@ -152,8 +107,11 @@ class _HistoryScreenState extends State<HistoryScreen>
                         Navigator.pushNamed(context, '/historyDetail',
                             arguments: {
                               'documentId': userDocuments[i].documentID,
-                              'user': this.medicallUser,
-                              'from': 'consults',
+                              'user': medicallUser,
+                              'patient_id': userDocuments[i].data['patient_id'],
+                              'provider_id':
+                                  userDocuments[i].data['provider_id'],
+                              'from': 'patients',
                               'isRouted': false,
                             });
                       },
@@ -355,10 +313,7 @@ class _HistoryScreenState extends State<HistoryScreen>
                                               //               height: 200,
                                               //             ));
                                               Navigator.pushReplacementNamed(
-                                                  context, '/doctors',
-                                                  arguments: {
-                                                    'user': this.medicallUser
-                                                  });
+                                                  context, '/doctors');
                                             },
                                             color: Colors.green,
                                             child: Text('Start'),
@@ -400,114 +355,118 @@ class _HistoryScreenState extends State<HistoryScreen>
     }
     if (questions == "patients") {
       return SingleChildScrollView(
-        child: StreamBuilder(
-            stream: Firestore.instance
-                .collection('consults')
-                .where('provider_id', isEqualTo: this.medicallUser.uid)
-                .orderBy('date', descending: true)
-                .snapshots(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return Center(
-                  heightFactor: 35,
-                  child: CircularProgressIndicator(),
-                );
-              }
-              if (snapshot.data.documents.length > 0) {
-                var userDocuments = snapshot.data.documents;
-                List<Widget> historyList = [];
-                for (var i = 0; i < userDocuments.length; i++) {
-                  Timestamp timestamp = userDocuments[i].data['date'];
-                  historyList.add(FlatButton(
-                      padding: EdgeInsets.all(0),
-                      splashColor:
-                          Theme.of(context).colorScheme.secondary.withAlpha(70),
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/historyDetail',
-                            arguments: {
-                              'documentId': userDocuments[i].documentID,
-                              'user': this.medicallUser,
-                              'from': 'patients',
-                              'isRouted': false,
-                            });
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                            border: Border(
-                                bottom: BorderSide(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .secondary
-                                        .withAlpha(70)))),
-                        child: ListTile(
-                          dense: true,
-                          isThreeLine: true,
-                          title: Text(
-                            userDocuments[i].data['patient'].toString(),
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 1.1,
-                                color: Theme.of(context).colorScheme.primary),
-                          ),
-                          subtitle: Text(DateFormat('dd MMM h:mm a')
-                                  .format(timestamp.toDate())
-                                  .toString() +
-                              '\n' +
-                              userDocuments[i].data['type'].toString()),
-                          trailing: FlatButton(
-                            splashColor: Colors.transparent,
-                            highlightColor: Colors.transparent,
-                            focusColor: Colors.transparent,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                userDocuments[i].data['state'].toString() ==
-                                        'done'
-                                    ? Icon(
-                                        Icons.assignment_turned_in,
-                                        color: Colors.green,
-                                      )
-                                    : userDocuments[i]
-                                                .data['state']
-                                                .toString() ==
-                                            'in progress'
+        child: FutureBuilder(
+            future: _getUserHistory(),
+            builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+              switch (snapshot.connectionState) {
+                case ConnectionState.none:
+                  return Center(
+                    heightFactor: 35,
+                    child: CircularProgressIndicator(),
+                  );
+                case ConnectionState.waiting:
+                  return Center(
+                    heightFactor: 35,
+                    child: CircularProgressIndicator(),
+                  );
+                default:
+                  if (snapshot.hasError)
+                    return Text('Error: ${snapshot.error}');
+                  else
+                    for (var i = 0; i < userDocuments.length; i++) {
+                      Timestamp timestamp = userDocuments[i].data['date'];
+                      historyList.add(FlatButton(
+                          padding: EdgeInsets.all(0),
+                          splashColor: Theme.of(context)
+                              .colorScheme
+                              .secondary
+                              .withAlpha(70),
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/historyDetail',
+                                arguments: {
+                                  'documentId': userDocuments[i].documentID,
+                                  'user': medicallUser,
+                                  'patient_id':
+                                      userDocuments[i].data['patient_id'],
+                                  'provider_id':
+                                      userDocuments[i].data['provider_id'],
+                                  'from': 'patients',
+                                  'isRouted': false,
+                                });
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                                border: Border(
+                                    bottom: BorderSide(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary
+                                            .withAlpha(70)))),
+                            child: ListTile(
+                              dense: true,
+                              isThreeLine: true,
+                              title: Text(
+                                userDocuments[i].data['patient'].toString(),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1.1,
+                                    color:
+                                        Theme.of(context).colorScheme.primary),
+                              ),
+                              subtitle: Text(DateFormat('dd MMM h:mm a')
+                                      .format(timestamp.toDate())
+                                      .toString() +
+                                  '\n' +
+                                  userDocuments[i].data['type'].toString()),
+                              trailing: FlatButton(
+                                splashColor: Colors.transparent,
+                                highlightColor: Colors.transparent,
+                                focusColor: Colors.transparent,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    userDocuments[i].data['state'].toString() ==
+                                            'done'
                                         ? Icon(
-                                            Icons.assignment,
-                                            color: Colors.blue,
+                                            Icons.assignment_turned_in,
+                                            color: Colors.green,
                                           )
-                                        : Icon(
-                                            Icons.assignment_ind,
-                                            color: Colors.amber,
-                                          ),
-                                Text(
-                                  userDocuments[i].data['state'].toString(),
-                                  style: TextStyle(
-                                      fontSize: 10,
-                                      color: Theme.of(context).primaryColor),
+                                        : userDocuments[i]
+                                                    .data['state']
+                                                    .toString() ==
+                                                'in progress'
+                                            ? Icon(
+                                                Icons.assignment,
+                                                color: Colors.blue,
+                                              )
+                                            : Icon(
+                                                Icons.assignment_ind,
+                                                color: Colors.amber,
+                                              ),
+                                    Text(
+                                      userDocuments[i].data['state'].toString(),
+                                      style: TextStyle(
+                                          fontSize: 10,
+                                          color:
+                                              Theme.of(context).primaryColor),
+                                    ),
+                                  ],
                                 ),
-                              ],
+                                onPressed: () {},
+                              ),
+                              leading: Icon(
+                                Icons.account_circle,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .secondary
+                                    .withAlpha(170),
+                                size: 50,
+                              ),
                             ),
-                            onPressed: () {},
-                          ),
-                          leading: Icon(
-                            Icons.account_circle,
-                            color: Theme.of(context)
-                                .colorScheme
-                                .secondary
-                                .withAlpha(170),
-                            size: 50,
-                          ),
-                        ),
-                      )));
-                }
-                return Column(children: historyList.toList());
-              } else {
-                return Center(
-                  heightFactor: 35,
-                  child: Text("You have no patient requests yet.",
-                      textAlign: TextAlign.center),
-                );
+                          )));
+                    }
+                  return Column(children: historyList.toList());
               }
             }),
       );
@@ -819,7 +778,11 @@ class CustomSearchDelegate extends SearchDelegate {
                                 arguments: {
                                   'documentId': userDocuments[i].documentID,
                                   'user': medicallUser,
-                                  'from': 'consults',
+                                  'patient_id':
+                                      userDocuments[i].data['patient_id'],
+                                  'provider_id':
+                                      userDocuments[i].data['provider_id'],
+                                  'from': 'patients',
                                   'isRouted': false,
                                 });
                           },

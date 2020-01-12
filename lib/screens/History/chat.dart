@@ -427,52 +427,47 @@ class ChatScreenState extends State<ChatScreen> {
 
   Widget buildListMessage() {
     return Flexible(
-      child: groupChatId == ''
-          ? Center(
-              child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(themeColor)))
-          : StreamBuilder(
-              stream: Firestore.instance
-                  .collection('consults')
-                  .document(this.peerId)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return Center(
-                      child: CircularProgressIndicator(
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(themeColor)));
-                } else {
-                  List listMessage = snapshot.data.data["chat"];
-                  listMessage = listMessage.reversed.toList();
-                  if (listMessage.length == 0) {
-                    return Container(
-                        child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                          Container(
-                            child: Text(
-                              'Send a message, it will appear here',
-                              style: TextStyle(
-                                  color: greyColor,
-                                  fontSize: 16.0,
-                                  fontStyle: FontStyle.italic),
-                            ),
-                          )
-                        ]));
-                  }
-                  return ListView.builder(
-                    padding: EdgeInsets.all(10.0),
-                    itemBuilder: (context, index) =>
-                        buildItem(index, listMessage[index]),
-                    itemCount: listMessage.length,
-                    reverse: true,
-                    controller: listScrollController,
-                  );
-                }
-              },
-            ),
+      child: StreamBuilder(
+        stream: Firestore.instance
+            .collection('consults')
+            .document(this.peerId)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Center(
+                child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(themeColor)));
+          } else {
+            List listMessage = snapshot.data.data["chat"];
+            listMessage = listMessage.reversed.toList();
+            if (listMessage.length == 0) {
+              return Container(
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                    Container(
+                      child: Text(
+                        'Send a message, it will appear here',
+                        style: TextStyle(
+                            color: greyColor,
+                            fontSize: 16.0,
+                            fontStyle: FontStyle.italic),
+                      ),
+                    )
+                  ]));
+            }
+            return ListView.builder(
+              padding: EdgeInsets.all(10.0),
+              itemBuilder: (context, index) =>
+                  buildItem(index, listMessage[index]),
+              itemCount: listMessage.length,
+              reverse: true,
+              controller: listScrollController,
+            );
+          }
+        },
+      ),
     );
   }
 }

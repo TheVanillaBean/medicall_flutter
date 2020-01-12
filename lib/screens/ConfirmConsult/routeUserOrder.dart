@@ -174,8 +174,7 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                 FlatButton(
                   color: Theme.of(context).colorScheme.primary,
                   onPressed: () {
-                    Navigator.pushReplacementNamed(context, '/history',
-                        arguments: {'consult': _consult, 'user': medicallUser});
+                    Navigator.pushReplacementNamed(context, '/history');
                   },
                   child: Text('Go to History'),
                 )
