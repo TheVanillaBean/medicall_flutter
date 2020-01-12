@@ -3,6 +3,7 @@ import 'package:Medicall/screens/History/index.dart';
 import 'package:Medicall/screens/Login/index.dart';
 import 'package:Medicall/screens/PhoneAuth/index.dart';
 import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -20,7 +21,27 @@ class LandingPage extends StatelessWidget {
           } else if (user.phoneNumber == null) {
             return AuthScreen.create(context);
           }
-          return HistoryScreen();
+          return FutureBuilder<MedicallUser>(
+              future: auth.currentMedicallUser(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  final MedicallUser user = snapshot.data;
+                  return Provider<MedicallUser>.value(
+                    value: user,
+                    child: Provider<Database>(
+                      create: (_) => FirestoreDatabase(uid: user.uid),
+                      child: HistoryScreen(),
+                    ),
+                  );
+                } else {
+                  return Scaffold(
+                    body: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                    backgroundColor: Colors.lightBlueAccent,
+                  );
+                }
+              });
         } else {
           return Scaffold(
             body: Center(

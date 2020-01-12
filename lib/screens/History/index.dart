@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({Key key}) : super(key: key);
@@ -25,6 +26,8 @@ class _HistoryScreenState extends State<HistoryScreen>
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   List<String> providers = [];
   var historyList;
+
+  MedicallUser medicallUser;
   @override
   void initState() {
     super.initState();
@@ -37,160 +40,84 @@ class _HistoryScreenState extends State<HistoryScreen>
     controller.dispose();
   }
 
-  Future<void> _getMedicallUser(documentId) async {
-    final DocumentReference documentReference =
-        Firestore.instance.collection('users').document(documentId);
-    await documentReference.get().then((datasnapshot) {
-      if (datasnapshot.data != null) {
-        medicallUser.address = datasnapshot.data['address'];
-        medicallUser.consent = datasnapshot.data['consent'];
-        medicallUser.devTokens = datasnapshot.data['dev_tokens'];
-        medicallUser.displayName = datasnapshot.data['name'];
-        medicallUser.firstName = datasnapshot.data['first_name'];
-        medicallUser.lastName = datasnapshot.data['last_name'];
-        medicallUser.dob = datasnapshot.data['dob'];
-        medicallUser.gender = datasnapshot.data['gender'];
-        medicallUser.policy = datasnapshot.data['policy'];
-        medicallUser.terms = datasnapshot.data['terms'];
-        medicallUser.titles = datasnapshot.data['titles'];
-        medicallUser.type = datasnapshot.data['type'];
-        //medicallUser.profilePic = datasnapshot.data['profile'];
-        //medicallUser.govId = datasnapshot.data['gov_id'];
-      }
-    }).catchError((e) => print(e));
-  }
-
   @override
   Widget build(BuildContext context) {
     currentOrientation = MediaQuery.of(context).orientation;
-    return FutureBuilder<void>(
-      future: _getMedicallUser(medicallUser.uid), // a Future<String> or null
-      builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.none:
-            return Text('Press button to start');
-          case ConnectionState.waiting:
-            return Scaffold(
-              resizeToAvoidBottomPadding: false,
-              appBar: AppBar(
-                centerTitle: true,
-                title: TabBar(
-                  tabs: [
-                    Tab(
-                      text: 'History',
-                    ),
-                    // Tab(
-                    //   text: 'Doctors',
-                    // ),
-                  ],
-                  indicatorColor: Colors.transparent,
-                  labelStyle: TextStyle(
-                      fontSize: 16,
-                      letterSpacing: 1,
-                      fontWeight: FontWeight.w600),
-                  indicatorPadding: EdgeInsets.all(0),
-                  indicatorSize: TabBarIndicatorSize.label,
-                  unselectedLabelColor: Colors.blue.shade100,
-                  indicatorWeight: 1,
-                  labelPadding: EdgeInsets.all(0),
-                  controller: controller,
+    medicallUser = Provider.of<MedicallUser>(context);
+    return Scaffold(
+      key: _scaffoldKey,
+      resizeToAvoidBottomPadding: false,
+      appBar: AppBar(
+        centerTitle: true,
+        leading: IconButton(
+          onPressed: () {
+            _scaffoldKey.currentState.openDrawer();
+          },
+          icon: Icon(Icons.home),
+        ),
+        title: TabBar(
+          tabs: [
+            Tab(
+              text: 'History',
+            ),
+            // Tab(
+            //   text: 'Doctors',
+            // ),
+          ],
+          indicatorColor: Colors.transparent,
+          labelStyle: TextStyle(
+              fontSize: 16, letterSpacing: 1, fontWeight: FontWeight.w600),
+          indicatorPadding: EdgeInsets.all(0),
+          indicatorSize: TabBarIndicatorSize.label,
+          unselectedLabelColor: Colors.blue.shade100,
+          indicatorWeight: 1,
+          labelPadding: EdgeInsets.all(0),
+          onTap: (val) {
+            if (val == 0) {
+              currTab = 'Search History';
+            } else {
+              currTab = 'Search Doctors';
+            }
+          },
+          controller: controller,
+        ),
+        actions: <Widget>[
+          userHasConsults
+              ? IconButton(
+                  icon: Icon(Icons.search),
+                  onPressed: () {
+                    showSearch(
+                      context: context,
+                      delegate: CustomSearchDelegate(),
+                    );
+                  },
+                )
+              : SizedBox(
+                  width: 60,
                 ),
-                elevation: Theme.of(context).platform == TargetPlatform.iOS
-                    ? 0.0
-                    : 4.0,
-              ),
-              body: Center(
-                heightFactor: 35,
-                child: CircularProgressIndicator(
-                  backgroundColor: Colors.black,
-                ),
-              ),
-            );
-          default:
-            if (snapshot.hasError)
-              return Text('Error: ${snapshot.error}');
-            else
-              return Scaffold(
-                key: _scaffoldKey,
-                resizeToAvoidBottomPadding: false,
-                appBar: AppBar(
-                  centerTitle: true,
-                  leading: IconButton(
-                    onPressed: () {
-                      _scaffoldKey.currentState.openDrawer();
-                    },
-                    icon: Icon(Icons.home),
-                  ),
-                  title: TabBar(
-                    tabs: [
-                      Tab(
-                        text: 'History',
-                      ),
-                      // Tab(
-                      //   text: 'Doctors',
-                      // ),
-                    ],
-                    indicatorColor: Colors.transparent,
-                    labelStyle: TextStyle(
-                        fontSize: 16,
-                        letterSpacing: 1,
-                        fontWeight: FontWeight.w600),
-                    indicatorPadding: EdgeInsets.all(0),
-                    indicatorSize: TabBarIndicatorSize.label,
-                    unselectedLabelColor: Colors.blue.shade100,
-                    indicatorWeight: 1,
-                    labelPadding: EdgeInsets.all(0),
-                    onTap: (val) {
-                      if (val == 0) {
-                        currTab = 'Search History';
-                      } else {
-                        currTab = 'Search Doctors';
-                      }
-                    },
-                    controller: controller,
-                  ),
-                  actions: <Widget>[
-                    userHasConsults
-                        ? IconButton(
-                            icon: Icon(Icons.search),
-                            onPressed: () {
-                              showSearch(
-                                context: context,
-                                delegate: CustomSearchDelegate(),
-                              );
-                            },
-                          )
-                        : SizedBox(
-                            width: 60,
-                          ),
-                  ],
-                  elevation: Theme.of(context).platform == TargetPlatform.iOS
-                      ? 0.0
-                      : 4.0,
-                ),
-                drawer: DrawerMenu(
-                  data: {'user': medicallUser},
-                ),
-                body: medicallUser.type == 'provider'
-                    ? TabBarView(
-                        // Add tabs as widgets
-                        children: <Widget>[
-                          //_buildTab("consults"),
-                          _buildTab("patients"),
-                        ],
-                        // set the controller
-                        controller: controller,
-                      )
-                    : TabBarView(
-                        controller: controller,
-                        children: <Widget>[
-                          _buildTab("consults"),
-                          //_buildTab("doctors"),
-                        ],
-                      ),
-              );
-        }
-      },
+        ],
+        elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
+      ),
+      drawer: DrawerMenu(
+        data: {'user': medicallUser},
+      ),
+      body: medicallUser.type == 'provider'
+          ? TabBarView(
+              // Add tabs as widgets
+              children: <Widget>[
+                //_buildTab("consults"),
+                _buildTab("patients"),
+              ],
+              // set the controller
+              controller: controller,
+            )
+          : TabBarView(
+              controller: controller,
+              children: <Widget>[
+                _buildTab("consults"),
+                //_buildTab("doctors"),
+              ],
+            ),
     );
   }
 
@@ -200,7 +127,7 @@ class _HistoryScreenState extends State<HistoryScreen>
         child: StreamBuilder(
             stream: Firestore.instance
                 .collection('consults')
-                .where('patient_id', isEqualTo: medicallUser.uid)
+                .where('patient_id', isEqualTo: this.medicallUser.uid)
                 .orderBy('date', descending: true)
                 .snapshots(),
             builder: (context, snapshot) {
@@ -225,7 +152,7 @@ class _HistoryScreenState extends State<HistoryScreen>
                         Navigator.pushNamed(context, '/historyDetail',
                             arguments: {
                               'documentId': userDocuments[i].documentID,
-                              'user': medicallUser,
+                              'user': this.medicallUser,
                               'from': 'consults',
                               'isRouted': false,
                             });
@@ -430,7 +357,7 @@ class _HistoryScreenState extends State<HistoryScreen>
                                               Navigator.pushReplacementNamed(
                                                   context, '/doctors',
                                                   arguments: {
-                                                    'user': medicallUser
+                                                    'user': this.medicallUser
                                                   });
                                             },
                                             color: Colors.green,
@@ -476,7 +403,7 @@ class _HistoryScreenState extends State<HistoryScreen>
         child: StreamBuilder(
             stream: Firestore.instance
                 .collection('consults')
-                .where('provider_id', isEqualTo: medicallUser.uid)
+                .where('provider_id', isEqualTo: this.medicallUser.uid)
                 .orderBy('date', descending: true)
                 .snapshots(),
             builder: (context, snapshot) {
@@ -499,7 +426,7 @@ class _HistoryScreenState extends State<HistoryScreen>
                         Navigator.pushNamed(context, '/historyDetail',
                             arguments: {
                               'documentId': userDocuments[i].documentID,
-                              'user': medicallUser,
+                              'user': this.medicallUser,
                               'from': 'patients',
                               'isRouted': false,
                             });
@@ -590,9 +517,12 @@ class _HistoryScreenState extends State<HistoryScreen>
 
 class DoctorSearch extends StatelessWidget {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     currTab = "Search Doctors";
+    final MedicallUser medicallUser = Provider.of<MedicallUser>(context);
+
     return Scaffold(
       key: _scaffoldKey,
       resizeToAvoidBottomPadding: false,

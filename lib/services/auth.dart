@@ -15,28 +15,43 @@ abstract class AuthBase {
   Future<MedicallUser> signInWithGoogle();
   Future<MedicallUser> signInWithPhoneNumber(
       String verificationId, String smsCode);
+  Future<MedicallUser> currentMedicallUser();
   Future<void> signOut();
 }
 
 class Auth implements AuthBase {
   final _firebaseAuth = FirebaseAuth.instance;
 
+  MedicallUser _medicallUser;
+
+  MedicallUser get medicallUser {
+    return _medicallUser;
+  }
+
+  Future<MedicallUser> _getMedicallUser(String uid) async {
+    final DocumentReference documentReference =
+        Firestore.instance.collection('users').document(uid);
+
+    try {
+      final snapshot = await documentReference.get();
+      _medicallUser = MedicallUser.from(uid, snapshot);
+    } catch (e) {
+      throw ('Error getting user');
+    }
+
+    return _medicallUser;
+  }
+
   MedicallUser _userFromFirebase(FirebaseUser user) {
     if (user == null) {
       return null;
     }
-    medicallUser = MedicallUser(
+    _medicallUser = MedicallUser(
       uid: user.uid,
       phoneNumber: user.phoneNumber,
       email: user.email,
     );
-    //getMedicallUser(medicallUser.uid);
-    //medicallUser;
-    return MedicallUser(
-      uid: user.uid,
-      phoneNumber: user.phoneNumber,
-      email: user.email,
-    );
+    return _medicallUser;
   }
 
   @override
@@ -48,6 +63,12 @@ class Auth implements AuthBase {
   Future<MedicallUser> currentUser() async {
     final user = await _firebaseAuth.currentUser();
     return _userFromFirebase(user);
+  }
+
+  @override
+  Future<MedicallUser> currentMedicallUser() async {
+    final user = await _firebaseAuth.currentUser();
+    return _getMedicallUser(user.uid);
   }
 
   @override

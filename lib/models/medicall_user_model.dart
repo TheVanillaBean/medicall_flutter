@@ -26,40 +26,50 @@ class MedicallUser {
   bool hasMedicalHistory;
 
   MedicallUser({
-    this.uid,
-    this.devTokens,
-    this.type,
-    this.displayName,
-    this.firstName,
-    this.lastName,
-    this.dob,
-    this.gender,
-    this.phoneNumber,
-    this.email,
-    this.address,
-    this.titles,
-    this.npi,
-    this.medLicense,
-    this.medLicenseState,
-    this.profilePic,
-    this.govId,
-    this.terms,
-    this.policy,
-    this.consent,
-    this.hasMedicalHistory,
+    this.uid = '',
+    this.devTokens = const ['', ''],
+    this.type = '',
+    this.displayName = '',
+    this.firstName = '',
+    this.lastName = '',
+    this.dob = '',
+    this.gender = '',
+    this.phoneNumber = '',
+    this.email = '',
+    this.address = '',
+    this.titles = '',
+    this.npi = '',
+    this.medLicense = '',
+    this.medLicenseState = '',
+    this.profilePic = '',
+    this.govId = '',
+    this.terms = false,
+    this.policy = false,
+    this.consent = false,
+    this.hasMedicalHistory = false,
   });
 
-  factory MedicallUser.from(DocumentSnapshot datasnapshot) {
-    medicallUser.displayName = datasnapshot.data['name'];
-    medicallUser.firstName = datasnapshot.data['first_name'];
-    medicallUser.lastName = datasnapshot.data['last_name'];
-    medicallUser.dob = datasnapshot.data['dob'];
-    medicallUser.policy = datasnapshot.data['policy'];
-    medicallUser.consent = datasnapshot.data['consent'];
-    medicallUser.terms = datasnapshot.data['terms'];
-    medicallUser.type = datasnapshot.data['type'];
-    medicallUser.email = datasnapshot.data['email'];
-    medicallUser.phoneNumber = datasnapshot.data['phone'];
+  factory MedicallUser.from(String uid, DocumentSnapshot snapshot) {
+    MedicallUser medicallUser = MedicallUser();
+    medicallUser.uid = uid ?? medicallUser.uid;
+    medicallUser.displayName =
+        snapshot.data['name'] ?? medicallUser.displayName;
+    medicallUser.firstName =
+        snapshot.data['first_name'] ?? medicallUser.firstName;
+    medicallUser.lastName = snapshot.data['last_name'] ?? medicallUser.lastName;
+    medicallUser.address = snapshot.data['address'] ?? medicallUser.address;
+    medicallUser.devTokens =
+        snapshot.data['dev_tokens'] ?? medicallUser.devTokens;
+    medicallUser.dob = snapshot.data['dob'] ?? medicallUser.dob;
+    medicallUser.gender = snapshot.data['gender'] ?? medicallUser.gender;
+    medicallUser.policy = snapshot.data['policy'] ?? medicallUser.policy;
+    medicallUser.consent = snapshot.data['consent'] ?? medicallUser.consent;
+    medicallUser.terms = snapshot.data['terms'] ?? medicallUser.terms;
+    medicallUser.titles = snapshot.data['titles'] ?? medicallUser.titles;
+    medicallUser.type = snapshot.data['type'] ?? medicallUser.type;
+    medicallUser.email = snapshot.data['email'] ?? medicallUser.email;
+    medicallUser.phoneNumber =
+        snapshot.data['phone' ?? medicallUser.phoneNumber];
     medicallUser.hasMedicalHistory = false;
     return medicallUser;
   }
