@@ -1,12 +1,14 @@
+import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:meta/meta.dart';
 
-abstract class Database {}
+abstract class Database {
+  MedicallUser currentMedicallUser;
+}
 
 class FirestoreDatabase implements Database {
-  final String uid;
+  MedicallUser currentMedicallUser;
 
-  FirestoreDatabase({@required this.uid}) : assert(uid != null);
+  FirestoreDatabase();
 
   Future<void> _setData({String path, Map<String, dynamic> data}) async {
     final reference = Firestore.instance.document(path);

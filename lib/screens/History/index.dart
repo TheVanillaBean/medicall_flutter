@@ -1,6 +1,7 @@
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/presentation/medicall_icons_icons.dart' as CustomIcons;
+import 'package:Medicall/services/database.dart';
 import 'package:Medicall/util/app_util.dart' as AppUtils;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -15,9 +16,15 @@ List<String> providers = [];
 List<Widget> historyList = [];
 MedicallUser medicallUser;
 var userDocuments;
-final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-class HistoryScreen extends StatelessWidget {
+class HistoryScreen extends StatefulWidget {
+  @override
+  _HistoryScreenState createState() => _HistoryScreenState();
+}
+
+class _HistoryScreenState extends State<HistoryScreen> {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
   Future<void> _getUserHistory() async {
     final Future<QuerySnapshot> documentReference = Firestore.instance
         .collection('consults')
@@ -34,8 +41,7 @@ class HistoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     currentOrientation = MediaQuery.of(context).orientation;
-    medicallUser = Provider.of<MedicallUser>(context);
-
+    medicallUser = Provider.of<Database>(context).currentMedicallUser;
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       key: _scaffoldKey,

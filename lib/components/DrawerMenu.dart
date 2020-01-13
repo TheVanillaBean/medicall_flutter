@@ -2,6 +2,7 @@ import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/presentation/medicall_app_icons.dart' as CustomIcons;
 import 'package:Medicall/screens/LandingPage/index.dart';
 import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -10,7 +11,7 @@ class DrawerMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    medicallUser = Provider.of<MedicallUser>(context);
+    medicallUser = Provider.of<Database>(context).currentMedicallUser;
     return (Drawer(
         child: Stack(
       children: <Widget>[
@@ -54,7 +55,7 @@ class DrawerMenu extends StatelessWidget {
                   ),
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.of(context).pushNamed('/history');
+                    Navigator.pushReplacementNamed(context, '/history');
                   }),
               ListTile(
                   leading: Icon(

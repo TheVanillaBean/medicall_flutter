@@ -10,7 +10,8 @@ import 'package:provider/provider.dart';
 class LandingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final auth = Provider.of<AuthBase>(context);
+    final AuthBase auth = Provider.of<AuthBase>(context);
+    final Database database = Provider.of<Database>(context);
     return StreamBuilder<MedicallUser>(
       stream: auth.onAuthStateChanged,
       builder: (context, snapshot) {
@@ -26,13 +27,8 @@ class LandingPage extends StatelessWidget {
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
                   final MedicallUser user = snapshot.data;
-                  return Provider<MedicallUser>.value(
-                    value: user,
-                    child: Provider<Database>(
-                      create: (_) => FirestoreDatabase(uid: user.uid),
-                      child: HistoryScreen(),
-                    ),
-                  );
+                  database.currentMedicallUser = user;
+                  return HistoryScreen();
                 }
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Container(
@@ -61,5 +57,29 @@ class LandingPage extends StatelessWidget {
         }
       },
     );
+  }
+}
+
+typedef StreamListener<T> = void Function(T value);
+
+class StreamListenableBuilder<T> extends StreamBuilder<T> {
+  final StreamListener<T> listener;
+
+  const StreamListenableBuilder({
+    Key key,
+    T initialData,
+    Stream<T> stream,
+    @required this.listener,
+    @required AsyncWidgetBuilder<T> builder,
+  }) : super(
+            key: key,
+            initialData: initialData,
+            stream: stream,
+            builder: builder);
+
+  @override
+  AsyncSnapshot<T> afterData(AsyncSnapshot<T> current, T data) {
+    listener(data);
+    return super.afterData(current, data);
   }
 }
