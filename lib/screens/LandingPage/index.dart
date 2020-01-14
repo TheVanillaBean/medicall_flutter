@@ -10,7 +10,9 @@ import 'package:provider/provider.dart';
 class LandingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final auth = Provider.of<AuthBase>(context);
+    final AuthBase auth = Provider.of<AuthBase>(context);
+    final FirestoreDatabase database = Provider.of<Database>(context);
+
     return StreamBuilder<MedicallUser>(
       stream: auth.onAuthStateChanged,
       builder: (context, snapshot) {
@@ -26,13 +28,17 @@ class LandingPage extends StatelessWidget {
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
                   final MedicallUser user = snapshot.data;
-                  return Provider<MedicallUser>.value(
-                    value: user,
-                    child: Provider<Database>(
-                      create: (_) => FirestoreDatabase(uid: user.uid),
-                      child: HistoryScreen(),
-                    ),
-                  );
+                  auth.medicallUser = user;
+                  database.uid = user.uid;
+                  return HistoryScreen();
+
+//                  return Provider<MedicallUser>.value(
+//                    value: user,
+//                    child: Provider<Database>(
+//                      create: (_) => FirestoreDatabase(uid: user.uid),
+//                      child: HistoryScreen(),
+//                    ),
+//                  );
                 }
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Container(

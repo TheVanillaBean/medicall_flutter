@@ -1,6 +1,6 @@
+import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/presentation/medicall_app_icons.dart' as CustomIcons;
-import 'package:Medicall/screens/LandingPage/index.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -10,7 +10,7 @@ class DrawerMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    medicallUser = Provider.of<MedicallUser>(context);
+    medicallUser = Provider.of<AuthBase>(context).medicallUser;
     return (Drawer(
         child: Stack(
       children: <Widget>[
@@ -54,7 +54,8 @@ class DrawerMenu extends StatelessWidget {
                   ),
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.of(context).pushNamed('/history');
+                    GlobalNavigatorKey.key.currentState
+                        .pushReplacementNamed('/history');
                   }),
               ListTile(
                   leading: Icon(
@@ -77,25 +78,18 @@ class DrawerMenu extends StatelessWidget {
                 color: Colors.grey[400],
               ),
               ListTile(
-                  leading: Icon(
-                    Icons.exit_to_app,
+                leading: Icon(
+                  Icons.exit_to_app,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+                title: Text(
+                  'Sign Out',
+                  style: TextStyle(
                     color: Theme.of(context).colorScheme.secondary,
                   ),
-                  title: Text(
-                    'Sign Out',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.secondary,
-                    ),
-                  ),
-                  onTap: () async {
-                    final auth = Provider.of<AuthBase>(context);
-                    await auth.signOut();
-                    Navigator.pop(context);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => LandingPage()),
-                    );
-                  }),
+                ),
+                onTap: () => _signOut(context),
+              ),
             ],
           ),
         ),
@@ -131,5 +125,15 @@ class DrawerMenu extends StatelessWidget {
         ),
       ],
     )));
+  }
+
+  Future<void> _signOut(BuildContext context) async {
+    try {
+      Navigator.pop(context);
+      final auth = Provider.of<AuthBase>(context);
+      await auth.signOut();
+    } catch (e) {
+      print(e);
+    }
   }
 }

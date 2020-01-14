@@ -1,6 +1,7 @@
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/presentation/medicall_icons_icons.dart' as CustomIcons;
+import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/util/app_util.dart' as AppUtils;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +35,7 @@ class HistoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     currentOrientation = MediaQuery.of(context).orientation;
-    medicallUser = Provider.of<MedicallUser>(context);
+    medicallUser = Provider.of<AuthBase>(context).medicallUser;
 
     return Scaffold(
       resizeToAvoidBottomPadding: false,

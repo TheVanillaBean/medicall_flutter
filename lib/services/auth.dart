@@ -7,6 +7,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 abstract class AuthBase {
   Stream<MedicallUser> get onAuthStateChanged;
   Future<MedicallUser> currentUser();
+  MedicallUser medicallUser;
   Future<MedicallUser> signInAnonymously();
   Future<MedicallUser> signInWithEmailAndPassword(
       String email, String password);
@@ -26,6 +27,10 @@ class Auth implements AuthBase {
 
   MedicallUser get medicallUser {
     return _medicallUser;
+  }
+
+  set medicallUser(user) {
+    _medicallUser = user;
   }
 
   Future<MedicallUser> _getMedicallUser(String uid) async {
