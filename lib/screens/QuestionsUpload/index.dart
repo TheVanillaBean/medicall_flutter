@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:Medicall/models/consult_data_model.dart';
+import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -130,10 +131,9 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
         color: Theme.of(context).colorScheme.primary,
         onPressed: () async {
           _consult.media = images;
-          Navigator.pushNamed(context, '/consultReview',
+          GlobalNavigatorKey.key.currentState.pushNamed('/consultReview',
               arguments: {'consult': _consult, 'user': medicallUser});
         },
-
         child: Text(
           'CONTINUE',
           style: TextStyle(

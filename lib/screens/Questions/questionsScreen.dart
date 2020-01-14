@@ -214,7 +214,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.close),
-          onPressed: () => Navigator.pop(context, false),
+          onPressed: () => GlobalNavigatorKey.key.currentState.pop(false),
         ),
         title: Text(widget.data['consult'].consultType == 'Lesion'
             ? 'Spot' +

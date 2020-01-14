@@ -1,4 +1,5 @@
 import 'package:Medicall/components/progress_hud.dart';
+import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:Medicall/util/count/countdown_base.dart';
 import 'package:Medicall/util/firebase_listenter.dart';
@@ -296,6 +297,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
   @override
   onLoginUserVerified(FirebaseUser currentUser) async {
     //Navigator.pushNamed(context, '/registration');
-    Navigator.pushNamed(context, '/registration');
+    GlobalNavigatorKey.key.currentState.pushNamed('/registration');
   }
 }

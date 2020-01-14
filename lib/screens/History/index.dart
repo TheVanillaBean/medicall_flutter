@@ -1,4 +1,5 @@
 import 'package:Medicall/components/DrawerMenu.dart';
+import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/presentation/medicall_icons_icons.dart' as CustomIcons;
 import 'package:Medicall/services/auth.dart';
@@ -16,9 +17,11 @@ List<String> providers = [];
 List<Widget> historyList = [];
 MedicallUser medicallUser;
 var userDocuments;
-final _scaffoldKey = GlobalKey<ScaffoldState>();
+final _scaffoldKeyDoc = GlobalKey<ScaffoldState>();
 
 class HistoryScreen extends StatelessWidget {
+  final _scaffoldKey =
+      GlobalKey<ScaffoldState>(debugLabel: '_historyScaffoldkey');
   Future<void> _getUserHistory() async {
     final Future<QuerySnapshot> documentReference = Firestore.instance
         .collection('consults')
@@ -101,16 +104,15 @@ class HistoryScreen extends StatelessWidget {
                       splashColor:
                           Theme.of(context).colorScheme.secondary.withAlpha(70),
                       onPressed: () {
-                        Navigator.pushNamed(context, '/historyDetail',
-                            arguments: {
-                              'documentId': userDocuments[i].documentID,
-                              'user': medicallUser,
-                              'patient_id': userDocuments[i].data['patient_id'],
-                              'provider_id':
-                                  userDocuments[i].data['provider_id'],
-                              'from': 'patients',
-                              'isRouted': false,
-                            });
+                        GlobalNavigatorKey.key.currentState
+                            .pushNamed('/historyDetail', arguments: {
+                          'documentId': userDocuments[i].documentID,
+                          'user': medicallUser,
+                          'patient_id': userDocuments[i].data['patient_id'],
+                          'provider_id': userDocuments[i].data['provider_id'],
+                          'from': 'patients',
+                          'isRouted': false,
+                        });
                       },
                       child: Container(
                         decoration: BoxDecoration(
@@ -309,8 +311,10 @@ class HistoryScreen extends StatelessWidget {
                                               //               color: Colors.white.withAlpha(200),
                                               //               height: 200,
                                               //             ));
-                                              Navigator.pushReplacementNamed(
-                                                  context, '/doctors');
+                                              GlobalNavigatorKey
+                                                  .key.currentState
+                                                  .pushReplacementNamed(
+                                                      '/doctors');
                                             },
                                             color: Colors.green,
                                             child: Text('Start'),
@@ -323,8 +327,9 @@ class HistoryScreen extends StatelessWidget {
                                               )),
                                           FlatButton(
                                             onPressed: () {
-                                              Navigator.push(
-                                                context,
+                                              GlobalNavigatorKey
+                                                  .key.currentState
+                                                  .push(
                                                 MaterialPageRoute(
                                                     builder: (context) =>
                                                         DoctorSearch()),
@@ -379,17 +384,16 @@ class HistoryScreen extends StatelessWidget {
                               .secondary
                               .withAlpha(70),
                           onPressed: () {
-                            Navigator.pushNamed(context, '/historyDetail',
-                                arguments: {
-                                  'documentId': userDocuments[i].documentID,
-                                  'user': medicallUser,
-                                  'patient_id':
-                                      userDocuments[i].data['patient_id'],
-                                  'provider_id':
-                                      userDocuments[i].data['provider_id'],
-                                  'from': 'patients',
-                                  'isRouted': false,
-                                });
+                            GlobalNavigatorKey.key.currentState
+                                .pushNamed('/historyDetail', arguments: {
+                              'documentId': userDocuments[i].documentID,
+                              'user': medicallUser,
+                              'patient_id': userDocuments[i].data['patient_id'],
+                              'provider_id':
+                                  userDocuments[i].data['provider_id'],
+                              'from': 'patients',
+                              'isRouted': false,
+                            });
                           },
                           child: Container(
                             decoration: BoxDecoration(
@@ -472,21 +476,19 @@ class HistoryScreen extends StatelessWidget {
 }
 
 class DoctorSearch extends StatelessWidget {
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
-
   @override
   Widget build(BuildContext context) {
     currTab = "Search Doctors";
     final MedicallUser medicallUser = Provider.of<MedicallUser>(context);
 
     return Scaffold(
-      key: _scaffoldKey,
+      key: _scaffoldKeyDoc,
       resizeToAvoidBottomPadding: false,
       appBar: AppBar(
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context, false),
+          onPressed: () => GlobalNavigatorKey.key.currentState.pop(false),
         ),
         title: Text('Find your doctor'),
         actions: <Widget>[
@@ -769,17 +771,16 @@ class CustomSearchDelegate extends SearchDelegate {
                               .secondary
                               .withAlpha(70),
                           onPressed: () {
-                            Navigator.pushNamed(context, '/historyDetail',
-                                arguments: {
-                                  'documentId': userDocuments[i].documentID,
-                                  'user': medicallUser,
-                                  'patient_id':
-                                      userDocuments[i].data['patient_id'],
-                                  'provider_id':
-                                      userDocuments[i].data['provider_id'],
-                                  'from': 'patients',
-                                  'isRouted': false,
-                                });
+                            GlobalNavigatorKey.key.currentState
+                                .pushNamed('/historyDetail', arguments: {
+                              'documentId': userDocuments[i].documentID,
+                              'user': medicallUser,
+                              'patient_id': userDocuments[i].data['patient_id'],
+                              'provider_id':
+                                  userDocuments[i].data['provider_id'],
+                              'from': 'patients',
+                              'isRouted': false,
+                            });
                           },
                           child: Container(
                             decoration: BoxDecoration(

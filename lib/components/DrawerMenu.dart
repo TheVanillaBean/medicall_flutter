@@ -36,8 +36,9 @@ class DrawerMenu extends StatelessWidget {
                         ),
                       ),
                       onTap: () {
-                        Navigator.pop(context);
-                        Navigator.of(context).pushNamed('/doctors',
+                        GlobalNavigatorKey.key.currentState.pop();
+                        GlobalNavigatorKey.key.currentState.pushNamed(
+                            '/doctors',
                             arguments: {'user': medicallUser});
                       }),
               ListTile(
@@ -53,9 +54,8 @@ class DrawerMenu extends StatelessWidget {
                     ),
                   ),
                   onTap: () {
-                    Navigator.pop(context);
-                    GlobalNavigatorKey.key.currentState
-                        .pushReplacementNamed('/history');
+                    GlobalNavigatorKey.key.currentState.pop();
+                    GlobalNavigatorKey.key.currentState.pushNamed('/history');
                   }),
               ListTile(
                   leading: Icon(
@@ -69,8 +69,8 @@ class DrawerMenu extends StatelessWidget {
                     ),
                   ),
                   onTap: () {
-                    Navigator.pop(context);
-                    Navigator.of(context).pushNamed('/account',
+                    GlobalNavigatorKey.key.currentState.pop();
+                    GlobalNavigatorKey.key.currentState.pushNamed('/account',
                         arguments: {'user': medicallUser});
                   }),
               Divider(
@@ -129,7 +129,7 @@ class DrawerMenu extends StatelessWidget {
 
   Future<void> _signOut(BuildContext context) async {
     try {
-      Navigator.pop(context);
+      GlobalNavigatorKey.key.currentState.pop(context);
       final auth = Provider.of<AuthBase>(context);
       await auth.signOut();
     } catch (e) {

@@ -1,4 +1,5 @@
 import 'package:Medicall/Screens/History/chat.dart';
+import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/History/buildMedicalNote.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -33,6 +34,8 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
   String documentId;
   String from;
   var consultSnapshot;
+  final GlobalKey<ScaffoldState> _scaffoldDetailKey =
+      GlobalKey<ScaffoldState>();
 
   @override
   initState() {
@@ -151,7 +154,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
           // if (snap.data['state'] == 'done') {
           //   consultStateData = {'state': 'in progress'};
           // }
-          Navigator.pop(context);
+          //Navigator.pop(context);
           documentReference.updateData(consultStateData).whenComplete(() {
             setState(() {
               if (consultStateData['state'] == 'done') {
@@ -216,6 +219,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
               return Text('Error: ${snapshot.error}');
             else
               return Scaffold(
+                key: _scaffoldDetailKey,
                 appBar: AppBar(
                   actions: <Widget>[
                     PopupMenuButton<Choice>(
@@ -343,16 +347,14 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                     // setup the controller
                     controller: controller,
                   ),
+                  leading: BackButton(
+                    onPressed: () {
+                      GlobalNavigatorKey.key.currentState.pop(context);
+                    },
+                  ),
                   elevation: Theme.of(context).platform == TargetPlatform.iOS
                       ? 0.0
                       : 4.0,
-                  leading: WillPopScope(
-                    onWillPop: () async {
-                      Navigator.pushNamed(context, '/history');
-                      return false;
-                    },
-                    child: BackButton(),
-                  ),
                 ),
                 body: medicallUser.type == 'patient' && consultSnapshot != null
                     ? TabBarView(

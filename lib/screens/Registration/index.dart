@@ -1,3 +1,4 @@
+import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/presentation/medicall_icons_icons.dart' as CustomIcons;
 import 'package:Medicall/secrets.dart' as secrets;
@@ -89,8 +90,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     // Navigator.of(context).pushReplacement(MaterialPageRoute(
     //   builder: (context) => AuthScreen(),
     // ));
-    Navigator.push(
-      context,
+    GlobalNavigatorKey.key.currentState.push(
       MaterialPageRoute(builder: (context) => PhotoIdScreen()),
     );
   }
@@ -540,7 +540,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   label: FlatButton(
                       padding: EdgeInsets.fromLTRB(0, 0, 62, 0),
                       onPressed: () {
-                        Navigator.pushNamed(context, '/terms');
+                        GlobalNavigatorKey.key.currentState.pushNamed('/terms');
                       },
                       child: Text('Terms & Conditions',
                           style: TextStyle(
@@ -563,7 +563,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   label: FlatButton(
                       padding: EdgeInsets.fromLTRB(0, 0, 62, 0),
                       onPressed: () {
-                        Navigator.pushNamed(context, '/privacy');
+                        GlobalNavigatorKey.key.currentState
+                            .pushNamed('/privacy');
                       },
                       child: Text('Privacy Policy',
                           style: TextStyle(
@@ -804,8 +805,8 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
               _isLoading = true;
             });
             await _addUserImages();
-            Navigator.pushNamed(context, '/consent',
-                arguments: {'user': medicallUser});
+            GlobalNavigatorKey.key.currentState
+                .pushNamed('/consent', arguments: {'user': medicallUser});
           }
         },
         child: !_isLoading

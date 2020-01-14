@@ -1,3 +1,4 @@
+import 'package:Medicall/models/global_nav_key.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -107,7 +108,8 @@ class _ConsentScreenState extends State<ConsentScreen> {
               Text(_returnString(this.widget.data['user'])),
               FlatButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/verification');
+                  GlobalNavigatorKey.key.currentState
+                      .pushNamed('/verification');
                 },
                 child: Text('Continue'),
               )

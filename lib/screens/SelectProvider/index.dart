@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:Medicall/models/consult_data_model.dart';
+import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/secrets.dart' as secrets;
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -112,7 +113,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
           onPressed: () async {
             if (selectedProvider.length > 0) {
               //await setConsult();
-              Navigator.pushNamed(context, '/consultReview',
+              GlobalNavigatorKey.key.currentState.pushNamed('/consultReview',
                   arguments: {'consult': _consult, 'user': medicallUser});
             } else {
               _showMessageDialog();

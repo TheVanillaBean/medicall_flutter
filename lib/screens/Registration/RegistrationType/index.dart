@@ -1,3 +1,4 @@
+import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -87,8 +88,8 @@ class _RegistrationTypeScreenState extends State<RegistrationTypeScreen> {
                 ),
                 onPressed: () {
                   _add(medicallUser, 'patient');
-                  Navigator.pushNamed(context, '/registration',
-                      arguments: widget.data);
+                  GlobalNavigatorKey.key.currentState
+                      .pushNamed('/registration', arguments: widget.data);
                 },
               ),
             ),
@@ -131,8 +132,8 @@ class _RegistrationTypeScreenState extends State<RegistrationTypeScreen> {
                 ),
                 onPressed: () {
                   _add(medicallUser, 'provider');
-                  Navigator.pushNamed(context, '/registration',
-                      arguments: widget.data);
+                  GlobalNavigatorKey.key.currentState
+                      .pushNamed('/registration', arguments: widget.data);
                 },
               ),
             )

@@ -1,4 +1,5 @@
 import 'package:Medicall/components/DrawerMenu.dart';
+import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -148,7 +149,8 @@ class _AccountScreenState extends State<AccountScreen> {
                     title: Text('Payment Cards'),
                     leading: Icon(Icons.payment),
                     onTap: () {
-                      Navigator.pushNamed(context, '/paymentDetail');
+                      GlobalNavigatorKey.key.currentState
+                          .pushNamed('/paymentDetail');
                     },
                     contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                   ),

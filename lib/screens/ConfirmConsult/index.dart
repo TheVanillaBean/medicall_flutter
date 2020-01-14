@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:Medicall/models/consult_data_model.dart';
+import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/ConfirmConsult/routeUserOrder.dart';
 import 'package:Medicall/secrets.dart';
@@ -415,7 +416,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
           builder: (context) => RouteUserOrderScreen(
                 data: {'user': medicallUser, 'consult': _consult},
               ));
-      return Navigator.pushReplacement(context, route);
+      return GlobalNavigatorKey.key.currentState.pushReplacement(route);
 
       //_addProviderConsult(ref.documentID, imagesList);
     }).catchError((e) => print(e));
