@@ -11,6 +11,7 @@ import 'package:Medicall/screens/History/index.dart';
 import 'package:Medicall/screens/Home/index.dart';
 import 'package:Medicall/screens/LandingPage/index.dart';
 import 'package:Medicall/screens/Login/index.dart';
+import 'package:Medicall/screens/OtpVerification/index.dart';
 import 'package:Medicall/screens/Privacy/index.dart';
 import 'package:Medicall/screens/QuestionsUpload/index.dart';
 import 'package:Medicall/screens/Registration/RegistrationType/index.dart';
@@ -18,7 +19,6 @@ import 'package:Medicall/screens/Registration/index.dart';
 import 'package:Medicall/screens/SelectProvider/index.dart';
 import 'package:Medicall/screens/Terms/index.dart';
 import 'package:Medicall/services/auth.dart';
-import 'package:Medicall/services/database.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +26,6 @@ import 'package:flutter_crashlytics/flutter_crashlytics.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
 
-import 'screens/PhoneAuth/index.dart';
 import 'screens/Questions/questionsScreen.dart';
 import 'screens/Symptoms/index.dart';
 
@@ -94,7 +93,6 @@ class _MedicallAppState extends State<MedicallApp> {
     return MultiProvider(
       providers: [
         Provider<AuthBase>(create: (_) => Auth()),
-        Provider<Database>(create: (_) => FirestoreDatabase()),
       ],
       child: OKToast(
         child: MaterialApp(
@@ -131,7 +129,7 @@ class _MedicallAppState extends State<MedicallApp> {
                 );
               case '/verification':
                 return MyCustomRoute(
-                  builder: (_) => AuthScreen.create(context),
+                  builder: (_) => OtpVerificationScreen(),
                   settings: settings,
                 );
               case '/registrationType':

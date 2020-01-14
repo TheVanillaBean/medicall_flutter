@@ -39,7 +39,7 @@ class Auth implements AuthBase {
       throw ('Error getting user');
     }
 
-    return medicallUser;
+    return _medicallUser;
   }
 
   MedicallUser _userFromFirebase(FirebaseUser user) {
@@ -51,7 +51,7 @@ class Auth implements AuthBase {
       phoneNumber: user.phoneNumber,
       email: user.email,
     );
-    return medicallUser;
+    return _medicallUser;
   }
 
   @override

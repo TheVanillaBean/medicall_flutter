@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -58,6 +57,7 @@ class FirebaseNotifications {
 
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
+
         //AppUtil().showAlert('\n \n    ' + msg + '\n \n');
         print('onMessage: $message');
         //_showItemDialog(message);
