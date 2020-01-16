@@ -28,12 +28,12 @@ class DrawerMenu extends StatelessWidget {
                       contentPadding: EdgeInsets.fromLTRB(16, 80, 0, 0),
                       leading: Icon(
                         Icons.local_hospital,
-                        color: Theme.of(context).colorScheme.primary,
+                        color: Theme.of(context).primaryColor,
                       ),
                       title: Text(
                         'Find A Doctor',
                         style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
+                          color: Theme.of(context).primaryColor,
                         ),
                       ),
                       onTap: () {
@@ -46,12 +46,12 @@ class DrawerMenu extends StatelessWidget {
                   dense: true,
                   leading: Icon(
                     Icons.recent_actors,
-                    color: Theme.of(context).colorScheme.primary,
+                    color: Theme.of(context).primaryColor,
                   ),
                   title: Text(
                     'History',
                     style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
+                      color: Theme.of(context).primaryColor,
                     ),
                   ),
                   onTap: () {
@@ -81,12 +81,12 @@ class DrawerMenu extends StatelessWidget {
               ListTile(
                 leading: Icon(
                   Icons.exit_to_app,
-                  color: Theme.of(context).colorScheme.secondary,
+                  color: Theme.of(context).colorScheme.error,
                 ),
                 title: Text(
                   'Sign Out',
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.secondary,
+                    color: Theme.of(context).colorScheme.error,
                   ),
                 ),
                 onTap: () => _signOut(context),
@@ -99,7 +99,7 @@ class DrawerMenu extends StatelessWidget {
           child: DrawerHeader(
               padding: EdgeInsets.fromLTRB(0, 0, 50, 0),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary,
+                color: Theme.of(context).primaryColor,
               ),
               child: Row(
                 children: <Widget>[

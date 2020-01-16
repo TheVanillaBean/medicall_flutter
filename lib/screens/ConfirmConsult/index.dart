@@ -121,7 +121,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                   color: Colors.blue[100].withAlpha(50),
                   border: Border(
                       top: BorderSide(
-                          color: Theme.of(context).colorScheme.primary,
+                          color: Theme.of(context).primaryColor,
                           width: hasReviewed ? 2 : 0))),
               height: hasReviewed ? 280 : 56,
               child: hasReviewed
@@ -131,7 +131,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                         Column(
                           children: <Widget>[
                             Container(
-                                color: Theme.of(context).colorScheme.primary,
+                                color: Theme.of(context).primaryColor,
                                 padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
                                 height: 58,
                                 width: MediaQuery.of(context).size.width,
@@ -217,8 +217,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                         letterSpacing: 1.3,
                                         fontWeight: FontWeight.w700,
                                         color: Theme.of(context)
-                                            .colorScheme
-                                            .primary),
+                                            .primaryColor),
                                   ),
                                 ],
                               ),
@@ -230,7 +229,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                         fontSize: 28,
                                         color: Theme.of(context)
                                             .colorScheme
-                                            .secondary,
+                                            .primary,
                                         fontWeight: FontWeight.bold),
                                   ),
                                 ],
@@ -343,7 +342,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                         Expanded(
                             child: OutlineButton(
                           borderSide: BorderSide(
-                              color: Theme.of(context).colorScheme.primary,
+                              color: Theme.of(context).primaryColor,
                               style: BorderStyle.solid,
                               width: 2),
                           padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
@@ -368,7 +367,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
             )
           : FlatButton(
               padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
-              color: Theme.of(context).colorScheme.primary,
+              color: Theme.of(context).primaryColor,
               onPressed: () {},
               child: CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(Colors.white),

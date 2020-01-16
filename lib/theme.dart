@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 final ThemeData myTheme = ThemeData(
   primarySwatch: Colors.blue,
   brightness: Brightness.light,
-  primaryColor: Color(0xff2196f3),
+  primaryColor: Color(0xFF2F97C1),
   primaryColorBrightness: Brightness.dark,
   primaryColorLight: Color(0xffbbdefb),
   primaryColorDark: Color(0xff1976d2),
@@ -51,9 +51,9 @@ final ThemeData myTheme = ThemeData(
     focusColor: Color(0x1f000000),
     hoverColor: Color(0x0a000000),
     colorScheme: ColorScheme(
-      primary: Color(0xff2196f3),
+      primary: Color(0xFF2F97C1),
       primaryVariant: Color(0xff1976d2),
-      secondary: Color(0xff2196f3),
+      secondary: Color(0x444cebf6),
       secondaryVariant: Color(0xff1976d2),
       surface: Color(0xffffffff),
       background: Color(0xff90caf9),
@@ -65,6 +65,21 @@ final ThemeData myTheme = ThemeData(
       onError: Color(0xffffffff),
       brightness: Brightness.light,
     ),
+  ),
+  colorScheme: ColorScheme(
+    primary: Color(0xFF2F97C1),
+    primaryVariant: Color(0xff1976d2),
+    secondary: Color(0xfff16477),
+    secondaryVariant: Color(0xff1976d2),
+    surface: Color(0xffffffff),
+    background: Color(0xff90caf9),
+    error: Color(0xffd32f2f),
+    onPrimary: Color(0xffffffff),
+    onSecondary: Color(0xffffffff),
+    onSurface: Color(0xff000000),
+    onBackground: Color(0xffffffff),
+    onError: Color(0xffffffff),
+    brightness: Brightness.light,
   ),
   textTheme: TextTheme(
     display4: TextStyle(
@@ -334,7 +349,7 @@ final ThemeData myTheme = ThemeData(
     errorMaxLines: null,
     hasFloatingPlaceholder: true,
     isDense: false,
-    contentPadding: EdgeInsets.only(top: 12, bottom: 12, left: 0, right: 0),
+    contentPadding: EdgeInsets.only(top: 12, bottom: 12, left: 10, right: 10),
     isCollapsed: false,
     prefixStyle: TextStyle(
       color: Color(0xdd000000),
@@ -358,48 +373,48 @@ final ThemeData myTheme = ThemeData(
     fillColor: Color(0x00000000),
     errorBorder: UnderlineInputBorder(
       borderSide: BorderSide(
-        color: Color(0xff000000),
-        width: 1,
+        color: Colors.transparent,
+        width: 0,
         style: BorderStyle.solid,
       ),
       borderRadius: BorderRadius.all(Radius.circular(4.0)),
     ),
     focusedBorder: UnderlineInputBorder(
       borderSide: BorderSide(
-        color: Color(0xff000000),
-        width: 1,
+        color: Colors.transparent,
+        width: 0,
         style: BorderStyle.solid,
       ),
       borderRadius: BorderRadius.all(Radius.circular(4.0)),
     ),
     focusedErrorBorder: UnderlineInputBorder(
       borderSide: BorderSide(
-        color: Color(0xff000000),
-        width: 1,
+        color: Colors.transparent,
+        width: 0,
         style: BorderStyle.solid,
       ),
       borderRadius: BorderRadius.all(Radius.circular(4.0)),
     ),
     disabledBorder: UnderlineInputBorder(
       borderSide: BorderSide(
-        color: Color(0xff000000),
-        width: 1,
+        color: Colors.transparent,
+        width: 0,
         style: BorderStyle.solid,
       ),
       borderRadius: BorderRadius.all(Radius.circular(4.0)),
     ),
     enabledBorder: UnderlineInputBorder(
       borderSide: BorderSide(
-        color: Color(0xff000000),
-        width: 1,
+        color: Colors.transparent,
+        width: 0,
         style: BorderStyle.solid,
       ),
       borderRadius: BorderRadius.all(Radius.circular(4.0)),
     ),
     border: UnderlineInputBorder(
       borderSide: BorderSide(
-        color: Color(0xff000000),
-        width: 1,
+        color: Colors.transparent,
+        width: 0,
         style: BorderStyle.solid,
       ),
       borderRadius: BorderRadius.all(Radius.circular(4.0)),
@@ -470,7 +485,7 @@ final ThemeData myTheme = ThemeData(
     shape: StadiumBorder(
         side: BorderSide(
       color: Color(0xff000000),
-      width: 0,
+      width: 1,
       style: BorderStyle.none,
     )),
   ),
@@ -478,7 +493,7 @@ final ThemeData myTheme = ThemeData(
       shape: RoundedRectangleBorder(
     side: BorderSide(
       color: Color(0xff000000),
-      width: 0,
+      width: 1,
       style: BorderStyle.none,
     ),
     borderRadius: BorderRadius.all(Radius.circular(0.0)),

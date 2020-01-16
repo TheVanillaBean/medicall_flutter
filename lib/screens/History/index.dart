@@ -88,10 +88,8 @@ class HistoryScreen extends StatelessWidget {
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return Center(
-                  heightFactor: 35,
-                  child: CircularProgressIndicator(
-                    backgroundColor: Colors.black,
-                  ),
+                  heightFactor: 16,
+                  child: CircularProgressIndicator(),
                 );
               }
               if (snapshot.data.documents.length > 0) {
@@ -131,7 +129,7 @@ class HistoryScreen extends StatelessWidget {
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 1.1,
-                                color: Theme.of(context).colorScheme.primary),
+                                color: Theme.of(context).primaryColor),
                           ),
                           subtitle: Text(DateFormat('dd MMM h:mm a')
                                   .format(timestamp.toDate())
@@ -176,10 +174,8 @@ class HistoryScreen extends StatelessWidget {
                           ),
                           leading: Icon(
                             Icons.account_circle,
-                            color: Theme.of(context)
-                                .colorScheme
-                                .secondary
-                                .withAlpha(170),
+                            color:
+                                Theme.of(context).primaryColor.withAlpha(170),
                             size: 50,
                           ),
                         ),
@@ -411,8 +407,7 @@ class HistoryScreen extends StatelessWidget {
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     letterSpacing: 1.1,
-                                    color:
-                                        Theme.of(context).colorScheme.primary),
+                                    color: Theme.of(context).primaryColor),
                               ),
                               subtitle: Text(DateFormat('dd MMM h:mm a')
                                       .format(timestamp.toDate())
@@ -459,8 +454,7 @@ class HistoryScreen extends StatelessWidget {
                               leading: Icon(
                                 Icons.account_circle,
                                 color: Theme.of(context)
-                                    .colorScheme
-                                    .secondary
+                                    .primaryColor
                                     .withAlpha(170),
                                 size: 50,
                               ),
@@ -799,8 +793,7 @@ class CustomSearchDelegate extends SearchDelegate {
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     letterSpacing: 1.1,
-                                    color:
-                                        Theme.of(context).colorScheme.primary),
+                                    color: Theme.of(context).primaryColor),
                               ),
                               subtitle: Text(DateFormat('dd MMM h:mm a')
                                       .format(timestamp.toDate())
@@ -847,8 +840,7 @@ class CustomSearchDelegate extends SearchDelegate {
                               leading: Icon(
                                 Icons.account_circle,
                                 color: Theme.of(context)
-                                    .colorScheme
-                                    .secondary
+                                    .primaryColor
                                     .withAlpha(170),
                                 size: 50,
                               ),
@@ -923,7 +915,7 @@ class CustomSearchDelegate extends SearchDelegate {
                               children: <Widget>[
                                 Icon(
                                   Icons.more_vert,
-                                  color: Theme.of(context).colorScheme.primary,
+                                  color: Theme.of(context).primaryColor,
                                 ),
                               ],
                             ),

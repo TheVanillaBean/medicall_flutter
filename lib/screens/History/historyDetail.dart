@@ -2,11 +2,16 @@ import 'package:Medicall/Screens/History/chat.dart';
 import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/History/buildMedicalNote.dart';
+import 'package:Medicall/util/stripe_payment_handler.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:Medicall/secrets.dart' as secrets;
+import 'package:google_maps_webservice/places.dart';
+import 'package:stripe_payment/stripe_payment.dart';
 
 class HistoryDetailScreen extends StatefulWidget {
   final data;
@@ -15,24 +20,32 @@ class HistoryDetailScreen extends StatefulWidget {
   _HistoryDetailScreenState createState() => _HistoryDetailScreenState();
 }
 
+GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: secrets.kGoogleApiKey);
 bool isDone = false;
+
+bool userShippingSelected = false;
+String shippingAddress = '';
+String shipTo = '';
 
 class _HistoryDetailScreenState extends State<HistoryDetailScreen>
     with SingleTickerProviderStateMixin {
   GlobalKey<FormBuilderState> _consultFormKey = GlobalKey();
+  final TextEditingController _typeAheadController = TextEditingController();
   TabController controller;
   int _currentIndex = 0;
   int _currentDetailsIndex = 0;
   Choice _selectedChoice;
   bool isLoading = true;
-
+  List<dynamic> _addressList = [];
   bool isConsultOpen = false;
   bool addedImages = false;
   bool addedQuestions = false;
+  bool hasPayment = false;
   String buttonTxt = "Send Prescription";
   MedicallUser patientDetail;
   String documentId;
   String from;
+  ValueChanged _onChangedCheckBox;
   var consultSnapshot;
   final GlobalKey<ScaffoldState> _scaffoldDetailKey =
       GlobalKey<ScaffoldState>();
@@ -45,6 +58,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
     from = widget.data['from'];
     controller = TabController(length: 3, vsync: this);
     controller.addListener(_handleTabSelection);
+    _typeAheadController.text = shippingAddress;
   }
 
   _handleTabSelection() {
@@ -106,6 +120,19 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
             dob: datasnapshot.data['dob'],
             gender: datasnapshot.data['gender'],
             phoneNumber: datasnapshot.data['phone']);
+      }
+    }).catchError((e) => print(e));
+  }
+
+  Future<void> _getUserPaymentCard() async {
+    final Future<QuerySnapshot> documentReference = Firestore.instance
+        .collection('cards')
+        .document(medicallUser.uid)
+        .collection('sources')
+        .getDocuments();
+    await documentReference.then((datasnapshot) {
+      if (datasnapshot.documents.length > 0) {
+        hasPayment = true;
       }
     }).catchError((e) => print(e));
   }
@@ -205,12 +232,38 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                   color: Colors.blue,
                 )),
     ];
-
+    _onChangedCheckBox = (val) {
+      if (val.length > 0) {
+        if (val.length >= 2 && val[1] == 'pickup') {
+          val.removeAt(0);
+        }
+        if (val.length >= 2 && val[1] == 'delivery') {
+          val.removeAt(0);
+        }
+        shipTo = val[0];
+        setState(() {
+          if (_consultFormKey != null &&
+              _consultFormKey.currentState != null &&
+              _consultFormKey
+                      .currentState.fields['shipTo'].currentState.value.length >
+                  0) {
+            userShippingSelected = true;
+          } else {
+            userShippingSelected = false;
+          }
+        });
+      } else {
+        setState(() {
+          userShippingSelected = false;
+        });
+      }
+    };
     // The app's "state".
     return FutureBuilder<List<void>>(
       future: Future.wait([
         _getConsultDetail(),
         _getPatientDetail(),
+        _getUserPaymentCard()
       ]), // a Future<String> or null
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
         switch (snapshot.connectionState) {
@@ -222,28 +275,32 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                 key: _scaffoldDetailKey,
                 appBar: AppBar(
                   actions: <Widget>[
-                    PopupMenuButton<Choice>(
-                      onSelected: _updateConsultStatus,
-                      initialValue: _selectedChoice,
-                      itemBuilder: (BuildContext context) {
-                        return choices.map((Choice choice) {
-                          return PopupMenuItem<Choice>(
-                            value: choice,
-                            child: Container(
-                              height: 70,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Text(choice.title),
-                                  choice.icon
-                                ],
-                              ),
-                            ),
-                          );
-                        }).toList();
-                      },
-                    ),
+                    medicallUser.type == 'provider'
+                        ? PopupMenuButton<Choice>(
+                            onSelected: _updateConsultStatus,
+                            initialValue: _selectedChoice,
+                            itemBuilder: (BuildContext context) {
+                              return choices.map((Choice choice) {
+                                return PopupMenuItem<Choice>(
+                                  value: choice,
+                                  child: Container(
+                                    height: 70,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Text(choice.title),
+                                        choice.icon
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              }).toList();
+                            },
+                          )
+                        : SizedBox(
+                            width: 60,
+                          ),
                   ],
                   title: Row(
                     mainAxisSize: MainAxisSize.max,
@@ -257,14 +314,12 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                                     from == 'consults' &&
                                     consultSnapshot['type'] != 'Lesion'
                                 ? consultSnapshot['type']
-                                : consultSnapshot != null &&
-                                        consultSnapshot['type'] == 'Lesion' &&
-                                        medicallUser.type == 'patient'
-                                    ? 'Spot'
-                                    : consultSnapshot != null &&
-                                            from == 'patients'
-                                        ? '${consultSnapshot['patient'].split(" ")[0][0].toUpperCase()}${consultSnapshot['patient'].split(" ")[0].substring(1)} ${consultSnapshot['patient'].split(" ")[1][0].toUpperCase()}${consultSnapshot['patient'].split(" ")[1].substring(1)} '
-                                        : '',
+                                : consultSnapshot != null && from == 'patients'
+                                    ? medicallUser.type == 'patient'
+                                        ? '${consultSnapshot['provider'].split(" ")[0][0].toUpperCase()}${consultSnapshot['provider'].split(" ")[0].substring(1)} ${consultSnapshot['provider'].split(" ")[1][0].toUpperCase()}${consultSnapshot['provider'].split(" ")[1].substring(1)} ' +
+                                            consultSnapshot['providerTitles']
+                                        : '${consultSnapshot['patient'].split(" ")[0][0].toUpperCase()}${consultSnapshot['patient'].split(" ")[0].substring(1)} ${consultSnapshot['patient'].split(" ")[1][0].toUpperCase()}${consultSnapshot['patient'].split(" ")[1].substring(1)} '
+                                    : '',
                             style: TextStyle(
                               fontSize: Theme.of(context).platform ==
                                       TargetPlatform.iOS
@@ -306,7 +361,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                     ],
                   ),
                   bottom: TabBar(
-                    indicatorColor: Theme.of(context).colorScheme.primary,
+                    indicatorColor: Theme.of(context).primaryColor,
                     indicatorWeight: 3,
                     labelStyle: TextStyle(fontSize: 12),
                     tabs: medicallUser.type == 'patient'
@@ -558,231 +613,330 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
       }
       if (medicallUser.type == 'patient' && key == 'prescription') {
         return Scaffold(
-            body: Container(
-                child: SingleChildScrollView(
-                    padding: EdgeInsets.fromLTRB(15, 20, 15, 20),
-                    child: FormBuilder(
-                      key: _consultFormKey,
-                      autovalidate: true,
-                      child: Column(
-                        children: <Widget>[
-                          Container(
-                            alignment: Alignment.centerLeft,
-                            padding: EdgeInsets.all(15),
-                            child: Text(
-                              'Rx',
-                              style: TextStyle(
-                                  fontSize: 24, fontFamily: 'MedicallApp'),
-                            ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                            child: FormBuilderTextField(
-                              initialValue: consultSnapshot
-                                          .containsKey('prescription') &&
-                                      consultSnapshot['prescription'].length > 0
-                                  ? consultSnapshot['prescription']
-                                  : '',
-                              attribute: 'docInput',
-                              maxLines: 10,
-                              readOnly: true,
-                              decoration: InputDecoration(
-                                hintText:
-                                    'This is where your presciption will show up. If a doctor prescribes something, you will be notified and asked here for payment and shipment address.',
-                                fillColor: consultSnapshot
-                                            .containsKey('prescription') &&
-                                        consultSnapshot['prescription'].length >
-                                            0
-                                    ? Colors.green.withAlpha(30)
-                                    : Colors.grey.withAlpha(50),
-                                filled: true,
-                                border: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: Colors.grey, width: 5.0),
-                                ),
-                              ),
-                              validators: [
-                                //FormBuilderValidators.required(),
-                              ],
-                            ),
-                          ),
-                          consultSnapshot.containsKey('prescription') &&
-                                  consultSnapshot['prescription'].length > 0
-                              ? Column(
-                                  children: <Widget>[
-                                    Container(
-                                      padding:
-                                          EdgeInsets.fromLTRB(0, 10, 20, 10),
-                                      child: FormBuilderCheckboxList(
-                                        leadingInput: true,
-                                        attribute: 'shipTo',
-                                        validators: [
-                                          FormBuilderValidators.required(),
-                                        ],
-                                        decoration: InputDecoration(
-                                            border: InputBorder.none,
-                                            disabledBorder: InputBorder.none,
-                                            enabledBorder: InputBorder.none,
-                                            focusedBorder: InputBorder.none,
-                                            contentPadding: EdgeInsets.fromLTRB(
-                                                0, 10, 0, 10)),
-                                        onChanged: null,
-                                        options: [
-                                          FormBuilderFieldOption(
-                                            value: 'pickup',
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: <Widget>[
-                                                Text(
-                                                  'Local pharmacy pickup',
-                                                  style: TextStyle(
-                                                    fontSize: 16,
-                                                  ),
-                                                  softWrap: true,
-                                                ),
-                                                Text(
-                                                  '\$80',
-                                                  style:
-                                                      TextStyle(fontSize: 21),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          FormBuilderFieldOption(
-                                            value: 'delivery',
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: <Widget>[
-                                                Text(
-                                                  'Ship directly to my door.',
-                                                  style: TextStyle(
-                                                    fontSize: 16,
-                                                  ),
-                                                  softWrap: true,
-                                                ),
-                                                Text(
-                                                  '\$60',
-                                                  style:
-                                                      TextStyle(fontSize: 21),
-                                                ),
-                                              ],
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding:
-                                          EdgeInsets.only(top: 10, bottom: 10),
-                                      child: Text(
-                                          'Please enter the address below where you want your prescription sent.'),
-                                    ),
-                                    FormBuilderTextField(
-                                      attribute: "Address",
-                                      initialValue: medicallUser.address,
-                                      decoration: InputDecoration(
-                                          labelText: 'Street Address',
-                                          fillColor:
-                                              Color.fromRGBO(35, 179, 232, 0.1),
-                                          filled: true,
-                                          disabledBorder: InputBorder.none,
-                                          enabledBorder: InputBorder.none,
-                                          border: InputBorder.none),
-                                      validators: [
-                                        FormBuilderValidators.required(),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    FormBuilderTextField(
-                                      attribute: "City",
-                                      decoration: InputDecoration(
-                                          labelText: 'City',
-                                          fillColor:
-                                              Color.fromRGBO(35, 179, 232, 0.1),
-                                          filled: true,
-                                          disabledBorder: InputBorder.none,
-                                          enabledBorder: InputBorder.none,
-                                          border: InputBorder.none),
-                                      validators: [
-                                        FormBuilderValidators.required(),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    FormBuilderTextField(
-                                      attribute: "State",
-                                      decoration: InputDecoration(
-                                          labelText: 'State',
-                                          fillColor:
-                                              Color.fromRGBO(35, 179, 232, 0.1),
-                                          filled: true,
-                                          disabledBorder: InputBorder.none,
-                                          enabledBorder: InputBorder.none,
-                                          border: InputBorder.none),
-                                      validators: [
-                                        FormBuilderValidators.required(),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: 70,
-                                    )
-                                  ],
-                                )
-                              : SizedBox()
-                        ],
-                      ),
-                    ))),
-            bottomSheet: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                consultSnapshot.containsKey('prescription') &&
-                        consultSnapshot['prescription'].length > 0
-                    ? Expanded(
-                        child: Container(
-                        decoration: BoxDecoration(
-                            border: Border(
-                                top: BorderSide(
-                                    color: Colors.grey,
-                                    width: 1,
-                                    style: BorderStyle.solid))),
-                        child: FlatButton(
-                          padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
-                          color: Theme.of(context).colorScheme.secondary,
-                          onPressed: () {},
+          body: Container(
+              child: SingleChildScrollView(
+                  padding: EdgeInsets.fromLTRB(15, 20, 15, 100),
+                  child: FormBuilder(
+                    key: _consultFormKey,
+                    autovalidate: false,
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          alignment: Alignment.centerLeft,
+                          padding: EdgeInsets.fromLTRB(15, 0, 15, 10),
                           child: Text(
-                            'Pay for Presciption',
-                            textAlign: TextAlign.center,
+                            'Rx',
                             style: TextStyle(
-                              fontSize: 18,
-                              color: Theme.of(context).colorScheme.onBackground,
-                              letterSpacing: 1.0,
-                              fontWeight: FontWeight.bold,
-                            ),
+                                fontSize: 24, fontFamily: 'MedicallApp'),
                           ),
                         ),
-                      ))
-                    : SizedBox()
-              ],
-            ));
+                        Container(
+                          padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                          child: FormBuilderTextField(
+                            initialValue: consultSnapshot
+                                        .containsKey('prescription') &&
+                                    consultSnapshot['prescription'].length > 0
+                                ? consultSnapshot['prescription']
+                                : '',
+                            attribute: 'docInput',
+                            maxLines: 8,
+                            readOnly: true,
+                            decoration: InputDecoration(
+                              hintText:
+                                  'This is where your presciption will show up. If a doctor prescribes something, you will be notified and asked here for payment and shipment address.',
+                              fillColor: consultSnapshot
+                                          .containsKey('prescription') &&
+                                      consultSnapshot['prescription'].length > 0
+                                  ? Colors.lightGreen.withAlpha(120)
+                                  : Colors.grey.withAlpha(50),
+                              filled: true,
+                              border: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Colors.grey, width: 5.0),
+                              ),
+                            ),
+                            validators: [
+                              //FormBuilderValidators.required(),
+                            ],
+                          ),
+                        ),
+                        consultSnapshot.containsKey('prescription') &&
+                                consultSnapshot['prescription'].length > 0
+                            ? Column(
+                                children: <Widget>[
+                                  Container(
+                                    padding: EdgeInsets.fromLTRB(0, 10, 20, 10),
+                                    child: FormBuilderCheckboxList(
+                                      leadingInput: true,
+                                      attribute: 'shipTo',
+                                      initialValue: [shipTo],
+                                      validators: [
+                                        FormBuilderValidators.required(),
+                                      ],
+                                      decoration: InputDecoration(
+                                          border: InputBorder.none,
+                                          disabledBorder: InputBorder.none,
+                                          enabledBorder: InputBorder.none,
+                                          focusedBorder: InputBorder.none,
+                                          contentPadding: EdgeInsets.fromLTRB(
+                                              0, 10, 0, 10)),
+                                      onChanged: _onChangedCheckBox,
+                                      options: [
+                                        FormBuilderFieldOption(
+                                          value: 'pickup',
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: <Widget>[
+                                              Text(
+                                                'Local pharmacy pickup',
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                ),
+                                                softWrap: true,
+                                              ),
+                                              Text(
+                                                '\$80',
+                                                style: TextStyle(fontSize: 21),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        FormBuilderFieldOption(
+                                          value: 'delivery',
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: <Widget>[
+                                              Text(
+                                                'Ship directly to my door.',
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                ),
+                                                softWrap: true,
+                                              ),
+                                              Text(
+                                                '\$60',
+                                                style: TextStyle(fontSize: 21),
+                                              ),
+                                            ],
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                  Visibility(
+                                      visible: userShippingSelected,
+                                      child: Container(
+                                        padding:
+                                            EdgeInsets.fromLTRB(15, 0, 15, 0),
+                                        child: Column(
+                                          children: <Widget>[
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                top: 10,
+                                                bottom: 10,
+                                              ),
+                                              child: Text(
+                                                  'Please enter the address below where you want your prescription sent.'),
+                                            ),
+                                            TypeAheadFormField(
+                                              hideOnEmpty: true,
+                                              suggestionsBoxVerticalOffset: 5.0,
+                                              hideOnError: true,
+                                              suggestionsBoxDecoration:
+                                                  SuggestionsBoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(5)),
+                                              ),
+                                              textFieldConfiguration:
+                                                  TextFieldConfiguration(
+                                                onEditingComplete: () {
+                                                  if (_addressList.length ==
+                                                      0) {
+                                                    this
+                                                        ._typeAheadController
+                                                        .clear();
+                                                  }
+                                                },
+                                                onSubmitted: (v) {
+                                                  if (_addressList.length ==
+                                                      0) {
+                                                    this
+                                                        ._typeAheadController
+                                                        .clear();
+                                                  }
+                                                  if (_addressList.indexOf(v) ==
+                                                      -1) {
+                                                    this
+                                                        ._typeAheadController
+                                                        .clear();
+                                                  }
+                                                },
+                                                controller:
+                                                    this._typeAheadController,
+                                                maxLines: 2,
+                                                decoration: InputDecoration(
+                                                    hintText: shipTo ==
+                                                            'delivery'
+                                                        ? medicallUser.address
+                                                        : '',
+                                                    labelText: shipTo ==
+                                                            'delivery'
+                                                        ? 'Street Address'
+                                                        : 'Local Pharmacy Address',
+                                                    fillColor:
+                                                        Color.fromRGBO(35, 179,
+                                                            232, 0.1),
+                                                    filled: true,
+                                                    disabledBorder:
+                                                        InputBorder.none,
+                                                    enabledBorder:
+                                                        InputBorder.none,
+                                                    border: InputBorder.none),
+                                              ),
+                                              suggestionsCallback:
+                                                  (pattern) async {
+                                                _addressList = [];
+                                                if (pattern.length > 0) {
+                                                  return await _places
+                                                      .searchByText(pattern)
+                                                      .then((val) {
+                                                    _addressList.add(val
+                                                        .results
+                                                        .first
+                                                        .formattedAddress);
+                                                    return _addressList;
+                                                  });
+                                                } else {
+                                                  return _addressList;
+                                                }
+                                              },
+                                              itemBuilder:
+                                                  (context, suggestion) {
+                                                return ListTile(
+                                                  title: Text(suggestion),
+                                                );
+                                              },
+                                              transitionBuilder: (context,
+                                                  suggestionsBox, controller) {
+                                                return suggestionsBox;
+                                              },
+                                              onSuggestionSelected:
+                                                  (suggestion) {
+                                                setState(() {
+                                                  shippingAddress = suggestion;
+                                                });
+                                                this._typeAheadController.text =
+                                                    suggestion;
+                                              },
+                                              validator: (value) {
+                                                if (value.isEmpty) {
+                                                  return 'Please enter valid address';
+                                                } else {
+                                                  if (_addressList
+                                                          .indexOf(value) ==
+                                                      -1) {
+                                                    this
+                                                        ._typeAheadController
+                                                        .clear();
+                                                  } else {
+                                                    shippingAddress = value;
+                                                  }
+                                                  return null;
+                                                }
+                                              },
+                                              onSaved: (value) {
+                                                setState(() {
+                                                  shippingAddress = value;
+                                                });
+                                              },
+                                            ),
+                                            SizedBox(
+                                              height: 20,
+                                            ),
+                                            shippingAddress.length > 0
+                                                ? FlatButton(
+                                                    padding:
+                                                        EdgeInsets.fromLTRB(
+                                                            20, 20, 20, 20),
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .secondary,
+                                                    onPressed: () async {
+                                                      setState(() {
+                                                        isLoading = true;
+                                                      });
+                                                      //await _addProviderConsult();
+                                                      setState(() {
+                                                        isLoading = true;
+                                                      });
+                                                      if (hasPayment) {
+                                                        await PaymentService().chargePayment(
+                                                            consultSnapshot
+                                                                .price,
+                                                            consultSnapshot
+                                                                    .consultType +
+                                                                ' consult with ' +
+                                                                consultSnapshot
+                                                                    .provider);
+                                                      } else {
+                                                        await StripeSource
+                                                                .addSource()
+                                                            .then((String
+                                                                token) async {
+                                                          PaymentService()
+                                                              .addCard(token);
+                                                          setState(() {
+                                                            isLoading = true;
+                                                          });
+                                                        });
+                                                      }
+                                                    },
+                                                    child: Text(
+                                                      hasPayment
+                                                          ? 'Pay for Presciption'
+                                                          : 'Add Card',
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: TextStyle(
+                                                        fontSize: 18,
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .onBackground,
+                                                        letterSpacing: 1.0,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  )
+                                                : Container(),
+                                          ],
+                                        ),
+                                      ))
+                                ],
+                              )
+                            : SizedBox()
+                      ],
+                    ),
+                  ))),
+        );
       }
       if (medicallUser.type == 'provider' &&
           key == 'prescription' &&
           consultSnapshot['prescription'] != null) {
         return Scaffold(
-            body: Container(
-                child: SingleChildScrollView(
-                    padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
-                    child: FormBuilder(
+            body: SingleChildScrollView(
+                padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    FormBuilder(
                       key: _consultFormKey,
                       autovalidate: true,
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
                           this.patientDetail != null
                               ? Column(
@@ -796,6 +950,9 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                                         ' '),
                                     Text('Address: ' +
                                         this.patientDetail.address),
+                                    SizedBox(
+                                      height: 100,
+                                    )
                                   ],
                                 )
                               : Container(),
@@ -816,7 +973,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                                       ? consultSnapshot['prescription']
                                       : '',
                               attribute: 'docInput',
-                              maxLines: 10,
+                              maxLines: 8,
                               readOnly: consultSnapshot['state'] == 'done'
                                   ? true
                                   : false,
@@ -839,7 +996,9 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                           ),
                         ],
                       ),
-                    ))),
+                    )
+                  ],
+                )),
             bottomSheet: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
@@ -930,7 +1089,7 @@ class _CarouselWithIndicatorState extends State<CarouselWithIndicator> {
     return Column(children: [
       CarouselSlider(
         viewportFraction: 1.0,
-        height: MediaQuery.of(context).size.height * 0.65,
+        height: MediaQuery.of(context).size.height * 0.64,
         items: widget.imgList.map(
           (url) {
             return Container(

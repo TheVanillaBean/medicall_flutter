@@ -109,7 +109,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
         ),
         bottomNavigationBar: FlatButton(
           padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
-          color: Theme.of(context).colorScheme.primary,
+          color: Theme.of(context).primaryColor,
           onPressed: () async {
             if (selectedProvider.length > 0) {
               //await setConsult();

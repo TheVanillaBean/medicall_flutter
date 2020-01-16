@@ -97,7 +97,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
             actions: <Widget>[
               // usually buttons at the bottom of the dialog
               FlatButton(
-                color: Theme.of(context).colorScheme.primary,
+                color: Theme.of(context).primaryColor,
                 child: Text("Continue to " + _consult.consultType == 'Lesion'
                     ? 'Spot'
                     : "Continue to " + _consult.consultType + ' treatment'),
@@ -240,7 +240,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
               onChange: (i) => _checkQuestion(i, context),
               skip: Text(
                 'Skip',
-                style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                style: TextStyle(color: Theme.of(context).primaryColor),
               ),
               next: Icon(
                 Icons.arrow_forward,
@@ -248,14 +248,14 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
               ),
               done: Text(
                 'Done',
-                style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                style: TextStyle(color: Theme.of(context).primaryColor),
               ),
               dotsFlex: 1,
               dotsDecorator: DotsDecorator(
                 size: Size(10.0, 10.0),
                 spacing: EdgeInsets.all(1),
                 color: Colors.grey,
-                activeColor: Theme.of(context).colorScheme.primary,
+                activeColor: Theme.of(context).primaryColor,
                 activeSize: Size(22.0, 10.0),
                 activeShape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(25.0)),

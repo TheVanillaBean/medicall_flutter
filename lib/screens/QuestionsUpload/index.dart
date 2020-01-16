@@ -88,9 +88,9 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
           cupertinoOptions: CupertinoOptions(takePhotoIcon: 'chat'),
           materialOptions: MaterialOptions(
               actionBarColor:
-                  '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
+                  '#${Theme.of(context).primaryColor.value.toRadixString(16).toUpperCase().substring(2)}',
               statusBarColor:
-                  '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
+                  '#${Theme.of(context).primaryColor.value.toRadixString(16).toUpperCase().substring(2)}',
               lightStatusBar: false,
               startInAllView: true,
               actionBarTitle: 'Select Images',
@@ -128,7 +128,7 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       bottomNavigationBar: FlatButton(
         padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
-        color: Theme.of(context).colorScheme.primary,
+        color: Theme.of(context).primaryColor,
         onPressed: () async {
           _consult.media = images;
           GlobalNavigatorKey.key.currentState.pushNamed('/consultReview',

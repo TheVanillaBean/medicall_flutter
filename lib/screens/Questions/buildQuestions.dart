@@ -74,15 +74,11 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                                                         .size
                                                         .height *
                                                     0.6,
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.85,
                                                 decoration: BoxDecoration(
                                                   border: Border.all(
                                                       width: 1,
                                                       color: Colors.grey,
-                                                      style: BorderStyle.solid),
+                                                      style: BorderStyle.none),
                                                 ),
                                                 child: Image.network(
                                                   question['media'],
@@ -104,6 +100,9 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                                                     child: Icon(
                                                       Icons.camera_alt,
                                                       size: 40,
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .onPrimary,
                                                     ),
                                                   ),
                                                 ),
@@ -123,6 +122,8 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                                                           child: Icon(
                                                             Icons.image,
                                                             size: 50,
+                                                            color: Colors.grey
+                                                                .withAlpha(100),
                                                           ),
                                                           height: MediaQuery.of(
                                                                       context)
@@ -156,6 +157,8 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                                                           child: Icon(
                                                             Icons.image,
                                                             size: 50,
+                                                            color: Colors.grey
+                                                                .withAlpha(100),
                                                           ),
                                                           height: MediaQuery.of(
                                                                       context)
@@ -199,6 +202,8 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                                                           child: Icon(
                                                             Icons.image,
                                                             size: 50,
+                                                            color: Colors.grey
+                                                                .withAlpha(100),
                                                           ),
                                                           height: MediaQuery.of(
                                                                       context)
@@ -239,6 +244,8 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                                                           child: Icon(
                                                             Icons.image,
                                                             size: 50,
+                                                            color: Colors.grey
+                                                                .withAlpha(100),
                                                           ),
                                                           height: MediaQuery.of(
                                                                       context)
@@ -299,6 +306,9 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                                                     child: Icon(
                                                       Icons.camera_alt,
                                                       size: 40,
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .onPrimary,
                                                     ),
                                                   ),
                                                 ),
@@ -361,8 +371,6 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                                     leadingInput: true,
                                     initialValue: data['answer'],
                                     attribute: 'question0',
-                                    decoration: InputDecoration(
-                                        border: InputBorder.none),
                                     validators: [
                                       FormBuilderValidators.required(),
                                     ],
@@ -654,6 +662,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
           child: Icon(
             Icons.camera_alt,
             size: 40,
+            color: Theme.of(context).colorScheme.onPrimary,
           ),
         ),
       ),

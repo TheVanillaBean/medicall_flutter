@@ -106,7 +106,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 ' Registration'),
       ),
       bottomNavigationBar: FlatButton(
-        color: Theme.of(context).colorScheme.primary,
+        color: Theme.of(context).primaryColor,
         padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
         onPressed: () {
           _isLoading = true;
@@ -693,9 +693,9 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
           materialOptions: MaterialOptions(
               useDetailsView: true,
               actionBarColor:
-                  '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
+                  '#${Theme.of(context).primaryColor.value.toRadixString(16).toUpperCase().substring(2)}',
               statusBarColor:
-                  '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
+                  '#${Theme.of(context).primaryColor.value.toRadixString(16).toUpperCase().substring(2)}',
               lightStatusBar: false,
               autoCloseOnSelectionLimit: true,
               startInAllView: true,
@@ -730,9 +730,9 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
           materialOptions: MaterialOptions(
               useDetailsView: true,
               actionBarColor:
-                  '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
+                  '#${Theme.of(context).primaryColor.value.toRadixString(16).toUpperCase().substring(2)}',
               statusBarColor:
-                  '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
+                  '#${Theme.of(context).primaryColor.value.toRadixString(16).toUpperCase().substring(2)}',
               lightStatusBar: false,
               autoCloseOnSelectionLimit: true,
               startInAllView: true,
@@ -795,7 +795,7 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
       bottomNavigationBar: FlatButton(
         padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
         color: profileImage.length == 1 && govIdImage.length == 1
-            ? Theme.of(context).colorScheme.primary
+            ? Theme.of(context).primaryColor
             : Colors.grey,
         onPressed: () async {
           if (profileImage.length == 1 && govIdImage.length == 1) {

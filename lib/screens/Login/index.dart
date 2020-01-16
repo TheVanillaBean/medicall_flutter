@@ -136,7 +136,7 @@ class _LoginScreenState extends State<LoginPage> {
       _buildEmailAuthForm(context),
       SizedBox(height: 16.0),
       SignInButton(
-        color: Theme.of(context).colorScheme.primary,
+        color: Theme.of(context).primaryColor,
         textColor: Colors.white,
         text: "Sign in",
         onPressed: model.canSubmit ? _submit : null,
@@ -152,7 +152,7 @@ class _LoginScreenState extends State<LoginPage> {
       ),
       SizedBox(height: 12),
       SignInButton(
-        color: Theme.of(context).colorScheme.primaryVariant.withBlue(3000),
+        color: Theme.of(context).primaryColor.withBlue(3000),
         textColor: Colors.white,
         text: "Create New Account",
         onPressed: () => _createAccountWithEmail(context),
@@ -169,14 +169,6 @@ class _LoginScreenState extends State<LoginPage> {
   }
 
   Widget _buildHeader(BuildContext context) {
-    if (model.isLoading) {
-      return Padding(
-        padding: const EdgeInsets.only(bottom: 16.0),
-        child: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -188,7 +180,7 @@ class _LoginScreenState extends State<LoginPage> {
                   height: 1.08,
                   letterSpacing: 2.5,
                   fontWeight: FontWeight.w700,
-                  color: Theme.of(context).colorScheme.secondary)),
+                  color: Theme.of(context).primaryColor)),
         ),
         SizedBox(
           width: 110,
@@ -205,13 +197,22 @@ class _LoginScreenState extends State<LoginPage> {
                   height: 1.08,
                   letterSpacing: 2.5,
                   fontWeight: FontWeight.w700,
-                  color: Theme.of(context).colorScheme.primary)),
+                  color: Theme.of(context).primaryColor)),
         )
       ],
     );
   }
 
   Container _buildEmailAuthForm(BuildContext context) {
+    if (model.isLoading) {
+      return Container(
+        height: 225,
+        padding: const EdgeInsets.only(bottom: 16.0),
+        child: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
     return Container(
       padding: const EdgeInsets.fromLTRB(0, 40, 0, 40),
       child: Column(
@@ -242,6 +243,8 @@ class _LoginScreenState extends State<LoginPage> {
         color: Color.fromRGBO(80, 80, 80, 1),
       ),
       decoration: InputDecoration(
+        filled: true,
+        fillColor: Colors.grey.withAlpha(70),
         labelStyle: TextStyle(
           color: Theme.of(context).colorScheme.onSurface,
         ),
@@ -273,6 +276,8 @@ class _LoginScreenState extends State<LoginPage> {
         hintStyle: TextStyle(
           color: Color.fromRGBO(100, 100, 100, 1),
         ),
+        filled: true,
+        fillColor: Colors.grey.withAlpha(70),
         prefixIcon: Icon(
           Icons.email,
           color: Theme.of(context).colorScheme.onSurface.withAlpha(150),
@@ -289,7 +294,7 @@ class _LoginScreenState extends State<LoginPage> {
     return BoxDecoration(
       gradient: LinearGradient(
         colors: <Color>[
-          const Color.fromRGBO(220, 255, 255, 0.9),
+          const Color.fromRGBO(220, 255, 255, 0.5),
           const Color.fromRGBO(88, 178, 214, 0.8),
         ],
         stops: [0.1, 1],

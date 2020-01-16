@@ -17,7 +17,6 @@ class AssetView extends StatefulWidget {
 }
 
 class AssetState extends State<AssetView> {
-  Asset _asset;
   ByteData byteData;
   List<int> imageData;
   AssetState(_index, _asset);

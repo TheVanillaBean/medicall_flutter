@@ -33,7 +33,7 @@ class SymptomsScreen extends StatelessWidget {
             actions: <Widget>[
               // usually buttons at the bottom of the dialog
               FlatButton(
-                color: Theme.of(context).colorScheme.primary,
+                color: Theme.of(context).primaryColor,
                 child: Text("My Medical History"),
                 onPressed: () {
                   GlobalNavigatorKey.key.currentState.pop();
@@ -247,6 +247,7 @@ class EntryItem extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: <Widget>[
                                 RaisedButton(
+                                  color: Color(0xdddffffb),
                                   onPressed: () async {
                                     _consult = ConsultData();
 
@@ -308,7 +309,15 @@ class EntryItem extends StatelessWidget {
                                       );
                                     }
                                   },
-                                  child: Text('Start'),
+                                  child: Text(
+                                    'Start',
+                                    style: TextStyle(
+                                        color: Theme.of(GlobalNavigatorKey
+                                                .key.currentContext)
+                                            .primaryColor,
+                                        fontWeight: FontWeight.bold,
+                                        letterSpacing: 0.5),
+                                  ),
                                 )
                               ],
                             )

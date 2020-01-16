@@ -51,7 +51,7 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             fontSize: 16,
-                            color: Theme.of(context).colorScheme.primary),
+                            color: Theme.of(context).primaryColor),
                       ),
                     )
                   ],
@@ -68,7 +68,7 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             fontSize: 16,
-                            color: Theme.of(context).colorScheme.primary),
+                            color: Theme.of(context).primaryColor),
                       ),
                     )
                   ],
@@ -87,11 +87,17 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                                   width: 160,
                                   fit: BoxFit.cover,
                                   imageUrl: medicallUser.profilePic,
-                                  placeholder: (context, url) =>
-                                      CircularProgressIndicator(),
+                                  placeholder: (context, url) => Container(
+                                        height: 50,
+                                        width: 50,
+                                        child: CircularProgressIndicator(),
+                                      ),
                                   errorWidget: (context, url, error) =>
-                                      Icon(Icons.error),
-                                )
+                                      Container(
+                                        height: 100,
+                                        width: 100,
+                                        child: Icon(Icons.error),
+                                      ))
                               : Icon(
                                   Icons.account_circle,
                                   size: 160,
@@ -110,7 +116,7 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             fontSize: 16,
-                            color: Theme.of(context).colorScheme.primary),
+                            color: Theme.of(context).primaryColor),
                       ),
                     )
                   ],
@@ -124,7 +130,7 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             fontSize: 16,
-                            color: Theme.of(context).colorScheme.primary),
+                            color: Theme.of(context).primaryColor),
                       ),
                     )
                   ],
@@ -144,7 +150,7 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                         style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.primary),
+                            color: Theme.of(context).primaryColor),
                       ),
                     )
                   ],
@@ -163,7 +169,7 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: 14,
-                              color: Theme.of(context).colorScheme.primary),
+                              color: Theme.of(context).primaryColor),
                         ),
                       ),
                     ],
@@ -173,12 +179,16 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                   height: 20,
                 ),
                 FlatButton(
-                  color: Theme.of(context).colorScheme.primary,
+                  color: Theme.of(context).primaryColor,
                   onPressed: () {
                     GlobalNavigatorKey.key.currentState
                         .pushReplacementNamed('/history');
                   },
-                  child: Text('Go to History'),
+                  child: Text(
+                    'Go to History',
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimary),
+                  ),
                 )
               ]),
         ));
