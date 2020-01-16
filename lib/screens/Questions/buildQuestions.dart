@@ -329,35 +329,31 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                         ),
                         type == 'dropdown'
                             ? DropdownButtonHideUnderline(
-                                child: Theme(
-                                  data: ThemeData(),
-                                  child: FormBuilderDropdown(
-                                    attribute: 'question0',
-                                    initialValue: data['answer'] != null
-                                        ? data['answer'].runtimeType == List &&
-                                                data['answer'].length > 0
-                                            ? data['answer'][1]
-                                            : data['answer'].runtimeType ==
-                                                    String
-                                                ? data['answer']
-                                                : data['answer'][0]
-                                        : null,
-                                    decoration: InputDecoration(
-                                        fillColor:
-                                            Color.fromRGBO(35, 179, 232, 0.2),
-                                        filled: true,
-                                        contentPadding:
-                                            EdgeInsets.fromLTRB(10, 10, 10, 10),
-                                        border: InputBorder.none),
-                                    validators: [
-                                      FormBuilderValidators.required(),
-                                    ],
-                                    onChanged: _onChangedDropDown,
-                                    items: options
-                                        .map((lang) => DropdownMenuItem(
-                                            value: lang, child: Text(lang)))
-                                        .toList(),
-                                  ),
+                                child: FormBuilderDropdown(
+                                  attribute: 'question0',
+                                  initialValue: data['answer'] != null
+                                      ? data['answer'].runtimeType == List &&
+                                              data['answer'].length > 0
+                                          ? data['answer'][1]
+                                          : data['answer'].runtimeType == String
+                                              ? data['answer']
+                                              : data['answer'][0]
+                                      : null,
+                                  decoration: InputDecoration(
+                                      fillColor:
+                                          Color.fromRGBO(35, 179, 232, 0.2),
+                                      filled: true,
+                                      contentPadding:
+                                          EdgeInsets.fromLTRB(10, 10, 10, 10),
+                                      border: InputBorder.none),
+                                  validators: [
+                                    FormBuilderValidators.required(),
+                                  ],
+                                  onChanged: _onChangedDropDown,
+                                  items: options
+                                      .map((lang) => DropdownMenuItem(
+                                          value: lang, child: Text(lang)))
+                                      .toList(),
                                 ),
                               )
                             : type == 'checkbox'

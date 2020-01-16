@@ -1,6 +1,8 @@
 import 'package:Medicall/models/global_nav_key.dart';
+import 'package:Medicall/services/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 String _returnString(user) {
   var fullName = user.displayName;
@@ -83,17 +85,12 @@ Thanks again for using Medicall!''';
   return consent;
 }
 
-class ConsentScreen extends StatefulWidget {
-  final data;
-  ConsentScreen({Key key, @required this.data}) : super(key: key);
+class ConsentScreen extends StatelessWidget {
+  const ConsentScreen({Key key}) : super(key: key);
 
-  @override
-  _ConsentScreenState createState() => _ConsentScreenState();
-}
-
-class _ConsentScreenState extends State<ConsentScreen> {
   @override
   Widget build(BuildContext context) {
+    var medicallUser = Provider.of<AuthBase>(context).medicallUser;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -105,7 +102,7 @@ class _ConsentScreenState extends State<ConsentScreen> {
           padding: EdgeInsets.fromLTRB(15, 20, 15, 20),
           child: Column(
             children: <Widget>[
-              Text(_returnString(this.widget.data['user'])),
+              Text(_returnString(medicallUser)),
               FlatButton(
                 onPressed: () {
                   GlobalNavigatorKey.key.currentState

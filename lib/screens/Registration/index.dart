@@ -2,6 +2,7 @@ import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/presentation/medicall_icons_icons.dart' as CustomIcons;
 import 'package:Medicall/secrets.dart' as secrets;
+import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:Medicall/util/firebase_anonymously_util.dart';
 import 'package:Medicall/util/firebase_auth_codes.dart';
@@ -15,12 +16,12 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:provider/provider.dart';
 
 GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: secrets.kGoogleApiKey);
 
 class RegistrationScreen extends StatefulWidget {
-  final data;
-  const RegistrationScreen({Key key, @required this.data}) : super(key: key);
+  const RegistrationScreen({Key key}) : super(key: key);
   @override
   _RegistrationScreenState createState() => _RegistrationScreenState();
 }
@@ -44,7 +45,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   void initState() {
-    medicallUser = widget.data['user'];
+    medicallUser = Provider.of<AuthBase>(context).medicallUser;
     super.initState();
   }
 
@@ -183,25 +184,22 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 SizedBox(
                   height: 10,
                 ),
-                Theme(
-                  data: ThemeData(buttonColor: Colors.blue),
-                  child: FormBuilderDateTimePicker(
-                    attribute: "Date of birth",
-                    inputType: InputType.date,
-                    initialDatePickerMode: DatePickerMode.year,
-                    initialDate: DateTime.utc(DateTime.now().year - 19, 1, 1),
-                    format: DateFormat("MM-dd-yyyy"),
-                    decoration: InputDecoration(
-                        labelText: 'Date of Birth',
-                        fillColor: Color.fromRGBO(35, 179, 232, 0.1),
-                        filled: true,
-                        disabledBorder: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        border: InputBorder.none),
-                    validators: [
-                      FormBuilderValidators.required(),
-                    ],
-                  ),
+                FormBuilderDateTimePicker(
+                  attribute: "Date of birth",
+                  inputType: InputType.date,
+                  initialDatePickerMode: DatePickerMode.year,
+                  initialDate: DateTime.utc(DateTime.now().year - 19, 1, 1),
+                  format: DateFormat("MM-dd-yyyy"),
+                  decoration: InputDecoration(
+                      labelText: 'Date of Birth',
+                      fillColor: Color.fromRGBO(35, 179, 232, 0.1),
+                      filled: true,
+                      disabledBorder: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      border: InputBorder.none),
+                  validators: [
+                    FormBuilderValidators.required(),
+                  ],
                 ),
                 SizedBox(
                   height: 10,

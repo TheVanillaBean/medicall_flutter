@@ -204,127 +204,116 @@ class EntryItem extends StatelessWidget {
             child: ClipRRect(
               clipBehavior: Clip.antiAlias,
               borderRadius: BorderRadius.circular(10),
-              child: Theme(
-                data: ThemeData(
-                  dividerColor: Colors.transparent,
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                ),
-                child: ExpansionTile(
-                  backgroundColor: root.children.isEmpty
-                      ? Colors.transparent
-                      : Colors.blue.withAlpha(15),
-                  trailing: Padding(
-                    padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                    child: Text(
-                      root.price,
-                      style: TextStyle(fontSize: 24),
-                    ),
+              child: ExpansionTile(
+                backgroundColor: root.children.isEmpty
+                    ? Colors.transparent
+                    : Colors.blue.withAlpha(15),
+                trailing: Padding(
+                  padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                  child: Text(
+                    root.price,
+                    style: TextStyle(fontSize: 24),
                   ),
-                  key: PageStorageKey<Entry>(root),
-                  children: root.children.map<Widget>(_buildTiles).toList(),
-                  title: Container(
-                    padding: root.children.isEmpty
-                        ? EdgeInsets.fromLTRB(0, 0, 0, 0)
-                        : EdgeInsets.fromLTRB(0, 20, 0, 20),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        root.children.isEmpty ? SizedBox() : Text(root.title),
-                        root.children.isEmpty
-                            ? Container(
-                                padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
-                                child: Text(
-                                  root.subtitle,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              )
-                            : Text(
+                ),
+                key: PageStorageKey<Entry>(root),
+                children: root.children.map<Widget>(_buildTiles).toList(),
+                title: Container(
+                  padding: root.children.isEmpty
+                      ? EdgeInsets.fromLTRB(0, 0, 0, 0)
+                      : EdgeInsets.fromLTRB(0, 20, 0, 20),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      root.children.isEmpty ? SizedBox() : Text(root.title),
+                      root.children.isEmpty
+                          ? Container(
+                              padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
+                              child: Text(
                                 root.subtitle,
                                 style: TextStyle(
                                   fontSize: 12,
                                 ),
                               ),
-                        root.children.isEmpty
-                            ? Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: <Widget>[
-                                  RaisedButton(
-                                    onPressed: () async {
-                                      _consult = ConsultData();
+                            )
+                          : Text(
+                              root.subtitle,
+                              style: TextStyle(
+                                fontSize: 12,
+                              ),
+                            ),
+                      root.children.isEmpty
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: <Widget>[
+                                RaisedButton(
+                                  onPressed: () async {
+                                    _consult = ConsultData();
 
-                                      SharedPreferences _thisConsult =
-                                          await SharedPreferences.getInstance();
-                                      for (var i = 0; i < data.length; i++) {
-                                        if (data[i].title == root.title) {
-                                          _consult.price = data[i].price;
-                                        }
+                                    SharedPreferences _thisConsult =
+                                        await SharedPreferences.getInstance();
+                                    for (var i = 0; i < data.length; i++) {
+                                      if (data[i].title == root.title) {
+                                        _consult.price = data[i].price;
                                       }
-                                      _consult.consultType =
-                                          root.title == 'Spot'
-                                              ? 'Lesion'
-                                              : root.title;
-                                      var consultQuestions = await Firestore
-                                          .instance
-                                          .document(
-                                              'services/dermatology/symptoms/' +
-                                                  _consult.consultType
-                                                      .toLowerCase())
-                                          .get();
-                                      _consult.screeningQuestions =
-                                          consultQuestions
-                                              .data["screening_questions"];
-                                      _consult.historyQuestions =
-                                          consultQuestions.data[
-                                              "medical_history_questions"];
-                                      _consult.uploadQuestions =
-                                          consultQuestions
-                                              .data["upload_questions"];
-                                      String currentConsultString =
-                                          jsonEncode(_consult);
-                                      await _thisConsult.setString(
-                                          "consult", currentConsultString);
-                                      // for (var i = 0;
-                                      //     i < _consult.historyQuestions.length;
-                                      //     i++) {
-                                      //   if (_consult
-                                      //           .historyQuestions[i]['answer']
-                                      //           .length ==
-                                      //       0) {
-                                      //     GlobalNavigatorKey.key.currentState
-                                      //         .push(
-                                      //       MaterialPageRoute(
-                                      //           builder: (_) => QuestionsScreen(
-                                      //                 data: _consult,
-                                      //               )),
-                                      //     );
-                                      //   }
-                                      // }
-                                      if (!medicallUser.hasMedicalHistory) {
-                                        _showDialog(_consult);
-                                      } else {
-                                        GlobalNavigatorKey.key.currentState
-                                            .push(
-                                          MaterialPageRoute(
-                                              builder: (_) => QuestionsScreen(
-                                                    data: {
-                                                      'user': medicallUser,
-                                                      'consult': _consult
-                                                    },
-                                                  )),
-                                        );
-                                      }
-                                    },
-                                    child: Text('Start'),
-                                  )
-                                ],
-                              )
-                            : SizedBox(),
-                      ],
-                    ),
+                                    }
+                                    _consult.consultType = root.title == 'Spot'
+                                        ? 'Lesion'
+                                        : root.title;
+                                    var consultQuestions = await Firestore
+                                        .instance
+                                        .document(
+                                            'services/dermatology/symptoms/' +
+                                                _consult.consultType
+                                                    .toLowerCase())
+                                        .get();
+                                    _consult.screeningQuestions =
+                                        consultQuestions
+                                            .data["screening_questions"];
+                                    _consult.historyQuestions = consultQuestions
+                                        .data["medical_history_questions"];
+                                    _consult.uploadQuestions = consultQuestions
+                                        .data["upload_questions"];
+                                    String currentConsultString =
+                                        jsonEncode(_consult);
+                                    await _thisConsult.setString(
+                                        "consult", currentConsultString);
+                                    // for (var i = 0;
+                                    //     i < _consult.historyQuestions.length;
+                                    //     i++) {
+                                    //   if (_consult
+                                    //           .historyQuestions[i]['answer']
+                                    //           .length ==
+                                    //       0) {
+                                    //     GlobalNavigatorKey.key.currentState
+                                    //         .push(
+                                    //       MaterialPageRoute(
+                                    //           builder: (_) => QuestionsScreen(
+                                    //                 data: _consult,
+                                    //               )),
+                                    //     );
+                                    //   }
+                                    // }
+                                    if (!medicallUser.hasMedicalHistory) {
+                                      _showDialog(_consult);
+                                    } else {
+                                      GlobalNavigatorKey.key.currentState.push(
+                                        MaterialPageRoute(
+                                            builder: (_) => QuestionsScreen(
+                                                  data: {
+                                                    'user': medicallUser,
+                                                    'consult': _consult
+                                                  },
+                                                )),
+                                      );
+                                    }
+                                  },
+                                  child: Text('Start'),
+                                )
+                              ],
+                            )
+                          : SizedBox(),
+                    ],
                   ),
                 ),
               ),

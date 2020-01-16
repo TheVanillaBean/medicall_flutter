@@ -8,7 +8,6 @@ import 'package:Medicall/screens/ConfirmConsult/index.dart';
 import 'package:Medicall/screens/Consent/index.dart';
 import 'package:Medicall/screens/History/historyDetail.dart';
 import 'package:Medicall/screens/History/index.dart';
-import 'package:Medicall/screens/Home/index.dart';
 import 'package:Medicall/screens/LandingPage/index.dart';
 import 'package:Medicall/screens/Login/index.dart';
 import 'package:Medicall/screens/OtpVerification/index.dart';
@@ -19,6 +18,7 @@ import 'package:Medicall/screens/Registration/index.dart';
 import 'package:Medicall/screens/SelectProvider/index.dart';
 import 'package:Medicall/screens/Terms/index.dart';
 import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/theme.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
@@ -63,27 +63,6 @@ class MedicallApp extends StatefulWidget {
   _MedicallAppState createState() => _MedicallAppState();
 }
 
-const Color background = Color(0xFFFFFFFF);
-const Color primaryColor = Color.fromRGBO(29, 164, 204, 1);
-const Color onPrimary = Color(0xFFFFFFFF);
-const Color primaryVariant = Color(0xFF48ACF0);
-const Color secondaryColor = Color.fromRGBO(241, 100, 119, 1);
-const Color onSecondary = Color(0xFF0E202C);
-const Color onSurface = Color.fromRGBO(33, 136, 181, 1);
-
-const Color secondaryVariant = Color(0xFF47E5BC);
-const Color accentColor = Color.fromRGBO(241, 100, 119, 1);
-final ColorScheme colorScheme = const ColorScheme.dark().copyWith(
-  primary: primaryColor,
-  onPrimary: onPrimary,
-  background: background,
-  onSurface: onSurface,
-  secondary: secondaryColor,
-  onSecondary: onSecondary,
-  primaryVariant: primaryVariant,
-  secondaryVariant: secondaryVariant,
-);
-
 class _MedicallAppState extends State<MedicallApp> {
   static FirebaseAnalytics analytics = FirebaseAnalytics();
   static FirebaseAnalyticsObserver observer =
@@ -103,26 +82,7 @@ class _MedicallAppState extends State<MedicallApp> {
             debugShowCheckedModeBanner: false,
             navigatorKey: GlobalNavigatorKey.key,
             navigatorObservers: <NavigatorObserver>[observer],
-            theme: ThemeData(
-                primaryColor: primaryColor,
-                accentColor: accentColor,
-                colorScheme: colorScheme,
-                buttonTheme: ButtonThemeData(
-                  shape: new RoundedRectangleBorder(
-                      borderRadius: new BorderRadius.circular(0.0)),
-                ),
-                brightness: Brightness.light,
-                canvasColor: Colors.blue.shade200,
-                dialogBackgroundColor: onPrimary,
-                highlightColor: Color.fromRGBO(35, 179, 232, 0),
-                splashColor: Colors.transparent,
-                scaffoldBackgroundColor:
-                    Theme.of(context).colorScheme.onPrimary,
-                toggleableActiveColor: Color.fromRGBO(241, 100, 119, 1),
-                textSelectionColor: Color.fromRGBO(241, 100, 119, 0.5),
-                textSelectionHandleColor: Color.fromRGBO(35, 179, 232, 1),
-                cursorColor: Color.fromRGBO(35, 179, 232, 1),
-                backgroundColor: Theme.of(context).colorScheme.onPrimary),
+            theme: myTheme,
             home: LandingPage(),
             onGenerateRoute: (RouteSettings settings) {
               switch (settings.name) {
@@ -143,8 +103,7 @@ class _MedicallAppState extends State<MedicallApp> {
                   );
                 case '/registration':
                   return MyCustomRoute(
-                    builder: (_) =>
-                        RegistrationScreen(data: settings.arguments),
+                    builder: (_) => RegistrationScreen(),
                     settings: settings,
                   );
                 case '/terms':
@@ -159,12 +118,7 @@ class _MedicallAppState extends State<MedicallApp> {
                   );
                 case '/consent':
                   return MyCustomRoute(
-                    builder: (_) => ConsentScreen(data: settings.arguments),
-                    settings: settings,
-                  );
-                case '/home':
-                  return MyCustomRoute(
-                    builder: (_) => HomeScreen(),
+                    builder: (_) => ConsentScreen(),
                     settings: settings,
                   );
                 case '/doctors':
@@ -189,15 +143,15 @@ class _MedicallAppState extends State<MedicallApp> {
                         QuestionsUploadScreen(data: settings.arguments),
                     settings: settings,
                   );
-                case '/chat':
-                  return MyCustomRoute(
-                    builder: (_) => ChatScreen(),
-                    settings: settings,
-                  );
                 case '/consultReview':
                   return MyCustomRoute(
                     builder: (_) =>
                         ConfirmConsultScreen(data: settings.arguments),
+                    settings: settings,
+                  );
+                case '/chat':
+                  return MyCustomRoute(
+                    builder: (_) => ChatScreen(),
                     settings: settings,
                   );
                 case '/history':
@@ -213,7 +167,7 @@ class _MedicallAppState extends State<MedicallApp> {
                   );
                 case '/account':
                   return MyCustomRoute(
-                    builder: (_) => AccountScreen(data: settings.arguments),
+                    builder: (_) => AccountScreen(),
                     settings: settings,
                   );
                 case '/paymentDetail':
