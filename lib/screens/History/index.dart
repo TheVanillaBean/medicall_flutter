@@ -313,7 +313,13 @@ class HistoryScreen extends StatelessWidget {
                                                       '/doctors');
                                             },
                                             color: Colors.green,
-                                            child: Text('Start'),
+                                            child: Text(
+                                              'Start',
+                                              style: TextStyle(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .onPrimary),
+                                            ),
                                           ),
                                           Text('  - or -  ',
                                               style: TextStyle(
@@ -332,7 +338,13 @@ class HistoryScreen extends StatelessWidget {
                                               );
                                             },
                                             color: Colors.blueAccent,
-                                            child: Text('Find Doctor'),
+                                            child: Text(
+                                              'Find Doctor',
+                                              style: TextStyle(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .onPrimary),
+                                            ),
                                           ),
                                         ],
                                       ),

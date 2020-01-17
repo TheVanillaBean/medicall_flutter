@@ -9,17 +9,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-class AuthScreen extends StatefulWidget {
+class PhoneAuthScreen extends StatefulWidget {
   final PhoneAuthStateModel model;
 
-  const AuthScreen({@required this.model});
+  const PhoneAuthScreen({@required this.model});
 
   static Widget create(BuildContext context) {
     final AuthBase auth = Provider.of<AuthBase>(context);
     return ChangeNotifierProvider<PhoneAuthStateModel>(
       create: (context) => PhoneAuthStateModel(auth: auth),
       child: Consumer<PhoneAuthStateModel>(
-        builder: (_, model, __) => AuthScreen(
+        builder: (_, model, __) => PhoneAuthScreen(
           model: model,
         ),
       ),
@@ -27,10 +27,10 @@ class AuthScreen extends StatefulWidget {
   }
 
   @override
-  _AuthScreenState createState() => _AuthScreenState();
+  _PhoneAuthScreenState createState() => _PhoneAuthScreenState();
 }
 
-class _AuthScreenState extends State<AuthScreen> with VerificationError {
+class _PhoneAuthScreenState extends State<PhoneAuthScreen> with VerificationError {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   TextEditingController smsCodeController = TextEditingController();
@@ -57,7 +57,8 @@ class _AuthScreenState extends State<AuthScreen> with VerificationError {
 
   Widget _buildConfirmPhoneButton() {
     return IconButton(
-      icon: Icon(Icons.check_circle),
+      icon: Icon(Icons.check_circle, size: 50,),
+      padding: EdgeInsets.all(10),
       color: Colors.white,
       disabledColor: Theme.of(context).buttonColor,
       onPressed: (model.status != AuthStatus.PHONE_AUTH)
@@ -68,7 +69,8 @@ class _AuthScreenState extends State<AuthScreen> with VerificationError {
 
   Widget _buildConfirmSMSCodeButton() {
     return IconButton(
-      icon: Icon(Icons.check_circle),
+      icon: Icon(Icons.check_circle, size: 50,),
+      padding: EdgeInsets.all(10),
       color: Colors.white,
       disabledColor: Theme.of(context).buttonColor,
       onPressed: (model.status != AuthStatus.SMS_AUTH)

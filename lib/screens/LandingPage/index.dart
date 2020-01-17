@@ -21,16 +21,20 @@ class LandingPage extends StatelessWidget {
           if (user == null) {
             return LoginPage.create(context);
           } else if (user.phoneNumber == null) {
-            return AuthScreen.create(context);
+            return PhoneAuthScreen.create(context);
           }
           return FutureBuilder<MedicallUser>(
               future: auth.currentMedicallUser(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
-                  final MedicallUser user = snapshot.data;
-                  auth.medicallUser = user;
-                  database.uid = user.uid;
-                  return HistoryScreen();
+                  if (snapshot.hasData) {
+                    final MedicallUser user = snapshot.data;
+                    auth.medicallUser = user;
+                    database.uid = user.uid;
+                    return HistoryScreen();
+                  } else {
+                    return LoginPage.create(context);
+                  }
 
 //                  return Provider<MedicallUser>.value(
 //                    value: user,

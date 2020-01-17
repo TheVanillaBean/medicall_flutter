@@ -406,7 +406,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
       "media": _consult.media.length > 0 ? imagesList : "",
     };
     ref.setData(data).whenComplete(() {
-      print("Document Added");
+      print("Consult Added");
       // Future.delayed(const Duration(milliseconds: 5000), () {
       //   return Navigator.pushReplacementNamed(context, '/history',
       //       arguments: {'consult': _consult, 'user': medicallUser});

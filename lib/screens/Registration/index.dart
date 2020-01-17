@@ -2,7 +2,6 @@ import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/presentation/medicall_icons_icons.dart' as CustomIcons;
 import 'package:Medicall/secrets.dart' as secrets;
-import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:Medicall/util/firebase_anonymously_util.dart';
 import 'package:Medicall/util/firebase_auth_codes.dart';
@@ -16,12 +15,12 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
-import 'package:provider/provider.dart';
 
 GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: secrets.kGoogleApiKey);
 
 class RegistrationScreen extends StatefulWidget {
-  const RegistrationScreen({Key key}) : super(key: key);
+  final data;
+  const RegistrationScreen({Key key, @required this.data}) : super(key: key);
   @override
   _RegistrationScreenState createState() => _RegistrationScreenState();
 }
@@ -39,14 +38,69 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   double formSpacing = 20;
   bool showSegmentedControl = true;
   FirebaseUser firebaseUser;
-  DocumentReference documentReference = medicallUser.uid != null
-      ? Firestore.instance.document("users/" + medicallUser.uid)
-      : null;
+  List<String> states = [
+    'Alabama',
+    'Alaska',
+    'American Samoa',
+    'Arizona',
+    'Arkansas',
+    'California',
+    'Colorado',
+    'Connecticut',
+    'Delaware',
+    'District of Columbia',
+    'Florida',
+    'Georgia',
+    'Guam',
+    'Hawaii',
+    'Idaho',
+    'Illinois',
+    'Indiana',
+    'Iowa',
+    'Kansas',
+    'Kentucky',
+    'Louisiana',
+    'Maine',
+    'Maryland',
+    'Massachusetts',
+    'Michigan',
+    'Minnesota',
+    'Minor Outlying Islands',
+    'Mississippi',
+    'Missouri',
+    'Montana',
+    'Nebraska',
+    'Nevada',
+    'New Hampshire',
+    'New Jersey',
+    'New Mexico',
+    'New York',
+    'North Carolina',
+    'North Dakota',
+    'Northern Mariana Islands',
+    'Ohio',
+    'Oklahoma',
+    'Oregon',
+    'Pennsylvania',
+    'Puerto Rico',
+    'Rhode Island',
+    'South Carolina',
+    'South Dakota',
+    'Tennessee',
+    'Texas',
+    'U.S. Virgin Islands',
+    'Vermont',
+    'Virginia',
+    'Washington',
+    'West Virginia',
+    'Wisconsin',
+    'Wyoming'
+  ];
 
   @override
   void initState() {
-    medicallUser = Provider.of<AuthBase>(context).medicallUser;
     super.initState();
+    medicallUser = widget.data['user'];
   }
 
   getNearbyPlaces(addresses) async {
@@ -89,7 +143,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     }
     firebaseUser = currentUser;
     // Navigator.of(context).pushReplacement(MaterialPageRoute(
-    //   builder: (context) => AuthScreen(),
+    //   builder: (context) => PhoneAuthScreen(),
     // ));
     GlobalNavigatorKey.key.currentState.push(
       MaterialPageRoute(builder: (context) => PhotoIdScreen()),
@@ -98,6 +152,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    medicallUser = widget.data['user'];
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -260,7 +315,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           ),
                           FormBuilderDropdown(
                             attribute: "State Issued",
-                            initialValue: medicallUser.medLicenseState,
                             isDense: true,
                             decoration: InputDecoration(
                                 labelText: 'State Issued',
@@ -272,65 +326,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             validators: [
                               FormBuilderValidators.required(),
                             ],
-                            items: [
-                              'Alabama',
-                              'Alaska',
-                              'American Samoa',
-                              'Arizona',
-                              'Arkansas',
-                              'California',
-                              'Colorado',
-                              'Connecticut',
-                              'Delaware',
-                              'District of Columbia',
-                              'Florida',
-                              'Georgia',
-                              'Guam',
-                              'Hawaii',
-                              'Idaho',
-                              'Illinois',
-                              'Indiana',
-                              'Iowa',
-                              'Kansas',
-                              'Kentucky',
-                              'Louisiana',
-                              'Maine',
-                              'Maryland',
-                              'Massachusetts',
-                              'Michigan',
-                              'Minnesota',
-                              'Minor Outlying Islands',
-                              'Mississippi',
-                              'Missouri',
-                              'Montana',
-                              'Nebraska',
-                              'Nevada',
-                              'New Hampshire',
-                              'New Jersey',
-                              'New Mexico',
-                              'New York',
-                              'North Carolina',
-                              'North Dakota',
-                              'Northern Mariana Islands',
-                              'Ohio',
-                              'Oklahoma',
-                              'Oregon',
-                              'Pennsylvania',
-                              'Puerto Rico',
-                              'Rhode Island',
-                              'South Carolina',
-                              'South Dakota',
-                              'Tennessee',
-                              'Texas',
-                              'U.S. Virgin Islands',
-                              'Utah',
-                              'Vermont',
-                              'Virginia',
-                              'Washington',
-                              'West Virginia',
-                              'Wisconsin',
-                              'Wyoming'
-                            ]
+                            items: states
                                 .map((state) => DropdownMenuItem(
                                       value: state,
                                       child: Text('$state'),

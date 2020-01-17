@@ -13,7 +13,7 @@ class PaymentService {
             "email": user.email,
           };
           docCardsRef.setData(newCardEntryData).whenComplete(() {
-            print("Document Added");
+            print("Card Added");
           }).catchError((e) => print(e));
         }
       });

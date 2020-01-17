@@ -1,4 +1,5 @@
 import 'package:Medicall/models/global_nav_key.dart';
+import 'package:Medicall/screens/PhoneAuth/index.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -94,7 +95,6 @@ class ConsentScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: Color.fromRGBO(35, 179, 232, 1),
         title: Text('Telemedicine Consent'),
       ),
       body: Container(
@@ -103,12 +103,26 @@ class ConsentScreen extends StatelessWidget {
           child: Column(
             children: <Widget>[
               Text(_returnString(medicallUser)),
-              FlatButton(
-                onPressed: () {
-                  GlobalNavigatorKey.key.currentState
-                      .pushNamed('/verification');
-                },
-                child: Text('Continue'),
+              SizedBox(
+                height: 10,
+              ),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: FlatButton(
+                      padding: EdgeInsets.all(20),
+                      onPressed: () {
+                        Route route = MaterialPageRoute(
+                            builder: (context) =>
+                                PhoneAuthScreen.create(context));
+                        GlobalNavigatorKey.key.currentState
+                            .pushReplacement(route);
+                      },
+                      color: Colors.lightGreen,
+                      child: Text('Continue'),
+                    ),
+                  )
+                ],
               )
             ],
           ),

@@ -167,7 +167,7 @@ class ChatScreenState extends State<ChatScreen> {
             snap.data['state'] == 'new') {
           Map<String, dynamic> consultStateData = {'state': 'in progress'};
           documentReference.updateData(consultStateData).whenComplete(() {
-            print("Document Added");
+            print("Msg Sent");
           }).catchError((e) => print(e));
         }
       });
@@ -175,7 +175,7 @@ class ChatScreenState extends State<ChatScreen> {
 
       // }
       documentReference.updateData(data).whenComplete(() {
-        print("Document Added");
+        print("Msg Sent");
       }).catchError((e) => print(e));
 
       // Map<String, dynamic> consultStateData = {'state': 'In progress'};

@@ -10,7 +10,6 @@ import 'package:Medicall/screens/History/historyDetail.dart';
 import 'package:Medicall/screens/History/index.dart';
 import 'package:Medicall/screens/LandingPage/index.dart';
 import 'package:Medicall/screens/Login/index.dart';
-import 'package:Medicall/screens/OtpVerification/index.dart';
 import 'package:Medicall/screens/Privacy/index.dart';
 import 'package:Medicall/screens/QuestionsUpload/index.dart';
 import 'package:Medicall/screens/Registration/RegistrationType/index.dart';
@@ -91,19 +90,15 @@ class _MedicallAppState extends State<MedicallApp> {
                     builder: (_) => LoginPage.create(context),
                     settings: settings,
                   );
-                case '/verification':
-                  return MyCustomRoute(
-                    builder: (_) => OtpVerificationScreen(),
-                    settings: settings,
-                  );
                 case '/registrationType':
                   return MyCustomRoute(
-                    builder: (_) => RegistrationTypeScreen(),
+                    builder: (_) => RegistrationTypeScreen(data: settings.arguments),
                     settings: settings,
                   );
                 case '/registration':
                   return MyCustomRoute(
-                    builder: (_) => RegistrationScreen(),
+                    builder: (_) =>
+                        RegistrationScreen(data: settings.arguments),
                     settings: settings,
                   );
                 case '/terms':

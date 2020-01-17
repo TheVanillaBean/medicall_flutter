@@ -1,6 +1,5 @@
 import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class RegistrationTypeScreen extends StatefulWidget {
@@ -14,16 +13,16 @@ class RegistrationTypeScreen extends StatefulWidget {
 class _RegistrationTypeScreenState extends State<RegistrationTypeScreen> {
   void _add(MedicallUser user, String type) {
     medicallUser.type = type;
-    if (user.uid != null) {
-      final DocumentReference documentReference =
-          Firestore.instance.document("users/" + user.uid);
-      Map<String, String> data = <String, String>{
-        "type": type,
-      };
-      documentReference.updateData(data).whenComplete(() {
-        print("Document Added");
-      }).catchError((e) => print(e));
-    }
+    // if (user.uid != null) {
+    //   final DocumentReference documentReference =
+    //       Firestore.instance.document("users/" + user.uid);
+    //   Map<String, String> data = <String, String>{
+    //     "type": type,
+    //   };
+    //   documentReference.updateData(data).whenComplete(() {
+    //     print("Document Added");
+    //   }).catchError((e) => print(e));
+    // }
   }
 
   @override
@@ -88,8 +87,8 @@ class _RegistrationTypeScreenState extends State<RegistrationTypeScreen> {
                 ),
                 onPressed: () {
                   _add(medicallUser, 'patient');
-                  GlobalNavigatorKey.key.currentState
-                      .pushNamed('/registration', arguments: widget.data);
+                  GlobalNavigatorKey.key.currentState.pushNamed('/registration',
+                      arguments: {'user': medicallUser});
                 },
               ),
             ),

@@ -154,7 +154,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
           buttonTxt = 'Send Prescription';
         });
       });
-      print("Document Added");
+      print("Prescription Updated");
     }).catchError((e) => print(e));
   }
 
@@ -205,7 +205,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                 }
               }
             });
-            print("Document Added");
+            print("Consult Status Updated");
           }).catchError((e) => print(e));
         }
       });

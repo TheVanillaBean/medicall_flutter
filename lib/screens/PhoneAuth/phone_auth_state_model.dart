@@ -208,7 +208,7 @@ mixin VerificationError {
 //also check the firebase flutter auth repo and double check all other auth methods and see if anything is missing
 //for example the identical check is missing in google auth
 
-//add button to sign out user in authscreen, which will cause a auth update event and return to login
+//add button to sign out user in PhoneAuthScreen, which will cause a auth update event and return to login
 
 //move verifyPhoneNumber function at the bottom to auth.dart ---wait on this, just test if it works in this class and then move over
 //create variables to hold authcrediential and verificationid and call notifylisteners()
