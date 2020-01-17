@@ -103,6 +103,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     medicallUser = widget.data['user'];
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    this._typeAheadController.dispose();
+  }
+
   getNearbyPlaces(addresses) async {
     var placesList = [];
 
@@ -165,6 +171,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
         onPressed: () {
           _isLoading = true;
+          if (!this._addressList.contains(this._typeAheadController.text)) {
+            this._typeAheadController.clear();
+          }
           _userRegKey.currentState.save();
           if (_userRegKey.currentState.validate()) {
             print('validationSucceded');

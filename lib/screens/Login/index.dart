@@ -244,7 +244,7 @@ class _LoginScreenState extends State<LoginPage> {
       ),
       decoration: InputDecoration(
         filled: true,
-        fillColor: Colors.grey.withAlpha(70),
+        fillColor: Colors.white.withAlpha(100),
         labelStyle: TextStyle(
           color: Theme.of(context).colorScheme.onSurface,
         ),
@@ -277,7 +277,7 @@ class _LoginScreenState extends State<LoginPage> {
           color: Color.fromRGBO(100, 100, 100, 1),
         ),
         filled: true,
-        fillColor: Colors.grey.withAlpha(70),
+        fillColor: Colors.white.withAlpha(100),
         prefixIcon: Icon(
           Icons.email,
           color: Theme.of(context).colorScheme.onSurface.withAlpha(150),

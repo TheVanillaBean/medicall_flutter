@@ -106,7 +106,9 @@ class _AccountScreenState extends State<AccountScreen> {
                   ),
                 ),
                 child: ListTile(
-                  title: Text(medicallUser.phoneNumber),
+                  title: Text(medicallUser.phoneNumber != null
+                      ? medicallUser.phoneNumber
+                      : ''),
                   leading: Icon(Icons.phone),
                   onTap: () {},
                   contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
