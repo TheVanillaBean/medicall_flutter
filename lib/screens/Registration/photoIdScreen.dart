@@ -1,15 +1,14 @@
 import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:Medicall/services/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:Medicall/presentation/medicall_icons_icons.dart' as CustomIcons;
+import 'package:provider/provider.dart';
 
 class PhotoIdScreen extends StatefulWidget {
-  final data;
-  const PhotoIdScreen({Key key, this.data}) : super(key: key);
+  const PhotoIdScreen({Key key}) : super(key: key);
   @override
   _PhotoIdScreenState createState() => _PhotoIdScreenState();
 }
@@ -18,13 +17,11 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
   List<Asset> images = List<Asset>();
   List<Asset> govIdImage = List<Asset>();
   List<Asset> profileImage = List<Asset>();
-  bool _isLoading = false;
   String _error = '';
 
   @override
   void initState() {
     super.initState();
-    _isLoading = false;
   }
 
   Widget buildGridView(index, asset) {
@@ -142,32 +139,18 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
     print(_error);
   }
 
-  Future _addUserImages() async {
-    var ref = Firestore.instance.document("users/" + medicallUser.uid);
-    var images = [...this.profileImage, ...this.govIdImage];
-    var imagesList = await saveImages(images, ref.documentID);
-    medicallUser.profilePic = imagesList[0];
-    medicallUser.govId = imagesList[1];
-  }
-
-  Future saveImages(assets, consultId) async {
-    var allMediaList = [];
-    for (var i = 0; i < assets.length; i++) {
-      ByteData byteData = await assets[i].requestOriginal();
-      List<int> imageData = byteData.buffer.asUint8List();
-      StorageReference ref = FirebaseStorage.instance
-          .ref()
-          .child("profile/" + medicallUser.uid + '/' + assets[i].name);
-      StorageUploadTask uploadTask = ref.putData(imageData);
-
-      allMediaList
-          .add(await (await uploadTask.onComplete).ref.getDownloadURL());
-    }
-    return allMediaList;
-  }
+  // Future _addUserImages() async {
+  //   // var ref = Firestore.instance.document("users/" + medicallUser.uid);
+  //   // var images = [...this.profileImage, ...this.govIdImage];
+  //   // await saveImages(images, ref.documentID);
+  //   // medicallUser.govId = this.govIdImage as String;
+  //   GlobalNavigatorKey.key.currentState.pushNamed('/consent');
+  // }
 
   @override
   Widget build(BuildContext context) {
+    var auth = Provider.of<AuthBase>(context);
+    medicallUser = auth.medicallUser;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -187,27 +170,19 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
             : Colors.grey,
         onPressed: () async {
           if (profileImage.length == 1 && govIdImage.length == 1) {
-            setState(() {
-              _isLoading = true;
-            });
-            await _addUserImages();
-            GlobalNavigatorKey.key.currentState
-                .pushNamed('/consent', arguments: {'user': medicallUser});
+            auth.tempRegUser.images = [...profileImage, ...govIdImage];
+            GlobalNavigatorKey.key.currentState.pushNamed('/consent');
           }
         },
-        child: !_isLoading
-            ? Text(
-                profileImage.length == 1 && govIdImage.length == 1
-                    ? 'CONTINUE'
-                    : 'IMAGES REQUIRED',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                  letterSpacing: 2,
-                ),
-              )
-            : CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-              ),
+        child: Text(
+          profileImage.length == 1 && govIdImage.length == 1
+              ? 'CONTINUE'
+              : 'IMAGES REQUIRED',
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onPrimary,
+            letterSpacing: 2,
+          ),
+        ),
       ),
       body: ListView.builder(
           itemCount: 1,

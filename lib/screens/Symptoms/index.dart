@@ -6,8 +6,10 @@ import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/Questions/questionsScreen.dart';
+import 'package:Medicall/services/auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:simple_animations/simple_animations.dart';
 
@@ -20,7 +22,7 @@ class SymptomsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final _scaffoldKey = GlobalKey<ScaffoldState>();
     screenSize = MediaQuery.of(context).size;
-
+    medicallUser = Provider.of<AuthBase>(context).medicallUser;
     void _showDialog(ConsultData _consult) {
       showDialog(
         context: context,

@@ -191,7 +191,7 @@ class CurvePainter extends CustomPainter {
 
     path1 = Path();
     if (currentOrientation == Orientation.portrait) {
-      path1.moveTo(size.width * 0.78, size.height / 1.70);
+      path1.moveTo(size.width * 0.78, size.height / 1.78);
       path1.relativeCubicTo(0, 60, 0, 110, -60, 110);
     } else {
       path1.moveTo(size.width * 0.76, size.height / 1.75);

@@ -17,12 +17,17 @@ class LandingPage extends StatelessWidget {
       stream: auth.onAuthStateChanged,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.active) {
-          MedicallUser user = snapshot.data;
-          if (user == null) {
+          if (snapshot.hasData) {
+            MedicallUser user = snapshot.data;
+            if (user == null) {
+              return LoginPage.create(context);
+            } else if (user.phoneNumber == null) {
+              return PhoneAuthScreen.create(context);
+            }
+          }else{
             return LoginPage.create(context);
-          } else if (user.phoneNumber == null) {
-            return PhoneAuthScreen.create(context);
           }
+
           return FutureBuilder<MedicallUser>(
               future: auth.currentMedicallUser(),
               builder: (context, snapshot) {

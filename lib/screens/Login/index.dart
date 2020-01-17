@@ -6,7 +6,7 @@ import 'package:Medicall/common_widgets/social_sign_in_button.dart';
 import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/Login/sign_in_state_model.dart';
-import 'package:Medicall/screens/Registration/RegistrationType/index.dart';
+import 'package:Medicall/screens/Registration/registrationType.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/util/firebase_notification_handler.dart';
 import 'package:flutter/cupertino.dart';
@@ -82,9 +82,7 @@ class _LoginScreenState extends State<LoginPage> {
 
   void _createAccountWithEmail(BuildContext context) {
     GlobalNavigatorKey.key.currentState.push(CupertinoPageRoute(
-      builder: (context) => RegistrationTypeScreen(
-        data: {"user": medicallUser},
-      ),
+      builder: (context) => RegistrationTypeScreen(),
     ));
   }
 
@@ -155,7 +153,11 @@ class _LoginScreenState extends State<LoginPage> {
         color: Theme.of(context).primaryColor.withBlue(3000),
         textColor: Colors.white,
         text: "Create New Account",
-        onPressed: () => _createAccountWithEmail(context),
+        onPressed: () {
+          Provider.of<AuthBase>(GlobalNavigatorKey.key.currentContext)
+              .medicallUser = MedicallUser();
+          _createAccountWithEmail(context);
+        },
       ),
       SizedBox(height: 8),
       SocialSignInButton(

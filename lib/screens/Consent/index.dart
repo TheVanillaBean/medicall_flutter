@@ -1,8 +1,10 @@
 import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/PhoneAuth/index.dart';
+import 'package:Medicall/services/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 String _returnString(user) {
   var fullName = user.displayName;
@@ -90,6 +92,7 @@ class ConsentScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    medicallUser = Provider.of<AuthBase>(context).medicallUser;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -110,7 +113,9 @@ class ConsentScreen extends StatelessWidget {
                     child: FlatButton(
                       padding: EdgeInsets.all(20),
                       onPressed: () {
-                        medicallUser.consent = true;
+                        var auth = Provider.of<AuthBase>(
+                            GlobalNavigatorKey.key.currentContext);
+                        auth.medicallUser.consent = true;
                         Route route = MaterialPageRoute(
                             builder: (context) =>
                                 PhoneAuthScreen.create(context));

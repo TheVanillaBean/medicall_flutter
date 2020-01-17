@@ -1,34 +1,16 @@
 import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/services/auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class RegistrationTypeScreen extends StatefulWidget {
-  final data;
+class RegistrationTypeScreen extends StatelessWidget {
+  const RegistrationTypeScreen({Key key}) : super(key: key);
 
-  const RegistrationTypeScreen({Key key, this.data}) : super(key: key);
-  @override
-  _RegistrationTypeScreenState createState() => _RegistrationTypeScreenState();
-}
-
-class _RegistrationTypeScreenState extends State<RegistrationTypeScreen> {
-  void _add(MedicallUser user, String type) {
-    medicallUser.type = type;
-    // if (user.uid != null) {
-    //   final DocumentReference documentReference =
-    //       Firestore.instance.document("users/" + user.uid);
-    //   Map<String, String> data = <String, String>{
-    //     "type": type,
-    //   };
-    //   documentReference.updateData(data).whenComplete(() {
-    //     print("Document Added");
-    //   }).catchError((e) => print(e));
-    // }
-  }
-
-  @override
-  void initState() {
-    medicallUser = widget.data['user'];
-    super.initState();
+  void _add(String type) {
+    Provider.of<AuthBase>(GlobalNavigatorKey.key.currentContext)
+        .medicallUser
+        .type = type;
   }
 
   @override
@@ -86,9 +68,9 @@ class _RegistrationTypeScreenState extends State<RegistrationTypeScreen> {
                   ],
                 ),
                 onPressed: () {
-                  _add(medicallUser, 'patient');
-                  GlobalNavigatorKey.key.currentState.pushNamed('/registration',
-                      arguments: {'user': medicallUser});
+                  _add('patient');
+                  GlobalNavigatorKey.key.currentState
+                      .pushNamed('/registration');
                 },
               ),
             ),
@@ -130,9 +112,9 @@ class _RegistrationTypeScreenState extends State<RegistrationTypeScreen> {
                   ],
                 ),
                 onPressed: () {
-                  _add(medicallUser, 'provider');
+                  _add('provider');
                   GlobalNavigatorKey.key.currentState
-                      .pushNamed('/registration', arguments: widget.data);
+                      .pushNamed('/registration', arguments: medicallUser);
                 },
               ),
             )

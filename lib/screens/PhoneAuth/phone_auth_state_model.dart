@@ -1,11 +1,13 @@
 import 'dart:async';
 
+import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/util/validators.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 enum AuthStatus { PHONE_AUTH, SMS_AUTH }
 
@@ -77,7 +79,9 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
 
   void updatePhoneNumber(String number) =>
       updateWith(phoneNumber: '+1$number'.trim());
-  void updateSMSCode(String code) => updateWith(smsCode: code);
+  void updateSMSCode(String code) {
+    updateWith(smsCode: code);
+  }
 
   Future<void> updateRefreshing(bool isRefreshing, bool isMounted) async {
     if (isRefreshing) {
@@ -142,8 +146,10 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
     try {
       MedicallUser user =
           await auth.signInWithPhoneNumber(this.verificationId, this.smsCode);
-      _add(user);
+      await auth.saveImages();
+      await _add(user);
       updateRefreshing(false, mounted);
+      GlobalNavigatorKey.key.currentState.pushReplacementNamed('/history');
       return user;
     } catch (e) {
       updateRefreshing(false, mounted);
@@ -152,6 +158,8 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
   }
 
   Future<Null> _add(user) async {
+    var auth = Provider.of<AuthBase>(GlobalNavigatorKey.key.currentContext);
+    medicallUser = auth.medicallUser;
     final DocumentReference documentReference =
         Firestore.instance.document("users/" + user.uid);
     medicallUser.phoneNumber = user.phoneNumber;
@@ -161,6 +169,7 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
       "last_name": medicallUser.lastName,
       "email": user.email,
       "gender": medicallUser.gender,
+      "type": medicallUser.type,
       "address": medicallUser.address,
       "terms": medicallUser.terms,
       "policy": medicallUser.policy,
@@ -169,10 +178,19 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
       "phone": user.phoneNumber,
       "profile_pic": medicallUser.profilePic,
       "gov_id": medicallUser.govId,
+      "dev_tokens": medicallUser.devTokens,
     };
+    if (medicallUser.type == 'provider') {
+      data['titles'] = medicallUser.titles;
+      data['npi'] = medicallUser.npi;
+      data['med_license'] = medicallUser.medLicense;
+      data['state_issued'] = medicallUser.medLicenseState;
+    }
 
     try {
-      await documentReference.setData(data);
+      await documentReference.setData(data).then((onValue) {
+        print('User added');
+      });
     } catch (e) {
       throw e;
     }

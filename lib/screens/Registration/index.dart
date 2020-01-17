@@ -1,10 +1,9 @@
 import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/models/reg_user_model.dart';
 import 'package:Medicall/screens/Registration/photoIdScreen.dart';
 import 'package:Medicall/secrets.dart' as secrets;
-import 'package:Medicall/util/app_util.dart';
-import 'package:Medicall/util/firebase_anonymously_util.dart';
-import 'package:Medicall/util/firebase_auth_codes.dart';
+import 'package:Medicall/services/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,12 +11,12 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: secrets.kGoogleApiKey);
 
 class RegistrationScreen extends StatefulWidget {
-  final data;
-  const RegistrationScreen({Key key, @required this.data}) : super(key: key);
+  const RegistrationScreen({Key key}) : super(key: key);
   @override
   _RegistrationScreenState createState() => _RegistrationScreenState();
 }
@@ -25,11 +24,9 @@ class RegistrationScreen extends StatefulWidget {
 class _RegistrationScreenState extends State<RegistrationScreen> {
   final GlobalKey<FormBuilderState> _userRegKey = GlobalKey<FormBuilderState>();
   final TextEditingController _typeAheadController = TextEditingController();
-  final FirebaseAnonymouslyUtil firebaseAnonymouslyUtil =
-      FirebaseAnonymouslyUtil();
+
   var data;
   bool autoValidate = true;
-  bool _isLoading = false;
   bool readOnly = false;
   List<dynamic> _addressList = [];
   double formSpacing = 20;
@@ -97,7 +94,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   @override
   void initState() {
     super.initState();
-    medicallUser = widget.data['user'];
   }
 
   @override
@@ -119,56 +115,23 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     }
   }
 
-  Future moveUserDashboardScreen(FirebaseUser currentUser) async {
-    _isLoading = false;
-    medicallUser.uid = currentUser.uid;
-    medicallUser.displayName = _userRegKey.currentState.value['First name'] +
-        ' ' +
-        _userRegKey.currentState.value['Last name'];
-    medicallUser.firstName = _userRegKey.currentState.value['First name'];
-    medicallUser.lastName = _userRegKey.currentState.value['Last name'];
-    medicallUser.dob = DateFormat('MM-dd-yyyy')
-        .format(_userRegKey.currentState.value['Date of birth'])
-        .toString();
-    medicallUser.gender = _userRegKey.currentState.value['Gender'];
-    medicallUser.email = _userRegKey.currentState.value['Email'];
-    medicallUser.terms = _userRegKey.currentState.value['Terms and conditions'];
-    medicallUser.policy =
-        _userRegKey.currentState.value['accept_privacy_switch'];
-    medicallUser.consent = _userRegKey.currentState.value['accept_consent'];
-    if (medicallUser.type == 'provider') {
-      medicallUser.titles = _userRegKey.currentState.value['Medical Titles'];
-      medicallUser.npi = _userRegKey.currentState.value['NPI Number'];
-      medicallUser.medLicense =
-          _userRegKey.currentState.value['License Number'];
-      medicallUser.medLicenseState =
-          _userRegKey.currentState.value['State Issued'];
-    }
-    medicallUser.address = _typeAheadController.text;
-    firebaseUser = currentUser;
-    GlobalNavigatorKey.key.currentState.push(
-      MaterialPageRoute(
-          builder: (context) => PhotoIdScreen(
-                data: {'user': medicallUser},
-              )),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    medicallUser = widget.data['user'];
+    var auth = Provider.of<AuthBase>(GlobalNavigatorKey.key.currentContext);
+    medicallUser = auth.medicallUser;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(
-            '${medicallUser.type != null ? medicallUser.type[0].toUpperCase() : ''}${medicallUser.type != null ? medicallUser.type.substring(1) : ''}' +
-                ' Registration'),
+        title: medicallUser.type.length > 0
+            ? Text(
+                '${medicallUser.type != null ? medicallUser.type[0].toUpperCase() : ''}${medicallUser.type != null ? medicallUser.type.substring(1) : ''}' +
+                    ' Registration')
+            : Container(),
       ),
       bottomNavigationBar: FlatButton(
         color: Theme.of(context).primaryColor,
         padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
         onPressed: () {
-          _isLoading = true;
           if (!this._addressList.contains(this._typeAheadController.text)) {
             this._typeAheadController.clear();
           }
@@ -176,24 +139,54 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           if (_userRegKey.currentState.validate()) {
             print('validationSucceded');
             //print(_userRegKey.currentState.value);
-            _signUp();
+            //_signUp();
+            auth.tempRegUser = TempRegUser();
+            auth.tempRegUser.username = _userRegKey.currentState.value['Email'];
+            auth.tempRegUser.pass = _userRegKey.currentState.value['Password'];
+            medicallUser = auth.medicallUser;
+            medicallUser.displayName =
+                _userRegKey.currentState.value['First name'] +
+                    ' ' +
+                    _userRegKey.currentState.value['Last name'];
+            medicallUser.firstName =
+                _userRegKey.currentState.value['First name'];
+            medicallUser.lastName = _userRegKey.currentState.value['Last name'];
+            medicallUser.dob = DateFormat('MM-dd-yyyy')
+                .format(_userRegKey.currentState.value['Date of birth'])
+                .toString();
+            medicallUser.gender = _userRegKey.currentState.value['Gender'];
+            medicallUser.email = _userRegKey.currentState.value['Email'];
+            medicallUser.terms =
+                _userRegKey.currentState.value['Terms and conditions'];
+            medicallUser.policy =
+                _userRegKey.currentState.value['accept_privacy_switch'];
+            medicallUser.consent =
+                _userRegKey.currentState.value['accept_consent'];
+            if (medicallUser.type == 'provider') {
+              medicallUser.titles =
+                  _userRegKey.currentState.value['Medical Titles'];
+              medicallUser.npi = _userRegKey.currentState.value['NPI Number'];
+              medicallUser.medLicense =
+                  _userRegKey.currentState.value['License Number'];
+              medicallUser.medLicenseState =
+                  _userRegKey.currentState.value['State Issued'];
+            }
+            medicallUser.address = _typeAheadController.text;
+            GlobalNavigatorKey.key.currentState.push(
+              MaterialPageRoute(builder: (context) => PhotoIdScreen()),
+            );
           } else {
-            _isLoading = false;
             print('External FormValidation failed');
           }
         }, // Switch tabs
 
-        child: !_isLoading
-            ? Text(
-                'SUBMIT',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                  letterSpacing: 2,
-                ),
-              )
-            : CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-              ),
+        child: Text(
+          'CONTINUE',
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onPrimary,
+            letterSpacing: 2,
+          ),
+        ),
       ),
       body: Container(
         child: SingleChildScrollView(
@@ -583,42 +576,5 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         ),
       ),
     );
-  }
-
-  void _signUp() {
-    setState(() {
-      var _userN = _userRegKey.currentState.value['Email'];
-      var _userP = _userRegKey.currentState.value['Password'];
-      firebaseAnonymouslyUtil
-          .createUser(_userN, _userP)
-          .then((String user) => login(_userN, _userP))
-          .catchError((e) => loginError(getErrorMessage(error: e)));
-    });
-  }
-
-  login(String email, String pass) {
-    firebaseAnonymouslyUtil
-        .signIn(email, pass)
-        .then((FirebaseUser user) => moveUserDashboardScreen(user))
-        .catchError((e) => loginError(getErrorMessage(error: e)));
-  }
-
-  String getErrorMessage({dynamic error}) {
-    _isLoading = false;
-    if (error.code == FirebaseAuthCodes.ERROR_USER_NOT_FOUND) {
-      return "A user with this email does not exist. Register first.";
-    } else if (error.code == FirebaseAuthCodes.ERROR_USER_DISABLED) {
-      return "This user account has been disabled.";
-    } else if (error.code == FirebaseAuthCodes.ERROR_USER_TOKEN_EXPIRED) {
-      return "A password change is in the process.";
-    } else {
-      return error.message;
-    }
-  }
-
-  loginError(e) {
-    setState(() {
-      AppUtil().showAlert(e, 5);
-    });
   }
 }

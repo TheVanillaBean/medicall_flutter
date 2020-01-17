@@ -12,8 +12,8 @@ import 'package:Medicall/screens/LandingPage/index.dart';
 import 'package:Medicall/screens/Login/index.dart';
 import 'package:Medicall/screens/Privacy/index.dart';
 import 'package:Medicall/screens/QuestionsUpload/index.dart';
-import 'package:Medicall/screens/Registration/RegistrationType/index.dart';
 import 'package:Medicall/screens/Registration/index.dart';
+import 'package:Medicall/screens/Registration/registrationType.dart';
 import 'package:Medicall/screens/SelectProvider/index.dart';
 import 'package:Medicall/screens/Terms/index.dart';
 import 'package:Medicall/services/auth.dart';
@@ -92,13 +92,12 @@ class _MedicallAppState extends State<MedicallApp> {
                   );
                 case '/registrationType':
                   return MyCustomRoute(
-                    builder: (_) => RegistrationTypeScreen(data: settings.arguments),
+                    builder: (_) => RegistrationTypeScreen(),
                     settings: settings,
                   );
                 case '/registration':
                   return MyCustomRoute(
-                    builder: (_) =>
-                        RegistrationScreen(data: settings.arguments),
+                    builder: (_) => RegistrationScreen(),
                     settings: settings,
                   );
                 case '/terms':

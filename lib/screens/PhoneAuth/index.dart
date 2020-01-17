@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:Medicall/components/masked_text.dart';
 import 'package:Medicall/components/reactive_refresh_indicator.dart';
+import 'package:Medicall/models/global_nav_key.dart';
+import 'package:Medicall/models/reg_user_model.dart';
 import 'package:Medicall/screens/PhoneAuth/phone_auth_state_model.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -30,7 +32,8 @@ class PhoneAuthScreen extends StatefulWidget {
   _PhoneAuthScreenState createState() => _PhoneAuthScreenState();
 }
 
-class _PhoneAuthScreenState extends State<PhoneAuthScreen> with VerificationError {
+class _PhoneAuthScreenState extends State<PhoneAuthScreen>
+    with VerificationError {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   TextEditingController smsCodeController = TextEditingController();
@@ -57,7 +60,10 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> with VerificationErro
 
   Widget _buildConfirmPhoneButton() {
     return IconButton(
-      icon: Icon(Icons.check_circle, size: 50,),
+      icon: Icon(
+        Icons.check_circle,
+        size: 50,
+      ),
       padding: EdgeInsets.all(10),
       color: Colors.white,
       disabledColor: Theme.of(context).buttonColor,
@@ -69,13 +75,20 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> with VerificationErro
 
   Widget _buildConfirmSMSCodeButton() {
     return IconButton(
-      icon: Icon(Icons.check_circle, size: 50,),
+      icon: Icon(
+        Icons.check_circle,
+        size: 50,
+      ),
       padding: EdgeInsets.all(10),
       color: Colors.white,
       disabledColor: Theme.of(context).buttonColor,
       onPressed: (model.status != AuthStatus.SMS_AUTH)
           ? null
-          : () => model.updateRefreshing(true, mounted),
+          : () async {
+              var auth = Provider.of<AuthBase>(context);
+              await auth.signUp();
+              model.updateRefreshing(true, mounted);
+            },
     );
   }
 
@@ -148,6 +161,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> with VerificationErro
 
   Widget _buildSmsCodeInput() {
     final enabled = model.status == AuthStatus.SMS_AUTH;
+    var auth = Provider.of<AuthBase>(GlobalNavigatorKey.key.currentContext);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -160,7 +174,10 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> with VerificationErro
             controller: smsCodeController,
             onChanged: model.updateSMSCode,
             maxLength: 6,
-            onSubmitted: (_) => model.updateRefreshing(true, mounted),
+            onSubmitted: (_) async {
+              await auth.signUp();
+              model.updateRefreshing(true, mounted);
+            },
             style: Theme.of(context).textTheme.subhead.copyWith(
                   fontSize: 32.0,
                   color: enabled ? Colors.white : Theme.of(context).buttonColor,
