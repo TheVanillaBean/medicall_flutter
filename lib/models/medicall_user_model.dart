@@ -65,6 +65,9 @@ class MedicallUser {
     medicallUser.policy = snapshot.data['policy'] ?? medicallUser.policy;
     medicallUser.consent = snapshot.data['consent'] ?? medicallUser.consent;
     medicallUser.terms = snapshot.data['terms'] ?? medicallUser.terms;
+    medicallUser.profilePic =
+        snapshot.data['profile_pic'] ?? medicallUser.profilePic;
+    medicallUser.govId = snapshot.data['gov_id'] ?? medicallUser.govId;
     medicallUser.titles = snapshot.data['titles'] ?? medicallUser.titles;
     medicallUser.type = snapshot.data['type'] ?? medicallUser.type;
     medicallUser.email = snapshot.data['email'] ?? medicallUser.email;

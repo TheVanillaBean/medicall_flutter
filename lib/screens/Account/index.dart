@@ -22,7 +22,7 @@ class _AccountScreenState extends State<AccountScreen> {
 
   @override
   Widget build(BuildContext context) {
-    medicallUser = Provider.of<AuthBase>(context).medicallUser;
+    var auth = Provider.of<AuthBase>(context);
     return Scaffold(
       //App Bar
       key: _scaffoldKey1,
@@ -59,7 +59,7 @@ class _AccountScreenState extends State<AccountScreen> {
                             height: 100,
                             width: 100,
                             fit: BoxFit.cover,
-                            imageUrl: medicallUser.profilePic,
+                            imageUrl: auth.medicallUser.profilePic,
                             placeholder: (context, url) =>
                                 CircularProgressIndicator(),
                             errorWidget: (context, url, error) =>
