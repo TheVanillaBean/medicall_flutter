@@ -47,8 +47,6 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
   String from;
   ValueChanged _onChangedCheckBox;
   var consultSnapshot;
-  final GlobalKey<ScaffoldState> _scaffoldDetailKey =
-      GlobalKey<ScaffoldState>();
 
   @override
   initState() {
@@ -267,12 +265,11 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
       ]), // a Future<String> or null
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
         switch (snapshot.connectionState) {
-          default:
+          case ConnectionState.done:
             if (snapshot.hasError)
-              return Text('Error: ${snapshot.error}');
+              return new Text('Error: ${snapshot.error}');
             else
               return Scaffold(
-                key: _scaffoldDetailKey,
                 appBar: AppBar(
                   actions: <Widget>[
                     medicallUser.type == 'provider'
@@ -431,6 +428,11 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                         controller: controller,
                       ),
               );
+            break;
+
+          default:
+            debugPrint("Snapshot " + snapshot.toString());
+            return Container();
         }
       },
     );

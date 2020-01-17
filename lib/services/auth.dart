@@ -34,14 +34,16 @@ class Auth implements AuthBase {
   }
 
   Future<MedicallUser> _getMedicallUser(String uid) async {
-    final DocumentReference documentReference =
-        Firestore.instance.collection('users').document(uid);
+    if (uid != null) {
+      final DocumentReference documentReference =
+          Firestore.instance.collection('users').document(uid);
 
-    try {
-      final snapshot = await documentReference.get();
-      _medicallUser = MedicallUser.from(uid, snapshot);
-    } catch (e) {
-      throw ('Error getting user');
+      try {
+        final snapshot = await documentReference.get();
+        _medicallUser = MedicallUser.from(uid, snapshot);
+      } catch (e) {
+        print('Error getting user');
+      }
     }
 
     return _medicallUser;
@@ -73,7 +75,11 @@ class Auth implements AuthBase {
   @override
   Future<MedicallUser> currentMedicallUser() async {
     final user = await _firebaseAuth.currentUser();
-    return _getMedicallUser(user.uid);
+    if (user != null) {
+      return _getMedicallUser(user.uid);
+    } else {
+      return _getMedicallUser(null);
+    }
   }
 
   @override
@@ -163,6 +169,7 @@ class Auth implements AuthBase {
 
   @override
   Future<void> signOut() async {
+    medicallUser = MedicallUser();
     await GoogleSignIn().signOut();
     await _firebaseAuth.signOut();
   }
