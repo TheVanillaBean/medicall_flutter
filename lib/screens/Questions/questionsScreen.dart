@@ -114,7 +114,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
       );
     } else {
       widget.data['consult'].consultType = _consult.consultType;
-      if (_consult.provider == null) {
+      if (_consult == null || _consult.provider == null) {
         GlobalNavigatorKey.key.currentState.pushNamed('/selectProvider',
             arguments: {'user': medicallUser, 'consult': _consult});
       } else {

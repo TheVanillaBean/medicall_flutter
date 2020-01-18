@@ -23,14 +23,16 @@ class DoctorSearch extends StatelessWidget {
     medicallUser = auth.medicallUser;
     currentOrientation = MediaQuery.of(context).orientation;
     currTab = "Search Doctors";
-    var selectedProvider = '';
-    var providerTitles = '';
+    String selectedProvider = '';
+    String providerTitles = '';
+    String providerProfilePic = '';
     ConsultData _consult = ConsultData();
 
     setConsult() async {
       SharedPreferences _thisConsult = await SharedPreferences.getInstance();
       _consult.provider = selectedProvider;
       _consult.providerTitles = providerTitles;
+      _consult.providerProfilePic = providerProfilePic;
       String currentConsultString = jsonEncode(_consult);
       await _thisConsult.setString("consult", currentConsultString);
     }
@@ -114,6 +116,9 @@ class DoctorSearch extends StatelessWidget {
                                         _consult.provider = selectedProvider;
                                         _consult.providerTitles =
                                             providerTitles;
+                                        _consult.providerProfilePic =
+                                            userDocuments[i]
+                                                .data['profile_pic'];
                                         setConsult();
                                         GlobalNavigatorKey.key.currentState
                                             .pushNamed('/symptoms');
@@ -141,8 +146,9 @@ class DoctorSearch extends StatelessWidget {
                                         selectedProvider =
                                             userDocuments[i].data['name'];
                                         _consult.provider = selectedProvider;
-                                        _consult.providerTitles =
-                                            providerTitles;
+                                        _consult.providerProfilePic =
+                                            userDocuments[i]
+                                                .data['profile_pic'];
                                         setConsult();
                                         GlobalNavigatorKey.key.currentState
                                             .pushNamed('/symptoms');

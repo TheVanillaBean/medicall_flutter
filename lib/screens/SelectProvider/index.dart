@@ -177,6 +177,8 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
                                           userDocuments[i].data['dev_tokens'];
                                       _consult.providerId =
                                           userDocuments[i].documentID;
+                                      _consult.providerProfilePic =
+                                          userDocuments[i].data['profile_pic'];
                                       _selectProvider(
                                           userDocuments[i].data['name'],
                                           userDocuments[i].data['titles']);

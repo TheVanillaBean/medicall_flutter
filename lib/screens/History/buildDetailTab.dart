@@ -50,7 +50,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
       return Scaffold(
         bottomNavigationBar: Container(
             child: Container(
-          padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+          padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
           decoration: BoxDecoration(
             border: Border(top: BorderSide(color: Colors.grey[300], width: 1)),
           ),

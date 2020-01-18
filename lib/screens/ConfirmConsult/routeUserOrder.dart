@@ -76,33 +76,29 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Expanded(
-                      flex: 1,
-                      child: Container(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(160.0),
-                          child: medicallUser.profilePic != null
-                              ? CachedNetworkImage(
-                                  height: 160,
-                                  width: 160,
-                                  fit: BoxFit.cover,
-                                  imageUrl: medicallUser.profilePic,
-                                  placeholder: (context, url) => Container(
-                                        height: 50,
-                                        width: 50,
-                                        child: CircularProgressIndicator(),
-                                      ),
-                                  errorWidget: (context, url, error) =>
-                                      Container(
-                                        height: 100,
-                                        width: 100,
-                                        child: Icon(Icons.error),
-                                      ))
-                              : Icon(
-                                  Icons.account_circle,
-                                  size: 160,
-                                ),
-                        ),
+                    Container(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(160.0),
+                        child: _consult.providerProfilePic != null
+                            ? CachedNetworkImage(
+                                height: 160,
+                                width: 160,
+                                fit: BoxFit.cover,
+                                imageUrl: _consult.providerProfilePic,
+                                placeholder: (context, url) => Container(
+                                      height: 50,
+                                      width: 50,
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                errorWidget: (context, url, error) => Container(
+                                      height: 100,
+                                      width: 100,
+                                      child: Icon(Icons.error),
+                                    ))
+                            : Icon(
+                                Icons.account_circle,
+                                size: 160,
+                              ),
                       ),
                     )
                   ],

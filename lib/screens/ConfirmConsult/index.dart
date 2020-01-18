@@ -216,8 +216,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                     style: TextStyle(
                                         letterSpacing: 1.3,
                                         fontWeight: FontWeight.w700,
-                                        color: Theme.of(context)
-                                            .primaryColor),
+                                        color: Theme.of(context).primaryColor),
                                   ),
                                 ],
                               ),
@@ -279,17 +278,10 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                               .getDocuments()
                                               .then((snap) async {
                                             if (snap.documents.length == 0) {
-                                              // await StripeSource.addSource()
-                                              //     .then((String token) async {
-                                              //   PaymentService().addCard(token);
-                                              //   setState(() {
-                                              //     isLoading = true;
-                                              //   });
-                                              //return await _addConsult();
-                                              //});
                                               await StripeSource.addSource()
                                                   .then((String token) async {
-                                                PaymentService().addCard(token);
+                                                await PaymentService()
+                                                    .addCard(token);
                                                 //return await _addConsult();
                                               });
                                             } else {

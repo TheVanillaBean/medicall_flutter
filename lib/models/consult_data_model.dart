@@ -8,6 +8,7 @@ class ConsultData {
   String provider;
   String providerTitles;
   String providerId;
+  String providerProfilePic;
   String price;
   List<dynamic> patientDevTokens;
   List<dynamic> providerDevTokens;
@@ -25,6 +26,7 @@ class ConsultData {
     this.price,
     this.patientDevTokens,
     this.providerDevTokens,
+    this.providerProfilePic,
     this.historyQuestions,
     this.media,
   });
@@ -34,6 +36,7 @@ class ConsultData {
         provider = json['provider'],
         providerTitles = json['providerTitles'],
         providerId = json['providerId'],
+        providerProfilePic = json['providerProfilePic'],
         price = json['price'],
         patientDevTokens = json['patientDevTokens'],
         providerDevTokens = json['providerDevTokens'],
@@ -48,6 +51,7 @@ class ConsultData {
         'provider': provider,
         'providerTitles': providerTitles,
         'providerId': providerId,
+        'providerProfilePic': providerProfilePic,
         'price': price,
         'patientDevTokens': patientDevTokens,
         'providerDevTokens': providerDevTokens,
