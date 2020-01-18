@@ -640,7 +640,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
 
   _handleDetailsTabSelection(int index) {
     currentDetailsIndex = index;
-    GlobalNavigatorKey.key.currentState.setState(() {
+    setState(() {
       if (index == 1) {
         addedImages = false;
       } else {
