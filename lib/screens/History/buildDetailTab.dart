@@ -43,8 +43,8 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
   Widget build(BuildContext context) {
     var key = widget.keyStr.toString();
     var ind = widget.indx;
-    var consultSnapshot = auth.consultSnapshot.data;
     medicallUser = auth.medicallUser;
+    var consultSnapshot = auth.consultSnapshot.data;
     var questions = consultSnapshot[key];
     if (key == 'details') {
       return Scaffold(
@@ -171,15 +171,23 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                       }
                     } else {
                       if (i == 0 && currentDetailsIndex == 0 && ind == 0) {
-                        if (auth.patientDetail != null) {
-                          finalArray.add(ListTile(
-                            title: Text(
-                              buildMedicalNote(
-                                  consultSnapshot, auth.patientDetail),
-                              style: TextStyle(fontSize: 14.0),
-                            ),
-                          ));
-                        }
+                        finalArray.add(FutureBuilder(
+                          future: auth.getPatientDetail(),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<void> snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.done) {
+                              return ListTile(
+                                title: Text(
+                                  buildMedicalNote(
+                                      consultSnapshot, auth.patientDetail),
+                                  style: TextStyle(fontSize: 14.0),
+                                ),
+                              );
+                            }
+                            return Container();
+                          },
+                        ));
                       }
 
                       for (var y = 0;
@@ -613,13 +621,10 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
             ],
           ));
     }
-    if (key == 'chat') {
-      return Chat(
-        peerId: auth.currConsultId,
-        peerAvatar: isDone,
-      );
-    }
-    return Container();
+    return Chat(
+      peerId: auth.currConsultId,
+      peerAvatar: isDone,
+    );
   }
 
   Future<void> _updatePrescription() async {

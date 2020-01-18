@@ -74,6 +74,8 @@ class HistoryScreen extends StatelessWidget {
 
   _buildTab(questions) {
     var auth = Provider.of<AuthBase>(GlobalNavigatorKey.key.currentContext);
+    currentOrientation =
+        MediaQuery.of(GlobalNavigatorKey.key.currentContext).orientation;
     if (questions == "consults") {
       return SingleChildScrollView(
         child: StreamBuilder(
@@ -84,11 +86,19 @@ class HistoryScreen extends StatelessWidget {
                 .snapshots(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
-                return Center(
-                  heightFactor: 16,
-                  child: CircularProgressIndicator(),
+                return Text('No data...');
+              }
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Scaffold(
+                  body: Center(
+                    heightFactor: 20,
+                    child: CircularProgressIndicator(
+                      backgroundColor: Colors.red,
+                    ),
+                  ),
                 );
               }
+
               if (snapshot.data.documents.length > 0) {
                 var userDocuments = snapshot.data.documents;
                 List<Widget> historyList = [];
@@ -364,11 +374,20 @@ class HistoryScreen extends StatelessWidget {
             builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
               switch (snapshot.connectionState) {
                 case ConnectionState.waiting:
-                  return Center(
-                    heightFactor: 35,
-                    child: CircularProgressIndicator(
-                      backgroundColor: Colors.red,
-                    ),
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Center(
+                        heightFactor: 10,
+                        child: Container(
+                          padding: EdgeInsets.all(10),
+                          width: 50,
+                          height: 50,
+                          child: CircularProgressIndicator(),
+                        ),
+                      )
+                    ],
                   );
                 default:
                   if (snapshot.hasError)
@@ -383,13 +402,9 @@ class HistoryScreen extends StatelessWidget {
                               .secondary
                               .withAlpha(70),
                           onPressed: () {
+                            auth.currConsultId = userDocuments[i].documentID;
                             GlobalNavigatorKey.key.currentState
                                 .pushNamed('/historyDetail', arguments: {
-                              'documentId': userDocuments[i].documentID,
-                              'user': medicallUser,
-                              'patient_id': userDocuments[i].data['patient_id'],
-                              'provider_id':
-                                  userDocuments[i].data['provider_id'],
                               'from': 'patients',
                               'isRouted': false,
                             });

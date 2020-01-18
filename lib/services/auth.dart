@@ -112,7 +112,6 @@ class Auth implements AuthBase {
         } else {
           isDone = false;
         }
-        getPatientDetail();
       }
     }).catchError((e) => print(e));
   }
