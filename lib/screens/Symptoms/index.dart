@@ -14,15 +14,26 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:simple_animations/simple_animations.dart';
 
 var screenSize;
+ConsultData consult = ConsultData();
 
 class SymptomsScreen extends StatelessWidget {
   const SymptomsScreen({Key key}) : super(key: key);
+
+  getConsult() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    return jsonDecode(pref.getString('consult'));
+  }
 
   @override
   Widget build(BuildContext context) {
     final _scaffoldKey = GlobalKey<ScaffoldState>();
     screenSize = MediaQuery.of(context).size;
     medicallUser = Provider.of<AuthBase>(context).medicallUser;
+
+    getConsult().then((onValue) async {
+      consult.provider = onValue["provider"];
+      consult.providerTitles = onValue["providerTitles"];
+    });
     void _showDialog(ConsultData _consult) {
       showDialog(
         context: context,
@@ -251,8 +262,11 @@ class EntryItem extends StatelessWidget {
                                 RaisedButton(
                                   color: Color(0xdddffffb),
                                   onPressed: () async {
-                                    _consult = ConsultData();
-
+                                    if (consult.provider == null) {
+                                      _consult = ConsultData();
+                                    } else {
+                                      _consult = consult;
+                                    }
                                     SharedPreferences _thisConsult =
                                         await SharedPreferences.getInstance();
                                     for (var i = 0; i < data.length; i++) {
@@ -281,22 +295,6 @@ class EntryItem extends StatelessWidget {
                                         jsonEncode(_consult);
                                     await _thisConsult.setString(
                                         "consult", currentConsultString);
-                                    // for (var i = 0;
-                                    //     i < _consult.historyQuestions.length;
-                                    //     i++) {
-                                    //   if (_consult
-                                    //           .historyQuestions[i]['answer']
-                                    //           .length ==
-                                    //       0) {
-                                    //     GlobalNavigatorKey.key.currentState
-                                    //         .push(
-                                    //       MaterialPageRoute(
-                                    //           builder: (_) => QuestionsScreen(
-                                    //                 data: _consult,
-                                    //               )),
-                                    //     );
-                                    //   }
-                                    // }
                                     if (!medicallUser.hasMedicalHistory) {
                                       _showDialog(_consult);
                                     } else {

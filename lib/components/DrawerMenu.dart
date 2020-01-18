@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/presentation/medicall_app_icons.dart' as CustomIcons;
@@ -5,6 +8,7 @@ import 'package:Medicall/screens/LandingPage/index.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DrawerMenu extends StatelessWidget {
   const DrawerMenu({Key key}) : super(key: key);
@@ -36,10 +40,15 @@ class DrawerMenu extends StatelessWidget {
                           color: Theme.of(context).primaryColor,
                         ),
                       ),
-                      onTap: () {
+                      onTap: () async {
+                        SharedPreferences _thisConsult =
+                            await SharedPreferences.getInstance();
+                        String currentConsultString = jsonEncode(ConsultData());
+                        await _thisConsult.setString(
+                            "consult", currentConsultString);
                         GlobalNavigatorKey.key.currentState.pop();
                         GlobalNavigatorKey.key.currentState.pushNamed(
-                            '/doctors',
+                            '/symptoms',
                             arguments: {'user': medicallUser});
                       }),
               ListTile(

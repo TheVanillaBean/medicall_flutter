@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:Medicall/components/DrawerMenu.dart';
+import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/presentation/medicall_icons_icons.dart' as CustomIcons;
@@ -8,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'doctorSearch.dart';
 
@@ -89,13 +93,20 @@ class HistoryScreen extends StatelessWidget {
                 return Text('No data...');
               }
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Scaffold(
-                  body: Center(
-                    heightFactor: 20,
-                    child: CircularProgressIndicator(
-                      backgroundColor: Colors.red,
-                    ),
-                  ),
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Center(
+                      heightFactor: 10,
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        width: 50,
+                        height: 50,
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
+                  ],
                 );
               }
 
@@ -304,17 +315,19 @@ class HistoryScreen extends StatelessWidget {
                                             MainAxisAlignment.center,
                                         children: <Widget>[
                                           FlatButton(
-                                            onPressed: () {
-                                              // _scaffoldKey.currentState
-                                              //     .showBottomSheet(
-                                              //         (context) => Container(
-                                              //               color: Colors.white.withAlpha(200),
-                                              //               height: 200,
-                                              //             ));
+                                            onPressed: () async {
+                                              SharedPreferences _thisConsult =
+                                                  await SharedPreferences
+                                                      .getInstance();
+                                              String currentConsultString =
+                                                  jsonEncode(ConsultData());
+                                              await _thisConsult.setString(
+                                                  "consult",
+                                                  currentConsultString);
                                               GlobalNavigatorKey
                                                   .key.currentState
                                                   .pushReplacementNamed(
-                                                      '/doctors');
+                                                      '/symptoms');
                                             },
                                             color: Colors.green,
                                             child: Text(

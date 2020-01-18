@@ -115,7 +115,7 @@ class _MedicallAppState extends State<MedicallApp> {
                     builder: (_) => ConsentScreen(),
                     settings: settings,
                   );
-                case '/doctors':
+                case '/symptoms':
                   return MyCustomRoute(
                     builder: (_) => SymptomsScreen(),
                     settings: settings,

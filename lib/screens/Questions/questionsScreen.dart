@@ -114,8 +114,13 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
       );
     } else {
       widget.data['consult'].consultType = _consult.consultType;
-      GlobalNavigatorKey.key.currentState.pushNamed('/selectProvider',
-          arguments: {'user': medicallUser, 'consult': _consult});
+      if (_consult.provider == null) {
+        GlobalNavigatorKey.key.currentState.pushNamed('/selectProvider',
+            arguments: {'user': medicallUser, 'consult': _consult});
+      } else {
+        GlobalNavigatorKey.key.currentState.pushNamed('/consultReview',
+            arguments: {'user': medicallUser, 'consult': _consult});
+      }
     }
   }
 

@@ -1,25 +1,41 @@
+import 'dart:convert';
+
 import 'package:Medicall/components/DrawerMenu.dart';
+import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/services/auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:Medicall/util/app_util.dart' as AppUtils;
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 String currTab = 'Search History';
-final _scaffoldKeyDoc = GlobalKey<ScaffoldState>();
 Orientation currentOrientation;
 bool userHasConsults = false;
 
 class DoctorSearch extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    var auth = Provider.of<AuthBase>(GlobalNavigatorKey.key.currentContext);
+    medicallUser = auth.medicallUser;
     currentOrientation = MediaQuery.of(context).orientation;
     currTab = "Search Doctors";
-    //final MedicallUser medicallUser = Provider.of<MedicallUser>(context);
+    var selectedProvider = '';
+    var providerTitles = '';
+    ConsultData _consult = ConsultData();
+
+    setConsult() async {
+      SharedPreferences _thisConsult = await SharedPreferences.getInstance();
+      _consult.provider = selectedProvider;
+      _consult.providerTitles = providerTitles;
+      String currentConsultString = jsonEncode(_consult);
+      await _thisConsult.setString("consult", currentConsultString);
+    }
 
     return Scaffold(
-      key: _scaffoldKeyDoc,
       resizeToAvoidBottomPadding: false,
       appBar: AppBar(
         centerTitle: true,
@@ -83,27 +99,27 @@ class DoctorSearch extends StatelessWidget {
                             padding: EdgeInsets.all(20),
                             width: 120,
                             child: DropdownButtonHideUnderline(
-                              child: Theme(
-                                data: Theme.of(context).copyWith(
-                                  canvasColor: Colors.blue[50],
-                                ),
-                                child: DropdownButton(
-                                  isExpanded: true,
-                                  icon: Icon(Icons.more_vert),
-                                  items: [
-                                    DropdownMenuItem(
-                                      value: 'New Request',
+                              child: DropdownButton(
+                                isExpanded: true,
+                                icon: Icon(Icons.more_vert),
+                                items: [
+                                  DropdownMenuItem(
+                                    value: 'New Request',
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        providerTitles =
+                                            userDocuments[i].data['titles'];
+                                        selectedProvider =
+                                            userDocuments[i].data['name'];
+                                        _consult.provider = selectedProvider;
+                                        _consult.providerTitles =
+                                            providerTitles;
+                                        setConsult();
+                                        GlobalNavigatorKey.key.currentState
+                                            .pushNamed('/symptoms');
+                                      },
                                       child: Container(
                                         alignment: Alignment.center,
-                                        height: 60,
-                                        decoration: BoxDecoration(
-                                          border: Border(
-                                            bottom: BorderSide(
-                                              color: Colors.black26,
-                                              width: 1.0,
-                                            ),
-                                          ),
-                                        ),
                                         child: Text(
                                           'New Request',
                                           textAlign: TextAlign.center,
@@ -115,11 +131,24 @@ class DoctorSearch extends StatelessWidget {
                                         ),
                                       ),
                                     ),
-                                    DropdownMenuItem(
-                                      value: 'Follow Up',
+                                  ),
+                                  DropdownMenuItem(
+                                    value: 'Follow Up',
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        providerTitles =
+                                            userDocuments[i].data['titles'];
+                                        selectedProvider =
+                                            userDocuments[i].data['name'];
+                                        _consult.provider = selectedProvider;
+                                        _consult.providerTitles =
+                                            providerTitles;
+                                        setConsult();
+                                        GlobalNavigatorKey.key.currentState
+                                            .pushNamed('/symptoms');
+                                      },
                                       child: Container(
                                         alignment: Alignment.center,
-                                        height: 60,
                                         child: Text(
                                           'Follow Up',
                                           textAlign: TextAlign.center,
@@ -131,9 +160,9 @@ class DoctorSearch extends StatelessWidget {
                                         ),
                                       ),
                                     ),
-                                  ],
-                                  onChanged: (String newVal) {},
-                                ),
+                                  ),
+                                ],
+                                onChanged: (String newVal) {},
                               ),
                             ),
                           ),
