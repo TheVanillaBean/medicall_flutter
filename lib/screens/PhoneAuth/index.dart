@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:Medicall/components/masked_text.dart';
 import 'package:Medicall/components/reactive_refresh_indicator.dart';
 import 'package:Medicall/models/global_nav_key.dart';
-import 'package:Medicall/models/reg_user_model.dart';
 import 'package:Medicall/screens/PhoneAuth/phone_auth_state_model.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:flutter/cupertino.dart';

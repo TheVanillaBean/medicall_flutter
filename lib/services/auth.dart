@@ -14,6 +14,11 @@ abstract class AuthBase {
   Future<MedicallUser> currentUser();
   MedicallUser medicallUser;
   TempRegUser tempRegUser;
+  MedicallUser patientDetail;
+  DocumentSnapshot consultSnapshot;
+  bool hasPayment;
+  bool isDone;
+  String currConsultId;
   Future<MedicallUser> signInAnonymously();
   Future<MedicallUser> signInWithEmailAndPassword(
       String email, String password);
@@ -24,6 +29,8 @@ abstract class AuthBase {
       String verificationId, String smsCode);
   Future<MedicallUser> currentMedicallUser();
   Future<void> signOut();
+  Future<void> getConsultDetail();
+  Future<void> getPatientDetail();
   signUp();
   saveImages();
 }
@@ -38,6 +45,16 @@ class Auth implements AuthBase {
   MedicallUser medicallUser;
   @override
   TempRegUser tempRegUser;
+  @override
+  MedicallUser patientDetail;
+  @override
+  DocumentSnapshot consultSnapshot;
+  @override
+  bool hasPayment;
+  @override
+  bool isDone;
+  @override
+  String currConsultId;
 
   Future<MedicallUser> _getMedicallUser(String uid) async {
     if (uid != null) {
@@ -76,6 +93,59 @@ class Auth implements AuthBase {
   Future<MedicallUser> currentUser() async {
     final user = await _firebaseAuth.currentUser();
     return _userFromFirebase(user);
+  }
+
+  @override
+  Future<void> getConsultDetail() async {
+    final DocumentReference documentReference =
+        Firestore.instance.collection('consults').document(currConsultId);
+    await documentReference.get().then((datasnapshot) async {
+      if (datasnapshot.data != null) {
+        consultSnapshot = datasnapshot;
+        consultSnapshot.data['details'] = [
+          consultSnapshot['medical_history_questions'],
+          consultSnapshot['screening_questions'],
+          consultSnapshot['media']
+        ];
+        if (consultSnapshot['state'] == 'done') {
+          isDone = true;
+        } else {
+          isDone = false;
+        }
+        getPatientDetail();
+      }
+    }).catchError((e) => print(e));
+  }
+
+  @override
+  Future<void> getPatientDetail() async {
+    final DocumentReference documentReference = Firestore.instance
+        .collection('users')
+        .document(consultSnapshot.data['patient_id']);
+    await documentReference.get().then((datasnapshot) async {
+      if (datasnapshot.data != null) {
+        patientDetail = MedicallUser(
+            address: datasnapshot.data['address'],
+            displayName: datasnapshot.data['name'],
+            dob: datasnapshot.data['dob'],
+            gender: datasnapshot.data['gender'],
+            phoneNumber: datasnapshot.data['phone']);
+        _getUserPaymentCard();
+      }
+    }).catchError((e) => print(e));
+  }
+
+  Future<void> _getUserPaymentCard() async {
+    final Future<QuerySnapshot> documentReference = Firestore.instance
+        .collection('cards')
+        .document(medicallUser.uid)
+        .collection('sources')
+        .getDocuments();
+    await documentReference.then((datasnapshot) {
+      if (datasnapshot.documents.length > 0) {
+        hasPayment = true;
+      }
+    }).catchError((e) => print(e));
   }
 
   @override

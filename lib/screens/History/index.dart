@@ -73,6 +73,7 @@ class HistoryScreen extends StatelessWidget {
   }
 
   _buildTab(questions) {
+    var auth = Provider.of<AuthBase>(GlobalNavigatorKey.key.currentContext);
     if (questions == "consults") {
       return SingleChildScrollView(
         child: StreamBuilder(
@@ -98,12 +99,9 @@ class HistoryScreen extends StatelessWidget {
                       splashColor:
                           Theme.of(context).colorScheme.secondary.withAlpha(70),
                       onPressed: () {
+                        auth.currConsultId = userDocuments[i].documentID;
                         GlobalNavigatorKey.key.currentState
                             .pushNamed('/historyDetail', arguments: {
-                          'documentId': userDocuments[i].documentID,
-                          'user': medicallUser,
-                          'patient_id': userDocuments[i].data['patient_id'],
-                          'provider_id': userDocuments[i].data['provider_id'],
                           'from': 'patients',
                           'isRouted': false,
                         });
@@ -365,15 +363,12 @@ class HistoryScreen extends StatelessWidget {
             future: _getUserHistory(),
             builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
               switch (snapshot.connectionState) {
-                case ConnectionState.none:
-                  return Center(
-                    heightFactor: 35,
-                    child: CircularProgressIndicator(),
-                  );
                 case ConnectionState.waiting:
                   return Center(
                     heightFactor: 35,
-                    child: CircularProgressIndicator(),
+                    child: CircularProgressIndicator(
+                      backgroundColor: Colors.red,
+                    ),
                   );
                 default:
                   if (snapshot.hasError)
