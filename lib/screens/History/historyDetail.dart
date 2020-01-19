@@ -23,32 +23,29 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
   bool isConsultOpen = false;
 
   String documentId;
-  String from;
 
   var consultSnapshot;
+  var auth;
 
   @override
   initState() {
     super.initState();
-    documentId = widget.data['documentId'];
-    medicallUser = widget.data['user'];
-    from = widget.data['from'];
+    auth = Provider.of<AuthBase>(GlobalNavigatorKey.key.currentContext);
+    medicallUser = auth.medicallUser;
     controller = TabController(length: 3, vsync: this);
     controller.addListener(_handleTabSelection);
-    typeAheadController.text = shippingAddress;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    controller.dispose();
   }
 
   _handleTabSelection() {
     setState(() {
       _currentIndex = controller.index;
     });
-  }
-
-  @override
-  void dispose() {
-    // Dispose of the Tab Controller
-    controller.dispose();
-    super.dispose();
   }
 
   void _updateConsultStatus(Choice choice) {
@@ -151,17 +148,151 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
         });
       }
     };
-    var auth = Provider.of<AuthBase>(context);
-    medicallUser = auth.medicallUser;
     // The app's "state".
     return FutureBuilder<void>(
       future: auth.getConsultDetail(), // a Future<String> or null
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
         if (snapshot.connectionState == ConnectionState.none &&
-            snapshot.hasData == null ||
+                snapshot.connectionState == ConnectionState.waiting &&
+                snapshot.hasData == null ||
             auth.consultSnapshot == null) {
           //print('project snapshot data is: ${projectSnap.data}');
-          return Container();
+          return Scaffold(
+              appBar: AppBar(
+                actions: <Widget>[
+                  medicallUser.type == 'provider'
+                      ? PopupMenuButton<Choice>(
+                          onSelected: _updateConsultStatus,
+                          initialValue: _selectedChoice,
+                          itemBuilder: (BuildContext context) {
+                            return choices.map((Choice choice) {
+                              return PopupMenuItem<Choice>(
+                                value: choice,
+                                child: Container(
+                                  height: 70,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      Text(choice.title),
+                                      choice.icon
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }).toList();
+                          },
+                        )
+                      : SizedBox(
+                          width: 60,
+                        ),
+                ],
+                title: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          consultSnapshot != null &&
+                                  consultSnapshot['type'] != 'Lesion'
+                              ? consultSnapshot['type']
+                              : consultSnapshot != null
+                                  ? medicallUser.type == 'patient'
+                                      ? '${consultSnapshot['provider'].split(" ")[0][0].toUpperCase()}${consultSnapshot['provider'].split(" ")[0].substring(1)} ${consultSnapshot['provider'].split(" ")[1][0].toUpperCase()}${consultSnapshot['provider'].split(" ")[1].substring(1)} ' +
+                                          consultSnapshot['providerTitles']
+                                      : '${consultSnapshot['patient'].split(" ")[0][0].toUpperCase()}${consultSnapshot['patient'].split(" ")[0].substring(1)} ${consultSnapshot['patient'].split(" ")[1][0].toUpperCase()}${consultSnapshot['patient'].split(" ")[1].substring(1)} '
+                                  : '',
+                          style: TextStyle(
+                            fontSize:
+                                Theme.of(context).platform == TargetPlatform.iOS
+                                    ? 17.0
+                                    : 20.0,
+                          ),
+                        ),
+                        Text(
+                          consultSnapshot != null &&
+                                  medicallUser.type == 'patient'
+                              ? '${consultSnapshot['provider'].split(" ")[0][0].toUpperCase()}${consultSnapshot['provider'].split(" ")[0].substring(1)} ${consultSnapshot['provider'].split(" ")[1][0].toUpperCase()}${consultSnapshot['provider'].split(" ")[1].substring(1)} ' +
+                                  consultSnapshot['providerTitles']
+                              : consultSnapshot != null &&
+                                      medicallUser.type == 'provider'
+                                  ? '${consultSnapshot['patient'].split(" ")[0][0].toUpperCase()}${consultSnapshot['patient'].split(" ")[0].substring(1)} ${consultSnapshot['patient'].split(" ")[1][0].toUpperCase()}${consultSnapshot['patient'].split(" ")[1].substring(1)} '
+                                  : consultSnapshot != null &&
+                                          consultSnapshot['type'] == 'Lesion'
+                                      ? 'Spot'
+                                      : consultSnapshot != null &&
+                                              consultSnapshot['type'] !=
+                                                  'Lesion'
+                                          ? consultSnapshot['type']
+                                          : '',
+                          style: TextStyle(
+                            fontSize:
+                                Theme.of(context).platform == TargetPlatform.iOS
+                                    ? 12.0
+                                    : 14.0,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                bottom: TabBar(
+                  indicatorColor: Theme.of(context).primaryColor,
+                  indicatorWeight: 3,
+                  labelStyle: TextStyle(fontSize: 12),
+                  tabs: medicallUser.type == 'patient'
+                      ? <Tab>[
+                          Tab(
+                            // set icon to the tab
+                            text: 'Prescription',
+                            icon: Icon(Icons.local_hospital),
+                          ),
+                          Tab(
+                            // set icon to the tab
+                            text: 'Chat',
+                            icon: Icon(Icons.chat_bubble_outline),
+                          ),
+                          Tab(
+                            // set icon to the tab
+                            text: 'Details',
+                            icon: Icon(Icons.assignment),
+                          ),
+                        ]
+                      : <Tab>[
+                          Tab(
+                            // set icon to the tab
+                            text: 'Details',
+                            icon: Icon(Icons.assignment),
+                          ),
+                          Tab(
+                            // set icon to the tab
+                            text: 'Chat',
+                            icon: Icon(Icons.chat_bubble_outline),
+                          ),
+                          Tab(
+                            // set icon to the tab
+                            text: 'Prescription',
+                            icon: Icon(Icons.local_hospital),
+                          ),
+                        ],
+                  // setup the controller
+                  controller: controller,
+                ),
+                elevation: Theme.of(context).platform == TargetPlatform.iOS
+                    ? 0.0
+                    : 4.0,
+              ),
+              body: Center(
+                heightFactor: 10,
+                child: Container(
+                  padding: EdgeInsets.all(10),
+                  width: 50,
+                  height: 50,
+                  child: CircularProgressIndicator(),
+                ),
+              ));
         }
         consultSnapshot = auth.consultSnapshot.data;
         return Scaffold(
@@ -203,10 +334,9 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                   children: <Widget>[
                     Text(
                       consultSnapshot != null &&
-                              from == 'consults' &&
                               consultSnapshot['type'] != 'Lesion'
                           ? consultSnapshot['type']
-                          : consultSnapshot != null && from == 'patients'
+                          : consultSnapshot != null
                               ? medicallUser.type == 'patient'
                                   ? '${consultSnapshot['provider'].split(" ")[0][0].toUpperCase()}${consultSnapshot['provider'].split(" ")[0].substring(1)} ${consultSnapshot['provider'].split(" ")[1][0].toUpperCase()}${consultSnapshot['provider'].split(" ")[1].substring(1)} ' +
                                       consultSnapshot['providerTitles']
@@ -220,22 +350,16 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                       ),
                     ),
                     Text(
-                      consultSnapshot != null &&
-                              from == 'consults' &&
-                              medicallUser.type == 'patient'
+                      consultSnapshot != null && medicallUser.type == 'patient'
                           ? '${consultSnapshot['provider'].split(" ")[0][0].toUpperCase()}${consultSnapshot['provider'].split(" ")[0].substring(1)} ${consultSnapshot['provider'].split(" ")[1][0].toUpperCase()}${consultSnapshot['provider'].split(" ")[1].substring(1)} ' +
                               consultSnapshot['providerTitles']
                           : consultSnapshot != null &&
-                                  from == 'consults' &&
                                   medicallUser.type == 'provider'
-                              ? '${consultSnapshot['provider'].split(" ")[0][0].toUpperCase()}${consultSnapshot['provider'].split(" ")[0].substring(1)} ${consultSnapshot['provider'].split(" ")[1][0].toUpperCase()}${consultSnapshot['provider'].split(" ")[1].substring(1)} ' +
-                                  consultSnapshot['providerTitles']
+                              ? '${consultSnapshot['patient'].split(" ")[0][0].toUpperCase()}${consultSnapshot['patient'].split(" ")[0].substring(1)} ${consultSnapshot['patient'].split(" ")[1][0].toUpperCase()}${consultSnapshot['patient'].split(" ")[1].substring(1)} '
                               : consultSnapshot != null &&
-                                      consultSnapshot['type'] == 'Lesion' &&
-                                      from == 'patients'
+                                      consultSnapshot['type'] == 'Lesion'
                                   ? 'Spot'
                                   : consultSnapshot != null &&
-                                          from == 'patients' &&
                                           consultSnapshot['type'] != 'Lesion'
                                       ? consultSnapshot['type']
                                       : '',

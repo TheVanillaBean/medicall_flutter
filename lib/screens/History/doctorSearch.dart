@@ -345,12 +345,6 @@ class CustomSearchDelegate extends SearchDelegate {
                           onPressed: () {
                             GlobalNavigatorKey.key.currentState
                                 .pushNamed('/historyDetail', arguments: {
-                              'documentId': userDocuments[i].documentID,
-                              'user': medicallUser,
-                              'patient_id': userDocuments[i].data['patient_id'],
-                              'provider_id':
-                                  userDocuments[i].data['provider_id'],
-                              'from': 'patients',
                               'isRouted': false,
                             });
                           },

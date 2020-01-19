@@ -141,7 +141,7 @@ class _LoginScreenState extends State<LoginPage> {
       ),
       SizedBox(height: 12),
       Text(
-        "or",
+        "",
         style: TextStyle(
           fontSize: 14.0,
           color: Colors.black87,

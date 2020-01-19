@@ -16,6 +16,7 @@ abstract class AuthBase {
   TempRegUser tempRegUser;
   MedicallUser patientDetail;
   DocumentSnapshot consultSnapshot;
+  List<DocumentSnapshot> userHistory;
   bool hasPayment;
   bool isDone;
   String currConsultId;
@@ -31,6 +32,7 @@ abstract class AuthBase {
   Future<void> signOut();
   Future<void> getConsultDetail();
   Future<void> getPatientDetail();
+  Future<void> getUserHistory();
   signUp();
   saveImages();
 }
@@ -49,6 +51,8 @@ class Auth implements AuthBase {
   MedicallUser patientDetail;
   @override
   DocumentSnapshot consultSnapshot;
+  @override
+  List<DocumentSnapshot> userHistory;
   @override
   bool hasPayment;
   @override
@@ -145,6 +149,27 @@ class Auth implements AuthBase {
         hasPayment = true;
       }
     }).catchError((e) => print(e));
+  }
+
+  Future<void> getUserHistory() async {
+    if (medicallUser.uid.length > 0) {
+      final Future<QuerySnapshot> documentReference = Firestore.instance
+          .collection('consults')
+          .where(medicallUser.type == 'provider' ? 'provider_id' : 'patient_id',
+              isEqualTo: medicallUser.uid)
+          .orderBy('date', descending: true)
+          .getDocuments();
+      await documentReference.then((datasnapshot) {
+        if (datasnapshot.documents != null) {
+          userHistory = [];
+          for (var i = 0; i < datasnapshot.documents.length; i++) {
+            if (!userHistory.contains(datasnapshot.documents[i])) {
+              userHistory.add(datasnapshot.documents[i]);
+            }
+          }
+        }
+      }).catchError((e) => print(e));
+    }
   }
 
   @override

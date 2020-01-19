@@ -82,7 +82,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
     await _thisConsult.setString("consult", currentConsultString);
   }
 
-  Future<void> _onIntroEnd(context) async {
+  Future<void> _onIntroEnd() async {
     //await setConsult(context);
     if (widget.data['consult'].consultType == 'Medical History') {
       medicallUser.hasMedicalHistory = true;
@@ -237,7 +237,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
           ? IntroductionScreen(
               pages: pageViewList,
               key: questionsFormKey,
-              onDone: () => _onIntroEnd(context),
+              onDone: () => _onIntroEnd(),
               //onSkip: () => _onIntroEnd(context), // You can override onSkip callback
               showSkipButton: false,
               skipFlex: 0,
