@@ -1,6 +1,3 @@
-import 'dart:convert';
-
-import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/services/auth.dart';
@@ -12,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'buildQuestions.dart';
 
@@ -39,56 +35,32 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
   var auth = Provider.of<AuthBase>(GlobalNavigatorKey.key.currentContext);
   var medicalHistoryQuestions;
   bool showSegmentedControl = true;
-  ConsultData _consult = ConsultData();
   List<dynamic> combinedList = [];
 
   @override
   void initState() {
     super.initState();
-    getConsult().then((onValue) {
-      setState(() {
-        _consult.consultType = onValue["consultType"];
-        _consult.provider = onValue["provider"];
-        _consult.price = onValue["price"];
-        _consult.providerTitles = onValue["providerTitles"];
-        _consult.screeningQuestions = onValue["screeningQuestions"];
-        _consult.historyQuestions = onValue["historyQuestions"];
-        _consult.uploadQuestions = onValue["uploadQuestions"];
-        if (medicallUser.hasMedicalHistory) {
-          combinedList = [
-            ..._consult.screeningQuestions,
-            ..._consult.uploadQuestions
-          ];
-        } else {
-          widget.data['consult'].consultType = "Medical History";
-          combinedList = [
-            ..._consult.historyQuestions,
-          ];
-        }
+    if (medicallUser.hasMedicalHistory) {
+      combinedList = [
+        ...auth.newConsult.screeningQuestions,
+        ...auth.newConsult.uploadQuestions
+      ];
+    } else {
+      auth.newConsult.consultType = "Medical History";
+      combinedList = [
+        ...auth.newConsult.historyQuestions,
+      ];
+    }
 
-        for (var i = 0; i < combinedList.length; i++) {
-          globalKeyList['questionKey' + i.toString()] =
-              GlobalKey<FormBuilderState>();
-        }
-      });
-    });
-  }
-
-  Future getConsult() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    return jsonDecode(pref.getString('consult'));
-  }
-
-  setConsult(context) async {
-    SharedPreferences _thisConsult = await SharedPreferences.getInstance();
-
-    String currentConsultString = jsonEncode(_consult);
-    await _thisConsult.setString("consult", currentConsultString);
+    for (var i = 0; i < combinedList.length; i++) {
+      globalKeyList['questionKey' + i.toString()] =
+          GlobalKey<FormBuilderState>();
+    }
   }
 
   Future<void> _onIntroEnd() async {
     //await setConsult(context);
-    if (widget.data['consult'].consultType == 'Medical History') {
+    if (auth.newConsult.consultType == 'Medical History') {
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -101,15 +73,17 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
               // usually buttons at the bottom of the dialog
               FlatButton(
                 color: Theme.of(context).primaryColor,
-                child: Text("Continue to " + _consult.consultType == 'Lesion'
-                    ? 'Spot'
-                    : "Continue to " + _consult.consultType + ' treatment'),
+                child: Text(
+                    "Continue to " + auth.newConsult.consultType == 'Lesion'
+                        ? 'Spot'
+                        : "Continue to " +
+                            auth.newConsult.consultType +
+                            ' treatment'),
                 onPressed: () {
                   auth.addUserMedicalHistory();
                   GlobalNavigatorKey.key.currentState.pop();
-                  GlobalNavigatorKey.key.currentState.pushReplacementNamed(
-                      '/questionsScreen',
-                      arguments: {'user': medicallUser, 'consult': _consult});
+                  GlobalNavigatorKey.key.currentState
+                      .pushReplacementNamed('/questionsScreen');
                 },
               ),
             ],
@@ -117,14 +91,16 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
         },
       );
     } else {
-      widget.data['consult'].consultType = _consult.consultType;
+      auth.newConsult.consultType = auth.newConsult.consultType;
       //switch for if provider has already been selected
-      if (_consult == null || _consult.provider == null) {
-        GlobalNavigatorKey.key.currentState.pushNamed('/selectProvider',
-            arguments: {'user': medicallUser, 'consult': _consult});
+      if (auth.newConsult == null || auth.newConsult.provider == null) {
+        GlobalNavigatorKey.key.currentState.pushNamed(
+          '/selectProvider',
+        );
       } else {
-        GlobalNavigatorKey.key.currentState.pushNamed('/consultReview',
-            arguments: {'user': medicallUser, 'consult': _consult});
+        GlobalNavigatorKey.key.currentState.pushNamed(
+          '/consultReview',
+        );
       }
     }
   }
@@ -213,13 +189,13 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
           icon: Icon(Icons.close),
           onPressed: () => GlobalNavigatorKey.key.currentState.pop(false),
         ),
-        title: Text(widget.data['consult'].consultType == 'Lesion'
+        title: Text(auth.newConsult.consultType == 'Lesion'
             ? 'Spot' +
                 ' Question: ' +
                 (currentPage + 1).toString() +
                 '/' +
                 pageViewList.length.toString()
-            : widget.data['consult'].consultType +
+            : auth.newConsult.consultType +
                 ' Question: ' +
                 (currentPage + 1).toString() +
                 '/' +

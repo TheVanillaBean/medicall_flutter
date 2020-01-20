@@ -1,22 +1,20 @@
 import 'dart:typed_data';
-
-import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/ConfirmConsult/routeUserOrder.dart';
 import 'package:Medicall/secrets.dart';
+import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/util/stripe_payment_handler.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:stripe_payment/stripe_payment.dart';
 
 class ConfirmConsultScreen extends StatefulWidget {
-  final data;
-
-  const ConfirmConsultScreen({Key key, @required this.data}) : super(key: key);
+  const ConfirmConsultScreen({Key key}) : super(key: key);
   @override
   _ConfirmConsultScreenState createState() => _ConfirmConsultScreenState();
 }
@@ -26,26 +24,13 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
   bool isLoading = false;
   double price = 39.00;
   bool hasReviewed = false;
-  ConsultData _consult;
+  var auth = Provider.of<AuthBase>(GlobalNavigatorKey.key.currentContext);
   TabController _confirmTabCntrl;
   @override
   void initState() {
     super.initState();
-    _consult = widget.data['consult'];
-    medicallUser = widget.data['user'];
     _confirmTabCntrl = TabController(length: 2, vsync: this);
     StripeSource.setPublishableKey(stripeKey);
-  }
-
-  Future getConsult() async {
-    // SharedPreferences pref = await SharedPreferences.getInstance();
-    // var perfConsult = jsonDecode(pref.getString('consult'));
-    // _consult.consultType = perfConsult["consultType"];
-    // _consult.provider = perfConsult["provider"];
-    // _consult.providerTitles = perfConsult["providerTitles"];
-    // _consult.screeningQuestions = perfConsult["screeningQuestions"];
-    // _consult.historyQuestions = perfConsult["historyQuestions"];
-    return _consult;
   }
 
   @override
@@ -65,11 +50,11 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              _consult != null
-                  ? _consult.consultType == 'Lesion'
+              auth.newConsult != null
+                  ? auth.newConsult.consultType == 'Lesion'
                       ? 'Review Spot Consult'
-                      : 'Review ' + _consult.consultType + ' Consult'
-                  : _consult != null ? _consult.provider : '',
+                      : 'Review ' + auth.newConsult.consultType + ' Consult'
+                  : auth.newConsult != null ? auth.newConsult.provider : '',
               style: TextStyle(
                 fontSize: Theme.of(context).platform == TargetPlatform.iOS
                     ? 17.0
@@ -77,10 +62,10 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
               ),
             ),
             Text(
-              _consult != null
-                  ? 'With ${_consult.provider.split(" ")[0][0].toUpperCase()}${_consult.provider.split(" ")[0].substring(1)} ${_consult.provider.split(" ")[1][0].toUpperCase()}${_consult.provider.split(" ")[1].substring(1)} ' +
-                      _consult.providerTitles
-                  : _consult != null ? _consult.provider : '',
+              auth.newConsult != null
+                  ? 'With ${auth.newConsult.provider.split(" ")[0][0].toUpperCase()}${auth.newConsult.provider.split(" ")[0].substring(1)} ${auth.newConsult.provider.split(" ")[1][0].toUpperCase()}${auth.newConsult.provider.split(" ")[1].substring(1)} ' +
+                      auth.newConsult.providerTitles
+                  : auth.newConsult != null ? auth.newConsult.provider : '',
               style: TextStyle(
                 fontSize: Theme.of(context).platform == TargetPlatform.iOS
                     ? 12.0
@@ -201,18 +186,18 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Text(
-                                    _consult.consultType != 'Lesion'
+                                    auth.newConsult.consultType != 'Lesion'
                                         ? 'Contact ' +
-                                            _consult.provider +
+                                            auth.newConsult.provider +
                                             ' ' +
-                                            _consult.providerTitles +
+                                            auth.newConsult.providerTitles +
                                             '\nabout your ' +
-                                            _consult.consultType
+                                            auth.newConsult.consultType
                                         : 'Spot' +
                                             ' consultation with \n' +
-                                            _consult.provider +
+                                            auth.newConsult.provider +
                                             ' ' +
-                                            _consult.providerTitles,
+                                            auth.newConsult.providerTitles,
                                     style: TextStyle(
                                         letterSpacing: 1.3,
                                         fontWeight: FontWeight.w700,
@@ -223,7 +208,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                               Column(
                                 children: <Widget>[
                                   Text(
-                                    _consult.price,
+                                    auth.newConsult.price,
                                     style: TextStyle(
                                         fontSize: 28,
                                         color: Theme.of(context)
@@ -291,23 +276,25 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                               await PaymentService()
                                                   .chargePayment(
                                                       price,
-                                                      _consult.consultType +
+                                                      auth.newConsult
+                                                              .consultType +
                                                           ' consult with ' +
-                                                          _consult.provider);
+                                                          auth.newConsult
+                                                              .provider);
                                               _addConsult();
 
                                               // await PaymentService()
                                               //     .chargePayment(
                                               //         price,
-                                              //         _consult.consultType +
+                                              //         auth.newConsult.consultType +
                                               //             ' consult with ' +
-                                              //             _consult.provider);
+                                              //             auth.newConsult.provider);
                                               // return await _addConsult();
                                             }
                                             // return Navigator.pushNamed(
                                             //     context, '/history',
                                             //     arguments: {
-                                            //       'consult': _consult,
+                                            //       'consult': auth.newConsult,
                                             //       'user': medicallUser
                                             //     });
                                           });
@@ -368,9 +355,9 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
       body: TabBarView(
         // Add tabs as widgets
         children: <Widget>[
-          _buildTab(_consult.screeningQuestions),
-          //_buildTab(_consult.historyQuestions),
-          _buildTab(_consult.uploadQuestions),
+          _buildTab(auth.newConsult.screeningQuestions),
+          //_buildTab(auth.newConsult.historyQuestions),
+          _buildTab(auth.newConsult.uploadQuestions),
         ],
         // set the _confirmTabCntrl
         controller: _confirmTabCntrl,
@@ -381,66 +368,31 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
   Future _addConsult() async {
     var ref = Firestore.instance.collection('consults').document();
 
-    var imagesList = await saveImages(_consult.media, ref.documentID);
+    var imagesList = await saveImages(auth.newConsult.media, ref.documentID);
     Map<String, dynamic> data = <String, dynamic>{
-      "screening_questions": _consult.screeningQuestions,
-      //"medical_history_questions": _consult.historyQuestions,
-      "type": _consult.consultType,
+      "screening_questions": auth.newConsult.screeningQuestions,
+      //"medical_history_questions": auth.newConsult.historyQuestions,
+      "type": auth.newConsult.consultType,
       "chat": [],
       "state": "new",
       "date": DateTime.now(),
       "medication_name": "",
-      "provider": _consult.provider,
-      "providerTitles": _consult.providerTitles,
+      "provider": auth.newConsult.provider,
+      "providerTitles": auth.newConsult.providerTitles,
       "patient": medicallUser.displayName,
-      "provider_id": _consult.providerId,
+      "provider_id": auth.newConsult.providerId,
       "patient_id": medicallUser.uid,
-      "media": _consult.media.length > 0 ? imagesList : "",
+      "media": auth.newConsult.media.length > 0 ? imagesList : "",
     };
     ref.setData(data).whenComplete(() {
       print("Consult Added");
       // Future.delayed(const Duration(milliseconds: 5000), () {
       //   return Navigator.pushReplacementNamed(context, '/history',
-      //       arguments: {'consult': _consult, 'user': medicallUser});
+      //       arguments: {'consult': auth.newConsult, 'user': medicallUser});
       // });
       Route route = MaterialPageRoute(
           builder: (context) => RouteUserOrderScreen(
-                data: {'user': medicallUser, 'consult': _consult},
-              ));
-      return GlobalNavigatorKey.key.currentState.pushReplacement(route);
-
-      //_addProviderConsult(ref.documentID, imagesList);
-    }).catchError((e) => print(e));
-  }
-
-  Future _addUserMedicalHistory() async {
-    var ref = Firestore.instance.collection('users').document();
-
-    var imagesList = await saveImages(_consult.media, ref.documentID);
-    Map<String, dynamic> data = <String, dynamic>{
-      "screening_questions": _consult.screeningQuestions,
-      //"medical_history_questions": _consult.historyQuestions,
-      "type": _consult.consultType,
-      "chat": [],
-      "state": "new",
-      "date": DateTime.now(),
-      "medication_name": "",
-      "provider": _consult.provider,
-      "providerTitles": _consult.providerTitles,
-      "patient": medicallUser.displayName,
-      "provider_id": _consult.providerId,
-      "patient_id": medicallUser.uid,
-      "media": _consult.media.length > 0 ? imagesList : "",
-    };
-    ref.setData(data).whenComplete(() {
-      print("Consult Added");
-      // Future.delayed(const Duration(milliseconds: 5000), () {
-      //   return Navigator.pushReplacementNamed(context, '/history',
-      //       arguments: {'consult': _consult, 'user': medicallUser});
-      // });
-      Route route = MaterialPageRoute(
-          builder: (context) => RouteUserOrderScreen(
-                data: {'user': medicallUser, 'consult': _consult},
+                data: {'user': medicallUser, 'consult': auth.newConsult},
               ));
       return GlobalNavigatorKey.key.currentState.pushReplacement(route);
 
@@ -498,7 +450,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
           }
         }
       }
-      _consult.media = questionsList;
+      auth.newConsult.media = questionsList;
       return Scaffold(
         body: Container(
           child: questions[0].containsKey('image')

@@ -1,62 +1,26 @@
-import 'dart:convert';
-
-import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/global_nav_key.dart';
-import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/services/auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:oktoast/oktoast.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 import 'asset_view.dart';
 
 class QuestionsUploadScreen extends StatefulWidget {
-  final data;
-
-  const QuestionsUploadScreen({Key key, @required this.data}) : super(key: key);
+  const QuestionsUploadScreen({Key key}) : super(key: key);
   @override
   _QuestionsUploadScreenState createState() => _QuestionsUploadScreenState();
 }
 
 class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
   List<Asset> images = List<Asset>();
-  ConsultData _consult = ConsultData();
   String _error = '';
+  var auth = Provider.of<AuthBase>(GlobalNavigatorKey.key.currentContext);
   @override
   void initState() {
     super.initState();
-    medicallUser = widget.data['user'];
-    getConsult().then((onValue) {
-      setState(() {
-        _consult.consultType = onValue["consultType"];
-        _consult.screeningQuestions = onValue["screeningQuestions"];
-        _consult.uploadQuestions = onValue["uploadQuestions"];
-        _consult.historyQuestions = onValue["historyQuestions"];
-        _consult.provider = onValue["provider"];
-        _consult.providerTitles = onValue["providerTitles"];
-        _consult.providerId = onValue["providerId"];
-        if (_consult.provider != null && _consult.provider.length > 0) {
-          _consult.historyQuestions[0]["question"] =
-              _consult.historyQuestions[0]["question"] +
-                  " " +
-                  _consult.provider;
-        }
-      });
-    });
-  }
-
-  Future getConsult() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    return jsonDecode(pref.getString('consult'));
-  }
-
-  setConsult() async {
-    SharedPreferences _thisConsult = await SharedPreferences.getInstance();
-    _consult.media = images;
-    String currentConsultString = jsonEncode(_consult);
-    await _thisConsult.setString("consult", currentConsultString);
-    return;
   }
 
   Widget buildGridView(index, asset) {
@@ -83,7 +47,7 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
     try {
       resultList = await MultiImagePicker.pickImages(
           selectedAssets: images,
-          maxImages: widget.data['consult'].uploadQuestions.length - 1,
+          maxImages: auth.newConsult.uploadQuestions.length - 1,
           enableCamera: true,
           cupertinoOptions: CupertinoOptions(takePhotoIcon: 'chat'),
           materialOptions: MaterialOptions(
@@ -130,9 +94,8 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
         padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
         color: Theme.of(context).primaryColor,
         onPressed: () async {
-          _consult.media = images;
-          GlobalNavigatorKey.key.currentState.pushNamed('/consultReview',
-              arguments: {'consult': _consult, 'user': medicallUser});
+          auth.newConsult.media = images;
+          GlobalNavigatorKey.key.currentState.pushNamed('/consultReview');
         },
         child: Text(
           'CONTINUE',
@@ -143,7 +106,7 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
         ),
       ),
       body: ListView.builder(
-          itemCount: widget.data['consult'].uploadQuestions.length,
+          itemCount: auth.newConsult.uploadQuestions.length,
           itemBuilder: (BuildContext ctxt, int index) {
             return Column(
               children: <Widget>[
@@ -152,7 +115,7 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
                       ? EdgeInsets.fromLTRB(20, 10, 20, 0)
                       : EdgeInsets.fromLTRB(20, 10, 20, 10),
                   child: Text(
-                    widget.data['consult'].uploadQuestions[index]['question'],
+                    auth.newConsult.uploadQuestions[index]['question'],
                     style: index == 0
                         ? TextStyle(fontSize: 14, color: Colors.red)
                         : TextStyle(fontSize: 12),
@@ -167,8 +130,8 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
                                 ? buildGridView(index, images[index - 1])
                                 : Container(
                                     child: Image.network(
-                                    widget.data['consult']
-                                        .uploadQuestions[index]['media'],
+                                    auth.newConsult.uploadQuestions[index]
+                                        ['media'],
                                   ))
                           ],
                         ),

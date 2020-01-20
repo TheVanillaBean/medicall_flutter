@@ -122,25 +122,25 @@ class _MedicallAppState extends State<MedicallApp> {
                   );
                 case '/questionsScreen':
                   return MyCustomRoute(
-                    builder: (_) => QuestionsScreen(data: settings.arguments),
+                    builder: (_) => QuestionsScreen(),
                     settings: settings,
                   );
                 case '/selectProvider':
                   return MyCustomRoute(
                     builder: (_) =>
-                        SelectProviderScreen(data: settings.arguments),
+                        SelectProviderScreen(),
                     settings: settings,
                   );
                 case '/questionsUpload':
                   return MyCustomRoute(
                     builder: (_) =>
-                        QuestionsUploadScreen(data: settings.arguments),
+                        QuestionsUploadScreen(),
                     settings: settings,
                   );
                 case '/consultReview':
                   return MyCustomRoute(
                     builder: (_) =>
-                        ConfirmConsultScreen(data: settings.arguments),
+                        ConfirmConsultScreen(),
                     settings: settings,
                   );
                 case '/chat':

@@ -1,6 +1,4 @@
-import 'dart:convert';
 import 'dart:math';
-
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/global_nav_key.dart';
@@ -10,31 +8,20 @@ import 'package:Medicall/services/auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:simple_animations/simple_animations.dart';
 
 var screenSize;
-ConsultData consult = ConsultData();
 
 class SymptomsScreen extends StatelessWidget {
   const SymptomsScreen({Key key}) : super(key: key);
 
-  getConsult() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    return jsonDecode(pref.getString('consult'));
-  }
-
   @override
   Widget build(BuildContext context) {
+    var auth = Provider.of<AuthBase>(context);
     final _scaffoldKey = GlobalKey<ScaffoldState>();
     screenSize = MediaQuery.of(context).size;
-    medicallUser = Provider.of<AuthBase>(context).medicallUser;
-
-    getConsult().then((onValue) async {
-      consult.provider = onValue["provider"];
-      consult.providerTitles = onValue["providerTitles"];
-    });
-    void _showDialog(ConsultData _consult) {
+    medicallUser = auth.medicallUser;
+    void _showDialog() {
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -51,10 +38,7 @@ class SymptomsScreen extends StatelessWidget {
                 onPressed: () {
                   GlobalNavigatorKey.key.currentState.pop();
                   GlobalNavigatorKey.key.currentState.push(
-                    MaterialPageRoute(
-                        builder: (_) => QuestionsScreen(
-                              data: {'user': medicallUser, 'consult': _consult},
-                            )),
+                    MaterialPageRoute(builder: (_) => QuestionsScreen()),
                   );
                 },
               ),
@@ -171,7 +155,6 @@ class AnimatedBackground extends StatelessWidget {
 class EntryItem extends StatelessWidget {
   const EntryItem(this.entry, this._showDialog);
   final Entry entry;
-  static ConsultData _consult;
   final _showDialog;
 
   onBottom(Widget child) => Positioned.fill(
@@ -182,6 +165,7 @@ class EntryItem extends StatelessWidget {
       );
 
   Widget _buildTiles(Entry root) {
+    var auth = Provider.of<AuthBase>(GlobalNavigatorKey.key.currentContext);
     return Stack(
       children: <Widget>[
         root.price.length > 0
@@ -273,36 +257,25 @@ class EntryItem extends StatelessWidget {
                                           .colorScheme
                                           .secondary,
                                       onPressed: () async {
-                                        if (consult.provider == null) {
-                                          _consult = ConsultData();
-                                        } else {
-                                          _consult = consult;
+                                        if (auth.newConsult.provider == null) {
+                                          auth.newConsult = ConsultData();
                                         }
-                                        SharedPreferences _thisConsult =
-                                            await SharedPreferences
-                                                .getInstance();
+
                                         for (var i = 0; i < data.length; i++) {
                                           if (data[i].title == root.title) {
-                                            _consult.price = data[i].price;
+                                            auth.newConsult.price =
+                                                data[i].price;
                                           }
                                         }
-                                        _consult.consultType =
+                                        auth.newConsult.consultType =
                                             root.title == 'Spot'
                                                 ? 'Lesion'
                                                 : root.title;
-                                        var consultQuestions = await Firestore
-                                            .instance
-                                            .document(
-                                                'services/dermatology/symptoms/' +
-                                                    _consult.consultType
-                                                        .toLowerCase())
-                                            .get();
-                                        var medRecord = await Firestore.instance
-                                            .collection('medical_history')
-                                            .document(medicallUser.uid)
-                                            .get();
-                                        if (medRecord != null &&
-                                            medRecord.data != null) {
+                                        await auth.getUserMedicalHistory();
+                                        await auth.getConsultQuestions();
+                                        if (auth.userMedicalRecord != null &&
+                                            auth.userMedicalRecord.data !=
+                                                null) {
                                           medicallUser.hasMedicalHistory = true;
                                         }
                                         if (!medicallUser.hasMedicalHistory) {
@@ -311,34 +284,26 @@ class EntryItem extends StatelessWidget {
                                                   .document(
                                                       'services/general_questions')
                                                   .get();
-                                          _consult.historyQuestions =
+                                          auth.newConsult.historyQuestions =
                                               medicalHistoryQuestions.data[
                                                   "medical_history_questions"];
                                         }
 
-                                        _consult.screeningQuestions =
-                                            consultQuestions
+                                        auth.newConsult.screeningQuestions =
+                                            auth.consultQuestions
                                                 .data["screening_questions"];
 
-                                        _consult.uploadQuestions =
-                                            consultQuestions
-                                                .data["upload_questions"];
-                                        String currentConsultString =
-                                            jsonEncode(_consult);
-                                        await _thisConsult.setString(
-                                            "consult", currentConsultString);
+                                        auth.newConsult.uploadQuestions = auth
+                                            .consultQuestions
+                                            .data["upload_questions"];
                                         if (!medicallUser.hasMedicalHistory) {
-                                          _showDialog(_consult);
+                                          _showDialog(auth.newConsult);
                                         } else {
                                           GlobalNavigatorKey.key.currentState
                                               .push(
                                             MaterialPageRoute(
-                                                builder: (_) => QuestionsScreen(
-                                                      data: {
-                                                        'user': medicallUser,
-                                                        'consult': _consult
-                                                      },
-                                                    )),
+                                                builder: (_) =>
+                                                    QuestionsScreen()),
                                           );
                                         }
                                       },

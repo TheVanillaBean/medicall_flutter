@@ -1,6 +1,6 @@
+import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/models/reg_user_model.dart';
-import 'package:Medicall/screens/Symptoms/index.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:Medicall/util/firebase_anonymously_util.dart';
 import 'package:Medicall/util/firebase_auth_codes.dart';
@@ -20,6 +20,9 @@ abstract class AuthBase {
   List<DocumentSnapshot> userHistory;
   bool hasPayment;
   bool isDone;
+  var consultQuestions;
+  ConsultData newConsult;
+  var userMedicalRecord;
   String currConsultId;
   Future<MedicallUser> signInAnonymously();
   Future<MedicallUser> signInWithEmailAndPassword(
@@ -37,6 +40,8 @@ abstract class AuthBase {
   signUp();
   saveImages();
   addUserMedicalHistory();
+  getUserMedicalHistory();
+  getConsultQuestions();
 }
 
 class Auth implements AuthBase {
@@ -61,6 +66,12 @@ class Auth implements AuthBase {
   bool isDone;
   @override
   String currConsultId;
+  @override
+  var consultQuestions;
+  @override
+  ConsultData newConsult = ConsultData();
+  @override
+  var userMedicalRecord;
 
   Future<MedicallUser> _getMedicallUser(String uid) async {
     if (uid != null) {
@@ -185,11 +196,29 @@ class Auth implements AuthBase {
           .collection('medical_history')
           .document(medicallUser.uid);
       Map<String, dynamic> data = <String, dynamic>{
-        "medical_history_questions": consult.historyQuestions,
+        "medical_history_questions": newConsult.historyQuestions,
       };
       ref.setData(data).whenComplete(() {
         print("Consult Added");
       }).catchError((e) => print(e));
+    }
+  }
+
+  Future<void> getUserMedicalHistory() async {
+    if (medicallUser.uid.length > 0) {
+      userMedicalRecord = await Firestore.instance
+          .collection('medical_history')
+          .document(medicallUser.uid)
+          .get();
+    }
+  }
+
+  Future<void> getConsultQuestions() async {
+    if (medicallUser.uid.length > 0) {
+      consultQuestions = await Firestore.instance
+          .document('services/dermatology/symptoms/' +
+              newConsult.consultType.toLowerCase())
+          .get();
     }
   }
 

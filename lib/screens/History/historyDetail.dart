@@ -9,7 +9,7 @@ import 'buildDetailTab.dart';
 
 class HistoryDetailScreen extends StatefulWidget {
   final data;
-  HistoryDetailScreen({Key key, @required this.data}) : super(key: key);
+  HistoryDetailScreen({Key key, this.data}) : super(key: key);
 
   _HistoryDetailScreenState createState() => _HistoryDetailScreenState();
 }

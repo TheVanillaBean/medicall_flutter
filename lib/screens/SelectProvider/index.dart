@@ -1,9 +1,7 @@
-import 'dart:convert';
-
-import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/secrets.dart' as secrets;
+import 'package:Medicall/services/auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -11,14 +9,12 @@ import 'package:google_maps_webservice/places.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as LocationManager;
 import 'package:oktoast/oktoast.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 
 GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: secrets.kGoogleApiKey);
 
 class SelectProviderScreen extends StatefulWidget {
-  final data;
-
-  const SelectProviderScreen({Key key, @required this.data}) : super(key: key);
+  const SelectProviderScreen({Key key}) : super(key: key);
   @override
   _SelectProviderScreenState createState() => _SelectProviderScreenState();
 }
@@ -37,29 +33,12 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
   var providerTitles = '';
   LatLng bounds = LatLng(41.850033, -87.6500523);
   String errorMessage;
-  ConsultData _consult = ConsultData();
+  var auth = Provider.of<AuthBase>(GlobalNavigatorKey.key.currentContext);
 
   @override
   void initState() {
     super.initState();
-    medicallUser = widget.data['user'];
-    _consult = widget.data['consult'];
     getAddresses();
-    getConsult();
-  }
-
-  Future getConsult() async {
-    if (_consult.provider != null && _consult.provider.length > 0) {
-      selectedProvider = _consult.provider;
-    }
-  }
-
-  setConsult() async {
-    SharedPreferences _thisConsult = await SharedPreferences.getInstance();
-    _consult.provider = selectedProvider;
-    _consult.providerTitles = providerTitles;
-    String currentConsultString = jsonEncode(_consult);
-    await _thisConsult.setString("consult", currentConsultString);
   }
 
   Future getAddresses() async {
@@ -113,8 +92,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
           onPressed: () async {
             if (selectedProvider.length > 0) {
               //await setConsult();
-              GlobalNavigatorKey.key.currentState.pushNamed('/consultReview',
-                  arguments: {'consult': _consult, 'user': medicallUser});
+              GlobalNavigatorKey.key.currentState.pushNamed('/consultReview');
             } else {
               _showMessageDialog();
             }
@@ -169,15 +147,15 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
                                 trailing: FlatButton(
                                   onPressed: () {
                                     setState(() {
-                                      _consult.provider =
+                                      auth.newConsult.provider =
                                           userDocuments[i].data['name'];
-                                      _consult.providerTitles =
+                                      auth.newConsult.providerTitles =
                                           userDocuments[i].data['titles'];
-                                      _consult.providerDevTokens =
+                                      auth.newConsult.providerDevTokens =
                                           userDocuments[i].data['dev_tokens'];
-                                      _consult.providerId =
+                                      auth.newConsult.providerId =
                                           userDocuments[i].documentID;
-                                      _consult.providerProfilePic =
+                                      auth.newConsult.providerProfilePic =
                                           userDocuments[i].data['profile_pic'];
                                       _selectProvider(
                                           userDocuments[i].data['name'],
@@ -247,8 +225,8 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
   Future _selectProvider(provider, titles) async {
     selectedProvider = provider;
     providerTitles = titles;
-    _consult.provider = selectedProvider;
-    _consult.providerTitles = providerTitles;
+    auth.newConsult.provider = selectedProvider;
+    auth.newConsult.providerTitles = providerTitles;
     //await setConsult();
   }
 
