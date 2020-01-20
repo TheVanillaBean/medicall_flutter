@@ -1,5 +1,6 @@
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/models/reg_user_model.dart';
+import 'package:Medicall/screens/Symptoms/index.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:Medicall/util/firebase_anonymously_util.dart';
 import 'package:Medicall/util/firebase_auth_codes.dart';
@@ -35,6 +36,7 @@ abstract class AuthBase {
   Future<void> getUserHistory();
   signUp();
   saveImages();
+  addUserMedicalHistory();
 }
 
 class Auth implements AuthBase {
@@ -101,23 +103,26 @@ class Auth implements AuthBase {
 
   @override
   Future<void> getConsultDetail() async {
-    final DocumentReference documentReference =
-        Firestore.instance.collection('consults').document(currConsultId);
-    await documentReference.get().then((datasnapshot) async {
-      if (datasnapshot.data != null) {
-        consultSnapshot = datasnapshot;
-        consultSnapshot.data['details'] = [
-          consultSnapshot['medical_history_questions'],
-          consultSnapshot['screening_questions'],
-          consultSnapshot['media']
-        ];
-        if (consultSnapshot['state'] == 'done') {
-          isDone = true;
-        } else {
-          isDone = false;
+    if (consultSnapshot == null ||
+        currConsultId != consultSnapshot.documentID) {
+      final DocumentReference documentReference =
+          Firestore.instance.collection('consults').document(currConsultId);
+      await documentReference.get().then((datasnapshot) async {
+        if (datasnapshot.data != null) {
+          consultSnapshot = datasnapshot;
+          consultSnapshot.data['details'] = [
+            consultSnapshot['medical_history_questions'],
+            consultSnapshot['screening_questions'],
+            consultSnapshot['media']
+          ];
+          if (consultSnapshot['state'] == 'done') {
+            isDone = true;
+          } else {
+            isDone = false;
+          }
         }
-      }
-    }).catchError((e) => print(e));
+      }).catchError((e) => print(e));
+    }
   }
 
   @override
@@ -170,6 +175,20 @@ class Auth implements AuthBase {
             }
           }
         }
+      }).catchError((e) => print(e));
+    }
+  }
+
+  Future<void> addUserMedicalHistory() async {
+    if (medicallUser.uid.length > 0) {
+      final DocumentReference ref = Firestore.instance
+          .collection('medical_history')
+          .document(medicallUser.uid);
+      Map<String, dynamic> data = <String, dynamic>{
+        "medical_history_questions": consult.historyQuestions,
+      };
+      ref.setData(data).whenComplete(() {
+        print("Consult Added");
       }).catchError((e) => print(e));
     }
   }

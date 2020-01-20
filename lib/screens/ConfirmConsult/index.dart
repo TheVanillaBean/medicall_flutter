@@ -413,6 +413,41 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
     }).catchError((e) => print(e));
   }
 
+  Future _addUserMedicalHistory() async {
+    var ref = Firestore.instance.collection('users').document();
+
+    var imagesList = await saveImages(_consult.media, ref.documentID);
+    Map<String, dynamic> data = <String, dynamic>{
+      "screening_questions": _consult.screeningQuestions,
+      //"medical_history_questions": _consult.historyQuestions,
+      "type": _consult.consultType,
+      "chat": [],
+      "state": "new",
+      "date": DateTime.now(),
+      "medication_name": "",
+      "provider": _consult.provider,
+      "providerTitles": _consult.providerTitles,
+      "patient": medicallUser.displayName,
+      "provider_id": _consult.providerId,
+      "patient_id": medicallUser.uid,
+      "media": _consult.media.length > 0 ? imagesList : "",
+    };
+    ref.setData(data).whenComplete(() {
+      print("Consult Added");
+      // Future.delayed(const Duration(milliseconds: 5000), () {
+      //   return Navigator.pushReplacementNamed(context, '/history',
+      //       arguments: {'consult': _consult, 'user': medicallUser});
+      // });
+      Route route = MaterialPageRoute(
+          builder: (context) => RouteUserOrderScreen(
+                data: {'user': medicallUser, 'consult': _consult},
+              ));
+      return GlobalNavigatorKey.key.currentState.pushReplacement(route);
+
+      //_addProviderConsult(ref.documentID, imagesList);
+    }).catchError((e) => print(e));
+  }
+
   Future saveImages(assets, consultId) async {
     var allMediaList = [];
     var allFileNames = [];

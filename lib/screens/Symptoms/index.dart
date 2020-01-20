@@ -297,12 +297,29 @@ class EntryItem extends StatelessWidget {
                                                     _consult.consultType
                                                         .toLowerCase())
                                             .get();
+                                        var medRecord = await Firestore.instance
+                                            .collection('medical_history')
+                                            .document(medicallUser.uid)
+                                            .get();
+                                        if (medRecord != null &&
+                                            medRecord.data != null) {
+                                          medicallUser.hasMedicalHistory = true;
+                                        }
+                                        if (!medicallUser.hasMedicalHistory) {
+                                          var medicalHistoryQuestions =
+                                              await Firestore.instance
+                                                  .document(
+                                                      'services/general_questions')
+                                                  .get();
+                                          _consult.historyQuestions =
+                                              medicalHistoryQuestions.data[
+                                                  "medical_history_questions"];
+                                        }
+
                                         _consult.screeningQuestions =
                                             consultQuestions
                                                 .data["screening_questions"];
-                                        _consult.historyQuestions =
-                                            consultQuestions.data[
-                                                "medical_history_questions"];
+
                                         _consult.uploadQuestions =
                                             consultQuestions
                                                 .data["upload_questions"];

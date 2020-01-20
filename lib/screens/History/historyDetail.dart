@@ -129,6 +129,128 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(
+            appBar: AppBar(
+              actions: <Widget>[
+                medicallUser.type == 'provider'
+                    ? PopupMenuButton<Choice>(
+                        onSelected: _updateConsultStatus,
+                        initialValue: _selectedChoice,
+                        itemBuilder: (BuildContext context) {
+                          return choices.map((Choice choice) {
+                            return PopupMenuItem<Choice>(
+                              value: choice,
+                              child: Container(
+                                height: 70,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Text(choice.title),
+                                    choice.icon
+                                  ],
+                                ),
+                              ),
+                            );
+                          }).toList();
+                        },
+                      )
+                    : SizedBox(
+                        width: 60,
+                      ),
+              ],
+              title: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        consultSnapshot != null &&
+                                consultSnapshot['type'] != 'Lesion'
+                            ? consultSnapshot['type']
+                            : consultSnapshot != null
+                                ? medicallUser.type == 'patient'
+                                    ? '${consultSnapshot['provider'].split(" ")[0][0].toUpperCase()}${consultSnapshot['provider'].split(" ")[0].substring(1)} ${consultSnapshot['provider'].split(" ")[1][0].toUpperCase()}${consultSnapshot['provider'].split(" ")[1].substring(1)} ' +
+                                        consultSnapshot['providerTitles']
+                                    : '${consultSnapshot['patient'].split(" ")[0][0].toUpperCase()}${consultSnapshot['patient'].split(" ")[0].substring(1)} ${consultSnapshot['patient'].split(" ")[1][0].toUpperCase()}${consultSnapshot['patient'].split(" ")[1].substring(1)} '
+                                : '',
+                        style: TextStyle(
+                          fontSize:
+                              Theme.of(context).platform == TargetPlatform.iOS
+                                  ? 17.0
+                                  : 20.0,
+                        ),
+                      ),
+                      Text(
+                        consultSnapshot != null &&
+                                medicallUser.type == 'patient'
+                            ? '${consultSnapshot['provider'].split(" ")[0][0].toUpperCase()}${consultSnapshot['provider'].split(" ")[0].substring(1)} ${consultSnapshot['provider'].split(" ")[1][0].toUpperCase()}${consultSnapshot['provider'].split(" ")[1].substring(1)} ' +
+                                consultSnapshot['providerTitles']
+                            : consultSnapshot != null &&
+                                    medicallUser.type == 'provider'
+                                ? '${consultSnapshot['patient'].split(" ")[0][0].toUpperCase()}${consultSnapshot['patient'].split(" ")[0].substring(1)} ${consultSnapshot['patient'].split(" ")[1][0].toUpperCase()}${consultSnapshot['patient'].split(" ")[1].substring(1)} '
+                                : consultSnapshot != null &&
+                                        consultSnapshot['type'] == 'Lesion'
+                                    ? 'Spot'
+                                    : consultSnapshot != null &&
+                                            consultSnapshot['type'] != 'Lesion'
+                                        ? consultSnapshot['type']
+                                        : '',
+                        style: TextStyle(
+                          fontSize:
+                              Theme.of(context).platform == TargetPlatform.iOS
+                                  ? 12.0
+                                  : 14.0,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              bottom: TabBar(
+                indicatorColor: Theme.of(context).primaryColor,
+                indicatorWeight: 3,
+                labelStyle: TextStyle(fontSize: 12),
+                tabs: medicallUser.type == 'patient'
+                    ? <Tab>[
+                        Tab(
+                          // set icon to the tab
+                          text: 'Prescription',
+                          icon: Icon(Icons.local_hospital),
+                        ),
+                        Tab(
+                          // set icon to the tab
+                          text: 'Chat',
+                          icon: Icon(Icons.chat_bubble_outline),
+                        ),
+                        Tab(
+                          // set icon to the tab
+                          text: 'Details',
+                          icon: Icon(Icons.assignment),
+                        ),
+                      ]
+                    : <Tab>[
+                        Tab(
+                          // set icon to the tab
+                          text: 'Details',
+                          icon: Icon(Icons.assignment),
+                        ),
+                        Tab(
+                          // set icon to the tab
+                          text: 'Chat',
+                          icon: Icon(Icons.chat_bubble_outline),
+                        ),
+                        Tab(
+                          // set icon to the tab
+                          text: 'Prescription',
+                          icon: Icon(Icons.local_hospital),
+                        ),
+                      ],
+                // setup the controller
+                controller: controller,
+              ),
+            ),
             body: Center(
               child: CircularProgressIndicator(),
             ),

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/util/introduction_screen/introduction_screen.dart';
 import 'package:Medicall/util/introduction_screen/model/page_decoration.dart';
 import 'package:Medicall/util/introduction_screen/model/page_view_model.dart';
@@ -10,6 +11,7 @@ import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:oktoast/oktoast.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'buildQuestions.dart';
@@ -34,6 +36,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
   double formSpacing = 20;
   var screeningQuestions;
   var ranOnce = false;
+  var auth = Provider.of<AuthBase>(GlobalNavigatorKey.key.currentContext);
   var medicalHistoryQuestions;
   bool showSegmentedControl = true;
   ConsultData _consult = ConsultData();
@@ -64,7 +67,8 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
         }
 
         for (var i = 0; i < combinedList.length; i++) {
-          globalKeyList['questionKey' + i.toString()] = GlobalKey();
+          globalKeyList['questionKey' + i.toString()] =
+              GlobalKey<FormBuilderState>();
         }
       });
     });
@@ -85,7 +89,6 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
   Future<void> _onIntroEnd() async {
     //await setConsult(context);
     if (widget.data['consult'].consultType == 'Medical History') {
-      medicallUser.hasMedicalHistory = true;
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -102,6 +105,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
                     ? 'Spot'
                     : "Continue to " + _consult.consultType + ' treatment'),
                 onPressed: () {
+                  auth.addUserMedicalHistory();
                   GlobalNavigatorKey.key.currentState.pop();
                   GlobalNavigatorKey.key.currentState.pushReplacementNamed(
                       '/questionsScreen',
@@ -114,6 +118,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
       );
     } else {
       widget.data['consult'].consultType = _consult.consultType;
+      //switch for if provider has already been selected
       if (_consult == null || _consult.provider == null) {
         GlobalNavigatorKey.key.currentState.pushNamed('/selectProvider',
             arguments: {'user': medicallUser, 'consult': _consult});
@@ -130,54 +135,41 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
     });
     var tabController = context.state.questionsFormKey.currentContext.state;
     var listKeys = [];
-    this.globalKeyList.forEach((k, v) => listKeys.add({'key': k, 'value': v}));
-    var formAnswer = combinedList[int.parse(
-            listKeys[index != 0 ? index - 1 : index]['key'].split('Key')[1])]
-        ['answer'];
-    var currentState =
-        listKeys[index != 0 ? index - 1 : index]['value'].currentState;
+    var currentKeys = [];
+    for (var i = 0; i < combinedList.length; i++) {
+      if (combinedList[i]['visible']) {
+        var keyObj = 'questionKey' + i.toString();
+        listKeys.add(combinedList[i]);
+        currentKeys.add(globalKeyList[keyObj]);
+      }
+    }
+    var formAnswer = listKeys[index != 0 ? index - 1 : index]['answer'];
+    var currentState = currentKeys[index].currentState;
 
     if (formAnswer != null &&
+        formAnswer[0] != null &&
         currentState != null &&
         currentState.value['question0'] != formAnswer) {
       currentState.value['question0'] = formAnswer;
     }
 
-    if (this
-            .globalKeyList[listKeys[index != 0 ? index - 1 : index]['key']]
-            .currentState !=
-        null) {
-      if (this
-                      .globalKeyList[listKeys[index != 0 ? index - 1 : index]
-                          ['key']]
-                      .currentState
-                      .value
-                      .length >
-                  0 &&
-              this
-                      .globalKeyList[listKeys[index != 0 ? index - 1 : index]
-                          ['key']]
-                      .currentState
-                      .value['question0']
-                      .length >
-                  0 ||
-          this
-              .combinedList[index != 0 ? index - 1 : index]
-              .containsKey('not_required')) {
-        tabController.pageController.animateToPage(
-          index,
-          duration: Duration(milliseconds: 200),
-          curve: Curves.linear,
-        );
-      } else {
-        tabController.pageController.animateToPage(
-          index != 0 ? index - 1 : index,
-          duration: Duration(milliseconds: 200),
-          curve: Curves.linear,
-        );
-        showToast('Please fill out the required question.',
-            position: ToastPosition(align: Alignment.center));
-      }
+    if (formAnswer != null &&
+        formAnswer[0] != null &&
+        currentState != null &&
+        currentState.value['question0'] == formAnswer) {
+      tabController.pageController.animateToPage(
+        index,
+        duration: Duration(milliseconds: 200),
+        curve: Curves.linear,
+      );
+    } else {
+      tabController.pageController.animateToPage(
+        index != 0 ? index - 1 : index,
+        duration: Duration(milliseconds: 200),
+        curve: Curves.linear,
+      );
+      showToast('Please fill out the required question.',
+          position: ToastPosition(align: Alignment.center));
     }
   }
 

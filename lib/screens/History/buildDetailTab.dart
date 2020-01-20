@@ -271,6 +271,11 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                               ],
                             )
                           : Container(),
+                      consultSnapshot.containsKey('medication_name') &&
+                              consultSnapshot['medication_name'].length == 0
+                          ? Text(
+                              'Once your doctor reviews the details and if a prescription is nessassary it will appear below. Once it is filled out we will ask you for address & payment below.')
+                          : Container(),
                       Row(
                         children: <Widget>[
                           Container(
