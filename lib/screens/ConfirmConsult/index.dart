@@ -384,12 +384,12 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
     var imagesList = await saveImages(_consult.media, ref.documentID);
     Map<String, dynamic> data = <String, dynamic>{
       "screening_questions": _consult.screeningQuestions,
-      "medical_history_questions": _consult.historyQuestions,
+      //"medical_history_questions": _consult.historyQuestions,
       "type": _consult.consultType,
       "chat": [],
       "state": "new",
       "date": DateTime.now(),
-      "prescription": "",
+      "medication_name": "",
       "provider": _consult.provider,
       "providerTitles": _consult.providerTitles,
       "patient": medicallUser.displayName,

@@ -139,16 +139,18 @@ class Auth implements AuthBase {
   }
 
   Future<void> _getUserPaymentCard() async {
-    final Future<QuerySnapshot> documentReference = Firestore.instance
-        .collection('cards')
-        .document(medicallUser.uid)
-        .collection('sources')
-        .getDocuments();
-    await documentReference.then((datasnapshot) {
-      if (datasnapshot.documents.length > 0) {
-        hasPayment = true;
-      }
-    }).catchError((e) => print(e));
+    if (medicallUser.uid.length > 0) {
+      final Future<QuerySnapshot> documentReference = Firestore.instance
+          .collection('cards')
+          .document(medicallUser.uid)
+          .collection('sources')
+          .getDocuments();
+      await documentReference.then((datasnapshot) {
+        if (datasnapshot.documents.length > 0) {
+          hasPayment = true;
+        }
+      }).catchError((e) => print(e));
+    }
   }
 
   Future<void> getUserHistory() async {
@@ -276,21 +278,23 @@ class Auth implements AuthBase {
 
   @override
   Future<void> saveImages() async {
-    var assets = tempRegUser.images;
-    var allMediaList = [];
-    for (var i = 0; i < assets.length; i++) {
-      ByteData byteData = await assets[i].requestOriginal();
-      List<int> imageData = byteData.buffer.asUint8List();
-      StorageReference ref = FirebaseStorage.instance
-          .ref()
-          .child("profile/" + medicallUser.uid + '/' + assets[i].name);
-      StorageUploadTask uploadTask = ref.putData(imageData);
+    if (medicallUser.uid.length > 0) {
+      var assets = tempRegUser.images;
+      var allMediaList = [];
+      for (var i = 0; i < assets.length; i++) {
+        ByteData byteData = await assets[i].requestOriginal();
+        List<int> imageData = byteData.buffer.asUint8List();
+        StorageReference ref = FirebaseStorage.instance
+            .ref()
+            .child("profile/" + medicallUser.uid + '/' + assets[i].name);
+        StorageUploadTask uploadTask = ref.putData(imageData);
 
-      allMediaList
-          .add(await (await uploadTask.onComplete).ref.getDownloadURL());
+        allMediaList
+            .add(await (await uploadTask.onComplete).ref.getDownloadURL());
+      }
+      medicallUser.profilePic = allMediaList[0];
+      medicallUser.govId = allMediaList[1];
     }
-    medicallUser.profilePic = allMediaList[0];
-    medicallUser.govId = allMediaList[1];
   }
 
   @override

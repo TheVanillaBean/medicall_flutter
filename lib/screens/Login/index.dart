@@ -137,7 +137,7 @@ class _LoginScreenState extends State<LoginPage> {
         color: Theme.of(context).primaryColor,
         textColor: Colors.white,
         text: "Sign in",
-        onPressed: model.canSubmit ? _submit : null,
+        onPressed: model.canSubmit ? _submit : _submit,
       ),
       SizedBox(height: 12),
       Text(
