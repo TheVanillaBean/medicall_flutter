@@ -41,6 +41,7 @@ abstract class AuthBase {
   saveImages();
   addUserMedicalHistory();
   getUserMedicalHistory();
+  getPatientMedicalHistory();
   getConsultQuestions();
 }
 
@@ -208,6 +209,15 @@ class Auth implements AuthBase {
       userMedicalRecord = await Firestore.instance
           .collection('medical_history')
           .document(medicallUser.uid)
+          .get();
+    }
+  }
+
+  Future<void> getPatientMedicalHistory() async {
+    if (medicallUser.uid.length > 0) {
+      userMedicalRecord = await Firestore.instance
+          .collection('medical_history')
+          .document(consultSnapshot.data['patient_id'])
           .get();
     }
   }

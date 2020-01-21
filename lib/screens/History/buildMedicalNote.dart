@@ -1,4 +1,5 @@
-buildMedicalNote(snapshot, patientDetail) {
+buildMedicalNote(snapshot, patientDetail, medicalHistory) {
+  medicalHistory = medicalHistory['medical_history_questions'];
   String fullStr = '';
   if (snapshot['type'] == 'Hairloss') {
     fullStr += '\nCC: ' +
@@ -77,7 +78,7 @@ buildMedicalNote(snapshot, patientDetail) {
             .toString() +
         ' year old ' +
         patientDetail.gender +
-        ' complains of Spot'+
+        ' complains of Spot' +
         '.  This has been present for ' +
         snapshot['screening_questions'][0]['answer'].toString();
     if (patientDetail != null &&
@@ -106,8 +107,29 @@ buildMedicalNote(snapshot, patientDetail) {
           snapshot['screening_questions'][5]['answer'].toString();
     }
   }
-  fullStr += '\n\n Medications: ';
-  fullStr += '\n\n Allergies: ';
-  fullStr += '\n\n Past medical history: ';
-  return fullStr;
+  if (medicalHistory != null) {
+    fullStr += '\n\nMedications: \n' +
+        medicalHistory[4]['answer'].toString() +
+        ' ' +
+        medicalHistory[5]['answer'].toString();
+    fullStr += '\n\nAllergies: \n' +
+        medicalHistory[6]['answer'].toString() +
+        ' ' +
+        medicalHistory[7]['answer'].toString();
+    fullStr += '\n\nPast medical history: \n';
+    // medicalHistory[2]['answer'].toString() +
+    // ' ' +
+    // medicalHistory[3]['answer'].toString() +
+    // ' ' +
+    // medicalHistory[13]['answer'].toString();
+    if (medicalHistory[0]['answer'][0].toString() == 'Yes') {
+      fullStr += medicalHistory[1]['answer'].toString();
+    }
+    fullStr += medicalHistory[2]['answer'].toString() +
+        ' ' +
+        medicalHistory[3]['answer'].toString() +
+        ' ' +
+        medicalHistory[13]['answer'].toString();
+    return fullStr;
+  }
 }

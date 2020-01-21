@@ -31,6 +31,14 @@ class BuildDetailTab extends StatefulWidget {
 class _BuildDetailTabState extends State<BuildDetailTab> {
   var auth = Provider.of<AuthBase>(GlobalNavigatorKey.key.currentContext);
   @override
+  void initState() {
+    super.initState();
+    if (currentDetailsIndex == 0) {
+      auth.getPatientMedicalHistory();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     var key = widget.keyStr.toString();
     var ind = widget.indx;
@@ -171,7 +179,9 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                               return ListTile(
                                 title: Text(
                                   buildMedicalNote(
-                                      consultSnapshot, auth.patientDetail),
+                                      consultSnapshot,
+                                      auth.patientDetail,
+                                      auth.userMedicalRecord.data),
                                   style: TextStyle(fontSize: 14.0),
                                 ),
                               );
@@ -640,8 +650,9 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
     }).catchError((e) => print(e));
   }
 
-  _handleDetailsTabSelection(int index) {
+  _handleDetailsTabSelection(int index) async {
     currentDetailsIndex = index;
+
     setState(() {
       if (index == 1) {
         addedImages = false;
