@@ -185,8 +185,11 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                       Text(
                         consultSnapshot != null &&
                                 medicallUser.type == 'patient'
-                            ? '${consultSnapshot['provider'].split(" ")[0][0].toUpperCase()}${consultSnapshot['provider'].split(" ")[0].substring(1)} ${consultSnapshot['provider'].split(" ")[1][0].toUpperCase()}${consultSnapshot['provider'].split(" ")[1].substring(1)} ' +
-                                consultSnapshot['providerTitles']
+                            ? consultSnapshot['type'] == 'Lesion'
+                                ? 'Spot'
+                                : consultSnapshot['type'] != 'Lesion'
+                                    ? consultSnapshot['type']
+                                    : ''
                             : consultSnapshot != null &&
                                     medicallUser.type == 'provider'
                                 ? '${consultSnapshot['patient'].split(" ")[0][0].toUpperCase()}${consultSnapshot['patient'].split(" ")[0].substring(1)} ${consultSnapshot['patient'].split(" ")[1][0].toUpperCase()}${consultSnapshot['patient'].split(" ")[1].substring(1)} '
@@ -296,15 +299,12 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      consultSnapshot != null &&
-                              consultSnapshot['type'] != 'Lesion'
+                      consultSnapshot['type'] != 'Lesion'
                           ? consultSnapshot['type']
-                          : consultSnapshot != null
-                              ? medicallUser.type == 'patient'
-                                  ? '${consultSnapshot['provider'].split(" ")[0][0].toUpperCase()}${consultSnapshot['provider'].split(" ")[0].substring(1)} ${consultSnapshot['provider'].split(" ")[1][0].toUpperCase()}${consultSnapshot['provider'].split(" ")[1].substring(1)} ' +
-                                      consultSnapshot['providerTitles']
-                                  : '${consultSnapshot['patient'].split(" ")[0][0].toUpperCase()}${consultSnapshot['patient'].split(" ")[0].substring(1)} ${consultSnapshot['patient'].split(" ")[1][0].toUpperCase()}${consultSnapshot['patient'].split(" ")[1].substring(1)} '
-                              : '',
+                          : medicallUser.type == 'patient'
+                              ? '${consultSnapshot['provider'].split(" ")[0][0].toUpperCase()}${consultSnapshot['provider'].split(" ")[0].substring(1)} ${consultSnapshot['provider'].split(" ")[1][0].toUpperCase()}${consultSnapshot['provider'].split(" ")[1].substring(1)} ' +
+                                  consultSnapshot['providerTitles']
+                              : '${consultSnapshot['patient'].split(" ")[0][0].toUpperCase()}${consultSnapshot['patient'].split(" ")[0].substring(1)} ${consultSnapshot['patient'].split(" ")[1][0].toUpperCase()}${consultSnapshot['patient'].split(" ")[1].substring(1)} ',
                       style: TextStyle(
                         fontSize:
                             Theme.of(context).platform == TargetPlatform.iOS
@@ -313,17 +313,17 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                       ),
                     ),
                     Text(
-                      consultSnapshot != null && medicallUser.type == 'patient'
-                          ? '${consultSnapshot['provider'].split(" ")[0][0].toUpperCase()}${consultSnapshot['provider'].split(" ")[0].substring(1)} ${consultSnapshot['provider'].split(" ")[1][0].toUpperCase()}${consultSnapshot['provider'].split(" ")[1].substring(1)} ' +
-                              consultSnapshot['providerTitles']
-                          : consultSnapshot != null &&
-                                  medicallUser.type == 'provider'
+                      medicallUser.type == 'patient'
+                          ? consultSnapshot['type'] == 'Lesion'
+                              ? 'Spot'
+                              : consultSnapshot['type'] != 'Lesion'
+                                  ? consultSnapshot['type']
+                                  : ''
+                          : medicallUser.type == 'provider'
                               ? '${consultSnapshot['patient'].split(" ")[0][0].toUpperCase()}${consultSnapshot['patient'].split(" ")[0].substring(1)} ${consultSnapshot['patient'].split(" ")[1][0].toUpperCase()}${consultSnapshot['patient'].split(" ")[1].substring(1)} '
-                              : consultSnapshot != null &&
-                                      consultSnapshot['type'] == 'Lesion'
+                              : consultSnapshot['type'] == 'Lesion'
                                   ? 'Spot'
-                                  : consultSnapshot != null &&
-                                          consultSnapshot['type'] != 'Lesion'
+                                  : consultSnapshot['type'] != 'Lesion'
                                       ? consultSnapshot['type']
                                       : '',
                       style: TextStyle(

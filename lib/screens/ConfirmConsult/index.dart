@@ -380,6 +380,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
       "provider": auth.newConsult.provider,
       "providerTitles": auth.newConsult.providerTitles,
       "patient": medicallUser.displayName,
+      "consult_price": auth.newConsult.price,
       "provider_id": auth.newConsult.providerId,
       "patient_id": medicallUser.uid,
       "media": auth.newConsult.media.length > 0 ? imagesList : "",

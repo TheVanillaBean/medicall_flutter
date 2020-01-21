@@ -36,7 +36,10 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
     var ind = widget.indx;
     medicallUser = auth.medicallUser;
     var consultSnapshot = auth.consultSnapshot.data;
-    var questions = consultSnapshot[key];
+    List<String> mediaList = [];
+    for (var i = 0; i < consultSnapshot['media'].length; i++) {
+      mediaList.add(consultSnapshot['media'][i]);
+    }
     var units = ['Capsule', 'Ointment', 'Cream', 'Solution', 'Foam'];
     if (key == 'details') {
       return Scaffold(
@@ -59,10 +62,6 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
             items: auth.medicallUser.type == 'patient'
                 ? [
                     BottomNavigationBarItem(
-                      icon: Icon(Icons.assignment_ind),
-                      title: Text('History'),
-                    ),
-                    BottomNavigationBarItem(
                       icon: Icon(Icons.local_pharmacy),
                       title: Text('Symptom'),
                     ),
@@ -84,9 +83,9 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
           ),
         )),
         body: Container(
-          child: questions[0].toString().contains('https')
+          child: currentDetailsIndex == 1
               ? CarouselWithIndicator(
-                  imgList: consultSnapshot['details'],
+                  imgList: mediaList,
                 )
               : ListView.builder(
                   itemCount: consultSnapshot['details'] != null
@@ -272,9 +271,13 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                             )
                           : Container(),
                       consultSnapshot.containsKey('medication_name') &&
-                              consultSnapshot['medication_name'].length == 0
-                          ? Text(
-                              'Once your doctor reviews the details and if a prescription is nessassary it will appear below. Once it is filled out we will ask you for address & payment below.')
+                              consultSnapshot['medication_name'].length == 0 &&
+                              medicallUser.type == 'patient'
+                          ? Container(
+                              padding: EdgeInsets.all(8),
+                              child: Text(
+                                  'Once your doctor reviews the details and if a prescription is nessassary it will appear below. Once it is filled out we will ask you for address & payment below.'),
+                            )
                           : Container(),
                       Row(
                         children: <Widget>[
@@ -296,6 +299,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                   ? true
                                   : false,
                               decoration: InputDecoration(
+                                labelStyle: TextStyle(color: Colors.black45),
                                 labelText: 'Medication Name',
                                 hintText: 'Enter patient\'s medication name',
                                 fillColor: consultSnapshot['state'] == 'done' ||
@@ -325,7 +329,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                   consultSnapshot.containsKey('quantity') &&
                                           consultSnapshot['quantity'].length > 0
                                       ? consultSnapshot['quantity']
-                                      : '2',
+                                      : '0',
                               attribute: 'quantity',
                               maxLines: 1,
                               readOnly: consultSnapshot['state'] == 'done' ||
@@ -333,6 +337,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                   ? true
                                   : false,
                               decoration: InputDecoration(
+                                labelStyle: TextStyle(color: Colors.black45),
                                 labelText: 'Quantity',
                                 hintText: '',
                                 fillColor: consultSnapshot['state'] == 'done' ||
@@ -367,6 +372,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                   : false,
                               decoration: InputDecoration(
                                   contentPadding: EdgeInsets.all(9),
+                                  labelStyle: TextStyle(color: Colors.black45),
                                   labelText: 'Units',
                                   fillColor:
                                       consultSnapshot['state'] == 'done' ||
@@ -404,6 +410,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                               iconSize: medicallUser.type == 'patient' ? 0 : 24,
                               decoration: InputDecoration(
                                   contentPadding: EdgeInsets.all(9),
+                                  labelStyle: TextStyle(color: Colors.black45),
                                   labelText: 'Refills',
                                   fillColor:
                                       consultSnapshot['state'] == 'done' ||
@@ -446,6 +453,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                   : false,
                               decoration: InputDecoration(
                                 labelText: 'Dose',
+                                labelStyle: TextStyle(color: Colors.black45),
                                 fillColor: consultSnapshot['state'] == 'done' ||
                                         medicallUser.type == 'patient'
                                     ? Colors.grey.withAlpha(30)
@@ -478,6 +486,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                   : false,
                               decoration: InputDecoration(
                                 labelText: 'Frequency',
+                                labelStyle: TextStyle(color: Colors.black45),
                                 fillColor: consultSnapshot['state'] == 'done' ||
                                         medicallUser.type == 'patient'
                                     ? Colors.grey.withAlpha(30)
@@ -514,6 +523,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                   : false,
                               decoration: InputDecoration(
                                 labelText: 'Instructions',
+                                labelStyle: TextStyle(color: Colors.black45),
                                 fillColor: consultSnapshot['state'] == 'done' ||
                                         medicallUser.type == 'patient'
                                     ? Colors.grey.withAlpha(30)

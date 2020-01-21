@@ -122,7 +122,6 @@ class Auth implements AuthBase {
         if (datasnapshot.data != null) {
           consultSnapshot = datasnapshot;
           consultSnapshot.data['details'] = [
-            consultSnapshot['medical_history_questions'],
             consultSnapshot['screening_questions'],
             consultSnapshot['media']
           ];

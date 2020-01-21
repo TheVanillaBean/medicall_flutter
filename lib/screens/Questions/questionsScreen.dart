@@ -131,10 +131,12 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
     }
 
     if (formAnswer != null &&
-        formAnswer.length > 0 &&
-        formAnswer[0] != null &&
-        currentState != null &&
-        currentState.value['question0'] == formAnswer) {
+            formAnswer.length > 0 &&
+            formAnswer[0] != null &&
+            currentState != null &&
+            currentState.value['question0'] == formAnswer ||
+        listKeys[index != 0 ? index - 1 : index].containsKey('image') &&
+            listKeys[index != 0 ? index - 1 : index]['image'].length > 0) {
       tabController.pageController.animateToPage(
         index,
         duration: Duration(milliseconds: 200),

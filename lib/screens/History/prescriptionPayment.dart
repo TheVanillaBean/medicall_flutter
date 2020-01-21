@@ -1,7 +1,9 @@
 import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/database.dart';
 import 'package:Medicall/util/stripe_payment_handler.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -21,6 +23,7 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
   bool userShippingSelected = false;
   String shippingAddress = '';
   String shipTo = '';
+  bool isLoading = false;
   List<dynamic> addressList = [];
   GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: secrets.kGoogleApiKey);
   final TextEditingController typeAheadController = TextEditingController();
@@ -43,7 +46,7 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
     var auth = Provider.of<AuthBase>(GlobalNavigatorKey.key.currentContext);
     MedicallUser medicallUser = auth.medicallUser;
     var consultSnapshot = auth.consultSnapshot.data;
-    onChangedCheckBox = (val) {
+    onChangedCheckBox = (val) async {
       if (val.length > 0) {
         if (val.length >= 2 && val[1] == 'pickup') {
           val.removeAt(0);
@@ -111,7 +114,7 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
                               softWrap: true,
                             ),
                             Text(
-                              '\$80',
+                              '\*',
                               style: TextStyle(fontSize: 21),
                             ),
                           ],
@@ -246,33 +249,83 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
                                       .secondary,
                                   onPressed: () async {
                                     if (auth.hasPayment) {
+                                      isLoading = true;
                                       await PaymentService().chargePayment(
                                           consultSnapshot['price'],
                                           consultSnapshot['consultType'] +
                                               ' consult with ' +
                                               consultSnapshot['provider']);
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          // return object of type Dialog
+                                          return AlertDialog(
+                                            title: Text("Payment Accepted"),
+                                            content: Column(
+                                              children: <Widget>[
+                                                Row(
+                                                  children: <Widget>[
+                                                    Text(
+                                                        "Thank you for your order,")
+                                                  ],
+                                                ),
+                                                Row(
+                                                  children: <Widget>[
+                                                    Text(
+                                                        "Thank you for your order,")
+                                                  ],
+                                                )
+                                              ],
+                                            ),
+                                            actions: <Widget>[
+                                              // usually buttons at the bottom of the dialog
+                                              FlatButton(
+                                                color: Theme.of(context)
+                                                    .primaryColor,
+                                                child: Text("Continue"),
+                                                onPressed: () async {
+                                                  await Firestore.instance
+                                                      .collection("consults")
+                                                      .document(
+                                                          auth.currConsultId)
+                                                      .updateData({
+                                                    'paid': true,
+                                                    'shipping_address':
+                                                        shippingAddress,
+                                                  });
+                                                },
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                      isLoading = false;
                                     } else {
+                                      isLoading = true;
                                       await StripeSource.addSource()
                                           .then((String token) async {
-                                        PaymentService().addCard(token);
+                                        await PaymentService().addCard(token);
+                                        isLoading = false;
                                       });
                                     }
                                   },
-                                  child: Text(
-                                    auth.hasPayment
-                                        ? 'Pay for Presciption'
-                                        : 'Add Card',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      color: Theme.of(GlobalNavigatorKey
-                                              .key.currentContext)
-                                          .colorScheme
-                                          .onBackground,
-                                      letterSpacing: 1.0,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
+                                  child: isLoading
+                                      ? CircularProgressIndicator()
+                                      : Text(
+                                          auth.hasPayment
+                                              ? 'Pay for Presciption'
+                                              : 'Add Card',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            color: Theme.of(GlobalNavigatorKey
+                                                    .key.currentContext)
+                                                .colorScheme
+                                                .onBackground,
+                                            letterSpacing: 1.0,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
                                 )
                               : Container(),
                         ],
