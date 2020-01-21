@@ -79,8 +79,8 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
                         : "Continue to " +
                             auth.newConsult.consultType +
                             ' treatment'),
-                onPressed: () {
-                  auth.addUserMedicalHistory();
+                onPressed: () async {
+                  await auth.addUserMedicalHistory();
                   GlobalNavigatorKey.key.currentState.pop();
                   GlobalNavigatorKey.key.currentState
                       .pushReplacementNamed('/questionsScreen');
@@ -123,6 +123,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
     var currentState = currentKeys[index].currentState;
 
     if (formAnswer != null &&
+        formAnswer.length > 0 &&
         formAnswer[0] != null &&
         currentState != null &&
         currentState.value['question0'] != formAnswer) {
@@ -130,6 +131,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
     }
 
     if (formAnswer != null &&
+        formAnswer.length > 0 &&
         formAnswer[0] != null &&
         currentState != null &&
         currentState.value['question0'] == formAnswer) {
@@ -162,23 +164,24 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
     );
 
     List<PageViewModel> pageViewList = [];
-
-    for (var i = 0; i < combinedList.length; i++) {
-      if (combinedList[i]['visible']) {
-        pageViewList.add(PageViewModel(
-            titleWidget: SizedBox(),
-            bodyWidget: BuildQuestions(
-              data: {
-                'data': combinedList[i],
-                'questionIndex': 'screening_questions',
-                'dynamicAdd': null,
-                'parent': context,
-                'widget': widget,
-                'questions': combinedList,
-                'key': globalKeyList['questionKey' + i.toString()],
-              },
-            ),
-            decoration: pageDecoration));
+    if (combinedList != null) {
+      for (var i = 0; i < combinedList.length; i++) {
+        if (combinedList[i]['visible']) {
+          pageViewList.add(PageViewModel(
+              titleWidget: SizedBox(),
+              bodyWidget: BuildQuestions(
+                data: {
+                  'data': combinedList[i],
+                  'questionIndex': 'screening_questions',
+                  'dynamicAdd': null,
+                  'parent': context,
+                  'widget': widget,
+                  'questions': combinedList,
+                  'key': globalKeyList['questionKey' + i.toString()],
+                },
+              ),
+              decoration: pageDecoration));
+        }
       }
     }
 
@@ -215,13 +218,26 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
                 'Skip',
                 style: TextStyle(color: Theme.of(context).primaryColor),
               ),
-              next: Icon(
-                Icons.arrow_forward,
-                color: Theme.of(context).colorScheme.secondary,
+              next: Container(
+                padding: EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                      color: Theme.of(context).colorScheme.secondary,
+                      width: 2.0,
+                      style: BorderStyle.solid),
+                ),
+                child: Icon(
+                  Icons.arrow_forward_ios,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
               ),
               done: Text(
-                'Done',
-                style: TextStyle(color: Theme.of(context).primaryColor),
+                'Finish',
+                style: TextStyle(
+                    fontSize: 18,
+                    color: Theme.of(context).colorScheme.secondary,
+                    fontWeight: FontWeight.bold),
               ),
               dotsFlex: 1,
               dotsDecorator: DotsDecorator(

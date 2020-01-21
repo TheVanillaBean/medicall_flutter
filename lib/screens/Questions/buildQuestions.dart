@@ -74,11 +74,15 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                                                         .size
                                                         .height *
                                                     0.6,
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.85,
                                                 decoration: BoxDecoration(
                                                   border: Border.all(
                                                       width: 1,
                                                       color: Colors.grey,
-                                                      style: BorderStyle.none),
+                                                      style: BorderStyle.solid),
                                                 ),
                                                 child: Image.network(
                                                   question['media'],
@@ -100,9 +104,6 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                                                     child: Icon(
                                                       Icons.camera_alt,
                                                       size: 40,
-                                                      color: Theme.of(context)
-                                                          .colorScheme
-                                                          .onPrimary,
                                                     ),
                                                   ),
                                                 ),
@@ -122,8 +123,6 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                                                           child: Icon(
                                                             Icons.image,
                                                             size: 50,
-                                                            color: Colors.grey
-                                                                .withAlpha(100),
                                                           ),
                                                           height: MediaQuery.of(
                                                                       context)
@@ -157,8 +156,6 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                                                           child: Icon(
                                                             Icons.image,
                                                             size: 50,
-                                                            color: Colors.grey
-                                                                .withAlpha(100),
                                                           ),
                                                           height: MediaQuery.of(
                                                                       context)
@@ -202,8 +199,6 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                                                           child: Icon(
                                                             Icons.image,
                                                             size: 50,
-                                                            color: Colors.grey
-                                                                .withAlpha(100),
                                                           ),
                                                           height: MediaQuery.of(
                                                                       context)
@@ -244,8 +239,6 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                                                           child: Icon(
                                                             Icons.image,
                                                             size: 50,
-                                                            color: Colors.grey
-                                                                .withAlpha(100),
                                                           ),
                                                           height: MediaQuery.of(
                                                                       context)
@@ -306,9 +299,6 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                                                     child: Icon(
                                                       Icons.camera_alt,
                                                       size: 40,
-                                                      color: Theme.of(context)
-                                                          .colorScheme
-                                                          .onPrimary,
                                                     ),
                                                   ),
                                                 ),
@@ -339,38 +329,47 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                         ),
                         type == 'dropdown'
                             ? DropdownButtonHideUnderline(
-                                child: FormBuilderDropdown(
-                                  attribute: 'question0',
-                                  initialValue: data['answer'] != null
-                                      ? data['answer'].runtimeType == List &&
-                                              data['answer'].length > 0
-                                          ? data['answer'][1]
-                                          : data['answer'].runtimeType == String
-                                              ? data['answer']
-                                              : data['answer'][0]
-                                      : null,
-                                  decoration: InputDecoration(
-                                      fillColor:
-                                          Color.fromRGBO(35, 179, 232, 0.2),
-                                      filled: true,
-                                      contentPadding:
-                                          EdgeInsets.fromLTRB(10, 10, 10, 10),
-                                      border: InputBorder.none),
-                                  validators: [
-                                    FormBuilderValidators.required(),
-                                  ],
-                                  onChanged: _onChangedDropDown,
-                                  items: options
-                                      .map((lang) => DropdownMenuItem(
-                                          value: lang, child: Text(lang)))
-                                      .toList(),
+                                child: Theme(
+                                  data: ThemeData(),
+                                  child: FormBuilderDropdown(
+                                    attribute: 'question0',
+                                    initialValue: data['answer'] != null
+                                        ? data['answer'].runtimeType == List &&
+                                                data['answer'].length > 0
+                                            ? data['answer'][1]
+                                            : data['answer'].runtimeType ==
+                                                    String
+                                                ? data['answer']
+                                                : data['answer'][0]
+                                        : null,
+                                    decoration: InputDecoration(
+                                        fillColor:
+                                            Color.fromRGBO(35, 179, 232, 0.2),
+                                        filled: true,
+                                        contentPadding:
+                                            EdgeInsets.fromLTRB(10, 10, 10, 10),
+                                        border: InputBorder.none),
+                                    validators: [
+                                      FormBuilderValidators.required(),
+                                    ],
+                                    onChanged: _onChangedDropDown,
+                                    items: options
+                                        .map((lang) => DropdownMenuItem(
+                                            value: lang, child: Text(lang)))
+                                        .toList(),
+                                  ),
                                 ),
                               )
                             : type == 'checkbox'
                                 ? FormBuilderCheckboxList(
                                     leadingInput: true,
-                                    initialValue: data['answer'],
+                                    initialValue: data['answer'] != null &&
+                                            data['answer'].length > 0
+                                        ? data['answer']
+                                        : null,
                                     attribute: 'question0',
+                                    decoration: InputDecoration(
+                                        border: InputBorder.none),
                                     validators: [
                                       FormBuilderValidators.required(),
                                     ],
@@ -662,7 +661,6 @@ class _BuildQuestionsState extends State<BuildQuestions> {
           child: Icon(
             Icons.camera_alt,
             size: 40,
-            color: Theme.of(context).colorScheme.onPrimary,
           ),
         ),
       ),

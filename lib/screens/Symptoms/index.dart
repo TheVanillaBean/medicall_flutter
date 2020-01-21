@@ -21,6 +21,50 @@ class SymptomsScreen extends StatelessWidget {
     final _scaffoldKey = GlobalKey<ScaffoldState>();
     screenSize = MediaQuery.of(context).size;
     medicallUser = auth.medicallUser;
+    void _showMedDialog() {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          // return object of type Dialog
+          return AlertDialog(
+            title: Text("Medical History"),
+            content: Text(
+                "Has there been any changes in your medical history since the last time you saw a doctor?"),
+            actions: <Widget>[
+              // usually buttons at the bottom of the dialog
+              FlatButton(
+                color: Theme.of(context).primaryColor,
+                child: Text("Yes"),
+                onPressed: () async {
+                  medicallUser.hasMedicalHistory = false;
+                  var historyQuestions = await Firestore.instance
+                      .document('services/general_questions')
+                      .get();
+                  auth.newConsult.historyQuestions =
+                      historyQuestions.data['medical_history_questions'];
+                  GlobalNavigatorKey.key.currentState.pop();
+                  GlobalNavigatorKey.key.currentState.push(
+                    MaterialPageRoute(builder: (_) => QuestionsScreen()),
+                  );
+                },
+              ),
+              FlatButton(
+                color: Theme.of(context).colorScheme.secondary,
+                child: Text("No"),
+                onPressed: () {
+                  medicallUser.hasMedicalHistory = true;
+                  GlobalNavigatorKey.key.currentState.pop();
+                  GlobalNavigatorKey.key.currentState.push(
+                    MaterialPageRoute(builder: (_) => QuestionsScreen()),
+                  );
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+
     void _showDialog() {
       showDialog(
         context: context,
@@ -84,7 +128,7 @@ class SymptomsScreen extends StatelessWidget {
       //Content of tabs
       body: ListView.builder(
         itemBuilder: (BuildContext context, int index) =>
-            EntryItem(data[index], _showDialog),
+            EntryItem(data[index], _showDialog, _showMedDialog),
         itemCount: data.length,
       ),
     );
@@ -153,9 +197,10 @@ class AnimatedBackground extends StatelessWidget {
 }
 
 class EntryItem extends StatelessWidget {
-  const EntryItem(this.entry, this._showDialog);
+  const EntryItem(this.entry, this._showDialog, this._showMedDialog);
   final Entry entry;
   final _showDialog;
+  final _showMedDialog;
 
   onBottom(Widget child) => Positioned.fill(
         child: Align(
@@ -297,14 +342,9 @@ class EntryItem extends StatelessWidget {
                                             .consultQuestions
                                             .data["upload_questions"];
                                         if (!medicallUser.hasMedicalHistory) {
-                                          _showDialog(auth.newConsult);
+                                          _showDialog();
                                         } else {
-                                          GlobalNavigatorKey.key.currentState
-                                              .push(
-                                            MaterialPageRoute(
-                                                builder: (_) =>
-                                                    QuestionsScreen()),
-                                          );
+                                          _showMedDialog();
                                         }
                                       },
                                       child: Text(
