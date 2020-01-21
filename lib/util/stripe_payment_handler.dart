@@ -42,6 +42,9 @@ class PaymentService {
   }
 
   chargePayment(price, description) {
+    if (price.runtimeType == String) {
+      price = int.parse(price.split('\$')[1]);
+    }
     var processedPrice = price * 100;
     FirebaseAuth.instance.currentUser().then((user) {
       Firestore.instance

@@ -250,31 +250,35 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
                                     if (auth.hasPayment) {
                                       isLoading = true;
                                       await PaymentService().chargePayment(
-                                          consultSnapshot['price'],
-                                          consultSnapshot['consultType'] +
+                                          consultSnapshot['consult_price'],
+                                          consultSnapshot['type'] +
                                               ' consult with ' +
                                               consultSnapshot['provider']);
+                                      await Firestore.instance
+                                          .collection("consults")
+                                          .document(auth.currConsultId)
+                                          .updateData({
+                                        'state': 'prescription paid',
+                                        'shipping_address': shippingAddress,
+                                      });
                                       showDialog(
                                         context: context,
                                         builder: (BuildContext context) {
                                           // return object of type Dialog
                                           return AlertDialog(
                                             title: Text("Payment Accepted"),
-                                            content: Column(
-                                              children: <Widget>[
-                                                Row(
-                                                  children: <Widget>[
-                                                    Text(
-                                                        "Thank you for your order,")
-                                                  ],
-                                                ),
-                                                Row(
-                                                  children: <Widget>[
-                                                    Text(
-                                                        "Thank you for your order,")
-                                                  ],
-                                                )
-                                              ],
+                                            content: Container(
+                                              height: 70,
+                                              child: Column(
+                                                children: <Widget>[
+                                                  Row(
+                                                    children: <Widget>[
+                                                      Text(
+                                                          "Thank you for your order.")
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                             actions: <Widget>[
                                               // usually buttons at the bottom of the dialog
@@ -282,16 +286,8 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
                                                 color: Theme.of(context)
                                                     .primaryColor,
                                                 child: Text("Continue"),
-                                                onPressed: () async {
-                                                  await Firestore.instance
-                                                      .collection("consults")
-                                                      .document(
-                                                          auth.currConsultId)
-                                                      .updateData({
-                                                    'paid': true,
-                                                    'shipping_address':
-                                                        shippingAddress,
-                                                  });
+                                                onPressed: () {
+                                                  Navigator.pop(context);
                                                 },
                                               ),
                                             ],

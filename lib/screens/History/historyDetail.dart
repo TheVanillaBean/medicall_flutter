@@ -1,4 +1,3 @@
-import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/services/auth.dart';
@@ -9,8 +8,7 @@ import 'package:provider/provider.dart';
 import 'buildDetailTab.dart';
 
 class HistoryDetailScreen extends StatefulWidget {
-  final data;
-  HistoryDetailScreen({Key key, this.data}) : super(key: key);
+  HistoryDetailScreen({Key key}) : super(key: key);
 
   _HistoryDetailScreenState createState() => _HistoryDetailScreenState();
 }

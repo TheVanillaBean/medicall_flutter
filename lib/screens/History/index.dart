@@ -143,29 +143,49 @@ class HistoryScreen extends StatelessWidget {
                                 children: <Widget>[
                                   auth.userHistory[i].data['state']
                                               .toString() ==
-                                          'done'
+                                          'prescription paid'
                                       ? Icon(
-                                          Icons.assignment_turned_in,
-                                          color: Colors.green,
+                                          CustomIcons.MedicallIcons.ambulance,
+                                          color: Colors.indigo,
                                         )
                                       : auth.userHistory[i].data['state']
                                                   .toString() ==
-                                              'in progress'
+                                              'prescription waiting'
                                           ? Icon(
-                                              Icons.assignment,
-                                              color: Colors.blue,
+                                              CustomIcons.MedicallIcons.medkit,
+                                              color: Colors.green,
                                             )
-                                          : Icon(
-                                              Icons.assignment_ind,
-                                              color: Colors.amber,
-                                            ),
-                                  Text(
-                                    auth.userHistory[i].data['state']
-                                        .toString(),
-                                    style: TextStyle(
-                                        fontSize: 10,
-                                        color: Theme.of(context).primaryColor),
-                                  ),
+                                          : auth.userHistory[i].data['state']
+                                                      .toString() ==
+                                                  'done'
+                                              ? Icon(
+                                                  Icons.assignment_turned_in,
+                                                  color: Colors.green,
+                                                )
+                                              : auth.userHistory[i]
+                                                          .data['state']
+                                                          .toString() ==
+                                                      'in progress'
+                                                  ? Icon(
+                                                      Icons.assignment,
+                                                      color: Colors.blue,
+                                                    )
+                                                  : Icon(
+                                                      Icons.assignment_ind,
+                                                      color: Colors.amber,
+                                                    ),
+                                  Container(
+                                    width: 80,
+                                    child: Text(
+                                      auth.userHistory[i].data['state']
+                                          .toString(),
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          fontSize: 10,
+                                          color:
+                                              Theme.of(context).primaryColor),
+                                    ),
+                                  )
                                 ],
                               ),
                               onPressed: () {},

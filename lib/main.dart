@@ -156,7 +156,7 @@ class _MedicallAppState extends State<MedicallApp> {
                 case '/historyDetail':
                   return MyCustomRoute(
                     builder: (_) =>
-                        HistoryDetailScreen(data: settings.arguments),
+                        HistoryDetailScreen(),
                     settings: settings,
                   );
                 case '/account':

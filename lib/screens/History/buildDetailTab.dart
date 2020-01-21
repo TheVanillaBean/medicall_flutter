@@ -226,394 +226,449 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
     }
 
     if (key == 'prescription') {
-      return Scaffold(
-        body: SingleChildScrollView(
-            padding: EdgeInsets.fromLTRB(10, 0, 10, 80),
-            child: Column(
-              children: <Widget>[
-                FormBuilder(
-                  key: consultFormKey,
-                  autovalidate: false,
-                  child: Column(
-                    children: <Widget>[
-                      auth.patientDetail != null &&
-                              medicallUser.type == 'provider'
-                          ? Row(
-                              children: <Widget>[
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+      return FutureBuilder<void>(
+        future: auth.getConsultDetail(), // a Future<String> or null
+        builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: Container(
+                width: 80,
+                height: 80,
+                child: CircularProgressIndicator(),
+              ),
+            );
+          }
+          return Scaffold(
+            body: SingleChildScrollView(
+                padding: EdgeInsets.fromLTRB(10, 0, 10, 80),
+                child: Column(
+                  children: <Widget>[
+                    FormBuilder(
+                      key: consultFormKey,
+                      autovalidate: false,
+                      child: Column(
+                        children: <Widget>[
+                          auth.patientDetail != null &&
+                                  medicallUser.type == 'provider'
+                              ? Row(
                                   children: <Widget>[
-                                    Text(
-                                      'Patient name: ',
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Text(
+                                          'Patient name: ',
+                                        ),
+                                        Text('Date of birth: '),
+                                        Text('Address: '),
+                                      ],
                                     ),
-                                    Text('Date of birth: '),
-                                    Text('Address: '),
-                                  ],
-                                ),
-                                SizedBox(
-                                  width: 5,
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(
-                                      '\n' +
-                                          auth.patientDetail.displayName
-                                              .split(' ')[0][0]
-                                              .toUpperCase() +
-                                          auth.patientDetail.displayName
-                                              .split(' ')[0]
-                                              .substring(1) +
-                                          ' ' +
-                                          auth.patientDetail.displayName
-                                              .split(' ')[1][0]
-                                              .toUpperCase() +
-                                          auth.patientDetail.displayName
-                                              .split(' ')[1]
-                                              .substring(1),
+                                    SizedBox(
+                                      width: 5,
                                     ),
-                                    Text(auth.patientDetail.dob),
-                                    Text(auth.patientDetail.address
-                                        .replaceFirst(',', '\n')),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Text(
+                                          '\n' +
+                                              auth.patientDetail.displayName
+                                                  .split(' ')[0][0]
+                                                  .toUpperCase() +
+                                              auth.patientDetail.displayName
+                                                  .split(' ')[0]
+                                                  .substring(1) +
+                                              ' ' +
+                                              auth.patientDetail.displayName
+                                                  .split(' ')[1][0]
+                                                  .toUpperCase() +
+                                              auth.patientDetail.displayName
+                                                  .split(' ')[1]
+                                                  .substring(1),
+                                        ),
+                                        Text(auth.patientDetail.dob),
+                                        Text(auth.consultSnapshot.data
+                                                .containsKey('shipping_address')
+                                            ? auth.consultSnapshot
+                                                .data['shipping_address']
+                                                .replaceFirst(',', '\n')
+                                            : auth.patientDetail.address
+                                                .replaceFirst(',', '\n')),
+                                      ],
+                                    )
                                   ],
                                 )
-                              ],
-                            )
-                          : Container(),
-                      consultSnapshot.containsKey('medication_name') &&
-                              consultSnapshot['medication_name'].length == 0 &&
-                              medicallUser.type == 'patient'
-                          ? Container(
-                              padding: EdgeInsets.all(8),
-                              child: Text(
-                                  'Once your doctor reviews the details and if a prescription is nessassary it will appear below. Once it is filled out we will ask you for address & payment below.'),
-                            )
-                          : Container(),
-                      Row(
-                        children: <Widget>[
-                          Container(
-                            width: MediaQuery.of(context).size.width - 20,
-                            padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                            child: FormBuilderTextField(
-                              initialValue: consultSnapshot
+                              : Container(),
+                          consultSnapshot.containsKey('medication_name') &&
+                                  consultSnapshot['medication_name'].length ==
+                                      0 &&
+                                  medicallUser.type == 'patient'
+                              ? Container(
+                                  padding: EdgeInsets.all(8),
+                                  child: Text(
+                                      'Once your doctor reviews the details and if a prescription is nessassary it will appear below. Once it is filled out we will ask you for address & payment below.'),
+                                )
+                              : Container(),
+                          Row(
+                            children: <Widget>[
+                              Container(
+                                width: MediaQuery.of(context).size.width - 20,
+                                padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                                child: FormBuilderTextField(
+                                  initialValue: consultSnapshot
+                                              .containsKey('medication_name') &&
+                                          consultSnapshot['medication_name']
+                                                  .length >
+                                              0
+                                      ? consultSnapshot['medication_name']
+                                      : '',
+                                  attribute: 'medName',
+                                  maxLines: 1,
+                                  readOnly:
+                                      consultSnapshot['state'] == 'done' ||
+                                              medicallUser.type == 'patient'
+                                          ? true
+                                          : false,
+                                  decoration: InputDecoration(
+                                    labelStyle:
+                                        TextStyle(color: Colors.black45),
+                                    labelText: 'Medication Name',
+                                    hintText:
+                                        'Enter patient\'s medication name',
+                                    fillColor:
+                                        consultSnapshot['state'] == 'done' ||
+                                                medicallUser.type == 'patient'
+                                            ? Colors.grey.withAlpha(30)
+                                            : Color.fromRGBO(35, 179, 232, 0.1),
+                                    filled: true,
+                                    border: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.grey, width: 5.0),
+                                    ),
+                                  ),
+                                  validators: [
+                                    FormBuilderValidators.required(),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: <Widget>[
+                              Container(
+                                width:
+                                    MediaQuery.of(context).size.width / 3 - 6.7,
+                                padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                                child: FormBuilderTextField(
+                                  initialValue: consultSnapshot
+                                              .containsKey('quantity') &&
+                                          consultSnapshot['quantity'].length > 0
+                                      ? consultSnapshot['quantity']
+                                      : '0',
+                                  attribute: 'quantity',
+                                  maxLines: 1,
+                                  readOnly:
+                                      consultSnapshot['state'] == 'done' ||
+                                              medicallUser.type == 'patient'
+                                          ? true
+                                          : false,
+                                  decoration: InputDecoration(
+                                    labelStyle:
+                                        TextStyle(color: Colors.black45),
+                                    labelText: 'Quantity',
+                                    hintText: '',
+                                    fillColor:
+                                        consultSnapshot['state'] == 'done' ||
+                                                medicallUser.type == 'patient'
+                                            ? Colors.grey.withAlpha(30)
+                                            : Color.fromRGBO(35, 179, 232, 0.1),
+                                    filled: true,
+                                    border: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.grey, width: 5.0),
+                                    ),
+                                  ),
+                                  validators: [
+                                    FormBuilderValidators.required(),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                width:
+                                    MediaQuery.of(context).size.width / 3 - 6.7,
+                                padding: EdgeInsets.fromLTRB(10, 10, 0, 0),
+                                child: FormBuilderDropdown(
+                                  initialValue: consultSnapshot
+                                              .containsKey('units') &&
+                                          consultSnapshot['units'].length > 0
+                                      ? consultSnapshot['units']
+                                      : 'Capsule',
+                                  attribute: "units",
+                                  iconSize:
+                                      medicallUser.type == 'patient' ? 0 : 24,
+                                  readOnly:
+                                      consultSnapshot['state'] == 'done' ||
+                                              medicallUser.type == 'patient'
+                                          ? true
+                                          : false,
+                                  decoration: InputDecoration(
+                                      contentPadding: EdgeInsets.all(9),
+                                      labelStyle:
+                                          TextStyle(color: Colors.black45),
+                                      labelText: 'Units',
+                                      fillColor: consultSnapshot['state'] ==
+                                                  'done' ||
+                                              medicallUser.type == 'patient'
+                                          ? Colors.grey.withAlpha(30)
+                                          : Color.fromRGBO(35, 179, 232, 0.1),
+                                      filled: true,
+                                      disabledBorder: InputBorder.none,
+                                      enabledBorder: InputBorder.none,
+                                      border: InputBorder.none),
+                                  validators: [
+                                    FormBuilderValidators.required(),
+                                  ],
+                                  items: units
+                                      .map((unit) => DropdownMenuItem(
+                                            value: unit,
+                                            child: Text('$unit'),
+                                          ))
+                                      .toList(),
+                                ),
+                              ),
+                              Container(
+                                width:
+                                    MediaQuery.of(context).size.width / 3 - 6.7,
+                                padding: EdgeInsets.fromLTRB(10, 10, 0, 0),
+                                child: FormBuilderDropdown(
+                                  initialValue:
+                                      consultSnapshot.containsKey('refills')
+                                          ? consultSnapshot['refills']
+                                          : 0,
+                                  attribute: "refills",
+                                  readOnly:
+                                      consultSnapshot['state'] == 'done' ||
+                                              medicallUser.type == 'patient'
+                                          ? true
+                                          : false,
+                                  iconSize:
+                                      medicallUser.type == 'patient' ? 0 : 24,
+                                  decoration: InputDecoration(
+                                      contentPadding: EdgeInsets.all(9),
+                                      labelStyle:
+                                          TextStyle(color: Colors.black45),
+                                      labelText: 'Refills',
+                                      fillColor: consultSnapshot['state'] ==
+                                                  'done' ||
+                                              medicallUser.type == 'patient'
+                                          ? Colors.grey.withAlpha(30)
+                                          : Color.fromRGBO(35, 179, 232, 0.1),
+                                      filled: true,
+                                      disabledBorder: InputBorder.none,
+                                      enabledBorder: InputBorder.none,
+                                      border: InputBorder.none),
+                                  validators: [
+                                    FormBuilderValidators.required(),
+                                  ],
+                                  items: Iterable<int>.generate(10)
+                                      .map((unit) => DropdownMenuItem(
+                                            value: unit,
+                                            child: Text('$unit'),
+                                          ))
+                                      .toList(),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: <Widget>[
+                              Container(
+                                width:
+                                    MediaQuery.of(context).size.width / 2 - 10,
+                                padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                                child: FormBuilderTextField(
+                                  initialValue:
+                                      consultSnapshot.containsKey('dose') &&
+                                              consultSnapshot['dose'].length > 0
+                                          ? consultSnapshot['dose']
+                                          : '',
+                                  attribute: 'dose',
+                                  maxLines: 1,
+                                  readOnly:
+                                      consultSnapshot['state'] == 'done' ||
+                                              medicallUser.type == 'patient'
+                                          ? true
+                                          : false,
+                                  decoration: InputDecoration(
+                                    labelText: 'Dose',
+                                    labelStyle:
+                                        TextStyle(color: Colors.black45),
+                                    fillColor:
+                                        consultSnapshot['state'] == 'done' ||
+                                                medicallUser.type == 'patient'
+                                            ? Colors.grey.withAlpha(30)
+                                            : Color.fromRGBO(35, 179, 232, 0.1),
+                                    filled: true,
+                                    border: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.grey, width: 5.0),
+                                    ),
+                                  ),
+                                  validators: [
+                                    FormBuilderValidators.required(),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                width:
+                                    MediaQuery.of(context).size.width / 2 - 10,
+                                padding: EdgeInsets.fromLTRB(10, 10, 0, 0),
+                                child: FormBuilderTextField(
+                                  initialValue: consultSnapshot
+                                              .containsKey('frequency') &&
+                                          consultSnapshot['frequency'].length >
+                                              0
+                                      ? consultSnapshot['frequency']
+                                      : '',
+                                  attribute: 'frequency',
+                                  maxLines: 1,
+                                  readOnly:
+                                      consultSnapshot['state'] == 'done' ||
+                                              medicallUser.type == 'patient'
+                                          ? true
+                                          : false,
+                                  decoration: InputDecoration(
+                                    labelText: 'Frequency',
+                                    labelStyle:
+                                        TextStyle(color: Colors.black45),
+                                    fillColor:
+                                        consultSnapshot['state'] == 'done' ||
+                                                medicallUser.type == 'patient'
+                                            ? Colors.grey.withAlpha(30)
+                                            : Color.fromRGBO(35, 179, 232, 0.1),
+                                    filled: true,
+                                    border: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.grey, width: 5.0),
+                                    ),
+                                  ),
+                                  validators: [
+                                    FormBuilderValidators.required(),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: <Widget>[
+                              Container(
+                                width: MediaQuery.of(context).size.width - 20,
+                                padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                                child: FormBuilderTextField(
+                                  initialValue: consultSnapshot
+                                              .containsKey('instructions') &&
+                                          consultSnapshot['instructions']
+                                                  .length >
+                                              0
+                                      ? consultSnapshot['instructions']
+                                      : '',
+                                  attribute: 'instructions',
+                                  maxLines: 3,
+                                  readOnly:
+                                      consultSnapshot['state'] == 'done' ||
+                                              medicallUser.type == 'patient'
+                                          ? true
+                                          : false,
+                                  decoration: InputDecoration(
+                                    labelText: 'Instructions',
+                                    labelStyle:
+                                        TextStyle(color: Colors.black45),
+                                    fillColor:
+                                        consultSnapshot['state'] == 'done' ||
+                                                medicallUser.type == 'patient'
+                                            ? Colors.grey.withAlpha(30)
+                                            : Color.fromRGBO(35, 179, 232, 0.1),
+                                    filled: true,
+                                    border: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.grey, width: 5.0),
+                                    ),
+                                  ),
+                                  validators: [
+                                    FormBuilderValidators.required(),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          medicallUser.type == 'provider'
+                              ? Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Expanded(
+                                        child: Container(
+                                      decoration: BoxDecoration(
+                                          border: Border(
+                                              top: BorderSide(
+                                                  color: Colors.grey,
+                                                  width: 1,
+                                                  style: BorderStyle.solid))),
+                                      child: FlatButton(
+                                        padding:
+                                            EdgeInsets.fromLTRB(20, 20, 20, 20),
+                                        color: buttonTxt.contains('Send')
+                                            ? Theme.of(GlobalNavigatorKey
+                                                    .key.currentContext)
+                                                .colorScheme
+                                                .secondary
+                                            : Colors.green,
+                                        onPressed: () async {
+                                          await _updatePrescription();
+                                        },
+                                        child: Text(
+                                          buttonTxt,
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            color: Theme.of(GlobalNavigatorKey
+                                                    .key.currentContext)
+                                                .colorScheme
+                                                .onBackground,
+                                            letterSpacing: 1.0,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ))
+                                  ],
+                                )
+                              : consultSnapshot
                                           .containsKey('medication_name') &&
                                       consultSnapshot['medication_name']
                                               .length >
                                           0
-                                  ? consultSnapshot['medication_name']
-                                  : '',
-                              attribute: 'medName',
-                              maxLines: 1,
-                              readOnly: consultSnapshot['state'] == 'done' ||
-                                      medicallUser.type == 'patient'
-                                  ? true
-                                  : false,
-                              decoration: InputDecoration(
-                                labelStyle: TextStyle(color: Colors.black45),
-                                labelText: 'Medication Name',
-                                hintText: 'Enter patient\'s medication name',
-                                fillColor: consultSnapshot['state'] == 'done' ||
-                                        medicallUser.type == 'patient'
-                                    ? Colors.grey.withAlpha(30)
-                                    : Color.fromRGBO(35, 179, 232, 0.1),
-                                filled: true,
-                                border: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: Colors.grey, width: 5.0),
-                                ),
-                              ),
-                              validators: [
-                                FormBuilderValidators.required(),
-                              ],
-                            ),
-                          ),
+                                  ? FutureBuilder(
+                                      future: auth.getPatientDetail(),
+                                      builder: (BuildContext context,
+                                          AsyncSnapshot<void> snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.done) {
+                                          return PrescriptionPayment();
+                                        } else {
+                                          return Container();
+                                        }
+                                      })
+                                  : Container()
                         ],
                       ),
-                      Row(
-                        children: <Widget>[
-                          Container(
-                            width: MediaQuery.of(context).size.width / 3 - 6.7,
-                            padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                            child: FormBuilderTextField(
-                              initialValue:
-                                  consultSnapshot.containsKey('quantity') &&
-                                          consultSnapshot['quantity'].length > 0
-                                      ? consultSnapshot['quantity']
-                                      : '0',
-                              attribute: 'quantity',
-                              maxLines: 1,
-                              readOnly: consultSnapshot['state'] == 'done' ||
-                                      medicallUser.type == 'patient'
-                                  ? true
-                                  : false,
-                              decoration: InputDecoration(
-                                labelStyle: TextStyle(color: Colors.black45),
-                                labelText: 'Quantity',
-                                hintText: '',
-                                fillColor: consultSnapshot['state'] == 'done' ||
-                                        medicallUser.type == 'patient'
-                                    ? Colors.grey.withAlpha(30)
-                                    : Color.fromRGBO(35, 179, 232, 0.1),
-                                filled: true,
-                                border: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: Colors.grey, width: 5.0),
-                                ),
-                              ),
-                              validators: [
-                                FormBuilderValidators.required(),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            width: MediaQuery.of(context).size.width / 3 - 6.7,
-                            padding: EdgeInsets.fromLTRB(10, 10, 0, 0),
-                            child: FormBuilderDropdown(
-                              initialValue:
-                                  consultSnapshot.containsKey('units') &&
-                                          consultSnapshot['units'].length > 0
-                                      ? consultSnapshot['units']
-                                      : 'Capsule',
-                              attribute: "units",
-                              iconSize: medicallUser.type == 'patient' ? 0 : 24,
-                              readOnly: consultSnapshot['state'] == 'done' ||
-                                      medicallUser.type == 'patient'
-                                  ? true
-                                  : false,
-                              decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.all(9),
-                                  labelStyle: TextStyle(color: Colors.black45),
-                                  labelText: 'Units',
-                                  fillColor:
-                                      consultSnapshot['state'] == 'done' ||
-                                              medicallUser.type == 'patient'
-                                          ? Colors.grey.withAlpha(30)
-                                          : Color.fromRGBO(35, 179, 232, 0.1),
-                                  filled: true,
-                                  disabledBorder: InputBorder.none,
-                                  enabledBorder: InputBorder.none,
-                                  border: InputBorder.none),
-                              validators: [
-                                FormBuilderValidators.required(),
-                              ],
-                              items: units
-                                  .map((unit) => DropdownMenuItem(
-                                        value: unit,
-                                        child: Text('$unit'),
-                                      ))
-                                  .toList(),
-                            ),
-                          ),
-                          Container(
-                            width: MediaQuery.of(context).size.width / 3 - 6.7,
-                            padding: EdgeInsets.fromLTRB(10, 10, 0, 0),
-                            child: FormBuilderDropdown(
-                              initialValue:
-                                  consultSnapshot.containsKey('refills')
-                                      ? consultSnapshot['refills']
-                                      : 0,
-                              attribute: "refills",
-                              readOnly: consultSnapshot['state'] == 'done' ||
-                                      medicallUser.type == 'patient'
-                                  ? true
-                                  : false,
-                              iconSize: medicallUser.type == 'patient' ? 0 : 24,
-                              decoration: InputDecoration(
-                                  contentPadding: EdgeInsets.all(9),
-                                  labelStyle: TextStyle(color: Colors.black45),
-                                  labelText: 'Refills',
-                                  fillColor:
-                                      consultSnapshot['state'] == 'done' ||
-                                              medicallUser.type == 'patient'
-                                          ? Colors.grey.withAlpha(30)
-                                          : Color.fromRGBO(35, 179, 232, 0.1),
-                                  filled: true,
-                                  disabledBorder: InputBorder.none,
-                                  enabledBorder: InputBorder.none,
-                                  border: InputBorder.none),
-                              validators: [
-                                FormBuilderValidators.required(),
-                              ],
-                              items: Iterable<int>.generate(10)
-                                  .map((unit) => DropdownMenuItem(
-                                        value: unit,
-                                        child: Text('$unit'),
-                                      ))
-                                  .toList(),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: <Widget>[
-                          Container(
-                            width: MediaQuery.of(context).size.width / 2 - 10,
-                            padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                            child: FormBuilderTextField(
-                              initialValue:
-                                  consultSnapshot.containsKey('dose') &&
-                                          consultSnapshot['dose'].length > 0
-                                      ? consultSnapshot['dose']
-                                      : '',
-                              attribute: 'dose',
-                              maxLines: 1,
-                              readOnly: consultSnapshot['state'] == 'done' ||
-                                      medicallUser.type == 'patient'
-                                  ? true
-                                  : false,
-                              decoration: InputDecoration(
-                                labelText: 'Dose',
-                                labelStyle: TextStyle(color: Colors.black45),
-                                fillColor: consultSnapshot['state'] == 'done' ||
-                                        medicallUser.type == 'patient'
-                                    ? Colors.grey.withAlpha(30)
-                                    : Color.fromRGBO(35, 179, 232, 0.1),
-                                filled: true,
-                                border: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: Colors.grey, width: 5.0),
-                                ),
-                              ),
-                              validators: [
-                                FormBuilderValidators.required(),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            width: MediaQuery.of(context).size.width / 2 - 10,
-                            padding: EdgeInsets.fromLTRB(10, 10, 0, 0),
-                            child: FormBuilderTextField(
-                              initialValue: consultSnapshot
-                                          .containsKey('frequency') &&
-                                      consultSnapshot['frequency'].length > 0
-                                  ? consultSnapshot['frequency']
-                                  : '',
-                              attribute: 'frequency',
-                              maxLines: 1,
-                              readOnly: consultSnapshot['state'] == 'done' ||
-                                      medicallUser.type == 'patient'
-                                  ? true
-                                  : false,
-                              decoration: InputDecoration(
-                                labelText: 'Frequency',
-                                labelStyle: TextStyle(color: Colors.black45),
-                                fillColor: consultSnapshot['state'] == 'done' ||
-                                        medicallUser.type == 'patient'
-                                    ? Colors.grey.withAlpha(30)
-                                    : Color.fromRGBO(35, 179, 232, 0.1),
-                                filled: true,
-                                border: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: Colors.grey, width: 5.0),
-                                ),
-                              ),
-                              validators: [
-                                FormBuilderValidators.required(),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: <Widget>[
-                          Container(
-                            width: MediaQuery.of(context).size.width - 20,
-                            padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                            child: FormBuilderTextField(
-                              initialValue: consultSnapshot
-                                          .containsKey('instructions') &&
-                                      consultSnapshot['instructions'].length > 0
-                                  ? consultSnapshot['instructions']
-                                  : '',
-                              attribute: 'instructions',
-                              maxLines: 3,
-                              readOnly: consultSnapshot['state'] == 'done' ||
-                                      medicallUser.type == 'patient'
-                                  ? true
-                                  : false,
-                              decoration: InputDecoration(
-                                labelText: 'Instructions',
-                                labelStyle: TextStyle(color: Colors.black45),
-                                fillColor: consultSnapshot['state'] == 'done' ||
-                                        medicallUser.type == 'patient'
-                                    ? Colors.grey.withAlpha(30)
-                                    : Color.fromRGBO(35, 179, 232, 0.1),
-                                filled: true,
-                                border: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: Colors.grey, width: 5.0),
-                                ),
-                              ),
-                              validators: [
-                                FormBuilderValidators.required(),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      medicallUser.type == 'provider'
-                          ? Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Expanded(
-                                    child: Container(
-                                  decoration: BoxDecoration(
-                                      border: Border(
-                                          top: BorderSide(
-                                              color: Colors.grey,
-                                              width: 1,
-                                              style: BorderStyle.solid))),
-                                  child: FlatButton(
-                                    padding:
-                                        EdgeInsets.fromLTRB(20, 20, 20, 20),
-                                    color: buttonTxt.contains('Send')
-                                        ? Theme.of(GlobalNavigatorKey
-                                                .key.currentContext)
-                                            .colorScheme
-                                            .secondary
-                                        : Colors.green,
-                                    onPressed: () async {
-                                      await _updatePrescription();
-                                    },
-                                    child: Text(
-                                      buttonTxt,
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        color: Theme.of(GlobalNavigatorKey
-                                                .key.currentContext)
-                                            .colorScheme
-                                            .onBackground,
-                                        letterSpacing: 1.0,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ))
-                              ],
-                            )
-                          : consultSnapshot.containsKey('medication_name') &&
-                                  consultSnapshot['medication_name'].length > 0
-                              ? FutureBuilder(
-                                  future: auth.getPatientDetail(),
-                                  builder: (BuildContext context,
-                                      AsyncSnapshot<void> snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.done) {
-                                      return PrescriptionPayment();
-                                    } else {
-                                      return Container();
-                                    }
-                                  })
-                              : Container()
-                    ],
-                  ),
-                )
-              ],
-            )),
+                    )
+                  ],
+                )),
+          );
+        },
       );
     }
     return Chat(
@@ -638,11 +693,25 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
           consultFormKey.currentState.fields['frequency'].currentState.value,
       "instructions":
           consultFormKey.currentState.fields['instructions'].currentState.value,
+      "state": "prescription waiting"
     };
     await documentReference.updateData(data).whenComplete(() {
       setState(() {
         buttonTxt = 'Prescription Updated';
       });
+      auth.consultSnapshot.data['medication_name'] =
+          consultFormKey.currentState.fields['medName'].currentState.value;
+      auth.consultSnapshot.data['quantity'] =
+          consultFormKey.currentState.fields['quantity'].currentState.value;
+      auth.consultSnapshot.data['units'] =
+          consultFormKey.currentState.fields['units'].currentState.value;
+      auth.consultSnapshot.data['refills'] =
+          consultFormKey.currentState.fields['refills'].currentState.value;
+      auth.consultSnapshot.data['frequency'] =
+          consultFormKey.currentState.fields['frequency'].currentState.value;
+      auth.consultSnapshot.data['instructions'] =
+          consultFormKey.currentState.fields['instructions'].currentState.value;
+      auth.consultSnapshot.data['state'] = "prescription waiting";
       Future.delayed(const Duration(milliseconds: 2500), () {
         buttonTxt = 'Send Prescription';
       });
