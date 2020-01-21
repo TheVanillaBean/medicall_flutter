@@ -32,6 +32,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
   double formSpacing = 20;
   var screeningQuestions;
   var ranOnce = false;
+  var currentQuestions = 'symptom';
   var auth = Provider.of<AuthBase>(GlobalNavigatorKey.key.currentContext);
   var medicalHistoryQuestions;
   bool showSegmentedControl = true;
@@ -46,7 +47,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
         ...auth.newConsult.uploadQuestions
       ];
     } else {
-      auth.newConsult.consultType = "Medical History";
+      currentQuestions = "Medical History";
       combinedList = [
         ...auth.newConsult.historyQuestions,
       ];
@@ -60,7 +61,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
 
   Future<void> _onIntroEnd() async {
     //await setConsult(context);
-    if (auth.newConsult.consultType == 'Medical History') {
+    if (currentQuestions == 'Medical History') {
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -80,6 +81,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
                             auth.newConsult.consultType +
                             ' treatment'),
                 onPressed: () async {
+                  medicallUser.hasMedicalHistory = true;
                   await auth.addUserMedicalHistory();
                   GlobalNavigatorKey.key.currentState.pop();
                   GlobalNavigatorKey.key.currentState
@@ -194,14 +196,19 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
           icon: Icon(Icons.close),
           onPressed: () => GlobalNavigatorKey.key.currentState.pop(false),
         ),
-        title: Text(auth.newConsult.consultType == 'Lesion'
-            ? 'Spot' +
-                ' Question: ' +
-                (currentPage + 1).toString() +
-                '/' +
-                pageViewList.length.toString()
-            : auth.newConsult.consultType +
-                ' Question: ' +
+        title: Text(currentQuestions == 'symptom'
+            ? auth.newConsult.consultType == 'Lesion'
+                ? 'Spot' +
+                    ' Question: ' +
+                    (currentPage + 1).toString() +
+                    '/' +
+                    pageViewList.length.toString()
+                : auth.newConsult.consultType +
+                    ' Question: ' +
+                    (currentPage + 1).toString() +
+                    '/' +
+                    pageViewList.length.toString()
+            : "Medical History Question: " +
                 (currentPage + 1).toString() +
                 '/' +
                 pageViewList.length.toString()),

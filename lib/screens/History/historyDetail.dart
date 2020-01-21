@@ -1,3 +1,4 @@
+import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/services/auth.dart';
@@ -121,7 +122,11 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                   color: Colors.blue,
                 )),
     ];
-    consultSnapshot = auth.consultSnapshot.data;
+    if (auth.consultSnapshot != null) {
+      consultSnapshot = auth.consultSnapshot.data;
+    } else {
+      consultSnapshot = {'type': ''};
+    }
     return Scaffold(
       appBar: AppBar(
         actions: <Widget>[
@@ -233,43 +238,45 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
         ),
         elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
       ),
-      body: medicallUser.type == 'patient' && consultSnapshot != null
-          ? TabBarView(
-              // Add tabs as widgets
-              children: <Widget>[
-                BuildDetailTab(
-                  keyStr: 'prescription',
-                  indx: 0,
-                ),
-                BuildDetailTab(
-                  keyStr: 'chat',
-                  indx: 1,
-                ),
-                BuildDetailTab(
-                  keyStr: 'details',
-                  indx: 2,
+      body: auth.consultSnapshot != null
+          ? medicallUser.type == 'patient' && consultSnapshot != null
+              ? TabBarView(
+                  // Add tabs as widgets
+                  children: <Widget>[
+                    BuildDetailTab(
+                      keyStr: 'prescription',
+                      indx: 0,
+                    ),
+                    BuildDetailTab(
+                      keyStr: 'chat',
+                      indx: 1,
+                    ),
+                    BuildDetailTab(
+                      keyStr: 'details',
+                      indx: 2,
+                    )
+                  ],
+                  // set the controller
+                  controller: controller,
                 )
-              ],
-              // set the controller
-              controller: controller,
-            )
-          : TabBarView(
-              children: <Widget>[
-                BuildDetailTab(
-                  keyStr: 'details',
-                  indx: 0,
-                ),
-                BuildDetailTab(
-                  keyStr: 'chat',
-                  indx: 1,
-                ),
-                BuildDetailTab(
-                  keyStr: 'prescription',
-                  indx: 2,
+              : TabBarView(
+                  children: <Widget>[
+                    BuildDetailTab(
+                      keyStr: 'details',
+                      indx: 0,
+                    ),
+                    BuildDetailTab(
+                      keyStr: 'chat',
+                      indx: 1,
+                    ),
+                    BuildDetailTab(
+                      keyStr: 'prescription',
+                      indx: 2,
+                    )
+                  ],
+                  controller: controller,
                 )
-              ],
-              controller: controller,
-            ),
+          : Container(),
     );
   }
 

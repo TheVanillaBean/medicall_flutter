@@ -476,51 +476,56 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                   for (var i = 0;
                       i < this.widget.data['questions'].length;
                       i++) {
-                    if (currQuestionObj["question"] ==
-                        this.widget.data['questions'][i]['parent_question']) {
-                      if (currQuestionObj["answer"].length > 0) {
-                        for (var x = 0;
-                            x < currQuestionObj["answer"].length;
-                            x++) {
-                          var currIndex = currQuestionObj["options"]
-                              .indexOf(currQuestionObj["answer"][x]);
+                    if (this
+                        .widget
+                        .data['questions'][i]
+                        .containsKey('parent_question')) {
+                      if (currQuestionObj["question"] ==
+                          this.widget.data['questions'][i]['parent_question']) {
+                        if (currQuestionObj["answer"].length > 0) {
+                          for (var x = 0;
+                              x < currQuestionObj["answer"].length;
+                              x++) {
+                            var currIndex = currQuestionObj["options"]
+                                .indexOf(currQuestionObj["answer"][x]);
 
-                          var widgetIndex =
-                              this.widget.data['questions'][i]['index'];
-                          if (currIndex == widgetIndex &&
-                              !this.widget.data['questions'][i]["visible"] &&
-                              currQuestionObj["answer"].indexOf(
-                                      currQuestionObj["options"][this
-                                          .widget
-                                          .data['questions'][i]["index"]]) !=
-                                  -1) {
-                            this.widget.data['parent'].state.setState(() {
-                              this.widget.data['questions'][i]['visible'] =
-                                  true;
-                            });
+                            var widgetIndex =
+                                this.widget.data['questions'][i]['index'];
+                            if (currIndex == widgetIndex &&
+                                !this.widget.data['questions'][i]["visible"] &&
+                                currQuestionObj["answer"].indexOf(
+                                        currQuestionObj["options"][this
+                                            .widget
+                                            .data['questions'][i]["index"]]) !=
+                                    -1) {
+                              this.widget.data['parent'].state.setState(() {
+                                this.widget.data['questions'][i]['visible'] =
+                                    true;
+                              });
+                            }
+                            if (currQuestionObj["answer"].indexOf(
+                                    currQuestionObj["options"][this
+                                        .widget
+                                        .data['questions'][i]["index"]]) ==
+                                -1) {
+                              this.widget.data['parent'].state.setState(() {
+                                this.widget.data['questions'][i]['visible'] =
+                                    false;
+                              });
+                            }
                           }
-                          if (currQuestionObj["answer"].indexOf(
-                                  currQuestionObj["options"][this
-                                      .widget
-                                      .data['questions'][i]["index"]]) ==
-                              -1) {
-                            this.widget.data['parent'].state.setState(() {
-                              this.widget.data['questions'][i]['visible'] =
-                                  false;
-                            });
-                          }
-                        }
-                      } else {
-                        for (var i = 0;
-                            i < this.widget.data['questions'].length;
-                            i++) {
-                          if (currQuestionObj["question"] ==
-                              this.widget.data['questions'][i]
-                                  ['parent_question']) {
-                            this.widget.data['parent'].state.setState(() {
-                              this.widget.data['questions'][i]['visible'] =
-                                  false;
-                            });
+                        } else {
+                          for (var i = 0;
+                              i < this.widget.data['questions'].length;
+                              i++) {
+                            if (currQuestionObj["question"] ==
+                                this.widget.data['questions'][i]
+                                    ['parent_question']) {
+                              this.widget.data['parent'].state.setState(() {
+                                this.widget.data['questions'][i]['visible'] =
+                                    false;
+                              });
+                            }
                           }
                         }
                       }

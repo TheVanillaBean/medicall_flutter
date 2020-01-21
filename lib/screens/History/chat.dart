@@ -171,20 +171,9 @@ class ChatScreenState extends State<ChatScreen> {
           }).catchError((e) => print(e));
         }
       });
-      // if(medicallUser.id == ){
-
-      // }
       documentReference.updateData(data).whenComplete(() {
         print("Msg Sent");
       }).catchError((e) => print(e));
-
-      // Map<String, dynamic> consultStateData = {'state': 'In progress'};
-      // documentReference.updateData(consultStateData).whenComplete(() {
-      //   print("Document Added");
-      // }).catchError((e) => print(e));
-
-      listScrollController.animateTo(0.0,
-          duration: Duration(milliseconds: 300), curve: Curves.easeOut);
     } else {
       Fluttertoast.showToast(msg: 'Nothing to send');
     }
