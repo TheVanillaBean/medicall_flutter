@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 import 'package:stripe_payment/stripe_payment.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:Medicall/secrets.dart' as secrets;
@@ -45,6 +46,8 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
     var auth = Provider.of<AuthBase>(GlobalNavigatorKey.key.currentContext);
     MedicallUser medicallUser = auth.medicallUser;
     var consultSnapshot = auth.consultSnapshot.data;
+    var datePaid = consultSnapshot['pay_date'];
+
     onChangedCheckBox = (val) async {
       if (val.length > 0) {
         if (val.length >= 2 && val[1] == 'pickup') {
@@ -83,64 +86,113 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
             key: prescriptionPaymentKey,
             child: Column(
               children: <Widget>[
-                Container(
-                  padding: EdgeInsets.fromLTRB(0, 10, 20, 10),
-                  child: FormBuilderCheckboxList(
-                    leadingInput: true,
-                    attribute: 'shipTo',
-                    initialValue: [shipTo],
-                    validators: [
-                      FormBuilderValidators.required(),
-                    ],
-                    decoration: InputDecoration(
-                        border: InputBorder.none,
-                        disabledBorder: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        contentPadding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
-                    onChanged: onChangedCheckBox,
-                    options: [
-                      FormBuilderFieldOption(
-                        value: 'pickup',
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text(
-                              'Local pharmacy pickup',
-                              style: TextStyle(
-                                fontSize: 16,
-                              ),
-                              softWrap: true,
-                            ),
-                            Text(
-                              '\*',
-                              style: TextStyle(fontSize: 21),
-                            ),
+                consultSnapshot['state'] != 'prescription paid'
+                    ? Container(
+                        padding: EdgeInsets.fromLTRB(0, 10, 20, 10),
+                        child: FormBuilderCheckboxList(
+                          leadingInput: true,
+                          attribute: 'shipTo',
+                          initialValue: [shipTo],
+                          validators: [
+                            FormBuilderValidators.required(),
                           ],
-                        ),
-                      ),
-                      FormBuilderFieldOption(
-                        value: 'delivery',
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text(
-                              'Ship directly to my door.',
-                              style: TextStyle(
-                                fontSize: 16,
+                          decoration: InputDecoration(
+                              border: InputBorder.none,
+                              disabledBorder: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              contentPadding:
+                                  EdgeInsets.fromLTRB(0, 10, 0, 10)),
+                          onChanged: onChangedCheckBox,
+                          options: [
+                            FormBuilderFieldOption(
+                              value: 'pickup',
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Text(
+                                    'Local pharmacy pickup',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                    ),
+                                    softWrap: true,
+                                  ),
+                                  Text(
+                                    '\*',
+                                    style: TextStyle(fontSize: 21),
+                                  ),
+                                ],
                               ),
-                              softWrap: true,
                             ),
-                            Text(
-                              '\$60',
-                              style: TextStyle(fontSize: 21),
-                            ),
+                            FormBuilderFieldOption(
+                              value: 'delivery',
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Text(
+                                    'Ship directly to my door.',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                    ),
+                                    softWrap: true,
+                                  ),
+                                  Text(
+                                    '\$60',
+                                    style: TextStyle(fontSize: 21),
+                                  ),
+                                ],
+                              ),
+                            )
                           ],
                         ),
                       )
-                    ],
-                  ),
-                ),
+                    : Container(
+                        padding: EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: Colors.greenAccent.withAlpha(50),
+                          border: Border.all(
+                              color: Colors.grey.withAlpha(100),
+                              style: BorderStyle.solid,
+                              width: 1),
+                          borderRadius: BorderRadius.all(Radius.circular(5)),
+                        ),
+                        child: Text(
+                          datePaid.runtimeType == Timestamp
+                              ? consultSnapshot['shipping_option'] == 'delivery'
+                                  ? 'Payment made:' +
+                                      ' ' +
+                                      DateFormat('MM-dd-yyyy hh:mm a')
+                                          .format(datePaid.toDate()) +
+                                      '\nShipping option: Home delivery' +
+                                      '\nShipping Address: ' +
+                                      consultSnapshot['shipping_address']
+                                  : 'Payment made:' +
+                                      ' ' +
+                                      DateFormat('MM-dd-yyyy hh:mm a')
+                                          .format(datePaid.toDate()) +
+                                      '\nShipping option: Local Pharmacy' +
+                                      '\nShipping Address: ' +
+                                      consultSnapshot['shipping_address']
+                              : consultSnapshot['shipping_option'] == 'delivery'
+                                  ? 'Payment made:' +
+                                      ' ' +
+                                      DateFormat('MM-dd-yyyy hh:mm a')
+                                          .format(datePaid) +
+                                      '\nShipping option: Home delivery' +
+                                      '\nShipping Address: ' +
+                                      consultSnapshot['shipping_address']
+                                  : 'Payment made:' +
+                                      ' ' +
+                                      DateFormat('MM-dd-yyyy hh:mm a')
+                                          .format(datePaid) +
+                                      '\nShipping option: Local Pharmacy' +
+                                      '\nShipping Address: ' +
+                                      consultSnapshot['shipping_address'],
+                          style: TextStyle(color: Colors.green, fontSize: 16),
+                        ),
+                      ),
                 Visibility(
                     visible: userShippingSelected,
                     child: Container(
@@ -259,8 +311,21 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
                                           .document(auth.currConsultId)
                                           .updateData({
                                         'state': 'prescription paid',
+                                        'pay_date': DateTime.now(),
+                                        'shipping_option': shipTo,
                                         'shipping_address': shippingAddress,
                                       });
+                                      setState(() {
+                                        consultSnapshot['state'] =
+                                            'prescription paid';
+                                        consultSnapshot['pay_date'] =
+                                            DateTime.now();
+                                        consultSnapshot['shipping_option'] =
+                                            shipTo;
+                                        consultSnapshot['shipping_address'] =
+                                            shippingAddress;
+                                      });
+
                                       showDialog(
                                         context: context,
                                         builder: (BuildContext context) {
