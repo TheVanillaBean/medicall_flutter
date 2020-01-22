@@ -193,6 +193,7 @@ class HistoryScreen extends StatelessWidget {
                             leading: medicallUser.type == 'patient'
                                 ? CircleAvatar(
                                     radius: 20,
+                                    backgroundColor: Colors.grey.withAlpha(100),
                                     child: auth.userHistory[i]
                                                 .data['provider_profile'] !=
                                             null
