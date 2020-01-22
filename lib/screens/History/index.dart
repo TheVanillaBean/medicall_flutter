@@ -119,10 +119,10 @@ class HistoryScreen extends StatelessWidget {
                             isThreeLine: true,
                             title: Text(
                               medicallUser.type == 'patient'
-                                  ? auth.userHistory[i].data['provider'] +
+                                  ? '${auth.userHistory[i].data['provider'].split(" ")[0][0].toUpperCase()}${auth.userHistory[i].data['provider'].split(" ")[0].substring(1)} ${auth.userHistory[i].data['provider'].split(" ")[1][0].toUpperCase()}${auth.userHistory[i].data['provider'].split(" ")[1].substring(1)} ' +
                                       ' ' +
                                       auth.userHistory[i].data['providerTitles']
-                                  : auth.userHistory[i].data['patient'],
+                                  : '${auth.userHistory[i].data['patient'].split(" ")[0][0].toUpperCase()}${auth.userHistory[i].data['patient'].split(" ")[0].substring(1)} ${auth.userHistory[i].data['patient'].split(" ")[1][0].toUpperCase()}${auth.userHistory[i].data['patient'].split(" ")[1].substring(1)}',
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 1.1,
@@ -236,187 +236,353 @@ class HistoryScreen extends StatelessWidget {
                   }
                   return Column(children: historyList.toList());
                 } else {
-                  return Container(
-                    height: currentOrientation == Orientation.portrait
-                        ? MediaQuery.of(context).size.height - 80
-                        : MediaQuery.of(context).size.height - 50,
-                    child: Stack(
-                      children: <Widget>[
-                        Container(
-                          height: currentOrientation == Orientation.portrait
-                              ? MediaQuery.of(context).size.height - 80
-                              : MediaQuery.of(context).size.height - 50,
-                          width: MediaQuery.of(context).size.width,
-                          child: CustomPaint(
-                            foregroundPainter: CurvePainter(),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: <Widget>[
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Text(
-                                      'Connect with local doctors now!',
-                                      style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Column(
-                                      children: <Widget>[
-                                        Icon(
-                                          CustomIcons.MedicallIcons.live_help,
-                                          size: 60,
-                                          color: Colors.purple.withAlpha(140),
-                                        ),
-                                        Text('Select medical \nconcern',
+                  if (medicallUser.type == 'patient') {
+                    return Container(
+                      height: currentOrientation == Orientation.portrait
+                          ? MediaQuery.of(context).size.height - 80
+                          : MediaQuery.of(context).size.height - 50,
+                      child: Stack(
+                        children: <Widget>[
+                          Container(
+                            height: currentOrientation == Orientation.portrait
+                                ? MediaQuery.of(context).size.height - 80
+                                : MediaQuery.of(context).size.height - 50,
+                            width: MediaQuery.of(context).size.width,
+                            child: CustomPaint(
+                              foregroundPainter: CurvePainter(),
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: <Widget>[
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Text(
+                                        'Connect with local doctors now!',
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Column(
+                                        children: <Widget>[
+                                          Icon(
+                                            CustomIcons.MedicallIcons.live_help,
+                                            size: 60,
+                                            color: Colors.purple.withAlpha(140),
+                                          ),
+                                          Text('Select medical \nconcern',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.black54,
+                                              ))
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: <Widget>[
+                                      Column(
+                                        children: <Widget>[
+                                          Icon(
+                                            CustomIcons.MedicallIcons.medkit,
+                                            size: 60,
+                                            color:
+                                                Colors.redAccent.withAlpha(200),
+                                          ),
+                                          Text(
+                                            'If needed meds\nare delivered',
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.black54,
-                                            ))
-                                      ],
-                                    )
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: <Widget>[
-                                    Column(
-                                      children: <Widget>[
-                                        Icon(
-                                          CustomIcons.MedicallIcons.medkit,
-                                          size: 60,
-                                          color:
-                                              Colors.redAccent.withAlpha(200),
-                                        ),
-                                        Text(
-                                          'If needed meds\nare delivered',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.black54),
-                                        ),
-                                      ],
-                                    ),
-                                    Column(
-                                      children: <Widget>[
-                                        Icon(
-                                          CustomIcons.MedicallIcons.clipboard_1,
-                                          size: 60,
-                                          color: Colors.green.withAlpha(200),
-                                        ),
-                                        Text(
-                                          'Answer\nquestions',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.black54),
-                                        )
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Column(
-                                      children: <Widget>[
-                                        Icon(
-                                          CustomIcons.MedicallIcons.stethoscope,
-                                          size: 60,
-                                          color:
-                                              Colors.blueAccent.withAlpha(200),
-                                        ),
-                                        Text(
-                                          'Doctor reviews &\n provides diagnosis',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.black54),
-                                        ),
-                                        currentOrientation ==
-                                                Orientation.portrait
-                                            ? SizedBox(
-                                                height: 60,
-                                              )
-                                            : SizedBox(
-                                                height: 20,
+                                                fontSize: 12,
+                                                color: Colors.black54),
+                                          ),
+                                        ],
+                                      ),
+                                      Column(
+                                        children: <Widget>[
+                                          Icon(
+                                            CustomIcons
+                                                .MedicallIcons.clipboard_1,
+                                            size: 60,
+                                            color: Colors.green.withAlpha(200),
+                                          ),
+                                          Text(
+                                            'Answer\nquestions',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.black54),
+                                          )
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Column(
+                                        children: <Widget>[
+                                          Icon(
+                                            CustomIcons
+                                                .MedicallIcons.stethoscope,
+                                            size: 60,
+                                            color: Colors.blueAccent
+                                                .withAlpha(200),
+                                          ),
+                                          Text(
+                                            'Doctor reviews &\n provides diagnosis',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.black54),
+                                          ),
+                                          currentOrientation ==
+                                                  Orientation.portrait
+                                              ? SizedBox(
+                                                  height: 60,
+                                                )
+                                              : SizedBox(
+                                                  height: 20,
+                                                ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: <Widget>[
+                                              FlatButton(
+                                                onPressed: () async {
+                                                  SharedPreferences
+                                                      _thisConsult =
+                                                      await SharedPreferences
+                                                          .getInstance();
+                                                  String currentConsultString =
+                                                      jsonEncode(ConsultData());
+                                                  await _thisConsult.setString(
+                                                      "consult",
+                                                      currentConsultString);
+                                                  GlobalNavigatorKey
+                                                      .key.currentState
+                                                      .pushReplacementNamed(
+                                                          '/symptoms');
+                                                },
+                                                color: Colors.green,
+                                                child: Text(
+                                                  'Start',
+                                                  style: TextStyle(
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .onPrimary),
+                                                ),
                                               ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: <Widget>[
-                                            FlatButton(
-                                              onPressed: () async {
-                                                SharedPreferences _thisConsult =
-                                                    await SharedPreferences
-                                                        .getInstance();
-                                                String currentConsultString =
-                                                    jsonEncode(ConsultData());
-                                                await _thisConsult.setString(
-                                                    "consult",
-                                                    currentConsultString);
-                                                GlobalNavigatorKey
-                                                    .key.currentState
-                                                    .pushReplacementNamed(
-                                                        '/symptoms');
-                                              },
-                                              color: Colors.green,
-                                              child: Text(
-                                                'Start',
-                                                style: TextStyle(
+                                              Text('  - or -  ',
+                                                  style: TextStyle(
+                                                    fontSize: 12,
                                                     color: Theme.of(context)
-                                                        .colorScheme
-                                                        .onPrimary),
+                                                        .primaryColor,
+                                                  )),
+                                              FlatButton(
+                                                onPressed: () {
+                                                  GlobalNavigatorKey
+                                                      .key.currentState
+                                                      .push(
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            DoctorSearch()),
+                                                  );
+                                                },
+                                                color: Colors.blueAccent,
+                                                child: Text(
+                                                  'Find Doctor',
+                                                  style: TextStyle(
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .onPrimary),
+                                                ),
                                               ),
-                                            ),
-                                            Text('  - or -  ',
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                  color: Theme.of(context)
-                                                      .primaryColor,
-                                                )),
-                                            FlatButton(
-                                              onPressed: () {
-                                                GlobalNavigatorKey
-                                                    .key.currentState
-                                                    .push(
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          DoctorSearch()),
-                                                );
-                                              },
-                                              color: Colors.blueAccent,
-                                              child: Text(
-                                                'Find Doctor',
-                                                style: TextStyle(
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .onPrimary),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    )
-                                  ],
-                                ),
-                              ],
+                                            ],
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  );
+                        ],
+                      ),
+                    );
+                  } else {
+                    return Container(
+                      height: currentOrientation == Orientation.portrait
+                          ? MediaQuery.of(context).size.height - 80
+                          : MediaQuery.of(context).size.height - 50,
+                      child: Stack(
+                        children: <Widget>[
+                          Container(
+                            height: currentOrientation == Orientation.portrait
+                                ? MediaQuery.of(context).size.height - 80
+                                : MediaQuery.of(context).size.height - 50,
+                            width: MediaQuery.of(context).size.width,
+                            child: CustomPaint(
+                              foregroundPainter: CurvePainter(),
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: <Widget>[
+                                  SizedBox(
+                                    height: 50,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Column(
+                                        children: <Widget>[
+                                          Icon(
+                                            CustomIcons.MedicallIcons.live_help,
+                                            size: 60,
+                                            color: Colors.purple.withAlpha(140),
+                                          ),
+                                          Text('Receive patient \nrequests',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.black54,
+                                              ))
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: <Widget>[
+                                      Column(
+                                        children: <Widget>[
+                                          Icon(
+                                            CustomIcons.MedicallIcons.medkit,
+                                            size: 60,
+                                            color:
+                                                Colors.redAccent.withAlpha(200),
+                                          ),
+                                          Text(
+                                            'Provide\nprescription\nif needed',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.black54),
+                                          ),
+                                        ],
+                                      ),
+                                      Column(
+                                        children: <Widget>[
+                                          Icon(
+                                            CustomIcons
+                                                .MedicallIcons.clipboard_1,
+                                            size: 60,
+                                            color: Colors.green.withAlpha(200),
+                                          ),
+                                          Text(
+                                            'View request\ndetails',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.black54),
+                                          )
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Column(
+                                        children: <Widget>[
+                                          Icon(
+                                            CustomIcons
+                                                .MedicallIcons.stethoscope,
+                                            size: 60,
+                                            color: Colors.blueAccent
+                                                .withAlpha(200),
+                                          ),
+                                          Text(
+                                            'Review &\n provide diagnosis',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.black54),
+                                          ),
+                                          currentOrientation ==
+                                                  Orientation.portrait
+                                              ? SizedBox(
+                                                  height: 60,
+                                                )
+                                              : SizedBox(
+                                                  height: 20,
+                                                ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Text(
+                                        'Connect with patients now!',
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            top: 0,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Container(
+                                  width: MediaQuery.of(context).size.width - 20,
+                                  margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                                  padding: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue.withAlpha(50),
+                                    border: Border.all(
+                                        color: Colors.grey.withAlpha(100),
+                                        style: BorderStyle.solid,
+                                        width: 1),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(5)),
+                                  ),
+                                  child: Text(
+                                    'You will now show up in our network when patients request for care. Once a patient selects you, a record of that request will show up here. By tapping on a request once it shows up in "History" you will be able to see detailed answers/photos from the patient, chat directly, and provide a prescription to them if needed.',
+                                    style: TextStyle(
+                                        fontSize: 12, color: Colors.black54),
+                                  ),
+                                )
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    );
+                  }
                 }
             }
           }),

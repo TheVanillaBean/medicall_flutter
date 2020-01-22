@@ -155,34 +155,38 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  medicallUser.type == 'patient'
-                      ? '${consultSnapshot['provider'].split(" ")[0][0].toUpperCase()}${consultSnapshot['provider'].split(" ")[0].substring(1)} ${consultSnapshot['provider'].split(" ")[1][0].toUpperCase()}${consultSnapshot['provider'].split(" ")[1].substring(1)} ' +
-                          consultSnapshot['providerTitles']
-                      : '${consultSnapshot['patient'].split(" ")[0][0].toUpperCase()}${consultSnapshot['patient'].split(" ")[0].substring(1)} ${consultSnapshot['patient'].split(" ")[1][0].toUpperCase()}${consultSnapshot['patient'].split(" ")[1].substring(1)} ',
-                  style: TextStyle(
-                    fontSize: Theme.of(context).platform == TargetPlatform.iOS
-                        ? 17.0
-                        : 20.0,
-                  ),
-                ),
-                Text(
-                  consultSnapshot['type'] == 'Lesion'
-                      ? 'Spot'
-                      : consultSnapshot['type'] != 'Lesion'
-                          ? consultSnapshot['type']
-                          : '',
-                  style: TextStyle(
-                    fontSize: Theme.of(context).platform == TargetPlatform.iOS
-                        ? 12.0
-                        : 14.0,
-                  ),
-                ),
-              ],
-            ),
+            consultSnapshot != null
+                ? Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        medicallUser.type == 'patient'
+                            ? '${consultSnapshot['provider'].split(" ")[0][0].toUpperCase()}${consultSnapshot['provider'].split(" ")[0].substring(1)} ${consultSnapshot['provider'].split(" ")[1][0].toUpperCase()}${consultSnapshot['provider'].split(" ")[1].substring(1)} ' +
+                                consultSnapshot['providerTitles']
+                            : '${consultSnapshot['patient'].split(" ")[0][0].toUpperCase()}${consultSnapshot['patient'].split(" ")[0].substring(1)} ${consultSnapshot['patient'].split(" ")[1][0].toUpperCase()}${consultSnapshot['patient'].split(" ")[1].substring(1)} ',
+                        style: TextStyle(
+                          fontSize:
+                              Theme.of(context).platform == TargetPlatform.iOS
+                                  ? 17.0
+                                  : 20.0,
+                        ),
+                      ),
+                      Text(
+                        consultSnapshot['type'] == 'Lesion'
+                            ? 'Spot'
+                            : consultSnapshot['type'] != 'Lesion'
+                                ? consultSnapshot['type']
+                                : '',
+                        style: TextStyle(
+                          fontSize:
+                              Theme.of(context).platform == TargetPlatform.iOS
+                                  ? 12.0
+                                  : 14.0,
+                        ),
+                      ),
+                    ],
+                  )
+                : Container(),
           ],
         ),
         bottom: TabBar(

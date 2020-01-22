@@ -192,10 +192,35 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
                                     ],
                                   ),
                                 ),
-                                leading: Icon(
-                                  Icons.account_circle,
-                                  size: 50,
-                                ),
+                                leading: userDocuments[i]
+                                        .data
+                                        .containsKey('profile_pic')
+                                    ? CircleAvatar(
+                                        radius: 20,
+                                        backgroundColor:
+                                            Colors.grey.withAlpha(100),
+                                        child: userDocuments[i]
+                                                    .data['profile_pic'] !=
+                                                null
+                                            ? ClipOval(
+                                                child: Image.network(
+                                                  userDocuments[i]
+                                                      .data['profile_pic'],
+                                                  width: 100,
+                                                  height: 100,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              )
+                                            : Icon(
+                                                Icons.account_circle,
+                                                size: 40,
+                                                color: Colors.grey,
+                                              ))
+                                    : Icon(
+                                        Icons.account_circle,
+                                        size: 40,
+                                        color: Colors.grey,
+                                      ),
                               ),
                             ));
                           }
