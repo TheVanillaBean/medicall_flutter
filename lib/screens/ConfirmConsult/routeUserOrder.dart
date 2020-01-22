@@ -79,7 +79,8 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                     Container(
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(160.0),
-                        child: _consult.providerProfilePic != null
+                        child: _consult != null &&
+                                _consult.providerProfilePic != null
                             ? CachedNetworkImage(
                                 height: 160,
                                 width: 160,

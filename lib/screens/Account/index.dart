@@ -54,21 +54,22 @@ class _AccountScreenState extends State<AccountScreen> {
                 Container(
                   child: ClipRRect(
                     borderRadius: new BorderRadius.circular(100.0),
-                    child: medicallUser.profilePic != null
-                        ? CachedNetworkImage(
-                            height: 100,
-                            width: 100,
-                            fit: BoxFit.cover,
-                            imageUrl: auth.medicallUser.profilePic,
-                            placeholder: (context, url) =>
-                                CircularProgressIndicator(),
-                            errorWidget: (context, url, error) =>
-                                Icon(Icons.error),
-                          )
-                        : Icon(
-                            Icons.account_circle,
-                            size: 100,
-                          ),
+                    child:
+                        medicallUser != null && medicallUser.profilePic != null
+                            ? CachedNetworkImage(
+                                height: 100,
+                                width: 100,
+                                fit: BoxFit.cover,
+                                imageUrl: auth.medicallUser.profilePic,
+                                placeholder: (context, url) =>
+                                    CircularProgressIndicator(),
+                                errorWidget: (context, url, error) =>
+                                    Icon(Icons.error),
+                              )
+                            : Icon(
+                                Icons.account_circle,
+                                size: 100,
+                              ),
                   ),
                 ),
                 SizedBox(

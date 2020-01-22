@@ -20,6 +20,7 @@ import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/theme.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
+import 'package:flare_splash_screen/flare_splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_crashlytics/flutter_crashlytics.dart';
 import 'package:oktoast/oktoast.dart';
@@ -82,7 +83,13 @@ class _MedicallAppState extends State<MedicallApp> {
             navigatorKey: GlobalNavigatorKey.key,
             navigatorObservers: <NavigatorObserver>[observer],
             theme: myTheme,
-            home: LandingPage(),
+            home: SplashScreen.navigate(
+              name: 'assets/splash.flr',
+              next: (context) => LandingPage(),
+              until: () => Future.delayed(Duration(seconds: 1)),
+              backgroundColor: Colors.white,
+              startAnimation: 'Untitled',
+            ),
             onGenerateRoute: (RouteSettings settings) {
               switch (settings.name) {
                 case '/login':
@@ -127,20 +134,17 @@ class _MedicallAppState extends State<MedicallApp> {
                   );
                 case '/selectProvider':
                   return MyCustomRoute(
-                    builder: (_) =>
-                        SelectProviderScreen(),
+                    builder: (_) => SelectProviderScreen(),
                     settings: settings,
                   );
                 case '/questionsUpload':
                   return MyCustomRoute(
-                    builder: (_) =>
-                        QuestionsUploadScreen(),
+                    builder: (_) => QuestionsUploadScreen(),
                     settings: settings,
                   );
                 case '/consultReview':
                   return MyCustomRoute(
-                    builder: (_) =>
-                        ConfirmConsultScreen(),
+                    builder: (_) => ConfirmConsultScreen(),
                     settings: settings,
                   );
                 case '/chat':
@@ -155,8 +159,7 @@ class _MedicallAppState extends State<MedicallApp> {
                   );
                 case '/historyDetail':
                   return MyCustomRoute(
-                    builder: (_) =>
-                        HistoryDetailScreen(),
+                    builder: (_) => HistoryDetailScreen(),
                     settings: settings,
                   );
                 case '/account':

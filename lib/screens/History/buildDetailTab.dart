@@ -229,15 +229,6 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
       return FutureBuilder<void>(
         future: auth.getConsultDetail(), // a Future<String> or null
         builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: Container(
-                width: 80,
-                height: 80,
-                child: CircularProgressIndicator(),
-              ),
-            );
-          }
           return Scaffold(
             body: SingleChildScrollView(
                 padding: EdgeInsets.fromLTRB(10, 0, 10, 80),
@@ -304,7 +295,17 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                       0 &&
                                   medicallUser.type == 'patient'
                               ? Container(
-                                  padding: EdgeInsets.all(8),
+                                  margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                                  padding: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue.withAlpha(50),
+                                    border: Border.all(
+                                        color: Colors.grey.withAlpha(100),
+                                        style: BorderStyle.solid,
+                                        width: 1),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(5)),
+                                  ),
                                   child: Text(
                                       'Once your doctor reviews the details and if a prescription is nessassary it will appear below. Once it is filled out we will ask you for address & payment below.'),
                                 )

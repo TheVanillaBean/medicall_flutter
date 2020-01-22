@@ -23,9 +23,11 @@ class _CarouselWithIndicatorState extends State<CarouselWithIndicator> {
             return Container(
               child: ClipRRect(
                 borderRadius: BorderRadius.all(Radius.circular(0.0)),
-                child: CachedNetworkImage(
-                  imageUrl: url,
-                ),
+                child: url != null
+                    ? CachedNetworkImage(
+                        imageUrl: url,
+                      )
+                    : CircularProgressIndicator(),
               ),
             );
           },

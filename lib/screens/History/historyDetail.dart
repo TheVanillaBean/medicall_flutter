@@ -159,12 +159,10 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  consultSnapshot['type'] != 'Lesion'
-                      ? consultSnapshot['type']
-                      : medicallUser.type == 'patient'
-                          ? '${consultSnapshot['provider'].split(" ")[0][0].toUpperCase()}${consultSnapshot['provider'].split(" ")[0].substring(1)} ${consultSnapshot['provider'].split(" ")[1][0].toUpperCase()}${consultSnapshot['provider'].split(" ")[1].substring(1)} ' +
-                              consultSnapshot['providerTitles']
-                          : '${consultSnapshot['patient'].split(" ")[0][0].toUpperCase()}${consultSnapshot['patient'].split(" ")[0].substring(1)} ${consultSnapshot['patient'].split(" ")[1][0].toUpperCase()}${consultSnapshot['patient'].split(" ")[1].substring(1)} ',
+                  medicallUser.type == 'patient'
+                      ? '${consultSnapshot['provider'].split(" ")[0][0].toUpperCase()}${consultSnapshot['provider'].split(" ")[0].substring(1)} ${consultSnapshot['provider'].split(" ")[1][0].toUpperCase()}${consultSnapshot['provider'].split(" ")[1].substring(1)} ' +
+                          consultSnapshot['providerTitles']
+                      : '${consultSnapshot['patient'].split(" ")[0][0].toUpperCase()}${consultSnapshot['patient'].split(" ")[0].substring(1)} ${consultSnapshot['patient'].split(" ")[1][0].toUpperCase()}${consultSnapshot['patient'].split(" ")[1].substring(1)} ',
                   style: TextStyle(
                     fontSize: Theme.of(context).platform == TargetPlatform.iOS
                         ? 17.0
