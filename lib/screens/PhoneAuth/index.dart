@@ -31,8 +31,6 @@ class PhoneAuthScreen extends StatefulWidget {
   _PhoneAuthScreenState createState() => _PhoneAuthScreenState();
 }
 
-final _mobileFormatter = NumberTextInputFormatter();
-
 class NumberTextInputFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
