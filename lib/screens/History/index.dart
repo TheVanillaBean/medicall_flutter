@@ -190,12 +190,46 @@ class HistoryScreen extends StatelessWidget {
                               ),
                               onPressed: () {},
                             ),
-                            leading: Icon(
-                              Icons.account_circle,
-                              color:
-                                  Theme.of(context).primaryColor.withAlpha(170),
-                              size: 50,
-                            ),
+                            leading: medicallUser.type == 'patient'
+                                ? CircleAvatar(
+                                    radius: 20,
+                                    child: auth.userHistory[i]
+                                                .data['provider_profile'] !=
+                                            null
+                                        ? ClipOval(
+                                            child: Image.network(
+                                                auth.userHistory[i]
+                                                    .data['provider_profile'],
+                                                width: 100,
+                                                height: 100,
+                                                fit: BoxFit.cover),
+                                          )
+                                        : Icon(
+                                            Icons.account_circle,
+                                            size: 40,
+                                            color: Colors.grey,
+                                          ),
+                                  )
+                                : CircleAvatar(
+                                    radius: 20,
+                                    backgroundColor: Colors.grey.withAlpha(100),
+                                    child: auth.userHistory[i]
+                                                .data['patient_profile'] !=
+                                            null
+                                        ? ClipOval(
+                                            child: Image.network(
+                                              auth.userHistory[i]
+                                                  .data['patient_profile'],
+                                              width: 100,
+                                              height: 100,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          )
+                                        : Icon(
+                                            Icons.account_circle,
+                                            size: 40,
+                                            color: Colors.grey,
+                                          )),
                           ),
                         )));
                   }
