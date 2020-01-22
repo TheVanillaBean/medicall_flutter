@@ -24,13 +24,13 @@
 				{
 					"name": "Group 1548",
 					"translation": [
-						54.49462127685547,
-						215.46681213378906
+						28.43402862548828,
+						210.61825561523438
 					],
 					"rotation": 0,
 					"scale": [
-						1,
-						1
+						1.2938655614852905,
+						1.2938655614852905
 					],
 					"opacity": 1,
 					"isCollapsed": false,
@@ -2194,13 +2194,13 @@
 				{
 					"name": "Path 1275",
 					"translation": [
-						178.5735626220703,
-						278.4335021972656
+						188.9759521484375,
+						292.08868408203125
 					],
 					"rotation": 0,
 					"scale": [
-						1,
-						1
+						1.2938655614852905,
+						1.2938655614852905
 					],
 					"opacity": 1,
 					"isCollapsed": false,
@@ -2317,8 +2317,44 @@
 					"name": "Untitled",
 					"fps": 60,
 					"duration": 3,
-					"isLooping": false,
+					"isLooping": true,
 					"keyed": [
+						{
+							"component": 0,
+							"posY": [
+								[
+									{
+										"time": 2.1,
+										"interpolatorType": 1,
+										"value": 197.28494262695312
+									},
+									{
+										"time": 3,
+										"interpolatorType": 1,
+										"value": 23.284931182861328
+									}
+								]
+							],
+							"opacity": [
+								[
+									{
+										"time": 2.35,
+										"interpolatorType": 1,
+										"value": 1
+									},
+									{
+										"time": 2.6333333333333333,
+										"interpolatorType": 1,
+										"value": 0.6499999999999999
+									},
+									{
+										"time": 3,
+										"interpolatorType": 1,
+										"value": 0
+									}
+								]
+							]
+						},
 						{
 							"component": 2,
 							"posX": [
@@ -2351,6 +2387,21 @@
 										"time": 0.9833333333333333,
 										"interpolatorType": 1,
 										"value": 1
+									},
+									{
+										"time": 2.35,
+										"interpolatorType": 1,
+										"value": 1
+									},
+									{
+										"time": 2.6333333333333333,
+										"interpolatorType": 1,
+										"value": 0.6499999999999999
+									},
+									{
+										"time": 3,
+										"interpolatorType": 1,
+										"value": 0
 									}
 								]
 							]
@@ -2392,6 +2443,21 @@
 										"time": 1.1666666666666667,
 										"interpolatorType": 1,
 										"value": 1
+									},
+									{
+										"time": 2.35,
+										"interpolatorType": 1,
+										"value": 1
+									},
+									{
+										"time": 2.6333333333333333,
+										"interpolatorType": 1,
+										"value": 0.6499999999999999
+									},
+									{
+										"time": 3,
+										"interpolatorType": 1,
+										"value": 0
 									}
 								]
 							],
@@ -2446,6 +2512,21 @@
 										"time": 0.9833333333333333,
 										"interpolatorType": 1,
 										"value": 1
+									},
+									{
+										"time": 2.35,
+										"interpolatorType": 1,
+										"value": 1
+									},
+									{
+										"time": 2.6333333333333333,
+										"interpolatorType": 1,
+										"value": 0.6499999999999999
+									},
+									{
+										"time": 3,
+										"interpolatorType": 1,
+										"value": 0
 									}
 								]
 							],
@@ -2562,6 +2643,21 @@
 										"time": 0.9833333333333333,
 										"interpolatorType": 1,
 										"value": 1
+									},
+									{
+										"time": 2.35,
+										"interpolatorType": 1,
+										"value": 1
+									},
+									{
+										"time": 2.6333333333333333,
+										"interpolatorType": 1,
+										"value": 0.6499999999999999
+									},
+									{
+										"time": 3,
+										"interpolatorType": 1,
+										"value": 0
 									}
 								]
 							]
@@ -2650,6 +2746,57 @@
 										"time": 0.9833333333333333,
 										"interpolatorType": 1,
 										"value": 1
+									},
+									{
+										"time": 2.35,
+										"interpolatorType": 1,
+										"value": 1
+									},
+									{
+										"time": 2.6333333333333333,
+										"interpolatorType": 1,
+										"value": 0.6499999999999999
+									},
+									{
+										"time": 3,
+										"interpolatorType": 1,
+										"value": 0
+									}
+								]
+							]
+						},
+						{
+							"component": 25,
+							"posY": [
+								[
+									{
+										"time": 2.1,
+										"interpolatorType": 1,
+										"value": 278.7552185058594
+									},
+									{
+										"time": 3,
+										"interpolatorType": 1,
+										"value": 104.75530242919922
+									}
+								]
+							],
+							"opacity": [
+								[
+									{
+										"time": 2.35,
+										"interpolatorType": 1,
+										"value": 1
+									},
+									{
+										"time": 2.6333333333333333,
+										"interpolatorType": 1,
+										"value": 0.6499999999999999
+									},
+									{
+										"time": 3,
+										"interpolatorType": 1,
+										"value": 0
 									}
 								]
 							]
@@ -2669,6 +2816,21 @@
 								[
 									{
 										"time": 0.9833333333333333,
+										"interpolatorType": 1,
+										"value": 0
+									},
+									{
+										"time": 2.35,
+										"interpolatorType": 1,
+										"value": 1
+									},
+									{
+										"time": 2.6333333333333333,
+										"interpolatorType": 1,
+										"value": 0.6499999999999999
+									},
+									{
+										"time": 3,
 										"interpolatorType": 1,
 										"value": 0
 									}
