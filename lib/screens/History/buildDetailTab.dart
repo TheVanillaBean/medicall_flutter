@@ -229,6 +229,11 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
       return FutureBuilder<void>(
         future: auth.getConsultDetail(), // a Future<String> or null
         builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: Container(),
+            );
+          }
           return Scaffold(
             body: SingleChildScrollView(
                 padding: EdgeInsets.fromLTRB(10, 0, 10, 80),
