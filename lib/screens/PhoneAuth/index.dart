@@ -31,6 +31,34 @@ class PhoneAuthScreen extends StatefulWidget {
   _PhoneAuthScreenState createState() => _PhoneAuthScreenState();
 }
 
+final _mobileFormatter = NumberTextInputFormatter();
+
+class NumberTextInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    final int newTextLength = newValue.text.length;
+    int selectionIndex = newValue.selection.end;
+    int usedSubstringIndex = 0;
+    final StringBuffer newText = new StringBuffer();
+    if (newTextLength >= 1) {
+      newText.write('+');
+      if (newValue.selection.end >= 1) selectionIndex++;
+    }
+    if (newTextLength >= 3) {
+      newText.write(newValue.text.substring(0, usedSubstringIndex = 2) + ' ');
+      if (newValue.selection.end >= 2) selectionIndex += 1;
+    }
+    // Dump the rest.
+    if (newTextLength >= usedSubstringIndex)
+      newText.write(newValue.text.substring(usedSubstringIndex));
+    return new TextEditingValue(
+      text: newText.toString(),
+      selection: new TextSelection.collapsed(offset: selectionIndex),
+    );
+  }
+}
+
 class _PhoneAuthScreenState extends State<PhoneAuthScreen>
     with VerificationError {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -93,10 +121,10 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
 
   Widget _buildPhoneNumberInput() {
     return MaskedTextField(
-      mask: "(xxx) xxx-xxxx",
-      keyboardType: TextInputType.number,
+      mask: "(xxx)xxx-xxxx",
+      keyboardType: TextInputType.phone,
       maskedTextFieldController: phoneNumberController,
-      maxLength: 14,
+      maxLength: 13,
       onSubmitted: (_) => model.updateRefreshing(true, mounted),
       onChanged: model.updatePhoneNumber,
       textAlign: TextAlign.center,
@@ -117,7 +145,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
         ),
         labelText: "Phone",
         labelStyle: decorationStyle,
-        hintText: "(999) 999-9999",
+        hintText: "(999)999-9999",
         hintStyle: hintStyle,
         errorText: model.phoneNumberErrorText,
         enabled: model.status == AuthStatus.PHONE_AUTH,
