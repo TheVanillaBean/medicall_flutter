@@ -101,6 +101,8 @@ class HistoryScreen extends StatelessWidget {
                             .secondary
                             .withAlpha(70),
                         onPressed: () {
+                          //clear current snap remove this and previous consult data is displayed in detailed history
+                          db.consultSnapshot = null;
                           db.currConsultId = db.userHistory[i].documentID;
                           GlobalNavigatorKey.key.currentState
                               .pushNamed('/historyDetail', arguments: {

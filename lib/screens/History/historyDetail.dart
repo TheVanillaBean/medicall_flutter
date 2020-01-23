@@ -286,8 +286,6 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
     // The app's "state".
     if (db.consultSnapshot == null ||
         db.currConsultId != db.consultSnapshot.documentID) {
-      //clear current snap remove this and previous consult data is displayed in detailed history
-      db.consultSnapshot = null;
       return FutureBuilder<void>(
         future: db.getConsultDetail(), // a Future<String> or null
         builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
