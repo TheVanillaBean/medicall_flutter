@@ -4,15 +4,17 @@ import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/presentation/medicall_icons_icons.dart' as CustomIcons;
 import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/user_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'doctorSearch.dart';
-import 'package:Medicall/presentation/medicall_icons_icons.dart' as CustomIcons;
 
 List<String> providers = [];
 List<Widget> historyList = [];
@@ -25,7 +27,7 @@ class HistoryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    medicallUser = Provider.of<AuthBase>(context).medicallUser;
+    medicallUser = Provider.of<UserProvider>(context).medicallUser;
 
     return Scaffold(
       resizeToAvoidBottomPadding: false,
