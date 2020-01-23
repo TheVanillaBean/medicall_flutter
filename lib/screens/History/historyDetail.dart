@@ -1,6 +1,7 @@
 import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -25,16 +26,13 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
   String documentId;
 
   var consultSnapshot;
-  var auth;
-  MedicallUser medicallUser;
-
+  var db = Provider.of<Database>(GlobalNavigatorKey.key.currentContext);
+  MedicallUser medicallUser =
+      Provider.of<UserProvider>(GlobalNavigatorKey.key.currentContext)
+          .medicallUser;
   @override
   initState() {
     super.initState();
-    auth = Provider.of<AuthBase>(GlobalNavigatorKey.key.currentContext);
-    medicallUser =
-        Provider.of<UserProvider>(GlobalNavigatorKey.key.currentContext)
-            .medicallUser;
     controller = TabController(length: 3, vsync: this);
     controller.addListener(_handleTabSelection);
   }
@@ -124,8 +122,8 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                   color: Colors.blue,
                 )),
     ];
-    if (auth.consultSnapshot != null) {
-      consultSnapshot = auth.consultSnapshot.data;
+    if (db.consultSnapshot != null) {
+      consultSnapshot = db.consultSnapshot.data;
     } else {
       consultSnapshot = {'type': ''};
     }
@@ -242,7 +240,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
         ),
         elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
       ),
-      body: auth.consultSnapshot != null
+      body: db.consultSnapshot != null
           ? medicallUser.type == 'patient' && consultSnapshot != null
               ? TabBarView(
                   // Add tabs as widgets
@@ -288,7 +286,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
   Widget build(BuildContext context) {
     // The app's "state".
     return FutureBuilder<void>(
-      future: auth.getConsultDetail(), // a Future<String> or null
+      future: db.getConsultDetail(), // a Future<String> or null
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return returnBody();
