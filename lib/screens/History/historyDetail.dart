@@ -17,7 +17,7 @@ class HistoryDetailScreen extends StatefulWidget {
 class _HistoryDetailScreenState extends State<HistoryDetailScreen>
     with SingleTickerProviderStateMixin {
   TabController controller;
-  int _currentIndex = 0;
+  int currentIndex = 0;
 
   Choice _selectedChoice;
   bool isConsultOpen = false;
@@ -42,7 +42,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
 
   _handleTabSelection() {
     setState(() {
-      _currentIndex = controller.index;
+      currentIndex = controller.index;
     });
   }
 
@@ -65,6 +65,9 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
         if (db.consultStateData['state'] == 'done') {
           isDone = true;
           consultSnapshot['state'] = 'done';
+          if (currentIndex != 0) {
+            Navigator.of(context).pop();
+          }
         } else {
           isDone = false;
           consultSnapshot['state'] = 'in progress';

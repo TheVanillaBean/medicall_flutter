@@ -73,29 +73,35 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                     )
                   ],
                 ),
+                SizedBox(
+                  height: 10,
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Container(
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(160.0),
+                        borderRadius: BorderRadius.circular(140.0),
                         child: _consult != null &&
                                 _consult.providerProfilePic != null
-                            ? CachedNetworkImage(
-                                height: 160,
-                                width: 160,
-                                fit: BoxFit.cover,
-                                imageUrl: _consult.providerProfilePic,
-                                placeholder: (context, url) => Container(
-                                      height: 50,
-                                      width: 50,
-                                      child: CircularProgressIndicator(),
-                                    ),
-                                errorWidget: (context, url, error) => Container(
-                                      height: 100,
-                                      width: 100,
-                                      child: Icon(Icons.error),
-                                    ))
+                            ? Container(
+                                child: CachedNetworkImage(
+                                    height: 140,
+                                    width: 140,
+                                    fit: BoxFit.cover,
+                                    imageUrl: _consult.providerProfilePic,
+                                    placeholder: (context, url) => Container(
+                                          height: 50,
+                                          width: 50,
+                                          child: CircularProgressIndicator(),
+                                        ),
+                                    errorWidget: (context, url, error) =>
+                                        Container(
+                                          height: 100,
+                                          width: 100,
+                                          child: Icon(Icons.error),
+                                        )),
+                              )
                             : Icon(
                                 Icons.account_circle,
                                 size: 160,
@@ -103,6 +109,9 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                       ),
                     )
                   ],
+                ),
+                SizedBox(
+                  height: 10,
                 ),
                 Row(
                   children: <Widget>[

@@ -108,7 +108,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                   ? EdgeInsets.fromLTRB(0, 0, 0, 0)
                   : EdgeInsets.fromLTRB(0, 0, 0, 0),
               decoration: BoxDecoration(
-                  color: Colors.blue[100].withAlpha(50),
+                  color: Colors.white,
                   border: Border(
                       top: BorderSide(
                           color: Theme.of(context).primaryColor,
@@ -324,13 +324,12 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: <Widget>[
                         Expanded(
-                            child: OutlineButton(
-                          borderSide: BorderSide(
-                              color: Theme.of(context).primaryColor,
-                              style: BorderStyle.solid,
-                              width: 2),
+                            child: FlatButton(
                           padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
-                          color: Theme.of(context).colorScheme.background,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withAlpha(100),
                           onPressed: () async {
                             setState(() {
                               hasReviewed = true;
@@ -340,7 +339,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                           child: Text(
                             'REVIEW ORDER',
                             style: TextStyle(
-                              color: Theme.of(context).colorScheme.secondary,
+                              color: Theme.of(context).colorScheme.primary,
                               fontWeight: FontWeight.bold,
                               letterSpacing: 1.2,
                             ),
@@ -471,6 +470,14 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                       asset: questionsList[index],
                       width: 300,
                       height: 300,
+                      quality: 50,
+                      spinner: Center(
+                        child: SizedBox(
+                          height: 30,
+                          width: 30,
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
                     );
                   }),
                 )

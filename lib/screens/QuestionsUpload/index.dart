@@ -127,12 +127,8 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
                         child: Column(
                           children: <Widget>[
                             images.length > 0 && (images.length) >= index
-                                ? buildGridView(index, images[index - 1])
-                                : Container(
-                                    child: Image.network(
-                                    db.newConsult.uploadQuestions[index]
-                                        ['media'],
-                                  ))
+                                ? Container()
+                                : Container(child: Container())
                           ],
                         ),
                       )

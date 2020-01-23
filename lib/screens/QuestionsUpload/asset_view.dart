@@ -32,12 +32,7 @@ class AssetState extends State<AssetView> {
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           byteData = snapshot.data;
-          // YOUR CUSTOM CODE GOES HERE
-          return Image.memory(
-            byteData.buffer.asUint8List(),
-            fit: BoxFit.fitWidth,
-            height: MediaQuery.of(context).size.height - 250,
-          );
+          return Image(image: MemoryImage(byteData.buffer.asUint8List()));
         } else {
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
