@@ -1,4 +1,4 @@
-import 'package:Medicall/screens/QuestionsUpload/asset_view.dart';
+import 'package:Medicall/screens/Questions/asset_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
