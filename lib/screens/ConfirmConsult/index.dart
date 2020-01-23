@@ -26,6 +26,9 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
   double price = 39.00;
   bool hasReviewed = false;
   var db = Provider.of<Database>(GlobalNavigatorKey.key.currentContext);
+  MedicallUser medicallUser =
+      Provider.of<UserProvider>(GlobalNavigatorKey.key.currentContext)
+          .medicallUser;
 
   TabController _confirmTabCntrl;
   @override
@@ -383,8 +386,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
       "providerTitles": db.newConsult.providerTitles,
       "patient": medicallUser.displayName,
       "provider_profile": db.newConsult.providerProfilePic,
-      "patient_profile":
-          Provider.of<UserProvider>(context).medicallUser.profilePic,
+      "patient_profile": medicallUser.profilePic,
       "consult_price": db.newConsult.price,
       "provider_id": db.newConsult.providerId,
       "patient_id": medicallUser.uid,

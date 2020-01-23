@@ -392,7 +392,7 @@ class ChatScreenState extends State<ChatScreen> {
                 child: IconButton(
                   icon: Icon(
                     Icons.send,
-                    color: Colors.green,
+                    color: !this.peerAvatar ? Colors.lightGreen : greyColor,
                   ),
                   onPressed: () {
                     if (!this.peerAvatar) {

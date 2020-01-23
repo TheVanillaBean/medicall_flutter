@@ -19,10 +19,8 @@ bool addedQuestions = false;
 String buttonTxt = "Send Prescription";
 bool isDone = false;
 GlobalKey<FormBuilderState> consultFormKey = GlobalKey();
-var db = Provider.of<Database>(GlobalNavigatorKey.key.currentContext);
-MedicallUser medicallUser =
-    Provider.of<UserProvider>(GlobalNavigatorKey.key.currentContext)
-        .medicallUser;
+var db;
+MedicallUser medicallUser;
 
 class BuildDetailTab extends StatefulWidget {
   final keyStr;
@@ -37,16 +35,17 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
   @override
   void initState() {
     super.initState();
-    if (currentDetailsIndex == 0) {
-      db.getPatientMedicalHistory(medicallUser);
-    }
   }
 
   @override
   Widget build(BuildContext context) {
+    db = Provider.of<Database>(GlobalNavigatorKey.key.currentContext);
+    medicallUser = Provider.of<UserProvider>(context).medicallUser;
+    if (currentDetailsIndex == 0) {
+      db.getPatientMedicalHistory(medicallUser);
+    }
     var key = widget.keyStr.toString();
     var ind = widget.indx;
-
     var consultSnapshot = db.consultSnapshot.data;
     List<String> mediaList = [];
     for (var i = 0; i < consultSnapshot['media'].length; i++) {

@@ -12,16 +12,16 @@ import 'package:provider/provider.dart';
 import 'package:simple_animations/simple_animations.dart';
 
 var screenSize;
-var db = Provider.of<Database>(GlobalNavigatorKey.key.currentContext);
-MedicallUser medicallUser =
-    Provider.of<UserProvider>(GlobalNavigatorKey.key.currentContext)
-        .medicallUser;
+var db;
+MedicallUser medicallUser;
 
 class SymptomsScreen extends StatelessWidget {
   const SymptomsScreen({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    db = Provider.of<Database>(context);
+    medicallUser = Provider.of<UserProvider>(context).medicallUser;
     final _scaffoldKey = GlobalKey<ScaffoldState>();
     screenSize = MediaQuery.of(context).size;
     void _showMedDialog() {
@@ -45,7 +45,7 @@ class SymptomsScreen extends StatelessWidget {
                       .get();
                   db.newConsult.historyQuestions =
                       historyQuestions.data['medical_history_questions'];
-                  GlobalNavigatorKey.key.currentState.pop();
+                  Navigator.of(context).pop();
                   GlobalNavigatorKey.key.currentState.push(
                     MaterialPageRoute(builder: (_) => QuestionsScreen()),
                   );
@@ -56,7 +56,7 @@ class SymptomsScreen extends StatelessWidget {
                 child: Text("No"),
                 onPressed: () {
                   medicallUser.hasMedicalHistory = true;
-                  GlobalNavigatorKey.key.currentState.pop();
+                  Navigator.of(context).pop();
                   GlobalNavigatorKey.key.currentState.push(
                     MaterialPageRoute(builder: (_) => QuestionsScreen()),
                   );
@@ -83,7 +83,7 @@ class SymptomsScreen extends StatelessWidget {
                 color: Theme.of(context).primaryColor,
                 child: Text("My Medical History"),
                 onPressed: () {
-                  GlobalNavigatorKey.key.currentState.pop();
+                  Navigator.of(context).pop();
                   GlobalNavigatorKey.key.currentState.push(
                     MaterialPageRoute(builder: (_) => QuestionsScreen()),
                   );
@@ -304,7 +304,8 @@ class EntryItem extends StatelessWidget {
                                           .colorScheme
                                           .secondary,
                                       onPressed: () async {
-                                        if (db.newConsult.provider == null) {
+                                        if (db.newConsult == null ||
+                                            db.newConsult.provider == null) {
                                           db.newConsult = ConsultData();
                                         }
 

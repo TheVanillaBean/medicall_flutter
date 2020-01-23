@@ -87,8 +87,8 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
                 onPressed: () async {
                   medicallUser.hasMedicalHistory = true;
                   await db.addUserMedicalHistory(medicallUser);
-                  GlobalNavigatorKey.key.currentState.pop();
-                  GlobalNavigatorKey.key.currentState
+                  Navigator.of(context).pop();
+                  Navigator.of(context)
                       .pushReplacementNamed('/questionsScreen');
                 },
               ),
@@ -198,7 +198,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.close),
-          onPressed: () => GlobalNavigatorKey.key.currentState.pop(false),
+          onPressed: () => Navigator.of(context).pop(false),
         ),
         title: Text(currentQuestions == 'symptom'
             ? db.newConsult.consultType == 'Lesion'

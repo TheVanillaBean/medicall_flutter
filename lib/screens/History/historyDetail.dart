@@ -64,12 +64,10 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
         }
         if (db.consultStateData['state'] == 'done') {
           isDone = true;
-          if (_currentIndex != 0) {
-            Navigator.of(context).pop();
-          }
+          consultSnapshot['state'] = 'done';
         } else {
           isDone = false;
-          Navigator.of(context).pop();
+          consultSnapshot['state'] = 'in progress';
         }
       }
     });
