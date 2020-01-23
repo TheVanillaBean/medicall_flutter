@@ -173,7 +173,7 @@ class Auth implements AuthBase {
 
   @override
   Future<void> signOut() async {
-    medicallUser = MedicallUser();
+    medicallUser = MedicallUser(displayName: 'logout');
     await GoogleSignIn().signOut();
     await _firebaseAuth.signOut();
   }

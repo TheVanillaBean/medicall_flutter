@@ -143,13 +143,6 @@ class DrawerMenu extends StatelessWidget {
       GlobalNavigatorKey.key.currentState.pop(context);
       final auth = Provider.of<AuthBase>(context, listen: false);
       await auth.signOut();
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => LandingPage(
-                  userSnapshot: AsyncSnapshot.nothing(),
-                )),
-      );
     } catch (e) {
       print(e);
     }

@@ -80,15 +80,26 @@ class MedicallApp extends StatelessWidget {
     return OKToast(
       child: AuthWidgetBuilder(
         builder: (context, userSnapshot) {
+          var auth = Provider.of<AuthBase>(context);
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-            home: SplashScreen.navigate(
-              name: 'assets/splash.flr',
-              next: (ctx) => _buildApp(userSnapshot, ctx),
-              isLoading: userSnapshot.connectionState != ConnectionState.active,
-              backgroundColor: Colors.white,
-              startAnimation: 'Untitled',
-            ),
+            home: auth.medicallUser != null &&
+                    auth.medicallUser.displayName == 'logout'
+                ? SplashScreen.navigate(
+                    name: 'assets/logout.flr',
+                    next: (ctx) => _buildApp(userSnapshot, ctx),
+                    isLoading: false,
+                    backgroundColor: Colors.white,
+                    startAnimation: 'Untitled',
+                  )
+                : SplashScreen.navigate(
+                    name: 'assets/splash.flr',
+                    next: (ctx) => _buildApp(userSnapshot, ctx),
+                    isLoading:
+                        userSnapshot.connectionState != ConnectionState.active,
+                    backgroundColor: Colors.white,
+                    startAnimation: 'Untitled',
+                  ),
           );
         },
       ),
