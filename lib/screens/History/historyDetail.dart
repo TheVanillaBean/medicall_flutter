@@ -1,6 +1,5 @@
 import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -157,7 +156,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            consultSnapshot != null
+            consultSnapshot != null && consultSnapshot['provider'] != null
                 ? Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
@@ -285,15 +284,23 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
   @override
   Widget build(BuildContext context) {
     // The app's "state".
-    return FutureBuilder<void>(
-      future: db.getConsultDetail(), // a Future<String> or null
-      builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
+    if (db.consultSnapshot == null ||
+        db.currConsultId != db.consultSnapshot.documentID) {
+      //clear current snap remove this and previous consult data is displayed in detailed history
+      db.consultSnapshot = null;
+      return FutureBuilder<void>(
+        future: db.getConsultDetail(), // a Future<String> or null
+        builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {}
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return returnBody();
+          }
           return returnBody();
-        }
-        return returnBody();
-      },
-    );
+        },
+      );
+    } else {
+      return returnBody();
+    }
   }
 }
 
