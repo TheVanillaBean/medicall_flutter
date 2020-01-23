@@ -52,7 +52,7 @@ class FirestoreDatabase implements Database {
   FirestoreDatabase();
   @override
   Future<void> getConsultDetail() async {
-    if (consultSnapshot == null ||
+    if (consultSnapshot == null && currConsultId != null ||
         currConsultId != consultSnapshot.documentID) {
       final DocumentReference documentReference =
           Firestore.instance.collection('consults').document(currConsultId);

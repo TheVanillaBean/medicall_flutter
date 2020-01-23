@@ -20,7 +20,6 @@ List<String> providers = [];
 List<Widget> historyList = [];
 MedicallUser medicallUser;
 var userDocuments;
-var db = Provider.of<Database>(GlobalNavigatorKey.key.currentContext);
 
 class HistoryScreen extends StatelessWidget {
   final _scaffoldKey =
@@ -29,7 +28,7 @@ class HistoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     medicallUser = Provider.of<UserProvider>(context).medicallUser;
-
+    var db = Provider.of<Database>(context);
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       key: _scaffoldKey,
@@ -60,11 +59,11 @@ class HistoryScreen extends StatelessWidget {
         ],
         elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
       ),
-      body: _buildTab("consults"),
+      body: _buildTab("consults", db),
     );
   }
 
-  _buildTab(questions) {
+  _buildTab(questions, db) {
     currentOrientation =
         MediaQuery.of(GlobalNavigatorKey.key.currentContext).orientation;
     return SingleChildScrollView(

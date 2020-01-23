@@ -145,7 +145,10 @@ class DrawerMenu extends StatelessWidget {
       await auth.signOut();
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => LandingPage(userSnapshot: null,)),
+        MaterialPageRoute(
+            builder: (context) => LandingPage(
+                  userSnapshot: AsyncSnapshot.nothing(),
+                )),
       );
     } catch (e) {
       print(e);
