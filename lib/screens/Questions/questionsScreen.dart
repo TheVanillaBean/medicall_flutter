@@ -1,6 +1,6 @@
 import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/database.dart';
 import 'package:Medicall/util/introduction_screen/introduction_screen.dart';
 import 'package:Medicall/util/introduction_screen/model/page_decoration.dart';
 import 'package:Medicall/util/introduction_screen/model/page_view_model.dart';
@@ -33,7 +33,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
   var screeningQuestions;
   var ranOnce = false;
   var currentQuestions = 'symptom';
-  var auth = Provider.of<AuthBase>(GlobalNavigatorKey.key.currentContext);
+  var db = Provider.of<Database>(GlobalNavigatorKey.key.currentContext);
   var medicalHistoryQuestions;
   bool showSegmentedControl = true;
   List<dynamic> combinedList = [];
@@ -43,13 +43,13 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
     super.initState();
     if (medicallUser.hasMedicalHistory) {
       combinedList = [
-        ...auth.newConsult.screeningQuestions,
-        ...auth.newConsult.uploadQuestions
+        ...db.newConsult.screeningQuestions,
+        ...db.newConsult.uploadQuestions
       ];
     } else {
       currentQuestions = "Medical History";
       combinedList = [
-        ...auth.newConsult.historyQuestions,
+        ...db.newConsult.historyQuestions,
       ];
     }
 
@@ -75,14 +75,14 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
               FlatButton(
                 color: Theme.of(context).primaryColor,
                 child: Text(
-                    "Continue to " + auth.newConsult.consultType == 'Lesion'
+                    "Continue to " + db.newConsult.consultType == 'Lesion'
                         ? 'Spot'
                         : "Continue to " +
-                            auth.newConsult.consultType +
+                            db.newConsult.consultType +
                             ' treatment'),
                 onPressed: () async {
                   medicallUser.hasMedicalHistory = true;
-                  await auth.addUserMedicalHistory();
+                  await db.addUserMedicalHistory();
                   GlobalNavigatorKey.key.currentState.pop();
                   GlobalNavigatorKey.key.currentState
                       .pushReplacementNamed('/questionsScreen');
@@ -93,9 +93,9 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
         },
       );
     } else {
-      auth.newConsult.consultType = auth.newConsult.consultType;
+      db.newConsult.consultType = db.newConsult.consultType;
       //switch for if provider has already been selected
-      if (auth.newConsult == null || auth.newConsult.provider == null) {
+      if (db.newConsult == null || db.newConsult.provider == null) {
         GlobalNavigatorKey.key.currentState.pushNamed(
           '/selectProvider',
         );
@@ -197,13 +197,13 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
           onPressed: () => GlobalNavigatorKey.key.currentState.pop(false),
         ),
         title: Text(currentQuestions == 'symptom'
-            ? auth.newConsult.consultType == 'Lesion'
+            ? db.newConsult.consultType == 'Lesion'
                 ? 'Spot' +
                     ' Question: ' +
                     (currentPage + 1).toString() +
                     '/' +
                     pageViewList.length.toString()
-                : auth.newConsult.consultType +
+                : db.newConsult.consultType +
                     ' Question: ' +
                     (currentPage + 1).toString() +
                     '/' +

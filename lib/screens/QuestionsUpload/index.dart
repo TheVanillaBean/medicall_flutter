@@ -1,5 +1,5 @@
 import 'package:Medicall/models/global_nav_key.dart';
-import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/database.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
@@ -17,7 +17,7 @@ class QuestionsUploadScreen extends StatefulWidget {
 class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
   List<Asset> images = List<Asset>();
   String _error = '';
-  var auth = Provider.of<AuthBase>(GlobalNavigatorKey.key.currentContext);
+  var db = Provider.of<Database>(GlobalNavigatorKey.key.currentContext);
   @override
   void initState() {
     super.initState();
@@ -47,7 +47,7 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
     try {
       resultList = await MultiImagePicker.pickImages(
           selectedAssets: images,
-          maxImages: auth.newConsult.uploadQuestions.length - 1,
+          maxImages: db.newConsult.uploadQuestions.length - 1,
           enableCamera: true,
           cupertinoOptions: CupertinoOptions(takePhotoIcon: 'chat'),
           materialOptions: MaterialOptions(
@@ -94,7 +94,7 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
         padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
         color: Theme.of(context).primaryColor,
         onPressed: () async {
-          auth.newConsult.media = images;
+          db.newConsult.media = images;
           GlobalNavigatorKey.key.currentState.pushNamed('/consultReview');
         },
         child: Text(
@@ -106,7 +106,7 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
         ),
       ),
       body: ListView.builder(
-          itemCount: auth.newConsult.uploadQuestions.length,
+          itemCount: db.newConsult.uploadQuestions.length,
           itemBuilder: (BuildContext ctxt, int index) {
             return Column(
               children: <Widget>[
@@ -115,7 +115,7 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
                       ? EdgeInsets.fromLTRB(20, 10, 20, 0)
                       : EdgeInsets.fromLTRB(20, 10, 20, 10),
                   child: Text(
-                    auth.newConsult.uploadQuestions[index]['question'],
+                    db.newConsult.uploadQuestions[index]['question'],
                     style: index == 0
                         ? TextStyle(fontSize: 14, color: Colors.red)
                         : TextStyle(fontSize: 12),
@@ -130,7 +130,7 @@ class _QuestionsUploadScreenState extends State<QuestionsUploadScreen> {
                                 ? buildGridView(index, images[index - 1])
                                 : Container(
                                     child: Image.network(
-                                    auth.newConsult.uploadQuestions[index]
+                                    db.newConsult.uploadQuestions[index]
                                         ['media'],
                                   ))
                           ],

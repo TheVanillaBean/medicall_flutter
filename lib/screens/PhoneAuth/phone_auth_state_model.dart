@@ -146,7 +146,7 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
     try {
       MedicallUser user =
           await auth.signInWithPhoneNumber(this.verificationId, this.smsCode);
-      await auth.saveImages();
+      await auth.saveRegistrationImages();
       await _add(user);
       updateRefreshing(false, mounted);
       GlobalNavigatorKey.key.currentState.pushReplacementNamed('/history');

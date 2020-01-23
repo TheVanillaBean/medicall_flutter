@@ -2,7 +2,8 @@ import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/History/carouselWithIndicator.dart';
 import 'package:Medicall/screens/History/prescriptionPayment.dart';
-import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/database.dart';
+import 'package:Medicall/services/user_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -18,6 +19,7 @@ bool addedQuestions = false;
 String buttonTxt = "Send Prescription";
 bool isDone = false;
 GlobalKey<FormBuilderState> consultFormKey = GlobalKey();
+var db = Provider.of<Database>(GlobalNavigatorKey.key.currentContext);
 
 class BuildDetailTab extends StatefulWidget {
   final keyStr;
@@ -29,12 +31,11 @@ class BuildDetailTab extends StatefulWidget {
 }
 
 class _BuildDetailTabState extends State<BuildDetailTab> {
-  var auth = Provider.of<AuthBase>(GlobalNavigatorKey.key.currentContext);
   @override
   void initState() {
     super.initState();
     if (currentDetailsIndex == 0) {
-      auth.getPatientMedicalHistory();
+      db.getPatientMedicalHistory();
     }
   }
 
@@ -42,8 +43,8 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
   Widget build(BuildContext context) {
     var key = widget.keyStr.toString();
     var ind = widget.indx;
-    medicallUser = auth.medicallUser;
-    var consultSnapshot = auth.consultSnapshot.data;
+    medicallUser = Provider.of<UserProvider>(context).medicallUser;
+    var consultSnapshot = db.consultSnapshot.data;
     List<String> mediaList = [];
     for (var i = 0; i < consultSnapshot['media'].length; i++) {
       mediaList.add(consultSnapshot['media'][i]);
@@ -67,7 +68,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                 .secondary,
             currentIndex:
                 currentDetailsIndex, // this will be set when a new tab is tapped
-            items: auth.medicallUser.type == 'patient'
+            items: medicallUser.type == 'patient'
                 ? [
                     BottomNavigationBarItem(
                       icon: Icon(Icons.local_pharmacy),
@@ -171,7 +172,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                     } else {
                       if (i == 0 && currentDetailsIndex == 0 && ind == 0) {
                         finalArray.add(FutureBuilder(
-                          future: auth.getPatientDetail(),
+                          future: db.getPatientDetail(),
                           builder: (BuildContext context,
                               AsyncSnapshot<void> snapshot) {
                             if (snapshot.connectionState ==
@@ -180,8 +181,8 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                 title: Text(
                                   buildMedicalNote(
                                       consultSnapshot,
-                                      auth.patientDetail,
-                                      auth.userMedicalRecord.data),
+                                      db.patientDetail,
+                                      db.userMedicalRecord.data),
                                   style: TextStyle(fontSize: 14.0),
                                 ),
                               );
@@ -227,7 +228,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
 
     if (key == 'prescription') {
       return FutureBuilder<void>(
-        future: auth.getConsultDetail(), // a Future<String> or null
+        future: db.getConsultDetail(), // a Future<String> or null
         builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
@@ -244,7 +245,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                       autovalidate: false,
                       child: Column(
                         children: <Widget>[
-                          auth.patientDetail != null &&
+                          db.patientDetail != null &&
                                   medicallUser.type == 'provider'
                               ? Row(
                                   children: <Widget>[
@@ -268,27 +269,27 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                       children: <Widget>[
                                         Text(
                                           '\n' +
-                                              auth.patientDetail.displayName
+                                              db.patientDetail.displayName
                                                   .split(' ')[0][0]
                                                   .toUpperCase() +
-                                              auth.patientDetail.displayName
+                                              db.patientDetail.displayName
                                                   .split(' ')[0]
                                                   .substring(1) +
                                               ' ' +
-                                              auth.patientDetail.displayName
+                                              db.patientDetail.displayName
                                                   .split(' ')[1][0]
                                                   .toUpperCase() +
-                                              auth.patientDetail.displayName
+                                              db.patientDetail.displayName
                                                   .split(' ')[1]
                                                   .substring(1),
                                         ),
-                                        Text(auth.patientDetail.dob),
-                                        Text(auth.consultSnapshot.data
+                                        Text(db.patientDetail.dob),
+                                        Text(db.consultSnapshot.data
                                                 .containsKey('shipping_address')
-                                            ? auth.consultSnapshot
+                                            ? db.consultSnapshot
                                                 .data['shipping_address']
                                                 .replaceFirst(',', '\n')
-                                            : auth.patientDetail.address
+                                            : db.patientDetail.address
                                                 .replaceFirst(',', '\n')),
                                       ],
                                     )
@@ -686,7 +687,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                               .length >
                                           0
                                   ? FutureBuilder(
-                                      future: auth.getPatientDetail(),
+                                      future: db.getPatientDetail(),
                                       builder: (BuildContext context,
                                           AsyncSnapshot<void> snapshot) {
                                         if (snapshot.connectionState ==
@@ -707,14 +708,14 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
       );
     }
     return Chat(
-      peerId: auth.currConsultId,
+      peerId: db.currConsultId,
       peerAvatar: isDone,
     );
   }
 
   Future<void> _updatePrescription() async {
     final DocumentReference documentReference =
-        Firestore.instance.collection('consults').document(auth.currConsultId);
+        Firestore.instance.collection('consults').document(db.currConsultId);
     Map<String, dynamic> data = <String, dynamic>{
       "medication_name":
           consultFormKey.currentState.fields['medName'].currentState.value,
@@ -734,19 +735,19 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
       setState(() {
         buttonTxt = 'Prescription Updated';
       });
-      auth.consultSnapshot.data['medication_name'] =
+      db.consultSnapshot.data['medication_name'] =
           consultFormKey.currentState.fields['medName'].currentState.value;
-      auth.consultSnapshot.data['quantity'] =
+      db.consultSnapshot.data['quantity'] =
           consultFormKey.currentState.fields['quantity'].currentState.value;
-      auth.consultSnapshot.data['units'] =
+      db.consultSnapshot.data['units'] =
           consultFormKey.currentState.fields['units'].currentState.value;
-      auth.consultSnapshot.data['refills'] =
+      db.consultSnapshot.data['refills'] =
           consultFormKey.currentState.fields['refills'].currentState.value;
-      auth.consultSnapshot.data['frequency'] =
+      db.consultSnapshot.data['frequency'] =
           consultFormKey.currentState.fields['frequency'].currentState.value;
-      auth.consultSnapshot.data['instructions'] =
+      db.consultSnapshot.data['instructions'] =
           consultFormKey.currentState.fields['instructions'].currentState.value;
-      auth.consultSnapshot.data['state'] = "prescription waiting";
+      db.consultSnapshot.data['state'] = "prescription waiting";
       Future.delayed(const Duration(milliseconds: 2500), () {
         buttonTxt = 'Send Prescription';
       });

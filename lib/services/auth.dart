@@ -1,4 +1,3 @@
-import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/models/reg_user_model.dart';
 import 'package:Medicall/util/app_util.dart';
@@ -15,15 +14,6 @@ abstract class AuthBase {
   Future<MedicallUser> currentUser();
   MedicallUser medicallUser;
   TempRegUser tempRegUser;
-  MedicallUser patientDetail;
-  DocumentSnapshot consultSnapshot;
-  List<DocumentSnapshot> userHistory;
-  bool hasPayment;
-  bool isDone;
-  var consultQuestions;
-  ConsultData newConsult;
-  var userMedicalRecord;
-  String currConsultId;
   Future<MedicallUser> signInAnonymously();
   Future<MedicallUser> signInWithEmailAndPassword(
       String email, String password);
@@ -34,45 +24,18 @@ abstract class AuthBase {
       String verificationId, String smsCode);
   Future<MedicallUser> currentMedicallUser();
   Future<void> signOut();
-  Future<void> getConsultDetail();
-  Future<void> getPatientDetail();
-  Future<void> getUserHistory();
   signUp();
-  saveImages();
-  addUserMedicalHistory();
-  getUserMedicalHistory();
-  getPatientMedicalHistory();
-  getConsultQuestions();
+  saveRegistrationImages();
 }
 
 class Auth implements AuthBase {
   final _firebaseAuth = FirebaseAuth.instance;
   final FirebaseAnonymouslyUtil firebaseAnonymouslyUtil =
       FirebaseAnonymouslyUtil();
-
-  MedicallUser _medicallUser;
-  @override
-  MedicallUser medicallUser;
   @override
   TempRegUser tempRegUser;
   @override
-  MedicallUser patientDetail;
-  @override
-  DocumentSnapshot consultSnapshot;
-  @override
-  List<DocumentSnapshot> userHistory;
-  @override
-  bool hasPayment;
-  @override
-  bool isDone;
-  @override
-  String currConsultId;
-  @override
-  var consultQuestions;
-  @override
-  ConsultData newConsult = ConsultData();
-  @override
-  var userMedicalRecord;
+  MedicallUser medicallUser;
 
   Future<MedicallUser> _getMedicallUser(String uid) async {
     if (uid != null) {
@@ -81,25 +44,25 @@ class Auth implements AuthBase {
 
       try {
         final snapshot = await documentReference.get();
-        _medicallUser = MedicallUser.from(uid, snapshot);
+        medicallUser = MedicallUser.from(uid, snapshot);
       } catch (e) {
         print('Error getting user');
       }
     }
 
-    return _medicallUser;
+    return medicallUser;
   }
 
   MedicallUser _userFromFirebase(FirebaseUser user) {
     if (user == null) {
       return null;
     }
-    _medicallUser = MedicallUser(
+    medicallUser = MedicallUser(
       uid: user.uid,
       phoneNumber: user.phoneNumber,
       email: user.email,
     );
-    return _medicallUser;
+    return medicallUser;
   }
 
   @override
@@ -111,124 +74,6 @@ class Auth implements AuthBase {
   Future<MedicallUser> currentUser() async {
     final user = await _firebaseAuth.currentUser();
     return _userFromFirebase(user);
-  }
-
-  @override
-  Future<void> getConsultDetail() async {
-    if (consultSnapshot == null ||
-        currConsultId != consultSnapshot.documentID) {
-      final DocumentReference documentReference =
-          Firestore.instance.collection('consults').document(currConsultId);
-      await documentReference.get().then((datasnapshot) async {
-        if (datasnapshot.data != null) {
-          consultSnapshot = datasnapshot;
-          consultSnapshot.data['details'] = [
-            consultSnapshot['screening_questions'],
-            consultSnapshot['media']
-          ];
-          if (consultSnapshot['state'] == 'done') {
-            isDone = true;
-          } else {
-            isDone = false;
-          }
-        }
-      }).catchError((e) => print(e));
-    }
-  }
-
-  @override
-  Future<void> getPatientDetail() async {
-    final DocumentReference documentReference = Firestore.instance
-        .collection('users')
-        .document(consultSnapshot.data['patient_id']);
-    await documentReference.get().then((datasnapshot) async {
-      if (datasnapshot.data != null) {
-        patientDetail = MedicallUser(
-            address: datasnapshot.data['address'],
-            displayName: datasnapshot.data['name'],
-            dob: datasnapshot.data['dob'],
-            gender: datasnapshot.data['gender'],
-            phoneNumber: datasnapshot.data['phone']);
-        _getUserPaymentCard();
-      }
-    }).catchError((e) => print(e));
-  }
-
-  Future<void> _getUserPaymentCard() async {
-    if (medicallUser.uid.length > 0) {
-      final Future<QuerySnapshot> documentReference = Firestore.instance
-          .collection('cards')
-          .document(medicallUser.uid)
-          .collection('sources')
-          .getDocuments();
-      await documentReference.then((datasnapshot) {
-        if (datasnapshot.documents.length > 0) {
-          hasPayment = true;
-        }
-      }).catchError((e) => print(e));
-    }
-  }
-
-  Future<void> getUserHistory() async {
-    if (medicallUser.uid.length > 0) {
-      final Future<QuerySnapshot> documentReference = Firestore.instance
-          .collection('consults')
-          .where(medicallUser.type == 'provider' ? 'provider_id' : 'patient_id',
-              isEqualTo: medicallUser.uid)
-          .orderBy('date', descending: true)
-          .getDocuments();
-      await documentReference.then((datasnapshot) {
-        if (datasnapshot.documents != null) {
-          userHistory = [];
-          for (var i = 0; i < datasnapshot.documents.length; i++) {
-            if (!userHistory.contains(datasnapshot.documents[i])) {
-              userHistory.add(datasnapshot.documents[i]);
-            }
-          }
-        }
-      }).catchError((e) => print(e));
-    }
-  }
-
-  Future<void> addUserMedicalHistory() async {
-    if (medicallUser.uid.length > 0) {
-      final DocumentReference ref = Firestore.instance
-          .collection('medical_history')
-          .document(medicallUser.uid);
-      Map<String, dynamic> data = <String, dynamic>{
-        "medical_history_questions": newConsult.historyQuestions,
-      };
-      ref.setData(data).whenComplete(() {
-        print("Consult Added");
-      }).catchError((e) => print(e));
-    }
-  }
-
-  Future<void> getUserMedicalHistory() async {
-    if (medicallUser.uid.length > 0) {
-      userMedicalRecord = await Firestore.instance
-          .collection('medical_history')
-          .document(medicallUser.uid)
-          .get();
-    }
-  }
-
-  Future<void> getPatientMedicalHistory() async {
-    if (medicallUser.uid.length > 0) {
-      userMedicalRecord = await Firestore.instance
-          .collection('medical_history')
-          .document(consultSnapshot.data['patient_id'])
-          .get();
-    }
-  }
-
-  Future<void> getConsultQuestions() async {
-    if (medicallUser.uid.length > 0) {
-      consultQuestions = await Firestore.instance
-          .document('services/dermatology/symptoms/' +
-              newConsult.consultType.toLowerCase())
-          .get();
-    }
   }
 
   @override
@@ -333,36 +178,6 @@ class Auth implements AuthBase {
     await _firebaseAuth.signOut();
   }
 
-  @override
-  Future<void> saveImages() async {
-    if (medicallUser.uid.length > 0) {
-      var assets = tempRegUser.images;
-      var allMediaList = [];
-      for (var i = 0; i < assets.length; i++) {
-        ByteData byteData = await assets[i].requestOriginal();
-        List<int> imageData = byteData.buffer.asUint8List();
-        StorageReference ref = FirebaseStorage.instance
-            .ref()
-            .child("profile/" + medicallUser.uid + '/' + assets[i].name);
-        StorageUploadTask uploadTask = ref.putData(imageData);
-
-        allMediaList
-            .add(await (await uploadTask.onComplete).ref.getDownloadURL());
-      }
-      medicallUser.profilePic = allMediaList[0];
-      medicallUser.govId = allMediaList[1];
-    }
-  }
-
-  @override
-  signUp() async {
-    await firebaseAnonymouslyUtil
-        .createUser(tempRegUser.username, tempRegUser.pass)
-        .then((String user) async {
-      await login(tempRegUser.username, tempRegUser.pass);
-    }).catchError((e) => loginError(getErrorMessage(error: e)));
-  }
-
   Future login(String email, String pass) async {
     firebaseAnonymouslyUtil.signIn(email, pass).then((onValue) {
       medicallUser.uid = onValue.uid;
@@ -382,7 +197,37 @@ class Auth implements AuthBase {
     }
   }
 
+  @override
+  signUp() async {
+    await firebaseAnonymouslyUtil
+        .createUser(tempRegUser.username, tempRegUser.pass)
+        .then((String user) async {
+      await login(tempRegUser.username, tempRegUser.pass);
+    }).catchError((e) => loginError(getErrorMessage(error: e)));
+  }
+
   loginError(e) {
     AppUtil().showAlert(e, 5);
+  }
+
+  @override
+  Future<void> saveRegistrationImages() async {
+    if (medicallUser.uid.length > 0) {
+      var assets = tempRegUser.images;
+      var allMediaList = [];
+      for (var i = 0; i < assets.length; i++) {
+        ByteData byteData = await assets[i].requestOriginal();
+        List<int> imageData = byteData.buffer.asUint8List();
+        StorageReference ref = FirebaseStorage.instance
+            .ref()
+            .child("profile/" + medicallUser.uid + '/' + assets[i].name);
+        StorageUploadTask uploadTask = ref.putData(imageData);
+
+        allMediaList
+            .add(await (await uploadTask.onComplete).ref.getDownloadURL());
+      }
+      medicallUser.profilePic = allMediaList[0];
+      medicallUser.govId = allMediaList[1];
+    }
   }
 }

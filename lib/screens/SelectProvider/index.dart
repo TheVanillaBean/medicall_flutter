@@ -1,7 +1,7 @@
 import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/secrets.dart' as secrets;
-import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -33,7 +33,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
   var providerTitles = '';
   LatLng bounds = LatLng(41.850033, -87.6500523);
   String errorMessage;
-  var auth = Provider.of<AuthBase>(GlobalNavigatorKey.key.currentContext);
+  var db = Provider.of<Database>(GlobalNavigatorKey.key.currentContext);
 
   @override
   void initState() {
@@ -147,15 +147,15 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
                                 trailing: FlatButton(
                                   onPressed: () {
                                     setState(() {
-                                      auth.newConsult.provider =
+                                      db.newConsult.provider =
                                           userDocuments[i].data['name'];
-                                      auth.newConsult.providerTitles =
+                                      db.newConsult.providerTitles =
                                           userDocuments[i].data['titles'];
-                                      auth.newConsult.providerDevTokens =
+                                      db.newConsult.providerDevTokens =
                                           userDocuments[i].data['dev_tokens'];
-                                      auth.newConsult.providerId =
+                                      db.newConsult.providerId =
                                           userDocuments[i].documentID;
-                                      auth.newConsult.providerProfilePic =
+                                      db.newConsult.providerProfilePic =
                                           userDocuments[i].data['profile_pic'];
                                       _selectProvider(
                                           userDocuments[i].data['name'],
@@ -250,8 +250,8 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
   Future _selectProvider(provider, titles) async {
     selectedProvider = provider;
     providerTitles = titles;
-    auth.newConsult.provider = selectedProvider;
-    auth.newConsult.providerTitles = providerTitles;
+    db.newConsult.provider = selectedProvider;
+    db.newConsult.providerTitles = providerTitles;
     //await setConsult();
   }
 

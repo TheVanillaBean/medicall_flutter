@@ -5,7 +5,10 @@ import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/presentation/medicall_app_icons.dart' as CustomIcons;
 import 'package:Medicall/screens/LandingPage/index.dart';
+import 'package:Medicall/screens/Login/index.dart';
+import 'package:Medicall/screens/Login/sign_in_state_model.dart';
 import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -142,10 +145,15 @@ class DrawerMenu extends StatelessWidget {
     try {
       GlobalNavigatorKey.key.currentState.pop(context);
       final auth = Provider.of<AuthBase>(context);
+      //user.medicallUser = MedicallUser();
+
       await auth.signOut();
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => LandingPage()),
+        MaterialPageRoute(
+            builder: (context) => LoginPage(
+                  model: SignInStateModel(auth: auth),
+                )),
       );
     } catch (e) {
       print(e);
