@@ -10,6 +10,10 @@ class UserProvider with ChangeNotifier {
     return _medicallUser;
   }
 
+  set medicallUser(user) {
+    _medicallUser = user;
+  }
+
   UserProvider({@required String uid}) : assert(uid != null) {
     _getMedicallUser(uid: uid);
   }

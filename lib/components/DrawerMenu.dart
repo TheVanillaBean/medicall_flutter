@@ -5,8 +5,6 @@ import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/presentation/medicall_app_icons.dart' as CustomIcons;
 import 'package:Medicall/screens/LandingPage/index.dart';
-import 'package:Medicall/screens/Login/index.dart';
-import 'package:Medicall/screens/Login/sign_in_state_model.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
@@ -144,15 +142,16 @@ class DrawerMenu extends StatelessWidget {
   Future<void> _signOut(BuildContext context) async {
     try {
       GlobalNavigatorKey.key.currentState.pop(context);
-      final auth = Provider.of<AuthBase>(context);
-      //user.medicallUser = MedicallUser();
+      final auth = Provider.of<AuthBase>(context, listen: false);
+      final user = Provider.of<UserProvider>(context, listen: false);
+      user.medicallUser = MedicallUser();
 
       await auth.signOut();
       Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => LoginPage(
-                  model: SignInStateModel(auth: auth),
+            builder: (context) => LandingPage(
+                  userSnapshot: null,
                 )),
       );
     } catch (e) {
