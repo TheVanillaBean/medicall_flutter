@@ -1,6 +1,7 @@
 //import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:Medicall/models/consult_data_model.dart';
+import 'package:Medicall/models/consult_status_modal.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/models/reg_user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -13,9 +14,12 @@ abstract class Database {
   getUserMedicalHistory(MedicallUser medicallUser);
   getPatientMedicalHistory(MedicallUser medicallUser);
   getConsultQuestions(MedicallUser medicallUser);
+  updateConsultStatus(Choice choice, MedicallUser medicallUser);
 
   DocumentSnapshot consultSnapshot;
+  DocumentReference consultRef;
   String currConsultId;
+  Map<String, dynamic> consultStateData;
   bool isDone;
   MedicallUser patientDetail;
   bool hasPayment;
@@ -31,7 +35,11 @@ class FirestoreDatabase implements Database {
   @override
   DocumentSnapshot consultSnapshot;
   @override
+  DocumentReference consultRef;
+  @override
   String currConsultId;
+  @override
+  Map<String, dynamic> consultStateData;
   @override
   bool isDone;
   @override
@@ -54,9 +62,9 @@ class FirestoreDatabase implements Database {
   Future<void> getConsultDetail() async {
     if (consultSnapshot == null && currConsultId != null ||
         currConsultId != consultSnapshot.documentID) {
-      final DocumentReference documentReference =
+      consultRef =
           Firestore.instance.collection('consults').document(currConsultId);
-      await documentReference.get().then((datasnapshot) async {
+      await consultRef.get().then((datasnapshot) async {
         if (datasnapshot.data != null) {
           consultSnapshot = datasnapshot;
           consultSnapshot.data['details'] = [
@@ -69,6 +77,20 @@ class FirestoreDatabase implements Database {
             isDone = false;
           }
         }
+      }).catchError((e) => print(e));
+    }
+  }
+
+  updateConsultStatus(Choice choice, MedicallUser medicallUser) {
+    if (consultSnapshot.documentID == currConsultId &&
+        consultSnapshot.data['provider_id'] == medicallUser.uid) {
+      if (choice.title == 'Done') {
+        consultStateData = {'state': 'done'};
+      } else {
+        consultStateData = {'state': 'in progress'};
+      }
+      consultRef.updateData(consultStateData).whenComplete(() {
+        print('Consult Updated');
       }).catchError((e) => print(e));
     }
   }

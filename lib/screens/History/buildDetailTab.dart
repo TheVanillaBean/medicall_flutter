@@ -590,7 +590,8 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                         height: 10,
                       ),
                       medicallUser.type == 'provider' &&
-                              !consultSnapshot.containsKey('pay_date')
+                              !consultSnapshot.containsKey('pay_date') &&
+                              consultSnapshot['state'] != 'done'
                           ? Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
