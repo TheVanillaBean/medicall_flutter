@@ -7,12 +7,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 abstract class Database {
   Future<void> getConsultDetail();
-  Future<void> getPatientDetail();
-  Future<void> getUserHistory();
-  addUserMedicalHistory();
-  getUserMedicalHistory();
-  getPatientMedicalHistory();
-  getConsultQuestions();
+  Future<void> getPatientDetail(MedicallUser medicallUser);
+  Future<void> getUserHistory(MedicallUser medicallUser);
+  addUserMedicalHistory(MedicallUser medicallUser);
+  getUserMedicalHistory(MedicallUser medicallUser);
+  getPatientMedicalHistory(MedicallUser medicallUser);
+  getConsultQuestions(MedicallUser medicallUser);
 
   DocumentSnapshot consultSnapshot;
   String currConsultId;
@@ -74,7 +74,7 @@ class FirestoreDatabase implements Database {
   }
 
   @override
-  Future<void> getPatientDetail() async {
+  Future<void> getPatientDetail(MedicallUser medicallUser) async {
     final DocumentReference documentReference = Firestore.instance
         .collection('users')
         .document(consultSnapshot.data['patient_id']);
@@ -86,12 +86,12 @@ class FirestoreDatabase implements Database {
             dob: datasnapshot.data['dob'],
             gender: datasnapshot.data['gender'],
             phoneNumber: datasnapshot.data['phone']);
-        _getUserPaymentCard();
+        _getUserPaymentCard(medicallUser);
       }
     }).catchError((e) => print(e));
   }
 
-  Future<void> _getUserPaymentCard() async {
+  Future<void> _getUserPaymentCard(MedicallUser medicallUser) async {
     if (medicallUser.uid.length > 0) {
       final Future<QuerySnapshot> documentReference = Firestore.instance
           .collection('cards')
@@ -106,7 +106,7 @@ class FirestoreDatabase implements Database {
     }
   }
 
-  Future<void> getUserHistory() async {
+  Future<void> getUserHistory(MedicallUser medicallUser) async {
     if (medicallUser.uid.length > 0) {
       final Future<QuerySnapshot> documentReference = Firestore.instance
           .collection('consults')
@@ -127,7 +127,7 @@ class FirestoreDatabase implements Database {
     }
   }
 
-  Future<void> addUserMedicalHistory() async {
+  Future<void> addUserMedicalHistory(MedicallUser medicallUser) async {
     if (medicallUser.uid.length > 0) {
       final DocumentReference ref = Firestore.instance
           .collection('medical_history')
@@ -141,7 +141,7 @@ class FirestoreDatabase implements Database {
     }
   }
 
-  Future<void> getUserMedicalHistory() async {
+  Future<void> getUserMedicalHistory(MedicallUser medicallUser) async {
     if (medicallUser.uid.length > 0) {
       userMedicalRecord = await Firestore.instance
           .collection('medical_history')
@@ -150,7 +150,7 @@ class FirestoreDatabase implements Database {
     }
   }
 
-  Future<void> getPatientMedicalHistory() async {
+  Future<void> getPatientMedicalHistory(MedicallUser medicallUser) async {
     if (medicallUser.uid.length > 0) {
       userMedicalRecord = await Firestore.instance
           .collection('medical_history')
@@ -159,7 +159,7 @@ class FirestoreDatabase implements Database {
     }
   }
 
-  Future<void> getConsultQuestions() async {
+  Future<void> getConsultQuestions(MedicallUser medicallUser) async {
     if (medicallUser.uid.length > 0) {
       consultQuestions = await Firestore.instance
           .document('services/dermatology/symptoms/' +

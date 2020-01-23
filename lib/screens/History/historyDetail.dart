@@ -1,6 +1,7 @@
 import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/user_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -25,12 +26,15 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
 
   var consultSnapshot;
   var auth;
+  MedicallUser medicallUser;
 
   @override
   initState() {
     super.initState();
     auth = Provider.of<AuthBase>(GlobalNavigatorKey.key.currentContext);
-    medicallUser = auth.medicallUser;
+    medicallUser =
+        Provider.of<UserProvider>(GlobalNavigatorKey.key.currentContext)
+            .medicallUser;
     controller = TabController(length: 3, vsync: this);
     controller.addListener(_handleTabSelection);
   }

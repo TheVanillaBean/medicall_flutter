@@ -20,6 +20,9 @@ String buttonTxt = "Send Prescription";
 bool isDone = false;
 GlobalKey<FormBuilderState> consultFormKey = GlobalKey();
 var db = Provider.of<Database>(GlobalNavigatorKey.key.currentContext);
+MedicallUser medicallUser =
+    Provider.of<UserProvider>(GlobalNavigatorKey.key.currentContext)
+        .medicallUser;
 
 class BuildDetailTab extends StatefulWidget {
   final keyStr;
@@ -35,7 +38,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
   void initState() {
     super.initState();
     if (currentDetailsIndex == 0) {
-      db.getPatientMedicalHistory();
+      db.getPatientMedicalHistory(medicallUser);
     }
   }
 
@@ -43,7 +46,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
   Widget build(BuildContext context) {
     var key = widget.keyStr.toString();
     var ind = widget.indx;
-    medicallUser = Provider.of<UserProvider>(context).medicallUser;
+
     var consultSnapshot = db.consultSnapshot.data;
     List<String> mediaList = [];
     for (var i = 0; i < consultSnapshot['media'].length; i++) {
@@ -172,7 +175,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                     } else {
                       if (i == 0 && currentDetailsIndex == 0 && ind == 0) {
                         finalArray.add(FutureBuilder(
-                          future: db.getPatientDetail(),
+                          future: db.getPatientDetail(medicallUser),
                           builder: (BuildContext context,
                               AsyncSnapshot<void> snapshot) {
                             if (snapshot.connectionState ==
@@ -687,7 +690,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                               .length >
                                           0
                                   ? FutureBuilder(
-                                      future: db.getPatientDetail(),
+                                      future: db.getPatientDetail(medicallUser),
                                       builder: (BuildContext context,
                                           AsyncSnapshot<void> snapshot) {
                                         if (snapshot.connectionState ==

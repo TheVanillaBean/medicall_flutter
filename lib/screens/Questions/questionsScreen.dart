@@ -1,6 +1,7 @@
 import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/services/database.dart';
+import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/introduction_screen/introduction_screen.dart';
 import 'package:Medicall/util/introduction_screen/model/page_decoration.dart';
 import 'package:Medicall/util/introduction_screen/model/page_view_model.dart';
@@ -34,6 +35,9 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
   var ranOnce = false;
   var currentQuestions = 'symptom';
   var db = Provider.of<Database>(GlobalNavigatorKey.key.currentContext);
+  MedicallUser medicallUser =
+      Provider.of<UserProvider>(GlobalNavigatorKey.key.currentContext)
+          .medicallUser;
   var medicalHistoryQuestions;
   bool showSegmentedControl = true;
   List<dynamic> combinedList = [];
@@ -82,7 +86,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
                             ' treatment'),
                 onPressed: () async {
                   medicallUser.hasMedicalHistory = true;
-                  await db.addUserMedicalHistory();
+                  await db.addUserMedicalHistory(medicallUser);
                   GlobalNavigatorKey.key.currentState.pop();
                   GlobalNavigatorKey.key.currentState
                       .pushReplacementNamed('/questionsScreen');

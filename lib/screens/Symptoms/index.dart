@@ -5,6 +5,7 @@ import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/Questions/questionsScreen.dart';
 import 'package:Medicall/services/database.dart';
+import 'package:Medicall/services/user_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +13,9 @@ import 'package:simple_animations/simple_animations.dart';
 
 var screenSize;
 var db = Provider.of<Database>(GlobalNavigatorKey.key.currentContext);
+MedicallUser medicallUser =
+    Provider.of<UserProvider>(GlobalNavigatorKey.key.currentContext)
+        .medicallUser;
 
 class SymptomsScreen extends StatelessWidget {
   const SymptomsScreen({Key key}) : super(key: key);
@@ -313,8 +317,10 @@ class EntryItem extends StatelessWidget {
                                             root.title == 'Spot'
                                                 ? 'Lesion'
                                                 : root.title;
-                                        await db.getUserMedicalHistory();
-                                        await db.getConsultQuestions();
+                                        await db.getUserMedicalHistory(
+                                            medicallUser);
+                                        await db
+                                            .getConsultQuestions(medicallUser);
                                         if (db.userMedicalRecord != null &&
                                             db.userMedicalRecord.data != null) {
                                           medicallUser.hasMedicalHistory = true;

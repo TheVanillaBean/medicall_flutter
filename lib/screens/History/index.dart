@@ -69,7 +69,7 @@ class HistoryScreen extends StatelessWidget {
         MediaQuery.of(GlobalNavigatorKey.key.currentContext).orientation;
     return SingleChildScrollView(
       child: FutureBuilder(
-          future: db.getUserHistory(),
+          future: db.getUserHistory(medicallUser),
           builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
             switch (snapshot.connectionState) {
               case ConnectionState.waiting:

@@ -25,6 +25,7 @@ class UserProvider with ChangeNotifier {
     try {
       final snapshot = await documentReference.get();
       this._medicallUser = MedicallUser.from(uid, snapshot);
+      medicallUser = MedicallUser.from(uid, snapshot);
       notifyListeners();
     } catch (e) {
       throw PlatformException(
