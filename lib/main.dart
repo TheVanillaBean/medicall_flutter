@@ -81,7 +81,11 @@ class MedicallApp extends StatelessWidget {
         builder: (context, userSnapshot) {
           var auth = Provider.of<AuthBase>(context);
           return MaterialApp(
+            title: 'Medicall',
             debugShowCheckedModeBanner: false,
+            navigatorKey: GlobalNavigatorKey.key,
+            navigatorObservers: <NavigatorObserver>[observer],
+            theme: myTheme,
             home: auth.medicallUser != null &&
                     auth.medicallUser.displayName == 'logout'
                 ? SplashScreen.navigate(
@@ -100,110 +104,105 @@ class MedicallApp extends StatelessWidget {
                     backgroundColor: Colors.white,
                     startAnimation: 'Untitled',
                   ),
+            onGenerateRoute: (RouteSettings settings) {
+              switch (settings.name) {
+                case '/login':
+                  return MyCustomRoute(
+                    builder: (_) => LoginPage.create(context),
+                    settings: settings,
+                  );
+                case '/registrationType':
+                  return MyCustomRoute(
+                    builder: (_) => RegistrationTypeScreen(),
+                    settings: settings,
+                  );
+                case '/registration':
+                  return MyCustomRoute(
+                    builder: (_) => RegistrationScreen(),
+                    settings: settings,
+                  );
+                case '/terms':
+                  return MyCustomRoute(
+                    builder: (_) => TermsScreen(),
+                    settings: settings,
+                  );
+                case '/privacy':
+                  return MyCustomRoute(
+                    builder: (_) => PrivacyScreen(),
+                    settings: settings,
+                  );
+                case '/consent':
+                  return MyCustomRoute(
+                    builder: (_) => ConsentScreen(),
+                    settings: settings,
+                  );
+                case '/symptoms':
+                  return MyCustomRoute(
+                    builder: (_) => SymptomsScreen(),
+                    settings: settings,
+                  );
+                case '/questionsScreen':
+                  return MyCustomRoute(
+                    builder: (_) => QuestionsScreen(),
+                    settings: settings,
+                  );
+                case '/selectProvider':
+                  return MyCustomRoute(
+                    builder: (_) => SelectProviderScreen(),
+                    settings: settings,
+                  );
+                case '/consultReview':
+                  return MyCustomRoute(
+                    builder: (_) => ConfirmConsultScreen(),
+                    settings: settings,
+                  );
+                case '/chat':
+                  return MyCustomRoute(
+                    builder: (_) => ChatScreen(),
+                    settings: settings,
+                  );
+                case '/history':
+                  return MyCustomRoute(
+                    builder: (_) => HistoryScreen(),
+                    settings: settings,
+                  );
+                case '/historyDetail':
+                  return MyCustomRoute(
+                    builder: (_) => HistoryDetailScreen(),
+                    settings: settings,
+                  );
+                case '/account':
+                  return MyCustomRoute(
+                    builder: (_) => AccountScreen(),
+                    settings: settings,
+                  );
+                case '/paymentDetail':
+                  return MyCustomRoute(
+                    builder: (_) => PaymentDetail(),
+                    settings: settings,
+                  );
+                default:
+                  return MaterialPageRoute(
+                    builder: (_) => Scaffold(
+                      body: Center(
+                        child: Text('No route defined for ${settings.name}'),
+                      ),
+                    ),
+                  );
+              }
+            },
           );
         },
       ),
     );
   }
 
-  MaterialApp _buildApp(
+  Scaffold _buildApp(
       AsyncSnapshot<MedicallUser> userSnapshot, BuildContext context) {
-    return MaterialApp(
-      title: 'Medicall',
-      debugShowCheckedModeBanner: false,
-      navigatorKey: GlobalNavigatorKey.key,
-      navigatorObservers: <NavigatorObserver>[observer],
-      theme: myTheme,
-      home: LandingPage(
+    return Scaffold(
+      body: LandingPage(
         userSnapshot: userSnapshot,
       ),
-      onGenerateRoute: (RouteSettings settings) {
-        switch (settings.name) {
-          case '/login':
-            return MyCustomRoute(
-              builder: (_) => LoginPage.create(context),
-              settings: settings,
-            );
-          case '/registrationType':
-            return MyCustomRoute(
-              builder: (_) => RegistrationTypeScreen(),
-              settings: settings,
-            );
-          case '/registration':
-            return MyCustomRoute(
-              builder: (_) => RegistrationScreen(),
-              settings: settings,
-            );
-          case '/terms':
-            return MyCustomRoute(
-              builder: (_) => TermsScreen(),
-              settings: settings,
-            );
-          case '/privacy':
-            return MyCustomRoute(
-              builder: (_) => PrivacyScreen(),
-              settings: settings,
-            );
-          case '/consent':
-            return MyCustomRoute(
-              builder: (_) => ConsentScreen(),
-              settings: settings,
-            );
-          case '/symptoms':
-            return MyCustomRoute(
-              builder: (_) => SymptomsScreen(),
-              settings: settings,
-            );
-          case '/questionsScreen':
-            return MyCustomRoute(
-              builder: (_) => QuestionsScreen(),
-              settings: settings,
-            );
-          case '/selectProvider':
-            return MyCustomRoute(
-              builder: (_) => SelectProviderScreen(),
-              settings: settings,
-            );
-          case '/consultReview':
-            return MyCustomRoute(
-              builder: (_) => ConfirmConsultScreen(),
-              settings: settings,
-            );
-          case '/chat':
-            return MyCustomRoute(
-              builder: (_) => ChatScreen(),
-              settings: settings,
-            );
-          case '/history':
-            return MyCustomRoute(
-              builder: (_) => HistoryScreen(),
-              settings: settings,
-            );
-          case '/historyDetail':
-            return MyCustomRoute(
-              builder: (_) => HistoryDetailScreen(),
-              settings: settings,
-            );
-          case '/account':
-            return MyCustomRoute(
-              builder: (_) => AccountScreen(),
-              settings: settings,
-            );
-          case '/paymentDetail':
-            return MyCustomRoute(
-              builder: (_) => PaymentDetail(),
-              settings: settings,
-            );
-          default:
-            return MaterialPageRoute(
-              builder: (_) => Scaffold(
-                body: Center(
-                  child: Text('No route defined for ${settings.name}'),
-                ),
-              ),
-            );
-        }
-      },
     );
   }
 }

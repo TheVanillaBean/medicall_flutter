@@ -10,6 +10,7 @@ import 'package:Medicall/screens/Registration/registrationType.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:Medicall/util/firebase_notification_handler.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -40,7 +41,6 @@ class _LoginScreenState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
   final FocusNode _emailFocusNode = FocusNode();
   final FocusNode _passwordFocusNode = FocusNode();
-
   SignInStateModel get model => widget.model;
 
   @override
@@ -63,10 +63,24 @@ class _LoginScreenState extends State<LoginPage> {
       await model.submit();
       //Navigator.of(context).pop();
     } on PlatformException catch (e) {
-      PlatformExceptionAlertDialog(
-        title: 'Sign in failed',
-        exception: e,
-      ).show(context);
+      String exMsg = e.message;
+      if (exMsg == 'Given String is empty or null') {
+        exMsg =
+            "You did not provide a valid username and password, please try again.";
+      }
+      Flushbar(
+        message: exMsg,
+        flushbarPosition: FlushbarPosition.TOP,
+        flushbarStyle: FlushbarStyle.GROUNDED,
+        borderRadius: 8,
+        overlayBlur: 2.0,
+        icon: Icon(
+          Icons.info_outline,
+          size: 28.0,
+          color: Colors.blue[300],
+        ),
+        duration: Duration(seconds: 3),
+      )..show(context);
     }
   }
 
@@ -226,26 +240,26 @@ class _LoginScreenState extends State<LoginPage> {
   }
 
   Container _buildEmailAuthForm(BuildContext context) {
-    if (model.isLoading) {
-      return Container(
-        height: 225,
-        padding: const EdgeInsets.only(bottom: 16.0),
-        child: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
+    // if (model.isLoading) {
+    //   return Container(
+    //     height: 225,
+    //     padding: const EdgeInsets.only(bottom: 16.0),
+    //     child: Center(
+    //       child: CircularProgressIndicator(),
+    //     ),
+    //   );
+    // }
     return Container(
       padding: const EdgeInsets.fromLTRB(0, 40, 0, 40),
       child: Column(
         children: <Widget>[
-          _buildEmailTextField(),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.02,
+          Container(
+            height: 90,
+            child: _buildEmailTextField(),
           ),
-          _buildPasswordTextField(),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.02,
+          Container(
+            height: 90,
+            child: _buildPasswordTextField(),
           ),
         ],
       ),
