@@ -164,11 +164,6 @@ class MedicallApp extends StatelessWidget {
               builder: (_) => SelectProviderScreen(),
               settings: settings,
             );
-          case '/questionsUpload':
-            return MyCustomRoute(
-              builder: (_) => QuestionsUploadScreen(),
-              settings: settings,
-            );
           case '/consultReview':
             return MyCustomRoute(
               builder: (_) => ConfirmConsultScreen(),
