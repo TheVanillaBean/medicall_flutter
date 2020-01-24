@@ -13,7 +13,6 @@ import 'package:Medicall/screens/LandingPage/auth_widget_builder.dart';
 import 'package:Medicall/screens/LandingPage/index.dart';
 import 'package:Medicall/screens/Login/index.dart';
 import 'package:Medicall/screens/Privacy/index.dart';
-import 'package:Medicall/screens/QuestionsUpload/index.dart';
 import 'package:Medicall/screens/Registration/index.dart';
 import 'package:Medicall/screens/Registration/registrationType.dart';
 import 'package:Medicall/screens/SelectProvider/index.dart';
