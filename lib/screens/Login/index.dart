@@ -8,6 +8,7 @@ import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/Login/sign_in_state_model.dart';
 import 'package:Medicall/screens/Registration/registrationType.dart';
 import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/util/app_util.dart';
 import 'package:Medicall/util/firebase_notification_handler.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -96,7 +97,6 @@ class _LoginScreenState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: null,
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.dark,
         child: SingleChildScrollView(
@@ -130,43 +130,63 @@ class _LoginScreenState extends State<LoginPage> {
 
   List<Widget> _buildChildren(BuildContext context) {
     return [
-      _buildHeader(context),
-      _buildEmailAuthForm(context),
-      SizedBox(height: 16.0),
-      SignInButton(
-        color: Theme.of(context).primaryColor,
-        textColor: Colors.white,
-        text: "Sign in",
-        onPressed: model.canSubmit ? _submit : _submit,
-      ),
-      SizedBox(height: 12),
-      Text(
-        "",
-        style: TextStyle(
-          fontSize: 14.0,
-          color: Colors.black87,
-        ),
-        textAlign: TextAlign.center,
-      ),
-      SizedBox(height: 12),
-      SignInButton(
-        color: Theme.of(context).primaryColor.withBlue(3000),
-        textColor: Colors.white,
-        text: "Create New Account",
-        onPressed: () {
-          Provider.of<AuthBase>(GlobalNavigatorKey.key.currentContext)
-              .medicallUser = MedicallUser();
-          _createAccountWithEmail(context);
-        },
-      ),
-      SizedBox(height: 8),
-      SocialSignInButton(
-        imgPath: "assets/images/google-logo.png",
-        text: "Sign in with Google",
-        color: Colors.white,
-        textColor: Colors.black87,
-        onPressed: model.isLoading ? null : () => _signInWithGoogle(context),
-      ),
+      FadeIn(
+          2,
+          Column(
+            children: <Widget>[
+              _buildHeader(context),
+              _buildEmailAuthForm(context),
+              SizedBox(height: 16.0),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: SignInButton(
+                      color: Theme.of(context).primaryColor,
+                      textColor: Colors.white,
+                      text: "Sign in",
+                      onPressed: model.canSubmit ? _submit : _submit,
+                    ),
+                  )
+                ],
+              ),
+              SizedBox(height: 12),
+              Text(
+                "",
+                style: TextStyle(
+                  fontSize: 14.0,
+                  color: Colors.black87,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 12),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: SignInButton(
+                      color: Theme.of(context).primaryColor.withBlue(3000),
+                      textColor: Colors.white,
+                      text: "Create New Account",
+                      onPressed: () {
+                        Provider.of<AuthBase>(
+                                GlobalNavigatorKey.key.currentContext)
+                            .medicallUser = MedicallUser();
+                        _createAccountWithEmail(context);
+                      },
+                    ),
+                  )
+                ],
+              ),
+              SizedBox(height: 8),
+              SocialSignInButton(
+                imgPath: "assets/images/google-logo.png",
+                text: "Sign in with Google",
+                color: Colors.white,
+                textColor: Colors.black87,
+                onPressed:
+                    model.isLoading ? null : () => _signInWithGoogle(context),
+              ),
+            ],
+          )),
     ];
   }
 
