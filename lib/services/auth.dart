@@ -6,6 +6,7 @@ import 'package:Medicall/util/firebase_auth_codes.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -24,7 +25,7 @@ abstract class AuthBase {
       String verificationId, String smsCode);
   Future<MedicallUser> currentMedicallUser();
   Future<void> signOut();
-  signUp();
+  signUp(BuildContext context);
   saveRegistrationImages();
 }
 
@@ -178,11 +179,11 @@ class Auth implements AuthBase {
     await _firebaseAuth.signOut();
   }
 
-  Future login(String email, String pass) async {
+  Future login(String email, String pass, context) async {
     firebaseAnonymouslyUtil.signIn(email, pass).then((onValue) {
       medicallUser.uid = onValue.uid;
       return print('Login Success');
-    }).catchError((e) => loginError(getErrorMessage(error: e)));
+    }).catchError((e) => loginError(getErrorMessage(error: e), context));
   }
 
   String getErrorMessage({dynamic error}) {
@@ -198,16 +199,16 @@ class Auth implements AuthBase {
   }
 
   @override
-  signUp() async {
+  signUp(context) async {
     await firebaseAnonymouslyUtil
         .createUser(tempRegUser.username, tempRegUser.pass)
         .then((String user) async {
-      await login(tempRegUser.username, tempRegUser.pass);
-    }).catchError((e) => loginError(getErrorMessage(error: e)));
+      await login(tempRegUser.username, tempRegUser.pass, context);
+    }).catchError((e) => loginError(getErrorMessage(error: e), context));
   }
 
-  loginError(e) {
-    AppUtil().showAlert(e, 5);
+  loginError(e, context) {
+    AppUtil().showFlushBar(e, context);
   }
 
   @override

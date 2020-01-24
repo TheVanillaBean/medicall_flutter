@@ -2,13 +2,13 @@ import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/secrets.dart' as secrets;
 import 'package:Medicall/services/database.dart';
+import 'package:Medicall/util/app_util.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:google_maps_webservice/places.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as LocationManager;
-import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
 
 GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: secrets.kGoogleApiKey);
@@ -233,8 +233,8 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
   }
 
   void _showMessageDialog() {
-    showToast('Please select one of the providers in order to continue',
-        duration: Duration(seconds: 4), backgroundColor: Colors.deepOrange);
+    AppUtil().showFlushBar(
+        'Please select one of the providers in order to continue', context);
   }
 
   void refresh() async {

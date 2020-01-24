@@ -111,7 +111,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
           ? null
           : () async {
               var auth = Provider.of<AuthBase>(context);
-              await auth.signUp();
+              await auth.signUp(context);
               model.updateRefreshing(true, mounted);
             },
     );
@@ -200,7 +200,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
             onChanged: model.updateSMSCode,
             maxLength: 6,
             onSubmitted: (_) async {
-              await auth.signUp();
+              await auth.signUp(context);
               model.updateRefreshing(true, mounted);
             },
             style: Theme.of(context).textTheme.subhead.copyWith(

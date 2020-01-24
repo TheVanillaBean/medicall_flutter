@@ -1,9 +1,9 @@
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/secrets.dart';
+import 'package:Medicall/util/app_util.dart';
 import 'package:Medicall/util/stripe_payment_handler.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:oktoast/oktoast.dart';
 import 'package:stripe_payment/stripe_payment.dart';
 
 class PaymentDetail extends StatefulWidget {
@@ -37,8 +37,7 @@ class _PaymentDetailState extends State<PaymentDetail> {
             onPressed: () {
               StripeSource.addSource().then((String token) async {
                 PaymentService().addCard(token);
-                showToast('Card has been added',
-                    duration: Duration(seconds: 3));
+                AppUtil().showFlushBar('Card has been added', context);
               });
             },
           )

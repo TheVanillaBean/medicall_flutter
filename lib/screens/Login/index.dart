@@ -1,6 +1,4 @@
 import 'dart:ui' as ui;
-
-import 'package:Medicall/common_widgets/platform_exception_alert_dialog.dart';
 import 'package:Medicall/common_widgets/sign_in_button.dart';
 import 'package:Medicall/common_widgets/social_sign_in_button.dart';
 import 'package:Medicall/models/global_nav_key.dart';
@@ -10,7 +8,6 @@ import 'package:Medicall/screens/Registration/registrationType.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:Medicall/util/firebase_notification_handler.dart';
-import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -63,24 +60,7 @@ class _LoginScreenState extends State<LoginPage> {
       await model.submit();
       //Navigator.of(context).pop();
     } on PlatformException catch (e) {
-      String exMsg = e.message;
-      if (exMsg == 'Given String is empty or null') {
-        exMsg =
-            "You did not provide a valid username and password, please try again.";
-      }
-      Flushbar(
-        message: exMsg,
-        flushbarPosition: FlushbarPosition.TOP,
-        flushbarStyle: FlushbarStyle.GROUNDED,
-        borderRadius: 8,
-        overlayBlur: 2.0,
-        icon: Icon(
-          Icons.info_outline,
-          size: 28.0,
-          color: Colors.blue[300],
-        ),
-        duration: Duration(seconds: 3),
-      )..show(context);
+      AppUtil().showFlushBar(e, context);
     }
   }
 
@@ -88,10 +68,7 @@ class _LoginScreenState extends State<LoginPage> {
     try {
       await model.signInWithGoogle();
     } on PlatformException catch (e) {
-      PlatformExceptionAlertDialog(
-        title: 'Sign in failed',
-        exception: e,
-      ).show(context);
+      AppUtil().showFlushBar(e, context);
     }
   }
 

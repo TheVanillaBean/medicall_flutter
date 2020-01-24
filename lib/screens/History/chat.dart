@@ -3,11 +3,11 @@ import 'dart:io';
 
 import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/util/app_util.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -142,7 +142,7 @@ class ChatScreenState extends State<ChatScreen> {
       setState(() {
         isLoading = false;
       });
-      Fluttertoast.showToast(msg: 'This file is not an image');
+      AppUtil().showFlushBar('This file is not an image', context);
     });
   }
 
@@ -175,7 +175,7 @@ class ChatScreenState extends State<ChatScreen> {
         print("Msg Sent");
       }).catchError((e) => print(e));
     } else {
-      Fluttertoast.showToast(msg: 'Nothing to send');
+      AppUtil().showFlushBar('Nothing to send', context);
     }
   }
 

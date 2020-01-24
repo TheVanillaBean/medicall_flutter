@@ -2,13 +2,13 @@ import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
+import 'package:Medicall/util/app_util.dart';
 import 'package:Medicall/util/introduction_screen/introduction_screen.dart';
 import 'package:Medicall/util/introduction_screen/model/page_decoration.dart';
 import 'package:Medicall/util/introduction_screen/model/page_view_model.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
 
 import 'buildQuestions.dart';
@@ -155,8 +155,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
         duration: Duration(milliseconds: 200),
         curve: Curves.linear,
       );
-      showToast('Please fill out the required question.',
-          position: ToastPosition(align: Alignment.center));
+      AppUtil().showFlushBar('Please fill out the required question.', context);
     }
   }
 

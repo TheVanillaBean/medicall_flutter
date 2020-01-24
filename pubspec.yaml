@@ -46,8 +46,6 @@ dependencies:
   cached_network_image: ^2.0.0-rc.1
   #notifications
   #flutter_alert: ^0.4.0
-  oktoast: ^2.1.7
-  fluttertoast: ^3.1.0
   image_picker: ^0.6.1+3
   #state_management
   provider: ^4.0.2

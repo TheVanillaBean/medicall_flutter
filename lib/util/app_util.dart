@@ -1,5 +1,5 @@
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
-import 'package:oktoast/oktoast.dart';
 import 'dart:math' as math;
 import 'dart:ui';
 
@@ -19,16 +19,28 @@ class AppUtil {
     return networkStatus;
   }
 
-  void showAlert(String msg, int dur) {
-    showToast(
-      '$msg',
-      duration: Duration(seconds: dur),
-      textPadding: EdgeInsets.all(10),
-      position: ToastPosition(align: Alignment.topCenter, offset: 0),
-      backgroundColor: Colors.white.withOpacity(0.9),
-      radius: 4.0,
-      textStyle: TextStyle(fontSize: 16.0, color: Colors.black54),
-    );
+  Flushbar showFlushBar(e, context) {
+    String exMsg = e.message;
+    if (exMsg == 'Given String is empty or null') {
+      exMsg =
+          "You did not provide a valid username and password, please try again.";
+    }
+    return Flushbar(
+      message: exMsg,
+      flushbarPosition: FlushbarPosition.TOP,
+      flushbarStyle: FlushbarStyle.FLOATING,
+      borderRadius: 8,
+      dismissDirection: FlushbarDismissDirection.HORIZONTAL,
+      overlayColor: Colors.black.withAlpha(100),
+      margin: EdgeInsets.all(5),
+      overlayBlur: 2.0,
+      icon: Icon(
+        Icons.info_outline,
+        size: 28.0,
+        color: Colors.blue[300],
+      ),
+      duration: Duration(seconds: 3),
+    )..show(context);
   }
 }
 
@@ -54,10 +66,10 @@ class FadeIn extends StatelessWidget {
       tween: tween,
       child: child,
       builderWithChild: (context, child, animation) => Opacity(
-            opacity: animation["opacity"],
-            child: Transform.translate(
-                offset: Offset(animation["translateX"], 0), child: child),
-          ),
+        opacity: animation["opacity"],
+        child: Transform.translate(
+            offset: Offset(animation["translateX"], 0), child: child),
+      ),
     );
   }
 }
@@ -84,10 +96,10 @@ class FadeOut extends StatelessWidget {
       tween: tween,
       child: child,
       builderWithChild: (context, child, animation) => Opacity(
-            opacity: animation["opacity"],
-            child: Transform.translate(
-                offset: Offset(animation["translateX"], 0), child: child),
-          ),
+        opacity: animation["opacity"],
+        child: Transform.translate(
+            offset: Offset(animation["translateX"], 0), child: child),
+      ),
     );
   }
 }
