@@ -8,6 +8,7 @@ import 'package:Medicall/presentation/medicall_icons_icons.dart' as CustomIcons;
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:intl/intl.dart';
@@ -199,7 +200,7 @@ class HistoryScreen extends StatelessWidget {
                                                 .data['provider_profile'] !=
                                             null
                                         ? ClipOval(
-                                            child: Image.network(
+                                            child: ExtendedImage.network(
                                                 db.userHistory[i]
                                                     .data['provider_profile'],
                                                 width: 100,
@@ -219,7 +220,7 @@ class HistoryScreen extends StatelessWidget {
                                                 .data['patient_profile'] !=
                                             null
                                         ? ClipOval(
-                                            child: Image.network(
+                                            child: ExtendedImage.network(
                                               db.userHistory[i]
                                                   .data['patient_profile'],
                                               width: 100,

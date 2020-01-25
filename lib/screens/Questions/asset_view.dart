@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
@@ -20,34 +21,35 @@ class AssetState extends State<AssetView> {
   ByteData byteData;
   List<int> imageData;
   AssetState(_index, _asset);
+  Uint8List thisByte;
 
   @override
   void initState() {
     super.initState();
+    _getByteData();
+  }
+
+  _getByteData() async {
+    return await widget._asset.getByteData(quality: 100).then((onValue) {
+      setState(() {
+        thisByte = onValue.buffer.asUint8List();
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          byteData = snapshot.data;
-          return Image(image: MemoryImage(byteData.buffer.asUint8List()), fit: BoxFit.cover,);
-        } else {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Container(
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              ),
-            ],
-          );
-        }
-      },
-      future: widget._asset.getByteData(quality: 100),
+    return AssetThumb(
+      asset: widget._asset,
+      width: MediaQuery.of(context).size.width.toInt(),
+      height: MediaQuery.of(context).size.height.toInt(),
+      spinner: Center(
+        child: Container(
+          height: 50,
+          width: 50,
+          child: CircularProgressIndicator(),
+        ),
+      ),
     );
   }
 }

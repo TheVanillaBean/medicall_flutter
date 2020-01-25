@@ -195,7 +195,8 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
                         ),
                       ),
                 Visibility(
-                    visible: userShippingSelected,
+                    visible: userShippingSelected ||
+                        !consultSnapshot.containsKey('pay_date'),
                     child: Container(
                       padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
                       child: Column(
@@ -292,7 +293,8 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
                           SizedBox(
                             height: 20,
                           ),
-                          shippingAddress.length > 0
+                          shippingAddress.length > 0 &&
+                                  !consultSnapshot.containsKey('pay_date')
                               ? FlatButton(
                                   padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
                                   color: Theme.of(

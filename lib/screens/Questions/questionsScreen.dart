@@ -33,6 +33,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
   double formSpacing = 20;
   var screeningQuestions;
   var ranOnce = false;
+  PageController pageController = PageController(initialPage: 0);
   var currentQuestions = 'symptom';
   var db = Provider.of<Database>(GlobalNavigatorKey.key.currentContext);
   MedicallUser medicallUser =
@@ -115,7 +116,6 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
     setState(() {
       currentPage = index;
     });
-    var tabController = context.state.questionsFormKey.currentContext.state;
     var listKeys = [];
     var currentKeys = [];
     for (var i = 0; i < combinedList.length; i++) {
@@ -145,13 +145,13 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
             listKeys[index != 0 ? index - 1 : index]['image'].length > 0 ||
         listKeys[index != 0 ? index - 1 : index].containsKey('not_required') &&
             listKeys[index != 0 ? index - 1 : index]['not_required'] == true) {
-      tabController.pageController.animateToPage(
+      pageController.animateToPage(
         index,
         duration: Duration(milliseconds: 200),
         curve: Curves.linear,
       );
     } else {
-      tabController.pageController.animateToPage(
+      pageController.animateToPage(
         index != 0 ? index - 1 : index,
         duration: Duration(milliseconds: 200),
         curve: Curves.linear,
@@ -222,6 +222,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
           ? IntroductionScreen(
               pages: pageViewList,
               key: questionsFormKey,
+              pageController: pageController,
               onDone: () => _onIntroEnd(),
               //onSkip: () => _onIntroEnd(context), // You can override onSkip callback
               showSkipButton: false,

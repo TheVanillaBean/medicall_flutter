@@ -1,4 +1,5 @@
 import 'package:Medicall/screens/Questions/asset_view.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
@@ -17,7 +18,10 @@ class _BuildQuestionsState extends State<BuildQuestions> {
   ValueChanged _onChangedCheckBox;
   List<Widget> returnList = [];
 
+  List<Asset> resultList = List<Asset>();
+
   List<dynamic> options = [];
+  
   @override
   Widget build(BuildContext context) {
     return buildQuestions(
@@ -73,42 +77,15 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                                 ? Stack(
                                     alignment: Alignment.bottomCenter,
                                     children: <Widget>[
-                                      Image.network(
+                                      ExtendedImage.network(
                                         question['media'],
-                                        fit: BoxFit.cover,
-                                        loadingBuilder: (BuildContext context,
-                                            Widget child,
-                                            ImageChunkEvent loadingProgress) {
-                                          if (loadingProgress == null)
-                                            return Container(
-                                                height: MediaQuery.of(context)
-                                                        .size
-                                                        .height *
-                                                    0.63,
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.8,
-                                                decoration: BoxDecoration(
-                                                  border: Border.all(
-                                                      width: 1,
-                                                      color: Colors.grey,
-                                                      style: BorderStyle.solid),
-                                                ),
-                                                child: child);
-                                          return Center(
-                                            child: CircularProgressIndicator(
-                                              value: loadingProgress
-                                                          .expectedTotalBytes !=
-                                                      null
-                                                  ? loadingProgress
-                                                          .cumulativeBytesLoaded /
-                                                      loadingProgress
-                                                          .expectedTotalBytes
-                                                  : null,
-                                            ),
-                                          );
-                                        },
+                                        shape: BoxShape.rectangle,
+                                        cache: true,
+                                        border: Border.all(
+                                            color: Colors.grey.withAlpha(100),
+                                            style: BorderStyle.solid,
+                                            width: 1),
+                                        fit: BoxFit.fill,
                                       ),
                                       Container(
                                         transform: Matrix4.translationValues(
@@ -677,9 +654,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
   }
 
   Future<void> loadAssets() async {
-    List<Asset> resultList = List<Asset>();
     String error = '';
-
     try {
       resultList = await MultiImagePicker.pickImages(
           selectedAssets: images,
@@ -712,7 +687,6 @@ class _BuildQuestionsState extends State<BuildQuestions> {
       if (images.length == 0) {
         widget.data['data']['image'] = [];
       }
-
       print(error);
     });
   }

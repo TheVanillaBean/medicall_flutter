@@ -11,6 +11,21 @@ class CarouselWithIndicator extends StatefulWidget {
 
 class _CarouselWithIndicatorState extends State<CarouselWithIndicator> {
   int _current = 0;
+  PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(
+      initialPage: _current,
+    );
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,9 +65,7 @@ class _CarouselWithIndicatorState extends State<CarouselWithIndicator> {
             });
             //rebuild.add(index);
           },
-          controller: PageController(
-            initialPage: _current,
-          ),
+          controller: _pageController,
           scrollDirection: Axis.horizontal,
         ),
         Positioned(

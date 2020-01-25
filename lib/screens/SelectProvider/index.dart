@@ -1,9 +1,9 @@
 import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:Medicall/secrets.dart' as secrets;
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:google_maps_webservice/places.dart';
@@ -11,7 +11,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart' as LocationManager;
 import 'package:provider/provider.dart';
 
-GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: secrets.kGoogleApiKey);
+//GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: secrets.kGoogleApiKey);
 
 class SelectProviderScreen extends StatefulWidget {
   const SelectProviderScreen({Key key}) : super(key: key);
@@ -21,10 +21,10 @@ class SelectProviderScreen extends StatefulWidget {
 
 class _SelectProviderScreenState extends State<SelectProviderScreen> {
   final homeScaffoldKey = GlobalKey<ScaffoldState>();
-  GoogleMapController mapController;
+  //GoogleMapController mapController;
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
   MarkerId selectedMarker;
-  int _markerIdCounter = 1;
+  //int _markerIdCounter = 1;
   List<PlacesSearchResult> places = [];
   List<String> addresses = [];
   List<String> providers = [];
@@ -203,7 +203,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
                                                     .data['profile_pic'] !=
                                                 null
                                             ? ClipOval(
-                                                child: Image.network(
+                                                child: ExtendedImage.network(
                                                   userDocuments[i]
                                                       .data['profile_pic'],
                                                   width: 100,
@@ -237,10 +237,10 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
         'Please select one of the providers in order to continue', context);
   }
 
-  void refresh() async {
-    final center = null;
-    getNearbyPlaces(center);
-  }
+  // void refresh() async {
+  //   final center = null;
+  //   getNearbyPlaces(center);
+  // }
 
   // void _onMapCreated(GoogleMapController controller) async {
   //   mapController = controller;
@@ -270,69 +270,69 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
     }
   }
 
-  void getNearbyPlaces(LatLng center) async {
-    var placesList = [];
-    double minLat = 9999.9;
-    double minLng = 9999.9;
-    double maxLat = -9999.9;
-    double maxLng = -9999.9;
-    LatLngBounds bound;
+  // void getNearbyPlaces(LatLng center) async {
+  //   var placesList = [];
+  //   double minLat = 9999.9;
+  //   double minLng = 9999.9;
+  //   double maxLat = -9999.9;
+  //   double maxLng = -9999.9;
+  //   LatLngBounds bound;
 
-    for (var i = 0; i < addresses.length; i++) {
-      placesList.add(await _places.searchByText(addresses[i]));
+  //   for (var i = 0; i < addresses.length; i++) {
+  //     placesList.add(await _places.searchByText(addresses[i]));
 
-      if (placesList[i].status == 'OK') {
-        placesList[i].results.first.types.first = providers[i];
-        this.places.add(placesList[i].results.first);
+  //     if (placesList[i].status == 'OK') {
+  //       placesList[i].results.first.types.first = providers[i];
+  //       this.places.add(placesList[i].results.first);
 
-        placesList[i].results.forEach((f) {
-          if (f.geometry.location.lat < minLat) {
-            minLat = f.geometry.location.lat;
-          }
-          if (f.geometry.location.lng < minLng) {
-            minLng = f.geometry.location.lng;
-          }
-          if (f.geometry.location.lat > maxLat) {
-            maxLat = f.geometry.location.lat;
-          }
-          if (f.geometry.location.lng > maxLng) {
-            maxLng = f.geometry.location.lng;
-          }
-          final String markerIdVal = 'marker_id_$_markerIdCounter';
-          _markerIdCounter++;
-          final MarkerId markerId = MarkerId(markerIdVal);
+  //       placesList[i].results.forEach((f) {
+  //         if (f.geometry.location.lat < minLat) {
+  //           minLat = f.geometry.location.lat;
+  //         }
+  //         if (f.geometry.location.lng < minLng) {
+  //           minLng = f.geometry.location.lng;
+  //         }
+  //         if (f.geometry.location.lat > maxLat) {
+  //           maxLat = f.geometry.location.lat;
+  //         }
+  //         if (f.geometry.location.lng > maxLng) {
+  //           maxLng = f.geometry.location.lng;
+  //         }
+  //         final String markerIdVal = 'marker_id_$_markerIdCounter';
+  //         _markerIdCounter++;
+  //         final MarkerId markerId = MarkerId(markerIdVal);
 
-          final Marker marker = Marker(
-            markerId: markerId,
-            position: LatLng(f.geometry.location.lat, f.geometry.location.lng),
-            infoWindow:
-                InfoWindow(title: '${f.name}', snippet: '${f.types?.first}'),
-          );
-          markers[markerId] = marker;
+  //         final Marker marker = Marker(
+  //           markerId: markerId,
+  //           position: LatLng(f.geometry.location.lat, f.geometry.location.lng),
+  //           infoWindow:
+  //               InfoWindow(title: '${f.name}', snippet: '${f.types?.first}'),
+  //         );
+  //         markers[markerId] = marker;
 
-          LatLng latLng_1 = LatLng(minLat, minLng);
-          LatLng latLng_2 = LatLng(maxLat, maxLng);
-          bound = LatLngBounds(southwest: latLng_1, northeast: latLng_2);
-          CameraUpdate u2 = CameraUpdate.newLatLngBounds(bound, 50);
-          this.mapController.animateCamera(u2);
-        });
-      }
-    }
-    setState(() {
-      isLoading = false;
-    });
-  }
+  //         LatLng latLng_1 = LatLng(minLat, minLng);
+  //         LatLng latLng_2 = LatLng(maxLat, maxLng);
+  //         bound = LatLngBounds(southwest: latLng_1, northeast: latLng_2);
+  //         CameraUpdate u2 = CameraUpdate.newLatLngBounds(bound, 50);
+  //         this.mapController.animateCamera(u2);
+  //       });
+  //     }
+  //   }
+  //   setState(() {
+  //     isLoading = false;
+  //   });
+  // }
 
-  void check(CameraUpdate u, GoogleMapController c) async {
-    c.animateCamera(u);
-    mapController.animateCamera(u);
-    LatLngBounds l1 = await c.getVisibleRegion();
-    LatLngBounds l2 = await c.getVisibleRegion();
-    print(l1.toString());
-    print(l2.toString());
-    if (l1.southwest.latitude == -90 || l2.southwest.latitude == -90)
-      check(u, c);
-  }
+  // void check(CameraUpdate u, GoogleMapController c) async {
+  //   c.animateCamera(u);
+  //   mapController.animateCamera(u);
+  //   LatLngBounds l1 = await c.getVisibleRegion();
+  //   LatLngBounds l2 = await c.getVisibleRegion();
+  //   print(l1.toString());
+  //   print(l2.toString());
+  //   if (l1.southwest.latitude == -90 || l2.southwest.latitude == -90)
+  //     check(u, c);
+  // }
 
   void onError(PlacesAutocompleteResponse response) {
     homeScaffoldKey.currentState.showSnackBar(

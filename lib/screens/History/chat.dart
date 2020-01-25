@@ -81,6 +81,14 @@ class ChatScreenState extends State<ChatScreen> {
     readLocal();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    textEditingController.dispose();
+    listScrollController.dispose();
+    focusNode.dispose();
+  }
+
   void onFocusChange() {
     if (focusNode.hasFocus) {
       // Hide sticker when keyboard appear
