@@ -20,27 +20,45 @@ class AppUtil {
   }
 
   Flushbar showFlushBar(e, context) {
-    String exMsg = e.message;
-    if (exMsg == 'Given String is empty or null') {
-      exMsg =
-          "You did not provide a valid username and password, please try again.";
+    String exMsg;
+    if (e.runtimeType == String) {
+      exMsg = e;
+      if (exMsg == 'Given String is empty or null') {
+        exMsg =
+            "You did not provide a valid username and password, please try again.";
+      }
+      return Flushbar(
+        message: exMsg,
+        flushbarPosition: FlushbarPosition.TOP,
+        flushbarStyle: FlushbarStyle.GROUNDED,
+        dismissDirection: FlushbarDismissDirection.HORIZONTAL,
+        padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
+        icon: Icon(
+          Icons.info_outline,
+          size: 28.0,
+          color: Colors.blue[300],
+        ),
+        duration: Duration(seconds: 3),
+      )..show(context);
+    } else {
+      exMsg = e.message;
+      return Flushbar(
+        message: exMsg,
+        flushbarPosition: FlushbarPosition.TOP,
+        flushbarStyle: FlushbarStyle.FLOATING,
+        borderRadius: 8,
+        dismissDirection: FlushbarDismissDirection.HORIZONTAL,
+        overlayColor: Colors.black.withAlpha(100),
+        margin: EdgeInsets.all(5),
+        overlayBlur: 2.0,
+        icon: Icon(
+          Icons.info_outline,
+          size: 28.0,
+          color: Colors.blue[300],
+        ),
+        duration: Duration(seconds: 3),
+      )..show(context);
     }
-    return Flushbar(
-      message: exMsg,
-      flushbarPosition: FlushbarPosition.TOP,
-      flushbarStyle: FlushbarStyle.FLOATING,
-      borderRadius: 8,
-      dismissDirection: FlushbarDismissDirection.HORIZONTAL,
-      overlayColor: Colors.black.withAlpha(100),
-      margin: EdgeInsets.all(5),
-      overlayBlur: 2.0,
-      icon: Icon(
-        Icons.info_outline,
-        size: 28.0,
-        color: Colors.blue[300],
-      ),
-      duration: Duration(seconds: 3),
-    )..show(context);
   }
 }
 

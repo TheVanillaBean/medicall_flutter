@@ -32,7 +32,7 @@ class AssetState extends State<AssetView> {
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           byteData = snapshot.data;
-          return Image(image: MemoryImage(byteData.buffer.asUint8List()));
+          return Image(image: MemoryImage(byteData.buffer.asUint8List()), fit: BoxFit.cover,);
         } else {
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,

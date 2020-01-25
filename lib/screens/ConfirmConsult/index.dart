@@ -25,6 +25,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
   bool isLoading = false;
   double price = 39.00;
   bool hasReviewed = false;
+  var listaU8L = [];
   var db = Provider.of<Database>(GlobalNavigatorKey.key.currentContext);
   MedicallUser medicallUser =
       Provider.of<UserProvider>(GlobalNavigatorKey.key.currentContext)
@@ -359,14 +360,39 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
       body: TabBarView(
         // Add tabs as widgets
         children: <Widget>[
-          _buildTab(db.newConsult.screeningQuestions),
+          _buildTab(db.newConsult.screeningQuestions, listaU8L),
+          FutureBuilder(
+              future: convertImages(), // a Future<String> or null
+              builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  return _buildTab(db.newConsult.uploadQuestions, listaU8L);
+                }
+                return Container();
+              }),
           //_buildTab(db.newConsult.historyQuestions),
-          _buildTab(db.newConsult.uploadQuestions),
         ],
         // set the _confirmTabCntrl
         controller: _confirmTabCntrl,
       ),
     );
+  }
+
+  Future<void> convertImages() async {
+    listaU8L = [];
+    List<Asset> assetList = [];
+    for (var i = 1; i < db.newConsult.uploadQuestions.length; i++) {
+      for (var x = 0;
+          x < db.newConsult.uploadQuestions[i]['image'].length;
+          x++) {
+        assetList.add(db.newConsult.uploadQuestions[i]['image'][x]);
+      }
+    }
+    for (var i = 1; i < assetList.length; i++) {
+      ByteData bd = await assetList[i]
+          .getThumbByteData(224, 224, quality: 100); // width and height
+      Uint8List a2 = bd.buffer.asUint8List();
+      listaU8L.add(a2);
+    }
   }
 
   Future _addConsult() async {
@@ -438,7 +464,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
     return allMediaList;
   }
 
-  _buildTab(questions) {
+  _buildTab(questions, listaU8L) {
     List<Asset> questionsList = [];
     if (questions.length > 0) {
       for (var i = 0; i < questions.length; i++) {
@@ -458,28 +484,20 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
         }
       }
       db.newConsult.media = questionsList;
+
       return Scaffold(
         body: Container(
           child: questions[0].containsKey('image')
-              ? GridView.count(
-                  crossAxisCount: 2,
-                  children: List.generate(questionsList.length, (index) {
-                    //List<Widget> returnList = [];
-                    //returnList.add();
-                    return AssetThumb(
-                      asset: questionsList[index],
-                      width: 300,
-                      height: 300,
-                      quality: 50,
-                      spinner: Center(
-                        child: SizedBox(
-                          height: 30,
-                          width: 30,
-                          child: CircularProgressIndicator(),
-                        ),
-                      ),
+              ? GridView.builder(
+                  itemCount: listaU8L.length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2),
+                  itemBuilder: (context, index) {
+                    return Image(
+                      image: MemoryImage(listaU8L[index]),
+                      fit: BoxFit.cover,
                     );
-                  }),
+                  },
                 )
               : ListView.builder(
                   itemCount: questions.length,

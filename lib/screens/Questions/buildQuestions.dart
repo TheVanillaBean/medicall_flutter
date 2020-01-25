@@ -68,6 +68,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                         : Container(
                             padding: EdgeInsets.fromLTRB(0, 0, 0, 40),
                             alignment: Alignment.center,
+                            height: MediaQuery.of(context).size.height * 0.68,
                             child: question['media'].length > 0
                                 ? Stack(
                                     alignment: Alignment.bottomCenter,
