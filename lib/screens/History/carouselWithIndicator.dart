@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:pinch_zoom_image/pinch_zoom_image.dart';
 
 class CarouselWithIndicator extends StatefulWidget {
   final List<String> imgList;
@@ -24,8 +25,10 @@ class _CarouselWithIndicatorState extends State<CarouselWithIndicator> {
               child: ClipRRect(
                 borderRadius: BorderRadius.all(Radius.circular(0.0)),
                 child: url != null
-                    ? CachedNetworkImage(
-                        imageUrl: url,
+                    ? PinchZoomImage(
+                        image: CachedNetworkImage(
+                          imageUrl: url,
+                        ),
                       )
                     : CircularProgressIndicator(),
               ),
