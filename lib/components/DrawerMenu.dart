@@ -4,7 +4,6 @@ import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/presentation/medicall_app_icons.dart' as CustomIcons;
-import 'package:Medicall/screens/LandingPage/index.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
@@ -66,7 +65,8 @@ class DrawerMenu extends StatelessWidget {
                   ),
                   onTap: () {
                     GlobalNavigatorKey.key.currentState.pop();
-                    GlobalNavigatorKey.key.currentState.pushNamed('/history');
+                    GlobalNavigatorKey.key.currentState
+                        .pushReplacementNamed('/history');
                   }),
               ListTile(
                   leading: Icon(
@@ -141,12 +141,8 @@ class DrawerMenu extends StatelessWidget {
   Future<void> _signOut(BuildContext context) async {
     try {
       GlobalNavigatorKey.key.currentState.pop(context);
-      final auth = Provider.of<AuthBase>(context);
+      final auth = Provider.of<AuthBase>(context, listen: false);
       await auth.signOut();
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => LandingPage()),
-      );
     } catch (e) {
       print(e);
     }
