@@ -1,7 +1,6 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:carousel_slider/carousel_slider.dart';
+import 'package:dots_indicator/dots_indicator.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
-import 'package:pinch_zoom_image/pinch_zoom_image.dart';
 
 class CarouselWithIndicator extends StatefulWidget {
   final List<String> imgList;
@@ -15,61 +14,66 @@ class _CarouselWithIndicatorState extends State<CarouselWithIndicator> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      CarouselSlider(
-        viewportFraction: 1.0,
-        height: MediaQuery.of(context).size.height * 0.64,
-        items: widget.imgList.map(
-          (url) {
-            return Container(
-              child: ClipRRect(
-                borderRadius: BorderRadius.all(Radius.circular(0.0)),
-                child: url != null
-                    ? PinchZoomImage(
-                        image: CachedNetworkImage(
-                          imageUrl: url,
-                        ),
-                      )
-                    : CircularProgressIndicator(),
-              ),
+    return Stack(
+      alignment: Alignment.center,
+      children: <Widget>[
+        ExtendedImageGesturePageView.builder(
+          itemBuilder: (BuildContext context, int index) {
+            var item = widget.imgList[index];
+            Widget image = ExtendedImage.network(
+              item,
+              fit: BoxFit.contain,
+              mode: ExtendedImageMode.gesture,
+              cache: true,
+              enableMemoryCache: true,
+              initGestureConfigHandler: (state) {
+                return GestureConfig(
+                    inPageView: true, initialScale: 1.0, cacheGesture: false);
+              },
             );
-          },
-        ).toList(),
-        autoPlay: false,
-        enlargeCenterPage: true,
-        onPageChanged: (index) {
-          setState(() {
-            _current = index;
-          });
-        },
-      ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: map<Widget>(
-          widget.imgList,
-          (index, url) {
-            return Container(
-              width: 8.0,
-              height: 8.0,
-              margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
-              decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: _current == index
-                      ? Color.fromRGBO(0, 0, 0, 0.9)
-                      : Color.fromRGBO(0, 0, 0, 0.4)),
+            image = Container(
+              child: image,
             );
+            if (index == _current) {
+              return Hero(
+                tag: item + index.toString(),
+                child: image,
+              );
+            } else {
+              return image;
+            }
           },
+          itemCount: widget.imgList.length,
+          onPageChanged: (int index) {
+            setState(() {
+              _current = index;
+            });
+            //rebuild.add(index);
+          },
+          controller: PageController(
+            initialPage: _current,
+          ),
+          scrollDirection: Axis.horizontal,
         ),
-      ),
-    ]);
+        Positioned(
+          bottom: 20,
+          child: DotsIndicator(
+            dotsCount: widget.imgList.length,
+            position: _current.toDouble(),
+            decorator: DotsDecorator(
+                activeColor: Theme.of(context).colorScheme.secondary),
+          ),
+        )
+      ],
+    );
   }
-}
 
-List<T> map<T>(List list, Function handler) {
-  List<T> result = [];
-  for (var i = 0; i < list.length; i++) {
-    result.add(handler(i, list[i]));
+  List<T> map<T>(List list, Function handler) {
+    List<T> result = [];
+    for (var i = 0; i < list.length; i++) {
+      result.add(handler(i, list[i]));
+    }
+
+    return result;
   }
-
-  return result;
 }
