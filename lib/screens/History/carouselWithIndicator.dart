@@ -3,7 +3,7 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 
 class CarouselWithIndicator extends StatefulWidget {
-  final List<String> imgList;
+  final List<dynamic> imgList;
   CarouselWithIndicator({Key key, @required this.imgList}) : super(key: key);
   @override
   _CarouselWithIndicatorState createState() => _CarouselWithIndicatorState();
@@ -34,24 +34,39 @@ class _CarouselWithIndicatorState extends State<CarouselWithIndicator> {
       children: <Widget>[
         ExtendedImageGesturePageView.builder(
           itemBuilder: (BuildContext context, int index) {
+            Widget image;
             var item = widget.imgList[index];
-            Widget image = ExtendedImage.network(
-              item,
-              fit: BoxFit.contain,
-              mode: ExtendedImageMode.gesture,
-              cache: true,
-              enableMemoryCache: true,
-              initGestureConfigHandler: (state) {
-                return GestureConfig(
-                    inPageView: true, initialScale: 1.0, cacheGesture: false);
-              },
-            );
+            if (item.runtimeType == String) {
+              image = ExtendedImage.network(
+                item,
+                fit: BoxFit.contain,
+                mode: ExtendedImageMode.gesture,
+                cache: true,
+                enableMemoryCache: true,
+                initGestureConfigHandler: (state) {
+                  return GestureConfig(
+                      inPageView: true, initialScale: 1.0, cacheGesture: false);
+                },
+              );
+            } else {
+              image = ExtendedImage.memory(
+                item,
+                fit: BoxFit.contain,
+                mode: ExtendedImageMode.gesture,
+                enableMemoryCache: true,
+                initGestureConfigHandler: (state) {
+                  return GestureConfig(
+                      inPageView: true, initialScale: 1.0, cacheGesture: false);
+                },
+              );
+            }
+
             image = Container(
               child: image,
             );
             if (index == _current) {
               return Hero(
-                tag: item + index.toString(),
+                tag: index.toString(),
                 child: image,
               );
             } else {

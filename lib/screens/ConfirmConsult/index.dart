@@ -2,11 +2,13 @@ import 'dart:typed_data';
 import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/ConfirmConsult/routeUserOrder.dart';
+import 'package:Medicall/screens/History/carouselWithIndicator.dart';
 import 'package:Medicall/secrets.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/stripe_payment_handler.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -488,16 +490,8 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
       return Scaffold(
         body: Container(
           child: questions[0].containsKey('image')
-              ? GridView.builder(
-                  itemCount: listaU8L.length,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2),
-                  itemBuilder: (context, index) {
-                    return Image(
-                      image: MemoryImage(listaU8L[index]),
-                      fit: BoxFit.cover,
-                    );
-                  },
+              ? CarouselWithIndicator(
+                  imgList: listaU8L,
                 )
               : ListView.builder(
                   itemCount: questions.length,
