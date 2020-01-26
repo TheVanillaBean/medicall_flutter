@@ -88,8 +88,6 @@ class _LoginScreenState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: _buildHeader(context),
-      floatingActionButtonLocation: FloatingActionButtonLocation.miniStartTop,
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.dark,
         sized: false,
@@ -106,12 +104,9 @@ class _LoginScreenState extends State<LoginPage> {
                   onTap: () {
                     FocusScope.of(context).requestFocus(new FocusNode());
                   },
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(60, 15, 60, 15),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: _buildChildren(context),
-                    ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: _buildChildren(context),
                   ),
                 ),
               ),
@@ -124,75 +119,76 @@ class _LoginScreenState extends State<LoginPage> {
 
   List<Widget> _buildChildren(BuildContext context) {
     return [
-      FadeIn(
-          2,
-          Column(
-            children: <Widget>[
-              SizedBox(height: 60.0),
-              _buildEmailAuthForm(context),
-              SizedBox(height: 16.0),
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: SignInButton(
-                      color: Theme.of(context).primaryColor,
-                      textColor: Colors.white,
-                      text: "Sign in",
-                      onPressed: model.canSubmit ? _submit : _submit,
-                    ),
-                  )
-                ],
-              ),
-              SizedBox(height: 12),
-              Text(
-                "",
-                style: TextStyle(
-                  fontSize: 14.0,
-                  color: Colors.black87,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 12),
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: SignInButton(
-                      color: Theme.of(context).primaryColor.withBlue(3000),
-                      textColor: Colors.white,
-                      text: "Create New Account",
-                      onPressed: () {
-                        Provider.of<AuthBase>(context).medicallUser =
-                            MedicallUser();
-                        _createAccountWithEmail(context);
-                      },
-                    ),
-                  )
-                ],
-              ),
-              SizedBox(height: 8),
-              SocialSignInButton(
-                imgPath: "assets/images/google-logo.png",
-                text: "Sign in with Google",
-                color: Colors.white,
-                textColor: Colors.black87,
-                onPressed:
-                    model.isLoading ? null : () => _signInWithGoogle(context),
-              ),
-            ],
-          )),
-    ];
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(0, 150, 0, 0),
-      child: FlareActor(
-        'assets/headerlogo.flr',
-        fit: BoxFit.fitWidth,
-        snapToEnd: true,
-        animation: 'Untitled',
+      Container(
+        margin: EdgeInsets.only(top: 30),
+        height: 100,
+        child: FlareActor(
+          'assets/headerlogo.flr',
+          fit: BoxFit.fitWidth,
+          snapToEnd: true,
+          animation: 'Untitled',
+        ),
       ),
-    );
+      FadeIn(
+        2,
+        Padding(
+            padding: const EdgeInsets.fromLTRB(60, 15, 60, 15),
+            child: Column(
+              children: <Widget>[
+                SizedBox(height: 10.0),
+                _buildEmailAuthForm(context),
+                SizedBox(height: 16.0),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: SignInButton(
+                        color: Theme.of(context).primaryColor,
+                        textColor: Colors.white,
+                        text: "Sign in",
+                        onPressed: model.canSubmit ? _submit : _submit,
+                      ),
+                    )
+                  ],
+                ),
+                SizedBox(height: 12),
+                Text(
+                  "",
+                  style: TextStyle(
+                    fontSize: 14.0,
+                    color: Colors.black87,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 12),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: SignInButton(
+                        color: Theme.of(context).primaryColor.withBlue(3000),
+                        textColor: Colors.white,
+                        text: "Create New Account",
+                        onPressed: () {
+                          Provider.of<AuthBase>(context).medicallUser =
+                              MedicallUser();
+                          _createAccountWithEmail(context);
+                        },
+                      ),
+                    )
+                  ],
+                ),
+                SizedBox(height: 8),
+                SocialSignInButton(
+                  imgPath: "assets/images/google-logo.png",
+                  text: "Sign in with Google",
+                  color: Colors.white,
+                  textColor: Colors.black87,
+                  onPressed:
+                      model.isLoading ? null : () => _signInWithGoogle(context),
+                ),
+              ],
+            )),
+      ),
+    ];
   }
 
   Container _buildEmailAuthForm(BuildContext context) {

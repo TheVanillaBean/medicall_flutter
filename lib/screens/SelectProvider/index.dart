@@ -19,7 +19,6 @@ class SelectProviderScreen extends StatefulWidget {
 }
 
 class _SelectProviderScreenState extends State<SelectProviderScreen> {
-  final homeScaffoldKey = GlobalKey<ScaffoldState>();
   //GoogleMapController mapController;
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
   MarkerId selectedMarker;
@@ -69,7 +68,6 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
     db = Provider.of<Database>(context);
 
     return Scaffold(
-        key: homeScaffoldKey,
         appBar: AppBar(
           centerTitle: true,
           title: const Text('Select Provider'),
@@ -336,9 +334,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
   // }
 
   void onError(PlacesAutocompleteResponse response) {
-    homeScaffoldKey.currentState.showSnackBar(
-      SnackBar(content: Text(response.errorMessage)),
-    );
+    AppUtil().showFlushBar(response.errorMessage, context);
   }
 
   Future<Null> showDetailPlace(String placeId) async {

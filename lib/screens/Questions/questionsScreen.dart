@@ -26,7 +26,6 @@ class QuestionsScreen extends StatefulWidget {
 class _QuestionsScreenState extends State<QuestionsScreen> {
   Map globalKeyList = {};
   int currentPage = 0;
-  GlobalKey<FormBuilderState> questionsFormKey = GlobalKey();
   bool autoValidate = true;
   bool readOnly = false;
   double formSpacing = 20;
@@ -43,10 +42,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
   @override
   void initState() {
     super.initState();
-    for (var i = 0; i < combinedList.length; i++) {
-      globalKeyList['questionKey' + i.toString()] =
-          GlobalKey<FormBuilderState>();
-    }
+    
   }
 
   @override
@@ -175,6 +171,10 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
         ...db.newConsult.historyQuestions,
       ];
     }
+    for (var i = 0; i < combinedList.length; i++) {
+      globalKeyList['questionKey' + i.toString()] =
+          GlobalKey<FormBuilderState>();
+    }
 
     List<PageViewModel> pageViewList = [];
     if (combinedList != null) {
@@ -225,7 +225,6 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
       body: pageViewList.length > 0
           ? IntroductionScreen(
               pages: pageViewList,
-              key: questionsFormKey,
               pageController: pageController,
               onDone: () => _onIntroEnd(),
               //onSkip: () => _onIntroEnd(context), // You can override onSkip callback

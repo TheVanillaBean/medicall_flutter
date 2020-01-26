@@ -18,7 +18,8 @@ bool addedImages = false;
 bool addedQuestions = false;
 String buttonTxt = "Send Prescription";
 bool isDone = false;
-GlobalKey<FormBuilderState> consultFormKey = GlobalKey();
+final GlobalKey<FormBuilderState> consultFormKey =
+    GlobalKey<FormBuilderState>();
 var db;
 MedicallUser medicallUser;
 

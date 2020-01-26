@@ -29,71 +29,82 @@ class _CarouselWithIndicatorState extends State<CarouselWithIndicator> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: <Widget>[
-        ExtendedImageGesturePageView.builder(
-          itemBuilder: (BuildContext context, int index) {
-            Widget image;
-            var item = widget.imgList[index];
-            if (item.runtimeType == String) {
-              image = ExtendedImage.network(
-                item,
-                fit: BoxFit.contain,
-                mode: ExtendedImageMode.gesture,
-                cache: true,
-                enableMemoryCache: true,
-                initGestureConfigHandler: (state) {
-                  return GestureConfig(
-                      inPageView: true, initialScale: 1.0, cacheGesture: false);
-                },
-              );
-            } else {
-              image = ExtendedImage.memory(
-                item,
-                fit: BoxFit.contain,
-                mode: ExtendedImageMode.gesture,
-                enableMemoryCache: true,
-                initGestureConfigHandler: (state) {
-                  return GestureConfig(
-                      inPageView: true, initialScale: 1.0, cacheGesture: false);
-                },
-              );
-            }
+    return widget.imgList.length > 0
+        ? Stack(
+            alignment: Alignment.center,
+            children: <Widget>[
+              ExtendedImageGesturePageView.builder(
+                itemBuilder: (BuildContext context, int index) {
+                  Widget image;
+                  var item = widget.imgList[index];
+                  if (item.runtimeType == String) {
+                    image = ExtendedImage.network(
+                      item,
+                      fit: BoxFit.contain,
+                      mode: ExtendedImageMode.gesture,
+                      cache: true,
+                      enableMemoryCache: true,
+                      initGestureConfigHandler: (state) {
+                        return GestureConfig(
+                            inPageView: true,
+                            initialScale: 1.0,
+                            cacheGesture: false);
+                      },
+                    );
+                  } else {
+                    image = ExtendedImage.memory(
+                      item,
+                      fit: BoxFit.contain,
+                      mode: ExtendedImageMode.gesture,
+                      enableMemoryCache: true,
+                      initGestureConfigHandler: (state) {
+                        return GestureConfig(
+                            inPageView: true,
+                            initialScale: 1.0,
+                            cacheGesture: false);
+                      },
+                    );
+                  }
 
-            image = Container(
-              child: image,
-            );
-            if (index == _current) {
-              return Hero(
-                tag: index.toString(),
-                child: image,
-              );
-            } else {
-              return image;
-            }
-          },
-          itemCount: widget.imgList.length,
-          onPageChanged: (int index) {
-            setState(() {
-              _current = index;
-            });
-            //rebuild.add(index);
-          },
-          controller: _pageController,
-          scrollDirection: Axis.horizontal,
-        ),
-        Positioned(
-          bottom: 20,
-          child: DotsIndicator(
-            dotsCount: widget.imgList.length,
-            position: _current.toDouble(),
-            decorator: DotsDecorator(
-                activeColor: Theme.of(context).colorScheme.secondary),
-          ),
-        )
-      ],
-    );
+                  image = Container(
+                    child: image,
+                  );
+                  if (index == _current) {
+                    return Hero(
+                      tag: index.toString(),
+                      child: image,
+                    );
+                  } else {
+                    return image;
+                  }
+                },
+                itemCount: widget.imgList.length,
+                onPageChanged: (int index) {
+                  setState(() {
+                    _current = index;
+                  });
+                  //rebuild.add(index);
+                },
+                controller: _pageController,
+                scrollDirection: Axis.horizontal,
+              ),
+              Positioned(
+                bottom: 20,
+                child: DotsIndicator(
+                  dotsCount: widget.imgList.length,
+                  position: _current.toDouble(),
+                  decorator: DotsDecorator(
+                      activeColor: Theme.of(context).colorScheme.secondary),
+                ),
+              )
+            ],
+          )
+        : Center(
+            child: Container(
+              
+              child: Text('There are no images here.'),
+            ),
+          );
   }
 
   List<T> map<T>(List list, Function handler) {

@@ -21,7 +21,6 @@ class SymptomsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     db = Provider.of<Database>(context);
     medicallUser = Provider.of<UserProvider>(context).medicallUser;
-    final _scaffoldKey = GlobalKey<ScaffoldState>();
     screenSize = MediaQuery.of(context).size;
     void _showMedDialog() {
       showDialog(
@@ -95,13 +94,16 @@ class SymptomsScreen extends StatelessWidget {
     }
 
     return Scaffold(
-      key: _scaffoldKey,
       appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {
-            _scaffoldKey.currentState.openDrawer();
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+              icon: Icon(Icons.home),
+            );
           },
-          icon: Icon(Icons.home),
         ),
         centerTitle: true,
         title: Text(
@@ -298,7 +300,6 @@ class EntryItem extends StatelessWidget {
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: <Widget>[
                                     RaisedButton(
-                                     
                                       onPressed: () async {
                                         if (db.newConsult == null ||
                                             db.newConsult.provider == null) {
@@ -349,7 +350,6 @@ class EntryItem extends StatelessWidget {
                                       child: Text(
                                         'Start',
                                         style: TextStyle(
-                                            
                                             fontWeight: FontWeight.bold,
                                             letterSpacing: 0.5),
                                       ),

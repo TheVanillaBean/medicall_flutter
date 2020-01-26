@@ -13,7 +13,6 @@ class AccountScreen extends StatefulWidget {
 }
 
 class _AccountScreenState extends State<AccountScreen> {
-  final _scaffoldKey1 = GlobalKey<ScaffoldState>();
   @override
   void initState() {
     super.initState();
@@ -24,14 +23,17 @@ class _AccountScreenState extends State<AccountScreen> {
     var auth = Provider.of<AuthBase>(context);
     return Scaffold(
       //App Bar
-      key: _scaffoldKey1,
       appBar: AppBar(
         centerTitle: true,
-        leading: IconButton(
-          onPressed: () {
-            _scaffoldKey1.currentState.openDrawer();
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+              icon: Icon(Icons.home),
+            );
           },
-          icon: Icon(Icons.home),
         ),
         title: Text(
           'Account',
@@ -139,8 +141,7 @@ class _AccountScreenState extends State<AccountScreen> {
                   title: Text('Payment Cards'),
                   leading: Icon(Icons.payment),
                   onTap: () {
-                    Navigator.of(context)
-                        .pushNamed('/paymentDetail');
+                    Navigator.of(context).pushNamed('/paymentDetail');
                   },
                   contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                 ),

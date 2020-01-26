@@ -21,10 +21,8 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:flare_splash_screen/flare_splash_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_crashlytics/flutter_crashlytics.dart';
 import 'package:provider/provider.dart';
-
 import 'screens/Questions/questionsScreen.dart';
 import 'screens/Symptoms/index.dart';
 
@@ -62,7 +60,7 @@ class MedicallApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.values[0]]);
+    //SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.values[0]]);
     //SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
     return MultiProvider(
       providers: [

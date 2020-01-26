@@ -4,6 +4,7 @@ import 'package:Medicall/components/masked_text.dart';
 import 'package:Medicall/components/reactive_refresh_indicator.dart';
 import 'package:Medicall/screens/PhoneAuth/phone_auth_state_model.dart';
 import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -58,8 +59,6 @@ class NumberTextInputFormatter extends TextInputFormatter {
 
 class _PhoneAuthScreenState extends State<PhoneAuthScreen>
     with VerificationError {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
   TextEditingController smsCodeController = TextEditingController();
   TextEditingController phoneNumberController = TextEditingController();
 
@@ -73,9 +72,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
   }
 
   _showErrorSnackbar(String message) {
-    _scaffoldKey.currentState.showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+    AppUtil().showFlushBar(message, context);
   }
 
   // Widgets
@@ -321,7 +318,6 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
       appBar: AppBar(elevation: 0.0),
       backgroundColor: Theme.of(context).primaryColor,
       body: Container(

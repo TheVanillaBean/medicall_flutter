@@ -27,7 +27,8 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
   List<dynamic> addressList = [];
   GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: secrets.kGoogleApiKey);
   final TextEditingController typeAheadController = TextEditingController();
-  GlobalKey<FormBuilderState> prescriptionPaymentKey = GlobalKey();
+  final GlobalKey<FormBuilderState> prescriptionPaymentKey =
+      GlobalKey<FormBuilderState>();
 
   ValueChanged onChangedCheckBox;
   @override
