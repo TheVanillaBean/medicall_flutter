@@ -43,18 +43,6 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
   @override
   void initState() {
     super.initState();
-    if (medicallUser.hasMedicalHistory) {
-      combinedList = [
-        ...db.newConsult.screeningQuestions,
-        ...db.newConsult.uploadQuestions
-      ];
-    } else {
-      currentQuestions = "Medical History";
-      combinedList = [
-        ...db.newConsult.historyQuestions,
-      ];
-    }
-
     for (var i = 0; i < combinedList.length; i++) {
       globalKeyList['questionKey' + i.toString()] =
           GlobalKey<FormBuilderState>();
@@ -176,6 +164,17 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
       contentPadding: EdgeInsets.zero,
       imagePadding: EdgeInsets.zero,
     );
+    if (medicallUser.hasMedicalHistory) {
+      combinedList = [
+        ...db.newConsult.screeningQuestions,
+        ...db.newConsult.uploadQuestions
+      ];
+    } else {
+      currentQuestions = "Medical History";
+      combinedList = [
+        ...db.newConsult.historyQuestions,
+      ];
+    }
 
     List<PageViewModel> pageViewList = [];
     if (combinedList != null) {

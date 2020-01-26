@@ -22,8 +22,6 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
   bool isConsultOpen = false;
 
   String documentId;
-
-  var consultSnapshot;
   var db;
   MedicallUser medicallUser;
   @override
@@ -47,29 +45,19 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
 
   Future<void> _setConsultStatus(Choice choice) async {
     // Causes the app to rebuild with the new _selectedChoice.
+    db.updateConsultStatus(choice, medicallUser);
     setState(() {
-      db.updateConsultStatus(choice, medicallUser);
       _selectedChoice = choice;
       if (db.consultSnapshot.data['provider_id'] == medicallUser.uid) {
         if (_selectedChoice.title == 'Done') {
           _selectedChoice.icon = Icon(Icons.check_box, color: Colors.green);
-          db.consultStateData = {'state': 'done'};
+          db.consultSnapshot.data['state'] = 'done';
         } else {
           _selectedChoice.icon = Icon(
             Icons.check_box_outline_blank,
             color: Colors.blue,
           );
-          db.consultStateData = {'state': 'in progress'};
-        }
-        if (db.consultStateData['state'] == 'done') {
-          isDone = true;
-          consultSnapshot['state'] = 'done';
-          if (currentIndex != 0) {
-            Navigator.of(context).pop();
-          }
-        } else {
-          isDone = false;
-          consultSnapshot['state'] = 'in progress';
+          db.consultSnapshot.data['state'] = 'in progress';
         }
       }
     });
@@ -94,11 +82,6 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                   color: Colors.blue,
                 )),
     ];
-    if (db.consultSnapshot != null) {
-      consultSnapshot = db.consultSnapshot.data;
-    } else {
-      consultSnapshot = {'type': ''};
-    }
     return Scaffold(
       appBar: AppBar(
         actions: <Widget>[
@@ -129,15 +112,16 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            consultSnapshot != null && consultSnapshot['provider'] != null
+            db.consultSnapshot != null &&
+                    db.consultSnapshot.data['provider'] != null
                 ? Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
                         medicallUser.type == 'patient'
-                            ? '${consultSnapshot['provider'].split(" ")[0][0].toUpperCase()}${consultSnapshot['provider'].split(" ")[0].substring(1)} ${consultSnapshot['provider'].split(" ")[1][0].toUpperCase()}${consultSnapshot['provider'].split(" ")[1].substring(1)} ' +
-                                consultSnapshot['providerTitles']
-                            : '${consultSnapshot['patient'].split(" ")[0][0].toUpperCase()}${consultSnapshot['patient'].split(" ")[0].substring(1)} ${consultSnapshot['patient'].split(" ")[1][0].toUpperCase()}${consultSnapshot['patient'].split(" ")[1].substring(1)} ',
+                            ? '${db.consultSnapshot.data['provider'].split(" ")[0][0].toUpperCase()}${db.consultSnapshot.data['provider'].split(" ")[0].substring(1)} ${db.consultSnapshot.data['provider'].split(" ")[1][0].toUpperCase()}${db.consultSnapshot.data['provider'].split(" ")[1].substring(1)} ' +
+                                db.consultSnapshot.data['providerTitles']
+                            : '${db.consultSnapshot.data['patient'].split(" ")[0][0].toUpperCase()}${db.consultSnapshot.data['patient'].split(" ")[0].substring(1)} ${db.consultSnapshot.data['patient'].split(" ")[1][0].toUpperCase()}${db.consultSnapshot.data['patient'].split(" ")[1].substring(1)} ',
                         style: TextStyle(
                           fontSize:
                               Theme.of(context).platform == TargetPlatform.iOS
@@ -146,10 +130,10 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                         ),
                       ),
                       Text(
-                        consultSnapshot['type'] == 'Lesion'
+                        db.consultSnapshot.data['type'] == 'Lesion'
                             ? 'Spot'
-                            : consultSnapshot['type'] != 'Lesion'
-                                ? consultSnapshot['type']
+                            : db.consultSnapshot.data['type'] != 'Lesion'
+                                ? db.consultSnapshot.data['type']
                                 : '',
                         style: TextStyle(
                           fontSize:
@@ -213,7 +197,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
         elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
       ),
       body: db.consultSnapshot != null
-          ? medicallUser.type == 'patient' && consultSnapshot != null
+          ? medicallUser.type == 'patient' && db.consultSnapshot != null
               ? TabBarView(
                   // Add tabs as widgets
                   children: <Widget>[
@@ -259,20 +243,20 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
     // The app's "state".
     db = Provider.of<Database>(context);
     medicallUser = Provider.of<UserProvider>(context).medicallUser;
-    if (db.consultSnapshot == null ||
-        db.currConsultId != db.consultSnapshot.documentID) {
-      return FutureBuilder<void>(
-        future: db.getConsultDetail(), // a Future<String> or null
-        builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {}
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return returnBody();
+    return FutureBuilder<void>(
+      future: db.getConsultDetail(), // a Future<String> or null
+      builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (db.consultSnapshot.data['provider_id'] == medicallUser.uid) {
+            if (db.consultSnapshot.data['state'] == 'done') {
+              isDone = true;
+            } else {
+              isDone = false;
+            }
           }
-          return returnBody();
-        },
-      );
-    } else {
-      return returnBody();
-    }
+        }
+        return returnBody();
+      },
+    );
   }
 }

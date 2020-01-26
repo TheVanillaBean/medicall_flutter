@@ -74,7 +74,7 @@
 							"intersect": false
 						}
 					],
-					"isVisible": false,
+					"isVisible": true,
 					"blendMode": 3,
 					"drawOrder": 1,
 					"transformAffectsStroke": false,
@@ -109,7 +109,7 @@
 					"isCollapsed": false,
 					"clips": [],
 					"bones": [],
-					"isVisible": false,
+					"isVisible": true,
 					"isClosed": true,
 					"points": [
 						{
@@ -227,7 +227,7 @@
 					"isCollapsed": false,
 					"clips": [],
 					"bones": [],
-					"isVisible": false,
+					"isVisible": true,
 					"isClosed": true,
 					"points": [
 						{
@@ -345,7 +345,7 @@
 					"isCollapsed": false,
 					"clips": [],
 					"bones": [],
-					"isVisible": false,
+					"isVisible": true,
 					"isClosed": true,
 					"points": [
 						{
@@ -458,7 +458,7 @@
 					"isCollapsed": false,
 					"clips": [],
 					"bones": [],
-					"isVisible": false,
+					"isVisible": true,
 					"isClosed": true,
 					"points": [
 						{
@@ -571,7 +571,7 @@
 					"isCollapsed": false,
 					"clips": [],
 					"bones": [],
-					"isVisible": false,
+					"isVisible": true,
 					"isClosed": true,
 					"points": [
 						{
@@ -629,7 +629,7 @@
 							"intersect": false
 						}
 					],
-					"isVisible": false,
+					"isVisible": true,
 					"blendMode": 3,
 					"drawOrder": 2,
 					"transformAffectsStroke": false,
@@ -664,7 +664,7 @@
 					"isCollapsed": false,
 					"clips": [],
 					"bones": [],
-					"isVisible": false,
+					"isVisible": true,
 					"isClosed": true,
 					"points": [
 						{
@@ -1061,7 +1061,7 @@
 					"isCollapsed": false,
 					"clips": [],
 					"bones": [],
-					"isVisible": false,
+					"isVisible": true,
 					"isClosed": true,
 					"points": [
 						{
@@ -1147,7 +1147,7 @@
 					"isCollapsed": false,
 					"clips": [],
 					"bones": [],
-					"isVisible": false,
+					"isVisible": true,
 					"isClosed": true,
 					"points": [
 						{
@@ -1193,7 +1193,7 @@
 					"isCollapsed": false,
 					"clips": [],
 					"bones": [],
-					"isVisible": false,
+					"isVisible": true,
 					"isClosed": true,
 					"points": [
 						{
@@ -1263,7 +1263,7 @@
 					"isCollapsed": false,
 					"clips": [],
 					"bones": [],
-					"isVisible": false,
+					"isVisible": true,
 					"isClosed": true,
 					"points": [
 						{
@@ -1332,7 +1332,7 @@
 					"opacity": 1,
 					"isCollapsed": false,
 					"clips": [],
-					"isVisible": false,
+					"isVisible": true,
 					"blendMode": 3,
 					"drawOrder": 3,
 					"transformAffectsStroke": false,
@@ -1367,7 +1367,7 @@
 					"isCollapsed": false,
 					"clips": [],
 					"bones": [],
-					"isVisible": false,
+					"isVisible": true,
 					"isClosed": true,
 					"points": [
 						{

@@ -45,8 +45,7 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
   Widget build(BuildContext context) {
     var db = Provider.of<Database>(context);
     medicallUser = Provider.of<UserProvider>(context).medicallUser;
-    var consultSnapshot = db.consultSnapshot.data;
-    var datePaid = consultSnapshot['pay_date'];
+    var datePaid = db.consultSnapshot.data['pay_date'];
 
     onChangedCheckBox = (val) async {
       if (val.length > 0) {
@@ -80,13 +79,14 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
     } else {
       typeAheadController.text = '';
     }
-    return consultSnapshot.containsKey('medication_name') &&
-            consultSnapshot['medication_name'].length > 0
+    return db.consultSnapshot.data.containsKey('medication_name') &&
+            db.consultSnapshot.data['medication_name'].length > 0
         ? FormBuilder(
             key: prescriptionPaymentKey,
             child: Column(
               children: <Widget>[
-                consultSnapshot['state'] != 'prescription paid'
+                !db.consultSnapshot.data.containsKey('pay_date') &&
+                        db.consultSnapshot.data['state'] != 'done'
                     ? Container(
                         padding: EdgeInsets.fromLTRB(0, 10, 20, 10),
                         child: FormBuilderCheckboxList(
@@ -160,42 +160,48 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
                         ),
                         child: Text(
                           datePaid.runtimeType == Timestamp
-                              ? consultSnapshot['shipping_option'] == 'delivery'
+                              ? db.consultSnapshot.data['shipping_option'] ==
+                                      'delivery'
                                   ? 'Payment made:' +
                                       ' ' +
                                       DateFormat('MM-dd-yyyy hh:mm a')
                                           .format(datePaid.toDate()) +
                                       '\nShipping option: Home delivery' +
                                       '\nShipping Address: ' +
-                                      consultSnapshot['shipping_address']
+                                      db.consultSnapshot
+                                          .data['shipping_address']
                                   : 'Payment made:' +
                                       ' ' +
                                       DateFormat('MM-dd-yyyy hh:mm a')
                                           .format(datePaid.toDate()) +
                                       '\nShipping option: Local Pharmacy' +
                                       '\nShipping Address: ' +
-                                      consultSnapshot['shipping_address']
-                              : consultSnapshot['shipping_option'] == 'delivery'
+                                      db.consultSnapshot
+                                          .data['shipping_address']
+                              : db.consultSnapshot.data['shipping_option'] ==
+                                      'delivery'
                                   ? 'Payment made:' +
                                       ' ' +
                                       DateFormat('MM-dd-yyyy hh:mm a')
                                           .format(datePaid) +
                                       '\nShipping option: Home delivery' +
                                       '\nShipping Address: ' +
-                                      consultSnapshot['shipping_address']
+                                      db.consultSnapshot
+                                          .data['shipping_address']
                                   : 'Payment made:' +
                                       ' ' +
                                       DateFormat('MM-dd-yyyy hh:mm a')
                                           .format(datePaid) +
                                       '\nShipping option: Local Pharmacy' +
                                       '\nShipping Address: ' +
-                                      consultSnapshot['shipping_address'],
+                                      db.consultSnapshot
+                                          .data['shipping_address'],
                           style: TextStyle(color: Colors.green, fontSize: 16),
                         ),
                       ),
                 Visibility(
                     visible: userShippingSelected ||
-                        !consultSnapshot.containsKey('pay_date'),
+                        !db.consultSnapshot.data.containsKey('pay_date'),
                     child: Container(
                       padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
                       child: Column(
@@ -293,21 +299,22 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
                             height: 20,
                           ),
                           shippingAddress.length > 0 &&
-                                  !consultSnapshot.containsKey('pay_date')
+                                  !db.consultSnapshot.data
+                                      .containsKey('pay_date')
                               ? FlatButton(
                                   padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
-                                  color: Theme.of(
-                                          context)
-                                      .colorScheme
-                                      .secondary,
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
                                   onPressed: () async {
                                     if (db.hasPayment) {
                                       isLoading = true;
                                       await PaymentService().chargePayment(
-                                          consultSnapshot['consult_price'],
-                                          consultSnapshot['type'] +
+                                          db.consultSnapshot
+                                              .data['consult_price'],
+                                          db.consultSnapshot.data['type'] +
                                               ' consult with ' +
-                                              consultSnapshot['provider']);
+                                              db.consultSnapshot
+                                                  .data['provider']);
                                       await Firestore.instance
                                           .collection("consults")
                                           .document(db.currConsultId)
@@ -318,13 +325,14 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
                                         'shipping_address': shippingAddress,
                                       });
                                       setState(() {
-                                        consultSnapshot['state'] =
+                                        db.consultSnapshot.data['state'] =
                                             'prescription paid';
-                                        consultSnapshot['pay_date'] =
+                                        db.consultSnapshot.data['pay_date'] =
                                             DateTime.now();
-                                        consultSnapshot['shipping_option'] =
-                                            shipTo;
-                                        consultSnapshot['shipping_address'] =
+                                        db.consultSnapshot
+                                            .data['shipping_option'] = shipTo;
+                                        db.consultSnapshot
+                                                .data['shipping_address'] =
                                             shippingAddress;
                                       });
 

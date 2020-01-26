@@ -2,12 +2,14 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -186,6 +188,7 @@ class ChatScreenState extends State<ChatScreen> {
   }
 
   Widget buildItem(int index, Map document) {
+    medicallUser = Provider.of<UserProvider>(context).medicallUser;
     Timestamp timestamp = document['date'];
     if (document['user_id'] == medicallUser.uid) {
       // Right (my message)

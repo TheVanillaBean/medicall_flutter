@@ -7,6 +7,7 @@ import 'package:Medicall/screens/Registration/registrationType.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:Medicall/util/firebase_notification_handler.dart';
+import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -87,8 +88,11 @@ class _LoginScreenState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: _buildHeader(context),
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniStartTop,
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.dark,
+        sized: false,
         child: SingleChildScrollView(
           child: ConstrainedBox(
             constraints: BoxConstraints.tightFor(
@@ -124,7 +128,7 @@ class _LoginScreenState extends State<LoginPage> {
           2,
           Column(
             children: <Widget>[
-              _buildHeader(context),
+              SizedBox(height: 60.0),
               _buildEmailAuthForm(context),
               SizedBox(height: 16.0),
               Row(
@@ -157,9 +161,8 @@ class _LoginScreenState extends State<LoginPage> {
                       textColor: Colors.white,
                       text: "Create New Account",
                       onPressed: () {
-                        Provider.of<AuthBase>(
-                                context)
-                            .medicallUser = MedicallUser();
+                        Provider.of<AuthBase>(context).medicallUser =
+                            MedicallUser();
                         _createAccountWithEmail(context);
                       },
                     ),
@@ -181,37 +184,14 @@ class _LoginScreenState extends State<LoginPage> {
   }
 
   Widget _buildHeader(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Container(
-          transform: Matrix4.translationValues(12.0, 0.0, 0.0),
-          child: Text('MEDI',
-              style: TextStyle(
-                  fontSize: 26.0,
-                  height: 1.08,
-                  letterSpacing: 2.5,
-                  fontWeight: FontWeight.w700,
-                  color: Theme.of(context).primaryColor)),
-        ),
-        SizedBox(
-          width: 110,
-          height: 110,
-          child: Image.asset(
-            'assets/icon/logo_fore.png',
-          ),
-        ),
-        Container(
-          transform: Matrix4.translationValues(-20.0, 0.0, 0.0),
-          child: Text('CALL',
-              style: TextStyle(
-                  fontSize: 26.0,
-                  height: 1.08,
-                  letterSpacing: 2.5,
-                  fontWeight: FontWeight.w700,
-                  color: Theme.of(context).primaryColor)),
-        )
-      ],
+    return Padding(
+      padding: EdgeInsets.fromLTRB(0, 150, 0, 0),
+      child: FlareActor(
+        'assets/headerlogo.flr',
+        fit: BoxFit.fitWidth,
+        snapToEnd: true,
+        animation: 'Untitled',
+      ),
     );
   }
 

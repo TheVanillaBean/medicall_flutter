@@ -298,6 +298,7 @@ class EntryItem extends StatelessWidget {
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: <Widget>[
                                     RaisedButton(
+                                     
                                       onPressed: () async {
                                         if (db.newConsult == null ||
                                             db.newConsult.provider == null) {
@@ -348,6 +349,7 @@ class EntryItem extends StatelessWidget {
                                       child: Text(
                                         'Start',
                                         style: TextStyle(
+                                            
                                             fontWeight: FontWeight.bold,
                                             letterSpacing: 0.5),
                                       ),
