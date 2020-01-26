@@ -85,17 +85,18 @@ class MedicallApp extends StatelessWidget {
               ? SplashScreen.navigate(
                   name: 'assets/logout.flr',
                   next: (ctx) => _buildApp(userSnapshot, ctx),
-                  isLoading: false,
+                  isLoading:
+                      userSnapshot.connectionState == ConnectionState.done,
                   backgroundColor: Colors.white,
                   startAnimation: 'Untitled',
                 )
               : SplashScreen.navigate(
                   name: 'assets/splash.flr',
                   next: (ctx) => _buildApp(userSnapshot, ctx),
-                  isLoading: false,
+                  isLoading:
+                      userSnapshot.connectionState == ConnectionState.done,
                   backgroundColor: Colors.white,
                   startAnimation: 'Untitled',
-                  
                 ),
         );
       },
