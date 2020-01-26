@@ -1,4 +1,3 @@
-import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/History/carouselWithIndicator.dart';
 import 'package:Medicall/screens/History/prescriptionPayment.dart';
@@ -39,7 +38,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
 
   @override
   Widget build(BuildContext context) {
-    db = Provider.of<Database>(GlobalNavigatorKey.key.currentContext);
+    db = Provider.of<Database>(context);
     medicallUser = Provider.of<UserProvider>(context).medicallUser;
     if (currentDetailsIndex == 0) {
       db.getPatientMedicalHistory(medicallUser);
@@ -65,7 +64,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
             elevation: 40.0,
             backgroundColor: Colors.transparent,
             unselectedItemColor: Colors.grey[500],
-            selectedItemColor: Theme.of(GlobalNavigatorKey.key.currentContext)
+            selectedItemColor: Theme.of(context)
                 .colorScheme
                 .secondary,
             currentIndex:
@@ -606,8 +605,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                     padding:
                                         EdgeInsets.fromLTRB(20, 20, 20, 20),
                                     color: buttonTxt.contains('Send')
-                                        ? Theme.of(GlobalNavigatorKey
-                                                .key.currentContext)
+                                        ? Theme.of(context)
                                             .colorScheme
                                             .secondary
                                         : Colors.green,
@@ -619,8 +617,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         fontSize: 18,
-                                        color: Theme.of(GlobalNavigatorKey
-                                                .key.currentContext)
+                                        color: Theme.of(context)
                                             .colorScheme
                                             .onBackground,
                                         letterSpacing: 1.0,

@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/consult_data_model.dart';
-import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -19,7 +18,7 @@ bool userHasConsults = false;
 class DoctorSearch extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var auth = Provider.of<AuthBase>(GlobalNavigatorKey.key.currentContext);
+    var auth = Provider.of<AuthBase>(context);
     medicallUser = auth.medicallUser;
     currentOrientation = MediaQuery.of(context).orientation;
     currTab = "Search Doctors";
@@ -43,7 +42,7 @@ class DoctorSearch extends StatelessWidget {
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          onPressed: () => GlobalNavigatorKey.key.currentState.pop(false),
+          onPressed: () => Navigator.of(context).pop(false),
         ),
         title: Text('Find your doctor'),
         actions: <Widget>[
@@ -120,7 +119,7 @@ class DoctorSearch extends StatelessWidget {
                                             userDocuments[i]
                                                 .data['profile_pic'];
                                         setConsult();
-                                        GlobalNavigatorKey.key.currentState
+                                        Navigator.of(context)
                                             .pushNamed('/symptoms');
                                       },
                                       child: Container(
@@ -150,7 +149,7 @@ class DoctorSearch extends StatelessWidget {
                                             userDocuments[i]
                                                 .data['profile_pic'];
                                         setConsult();
-                                        GlobalNavigatorKey.key.currentState
+                                        Navigator.of(context)
                                             .pushNamed('/symptoms');
                                       },
                                       child: Container(
@@ -343,7 +342,7 @@ class CustomSearchDelegate extends SearchDelegate {
                               .secondary
                               .withAlpha(70),
                           onPressed: () {
-                            GlobalNavigatorKey.key.currentState
+                            Navigator.of(context)
                                 .pushNamed('/historyDetail', arguments: {
                               'isRouted': false,
                             });

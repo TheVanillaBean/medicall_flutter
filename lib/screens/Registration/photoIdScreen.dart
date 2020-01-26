@@ -1,4 +1,3 @@
-import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:flutter/material.dart';
@@ -144,7 +143,7 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
   //   // var images = [...this.profileImage, ...this.govIdImage];
   //   // await saveImages(images, ref.documentID);
   //   // medicallUser.govId = this.govIdImage as String;
-  //   GlobalNavigatorKey.key.currentState.pushNamed('/consent');
+  //   Navigator.of(context).pushNamed('/consent');
   // }
 
   @override
@@ -171,7 +170,7 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
         onPressed: () async {
           if (profileImage.length == 1 && govIdImage.length == 1) {
             auth.tempRegUser.images = [...profileImage, ...govIdImage];
-            GlobalNavigatorKey.key.currentState.pushNamed('/consent');
+            Navigator.of(context).pushNamed('/consent');
           }
         },
         child: Text(

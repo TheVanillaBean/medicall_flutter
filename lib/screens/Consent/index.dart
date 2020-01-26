@@ -1,4 +1,3 @@
-import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/PhoneAuth/index.dart';
 import 'package:Medicall/services/auth.dart';
@@ -114,12 +113,12 @@ class ConsentScreen extends StatelessWidget {
                       padding: EdgeInsets.all(20),
                       onPressed: () {
                         var auth = Provider.of<AuthBase>(
-                            GlobalNavigatorKey.key.currentContext);
+                            context);
                         auth.medicallUser.consent = true;
                         Route route = MaterialPageRoute(
                             builder: (context) =>
                                 PhoneAuthScreen.create(context));
-                        GlobalNavigatorKey.key.currentState
+                        Navigator.of(context)
                             .pushReplacement(route);
                       },
                       color: Colors.green,

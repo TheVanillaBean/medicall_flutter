@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:Medicall/components/masked_text.dart';
 import 'package:Medicall/components/reactive_refresh_indicator.dart';
-import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/screens/PhoneAuth/phone_auth_state_model.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -186,7 +185,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
 
   Widget _buildSmsCodeInput() {
     final enabled = model.status == AuthStatus.SMS_AUTH;
-    var auth = Provider.of<AuthBase>(GlobalNavigatorKey.key.currentContext);
+    var auth = Provider.of<AuthBase>(context);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -312,7 +311,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
 
     if (model.status == AuthStatus.SMS_AUTH) {
       try {
-        return await model.signInWithPhoneNumber(mounted);
+        return await model.signInWithPhoneNumber(mounted, context);
       } on PlatformException catch (e) {
         _showErrorSnackbar(e.message);
       }

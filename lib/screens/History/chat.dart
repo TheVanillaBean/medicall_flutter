@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -314,7 +313,7 @@ class ChatScreenState extends State<ChatScreen> {
       //     .collection('users')
       //     .document(id)
       //     .updateData({'chattingWith': null});
-      GlobalNavigatorKey.key.currentState.pop(context);
+      Navigator.of(context).pop(context);
     }
 
     return Future.value(false);

@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/util/validators.dart';
@@ -142,14 +140,14 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
         codeAutoRetrievalTimeout: codeAutoRetrievalTimeout);
   }
 
-  Future<MedicallUser> signInWithPhoneNumber(bool mounted) async {
+  Future<MedicallUser> signInWithPhoneNumber(bool mounted, context) async {
     try {
       MedicallUser user =
           await auth.signInWithPhoneNumber(this.verificationId, this.smsCode);
       await auth.saveRegistrationImages();
-      await _add(user);
+      await _add(user, context);
       updateRefreshing(false, mounted);
-      GlobalNavigatorKey.key.currentState.pushReplacementNamed('/history');
+      Navigator.of(context).pushReplacementNamed('/history');
       return user;
     } catch (e) {
       updateRefreshing(false, mounted);
@@ -157,8 +155,8 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
     }
   }
 
-  Future<Null> _add(user) async {
-    var auth = Provider.of<AuthBase>(GlobalNavigatorKey.key.currentContext);
+  Future<Null> _add(user, context) async {
+    var auth = Provider.of<AuthBase>(context);
     medicallUser = auth.medicallUser;
     final DocumentReference documentReference =
         Firestore.instance.document("users/" + user.uid);

@@ -1,4 +1,3 @@
-import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
@@ -44,7 +43,7 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
 
   @override
   Widget build(BuildContext context) {
-    var db = Provider.of<Database>(GlobalNavigatorKey.key.currentContext);
+    var db = Provider.of<Database>(context);
     medicallUser = Provider.of<UserProvider>(context).medicallUser;
     var consultSnapshot = db.consultSnapshot.data;
     var datePaid = consultSnapshot['pay_date'];
@@ -298,7 +297,7 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
                               ? FlatButton(
                                   padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
                                   color: Theme.of(
-                                          GlobalNavigatorKey.key.currentContext)
+                                          context)
                                       .colorScheme
                                       .secondary,
                                   onPressed: () async {
@@ -381,8 +380,7 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                             fontSize: 18,
-                                            color: Theme.of(GlobalNavigatorKey
-                                                    .key.currentContext)
+                                            color: Theme.of(context)
                                                 .colorScheme
                                                 .onBackground,
                                             letterSpacing: 1.0,

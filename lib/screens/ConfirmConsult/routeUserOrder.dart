@@ -1,5 +1,4 @@
 import 'package:Medicall/models/consult_data_model.dart';
-import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
@@ -177,7 +176,7 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                 FlatButton(
                   color: Theme.of(context).primaryColor,
                   onPressed: () {
-                    GlobalNavigatorKey.key.currentState
+                    Navigator.of(context)
                         .pushReplacementNamed('/history');
                   },
                   child: Text(

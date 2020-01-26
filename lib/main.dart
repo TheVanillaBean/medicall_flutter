@@ -77,8 +77,6 @@ class MedicallApp extends StatelessWidget {
         return MaterialApp(
           title: 'Medicall',
           debugShowCheckedModeBanner: false,
-//            navigatorKey: GlobalNavigatorKey.key,
-//            navigatorObservers: <NavigatorObserver>[observer],
           theme: myTheme,
           home: SplashScreen.navigate(
             name: 'assets/splash.flr',

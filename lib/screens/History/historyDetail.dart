@@ -1,5 +1,4 @@
 import 'package:Medicall/models/consult_status_modal.dart';
-import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
@@ -208,7 +207,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
         ),
         leading: BackButton(
           onPressed: () {
-            GlobalNavigatorKey.key.currentState.pop(context);
+            Navigator.of(context).pop(context);
           },
         ),
         elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,

@@ -1,4 +1,3 @@
-import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/models/reg_user_model.dart';
 import 'package:Medicall/screens/Registration/photoIdScreen.dart';
@@ -117,7 +116,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var auth = Provider.of<AuthBase>(GlobalNavigatorKey.key.currentContext);
+    var auth = Provider.of<AuthBase>(context);
     medicallUser = auth.medicallUser;
     return Scaffold(
       appBar: AppBar(
@@ -172,7 +171,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   _userRegKey.currentState.value['State Issued'];
             }
             medicallUser.address = _typeAheadController.text;
-            GlobalNavigatorKey.key.currentState.push(
+            Navigator.of(context).push(
               MaterialPageRoute(builder: (context) => PhotoIdScreen()),
             );
           } else {
@@ -535,7 +534,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   label: FlatButton(
                       padding: EdgeInsets.fromLTRB(0, 0, 62, 0),
                       onPressed: () {
-                        GlobalNavigatorKey.key.currentState.pushNamed('/terms');
+                        Navigator.of(context).pushNamed('/terms');
                       },
                       child: Text('Terms & Conditions',
                           style: TextStyle(
@@ -558,7 +557,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   label: FlatButton(
                       padding: EdgeInsets.fromLTRB(0, 0, 62, 0),
                       onPressed: () {
-                        GlobalNavigatorKey.key.currentState
+                        Navigator.of(context)
                             .pushNamed('/privacy');
                       },
                       child: Text('Privacy Policy',

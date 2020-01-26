@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/ConfirmConsult/routeUserOrder.dart';
 import 'package:Medicall/screens/History/carouselWithIndicator.dart';
@@ -27,10 +26,8 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
   double price = 39.00;
   bool hasReviewed = false;
   var listaU8L = [];
-  var db = Provider.of<Database>(GlobalNavigatorKey.key.currentContext);
-  MedicallUser medicallUser =
-      Provider.of<UserProvider>(GlobalNavigatorKey.key.currentContext)
-          .medicallUser;
+  var db;
+  MedicallUser medicallUser;
 
   TabController _confirmTabCntrl;
   @override
@@ -49,6 +46,8 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
 
   @override
   Widget build(BuildContext context) {
+    db = Provider.of<Database>(context);
+    medicallUser = Provider.of<UserProvider>(context).medicallUser;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -428,7 +427,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
           builder: (context) => RouteUserOrderScreen(
                 data: {'user': medicallUser, 'consult': db.newConsult},
               ));
-      return GlobalNavigatorKey.key.currentState.pushReplacement(route);
+      return Navigator.of(context).pushReplacement(route);
 
       //_addProviderConsult(ref.documentID, imagesList);
     }).catchError((e) => print(e));

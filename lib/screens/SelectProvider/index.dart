@@ -1,4 +1,3 @@
-import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/util/app_util.dart';
@@ -33,7 +32,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
   var providerTitles = '';
   LatLng bounds = LatLng(41.850033, -87.6500523);
   String errorMessage;
-  var db = Provider.of<Database>(GlobalNavigatorKey.key.currentContext);
+  var db;
 
   @override
   void initState() {
@@ -67,6 +66,8 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
     // } else {
     //   expandedChild = buildPlacesList();
     // }
+    db = Provider.of<Database>(context);
+
     return Scaffold(
         key: homeScaffoldKey,
         appBar: AppBar(
@@ -92,7 +93,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
           onPressed: () async {
             if (selectedProvider.length > 0) {
               //await setConsult();
-              GlobalNavigatorKey.key.currentState.pushNamed('/consultReview');
+              Navigator.of(context).pushNamed('/consultReview');
             } else {
               _showMessageDialog();
             }

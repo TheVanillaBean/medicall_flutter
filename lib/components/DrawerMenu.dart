@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:Medicall/models/consult_data_model.dart';
-import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/presentation/medicall_app_icons.dart' as CustomIcons;
 import 'package:Medicall/services/auth.dart';
@@ -46,8 +45,8 @@ class DrawerMenu extends StatelessWidget {
                         String currentConsultString = jsonEncode(ConsultData());
                         await _thisConsult.setString(
                             "consult", currentConsultString);
-                        GlobalNavigatorKey.key.currentState.pop();
-                        GlobalNavigatorKey.key.currentState.pushNamed(
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pushNamed(
                             '/symptoms',
                             arguments: {'user': medicallUser});
                       }),
@@ -64,8 +63,8 @@ class DrawerMenu extends StatelessWidget {
                     ),
                   ),
                   onTap: () {
-                    GlobalNavigatorKey.key.currentState.pop();
-                    GlobalNavigatorKey.key.currentState
+                    Navigator.of(context).pop();
+                    Navigator.of(context)
                         .pushReplacementNamed('/history');
                   }),
               ListTile(
@@ -80,8 +79,8 @@ class DrawerMenu extends StatelessWidget {
                     ),
                   ),
                   onTap: () {
-                    GlobalNavigatorKey.key.currentState.pop();
-                    GlobalNavigatorKey.key.currentState.pushNamed('/account',
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pushNamed('/account',
                         arguments: {'user': medicallUser});
                   }),
               Divider(
@@ -140,7 +139,7 @@ class DrawerMenu extends StatelessWidget {
 
   Future<void> _signOut(BuildContext context) async {
     try {
-      GlobalNavigatorKey.key.currentState.pop(context);
+      Navigator.of(context).pop(context);
       final auth = Provider.of<AuthBase>(context, listen: false);
       await auth.signOut();
     } catch (e) {

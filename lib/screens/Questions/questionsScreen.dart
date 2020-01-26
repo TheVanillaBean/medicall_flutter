@@ -1,4 +1,3 @@
-import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
@@ -35,10 +34,8 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
   var ranOnce = false;
   PageController pageController = PageController(initialPage: 0);
   var currentQuestions = 'symptom';
-  var db = Provider.of<Database>(GlobalNavigatorKey.key.currentContext);
-  MedicallUser medicallUser =
-      Provider.of<UserProvider>(GlobalNavigatorKey.key.currentContext)
-          .medicallUser;
+  var db;
+  MedicallUser medicallUser;
   var medicalHistoryQuestions;
   bool showSegmentedControl = true;
   List<dynamic> combinedList = [];
@@ -65,7 +62,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
   }
 
   @override
-  void dispose() { 
+  void dispose() {
     super.dispose();
     pageController.dispose();
   }
@@ -107,11 +104,11 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
       db.newConsult.consultType = db.newConsult.consultType;
       //switch for if provider has already been selected
       if (db.newConsult == null || db.newConsult.provider == null) {
-        GlobalNavigatorKey.key.currentState.pushNamed(
+        Navigator.of(context).pushNamed(
           '/selectProvider',
         );
       } else {
-        GlobalNavigatorKey.key.currentState.pushNamed(
+        Navigator.of(context).pushNamed(
           '/consultReview',
         );
       }
@@ -168,6 +165,8 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    medicallUser = Provider.of<UserProvider>(context).medicallUser;
+    db = Provider.of<Database>(context);
     const bodyStyle = TextStyle(fontSize: 19.0);
     const pageDecoration = const PageDecoration(
       titleTextStyle: TextStyle(fontSize: 28.0, fontWeight: FontWeight.w700),

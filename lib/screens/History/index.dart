@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/consult_data_model.dart';
-import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/presentation/medicall_icons_icons.dart' as CustomIcons;
 import 'package:Medicall/services/database.dart';
@@ -30,17 +29,22 @@ class HistoryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     medicallUser = Provider.of<UserProvider>(context).medicallUser;
     var db = Provider.of<Database>(context);
+    currentOrientation = MediaQuery.of(context).orientation;
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       key: _scaffoldKey,
       drawer: DrawerMenu(),
       appBar: AppBar(
         centerTitle: true,
-        leading: IconButton(
-          onPressed: () {
-            _scaffoldKey.currentState.openDrawer();
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+              icon: Icon(Icons.home),
+            );
           },
-          icon: Icon(Icons.home),
         ),
         title: Text('History'),
         actions: <Widget>[
@@ -65,8 +69,6 @@ class HistoryScreen extends StatelessWidget {
   }
 
   _buildTab(questions, db) {
-    currentOrientation =
-        MediaQuery.of(GlobalNavigatorKey.key.currentContext).orientation;
     return SingleChildScrollView(
       child: FutureBuilder(
           future: db.getUserHistory(medicallUser),
@@ -105,7 +107,7 @@ class HistoryScreen extends StatelessWidget {
                           //clear current snap remove this and previous consult data is displayed in detailed history
                           db.consultSnapshot = null;
                           db.currConsultId = db.userHistory[i].documentID;
-                          GlobalNavigatorKey.key.currentState
+                          Navigator.of(context)
                               .pushNamed('/historyDetail', arguments: {
                             'isRouted': false,
                           });
@@ -372,8 +374,7 @@ class HistoryScreen extends StatelessWidget {
                                                   await _thisConsult.setString(
                                                       "consult",
                                                       currentConsultString);
-                                                  GlobalNavigatorKey
-                                                      .key.currentState
+                                                  Navigator.of(context)
                                                       .pushReplacementNamed(
                                                           '/symptoms');
                                                 },
@@ -394,9 +395,7 @@ class HistoryScreen extends StatelessWidget {
                                                   )),
                                               FlatButton(
                                                 onPressed: () {
-                                                  GlobalNavigatorKey
-                                                      .key.currentState
-                                                      .push(
+                                                  Navigator.of(context).push(
                                                     MaterialPageRoute(
                                                         builder: (context) =>
                                                             DoctorSearch()),

@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/consult_data_model.dart';
-import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/Questions/questionsScreen.dart';
 import 'package:Medicall/services/database.dart';
@@ -46,7 +45,7 @@ class SymptomsScreen extends StatelessWidget {
                   db.newConsult.historyQuestions =
                       historyQuestions.data['medical_history_questions'];
                   Navigator.of(context).pop();
-                  GlobalNavigatorKey.key.currentState.push(
+                  Navigator.of(context).push(
                     MaterialPageRoute(builder: (_) => QuestionsScreen()),
                   );
                 },
@@ -57,7 +56,7 @@ class SymptomsScreen extends StatelessWidget {
                 onPressed: () {
                   medicallUser.hasMedicalHistory = true;
                   Navigator.of(context).pop();
-                  GlobalNavigatorKey.key.currentState.push(
+                  Navigator.of(context).push(
                     MaterialPageRoute(builder: (_) => QuestionsScreen()),
                   );
                 },
@@ -84,7 +83,7 @@ class SymptomsScreen extends StatelessWidget {
                 child: Text("My Medical History"),
                 onPressed: () {
                   Navigator.of(context).pop();
-                  GlobalNavigatorKey.key.currentState.push(
+                  Navigator.of(context).push(
                     MaterialPageRoute(builder: (_) => QuestionsScreen()),
                   );
                 },
@@ -299,10 +298,6 @@ class EntryItem extends StatelessWidget {
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: <Widget>[
                                     RaisedButton(
-                                      color: Theme.of(GlobalNavigatorKey
-                                              .key.currentContext)
-                                          .colorScheme
-                                          .secondary,
                                       onPressed: () async {
                                         if (db.newConsult == null ||
                                             db.newConsult.provider == null) {
@@ -353,10 +348,6 @@ class EntryItem extends StatelessWidget {
                                       child: Text(
                                         'Start',
                                         style: TextStyle(
-                                            color: Theme.of(GlobalNavigatorKey
-                                                    .key.currentContext)
-                                                .colorScheme
-                                                .onSecondary,
                                             fontWeight: FontWeight.bold,
                                             letterSpacing: 0.5),
                                       ),

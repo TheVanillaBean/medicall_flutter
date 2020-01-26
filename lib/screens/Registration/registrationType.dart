@@ -1,4 +1,3 @@
-import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:flutter/material.dart';
@@ -6,12 +5,6 @@ import 'package:provider/provider.dart';
 
 class RegistrationTypeScreen extends StatelessWidget {
   const RegistrationTypeScreen({Key key}) : super(key: key);
-
-  void _add(String type) {
-    Provider.of<AuthBase>(GlobalNavigatorKey.key.currentContext)
-        .medicallUser
-        .type = type;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,9 +61,8 @@ class RegistrationTypeScreen extends StatelessWidget {
                   ],
                 ),
                 onPressed: () {
-                  _add('patient');
-                  GlobalNavigatorKey.key.currentState
-                      .pushNamed('/registration');
+                  Provider.of<AuthBase>(context).medicallUser.type = 'patient';
+                  Navigator.of(context).pushNamed('/registration');
                 },
               ),
             ),
@@ -112,8 +104,8 @@ class RegistrationTypeScreen extends StatelessWidget {
                   ],
                 ),
                 onPressed: () {
-                  _add('provider');
-                  GlobalNavigatorKey.key.currentState
+                  Provider.of<AuthBase>(context).medicallUser.type = 'provider';
+                  Navigator.of(context)
                       .pushNamed('/registration', arguments: medicallUser);
                 },
               ),
