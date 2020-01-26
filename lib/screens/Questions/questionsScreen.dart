@@ -64,6 +64,12 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
     }
   }
 
+  @override
+  void dispose() { 
+    super.dispose();
+    pageController.dispose();
+  }
+
   Future<void> _onIntroEnd() async {
     //await setConsult(context);
     if (currentQuestions == 'Medical History') {
@@ -226,6 +232,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
               onDone: () => _onIntroEnd(),
               //onSkip: () => _onIntroEnd(context), // You can override onSkip callback
               showSkipButton: false,
+              curve: Curves.easeInOutSine,
               skipFlex: 0,
               nextFlex: 0,
               onChange: (i) => _checkQuestion(i, context),
