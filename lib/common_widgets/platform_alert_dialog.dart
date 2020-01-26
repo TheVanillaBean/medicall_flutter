@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:Medicall/common_widgets/platform_widget.dart';
-import 'package:Medicall/models/global_nav_key.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -57,14 +56,14 @@ class PlatformAlertDialog extends PlatformWidget {
       actions.add(
         PlatformAlertDialogAction(
           child: Text(cancelActionText),
-          onPressed: () => GlobalNavigatorKey.key.currentState.pop(false),
+          onPressed: () => Navigator.of(context).pop(false),
         ),
       );
     }
     actions.add(
       PlatformAlertDialogAction(
         child: Text(defaultActionText),
-        onPressed: () => GlobalNavigatorKey.key.currentState.pop(true),
+        onPressed: () => Navigator.of(context).pop(true),
       ),
     );
 
