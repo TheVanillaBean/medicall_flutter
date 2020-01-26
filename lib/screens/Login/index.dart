@@ -1,8 +1,8 @@
 import 'dart:ui' as ui;
-
-import 'package:Medicall/common_widgets/platform_exception_alert_dialog.dart';
 import 'package:Medicall/common_widgets/sign_in_button.dart';
 import 'package:Medicall/common_widgets/social_sign_in_button.dart';
+import 'package:Medicall/models/global_nav_key.dart';
+import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/Login/sign_in_state_model.dart';
 import 'package:Medicall/screens/Registration/registrationType.dart';
 import 'package:Medicall/services/auth.dart';
@@ -58,11 +58,9 @@ class _LoginScreenState extends State<LoginPage> {
   Future<void> _submit() async {
     try {
       await model.submit();
+      //Navigator.of(context).pop();
     } on PlatformException catch (e) {
-      PlatformExceptionAlertDialog(
-        title: 'Sign in failed',
-        exception: e,
-      ).show(context);
+      AppUtil().showFlushBar(e, context);
     }
   }
 
@@ -70,19 +68,14 @@ class _LoginScreenState extends State<LoginPage> {
     try {
       await model.signInWithGoogle();
     } on PlatformException catch (e) {
-      PlatformExceptionAlertDialog(
-        title: 'Sign in failed',
-        exception: e,
-      ).show(context);
+      AppUtil().showFlushBar(e, context);
     }
   }
 
-  void _navigateToCreateAccountScreen(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => RegistrationTypeScreen(),
-      ),
-    );
+  void _createAccountWithEmail(BuildContext context) {
+    GlobalNavigatorKey.key.currentState.push(CupertinoPageRoute(
+      builder: (context) => RegistrationTypeScreen(),
+    ));
   }
 
   void _emailEditingComplete() {
@@ -165,7 +158,10 @@ class _LoginScreenState extends State<LoginPage> {
                       textColor: Colors.white,
                       text: "Create New Account",
                       onPressed: () {
-                        _navigateToCreateAccountScreen(context);
+                        Provider.of<AuthBase>(
+                                GlobalNavigatorKey.key.currentContext)
+                            .medicallUser = MedicallUser();
+                        _createAccountWithEmail(context);
                       },
                     ),
                   )
@@ -221,6 +217,15 @@ class _LoginScreenState extends State<LoginPage> {
   }
 
   Container _buildEmailAuthForm(BuildContext context) {
+    // if (model.isLoading) {
+    //   return Container(
+    //     height: 225,
+    //     padding: const EdgeInsets.only(bottom: 16.0),
+    //     child: Center(
+    //       child: CircularProgressIndicator(),
+    //     ),
+    //   );
+    // }
     return Container(
       padding: const EdgeInsets.fromLTRB(0, 40, 0, 40),
       child: Column(

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/consult_data_model.dart';
+import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/presentation/medicall_icons_icons.dart' as CustomIcons;
 import 'package:Medicall/services/database.dart';
@@ -22,24 +23,24 @@ MedicallUser medicallUser;
 var userDocuments;
 
 class HistoryScreen extends StatelessWidget {
+  final _scaffoldKey =
+      GlobalKey<ScaffoldState>(debugLabel: '_historyScaffoldkey');
+
   @override
   Widget build(BuildContext context) {
     medicallUser = Provider.of<UserProvider>(context).medicallUser;
     var db = Provider.of<Database>(context);
     return Scaffold(
       resizeToAvoidBottomPadding: false,
+      key: _scaffoldKey,
       drawer: DrawerMenu(),
       appBar: AppBar(
         centerTitle: true,
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
-              icon: Icon(Icons.home),
-            );
+        leading: IconButton(
+          onPressed: () {
+            _scaffoldKey.currentState.openDrawer();
           },
+          icon: Icon(Icons.home),
         ),
         title: Text('History'),
         actions: <Widget>[
@@ -59,12 +60,13 @@ class HistoryScreen extends StatelessWidget {
         ],
         elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
       ),
-      body: _buildTab("consults", db, context),
+      body: _buildTab("consults", db),
     );
   }
 
-  _buildTab(questions, db, context) {
-    currentOrientation = MediaQuery.of(context).orientation;
+  _buildTab(questions, db) {
+    currentOrientation =
+        MediaQuery.of(GlobalNavigatorKey.key.currentContext).orientation;
     return SingleChildScrollView(
       child: FutureBuilder(
           future: db.getUserHistory(medicallUser),
@@ -103,7 +105,7 @@ class HistoryScreen extends StatelessWidget {
                           //clear current snap remove this and previous consult data is displayed in detailed history
                           db.consultSnapshot = null;
                           db.currConsultId = db.userHistory[i].documentID;
-                          Navigator.of(context)
+                          GlobalNavigatorKey.key.currentState
                               .pushNamed('/historyDetail', arguments: {
                             'isRouted': false,
                           });
@@ -370,7 +372,8 @@ class HistoryScreen extends StatelessWidget {
                                                   await _thisConsult.setString(
                                                       "consult",
                                                       currentConsultString);
-                                                  Navigator.of(context)
+                                                  GlobalNavigatorKey
+                                                      .key.currentState
                                                       .pushReplacementNamed(
                                                           '/symptoms');
                                                 },
@@ -391,7 +394,9 @@ class HistoryScreen extends StatelessWidget {
                                                   )),
                                               FlatButton(
                                                 onPressed: () {
-                                                  Navigator.of(context).push(
+                                                  GlobalNavigatorKey
+                                                      .key.currentState
+                                                      .push(
                                                     MaterialPageRoute(
                                                         builder: (context) =>
                                                             DoctorSearch()),

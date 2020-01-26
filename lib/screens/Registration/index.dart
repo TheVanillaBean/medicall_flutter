@@ -4,7 +4,6 @@ import 'package:Medicall/models/reg_user_model.dart';
 import 'package:Medicall/screens/Registration/photoIdScreen.dart';
 import 'package:Medicall/secrets.dart' as secrets;
 import 'package:Medicall/services/auth.dart';
-import 'package:Medicall/services/user_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -118,8 +117,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var auth = Provider.of<AuthBase>(context);
-    medicallUser = Provider.of<UserProvider>(context).medicallUser;
+    var auth = Provider.of<AuthBase>(GlobalNavigatorKey.key.currentContext);
+    medicallUser = auth.medicallUser;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,

@@ -16,7 +16,6 @@ class AuthWidgetBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthBase>(context, listen: false);
-    print("---");
 
     return StreamBuilder<MedicallUser>(
       stream: authService.onAuthStateChanged,
@@ -24,6 +23,7 @@ class AuthWidgetBuilder extends StatelessWidget {
         final MedicallUser user = snapshot.data;
         if (user != null) {
           print("User not null ${snapshot.connectionState}");
+
           return MultiProvider(
             providers: [
               ChangeNotifierProvider(
