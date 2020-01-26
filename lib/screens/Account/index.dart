@@ -1,6 +1,5 @@
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';

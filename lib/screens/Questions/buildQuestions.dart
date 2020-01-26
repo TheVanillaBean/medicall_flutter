@@ -12,16 +12,14 @@ class BuildQuestions extends StatefulWidget {
 }
 
 class _BuildQuestionsState extends State<BuildQuestions> {
-  List<Asset> images = List<Asset>();
+  List<Asset> _images = List<Asset>();
   ValueChanged _onChangedDropDown;
   ValueChanged _onChangedInput;
   ValueChanged _onChangedCheckBox;
-  List<Widget> returnList = [];
-
-  List<Asset> resultList = List<Asset>();
-
+  List<Widget> _returnListWidget = [];
+  List<Asset> _resultList = List<Asset>();
   List<dynamic> options = [];
-  
+
   @override
   Widget build(BuildContext context) {
     return buildQuestions(
@@ -37,16 +35,16 @@ class _BuildQuestionsState extends State<BuildQuestions> {
   _buildGroupedQuestions(question, index, val, questions) {
     if (question.containsKey('media')) {
       if (questions['image'].length > 0) {
-        if (images != questions['image'] && images.length > 0) {
-          questions['image'] = images;
+        if (_images != questions['image'] && _images.length > 0) {
+          questions['image'] = _images;
         } else {
-          images = questions['image'];
+          _images = questions['image'];
         }
       } else {
-        questions['image'] = images;
+        questions['image'] = _images;
       }
 
-      returnList.add(Visibility(
+      _returnListWidget.add(Visibility(
           visible: questions['visible'],
           child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -67,8 +65,8 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                   child: FlatButton(
                     padding: EdgeInsets.all(0),
                     onPressed: loadAssets,
-                    child: images.length > 0
-                        ? buildGridView(images)
+                    child: _images.length > 0
+                        ? buildGridView(_images)
                         : Container(
                             padding: EdgeInsets.fromLTRB(0, 0, 0, 40),
                             alignment: Alignment.center,
@@ -295,7 +293,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
       if (index == null) {
         String type = questions['type'];
         if (questions['visible']) {
-          returnList.add(SingleChildScrollView(
+          _returnListWidget.add(SingleChildScrollView(
             child: Visibility(
               visible: questions['visible'],
               child: Column(
@@ -394,7 +392,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
         }
       }
     }
-    return returnList;
+    return _returnListWidget;
   }
 
   buildQuestions(
@@ -512,7 +510,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
           });
         });
       };
-      returnList = [];
+      _returnListWidget = [];
       if (questions is Map) {
         options = questions['options'];
         _buildGroupedQuestions(questions, null, null, questions);
@@ -536,16 +534,16 @@ class _BuildQuestionsState extends State<BuildQuestions> {
     return FormBuilder(
         key: key,
         child: Column(
-          children: returnList,
+          children: _returnListWidget,
         ));
   }
 
   Widget buildGridView(images) {
-    List<Widget> returnList = [];
+    List<Widget> _returnListWidget = [];
     if (images.length > 1) {
       for (var i = 0; i < images.length; i++) {
         if (i == 0) {
-          returnList.add(Row(
+          _returnListWidget.add(Row(
             children: <Widget>[
               Expanded(
                 flex: 1,
@@ -554,7 +552,6 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                   child: AssetView(
                     i,
                     images[i],
-                    key: UniqueKey(),
                   ),
                 ),
               ),
@@ -565,7 +562,6 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                   child: AssetView(
                     i + 1,
                     images[i + 1],
-                    key: UniqueKey(),
                   ),
                 ),
               ),
@@ -573,7 +569,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
           ));
         }
         if (i == 2 && images.length == 3) {
-          returnList.add(Row(
+          _returnListWidget.add(Row(
             children: <Widget>[
               Expanded(
                 flex: 1,
@@ -582,7 +578,6 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                   child: AssetView(
                     i,
                     images[i],
-                    key: UniqueKey(),
                   ),
                 ),
               ),
@@ -590,7 +585,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
           ));
         }
         if (i == 2 && images.length == 4) {
-          returnList.add(Row(
+          _returnListWidget.add(Row(
             children: <Widget>[
               Expanded(
                 flex: 1,
@@ -599,7 +594,6 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                   child: AssetView(
                     i,
                     images[i],
-                    key: UniqueKey(),
                   ),
                 ),
               ),
@@ -610,7 +604,6 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                   child: AssetView(
                     i + 1,
                     images[i + 1],
-                    key: UniqueKey(),
                   ),
                 ),
               ),
@@ -619,17 +612,16 @@ class _BuildQuestionsState extends State<BuildQuestions> {
         }
       }
     } else {
-      returnList.add(Container(
+      _returnListWidget.add(Container(
         height: MediaQuery.of(context).size.height * .6,
         child: AssetView(
           0,
           images[0],
-          key: UniqueKey(),
         ),
       ));
     }
 
-    returnList.add(Container(
+    _returnListWidget.add(Container(
       transform: Matrix4.translationValues(0.0, -37.0, 0.0),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(60.0),
@@ -648,7 +640,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
     return Container(
       height: MediaQuery.of(context).size.height - 140,
       child: Column(
-        children: returnList,
+        children: _returnListWidget,
       ),
     );
   }
@@ -656,8 +648,8 @@ class _BuildQuestionsState extends State<BuildQuestions> {
   Future<void> loadAssets() async {
     String error = '';
     try {
-      resultList = await MultiImagePicker.pickImages(
-          selectedAssets: images,
+      _resultList = await MultiImagePicker.pickImages(
+          selectedAssets: _images,
           maxImages: widget.data['data']['max_images'],
           enableCamera: true,
           cupertinoOptions: CupertinoOptions(takePhotoIcon: 'chat'),
@@ -683,8 +675,8 @@ class _BuildQuestionsState extends State<BuildQuestions> {
     if (!mounted) return;
 
     setState(() {
-      images = resultList;
-      if (images.length == 0) {
+      _images = _resultList;
+      if (_images.length == 0) {
         widget.data['data']['image'] = [];
       }
       print(error);

@@ -367,6 +367,15 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                 if (snapshot.connectionState == ConnectionState.done) {
                   return _buildTab(db.newConsult.uploadQuestions, listaU8L);
                 }
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(
+                    child: Container(
+                      width: 50,
+                      height: 50,
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                }
                 return Container();
               }),
           //_buildTab(db.newConsult.historyQuestions),
@@ -388,8 +397,8 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
       }
     }
     for (var i = 0; i < assetList.length; i++) {
-      ByteData bd = await assetList[i]
-          .getThumbByteData(300, 300, quality: 100); // width and height
+      ByteData bd =
+          await assetList[i].getByteData(quality: 100); // width and height
       Uint8List a2 = bd.buffer.asUint8List();
       if (!listaU8L.contains(a2)) {
         listaU8L.add(a2);
