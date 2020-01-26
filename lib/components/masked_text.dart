@@ -40,6 +40,12 @@ class MaskedTextField extends StatefulWidget {
 
 class MaskedTextFieldState extends State<MaskedTextField> {
   @override
+  void dispose() {
+    super.dispose();
+    widget.maskedTextFieldController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var lastTextSize = 0;
 

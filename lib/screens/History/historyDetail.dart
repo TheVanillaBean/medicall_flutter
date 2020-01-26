@@ -1,7 +1,8 @@
+import 'package:Medicall/models/consult_status_modal.dart';
 import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:Medicall/services/auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:Medicall/services/database.dart';
+import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -16,7 +17,7 @@ class HistoryDetailScreen extends StatefulWidget {
 class _HistoryDetailScreenState extends State<HistoryDetailScreen>
     with SingleTickerProviderStateMixin {
   TabController controller;
-  int _currentIndex = 0;
+  int currentIndex = 0;
 
   Choice _selectedChoice;
   bool isConsultOpen = false;
@@ -24,13 +25,11 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
   String documentId;
 
   var consultSnapshot;
-  var auth;
-
+  var db;
+  MedicallUser medicallUser;
   @override
   initState() {
     super.initState();
-    auth = Provider.of<AuthBase>(GlobalNavigatorKey.key.currentContext);
-    medicallUser = auth.medicallUser;
     controller = TabController(length: 3, vsync: this);
     controller.addListener(_handleTabSelection);
   }
@@ -43,61 +42,37 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
 
   _handleTabSelection() {
     setState(() {
-      _currentIndex = controller.index;
+      currentIndex = controller.index;
     });
   }
 
-  void _updateConsultStatus(Choice choice) {
+  Future<void> _setConsultStatus(Choice choice) async {
     // Causes the app to rebuild with the new _selectedChoice.
     setState(() {
+      db.updateConsultStatus(choice, medicallUser);
       _selectedChoice = choice;
-      final DocumentReference documentReference =
-          Firestore.instance.collection('consults').document(documentId);
-      documentReference.get().then((snap) {
-        if (snap.documentID == documentId &&
-            snap.data['provider_id'] == medicallUser.uid) {
-          Map<String, dynamic> consultStateData;
-          if (_selectedChoice.title == 'Done') {
-            _selectedChoice.icon = Icon(Icons.check_box, color: Colors.green);
-            consultStateData = {'state': 'done'};
-          } else {
-            _selectedChoice.icon = Icon(
-              Icons.check_box_outline_blank,
-              color: Colors.blue,
-            );
-            consultStateData = {'state': 'in progress'};
-          }
-          // if (snap.data['state'] == 'done') {
-          //   consultStateData = {'state': 'in progress'};
-          // }
-          //Navigator.pop(context);
-          documentReference.updateData(consultStateData).whenComplete(() {
-            setState(() {
-              if (consultStateData['state'] == 'done') {
-                isDone = true;
-                if (_currentIndex != 0) {
-                  Future.delayed(const Duration(milliseconds: 100), () {
-                    controller.index = 0;
-                  });
-                }
-              } else {
-                isDone = false;
-                if (_currentIndex != 0) {
-                  Future.delayed(const Duration(milliseconds: 100), () {
-                    controller.index = 0;
-                  });
-                } else {
-                  //controller.index = 3;
-                  Future.delayed(const Duration(milliseconds: 500), () {
-                    controller.index = 0;
-                  });
-                }
-              }
-            });
-            print("Consult Status Updated");
-          }).catchError((e) => print(e));
+      if (db.consultSnapshot.data['provider_id'] == medicallUser.uid) {
+        if (_selectedChoice.title == 'Done') {
+          _selectedChoice.icon = Icon(Icons.check_box, color: Colors.green);
+          db.consultStateData = {'state': 'done'};
+        } else {
+          _selectedChoice.icon = Icon(
+            Icons.check_box_outline_blank,
+            color: Colors.blue,
+          );
+          db.consultStateData = {'state': 'in progress'};
         }
-      });
+        if (db.consultStateData['state'] == 'done') {
+          isDone = true;
+          consultSnapshot['state'] = 'done';
+          if (currentIndex != 0) {
+            Navigator.of(context).pop();
+          }
+        } else {
+          isDone = false;
+          consultSnapshot['state'] = 'in progress';
+        }
+      }
     });
   }
 
@@ -120,8 +95,8 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                   color: Colors.blue,
                 )),
     ];
-    if (auth.consultSnapshot != null) {
-      consultSnapshot = auth.consultSnapshot.data;
+    if (db.consultSnapshot != null) {
+      consultSnapshot = db.consultSnapshot.data;
     } else {
       consultSnapshot = {'type': ''};
     }
@@ -130,7 +105,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
         actions: <Widget>[
           medicallUser.type == 'provider'
               ? PopupMenuButton<Choice>(
-                  onSelected: _updateConsultStatus,
+                  onSelected: _setConsultStatus,
                   initialValue: _selectedChoice,
                   itemBuilder: (BuildContext context) {
                     return choices.map((Choice choice) {
@@ -155,7 +130,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            consultSnapshot != null
+            consultSnapshot != null && consultSnapshot['provider'] != null
                 ? Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
@@ -238,7 +213,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
         ),
         elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
       ),
-      body: auth.consultSnapshot != null
+      body: db.consultSnapshot != null
           ? medicallUser.type == 'patient' && consultSnapshot != null
               ? TabBarView(
                   // Add tabs as widgets
@@ -283,21 +258,22 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
   @override
   Widget build(BuildContext context) {
     // The app's "state".
-    return FutureBuilder<void>(
-      future: auth.getConsultDetail(), // a Future<String> or null
-      builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
+    db = Provider.of<Database>(context);
+    medicallUser = Provider.of<UserProvider>(context).medicallUser;
+    if (db.consultSnapshot == null ||
+        db.currConsultId != db.consultSnapshot.documentID) {
+      return FutureBuilder<void>(
+        future: db.getConsultDetail(), // a Future<String> or null
+        builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {}
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return returnBody();
+          }
           return returnBody();
-        }
-        return returnBody();
-      },
-    );
+        },
+      );
+    } else {
+      return returnBody();
+    }
   }
-}
-
-class Choice {
-  Choice({this.title, this.icon});
-
-  final String title;
-  Icon icon;
 }

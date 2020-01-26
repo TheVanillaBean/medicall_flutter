@@ -4,23 +4,26 @@ import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/Questions/questionsScreen.dart';
-import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/database.dart';
+import 'package:Medicall/services/user_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_animations/simple_animations.dart';
 
 var screenSize;
+var db;
+MedicallUser medicallUser;
 
 class SymptomsScreen extends StatelessWidget {
   const SymptomsScreen({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    var auth = Provider.of<AuthBase>(context);
+    db = Provider.of<Database>(context);
+    medicallUser = Provider.of<UserProvider>(context).medicallUser;
     final _scaffoldKey = GlobalKey<ScaffoldState>();
     screenSize = MediaQuery.of(context).size;
-    medicallUser = auth.medicallUser;
     void _showMedDialog() {
       showDialog(
         context: context,
@@ -40,9 +43,9 @@ class SymptomsScreen extends StatelessWidget {
                   var historyQuestions = await Firestore.instance
                       .document('services/general_questions')
                       .get();
-                  auth.newConsult.historyQuestions =
+                  db.newConsult.historyQuestions =
                       historyQuestions.data['medical_history_questions'];
-                  GlobalNavigatorKey.key.currentState.pop();
+                  Navigator.of(context).pop();
                   GlobalNavigatorKey.key.currentState.push(
                     MaterialPageRoute(builder: (_) => QuestionsScreen()),
                   );
@@ -53,7 +56,7 @@ class SymptomsScreen extends StatelessWidget {
                 child: Text("No"),
                 onPressed: () {
                   medicallUser.hasMedicalHistory = true;
-                  GlobalNavigatorKey.key.currentState.pop();
+                  Navigator.of(context).pop();
                   GlobalNavigatorKey.key.currentState.push(
                     MaterialPageRoute(builder: (_) => QuestionsScreen()),
                   );
@@ -80,7 +83,7 @@ class SymptomsScreen extends StatelessWidget {
                 color: Theme.of(context).primaryColor,
                 child: Text("My Medical History"),
                 onPressed: () {
-                  GlobalNavigatorKey.key.currentState.pop();
+                  Navigator.of(context).pop();
                   GlobalNavigatorKey.key.currentState.push(
                     MaterialPageRoute(builder: (_) => QuestionsScreen()),
                   );
@@ -210,7 +213,6 @@ class EntryItem extends StatelessWidget {
       );
 
   Widget _buildTiles(Entry root) {
-    var auth = Provider.of<AuthBase>(GlobalNavigatorKey.key.currentContext);
     return Stack(
       children: <Widget>[
         root.price.length > 0
@@ -302,25 +304,26 @@ class EntryItem extends StatelessWidget {
                                           .colorScheme
                                           .secondary,
                                       onPressed: () async {
-                                        if (auth.newConsult.provider == null) {
-                                          auth.newConsult = ConsultData();
+                                        if (db.newConsult == null ||
+                                            db.newConsult.provider == null) {
+                                          db.newConsult = ConsultData();
                                         }
 
                                         for (var i = 0; i < data.length; i++) {
                                           if (data[i].title == root.title) {
-                                            auth.newConsult.price =
-                                                data[i].price;
+                                            db.newConsult.price = data[i].price;
                                           }
                                         }
-                                        auth.newConsult.consultType =
+                                        db.newConsult.consultType =
                                             root.title == 'Spot'
                                                 ? 'Lesion'
                                                 : root.title;
-                                        await auth.getUserMedicalHistory();
-                                        await auth.getConsultQuestions();
-                                        if (auth.userMedicalRecord != null &&
-                                            auth.userMedicalRecord.data !=
-                                                null) {
+                                        await db.getUserMedicalHistory(
+                                            medicallUser);
+                                        await db
+                                            .getConsultQuestions(medicallUser);
+                                        if (db.userMedicalRecord != null &&
+                                            db.userMedicalRecord.data != null) {
                                           medicallUser.hasMedicalHistory = true;
                                         }
                                         if (!medicallUser.hasMedicalHistory) {
@@ -329,16 +332,16 @@ class EntryItem extends StatelessWidget {
                                                   .document(
                                                       'services/general_questions')
                                                   .get();
-                                          auth.newConsult.historyQuestions =
+                                          db.newConsult.historyQuestions =
                                               medicalHistoryQuestions.data[
                                                   "medical_history_questions"];
                                         }
 
-                                        auth.newConsult.screeningQuestions =
-                                            auth.consultQuestions
-                                                .data["screening_questions"];
+                                        db.newConsult.screeningQuestions = db
+                                            .consultQuestions
+                                            .data["screening_questions"];
 
-                                        auth.newConsult.uploadQuestions = auth
+                                        db.newConsult.uploadQuestions = db
                                             .consultQuestions
                                             .data["upload_questions"];
                                         if (!medicallUser.hasMedicalHistory) {

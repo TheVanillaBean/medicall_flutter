@@ -3,12 +3,11 @@ import 'dart:io';
 
 import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/util/app_util.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -82,6 +81,14 @@ class ChatScreenState extends State<ChatScreen> {
     readLocal();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    textEditingController.dispose();
+    listScrollController.dispose();
+    focusNode.dispose();
+  }
+
   void onFocusChange() {
     if (focusNode.hasFocus) {
       // Hide sticker when keyboard appear
@@ -108,16 +115,16 @@ class ChatScreenState extends State<ChatScreen> {
     //setState(() {});
   }
 
-  Future getImage() async {
-    imageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
+  // Future getImage() async {
+  //   imageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
 
-    if (imageFile != null) {
-      setState(() {
-        isLoading = true;
-      });
-      uploadFile();
-    }
-  }
+  //   if (imageFile != null) {
+  //     setState(() {
+  //       isLoading = true;
+  //     });
+  //     uploadFile();
+  //   }
+  // }
 
   void getSticker() {
     // Hide keyboard when sticker appear
@@ -142,7 +149,7 @@ class ChatScreenState extends State<ChatScreen> {
       setState(() {
         isLoading = false;
       });
-      Fluttertoast.showToast(msg: 'This file is not an image');
+      AppUtil().showFlushBar('This file is not an image', context);
     });
   }
 
@@ -175,7 +182,7 @@ class ChatScreenState extends State<ChatScreen> {
         print("Msg Sent");
       }).catchError((e) => print(e));
     } else {
-      Fluttertoast.showToast(msg: 'Nothing to send');
+      AppUtil().showFlushBar('Nothing to send', context);
     }
   }
 
@@ -392,7 +399,7 @@ class ChatScreenState extends State<ChatScreen> {
                 child: IconButton(
                   icon: Icon(
                     Icons.send,
-                    color: Colors.green,
+                    color: !this.peerAvatar ? Colors.lightGreen : greyColor,
                   ),
                   onPressed: () {
                     if (!this.peerAvatar) {

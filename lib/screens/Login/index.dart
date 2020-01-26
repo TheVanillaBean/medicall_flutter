@@ -1,6 +1,4 @@
 import 'dart:ui' as ui;
-
-import 'package:Medicall/common_widgets/platform_exception_alert_dialog.dart';
 import 'package:Medicall/common_widgets/sign_in_button.dart';
 import 'package:Medicall/common_widgets/social_sign_in_button.dart';
 import 'package:Medicall/models/global_nav_key.dart';
@@ -8,6 +6,7 @@ import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/Login/sign_in_state_model.dart';
 import 'package:Medicall/screens/Registration/registrationType.dart';
 import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/util/app_util.dart';
 import 'package:Medicall/util/firebase_notification_handler.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +38,6 @@ class _LoginScreenState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
   final FocusNode _emailFocusNode = FocusNode();
   final FocusNode _passwordFocusNode = FocusNode();
-
   SignInStateModel get model => widget.model;
 
   @override
@@ -62,10 +60,7 @@ class _LoginScreenState extends State<LoginPage> {
       await model.submit();
       //Navigator.of(context).pop();
     } on PlatformException catch (e) {
-      PlatformExceptionAlertDialog(
-        title: 'Sign in failed',
-        exception: e,
-      ).show(context);
+      AppUtil().showFlushBar(e, context);
     }
   }
 
@@ -73,10 +68,7 @@ class _LoginScreenState extends State<LoginPage> {
     try {
       await model.signInWithGoogle();
     } on PlatformException catch (e) {
-      PlatformExceptionAlertDialog(
-        title: 'Sign in failed',
-        exception: e,
-      ).show(context);
+      AppUtil().showFlushBar(e, context);
     }
   }
 
@@ -96,7 +88,6 @@ class _LoginScreenState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: null,
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.dark,
         child: SingleChildScrollView(
@@ -130,43 +121,63 @@ class _LoginScreenState extends State<LoginPage> {
 
   List<Widget> _buildChildren(BuildContext context) {
     return [
-      _buildHeader(context),
-      _buildEmailAuthForm(context),
-      SizedBox(height: 16.0),
-      SignInButton(
-        color: Theme.of(context).primaryColor,
-        textColor: Colors.white,
-        text: "Sign in",
-        onPressed: model.canSubmit ? _submit : _submit,
-      ),
-      SizedBox(height: 12),
-      Text(
-        "",
-        style: TextStyle(
-          fontSize: 14.0,
-          color: Colors.black87,
-        ),
-        textAlign: TextAlign.center,
-      ),
-      SizedBox(height: 12),
-      SignInButton(
-        color: Theme.of(context).primaryColor.withBlue(3000),
-        textColor: Colors.white,
-        text: "Create New Account",
-        onPressed: () {
-          Provider.of<AuthBase>(GlobalNavigatorKey.key.currentContext)
-              .medicallUser = MedicallUser();
-          _createAccountWithEmail(context);
-        },
-      ),
-      SizedBox(height: 8),
-      SocialSignInButton(
-        imgPath: "assets/images/google-logo.png",
-        text: "Sign in with Google",
-        color: Colors.white,
-        textColor: Colors.black87,
-        onPressed: model.isLoading ? null : () => _signInWithGoogle(context),
-      ),
+      FadeIn(
+          2,
+          Column(
+            children: <Widget>[
+              _buildHeader(context),
+              _buildEmailAuthForm(context),
+              SizedBox(height: 16.0),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: SignInButton(
+                      color: Theme.of(context).primaryColor,
+                      textColor: Colors.white,
+                      text: "Sign in",
+                      onPressed: model.canSubmit ? _submit : _submit,
+                    ),
+                  )
+                ],
+              ),
+              SizedBox(height: 12),
+              Text(
+                "",
+                style: TextStyle(
+                  fontSize: 14.0,
+                  color: Colors.black87,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 12),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: SignInButton(
+                      color: Theme.of(context).primaryColor.withBlue(3000),
+                      textColor: Colors.white,
+                      text: "Create New Account",
+                      onPressed: () {
+                        Provider.of<AuthBase>(
+                                GlobalNavigatorKey.key.currentContext)
+                            .medicallUser = MedicallUser();
+                        _createAccountWithEmail(context);
+                      },
+                    ),
+                  )
+                ],
+              ),
+              SizedBox(height: 8),
+              SocialSignInButton(
+                imgPath: "assets/images/google-logo.png",
+                text: "Sign in with Google",
+                color: Colors.white,
+                textColor: Colors.black87,
+                onPressed:
+                    model.isLoading ? null : () => _signInWithGoogle(context),
+              ),
+            ],
+          )),
     ];
   }
 
@@ -206,26 +217,26 @@ class _LoginScreenState extends State<LoginPage> {
   }
 
   Container _buildEmailAuthForm(BuildContext context) {
-    if (model.isLoading) {
-      return Container(
-        height: 225,
-        padding: const EdgeInsets.only(bottom: 16.0),
-        child: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
+    // if (model.isLoading) {
+    //   return Container(
+    //     height: 225,
+    //     padding: const EdgeInsets.only(bottom: 16.0),
+    //     child: Center(
+    //       child: CircularProgressIndicator(),
+    //     ),
+    //   );
+    // }
     return Container(
       padding: const EdgeInsets.fromLTRB(0, 40, 0, 40),
       child: Column(
         children: <Widget>[
-          _buildEmailTextField(),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.02,
+          Container(
+            height: 90,
+            child: _buildEmailTextField(),
           ),
-          _buildPasswordTextField(),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.02,
+          Container(
+            height: 90,
+            child: _buildPasswordTextField(),
           ),
         ],
       ),

@@ -1,13 +1,14 @@
 import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/database.dart';
+import 'package:Medicall/services/user_provider.dart';
+import 'package:Medicall/util/app_util.dart';
 import 'package:Medicall/util/introduction_screen/introduction_screen.dart';
 import 'package:Medicall/util/introduction_screen/model/page_decoration.dart';
 import 'package:Medicall/util/introduction_screen/model/page_view_model.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
 
 import 'buildQuestions.dart';
@@ -32,8 +33,12 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
   double formSpacing = 20;
   var screeningQuestions;
   var ranOnce = false;
+  PageController pageController = PageController(initialPage: 0);
   var currentQuestions = 'symptom';
-  var auth = Provider.of<AuthBase>(GlobalNavigatorKey.key.currentContext);
+  var db = Provider.of<Database>(GlobalNavigatorKey.key.currentContext);
+  MedicallUser medicallUser =
+      Provider.of<UserProvider>(GlobalNavigatorKey.key.currentContext)
+          .medicallUser;
   var medicalHistoryQuestions;
   bool showSegmentedControl = true;
   List<dynamic> combinedList = [];
@@ -43,13 +48,13 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
     super.initState();
     if (medicallUser.hasMedicalHistory) {
       combinedList = [
-        ...auth.newConsult.screeningQuestions,
-        ...auth.newConsult.uploadQuestions
+        ...db.newConsult.screeningQuestions,
+        ...db.newConsult.uploadQuestions
       ];
     } else {
       currentQuestions = "Medical History";
       combinedList = [
-        ...auth.newConsult.historyQuestions,
+        ...db.newConsult.historyQuestions,
       ];
     }
 
@@ -57,6 +62,12 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
       globalKeyList['questionKey' + i.toString()] =
           GlobalKey<FormBuilderState>();
     }
+  }
+
+  @override
+  void dispose() { 
+    super.dispose();
+    pageController.dispose();
   }
 
   Future<void> _onIntroEnd() async {
@@ -75,16 +86,16 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
               FlatButton(
                 color: Theme.of(context).primaryColor,
                 child: Text(
-                    "Continue to " + auth.newConsult.consultType == 'Lesion'
+                    "Continue to " + db.newConsult.consultType == 'Lesion'
                         ? 'Spot'
                         : "Continue to " +
-                            auth.newConsult.consultType +
+                            db.newConsult.consultType +
                             ' treatment'),
                 onPressed: () async {
                   medicallUser.hasMedicalHistory = true;
-                  await auth.addUserMedicalHistory();
-                  GlobalNavigatorKey.key.currentState.pop();
-                  GlobalNavigatorKey.key.currentState
+                  await db.addUserMedicalHistory(medicallUser);
+                  Navigator.of(context).pop();
+                  Navigator.of(context)
                       .pushReplacementNamed('/questionsScreen');
                 },
               ),
@@ -93,9 +104,9 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
         },
       );
     } else {
-      auth.newConsult.consultType = auth.newConsult.consultType;
+      db.newConsult.consultType = db.newConsult.consultType;
       //switch for if provider has already been selected
-      if (auth.newConsult == null || auth.newConsult.provider == null) {
+      if (db.newConsult == null || db.newConsult.provider == null) {
         GlobalNavigatorKey.key.currentState.pushNamed(
           '/selectProvider',
         );
@@ -111,7 +122,6 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
     setState(() {
       currentPage = index;
     });
-    var tabController = context.state.questionsFormKey.currentContext.state;
     var listKeys = [];
     var currentKeys = [];
     for (var i = 0; i < combinedList.length; i++) {
@@ -138,20 +148,21 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
             currentState != null &&
             currentState.value['question0'] == formAnswer ||
         listKeys[index != 0 ? index - 1 : index].containsKey('image') &&
-            listKeys[index != 0 ? index - 1 : index]['image'].length > 0) {
-      tabController.pageController.animateToPage(
+            listKeys[index != 0 ? index - 1 : index]['image'].length > 0 ||
+        listKeys[index != 0 ? index - 1 : index].containsKey('not_required') &&
+            listKeys[index != 0 ? index - 1 : index]['not_required'] == true) {
+      pageController.animateToPage(
         index,
         duration: Duration(milliseconds: 200),
         curve: Curves.linear,
       );
     } else {
-      tabController.pageController.animateToPage(
+      pageController.animateToPage(
         index != 0 ? index - 1 : index,
         duration: Duration(milliseconds: 200),
         curve: Curves.linear,
       );
-      showToast('Please fill out the required question.',
-          position: ToastPosition(align: Alignment.center));
+      AppUtil().showFlushBar('Please fill out the required question.', context);
     }
   }
 
@@ -194,16 +205,16 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.close),
-          onPressed: () => GlobalNavigatorKey.key.currentState.pop(false),
+          onPressed: () => Navigator.of(context).pop(false),
         ),
         title: Text(currentQuestions == 'symptom'
-            ? auth.newConsult.consultType == 'Lesion'
+            ? db.newConsult.consultType == 'Lesion'
                 ? 'Spot' +
                     ' Question: ' +
                     (currentPage + 1).toString() +
                     '/' +
                     pageViewList.length.toString()
-                : auth.newConsult.consultType +
+                : db.newConsult.consultType +
                     ' Question: ' +
                     (currentPage + 1).toString() +
                     '/' +
@@ -217,9 +228,11 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
           ? IntroductionScreen(
               pages: pageViewList,
               key: questionsFormKey,
+              pageController: pageController,
               onDone: () => _onIntroEnd(),
               //onSkip: () => _onIntroEnd(context), // You can override onSkip callback
               showSkipButton: false,
+              curve: Curves.easeInOutSine,
               skipFlex: 0,
               nextFlex: 0,
               onChange: (i) => _checkQuestion(i, context),

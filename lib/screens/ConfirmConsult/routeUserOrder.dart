@@ -1,7 +1,7 @@
 import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 
 class RouteUserOrderScreen extends StatefulWidget {
@@ -73,29 +73,25 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                     )
                   ],
                 ),
+                SizedBox(
+                  height: 10,
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Container(
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(160.0),
+                        borderRadius: BorderRadius.circular(140.0),
                         child: _consult != null &&
                                 _consult.providerProfilePic != null
-                            ? CachedNetworkImage(
-                                height: 160,
-                                width: 160,
+                            ? Container(
+                                child: ExtendedImage.network(
+                                _consult.providerProfilePic,
+                                height: 140,
+                                width: 140,
+                                cache: true,
                                 fit: BoxFit.cover,
-                                imageUrl: _consult.providerProfilePic,
-                                placeholder: (context, url) => Container(
-                                      height: 50,
-                                      width: 50,
-                                      child: CircularProgressIndicator(),
-                                    ),
-                                errorWidget: (context, url, error) => Container(
-                                      height: 100,
-                                      width: 100,
-                                      child: Icon(Icons.error),
-                                    ))
+                              ))
                             : Icon(
                                 Icons.account_circle,
                                 size: 160,
@@ -103,6 +99,9 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                       ),
                     )
                   ],
+                ),
+                SizedBox(
+                  height: 10,
                 ),
                 Row(
                   children: <Widget>[

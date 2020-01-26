@@ -5,9 +5,10 @@ import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/presentation/medicall_icons_icons.dart' as CustomIcons;
-import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:intl/intl.dart';
@@ -28,7 +29,7 @@ class HistoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     medicallUser = Provider.of<UserProvider>(context).medicallUser;
-
+    var db = Provider.of<Database>(context);
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       key: _scaffoldKey,
@@ -59,17 +60,16 @@ class HistoryScreen extends StatelessWidget {
         ],
         elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
       ),
-      body: _buildTab("consults"),
+      body: _buildTab("consults", db),
     );
   }
 
-  _buildTab(questions) {
-    var auth = Provider.of<AuthBase>(GlobalNavigatorKey.key.currentContext);
+  _buildTab(questions, db) {
     currentOrientation =
         MediaQuery.of(GlobalNavigatorKey.key.currentContext).orientation;
     return SingleChildScrollView(
       child: FutureBuilder(
-          future: auth.getUserHistory(),
+          future: db.getUserHistory(medicallUser),
           builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
             switch (snapshot.connectionState) {
               case ConnectionState.waiting:
@@ -91,10 +91,10 @@ class HistoryScreen extends StatelessWidget {
               default:
                 if (snapshot.hasError)
                   return Text('Error: ${snapshot.error}');
-                else if (auth.userHistory.length > 0) {
+                else if (db.userHistory.length > 0) {
                   historyList = [];
-                  for (var i = 0; i < auth.userHistory.length; i++) {
-                    Timestamp timestamp = auth.userHistory[i].data['date'];
+                  for (var i = 0; i < db.userHistory.length; i++) {
+                    Timestamp timestamp = db.userHistory[i].data['date'];
                     historyList.add(FlatButton(
                         padding: EdgeInsets.all(0),
                         splashColor: Theme.of(context)
@@ -102,7 +102,9 @@ class HistoryScreen extends StatelessWidget {
                             .secondary
                             .withAlpha(70),
                         onPressed: () {
-                          auth.currConsultId = auth.userHistory[i].documentID;
+                          //clear current snap remove this and previous consult data is displayed in detailed history
+                          db.consultSnapshot = null;
+                          db.currConsultId = db.userHistory[i].documentID;
                           GlobalNavigatorKey.key.currentState
                               .pushNamed('/historyDetail', arguments: {
                             'isRouted': false,
@@ -121,10 +123,10 @@ class HistoryScreen extends StatelessWidget {
                             isThreeLine: true,
                             title: Text(
                               medicallUser.type == 'patient'
-                                  ? '${auth.userHistory[i].data['provider'].split(" ")[0][0].toUpperCase()}${auth.userHistory[i].data['provider'].split(" ")[0].substring(1)} ${auth.userHistory[i].data['provider'].split(" ")[1][0].toUpperCase()}${auth.userHistory[i].data['provider'].split(" ")[1].substring(1)} ' +
+                                  ? '${db.userHistory[i].data['provider'].split(" ")[0][0].toUpperCase()}${db.userHistory[i].data['provider'].split(" ")[0].substring(1)} ${db.userHistory[i].data['provider'].split(" ")[1][0].toUpperCase()}${db.userHistory[i].data['provider'].split(" ")[1].substring(1)} ' +
                                       ' ' +
-                                      auth.userHistory[i].data['providerTitles']
-                                  : '${auth.userHistory[i].data['patient'].split(" ")[0][0].toUpperCase()}${auth.userHistory[i].data['patient'].split(" ")[0].substring(1)} ${auth.userHistory[i].data['patient'].split(" ")[1][0].toUpperCase()}${auth.userHistory[i].data['patient'].split(" ")[1].substring(1)}',
+                                      db.userHistory[i].data['providerTitles']
+                                  : '${db.userHistory[i].data['patient'].split(" ")[0][0].toUpperCase()}${db.userHistory[i].data['patient'].split(" ")[0].substring(1)} ${db.userHistory[i].data['patient'].split(" ")[1][0].toUpperCase()}${db.userHistory[i].data['patient'].split(" ")[1].substring(1)}',
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 1.1,
@@ -134,7 +136,7 @@ class HistoryScreen extends StatelessWidget {
                                     .format(timestamp.toDate())
                                     .toString() +
                                 '\n' +
-                                auth.userHistory[i].data['type'].toString()),
+                                db.userHistory[i].data['type'].toString()),
                             trailing: FlatButton(
                               splashColor: Colors.transparent,
                               highlightColor: Colors.transparent,
@@ -143,29 +145,27 @@ class HistoryScreen extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
-                                  auth.userHistory[i].data['state']
-                                              .toString() ==
+                                  db.userHistory[i].data['state'].toString() ==
                                           'prescription paid'
                                       ? Icon(
                                           CustomIcons.MedicallIcons.ambulance,
                                           color: Colors.indigo,
                                         )
-                                      : auth.userHistory[i].data['state']
+                                      : db.userHistory[i].data['state']
                                                   .toString() ==
                                               'prescription waiting'
                                           ? Icon(
                                               CustomIcons.MedicallIcons.medkit,
                                               color: Colors.green,
                                             )
-                                          : auth.userHistory[i].data['state']
+                                          : db.userHistory[i].data['state']
                                                       .toString() ==
                                                   'done'
                                               ? Icon(
                                                   Icons.assignment_turned_in,
                                                   color: Colors.green,
                                                 )
-                                              : auth.userHistory[i]
-                                                          .data['state']
+                                              : db.userHistory[i].data['state']
                                                           .toString() ==
                                                       'in progress'
                                                   ? Icon(
@@ -179,7 +179,7 @@ class HistoryScreen extends StatelessWidget {
                                   Container(
                                     width: 80,
                                     child: Text(
-                                      auth.userHistory[i].data['state']
+                                      db.userHistory[i].data['state']
                                           .toString(),
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
@@ -196,12 +196,12 @@ class HistoryScreen extends StatelessWidget {
                                 ? CircleAvatar(
                                     radius: 20,
                                     backgroundColor: Colors.grey.withAlpha(100),
-                                    child: auth.userHistory[i]
+                                    child: db.userHistory[i]
                                                 .data['provider_profile'] !=
                                             null
                                         ? ClipOval(
-                                            child: Image.network(
-                                                auth.userHistory[i]
+                                            child: ExtendedImage.network(
+                                                db.userHistory[i]
                                                     .data['provider_profile'],
                                                 width: 100,
                                                 height: 100,
@@ -216,12 +216,12 @@ class HistoryScreen extends StatelessWidget {
                                 : CircleAvatar(
                                     radius: 20,
                                     backgroundColor: Colors.grey.withAlpha(100),
-                                    child: auth.userHistory[i]
+                                    child: db.userHistory[i]
                                                 .data['patient_profile'] !=
                                             null
                                         ? ClipOval(
-                                            child: Image.network(
-                                              auth.userHistory[i]
+                                            child: ExtendedImage.network(
+                                              db.userHistory[i]
                                                   .data['patient_profile'],
                                               width: 100,
                                               height: 100,

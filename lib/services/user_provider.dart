@@ -10,6 +10,10 @@ class UserProvider with ChangeNotifier {
     return _medicallUser;
   }
 
+  set medicallUser(user) {
+    _medicallUser = user;
+  }
+
   UserProvider({@required String uid}) : assert(uid != null) {
     _getMedicallUser(uid: uid);
   }
@@ -21,6 +25,7 @@ class UserProvider with ChangeNotifier {
     try {
       final snapshot = await documentReference.get();
       this._medicallUser = MedicallUser.from(uid, snapshot);
+      medicallUser = MedicallUser.from(uid, snapshot);
       notifyListeners();
     } catch (e) {
       throw PlatformException(

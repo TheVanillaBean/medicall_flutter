@@ -16,7 +16,6 @@ class AuthWidgetBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthBase>(context, listen: false);
-    print("---");
 
     return StreamBuilder<MedicallUser>(
       stream: authService.onAuthStateChanged,

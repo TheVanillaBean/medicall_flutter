@@ -2,7 +2,7 @@ import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/services/auth.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -56,15 +56,11 @@ class _AccountScreenState extends State<AccountScreen> {
                     borderRadius: new BorderRadius.circular(100.0),
                     child:
                         medicallUser != null && medicallUser.profilePic != null
-                            ? CachedNetworkImage(
+                            ? ExtendedImage.network(
+                                auth.medicallUser.profilePic,
                                 height: 100,
                                 width: 100,
                                 fit: BoxFit.cover,
-                                imageUrl: auth.medicallUser.profilePic,
-                                placeholder: (context, url) =>
-                                    CircularProgressIndicator(),
-                                errorWidget: (context, url, error) =>
-                                    Icon(Icons.error),
                               )
                             : Icon(
                                 Icons.account_circle,

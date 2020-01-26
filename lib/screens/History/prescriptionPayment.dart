@@ -1,6 +1,7 @@
 import 'package:Medicall/models/global_nav_key.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/database.dart';
+import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/stripe_payment_handler.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -43,9 +44,9 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
 
   @override
   Widget build(BuildContext context) {
-    var auth = Provider.of<AuthBase>(GlobalNavigatorKey.key.currentContext);
-    MedicallUser medicallUser = auth.medicallUser;
-    var consultSnapshot = auth.consultSnapshot.data;
+    var db = Provider.of<Database>(GlobalNavigatorKey.key.currentContext);
+    medicallUser = Provider.of<UserProvider>(context).medicallUser;
+    var consultSnapshot = db.consultSnapshot.data;
     var datePaid = consultSnapshot['pay_date'];
 
     onChangedCheckBox = (val) async {
@@ -194,7 +195,8 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
                         ),
                       ),
                 Visibility(
-                    visible: userShippingSelected,
+                    visible: userShippingSelected ||
+                        !consultSnapshot.containsKey('pay_date'),
                     child: Container(
                       padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
                       child: Column(
@@ -291,7 +293,8 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
                           SizedBox(
                             height: 20,
                           ),
-                          shippingAddress.length > 0
+                          shippingAddress.length > 0 &&
+                                  !consultSnapshot.containsKey('pay_date')
                               ? FlatButton(
                                   padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
                                   color: Theme.of(
@@ -299,7 +302,7 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
                                       .colorScheme
                                       .secondary,
                                   onPressed: () async {
-                                    if (auth.hasPayment) {
+                                    if (db.hasPayment) {
                                       isLoading = true;
                                       await PaymentService().chargePayment(
                                           consultSnapshot['consult_price'],
@@ -308,7 +311,7 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
                                               consultSnapshot['provider']);
                                       await Firestore.instance
                                           .collection("consults")
-                                          .document(auth.currConsultId)
+                                          .document(db.currConsultId)
                                           .updateData({
                                         'state': 'prescription paid',
                                         'pay_date': DateTime.now(),
@@ -372,7 +375,7 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
                                   child: isLoading
                                       ? CircularProgressIndicator()
                                       : Text(
-                                          auth.hasPayment
+                                          db.hasPayment
                                               ? 'Pay for Presciption'
                                               : 'Add Card',
                                           textAlign: TextAlign.center,
