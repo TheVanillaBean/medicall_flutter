@@ -22,9 +22,6 @@ MedicallUser medicallUser;
 var userDocuments;
 
 class HistoryScreen extends StatelessWidget {
-  final _scaffoldKey =
-      GlobalKey<ScaffoldState>(debugLabel: '_historyScaffoldkey');
-
   @override
   Widget build(BuildContext context) {
     medicallUser = Provider.of<UserProvider>(context).medicallUser;
@@ -32,7 +29,6 @@ class HistoryScreen extends StatelessWidget {
     currentOrientation = MediaQuery.of(context).orientation;
     return Scaffold(
       resizeToAvoidBottomPadding: false,
-      key: _scaffoldKey,
       drawer: DrawerMenu(),
       appBar: AppBar(
         centerTitle: true,

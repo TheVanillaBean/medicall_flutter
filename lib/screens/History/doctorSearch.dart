@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/user_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:Medicall/util/app_util.dart' as AppUtils;
@@ -18,8 +18,8 @@ bool userHasConsults = false;
 class DoctorSearch extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var auth = Provider.of<AuthBase>(context);
-    medicallUser = auth.medicallUser;
+    var userProvider = Provider.of<UserProvider>(context);
+    medicallUser = userProvider.medicallUser;
     currentOrientation = MediaQuery.of(context).orientation;
     currTab = "Search Doctors";
     String selectedProvider = '';

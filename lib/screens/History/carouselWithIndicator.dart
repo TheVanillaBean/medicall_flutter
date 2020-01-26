@@ -101,7 +101,6 @@ class _CarouselWithIndicatorState extends State<CarouselWithIndicator> {
           )
         : Center(
             child: Container(
-              
               child: Text('There are no images here.'),
             ),
           );

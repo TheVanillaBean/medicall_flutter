@@ -360,7 +360,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
       body: TabBarView(
         // Add tabs as widgets
         children: <Widget>[
-          _buildTab(db.newConsult.screeningQuestions, listaU8L),
+          _buildTab(db.newConsult.screeningQuestions, []),
           FutureBuilder(
               future: convertImages(), // a Future<String> or null
               builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
@@ -378,20 +378,22 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
   }
 
   Future<void> convertImages() async {
-    listaU8L = [];
     List<Asset> assetList = [];
-    for (var i = 1; i < db.newConsult.uploadQuestions.length; i++) {
+    listaU8L = [];
+    for (var i = 0; i < db.newConsult.uploadQuestions.length; i++) {
       for (var x = 0;
           x < db.newConsult.uploadQuestions[i]['image'].length;
           x++) {
         assetList.add(db.newConsult.uploadQuestions[i]['image'][x]);
       }
     }
-    for (var i = 1; i < assetList.length; i++) {
+    for (var i = 0; i < assetList.length; i++) {
       ByteData bd = await assetList[i]
-          .getThumbByteData(224, 224, quality: 100); // width and height
+          .getThumbByteData(300, 300, quality: 100); // width and height
       Uint8List a2 = bd.buffer.asUint8List();
-      listaU8L.add(a2);
+      if (!listaU8L.contains(a2)) {
+        listaU8L.add(a2);
+      }
     }
   }
 
