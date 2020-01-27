@@ -29,7 +29,7 @@ class ExtendedImageProvider implements ExtImageProvider {
 
   @override
   ExtendedImage returnNetworkImage(String _url,
-      {double height, double width, BoxFit fit, bool cache}) {
+      {double height, double width, BoxFit fit, bool cache = true}) {
     return ExtendedImage.network(_url,
         height: height, width: width, fit: fit, cache: cache);
   }
@@ -38,7 +38,7 @@ class ExtendedImageProvider implements ExtImageProvider {
       {double height,
       double width,
       BoxFit fit,
-      bool memCache,
+      bool memCache = true,
       ExtendedImageMode mode,
       GestureConfig Function(ExtendedImageState) initGestureConfigHandler}) {
     return ExtendedImage.memory(

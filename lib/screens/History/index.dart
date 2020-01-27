@@ -196,9 +196,11 @@ class HistoryScreen extends StatelessWidget {
                                 ? CircleAvatar(
                                     radius: 20,
                                     backgroundColor: Colors.grey.withAlpha(100),
-                                    child: db.userHistory[i]
-                                                .data['provider_profile'] !=
-                                            null
+                                    child: db.userHistory[i].data.containsKey(
+                                                'provider_profile') &&
+                                            db.userHistory[i]
+                                                    .data['provider_profile'] !=
+                                                null
                                         ? ClipOval(
                                             child: _extImageProvider
                                                 .returnNetworkImage(
