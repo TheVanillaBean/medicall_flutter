@@ -1,4 +1,4 @@
-import 'package:Medicall/Screens/History/carouselWithIndicator.dart';
+import 'package:Medicall/common_widgets/carousel_with_indicator.dart';
 import 'package:Medicall/common_widgets/chat.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/History/prescriptionPayment.dart';
@@ -164,9 +164,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                   ];
                                   //print(consultSnapshot['details'][i]);
                                   finalArray.add(CarouselWithIndicator(
-                                    imgList: urlImgs,
-                                    from: 'detailTab'
-                                  ));
+                                      imgList: urlImgs, from: 'detailTab'));
                                 }
                               }
                             }
@@ -210,9 +208,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                             //print(consultSnapshot['details'][i]);
                             if (y == 0) {
                               finalArray.add(CarouselWithIndicator(
-                                imgList: urlImgs,
-                                from: 'detailTab'
-                              ));
+                                  imgList: urlImgs, from: 'detailTab'));
                             }
 
                             //addedImages = true;
