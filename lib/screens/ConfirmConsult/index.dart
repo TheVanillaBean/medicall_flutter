@@ -396,7 +396,8 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
       //   return Navigator.pushReplacementNamed(context, '/history',
       //       arguments: {'consult': _db.newConsult, 'user': _medicallUser});
       // });
-      imageCache.clear();
+      _extImageProvider.clearImageMemory();
+
       Route route = MaterialPageRoute(
           builder: (context) => RouteUserOrderScreen(
                 data: {'user': _medicallUser, 'consult': _db.newConsult},

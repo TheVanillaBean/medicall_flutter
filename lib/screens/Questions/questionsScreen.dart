@@ -1,5 +1,6 @@
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/services/database.dart';
+import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:Medicall/util/introduction_screen/introduction_screen.dart';
@@ -31,6 +32,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
   var _currentQuestions = 'symptom';
   var _db;
   List<dynamic> _combinedList = [];
+  ExtImageProvider _extImageProvider;
 
   @override
   void initState() {
@@ -46,6 +48,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
 
   Future<void> _onIntroEnd() async {
     //await setConsult(context);
+
     if (_currentQuestions == 'Medical History') {
       showDialog(
         context: context,
@@ -125,12 +128,14 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
             listKeys[index != 0 ? index - 1 : index]['image'].length > 0 ||
         listKeys[index != 0 ? index - 1 : index].containsKey('not_required') &&
             listKeys[index != 0 ? index - 1 : index]['not_required'] == true) {
+      _extImageProvider.currentPage = index;
       _pageController.animateToPage(
         index,
         duration: Duration(milliseconds: 200),
         curve: Curves.linear,
       );
     } else {
+      _extImageProvider.currentPage = index != 0 ? index - 1 : index;
       _pageController.animateToPage(
         index != 0 ? index - 1 : index,
         duration: Duration(milliseconds: 200),
@@ -144,6 +149,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
   Widget build(BuildContext context) {
     medicallUser = Provider.of<UserProvider>(context).medicallUser;
     _db = Provider.of<Database>(context);
+    _extImageProvider = Provider.of<ExtImageProvider>(context);
     const bodyStyle = TextStyle(fontSize: 19.0);
     const pageDecoration = const PageDecoration(
       titleTextStyle: TextStyle(fontSize: 28.0, fontWeight: FontWeight.w700),

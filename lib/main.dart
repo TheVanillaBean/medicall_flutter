@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:Medicall/models/carousel_state.dart';
 import 'package:Medicall/screens/Account/index.dart';
 import 'package:Medicall/screens/Account/paymentDetail.dart';
 import 'package:Medicall/screens/Chat/index.dart';
@@ -70,7 +71,10 @@ class MedicallApp extends StatelessWidget {
         ),
         Provider<ExtImageProvider>(
           create: (_) => ExtendedImageProvider(),
-        )
+        ),
+        ChangeNotifierProvider<CarouselState>(
+          create: (_) => CarouselState(),
+        ),
       ],
       child: _buildApp(),
     );

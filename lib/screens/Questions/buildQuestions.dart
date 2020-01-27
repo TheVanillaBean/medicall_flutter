@@ -12,7 +12,6 @@ class BuildQuestions extends StatefulWidget {
 }
 
 class _BuildQuestionsState extends State<BuildQuestions> {
-  List _images = [];
   ValueChanged _onChangedDropDown;
   ValueChanged _onChangedInput;
   ValueChanged _onChangedCheckBox;
@@ -37,13 +36,15 @@ class _BuildQuestionsState extends State<BuildQuestions> {
   _buildGroupedQuestions(question, index, val, questions) {
     if (question.containsKey('media')) {
       if (questions['image'].length > 0) {
-        if (_images != questions['image'] && _images.length > 0) {
-          questions['image'] = _images;
+        if (_extImageProvider.assetList != questions['image'] &&
+            _extImageProvider.assetList.length > 0) {
+          questions['image'] = _extImageProvider.assetList;
         } else {
-          _images = questions['image'];
+          _extImageProvider.assetList = [];
+          _extImageProvider.assetList = questions['image'];
         }
       } else {
-        questions['image'] = _images;
+        questions['image'] = _extImageProvider.assetList;
       }
 
       _returnListWidget.add(Visibility(
@@ -67,8 +68,8 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                   child: FlatButton(
                     padding: EdgeInsets.all(0),
                     onPressed: loadAssets,
-                    child: _images.length > 0
-                        ? buildGridView(_images)
+                    child: _extImageProvider.assetList.length > 0
+                        ? buildGridView()
                         : Container(
                             padding: EdgeInsets.fromLTRB(0, 0, 0, 40),
                             alignment: Alignment.center,
@@ -535,12 +536,13 @@ class _BuildQuestionsState extends State<BuildQuestions> {
         ));
   }
 
-  Widget buildGridView(images) {
+  Widget buildGridView() {
     List<Widget> _returnListWidget = [];
-    if (images.length > 0) {
+    if (_extImageProvider.assetList.length > 0) {
       return Container(
-        height: MediaQuery.of(context).size.height - 250,
-        child: CarouselWithIndicator(imgList: images, from: 'buildQuestions'),
+        height: MediaQuery.of(context).size.height,
+        child: CarouselWithIndicator(
+            imgList: _extImageProvider.assetList, from: 'buildQuestions'),
       );
     }
 
@@ -572,7 +574,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
     String error = '';
     try {
       _resultList = await _extImageProvider.pickImages(
-          _images,
+          _extImageProvider.assetList,
           widget.data['data']['max_images'],
           true,
           _extImageProvider.pickImagesCupertinoOptions(takePhotoIcon: 'chat'),
@@ -599,8 +601,8 @@ class _BuildQuestionsState extends State<BuildQuestions> {
     if (!mounted) return;
 
     setState(() {
-      _images = _resultList;
-      if (_images.length == 0) {
+      _extImageProvider.assetList = _resultList;
+      if (_extImageProvider.assetList.length == 0) {
         widget.data['data']['image'] = [];
       }
       print(error);

@@ -1,13 +1,16 @@
 import 'dart:typed_data';
+import 'package:Medicall/models/carousel_state.dart';
 import 'package:flutter/material.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:provider/provider.dart';
 
 abstract class ExtImageProvider {
   PageController pageController;
   List<Uint8List> listaU8L;
-  int currentImageIndex;
+  int currentPage;
   List<Asset> assetList;
+  Map convertedImages;
   CupertinoOptions pickImagesCupertinoOptions(
       {String backgroundColor,
       String selectionFillColor,
@@ -33,6 +36,7 @@ abstract class ExtImageProvider {
       String okButtonDrawable,
       bool autoCloseOnSelectionLimit});
   convertImages(BuildContext context);
+  clearImageMemory();
   Future<List<Asset>> pickImages(
       List<Asset> _images,
       int _maxImages,
@@ -56,8 +60,6 @@ abstract class ExtImageProvider {
       int height,
       int quality = 100,
       Widget spinner = const Center(child: SizedBox(width: 50, height: 50))});
-  Asset returnAsset(String _identifier, String _name, int _originalWidth,
-      int _originalHeight);
 
   ExtendedImageGesturePageView returnBuilder(
       BuildContext context, List<dynamic> itemList);
@@ -69,10 +71,11 @@ class ExtendedImageProvider implements ExtImageProvider {
   @override
   PageController pageController = PageController();
   @override
-  int currentImageIndex = 0;
+  int currentPage = 0;
   @override
   List<Asset> assetList = [];
   @override
+  Map convertedImages = {};
   @override
   MaterialOptions pickImagesMaterialOptions(
       {String actionBarColor,
@@ -133,11 +136,6 @@ class ExtendedImageProvider implements ExtImageProvider {
         takePhotoIcon: takePhotoIcon);
   }
 
-  Asset returnAsset(String _identifier, String _name, int _originalWidth,
-      int _originalHeight) {
-    return Asset(_identifier, _name, _originalHeight, _originalHeight);
-  }
-
   AssetThumb returnAssetThumb(
       {Key key,
       Asset asset,
@@ -155,21 +153,25 @@ class ExtendedImageProvider implements ExtImageProvider {
     );
   }
 
+  clearImageMemory() {
+    assetList = [];
+    listaU8L = [];
+    convertedImages = {};
+  }
+
   convertImages(BuildContext context) async {
     for (var i = 0; i < assetList.length; i++) {
-      ByteData bd = await assetList[i].getThumbByteData(
-          MediaQuery.of(context).size.width.toInt(),
-          MediaQuery.of(context).size.height.toInt(),
-          quality: 70); // width and height
-      Uint8List a2 = bd.buffer.asUint8List();
-      listaU8L.add(a2);
-      for (var x = 0; x < listaU8L.length; x++) {
-        if (!listaU8L.contains(a2) || listaU8L[x].first != a2.first) {
-          listaU8L.add(a2);
-        }
-        if (listaU8L[x].first != a2.first) {}
+      if (!convertedImages.containsKey(assetList[i].name)) {
+        ByteData bd = await assetList[i].getThumbByteData(
+            MediaQuery.of(context).size.width.toInt(),
+            MediaQuery.of(context).size.height.toInt(),
+            quality: 70); // width and height
+        Uint8List a2 = bd.buffer.asUint8List();
+        convertedImages[assetList[i].name] = a2;
+        listaU8L.add(a2);
       }
     }
+    assetList = [];
   }
 
   Future<List<Asset>> pickImages(
@@ -216,6 +218,8 @@ class ExtendedImageProvider implements ExtImageProvider {
 
   ExtendedImageGesturePageView returnBuilder(
       BuildContext _context, List<dynamic> _itemList) {
+    CarouselState _carouselState =
+        Provider.of<CarouselState>(_context, listen: false);
     return ExtendedImageGesturePageView.builder(
       itemBuilder: (BuildContext _context, int _index) {
         Widget image;
@@ -248,7 +252,7 @@ class ExtendedImageProvider implements ExtImageProvider {
         image = Container(
           child: image,
         );
-        if (_index == currentImageIndex) {
+        if (_index == _carouselState.getDotsIndex) {
           return Hero(
             tag: _index.toString(),
             child: image,
@@ -259,10 +263,7 @@ class ExtendedImageProvider implements ExtImageProvider {
       },
       itemCount: _itemList.length,
       onPageChanged: (int index) {
-        // setState(() {
-        //   _current = index;
-        // });
-        //rebuild.add(index);
+        _carouselState.setDotsIndex(index.toDouble());
       },
       controller: pageController,
       scrollDirection: Axis.horizontal,
