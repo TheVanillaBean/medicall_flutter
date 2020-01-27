@@ -1,8 +1,8 @@
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/extimage_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:Medicall/presentation/medicall_icons_icons.dart' as CustomIcons;
 import 'package:provider/provider.dart';
 
@@ -13,10 +13,11 @@ class PhotoIdScreen extends StatefulWidget {
 }
 
 class _PhotoIdScreenState extends State<PhotoIdScreen> {
-  List<Asset> images = List<Asset>();
-  List<Asset> govIdImage = List<Asset>();
-  List<Asset> profileImage = List<Asset>();
+  List images = List();
+  List govIdImage = List();
+  List profileImage = List();
   String _error = '';
+  ExtImageProvider _extImageProvider;
 
   @override
   void initState() {
@@ -28,7 +29,7 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
         onTap: loadGovIdImage,
         child: ClipRRect(
           borderRadius: new BorderRadius.circular(8.0),
-          child: AssetThumb(
+          child: _extImageProvider.returnAssetThumb(
             asset: asset,
             height: 200,
             width: 340,
@@ -41,7 +42,7 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
       onTap: loadProfileImage,
       child: ClipRRect(
         borderRadius: new BorderRadius.circular(1000.0),
-        child: AssetThumb(
+        child: _extImageProvider.returnAssetThumb(
           asset: asset,
           height: 200,
           width: 200,
@@ -53,28 +54,28 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
   Future<void> deleteGovIdImage() async {
     //await MultiImagePicker.deleteImages(assets: images);
     setState(() {
-      govIdImage = List<Asset>();
+      govIdImage = [];
     });
   }
 
   Future<void> deleteProfileImage() async {
     //await MultiImagePicker.deleteImages(assets: images);
     setState(() {
-      profileImage = List<Asset>();
+      profileImage = [];
     });
   }
 
   Future<void> loadProfileImage() async {
-    List<Asset> resultList = List<Asset>();
+    List resultList = [];
     String error = '';
 
     try {
-      resultList = await MultiImagePicker.pickImages(
-          selectedAssets: profileImage,
-          maxImages: 1,
-          enableCamera: true,
-          cupertinoOptions: CupertinoOptions(takePhotoIcon: 'chat'),
-          materialOptions: MaterialOptions(
+      resultList = await _extImageProvider.pickImages(
+          profileImage,
+          1,
+          true,
+          _extImageProvider.pickImagesCupertinoOptions(takePhotoIcon: 'camera'),
+          _extImageProvider.pickImagesMaterialOptions(
               useDetailsView: true,
               actionBarColor:
                   '#${Theme.of(context).primaryColor.value.toRadixString(16).toUpperCase().substring(2)}',
@@ -84,7 +85,8 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
               autoCloseOnSelectionLimit: true,
               startInAllView: true,
               actionBarTitle: 'Select Profile Picture',
-              allViewTitle: 'All Photos'));
+              allViewTitle: 'All Photos'),
+          context);
     } on PlatformException catch (e) {
       error = e.message;
     }
@@ -102,26 +104,28 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
   }
 
   Future<void> loadGovIdImage() async {
-    List<Asset> resultList = List<Asset>();
+    List resultList = [];
     String error = '';
 
     try {
-      resultList = await MultiImagePicker.pickImages(
-          selectedAssets: govIdImage,
-          maxImages: 1,
-          enableCamera: true,
-          cupertinoOptions: CupertinoOptions(takePhotoIcon: 'chat'),
-          materialOptions: MaterialOptions(
-              useDetailsView: true,
-              actionBarColor:
-                  '#${Theme.of(context).primaryColor.value.toRadixString(16).toUpperCase().substring(2)}',
-              statusBarColor:
-                  '#${Theme.of(context).primaryColor.value.toRadixString(16).toUpperCase().substring(2)}',
-              lightStatusBar: false,
-              autoCloseOnSelectionLimit: true,
-              startInAllView: true,
-              actionBarTitle: 'Select Government Id',
-              allViewTitle: 'All Photos'));
+      resultList = await _extImageProvider.pickImages(
+          govIdImage,
+          1,
+          true,
+          _extImageProvider.pickImagesCupertinoOptions(takePhotoIcon: 'camera'),
+          _extImageProvider.pickImagesMaterialOptions(
+            useDetailsView: true,
+            actionBarColor:
+                '#${Theme.of(context).primaryColor.value.toRadixString(16).toUpperCase().substring(2)}',
+            statusBarColor:
+                '#${Theme.of(context).primaryColor.value.toRadixString(16).toUpperCase().substring(2)}',
+            lightStatusBar: false,
+            autoCloseOnSelectionLimit: true,
+            startInAllView: true,
+            actionBarTitle: 'Select Government Id',
+            allViewTitle: 'All Photos',
+          ),
+          context);
     } on PlatformException catch (e) {
       error = e.message;
     }
@@ -150,6 +154,7 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
   Widget build(BuildContext context) {
     var auth = Provider.of<AuthBase>(context);
     medicallUser = auth.medicallUser;
+    _extImageProvider = Provider.of<ExtImageProvider>(context);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,

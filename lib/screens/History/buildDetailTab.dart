@@ -1,15 +1,15 @@
+import 'package:Medicall/Screens/History/carouselWithIndicator.dart';
+import 'package:Medicall/common_widgets/chat.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:Medicall/screens/History/carouselWithIndicator.dart';
 import 'package:Medicall/screens/History/prescriptionPayment.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
+import 'package:Medicall/util/build_medical_note.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:provider/provider.dart';
-import 'package:Medicall/Screens/History/chat.dart';
-import 'package:Medicall/screens/History/buildMedicalNote.dart';
 
 int currentDetailsIndex = 0;
 List<dynamic> addressList = [];

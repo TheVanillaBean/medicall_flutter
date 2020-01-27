@@ -1,5 +1,3 @@
-import 'package:multi_image_picker/multi_image_picker.dart';
-
 class ConsultData {
   String consultType;
   List<dynamic> screeningQuestions;
@@ -13,7 +11,7 @@ class ConsultData {
   List<dynamic> patientDevTokens;
   List<dynamic> providerDevTokens;
   List<dynamic> historyQuestions;
-  List<Asset> media;
+  List media;
 
   ConsultData({
     this.consultType,

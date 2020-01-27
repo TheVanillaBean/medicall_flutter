@@ -63,7 +63,7 @@ class HistoryScreen extends StatelessWidget {
     List<Widget> _historyList;
     MedicallUser _medicallUser =
         Provider.of<UserProvider>(context).medicallUser;
-    var _extImageProvider = Provider.of<ExtImageProvider>(context);
+    ExtImageProvider _extImageProvider = Provider.of<ExtImageProvider>(context);
     return SingleChildScrollView(
       child: FutureBuilder(
           future: db.getUserHistory(_medicallUser),

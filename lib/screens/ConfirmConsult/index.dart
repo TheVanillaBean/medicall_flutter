@@ -1,16 +1,14 @@
-import 'dart:typed_data';
+import 'package:Medicall/common_widgets/carousel_with_indicator.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/ConfirmConsult/routeUserOrder.dart';
-import 'package:Medicall/screens/History/carouselWithIndicator.dart';
 import 'package:Medicall/secrets.dart';
 import 'package:Medicall/services/database.dart';
+import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/stripe_payment_handler.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:stripe_payment/stripe_payment.dart';
 
@@ -26,6 +24,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
   bool _hasReviewed = false;
   var _db;
   MedicallUser _medicallUser;
+  ExtImageProvider _extImageProvider;
 
   TabController _confirmTabCntrl;
   @override
@@ -46,6 +45,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
   Widget build(BuildContext context) {
     _db = Provider.of<Database>(context);
     _medicallUser = Provider.of<UserProvider>(context).medicallUser;
+    _extImageProvider = Provider.of<ExtImageProvider>(context);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -421,17 +421,14 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
             assets[i].name.split('.')[1]);
       }
     }
-    for (var i = 0; i < assets.length; i++) {
-      ByteData byteData = await assets[i].requestOriginal();
-      List<int> imageData = byteData.buffer.asUint8List();
+    for (var i = 0; i < _extImageProvider.listaU8L.length; i++) {
       StorageReference ref = FirebaseStorage.instance.ref().child("consults/" +
           _medicallUser.uid +
           '/' +
           consultId +
           "/" +
           allFileNames[i]);
-      StorageUploadTask uploadTask = ref.putData(imageData);
-
+      StorageUploadTask uploadTask = ref.putData(_extImageProvider.listaU8L[i]);
       allMediaList
           .add(await (await uploadTask.onComplete).ref.getDownloadURL());
     }
@@ -439,7 +436,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
   }
 
   _buildTab(questions) {
-    List<Asset> questionsList = [];
+    List questionsList = [];
     if (questions.length > 0) {
       for (var i = 0; i < questions.length; i++) {
         if (questions[i].containsKey('image') &&

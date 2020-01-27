@@ -1,8 +1,7 @@
-import 'package:Medicall/screens/History/carouselWithIndicator.dart';
+import 'package:Medicall/common_widgets/carousel_with_indicator.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:provider/provider.dart';
 
 class BuildQuestions extends StatefulWidget {
@@ -13,16 +12,18 @@ class BuildQuestions extends StatefulWidget {
 }
 
 class _BuildQuestionsState extends State<BuildQuestions> {
-  List<Asset> _images = List<Asset>();
+  List _images = [];
   ValueChanged _onChangedDropDown;
   ValueChanged _onChangedInput;
   ValueChanged _onChangedCheckBox;
   List<Widget> _returnListWidget = [];
-  List<Asset> _resultList = List<Asset>();
+  List _resultList = [];
   List<dynamic> _options = [];
+  ExtImageProvider _extImageProvider;
 
   @override
   Widget build(BuildContext context) {
+    _extImageProvider = Provider.of<ExtImageProvider>(context);
     return buildQuestions(
         widget.data['data'],
         widget.data['questionIndex'],
@@ -44,7 +45,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
       } else {
         questions['image'] = _images;
       }
-      var _extImageProvider = Provider.of<ExtImageProvider>(context);
+
       _returnListWidget.add(Visibility(
           visible: questions['visible'],
           child: Column(
@@ -538,7 +539,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
     List<Widget> _returnListWidget = [];
     if (images.length > 0) {
       return Container(
-        height: 700,
+        height: MediaQuery.of(context).size.height - 250,
         child: CarouselWithIndicator(imgList: images, from: 'buildQuestions'),
       );
     }
@@ -570,12 +571,12 @@ class _BuildQuestionsState extends State<BuildQuestions> {
   Future<void> loadAssets() async {
     String error = '';
     try {
-      _resultList = await MultiImagePicker.pickImages(
-          selectedAssets: _images,
-          maxImages: widget.data['data']['max_images'],
-          enableCamera: true,
-          cupertinoOptions: CupertinoOptions(takePhotoIcon: 'chat'),
-          materialOptions: MaterialOptions(
+      _resultList = await _extImageProvider.pickImages(
+          _images,
+          widget.data['data']['max_images'],
+          true,
+          _extImageProvider.pickImagesCupertinoOptions(takePhotoIcon: 'chat'),
+          _extImageProvider.pickImagesMaterialOptions(
               actionBarColor:
                   '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
               statusBarColor:
@@ -584,7 +585,8 @@ class _BuildQuestionsState extends State<BuildQuestions> {
               autoCloseOnSelectionLimit: true,
               startInAllView: true,
               actionBarTitle: 'Select Images',
-              allViewTitle: 'All Photos'));
+              allViewTitle: 'All Photos'),
+          context);
     } on Exception catch (e) {
       if (e.toString() != 'The user has cancelled the selection') {
         error = e.toString();
