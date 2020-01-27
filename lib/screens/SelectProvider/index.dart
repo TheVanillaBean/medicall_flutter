@@ -1,8 +1,8 @@
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/services/database.dart';
+import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:google_maps_webservice/places.dart';
@@ -66,7 +66,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
     //   expandedChild = buildPlacesList();
     // }
     db = Provider.of<Database>(context);
-
+    var _extImageProvider = Provider.of<ExtImageProvider>(context);
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
@@ -202,7 +202,8 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
                                                     .data['profile_pic'] !=
                                                 null
                                             ? ClipOval(
-                                                child: ExtendedImage.network(
+                                                child: _extImageProvider
+                                                    .returnNetworkImage(
                                                   userDocuments[i]
                                                       .data['profile_pic'],
                                                   width: 100,

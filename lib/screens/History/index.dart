@@ -5,9 +5,9 @@ import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/presentation/medicall_icons_icons.dart' as CustomIcons;
 import 'package:Medicall/services/database.dart';
+import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:intl/intl.dart';
@@ -16,16 +16,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'doctorSearch.dart';
 
-List<String> providers = [];
-List<Widget> historyList = [];
-MedicallUser medicallUser;
-var userDocuments;
-
 class HistoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    medicallUser = Provider.of<UserProvider>(context).medicallUser;
-    var db = Provider.of<Database>(context);
+    var _db = Provider.of<Database>(context);
+
     currentOrientation = MediaQuery.of(context).orientation;
     return Scaffold(
       resizeToAvoidBottomPadding: false,
@@ -60,15 +55,22 @@ class HistoryScreen extends StatelessWidget {
         ],
         elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
       ),
-      body: _buildTab("consults", db),
+      body: _buildTab("consults", _db, context),
     );
   }
 
-  _buildTab(questions, db) {
+  _buildTab(questions, db, context) {
+    List<Widget> _historyList;
+    MedicallUser _medicallUser =
+        Provider.of<UserProvider>(context).medicallUser;
+    var _extImageProvider = Provider.of<ExtImageProvider>(context);
     return SingleChildScrollView(
       child: FutureBuilder(
-          future: db.getUserHistory(medicallUser),
-          builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+          future: db.getUserHistory(_medicallUser),
+          builder: (
+            BuildContext context,
+            AsyncSnapshot<void> snapshot,
+          ) {
             switch (snapshot.connectionState) {
               case ConnectionState.waiting:
                 return Column(
@@ -90,10 +92,10 @@ class HistoryScreen extends StatelessWidget {
                 if (snapshot.hasError)
                   return Text('Error: ${snapshot.error}');
                 else if (db.userHistory.length > 0) {
-                  historyList = [];
+                  _historyList = [];
                   for (var i = 0; i < db.userHistory.length; i++) {
                     Timestamp timestamp = db.userHistory[i].data['date'];
-                    historyList.add(FlatButton(
+                    _historyList.add(FlatButton(
                         padding: EdgeInsets.all(0),
                         splashColor: Theme.of(context)
                             .colorScheme
@@ -120,7 +122,7 @@ class HistoryScreen extends StatelessWidget {
                             dense: true,
                             isThreeLine: true,
                             title: Text(
-                              medicallUser.type == 'patient'
+                              _medicallUser.type == 'patient'
                                   ? '${db.userHistory[i].data['provider'].split(" ")[0][0].toUpperCase()}${db.userHistory[i].data['provider'].split(" ")[0].substring(1)} ${db.userHistory[i].data['provider'].split(" ")[1][0].toUpperCase()}${db.userHistory[i].data['provider'].split(" ")[1].substring(1)} ' +
                                       ' ' +
                                       db.userHistory[i].data['providerTitles']
@@ -190,7 +192,7 @@ class HistoryScreen extends StatelessWidget {
                               ),
                               onPressed: () {},
                             ),
-                            leading: medicallUser.type == 'patient'
+                            leading: _medicallUser.type == 'patient'
                                 ? CircleAvatar(
                                     radius: 20,
                                     backgroundColor: Colors.grey.withAlpha(100),
@@ -198,12 +200,13 @@ class HistoryScreen extends StatelessWidget {
                                                 .data['provider_profile'] !=
                                             null
                                         ? ClipOval(
-                                            child: ExtendedImage.network(
-                                                db.userHistory[i]
-                                                    .data['provider_profile'],
-                                                width: 100,
-                                                height: 100,
-                                                fit: BoxFit.cover),
+                                            child: _extImageProvider
+                                                .returnNetworkImage(
+                                                    db.userHistory[i].data[
+                                                        'provider_profile'],
+                                                    width: 100,
+                                                    height: 100,
+                                                    fit: BoxFit.cover),
                                           )
                                         : Icon(
                                             Icons.account_circle,
@@ -218,7 +221,8 @@ class HistoryScreen extends StatelessWidget {
                                                 .data['patient_profile'] !=
                                             null
                                         ? ClipOval(
-                                            child: ExtendedImage.network(
+                                            child: _extImageProvider
+                                                .returnNetworkImage(
                                               db.userHistory[i]
                                                   .data['patient_profile'],
                                               width: 100,
@@ -234,9 +238,9 @@ class HistoryScreen extends StatelessWidget {
                           ),
                         )));
                   }
-                  return Column(children: historyList.toList());
+                  return Column(children: _historyList.toList());
                 } else {
-                  if (medicallUser.type == 'patient') {
+                  if (_medicallUser.type == 'patient') {
                     return Container(
                       height: currentOrientation == Orientation.portrait
                           ? MediaQuery.of(context).size.height - 80

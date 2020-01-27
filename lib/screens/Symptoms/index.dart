@@ -217,22 +217,12 @@ class EntryItem extends StatelessWidget {
     return Stack(
       children: <Widget>[
         root.price.length > 0
-            ? Positioned.fill(child: AnimatedBackground())
+            ? Positioned.fill(child: Container())
             : SizedBox(),
-        onBottom(AnimatedWave(
-          height: 160,
-          speed: 0.6,
-        )),
-        onBottom(AnimatedWave(
-          height: 100,
-          speed: 0.9,
-          offset: pi,
-        )),
-        onBottom(AnimatedWave(
-          height: 220,
-          speed: 0.3,
-          offset: pi / 2,
-        )),
+        // onBottom(AnimatedWave(
+        //   height: 160,
+        //   speed: 0.6,
+        // )),
         Container(
             margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
             padding: EdgeInsets.fromLTRB(0, 0, 0, 0),

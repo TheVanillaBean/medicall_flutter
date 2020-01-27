@@ -1,7 +1,7 @@
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
-import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -21,6 +21,7 @@ class _AccountScreenState extends State<AccountScreen> {
   @override
   Widget build(BuildContext context) {
     var _userProvider = Provider.of<UserProvider>(context);
+    var _extImageProvider = Provider.of<ExtImageProvider>(context);
     return Scaffold(
       //App Bar
       appBar: AppBar(
@@ -57,12 +58,12 @@ class _AccountScreenState extends State<AccountScreen> {
                     borderRadius: new BorderRadius.circular(100.0),
                     child:
                         medicallUser != null && medicallUser.profilePic != null
-                            ? ExtendedImage.network(
+                            ? _extImageProvider.returnNetworkImage(
                                 _userProvider.medicallUser.profilePic,
-                                height: 100,
-                                width: 100,
                                 fit: BoxFit.cover,
-                              )
+                                height: 100.0,
+                                width: 100.0,
+                                cache: true)
                             : Icon(
                                 Icons.account_circle,
                                 size: 100,

@@ -6,6 +6,7 @@ import 'package:Medicall/util/introduction_screen/introduction_screen.dart';
 import 'package:Medicall/util/introduction_screen/model/page_decoration.dart';
 import 'package:Medicall/util/introduction_screen/model/page_view_model.dart';
 import 'package:dots_indicator/dots_indicator.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:provider/provider.dart';
@@ -24,36 +25,28 @@ class QuestionsScreen extends StatefulWidget {
 }
 
 class _QuestionsScreenState extends State<QuestionsScreen> {
-  Map globalKeyList = {};
-  int currentPage = 0;
-  bool autoValidate = true;
-  bool readOnly = false;
-  double formSpacing = 20;
-  var screeningQuestions;
-  var ranOnce = false;
-  PageController pageController = PageController(initialPage: 0);
-  var currentQuestions = 'symptom';
-  var db;
-  MedicallUser medicallUser;
-  var medicalHistoryQuestions;
-  bool showSegmentedControl = true;
-  List<dynamic> combinedList = [];
+  Map _globalKeyList = {};
+  int _currentPage = 0;
+  PageController _pageController = PageController(initialPage: 0);
+  var _currentQuestions = 'symptom';
+  var _db;
+  List<dynamic> _combinedList = [];
 
   @override
   void initState() {
     super.initState();
-    
+    clearMemoryImageCache();
   }
 
   @override
   void dispose() {
     super.dispose();
-    pageController.dispose();
+    _pageController.dispose();
   }
 
   Future<void> _onIntroEnd() async {
     //await setConsult(context);
-    if (currentQuestions == 'Medical History') {
+    if (_currentQuestions == 'Medical History') {
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -67,14 +60,14 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
               FlatButton(
                 color: Theme.of(context).primaryColor,
                 child: Text(
-                    "Continue to " + db.newConsult.consultType == 'Lesion'
+                    "Continue to " + _db.newConsult.consultType == 'Lesion'
                         ? 'Spot'
                         : "Continue to " +
-                            db.newConsult.consultType +
+                            _db.newConsult.consultType +
                             ' treatment'),
                 onPressed: () async {
                   medicallUser.hasMedicalHistory = true;
-                  await db.addUserMedicalHistory(medicallUser);
+                  await _db.addUserMedicalHistory(medicallUser);
                   Navigator.of(context).pop();
                   Navigator.of(context)
                       .pushReplacementNamed('/questionsScreen');
@@ -85,9 +78,9 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
         },
       );
     } else {
-      db.newConsult.consultType = db.newConsult.consultType;
+      _db.newConsult.consultType = _db.newConsult.consultType;
       //switch for if provider has already been selected
-      if (db.newConsult == null || db.newConsult.provider == null) {
+      if (_db.newConsult == null || _db.newConsult.provider == null) {
         Navigator.of(context).pushNamed(
           '/selectProvider',
         );
@@ -101,15 +94,15 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
 
   void _checkQuestion(index, context) {
     setState(() {
-      currentPage = index;
+      _currentPage = index;
     });
     var listKeys = [];
     var currentKeys = [];
-    for (var i = 0; i < combinedList.length; i++) {
-      if (combinedList[i]['visible']) {
+    for (var i = 0; i < _combinedList.length; i++) {
+      if (_combinedList[i]['visible']) {
         var keyObj = 'questionKey' + i.toString();
-        listKeys.add(combinedList[i]);
-        currentKeys.add(globalKeyList[keyObj]);
+        listKeys.add(_combinedList[i]);
+        currentKeys.add(_globalKeyList[keyObj]);
       }
     }
     var formAnswer = listKeys[index != 0 ? index - 1 : index]['answer'];
@@ -132,13 +125,13 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
             listKeys[index != 0 ? index - 1 : index]['image'].length > 0 ||
         listKeys[index != 0 ? index - 1 : index].containsKey('not_required') &&
             listKeys[index != 0 ? index - 1 : index]['not_required'] == true) {
-      pageController.animateToPage(
+      _pageController.animateToPage(
         index,
         duration: Duration(milliseconds: 200),
         curve: Curves.linear,
       );
     } else {
-      pageController.animateToPage(
+      _pageController.animateToPage(
         index != 0 ? index - 1 : index,
         duration: Duration(milliseconds: 200),
         curve: Curves.linear,
@@ -150,7 +143,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
   @override
   Widget build(BuildContext context) {
     medicallUser = Provider.of<UserProvider>(context).medicallUser;
-    db = Provider.of<Database>(context);
+    _db = Provider.of<Database>(context);
     const bodyStyle = TextStyle(fontSize: 19.0);
     const pageDecoration = const PageDecoration(
       titleTextStyle: TextStyle(fontSize: 28.0, fontWeight: FontWeight.w700),
@@ -161,36 +154,36 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
       imagePadding: EdgeInsets.zero,
     );
     if (medicallUser.hasMedicalHistory) {
-      combinedList = [
-        ...db.newConsult.screeningQuestions,
-        ...db.newConsult.uploadQuestions
+      _combinedList = [
+        ..._db.newConsult.screeningQuestions,
+        ..._db.newConsult.uploadQuestions
       ];
     } else {
-      currentQuestions = "Medical History";
-      combinedList = [
-        ...db.newConsult.historyQuestions,
+      _currentQuestions = "Medical History";
+      _combinedList = [
+        ..._db.newConsult.historyQuestions,
       ];
     }
-    for (var i = 0; i < combinedList.length; i++) {
-      globalKeyList['questionKey' + i.toString()] =
+    for (var i = 0; i < _combinedList.length; i++) {
+      _globalKeyList['questionKey' + i.toString()] =
           GlobalKey<FormBuilderState>();
     }
 
     List<PageViewModel> pageViewList = [];
-    if (combinedList != null) {
-      for (var i = 0; i < combinedList.length; i++) {
-        if (combinedList[i]['visible']) {
+    if (_combinedList != null) {
+      for (var i = 0; i < _combinedList.length; i++) {
+        if (_combinedList[i]['visible']) {
           pageViewList.add(PageViewModel(
               titleWidget: SizedBox(),
               bodyWidget: BuildQuestions(
                 data: {
-                  'data': combinedList[i],
+                  'data': _combinedList[i],
                   'questionIndex': 'screening_questions',
                   'dynamicAdd': null,
                   'parent': context,
                   'widget': widget,
-                  'questions': combinedList,
-                  'key': globalKeyList['questionKey' + i.toString()],
+                  'questions': _combinedList,
+                  'key': _globalKeyList['questionKey' + i.toString()],
                 },
               ),
               decoration: pageDecoration));
@@ -205,27 +198,27 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
           icon: Icon(Icons.close),
           onPressed: () => Navigator.of(context).pop(false),
         ),
-        title: Text(currentQuestions == 'symptom'
-            ? db.newConsult.consultType == 'Lesion'
+        title: Text(_currentQuestions == 'symptom'
+            ? _db.newConsult.consultType == 'Lesion'
                 ? 'Spot' +
                     ' Question: ' +
-                    (currentPage + 1).toString() +
+                    (_currentPage + 1).toString() +
                     '/' +
                     pageViewList.length.toString()
-                : db.newConsult.consultType +
+                : _db.newConsult.consultType +
                     ' Question: ' +
-                    (currentPage + 1).toString() +
+                    (_currentPage + 1).toString() +
                     '/' +
                     pageViewList.length.toString()
             : "Medical History Question: " +
-                (currentPage + 1).toString() +
+                (_currentPage + 1).toString() +
                 '/' +
                 pageViewList.length.toString()),
       ),
       body: pageViewList.length > 0
           ? IntroductionScreen(
               pages: pageViewList,
-              pageController: pageController,
+              pageController: _pageController,
               onDone: () => _onIntroEnd(),
               //onSkip: () => _onIntroEnd(context), // You can override onSkip callback
               showSkipButton: false,

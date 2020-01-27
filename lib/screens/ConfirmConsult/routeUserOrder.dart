@@ -1,7 +1,8 @@
 import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:extended_image/extended_image.dart';
+import 'package:Medicall/services/extimage_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class RouteUserOrderScreen extends StatefulWidget {
   final data;
@@ -26,6 +27,7 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var _extImageProvider = Provider.of<ExtImageProvider>(context);
     return WillPopScope(
         onWillPop: _onWillPop,
         child: Scaffold(
@@ -84,13 +86,12 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                         child: _consult != null &&
                                 _consult.providerProfilePic != null
                             ? Container(
-                                child: ExtendedImage.network(
-                                _consult.providerProfilePic,
-                                height: 140,
-                                width: 140,
-                                cache: true,
-                                fit: BoxFit.cover,
-                              ))
+                                child: _extImageProvider.returnNetworkImage(
+                                    _consult.providerProfilePic,
+                                    cache: true,
+                                    fit: BoxFit.cover,
+                                    height: 140,
+                                    width: 140))
                             : Icon(
                                 Icons.account_circle,
                                 size: 160,
@@ -176,8 +177,7 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                 FlatButton(
                   color: Theme.of(context).primaryColor,
                   onPressed: () {
-                    Navigator.of(context)
-                        .pushReplacementNamed('/history');
+                    Navigator.of(context).pushReplacementNamed('/history');
                   },
                   child: Text(
                     'Go to History',

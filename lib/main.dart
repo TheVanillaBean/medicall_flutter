@@ -16,6 +16,7 @@ import 'package:Medicall/screens/Registration/registrationType.dart';
 import 'package:Medicall/screens/SelectProvider/index.dart';
 import 'package:Medicall/screens/Terms/index.dart';
 import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/theme.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
@@ -67,6 +68,9 @@ class MedicallApp extends StatelessWidget {
         Provider<AuthBase>(
           create: (_) => Auth(),
         ),
+        Provider<ExtImageProvider>(
+          create: (_) => ExtendedImageProvider(),
+        )
       ],
       child: _buildApp(),
     );

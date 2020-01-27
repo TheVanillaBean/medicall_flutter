@@ -1,8 +1,9 @@
-import 'package:Medicall/screens/Questions/asset_view.dart';
-import 'package:extended_image/extended_image.dart';
+import 'package:Medicall/screens/History/carouselWithIndicator.dart';
+import 'package:Medicall/services/extimage_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:provider/provider.dart';
 
 class BuildQuestions extends StatefulWidget {
   final data;
@@ -18,7 +19,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
   ValueChanged _onChangedCheckBox;
   List<Widget> _returnListWidget = [];
   List<Asset> _resultList = List<Asset>();
-  List<dynamic> options = [];
+  List<dynamic> _options = [];
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +44,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
       } else {
         questions['image'] = _images;
       }
-
+      var _extImageProvider = Provider.of<ExtImageProvider>(context);
       _returnListWidget.add(Visibility(
           visible: questions['visible'],
           child: Column(
@@ -75,14 +76,9 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                                 ? Stack(
                                     alignment: Alignment.bottomCenter,
                                     children: <Widget>[
-                                      ExtendedImage.network(
+                                      _extImageProvider.returnNetworkImage(
                                         question['media'],
-                                        shape: BoxShape.rectangle,
                                         cache: true,
-                                        border: Border.all(
-                                            color: Colors.grey.withAlpha(100),
-                                            style: BorderStyle.solid,
-                                            width: 1),
                                         fit: BoxFit.fill,
                                       ),
                                       Container(
@@ -332,7 +328,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                                 FormBuilderValidators.required(),
                               ],
                               onChanged: _onChangedDropDown,
-                              items: options
+                              items: _options
                                   .map((lang) => DropdownMenuItem(
                                       value: lang, child: Text(lang)))
                                   .toList(),
@@ -353,7 +349,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                                 FormBuilderValidators.required(),
                               ],
                               onChanged: _onChangedCheckBox,
-                              options: options
+                              options: _options
                                   .map((lang) =>
                                       FormBuilderFieldOption(value: lang))
                                   .toList(),
@@ -512,7 +508,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
       };
       _returnListWidget = [];
       if (questions is Map) {
-        options = questions['options'];
+        _options = questions['options'];
         _buildGroupedQuestions(questions, null, null, questions);
       } else {
         for (var x = 0; x < questions.length; x++) {
@@ -524,7 +520,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
               questions[x]['question'] = question + ' ' + dynamicAdd;
             }
           }
-          options = questions[x]['options'];
+          _options = questions[x]['options'];
           _buildGroupedQuestions(questions[x], x, null, questions);
         }
       }
@@ -540,85 +536,11 @@ class _BuildQuestionsState extends State<BuildQuestions> {
 
   Widget buildGridView(images) {
     List<Widget> _returnListWidget = [];
-    if (images.length > 1) {
-      for (var i = 0; i < images.length; i++) {
-        if (i == 0) {
-          _returnListWidget.add(Row(
-            children: <Widget>[
-              Expanded(
-                flex: 1,
-                child: Container(
-                  height: MediaQuery.of(context).size.height * .3,
-                  child: AssetView(
-                    i,
-                    images[i],
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: Container(
-                  height: MediaQuery.of(context).size.height * .3,
-                  child: AssetView(
-                    i + 1,
-                    images[i + 1],
-                  ),
-                ),
-              ),
-            ],
-          ));
-        }
-        if (i == 2 && images.length == 3) {
-          _returnListWidget.add(Row(
-            children: <Widget>[
-              Expanded(
-                flex: 1,
-                child: Container(
-                  height: MediaQuery.of(context).size.height * .3,
-                  child: AssetView(
-                    i,
-                    images[i],
-                  ),
-                ),
-              ),
-            ],
-          ));
-        }
-        if (i == 2 && images.length == 4) {
-          _returnListWidget.add(Row(
-            children: <Widget>[
-              Expanded(
-                flex: 1,
-                child: Container(
-                  height: MediaQuery.of(context).size.height * .3,
-                  child: AssetView(
-                    i,
-                    images[i],
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: Container(
-                  height: MediaQuery.of(context).size.height * .3,
-                  child: AssetView(
-                    i + 1,
-                    images[i + 1],
-                  ),
-                ),
-              ),
-            ],
-          ));
-        }
-      }
-    } else {
-      _returnListWidget.add(Container(
-        height: MediaQuery.of(context).size.height * .6,
-        child: AssetView(
-          0,
-          images[0],
-        ),
-      ));
+    if (images.length > 0) {
+      return Container(
+        height: 700,
+        child: CarouselWithIndicator(imgList: images, from: 'buildQuestions'),
+      );
     }
 
     _returnListWidget.add(Container(

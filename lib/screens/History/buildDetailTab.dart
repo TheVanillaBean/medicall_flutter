@@ -96,9 +96,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
           3,
           Container(
             child: currentDetailsIndex == 1
-                ? CarouselWithIndicator(
-                    imgList: mediaList,
-                  )
+                ? CarouselWithIndicator(imgList: mediaList, from: 'detailTab')
                 : ListView.builder(
                     itemCount: consultSnapshot['details'] != null
                         ? consultSnapshot['details'].length
@@ -167,6 +165,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                   //print(consultSnapshot['details'][i]);
                                   finalArray.add(CarouselWithIndicator(
                                     imgList: urlImgs,
+                                    from: 'detailTab'
                                   ));
                                 }
                               }
@@ -212,6 +211,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                             if (y == 0) {
                               finalArray.add(CarouselWithIndicator(
                                 imgList: urlImgs,
+                                from: 'detailTab'
                               ));
                             }
 

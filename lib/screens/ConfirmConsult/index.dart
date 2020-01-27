@@ -22,12 +22,10 @@ class ConfirmConsultScreen extends StatefulWidget {
 
 class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
     with SingleTickerProviderStateMixin {
-  bool isLoading = false;
-  double price = 39.00;
-  bool hasReviewed = false;
-  var listaU8L = [];
-  var db;
-  MedicallUser medicallUser;
+  bool _isLoading = false;
+  bool _hasReviewed = false;
+  var _db;
+  MedicallUser _medicallUser;
 
   TabController _confirmTabCntrl;
   @override
@@ -46,8 +44,8 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
 
   @override
   Widget build(BuildContext context) {
-    db = Provider.of<Database>(context);
-    medicallUser = Provider.of<UserProvider>(context).medicallUser;
+    _db = Provider.of<Database>(context);
+    _medicallUser = Provider.of<UserProvider>(context).medicallUser;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -56,11 +54,11 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              db.newConsult != null
-                  ? db.newConsult.consultType == 'Lesion'
+              _db.newConsult != null
+                  ? _db.newConsult.consultType == 'Lesion'
                       ? 'Review Spot Consult'
-                      : 'Review ' + db.newConsult.consultType + ' Consult'
-                  : db.newConsult != null ? db.newConsult.provider : '',
+                      : 'Review ' + _db.newConsult.consultType + ' Consult'
+                  : _db.newConsult != null ? _db.newConsult.provider : '',
               style: TextStyle(
                 fontSize: Theme.of(context).platform == TargetPlatform.iOS
                     ? 17.0
@@ -68,10 +66,10 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
               ),
             ),
             Text(
-              db.newConsult != null
-                  ? 'With ${db.newConsult.provider.split(" ")[0][0].toUpperCase()}${db.newConsult.provider.split(" ")[0].substring(1)} ${db.newConsult.provider.split(" ")[1][0].toUpperCase()}${db.newConsult.provider.split(" ")[1].substring(1)} ' +
-                      db.newConsult.providerTitles
-                  : db.newConsult != null ? db.newConsult.provider : '',
+              _db.newConsult != null
+                  ? 'With ${_db.newConsult.provider.split(" ")[0][0].toUpperCase()}${_db.newConsult.provider.split(" ")[0].substring(1)} ${_db.newConsult.provider.split(" ")[1][0].toUpperCase()}${_db.newConsult.provider.split(" ")[1].substring(1)} ' +
+                      _db.newConsult.providerTitles
+                  : _db.newConsult != null ? _db.newConsult.provider : '',
               style: TextStyle(
                 fontSize: Theme.of(context).platform == TargetPlatform.iOS
                     ? 12.0
@@ -103,9 +101,9 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
         elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      bottomNavigationBar: !isLoading
+      bottomNavigationBar: !_isLoading
           ? Container(
-              padding: hasReviewed
+              padding: _hasReviewed
                   ? EdgeInsets.fromLTRB(0, 0, 0, 0)
                   : EdgeInsets.fromLTRB(0, 0, 0, 0),
               decoration: BoxDecoration(
@@ -113,9 +111,9 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                   border: Border(
                       top: BorderSide(
                           color: Theme.of(context).primaryColor,
-                          width: hasReviewed ? 2 : 0))),
-              height: hasReviewed ? 280 : 56,
-              child: hasReviewed
+                          width: _hasReviewed ? 2 : 0))),
+              height: _hasReviewed ? 280 : 56,
+              child: _hasReviewed
                   ? Stack(
                       fit: StackFit.expand,
                       children: <Widget>[
@@ -164,7 +162,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                               .onPrimary,
                                           onPressed: () {
                                             setState(() {
-                                              hasReviewed = false;
+                                              _hasReviewed = false;
                                             });
                                           },
                                         ),
@@ -192,18 +190,18 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Text(
-                                    db.newConsult.consultType != 'Lesion'
+                                    _db.newConsult.consultType != 'Lesion'
                                         ? 'Contact ' +
-                                            db.newConsult.provider +
+                                            _db.newConsult.provider +
                                             ' ' +
-                                            db.newConsult.providerTitles +
+                                            _db.newConsult.providerTitles +
                                             '\nabout your ' +
-                                            db.newConsult.consultType
+                                            _db.newConsult.consultType
                                         : 'Spot' +
                                             ' consultation with \n' +
-                                            db.newConsult.provider +
+                                            _db.newConsult.provider +
                                             ' ' +
-                                            db.newConsult.providerTitles,
+                                            _db.newConsult.providerTitles,
                                     style: TextStyle(
                                         letterSpacing: 1.3,
                                         fontWeight: FontWeight.w700,
@@ -214,7 +212,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                               Column(
                                 children: <Widget>[
                                   Text(
-                                    db.newConsult.price,
+                                    _db.newConsult.price,
                                     style: TextStyle(
                                         fontSize: 28,
                                         color: Theme.of(context)
@@ -258,13 +256,13 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                             .secondary,
                                         onPressed: () async {
                                           setState(() {
-                                            hasReviewed = true;
-                                            //isLoading = true;
+                                            _hasReviewed = true;
+                                            //_isLoading = true;
                                           });
                                           //await _addProviderConsult();
                                           Firestore.instance
                                               .collection('cards')
-                                              .document(medicallUser.uid)
+                                              .document(_medicallUser.uid)
                                               .collection('sources')
                                               .getDocuments()
                                               .then((snap) async {
@@ -277,31 +275,31 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                               });
                                             } else {
                                               setState(() {
-                                                isLoading = true;
+                                                _isLoading = true;
                                               });
                                               await PaymentService()
                                                   .chargePayment(
-                                                      price,
-                                                      db.newConsult
+                                                      _db.newConsult.price,
+                                                      _db.newConsult
                                                               .consultType +
                                                           ' consult with ' +
-                                                          db.newConsult
+                                                          _db.newConsult
                                                               .provider);
-                                              _addConsult();
+                                              _addConsult(context);
 
                                               // await PaymentService()
                                               //     .chargePayment(
                                               //         price,
-                                              //         db.newConsult.consultType +
+                                              //         _db.newConsult.consultType +
                                               //             ' consult with ' +
-                                              //             db.newConsult.provider);
+                                              //             _db.newConsult.provider);
                                               // return await _addConsult();
                                             }
                                             // return Navigator.pushNamed(
                                             //     context, '/history',
                                             //     arguments: {
-                                            //       'consult': db.newConsult,
-                                            //       'user': medicallUser
+                                            //       'consult': _db.newConsult,
+                                            //       'user': _medicallUser
                                             //     });
                                           });
                                         },
@@ -333,8 +331,8 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                               .withAlpha(100),
                           onPressed: () async {
                             setState(() {
-                              hasReviewed = true;
-                              //isLoading = true;
+                              _hasReviewed = true;
+                              //_isLoading = true;
                             });
                           },
                           child: Text(
@@ -360,25 +358,9 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
       body: TabBarView(
         // Add tabs as widgets
         children: <Widget>[
-          _buildTab(db.newConsult.screeningQuestions, []),
-          FutureBuilder(
-              future: convertImages(), // a Future<String> or null
-              builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  return _buildTab(db.newConsult.uploadQuestions, listaU8L);
-                }
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
-                    child: Container(
-                      width: 50,
-                      height: 50,
-                      child: CircularProgressIndicator(),
-                    ),
-                  );
-                }
-                return Container();
-              }),
-          //_buildTab(db.newConsult.historyQuestions),
+          _buildTab(_db.newConsult.screeningQuestions),
+          _buildTab(_db.newConsult.uploadQuestions),
+          //_buildTab(_db.newConsult.historyQuestions),
         ],
         // set the _confirmTabCntrl
         controller: _confirmTabCntrl,
@@ -386,57 +368,38 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
     );
   }
 
-  Future<void> convertImages() async {
-    List<Asset> assetList = [];
-    listaU8L = [];
-    for (var i = 0; i < db.newConsult.uploadQuestions.length; i++) {
-      for (var x = 0;
-          x < db.newConsult.uploadQuestions[i]['image'].length;
-          x++) {
-        assetList.add(db.newConsult.uploadQuestions[i]['image'][x]);
-      }
-    }
-    for (var i = 0; i < assetList.length; i++) {
-      ByteData bd =
-          await assetList[i].getByteData(quality: 100); // width and height
-      Uint8List a2 = bd.buffer.asUint8List();
-      if (!listaU8L.contains(a2)) {
-        listaU8L.add(a2);
-      }
-    }
-  }
-
-  Future _addConsult() async {
+  Future _addConsult(context) async {
     var ref = Firestore.instance.collection('consults').document();
 
-    var imagesList = await saveImages(db.newConsult.media, ref.documentID);
+    var imagesList = await saveImages(_db.newConsult.media, ref.documentID);
     Map<String, dynamic> data = <String, dynamic>{
-      "screening_questions": db.newConsult.screeningQuestions,
-      //"medical_history_questions": db.newConsult.historyQuestions,
-      "type": db.newConsult.consultType,
+      "screening_questions": _db.newConsult.screeningQuestions,
+      //"medical_history_questions": _db.newConsult.historyQuestions,
+      "type": _db.newConsult.consultType,
       "chat": [],
       "state": "new",
       "date": DateTime.now(),
       "medication_name": "",
-      "provider": db.newConsult.provider,
-      "providerTitles": db.newConsult.providerTitles,
-      "patient": medicallUser.displayName,
-      "provider_profile": db.newConsult.providerProfilePic,
-      "patient_profile": medicallUser.profilePic,
-      "consult_price": db.newConsult.price,
-      "provider_id": db.newConsult.providerId,
-      "patient_id": medicallUser.uid,
-      "media": db.newConsult.media.length > 0 ? imagesList : "",
+      "provider": _db.newConsult.provider,
+      "providerTitles": _db.newConsult.providerTitles,
+      "patient": _medicallUser.displayName,
+      "provider_profile": _db.newConsult.providerProfilePic,
+      "patient_profile": _medicallUser.profilePic,
+      "consult_price": _db.newConsult.price,
+      "provider_id": _db.newConsult.providerId,
+      "patient_id": _medicallUser.uid,
+      "media": _db.newConsult.media.length > 0 ? imagesList : "",
     };
     ref.setData(data).whenComplete(() {
       print("Consult Added");
       // Future.delayed(const Duration(milliseconds: 5000), () {
       //   return Navigator.pushReplacementNamed(context, '/history',
-      //       arguments: {'consult': db.newConsult, 'user': medicallUser});
+      //       arguments: {'consult': _db.newConsult, 'user': _medicallUser});
       // });
+      imageCache.clear();
       Route route = MaterialPageRoute(
           builder: (context) => RouteUserOrderScreen(
-                data: {'user': medicallUser, 'consult': db.newConsult},
+                data: {'user': _medicallUser, 'consult': _db.newConsult},
               ));
       return Navigator.of(context).pushReplacement(route);
 
@@ -462,7 +425,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
       ByteData byteData = await assets[i].requestOriginal();
       List<int> imageData = byteData.buffer.asUint8List();
       StorageReference ref = FirebaseStorage.instance.ref().child("consults/" +
-          medicallUser.uid +
+          _medicallUser.uid +
           '/' +
           consultId +
           "/" +
@@ -475,7 +438,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
     return allMediaList;
   }
 
-  _buildTab(questions, listaU8L) {
+  _buildTab(questions) {
     List<Asset> questionsList = [];
     if (questions.length > 0) {
       for (var i = 0; i < questions.length; i++) {
@@ -494,13 +457,14 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
           }
         }
       }
-      db.newConsult.media = questionsList;
+      _db.newConsult.media = questionsList;
 
       return Scaffold(
         body: Container(
           child: questions[0].containsKey('image')
               ? CarouselWithIndicator(
-                  imgList: listaU8L,
+                  imgList: questionsList,
+                  from: 'consultReview',
                 )
               : ListView.builder(
                   itemCount: questions.length,
