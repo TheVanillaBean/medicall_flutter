@@ -9,7 +9,6 @@ class DetailedHistoryState with ChangeNotifier {
   double _currentImageIndex = 0;
   Choice _selectedStatus;
   Database _db;
-  MedicallUser _medicallUser;
   TabController _controller;
   int _currentIndex = 0;
 
@@ -54,12 +53,14 @@ class DetailedHistoryState with ChangeNotifier {
   }
 
   void setControllerTabs(dis) {
-    _controller = TabController(length: 3, vsync: dis);
-    _controller.addListener(_handleTabSelection);
+    if (_controller == null) {
+      setTabController(dis);
+      _controller.addListener(_handleTabSelection);
+    }
   }
 
-  void setTabController(TabController cntrl) {
-    _controller = cntrl;
+  void setTabController(dis) {
+    _controller = TabController(length: 3, vsync: dis);
   }
 
   void setCurrentIndex(int index) {
@@ -83,10 +84,9 @@ class DetailedHistoryState with ChangeNotifier {
     _isDone = isDone;
   }
 
-  void setConsultStatus(Choice choice) async {
+  setConsultStatus(MedicallUser user) async {
     // Causes the app to rebuild with the new _selectedChoice.
-    _db.updateConsultStatus(choice, _medicallUser);
-    _selectedStatus = choice;
+    _db.updateConsultStatus(_selectedStatus, user);
     if (_db.consultSnapshot.data['provider_id'] == medicallUser.uid) {
       if (_selectedStatus.title == 'Done') {
         _selectedStatus.icon = Icon(Icons.check_box, color: Colors.green);

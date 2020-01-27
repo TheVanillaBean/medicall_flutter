@@ -19,16 +19,6 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
   Database db;
   MedicallUser medicallUser;
   DetailedHistoryState detailedHistoryState;
-  @override
-  initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    detailedHistoryState.getTabController.dispose();
-  }
 
   Widget returnBody() {
     detailedHistoryState.setChoices();
@@ -37,7 +27,8 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
         actions: <Widget>[
           medicallUser.type == 'provider'
               ? PopupMenuButton<Choice>(
-                  onSelected: detailedHistoryState.setConsultStatus,
+                  onSelected:
+                      detailedHistoryState.setConsultStatus(medicallUser),
                   initialValue: detailedHistoryState.getConsultStatus,
                   itemBuilder: (BuildContext context) {
                     return detailedHistoryState.getChoices.map((Choice choice) {
