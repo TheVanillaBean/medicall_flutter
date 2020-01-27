@@ -1,4 +1,5 @@
 import 'package:Medicall/models/consult_status_modal.dart';
+import 'package:Medicall/models/history_detail_state.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
@@ -15,82 +16,31 @@ class HistoryDetailScreen extends StatefulWidget {
 
 class _HistoryDetailScreenState extends State<HistoryDetailScreen>
     with SingleTickerProviderStateMixin {
-  TabController controller;
-  int currentIndex = 0;
-
-  Choice _selectedChoice;
-  bool isConsultOpen = false;
-
-  String documentId;
-  var db;
+  Database db;
   MedicallUser medicallUser;
+  DetailedHistoryState detailedHistoryState;
   @override
   initState() {
     super.initState();
-    controller = TabController(length: 3, vsync: this);
-    controller.addListener(_handleTabSelection);
   }
 
   @override
   void dispose() {
     super.dispose();
-    controller.dispose();
-  }
-
-  _handleTabSelection() {
-    setState(() {
-      currentIndex = controller.index;
-    });
-  }
-
-  Future<void> _setConsultStatus(Choice choice) async {
-    // Causes the app to rebuild with the new _selectedChoice.
-    db.updateConsultStatus(choice, medicallUser);
-    setState(() {
-      _selectedChoice = choice;
-      if (db.consultSnapshot.data['provider_id'] == medicallUser.uid) {
-        if (_selectedChoice.title == 'Done') {
-          _selectedChoice.icon = Icon(Icons.check_box, color: Colors.green);
-          db.consultSnapshot.data['state'] = 'done';
-        } else {
-          _selectedChoice.icon = Icon(
-            Icons.check_box_outline_blank,
-            color: Colors.blue,
-          );
-          db.consultSnapshot.data['state'] = 'in progress';
-        }
-      }
-    });
+    detailedHistoryState.getTabController.dispose();
   }
 
   Widget returnBody() {
-    List<Choice> choices = <Choice>[
-      Choice(
-          title: 'Done',
-          icon: isDone
-              ? Icon(Icons.check_box, color: Colors.green)
-              : Icon(
-                  Icons.check_box_outline_blank,
-                  color: Colors.blue,
-                )),
-      Choice(
-          title: 'Active',
-          icon: !isDone
-              ? Icon(Icons.check_box, color: Colors.green)
-              : Icon(
-                  Icons.check_box_outline_blank,
-                  color: Colors.blue,
-                )),
-    ];
+    detailedHistoryState.setChoices();
     return Scaffold(
       appBar: AppBar(
         actions: <Widget>[
           medicallUser.type == 'provider'
               ? PopupMenuButton<Choice>(
-                  onSelected: _setConsultStatus,
-                  initialValue: _selectedChoice,
+                  onSelected: detailedHistoryState.setConsultStatus,
+                  initialValue: detailedHistoryState.getConsultStatus,
                   itemBuilder: (BuildContext context) {
-                    return choices.map((Choice choice) {
+                    return detailedHistoryState.getChoices.map((Choice choice) {
                       return PopupMenuItem<Choice>(
                         value: choice,
                         child: Container(
@@ -187,7 +137,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                   ),
                 ],
           // setup the controller
-          controller: controller,
+          controller: detailedHistoryState.getTabController,
         ),
         leading: BackButton(
           onPressed: () {
@@ -215,7 +165,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                     )
                   ],
                   // set the controller
-                  controller: controller,
+                  controller: detailedHistoryState.getTabController,
                 )
               : TabBarView(
                   children: <Widget>[
@@ -232,7 +182,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                       indx: 2,
                     )
                   ],
-                  controller: controller,
+                  controller: detailedHistoryState.getTabController,
                 )
           : Container(),
     );
@@ -243,15 +193,17 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
     // The app's "state".
     db = Provider.of<Database>(context);
     medicallUser = Provider.of<UserProvider>(context).medicallUser;
+    detailedHistoryState = Provider.of<DetailedHistoryState>(context);
+    detailedHistoryState.setControllerTabs(this);
     return FutureBuilder<void>(
       future: db.getConsultDetail(), // a Future<String> or null
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           if (db.consultSnapshot.data['provider_id'] == medicallUser.uid) {
             if (db.consultSnapshot.data['state'] == 'done') {
-              isDone = true;
+              detailedHistoryState.setIsDone(true);
             } else {
-              isDone = false;
+              detailedHistoryState.setIsDone(false);
             }
           }
         }

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:Medicall/models/carousel_state.dart';
+import 'package:Medicall/models/history_detail_state.dart';
 import 'package:Medicall/screens/Account/index.dart';
 import 'package:Medicall/screens/Account/paymentDetail.dart';
 import 'package:Medicall/screens/Chat/index.dart';
@@ -74,6 +75,9 @@ class MedicallApp extends StatelessWidget {
         ),
         ChangeNotifierProvider<CarouselState>(
           create: (_) => CarouselState(),
+        ),
+        ChangeNotifierProvider<DetailedHistoryState>(
+          create: (_) => DetailedHistoryState(),
         ),
       ],
       child: _buildApp(),
