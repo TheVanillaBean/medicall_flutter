@@ -1,7 +1,7 @@
 import 'package:Medicall/models/consult_status_modal.dart';
-import 'package:Medicall/models/history_detail_state.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/services/database.dart';
+import 'package:Medicall/services/history_detail_state.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

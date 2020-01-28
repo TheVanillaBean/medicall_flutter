@@ -1,7 +1,4 @@
 import 'dart:async';
-
-import 'package:Medicall/models/carousel_state.dart';
-import 'package:Medicall/models/history_detail_state.dart';
 import 'package:Medicall/screens/Account/index.dart';
 import 'package:Medicall/screens/Account/paymentDetail.dart';
 import 'package:Medicall/screens/Chat/index.dart';
@@ -18,7 +15,9 @@ import 'package:Medicall/screens/Registration/registrationType.dart';
 import 'package:Medicall/screens/SelectProvider/index.dart';
 import 'package:Medicall/screens/Terms/index.dart';
 import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/carousel_state.dart';
 import 'package:Medicall/services/extimage_provider.dart';
+import 'package:Medicall/services/history_detail_state.dart';
 import 'package:Medicall/theme.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';

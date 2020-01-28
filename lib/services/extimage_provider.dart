@@ -1,5 +1,5 @@
 import 'dart:typed_data';
-import 'package:Medicall/models/carousel_state.dart';
+import 'package:Medicall/services/carousel_state.dart';
 import 'package:flutter/material.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
