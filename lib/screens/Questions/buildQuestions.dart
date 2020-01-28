@@ -75,7 +75,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                             AsyncSnapshot<void> snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.done) {
-                            return _extImageProvider.assetList.length > 0
+                            return question['image'].length > 0
                                 ? buildGridView()
                                 : Container(
                                     padding: EdgeInsets.fromLTRB(0, 0, 0, 40),
@@ -323,6 +323,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
                             return Center(
+                              heightFactor: 10,
                               child: Container(
                                 width: 50,
                                 height: 50,
@@ -588,10 +589,34 @@ class _BuildQuestionsState extends State<BuildQuestions> {
     List<Widget> _returnListWidget = [];
     if (widget.data['data']['image'].length > 0) {
       return Container(
-        height: MediaQuery.of(context).size.height - 250,
-        width: MediaQuery.of(context).size.width,
-        child: CarouselWithIndicator(
-            imgList: widget.data['data']['image'], from: 'buildQuestions'),
+        height: MediaQuery.of(context).size.height - 255,
+        child: Stack(
+          alignment: Alignment.bottomCenter,
+          children: <Widget>[
+            Container(
+              height: MediaQuery.of(context).size.height - 255,
+              width: MediaQuery.of(context).size.width,
+              child: CarouselWithIndicator(
+                  imgList: widget.data['data']['image'],
+                  from: 'buildQuestions'),
+            ),
+            Container(
+              transform: Matrix4.translationValues(0.0, 37.0, 0.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(60.0),
+                child: Container(
+                  padding: EdgeInsets.all(15),
+                  color: Theme.of(context).colorScheme.primary,
+                  child: Icon(
+                    Icons.camera_alt,
+                    color: Colors.white,
+                    size: 40,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       );
     }
 

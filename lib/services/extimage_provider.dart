@@ -160,17 +160,19 @@ class ExtendedImageProvider implements ExtImageProvider {
   }
 
   Future<bool> convertImages(BuildContext context) async {
-    for (var i = 0; i < assetList.length; i++) {
-      if (!convertedImages.containsKey(assetList[i].name)) {
-        await assetList[i]
-            .getThumbByteData(MediaQuery.of(context).size.width.toInt(),
-                MediaQuery.of(context).size.height.toInt(),
-                quality: 70)
-            .then((bd) {
-          Uint8List a2 = bd.buffer.asUint8List();
-          convertedImages[assetList[i].name] = a2;
-          listaU8L.add(a2);
-        });
+    if (assetList.length > 0) {
+      for (var i = 0; i < assetList.length; i++) {
+        if (!convertedImages.containsKey(assetList[i].name)) {
+          await assetList[i]
+              .getThumbByteData(MediaQuery.of(context).size.width.toInt(),
+                  MediaQuery.of(context).size.height.toInt(),
+                  quality: 70)
+              .then((bd) {
+            Uint8List a2 = bd.buffer.asUint8List();
+            convertedImages[assetList[i].name] = a2;
+            listaU8L.add(a2);
+          });
+        }
       }
     }
     return true;
@@ -207,21 +209,26 @@ class ExtendedImageProvider implements ExtImageProvider {
       bool memCache = true,
       ExtendedImageMode mode,
       GestureConfig Function(ExtendedImageState) initGestureConfigHandler}) {
-    return ExtendedImage.memory(
-      _src,
-      height: height,
-      width: width,
-      fit: fit,
-      mode: mode,
-      enableMemoryCache: memCache,
-      initGestureConfigHandler: initGestureConfigHandler,
-    );
+    if (_src != null) {
+      return ExtendedImage.memory(
+        _src,
+        height: height,
+        width: width,
+        fit: fit,
+        mode: mode,
+        enableMemoryCache: memCache,
+        initGestureConfigHandler: initGestureConfigHandler,
+      );
+    } else {
+      return null;
+    }
   }
 
   ExtendedImageGesturePageView returnBuilder(
       BuildContext _context, List<dynamic> _itemList) {
     CarouselState _carouselState =
         Provider.of<CarouselState>(_context, listen: false);
+
     return ExtendedImageGesturePageView.builder(
       itemBuilder: (BuildContext _context, int _index) {
         Widget image;
@@ -267,7 +274,7 @@ class ExtendedImageProvider implements ExtImageProvider {
         image = Container(
           child: image,
         );
-        if (_index == _carouselState.getDotsIndex) {
+        if (_index == _carouselState.getDotsIndex(_itemList.length)) {
           return Hero(
             tag: _index.toString(),
             child: image,

@@ -17,7 +17,7 @@ class CarouselWithIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     var _extImageProvider = Provider.of<ExtImageProvider>(context);
     CarouselState _carouselState = Provider.of<CarouselState>(context);
-    if (imgList.length > 0) {
+    if (imgList != null && imgList.length > 0) {
       if (imgList[0].runtimeType == String) {
         return Stack(
           alignment: Alignment.center,
@@ -27,7 +27,7 @@ class CarouselWithIndicator extends StatelessWidget {
               bottom: 20,
               child: DotsIndicator(
                 dotsCount: imgList.length,
-                position: _carouselState.getDotsIndex,
+                position: _carouselState.getDotsIndex(imgList.length),
                 decorator: DotsDecorator(
                     activeColor: Theme.of(context).colorScheme.secondary),
               ),
@@ -44,7 +44,7 @@ class CarouselWithIndicator extends StatelessWidget {
                   bottom: 20,
                   child: DotsIndicator(
                     dotsCount: imgList.length,
-                    position: _carouselState.getDotsIndex,
+                    position: _carouselState.getDotsIndex(imgList.length),
                     decorator: DotsDecorator(
                         activeColor: Theme.of(context).colorScheme.secondary),
                   ),
@@ -60,26 +60,29 @@ class CarouselWithIndicator extends StatelessWidget {
                   return GestureConfig(
                       inPageView: true, initialScale: 1.0, cacheGesture: false);
                 })
-              : Container(
-                  child: GridView.count(
-                      crossAxisCount: 2,
-                      childAspectRatio: 0.88,
-                      padding: const EdgeInsets.all(0.0),
-                      mainAxisSpacing: 1.0,
-                      crossAxisSpacing: 1.0,
-                      children: imgList.map((asset) {
-                        return _extImageProvider.returnMemoryImage(
-                            _extImageProvider.convertedImages[asset.name],
-                            fit: BoxFit.fill,
-                            mode: ExtendedImageMode.gesture,
-                            memCache: true, initGestureConfigHandler: (state) {
-                          return GestureConfig(
-                              inPageView: true,
-                              initialScale: 1.0,
-                              cacheGesture: false);
-                        });
-                      }).toList()),
-                );
+              : _extImageProvider.convertedImages.length > 0
+                  ? Container(
+                      child: GridView.count(
+                          crossAxisCount: 2,
+                          childAspectRatio: 0.88,
+                          padding: const EdgeInsets.all(0.0),
+                          mainAxisSpacing: 1.0,
+                          crossAxisSpacing: 1.0,
+                          children: imgList.map((asset) {
+                            return _extImageProvider.returnMemoryImage(
+                                _extImageProvider.convertedImages[asset.name],
+                                fit: BoxFit.fill,
+                                mode: ExtendedImageMode.gesture,
+                                memCache: true,
+                                initGestureConfigHandler: (state) {
+                              return GestureConfig(
+                                  inPageView: true,
+                                  initialScale: 1.0,
+                                  cacheGesture: false);
+                            });
+                          }).toList()),
+                    )
+                  : Container();
     } else {
       return Center(
         child: Text('No images to display.'),

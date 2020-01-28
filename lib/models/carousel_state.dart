@@ -10,5 +10,10 @@ class CarouselState with ChangeNotifier {
     notifyListeners();
   }
 
-  double get getDotsIndex => _currentImageIndex;
+  double getDotsIndex(int length) {
+    if (_currentImageIndex > length - 1) {
+      _currentImageIndex = 0.0;
+    }
+    return _currentImageIndex;
+  }
 }

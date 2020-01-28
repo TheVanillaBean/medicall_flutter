@@ -132,7 +132,7 @@ class SymptomsScreen extends StatelessWidget {
       //Content of tabs
       body: ListView.builder(
         itemBuilder: (BuildContext context, int index) =>
-            EntryItem(data[index], _showDialog, _showMedDialog),
+            EntryItem(data[index], _showDialog, _showMedDialog, context),
         itemCount: data.length,
       ),
     );
@@ -171,13 +171,13 @@ class AnimatedBackground extends StatelessWidget {
       Track("color1").add(
           Duration(seconds: 3),
           ColorTween(
-              begin: Colors.lightBlue[100],
-              end: Colors.lightBlue.shade50.withAlpha(20))),
+              begin: Colors.cyan.withAlpha(10),
+              end: Colors.cyanAccent.withAlpha(50))),
       Track("color2").add(
           Duration(seconds: 3),
           ColorTween(
-              begin: Colors.lightBlue[50].withAlpha(20),
-              end: Colors.lightBlue.shade100))
+              begin: Colors.lightBlue.withAlpha(100),
+              end: Colors.blueAccent.withAlpha(100)))
     ]);
 
     return ControlledAnimation(
@@ -201,10 +201,12 @@ class AnimatedBackground extends StatelessWidget {
 }
 
 class EntryItem extends StatelessWidget {
-  const EntryItem(this.entry, this._showDialog, this._showMedDialog);
+  const EntryItem(
+      this.entry, this._showDialog, this._showMedDialog, this.context);
   final Entry entry;
   final _showDialog;
   final _showMedDialog;
+  final context;
 
   onBottom(Widget child) => Positioned.fill(
         child: Align(
@@ -217,12 +219,14 @@ class EntryItem extends StatelessWidget {
     return Stack(
       children: <Widget>[
         root.price.length > 0
-            ? Positioned.fill(child: Container())
+            ? Positioned.fill(child: AnimatedBackground())
             : SizedBox(),
-        // onBottom(AnimatedWave(
-        //   height: 160,
-        //   speed: 0.6,
-        // )),
+        root.price != ''
+            ? onBottom(AnimatedWave(
+                height: 100,
+                speed: 0.2,
+              ))
+            : Container(),
         Container(
             margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
             padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
@@ -290,6 +294,9 @@ class EntryItem extends StatelessWidget {
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: <Widget>[
                                     RaisedButton(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary,
                                       onPressed: () async {
                                         if (db.newConsult == null ||
                                             db.newConsult.provider == null) {
@@ -341,9 +348,10 @@ class EntryItem extends StatelessWidget {
                                         'Start',
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
+                                            color: Colors.white,
                                             letterSpacing: 0.5),
                                       ),
-                                    )
+                                    ),
                                   ],
                                 )
                               : SizedBox(),
@@ -360,9 +368,7 @@ class EntryItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-      child: _buildTiles(
-        entry,
-      ),
+      child: _buildTiles(entry),
     );
   }
 }
@@ -379,11 +385,14 @@ class AnimatedWave extends StatelessWidget {
     return LayoutBuilder(builder: (context, constraints) {
       return Container(
         height: height,
-        width: constraints.biggest.width,
+        width: MediaQuery.of(context).size.width - 20,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+        ),
         child: ControlledAnimation(
             playback: Playback.LOOP,
-            duration: Duration(milliseconds: (5000 / speed).round()),
-            tween: Tween(begin: 0.0, end: 2 * pi),
+            duration: Duration(milliseconds: (10000 / speed).round()),
+            tween: Tween(begin: 0.0, end: 10 * pi),
             builder: (context, value) {
               return CustomPaint(
                 foregroundPainter: CurvePainter(value + offset),

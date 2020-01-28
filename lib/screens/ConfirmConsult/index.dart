@@ -285,6 +285,18 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                                   .then((String token) async {
                                                 await PaymentService()
                                                     .addCard(token);
+                                                setState(() {
+                                                  _isLoading = true;
+                                                });
+                                                await PaymentService()
+                                                    .chargePayment(
+                                                        _db.newConsult.price,
+                                                        _db.newConsult
+                                                                .consultType +
+                                                            ' consult with ' +
+                                                            _db.newConsult
+                                                                .provider);
+                                                _addConsult(context);
                                                 //return await _addConsult();
                                               });
                                             } else {
@@ -300,21 +312,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                                           _db.newConsult
                                                               .provider);
                                               _addConsult(context);
-
-                                              // await PaymentService()
-                                              //     .chargePayment(
-                                              //         price,
-                                              //         _db.newConsult.consultType +
-                                              //             ' consult with ' +
-                                              //             _db.newConsult.provider);
-                                              // return await _addConsult();
                                             }
-                                            // return Navigator.pushNamed(
-                                            //     context, '/history',
-                                            //     arguments: {
-                                            //       'consult': _db.newConsult,
-                                            //       'user': _medicallUser
-                                            //     });
                                           });
                                         },
                                         child: Text(
@@ -339,10 +337,10 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                         Expanded(
                             child: FlatButton(
                           padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
-                          color: Theme.of(context)
-                              .colorScheme
-                              .primary
-                              .withAlpha(100),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(0),
+                          ),
+                          color: Theme.of(context).colorScheme.secondary,
                           onPressed: () async {
                             setState(() {
                               _hasReviewed = true;
@@ -352,7 +350,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                           child: Text(
                             'REVIEW ORDER',
                             style: TextStyle(
-                              color: Theme.of(context).colorScheme.primary,
+                              color: Theme.of(context).colorScheme.onBackground,
                               fontWeight: FontWeight.bold,
                               letterSpacing: 1.2,
                             ),
@@ -388,7 +386,8 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
   Future _addConsult(context) async {
     var ref = Firestore.instance.collection('consults').document();
 
-    var imagesList = await saveImages(_db.newConsult.media, ref.documentID);
+    var imagesList =
+        await saveImages(_extImageProvider.assetList, ref.documentID);
     Map<String, dynamic> data = <String, dynamic>{
       "screening_questions": _db.newConsult.screeningQuestions,
       //"medical_history_questions": _db.newConsult.historyQuestions,
@@ -409,10 +408,6 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
     };
     ref.setData(data).whenComplete(() {
       print("Consult Added");
-      // Future.delayed(const Duration(milliseconds: 5000), () {
-      //   return Navigator.pushReplacementNamed(context, '/history',
-      //       arguments: {'consult': _db.newConsult, 'user': _medicallUser});
-      // });
       _extImageProvider.clearImageMemory();
 
       Route route = MaterialPageRoute(
@@ -420,8 +415,6 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                 data: {'user': _medicallUser, 'consult': _db.newConsult},
               ));
       return Navigator.of(context).pushReplacement(route);
-
-      //_addProviderConsult(ref.documentID, imagesList);
     }).catchError((e) => print(e));
   }
 

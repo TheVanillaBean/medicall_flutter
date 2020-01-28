@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class PaymentService {
-  addCard(token) {
-    FirebaseAuth.instance.currentUser().then((user) {
+  Future<bool> addCard(token) async {
+    await FirebaseAuth.instance.currentUser().then((user) async {
       final DocumentReference docCardsRef =
           Firestore.instance.document("cards/" + user.uid);
       docCardsRef.snapshots().forEach((snap) {
@@ -17,7 +17,7 @@ class PaymentService {
           }).catchError((e) => print(e));
         }
       });
-      Firestore.instance
+      await Firestore.instance
           .collection('cards')
           .document(user.uid)
           .collection('tokens')
@@ -25,6 +25,7 @@ class PaymentService {
         print("token saved");
       });
     });
+    return true;
   }
 
   removeCard(id) {
