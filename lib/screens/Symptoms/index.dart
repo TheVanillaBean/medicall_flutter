@@ -1,27 +1,21 @@
-import 'dart:math';
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/Questions/questionsScreen.dart';
+import 'package:Medicall/services/animation_provider.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:simple_animations/simple_animations.dart';
-
-var screenSize;
-var db;
-MedicallUser medicallUser;
 
 class SymptomsScreen extends StatelessWidget {
   const SymptomsScreen({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    db = Provider.of<Database>(context);
-    medicallUser = Provider.of<UserProvider>(context).medicallUser;
-    screenSize = MediaQuery.of(context).size;
+    Database db = Provider.of<Database>(context);
+    MedicallUser medicallUser = Provider.of<UserProvider>(context).medicallUser;
     void _showMedDialog() {
       showDialog(
         context: context,
@@ -164,42 +158,6 @@ final List<Entry> data = <Entry>[
   ]),
 ];
 
-class AnimatedBackground extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final tween = MultiTrackTween([
-      Track("color1").add(
-          Duration(seconds: 3),
-          ColorTween(
-              begin: Colors.cyan.withAlpha(10),
-              end: Colors.cyanAccent.withAlpha(50))),
-      Track("color2").add(
-          Duration(seconds: 3),
-          ColorTween(
-              begin: Colors.lightBlue.withAlpha(100),
-              end: Colors.blueAccent.withAlpha(100)))
-    ]);
-
-    return ControlledAnimation(
-      playback: Playback.MIRROR,
-      tween: tween,
-      duration: tween.duration,
-      builder: (context, animation) {
-        return Container(
-          margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
-          padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(10)),
-              gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [animation["color1"], animation["color2"]])),
-        );
-      },
-    );
-  }
-}
-
 class EntryItem extends StatelessWidget {
   const EntryItem(
       this.entry, this._showDialog, this._showMedDialog, this.context);
@@ -216,17 +174,30 @@ class EntryItem extends StatelessWidget {
       );
 
   Widget _buildTiles(Entry root) {
+    MyAnimationProvider _animationProvider =
+        Provider.of<MyAnimationProvider>(context);
+    Database db = Provider.of<Database>(context);
     return Stack(
       children: <Widget>[
-        root.price.length > 0
-            ? Positioned.fill(child: AnimatedBackground())
-            : SizedBox(),
-        root.price != ''
-            ? onBottom(AnimatedWave(
-                height: 100,
-                speed: 0.2,
-              ))
-            : Container(),
+        root.price != '' && root.title == 'Hairloss'
+            ? Positioned.fill(
+                child: _animationProvider.returnAnimation(
+                    tween: _animationProvider.returnMultiTrackTween([
+                Colors.blueAccent.withAlpha(100),
+                Colors.cyanAccent.withAlpha(50),
+                Colors.cyanAccent.withAlpha(50),
+                Colors.blueAccent.withAlpha(100)
+              ])))
+            : root.price != ''
+                ? Positioned.fill(
+                    child: _animationProvider.returnAnimation(
+                        tween: _animationProvider.returnMultiTrackTween([
+                    Colors.orangeAccent.withAlpha(100),
+                    Colors.purpleAccent.withAlpha(50),
+                    Colors.purpleAccent.withAlpha(50),
+                    Colors.orangeAccent.withAlpha(100)
+                  ])))
+                : Container(),
         Container(
             margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
             padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
@@ -370,68 +341,5 @@ class EntryItem extends StatelessWidget {
       padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
       child: _buildTiles(entry),
     );
-  }
-}
-
-class AnimatedWave extends StatelessWidget {
-  final double height;
-  final double speed;
-  final double offset;
-
-  AnimatedWave({this.height, this.speed, this.offset = 0.0});
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (context, constraints) {
-      return Container(
-        height: height,
-        width: MediaQuery.of(context).size.width - 20,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-        ),
-        child: ControlledAnimation(
-            playback: Playback.LOOP,
-            duration: Duration(milliseconds: (10000 / speed).round()),
-            tween: Tween(begin: 0.0, end: 10 * pi),
-            builder: (context, value) {
-              return CustomPaint(
-                foregroundPainter: CurvePainter(value + offset),
-              );
-            }),
-      );
-    });
-  }
-}
-
-class CurvePainter extends CustomPainter {
-  final double value;
-
-  CurvePainter(this.value);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final white = Paint()..color = Colors.white.withAlpha(60);
-    final path = Path();
-
-    final y1 = sin(value);
-    final y2 = sin(value + pi / 2);
-    final y3 = sin(value + pi);
-
-    final startPointY = size.height * (0.5 + 0.4 * y1);
-    final controlPointY = size.height * (0.5 + 0.4 * y2);
-    final endPointY = size.height * (0.5 + 0.4 * y3);
-
-    path.moveTo(size.width * 0, startPointY);
-    path.quadraticBezierTo(
-        size.width * 0.5, controlPointY, size.width, endPointY);
-    path.lineTo(size.width, size.height);
-    path.lineTo(0, size.height);
-    path.close();
-    canvas.drawPath(path, white);
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    return true;
   }
 }

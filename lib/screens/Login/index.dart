@@ -4,9 +4,9 @@ import 'package:Medicall/common_widgets/social_sign_in_button.dart';
 import 'package:Medicall/screens/Login/sign_in_state_model.dart';
 import 'package:Medicall/screens/Registration/registrationType.dart';
 import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/flare_provider.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:Medicall/util/firebase_notification_handler.dart';
-import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -117,11 +117,12 @@ class _LoginScreenState extends State<LoginPage> {
   }
 
   List<Widget> _buildChildren(BuildContext context) {
+    MyFlareProvider _flareProvider = Provider.of<MyFlareProvider>(context);
     return [
       Container(
         margin: EdgeInsets.only(top: 30),
         height: 100,
-        child: FlareActor(
+        child: _flareProvider.returnFlareActor(
           'assets/headerlogo.flr',
           fit: BoxFit.fitWidth,
           snapToEnd: true,

@@ -14,14 +14,15 @@ import 'package:Medicall/screens/Registration/index.dart';
 import 'package:Medicall/screens/Registration/registrationType.dart';
 import 'package:Medicall/screens/SelectProvider/index.dart';
 import 'package:Medicall/screens/Terms/index.dart';
+import 'package:Medicall/services/animation_provider.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/carousel_state.dart';
 import 'package:Medicall/services/extimage_provider.dart';
+import 'package:Medicall/services/flare_provider.dart';
 import 'package:Medicall/services/history_detail_state.dart';
 import 'package:Medicall/theme.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
-import 'package:flare_splash_screen/flare_splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_crashlytics/flutter_crashlytics.dart';
 import 'package:provider/provider.dart';
@@ -72,6 +73,12 @@ class MedicallApp extends StatelessWidget {
         Provider<ExtImageProvider>(
           create: (_) => ExtendedImageProvider(),
         ),
+        Provider<MyAnimationProvider>(
+          create: (_) => MyAnimationProvider(),
+        ),
+        Provider<MyFlareProvider>(
+          create: (_) => MyFlareProvider(),
+        ),
         ChangeNotifierProvider<CarouselState>(
           create: (_) => CarouselState(),
         ),
@@ -86,18 +93,17 @@ class MedicallApp extends StatelessWidget {
   AuthWidgetBuilder _buildApp() {
     return AuthWidgetBuilder(
       builder: (context, userSnapshot) {
-        //
+        MyFlareProvider _flareProvider = Provider.of<MyFlareProvider>(context);
         return MaterialApp(
           title: 'Medicall',
           debugShowCheckedModeBanner: false,
           theme: myTheme,
-          home: SplashScreen.navigate(
-            name: 'assets/splash.flr',
-            next: (ctx) => LandingPage(userSnapshot: userSnapshot),
-            isLoading: userSnapshot.connectionState != ConnectionState.active,
-            backgroundColor: Colors.white,
-            startAnimation: 'Untitled',
-          ),
+          home: _flareProvider.returnFlareSplash(
+              name: 'assets/splash.flr',
+              next: (ctx) => LandingPage(userSnapshot: userSnapshot),
+              isLoading: userSnapshot.connectionState != ConnectionState.active,
+              background: Colors.white,
+              startAnimation: 'Untitled'),
           onGenerateRoute: (RouteSettings settings) {
             switch (settings.name) {
               case '/login':

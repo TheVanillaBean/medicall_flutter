@@ -1,5 +1,6 @@
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/services/database.dart';
+import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:Medicall/util/introduction_screen/introduction_screen.dart';
@@ -29,7 +30,8 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
   int _currentPage = 0;
   PageController _pageController = PageController(initialPage: 0);
   var _currentQuestions = 'symptom';
-  var _db;
+  Database _db;
+  ExtImageProvider _extImageProvider;
   List<dynamic> _combinedList = [];
 
   @override
@@ -145,6 +147,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
   Widget build(BuildContext context) {
     medicallUser = Provider.of<UserProvider>(context).medicallUser;
     _db = Provider.of<Database>(context);
+    _extImageProvider = Provider.of<ExtImageProvider>(context);
     const bodyStyle = TextStyle(fontSize: 19.0);
     const pageDecoration = const PageDecoration(
       titleTextStyle: TextStyle(fontSize: 28.0, fontWeight: FontWeight.w700),
@@ -196,8 +199,16 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
       appBar: AppBar(
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.close),
-          onPressed: () => Navigator.of(context).pop(false),
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            if (_currentPage == 0) {
+              _extImageProvider.clearImageMemory();
+              Navigator.of(context).pop(false);
+            } else {
+              _pageController.previousPage(
+                  curve: Curves.ease, duration: Duration(seconds: 1));
+            }
+          },
         ),
         title: Text(_currentQuestions == 'symptom'
             ? _db.newConsult.consultType == 'Lesion'
