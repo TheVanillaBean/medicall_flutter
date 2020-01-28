@@ -20,6 +20,30 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
   MedicallUser medicallUser;
   DetailedHistoryState detailedHistoryState;
 
+  @override
+  Widget build(BuildContext context) {
+    // The app's "state".
+    db = Provider.of<Database>(context);
+    medicallUser = Provider.of<UserProvider>(context).medicallUser;
+    detailedHistoryState = Provider.of<DetailedHistoryState>(context);
+    detailedHistoryState.setControllerTabs(this);
+    return FutureBuilder<void>(
+      future: db.getConsultDetail(), // a Future<String> or null
+      builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (db.consultSnapshot.data['provider_id'] == medicallUser.uid) {
+            if (db.consultSnapshot.data['state'] == 'done') {
+              detailedHistoryState.setIsDone(true);
+            } else {
+              detailedHistoryState.setIsDone(false);
+            }
+          }
+        }
+        return returnBody();
+      },
+    );
+  }
+
   Widget returnBody() {
     detailedHistoryState.setChoices();
     return Scaffold(
@@ -176,30 +200,6 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                   controller: detailedHistoryState.getTabController,
                 )
           : Container(),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // The app's "state".
-    db = Provider.of<Database>(context);
-    medicallUser = Provider.of<UserProvider>(context).medicallUser;
-    detailedHistoryState = Provider.of<DetailedHistoryState>(context);
-    detailedHistoryState.setControllerTabs(this);
-    return FutureBuilder<void>(
-      future: db.getConsultDetail(), // a Future<String> or null
-      builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          if (db.consultSnapshot.data['provider_id'] == medicallUser.uid) {
-            if (db.consultSnapshot.data['state'] == 'done') {
-              detailedHistoryState.setIsDone(true);
-            } else {
-              detailedHistoryState.setIsDone(false);
-            }
-          }
-        }
-        return returnBody();
-      },
     );
   }
 }

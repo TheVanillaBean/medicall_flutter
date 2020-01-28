@@ -25,7 +25,6 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
   var _db;
   MedicallUser _medicallUser;
   ExtImageProvider _extImageProvider;
-
   TabController _confirmTabCntrl;
   @override
   void initState() {
@@ -46,6 +45,21 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
     _db = Provider.of<Database>(context);
     _medicallUser = Provider.of<UserProvider>(context).medicallUser;
     _extImageProvider = Provider.of<ExtImageProvider>(context);
+    _db.newConsult.media = [];
+    var _mediaList = [];
+    if (_db.newConsult.uploadQuestions.length > 0) {
+      for (var i = 0; i < _db.newConsult.uploadQuestions.length; i++) {
+        if (_db.newConsult.uploadQuestions[i].containsKey('image') &&
+            _db.newConsult.uploadQuestions[i]['visible']) {
+          for (var x = 0;
+              x < _db.newConsult.uploadQuestions[i]['image'].length;
+              x++) {
+            _mediaList.add(_db.newConsult.uploadQuestions[i]['image'][x]);
+          }
+        }
+      }
+      _db.newConsult.media = _mediaList;
+    }
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -358,8 +372,11 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
       body: TabBarView(
         // Add tabs as widgets
         children: <Widget>[
-          _buildTab(_db.newConsult.screeningQuestions),
-          _buildTab(_db.newConsult.uploadQuestions),
+          _buildQuestions(),
+          CarouselWithIndicator(
+            imgList: _db.newConsult.media,
+            from: 'consultReview',
+          ),
           //_buildTab(_db.newConsult.historyQuestions),
         ],
         // set the _confirmTabCntrl
@@ -436,70 +453,33 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
     return allMediaList;
   }
 
-  _buildTab(questions) {
-    List questionsList = [];
-    if (questions.length > 0) {
-      for (var i = 0; i < questions.length; i++) {
-        if (questions[i].containsKey('image') &&
-            questions[i]['visible'] &&
-            questions[i]['image'].length > 1) {
-          for (var x = 0; x < questions[i]['image'].length; x++) {
-            questionsList.add(questions[i]['image'][x]);
-          }
-        }
-        if (questions[i].containsKey('image') &&
-            questions[i]['visible'] &&
-            questions[i]['image'].length == 1) {
-          for (var x = 0; x < questions[i]['image'].length; x++) {
-            questionsList.add(questions[i]['image'][x]);
-          }
-        }
-      }
-      _db.newConsult.media = questionsList;
-
-      return Scaffold(
-        body: Container(
-          child: questions[0].containsKey('image')
-              ? CarouselWithIndicator(
-                  imgList: questionsList,
-                  from: 'consultReview',
-                )
-              : ListView.builder(
-                  itemCount: questions.length,
-                  itemBuilder: (context, i) {
-                    return questions[i]['visible']
-                        ? ListTile(
-                            title: Text(
-                              questions[i]['question'],
-                              style: TextStyle(fontSize: 14.0),
-                            ),
-                            subtitle: Text(
-                              questions[i]['answer']
-                                  .toString()
-                                  .replaceAll(']', '')
-                                  .replaceAll('[', '')
-                                  .replaceAll('null', '')
-                                  .replaceFirst(', ', ''),
-                              style: TextStyle(
-                                  letterSpacing: 1.0,
-                                  height: 1.2,
-                                  fontWeight: FontWeight.bold,
-                                  color:
-                                      Theme.of(context).colorScheme.secondary),
-                            ),
-                          )
-                        : SizedBox();
-                  }),
-        ),
-      );
-    } else {
-      return Center(
-        child: Icon(
-          Icons.broken_image,
-          size: 140,
-          color: Theme.of(context).colorScheme.secondary.withAlpha(90),
-        ),
-      );
-    }
+  _buildQuestions() {
+    return Container(
+      child: ListView.builder(
+          itemCount: _db.newConsult.screeningQuestions.length,
+          itemBuilder: (context, i) {
+            return _db.newConsult.screeningQuestions[i]['visible']
+                ? ListTile(
+                    title: Text(
+                      _db.newConsult.screeningQuestions[i]['question'],
+                      style: TextStyle(fontSize: 14.0),
+                    ),
+                    subtitle: Text(
+                      _db.newConsult.screeningQuestions[i]['answer']
+                          .toString()
+                          .replaceAll(']', '')
+                          .replaceAll('[', '')
+                          .replaceAll('null', '')
+                          .replaceFirst(', ', ''),
+                      style: TextStyle(
+                          letterSpacing: 1.0,
+                          height: 1.2,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.secondary),
+                    ),
+                  )
+                : SizedBox();
+          }),
+    );
   }
 }

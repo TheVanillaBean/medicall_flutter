@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 abstract class ExtImageProvider {
   PageController pageController;
   List<Uint8List> listaU8L;
-  int currentPage;
+  List<Asset> currentAssetList;
   List<Asset> assetList;
   Map convertedImages;
   CupertinoOptions pickImagesCupertinoOptions(
@@ -35,7 +35,7 @@ abstract class ExtImageProvider {
       String backButtonDrawable,
       String okButtonDrawable,
       bool autoCloseOnSelectionLimit});
-  convertImages(BuildContext context);
+  Future<bool> convertImages(BuildContext context);
   clearImageMemory();
   Future<List<Asset>> pickImages(
       List<Asset> _images,
@@ -71,7 +71,7 @@ class ExtendedImageProvider implements ExtImageProvider {
   @override
   PageController pageController = PageController();
   @override
-  int currentPage = 0;
+  List<Asset> currentAssetList = [];
   @override
   List<Asset> assetList = [];
   @override
@@ -159,19 +159,21 @@ class ExtendedImageProvider implements ExtImageProvider {
     convertedImages = {};
   }
 
-  convertImages(BuildContext context) async {
+  Future<bool> convertImages(BuildContext context) async {
     for (var i = 0; i < assetList.length; i++) {
       if (!convertedImages.containsKey(assetList[i].name)) {
-        ByteData bd = await assetList[i].getThumbByteData(
-            MediaQuery.of(context).size.width.toInt(),
-            MediaQuery.of(context).size.height.toInt(),
-            quality: 70); // width and height
-        Uint8List a2 = bd.buffer.asUint8List();
-        convertedImages[assetList[i].name] = a2;
-        listaU8L.add(a2);
+        await assetList[i]
+            .getThumbByteData(MediaQuery.of(context).size.width.toInt(),
+                MediaQuery.of(context).size.height.toInt(),
+                quality: 70)
+            .then((bd) {
+          Uint8List a2 = bd.buffer.asUint8List();
+          convertedImages[assetList[i].name] = a2;
+          listaU8L.add(a2);
+        });
       }
     }
-    assetList = [];
+    return true;
   }
 
   Future<List<Asset>> pickImages(
@@ -180,7 +182,7 @@ class ExtendedImageProvider implements ExtImageProvider {
       bool _enableCamera,
       CupertinoOptions _cupertinoOptions,
       MaterialOptions _materialOptions,
-      BuildContext context) {
+      BuildContext context) async {
     return MultiImagePicker.pickImages(
         selectedAssets: _images,
         maxImages: _maxImages,
@@ -237,16 +239,29 @@ class ExtendedImageProvider implements ExtImageProvider {
             },
           );
         } else {
-          image = ExtendedImage.memory(
-            listaU8L[_index],
-            fit: BoxFit.contain,
-            mode: ExtendedImageMode.gesture,
-            enableMemoryCache: true,
-            initGestureConfigHandler: (state) {
-              return GestureConfig(
-                  inPageView: true, initialScale: 1.0, cacheGesture: false);
-            },
-          );
+          if (convertedImages.containsKey(_itemList[_index].name)) {
+            image = ExtendedImage.memory(
+              convertedImages[_itemList[_index].name],
+              fit: BoxFit.contain,
+              mode: ExtendedImageMode.gesture,
+              enableMemoryCache: true,
+              initGestureConfigHandler: (state) {
+                return GestureConfig(
+                    inPageView: true, initialScale: 1.0, cacheGesture: false);
+              },
+            );
+          } else {
+            image = ExtendedImage.memory(
+              listaU8L[_index],
+              fit: BoxFit.contain,
+              mode: ExtendedImageMode.gesture,
+              enableMemoryCache: true,
+              initGestureConfigHandler: (state) {
+                return GestureConfig(
+                    inPageView: true, initialScale: 1.0, cacheGesture: false);
+              },
+            );
+          }
         }
 
         image = Container(
