@@ -1,16 +1,14 @@
 import 'package:Medicall/common_widgets/carousel_with_indicator.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/ConfirmConsult/routeUserOrder.dart';
-import 'package:Medicall/secrets.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
+import 'package:Medicall/services/stripe_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
-import 'package:Medicall/util/stripe_payment_handler.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:stripe_payment/stripe_payment.dart';
 
 class ConfirmConsultScreen extends StatefulWidget {
   const ConfirmConsultScreen({Key key}) : super(key: key);
@@ -25,12 +23,12 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
   var _db;
   MedicallUser _medicallUser;
   ExtImageProvider _extImageProvider;
+  MyStripeProvider _stripeProvider;
   TabController _confirmTabCntrl;
   @override
   void initState() {
     super.initState();
     _confirmTabCntrl = TabController(length: 2, vsync: this);
-    StripeSource.setPublishableKey(stripeKey);
   }
 
   @override
@@ -45,6 +43,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
     _db = Provider.of<Database>(context);
     _medicallUser = Provider.of<UserProvider>(context).medicallUser;
     _extImageProvider = Provider.of<ExtImageProvider>(context);
+    _stripeProvider = Provider.of<MyStripeProvider>(context);
     _db.newConsult.media = [];
     var _mediaList = [];
     if (_db.newConsult.uploadQuestions.length > 0) {
@@ -281,14 +280,15 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                               .getDocuments()
                                               .then((snap) async {
                                             if (snap.documents.length == 0) {
-                                              await StripeSource.addSource()
+                                              await _stripeProvider
+                                                  .addSource()
                                                   .then((String token) async {
-                                                await PaymentService()
+                                                await _stripeProvider
                                                     .addCard(token);
                                                 setState(() {
                                                   _isLoading = true;
                                                 });
-                                                await PaymentService()
+                                                await _stripeProvider
                                                     .chargePayment(
                                                         _db.newConsult.price,
                                                         _db.newConsult
@@ -297,13 +297,12 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                                             _db.newConsult
                                                                 .provider);
                                                 _addConsult(context);
-                                                //return await _addConsult();
                                               });
                                             } else {
                                               setState(() {
                                                 _isLoading = true;
                                               });
-                                              await PaymentService()
+                                              await _stripeProvider
                                                   .chargePayment(
                                                       _db.newConsult.price,
                                                       _db.newConsult

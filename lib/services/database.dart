@@ -10,11 +10,13 @@ abstract class Database {
   Future<void> getConsultDetail();
   Future<void> getPatientDetail(MedicallUser medicallUser);
   Future<void> getUserHistory(MedicallUser medicallUser);
+  Future<void> setPrescriptionPayment(state, shipTo, shippingAddress);
   addUserMedicalHistory(MedicallUser medicallUser);
   getUserMedicalHistory(MedicallUser medicallUser);
   getPatientMedicalHistory(MedicallUser medicallUser);
   getConsultQuestions(MedicallUser medicallUser);
   updateConsultStatus(Choice choice, MedicallUser medicallUser);
+  Stream<QuerySnapshot> getUserCardSources();
 
   DocumentSnapshot consultSnapshot;
   DocumentReference consultRef;
@@ -79,6 +81,26 @@ class FirestoreDatabase implements Database {
         }
       }).catchError((e) => print(e));
     }
+  }
+
+  Stream<QuerySnapshot> getUserCardSources() {
+    return Firestore.instance
+        .collection('cards')
+        .document(medicallUser.uid)
+        .collection('sources')
+        .snapshots();
+  }
+
+  Future<void> setPrescriptionPayment(state, shipTo, shippingAddress) {
+    return Firestore.instance
+        .collection("consults")
+        .document(currConsultId)
+        .updateData({
+      'state': 'prescription paid',
+      'pay_date': DateTime.now(),
+      'shipping_option': shipTo,
+      'shipping_address': shippingAddress,
+    });
   }
 
   updateConsultStatus(Choice choice, MedicallUser medicallUser) {

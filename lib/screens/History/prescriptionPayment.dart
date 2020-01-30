@@ -1,14 +1,13 @@
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/services/database.dart';
+import 'package:Medicall/services/stripe_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
-import 'package:Medicall/util/stripe_payment_handler.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-import 'package:stripe_payment/stripe_payment.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:Medicall/secrets.dart' as secrets;
 
@@ -44,8 +43,9 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
 
   @override
   Widget build(BuildContext context) {
-    var db = Provider.of<Database>(context);
-    medicallUser = Provider.of<UserProvider>(context).medicallUser;
+    Database db = Provider.of<Database>(context);
+    MedicallUser medicallUser = Provider.of<UserProvider>(context).medicallUser;
+    MyStripeProvider _stripeProvider = Provider.of<MyStripeProvider>(context);
     var datePaid = db.consultSnapshot.data['pay_date'];
 
     onChangedCheckBox = (val) async {
@@ -309,22 +309,18 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
                                   onPressed: () async {
                                     if (db.hasPayment) {
                                       isLoading = true;
-                                      await PaymentService().chargePayment(
+                                      await _stripeProvider.chargePayment(
                                           db.consultSnapshot
                                               .data['consult_price'],
                                           db.consultSnapshot.data['type'] +
                                               ' consult with ' +
                                               db.consultSnapshot
                                                   .data['provider']);
-                                      await Firestore.instance
-                                          .collection("consults")
-                                          .document(db.currConsultId)
-                                          .updateData({
-                                        'state': 'prescription paid',
-                                        'pay_date': DateTime.now(),
-                                        'shipping_option': shipTo,
-                                        'shipping_address': shippingAddress,
-                                      });
+                                      await db.setPrescriptionPayment(
+                                          'prescription paid',
+                                          shipTo,
+                                          shippingAddress);
+
                                       setState(() {
                                         db.consultSnapshot.data['state'] =
                                             'prescription paid';
@@ -373,9 +369,10 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
                                       isLoading = false;
                                     } else {
                                       isLoading = true;
-                                      await StripeSource.addSource()
+                                      await _stripeProvider
+                                          .addSource()
                                           .then((String token) async {
-                                        await PaymentService().addCard(token);
+                                        _stripeProvider.addCard(token);
                                         isLoading = false;
                                       });
                                     }

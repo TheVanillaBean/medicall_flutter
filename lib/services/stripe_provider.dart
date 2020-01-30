@@ -1,7 +1,24 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:stripe_payment/stripe_payment.dart';
 
-class PaymentService {
+abstract class StripeProvider {
+  void setPublishableKey(stripeKey);
+  Future<String> addSource();
+  Future<bool> addCard(context);
+  chargePayment(price, description);
+  removeCard(id);
+}
+
+class MyStripeProvider implements StripeProvider {
+  void setPublishableKey(stripeKey) {
+    return StripeSource.setPublishableKey(stripeKey);
+  }
+
+  Future<String> addSource() async {
+    return StripeSource.addSource();
+  }
+
   Future<bool> addCard(token) async {
     await FirebaseAuth.instance.currentUser().then((user) async {
       final DocumentReference docCardsRef =

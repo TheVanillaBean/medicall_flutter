@@ -2,6 +2,8 @@ import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/History/index.dart';
 import 'package:Medicall/screens/Login/index.dart';
 import 'package:Medicall/screens/PhoneAuth/index.dart';
+import 'package:Medicall/secrets.dart';
+import 'package:Medicall/services/stripe_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -23,13 +25,17 @@ class LandingPage extends StatelessWidget {
         try {
           final userProvider =
               Provider.of<UserProvider>(context, listen: false);
-
+          MyStripeProvider _stripeProvider =
+              Provider.of<MyStripeProvider>(context);
           print("Active: ${userSnapshot.connectionState} ");
 
           if (userProvider.medicallUser == null) {
             print('In-Progress');
           } else {
             print("Active: ${userProvider.medicallUser.uid}");
+            //setting stripe key once user is logged in
+            _stripeProvider.setPublishableKey(stripeKey);
+            print("Active: stripe key set");
           }
 
           if (userProvider.medicallUser.phoneNumber == null) {
