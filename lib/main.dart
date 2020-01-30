@@ -20,6 +20,7 @@ import 'package:Medicall/services/carousel_state.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/flare_provider.dart';
 import 'package:Medicall/services/history_detail_state.dart';
+import 'package:Medicall/services/medical_history_state.dart';
 import 'package:Medicall/services/stripe_provider.dart';
 import 'package:Medicall/theme.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -85,6 +86,9 @@ class MedicallApp extends StatelessWidget {
         ),
         ChangeNotifierProvider<CarouselState>(
           create: (_) => CarouselState(),
+        ),
+        ChangeNotifierProvider<MedicalHistoryState>(
+          create: (_) => MedicalHistoryState(),
         ),
         ChangeNotifierProvider<DetailedHistoryState>(
           create: (_) => DetailedHistoryState(),

@@ -4,7 +4,7 @@ import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/Questions/questionsScreen.dart';
 import 'package:Medicall/services/animation_provider.dart';
 import 'package:Medicall/services/database.dart';
-import 'package:Medicall/services/user_provider.dart';
+import 'package:Medicall/services/medical_history_state.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -13,50 +13,6 @@ class SymptomsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Database db = Provider.of<Database>(context);
-    MedicallUser medicallUser = Provider.of<UserProvider>(context).medicallUser;
-    void _showMedDialog() {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          // return object of type Dialog
-          return AlertDialog(
-            title: Text("Medical History"),
-            content: Text(
-                "Has there been any changes in your medical history since the last time you saw a doctor?"),
-            actions: <Widget>[
-              // usually buttons at the bottom of the dialog
-              FlatButton(
-                color: Theme.of(context).primaryColor,
-                child: Text("Yes"),
-                onPressed: () async {
-                  medicallUser.hasMedicalHistory = false;
-                  var historyQuestions = await db.getMedicalHistoryQuestions();
-                  db.newConsult.historyQuestions =
-                      historyQuestions.data['medical_history_questions'];
-                  Navigator.of(context).pop();
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => QuestionsScreen()),
-                  );
-                },
-              ),
-              FlatButton(
-                color: Theme.of(context).colorScheme.secondary,
-                child: Text("No"),
-                onPressed: () {
-                  medicallUser.hasMedicalHistory = true;
-                  Navigator.of(context).pop();
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => QuestionsScreen()),
-                  );
-                },
-              ),
-            ],
-          );
-        },
-      );
-    }
-
     void _showDialog() {
       showDialog(
         context: context,
@@ -123,7 +79,7 @@ class SymptomsScreen extends StatelessWidget {
       //Content of tabs
       body: ListView.builder(
         itemBuilder: (BuildContext context, int index) =>
-            EntryItem(data[index], _showDialog, _showMedDialog, context),
+            EntryItem(data[index], _showDialog, context),
         itemCount: data.length,
       ),
     );
@@ -156,11 +112,9 @@ final List<Entry> data = <Entry>[
 ];
 
 class EntryItem extends StatelessWidget {
-  const EntryItem(
-      this.entry, this._showDialog, this._showMedDialog, this.context);
+  const EntryItem(this.entry, this._showDialog, this.context);
   final Entry entry;
   final _showDialog;
-  final _showMedDialog;
   final context;
 
   onBottom(Widget child) => Positioned.fill(
@@ -174,6 +128,9 @@ class EntryItem extends StatelessWidget {
     MyAnimationProvider _animationProvider =
         Provider.of<MyAnimationProvider>(context);
     Database db = Provider.of<Database>(context);
+    MedicalHistoryState _newMedicalHistory =
+        Provider.of<MedicalHistoryState>(context);
+    //_newMedicalHistory.setnewMedicalHistory(false);
     return Stack(
       children: <Widget>[
         root.price != '' && root.title == 'Hairloss'
@@ -261,6 +218,39 @@ class EntryItem extends StatelessWidget {
                               ? Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: <Widget>[
+                                    Container(
+                                        margin:
+                                            EdgeInsets.fromLTRB(0, 0, 60, 0),
+                                        width: 160,
+                                        decoration: BoxDecoration(
+                                          border: Border(
+                                              top: BorderSide(
+                                                  color: Colors.grey.withAlpha(100))),
+                                        ),
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 10, 0, 0),
+                                        child: Column(
+                                          children: <Widget>[
+                                            Text(
+                                              'Change in medical history?',
+                                              style: TextStyle(fontSize: 12),
+                                            ),
+                                            Switch(
+                                              value: _newMedicalHistory
+                                                  .getnewMedicalHistory(),
+                                              onChanged: (value) {
+                                                _newMedicalHistory =
+                                                    _newMedicalHistory
+                                                        .setnewMedicalHistory(
+                                                            value);
+                                              },
+                                              activeTrackColor: Colors.white,
+                                              activeColor: Theme.of(context)
+                                                  .colorScheme
+                                                  .secondary,
+                                            ),
+                                          ],
+                                        )),
                                     RaisedButton(
                                       color: Theme.of(context)
                                           .colorScheme
@@ -288,7 +278,9 @@ class EntryItem extends StatelessWidget {
                                             db.userMedicalRecord.data != null) {
                                           medicallUser.hasMedicalHistory = true;
                                         }
-                                        if (!medicallUser.hasMedicalHistory) {
+                                        if (!medicallUser.hasMedicalHistory ||
+                                            _newMedicalHistory
+                                                .getnewMedicalHistory()) {
                                           var medicalHistoryQuestions = await db
                                               .getMedicalHistoryQuestions();
                                           db.newConsult.historyQuestions =
@@ -306,7 +298,27 @@ class EntryItem extends StatelessWidget {
                                         if (!medicallUser.hasMedicalHistory) {
                                           _showDialog();
                                         } else {
-                                          _showMedDialog();
+                                          if (_newMedicalHistory
+                                              .getnewMedicalHistory()) {
+                                            medicallUser.hasMedicalHistory =
+                                                false;
+                                            _newMedicalHistory
+                                                .setnewMedicalHistory(false);
+                                            Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                  builder: (_) =>
+                                                      QuestionsScreen()),
+                                            );
+                                          } else {
+                                            _newMedicalHistory
+                                                .setnewMedicalHistory(false);
+                                            Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                  builder: (_) =>
+                                                      QuestionsScreen()),
+                                            );
+                                          }
+                                          //_showMedDialog();
                                         }
                                       },
                                       child: Text(
