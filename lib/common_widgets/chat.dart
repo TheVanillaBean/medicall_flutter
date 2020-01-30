@@ -108,13 +108,6 @@ class ChatScreenState extends State<ChatScreen> {
     } else {
       groupChatId = '$peerId-$id';
     }
-
-    // Firestore.instance
-    //     .collection('users')
-    //     .document(id)
-    //     .updateData({'chattingWith': peerId});
-
-    //setState(() {});
   }
 
   // Future getImage() async {
@@ -167,7 +160,7 @@ class ChatScreenState extends State<ChatScreen> {
   Widget buildItem(int index, Map document) {
     medicallUser = Provider.of<UserProvider>(context).medicallUser;
     var timestamp =
-        DateTime.fromMillisecondsSinceEpoch(document['date'] * 1000);
+        DateTime.fromMillisecondsSinceEpoch(document['date'].millisecondsSinceEpoch);
     if (document['user_id'] == medicallUser.uid) {
       // Right (my message)
       return Container(
@@ -288,10 +281,6 @@ class ChatScreenState extends State<ChatScreen> {
         isShowSticker = false;
       });
     } else {
-      // Firestore.instance
-      //     .collection('users')
-      //     .document(id)
-      //     .updateData({'chattingWith': null});
       Navigator.of(context).pop(context);
     }
 

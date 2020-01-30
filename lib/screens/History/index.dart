@@ -94,7 +94,7 @@ class HistoryScreen extends StatelessWidget {
                   _historyList = [];
                   for (var i = 0; i < db.userHistory.length; i++) {
                     DateTime timestamp = DateTime.fromMillisecondsSinceEpoch(
-                        db.userHistory[i].data['date'] * 1000);
+                        db.userHistory[i].data['date'].millisecondsSinceEpoch);
                     _historyList.add(FlatButton(
                         padding: EdgeInsets.all(0),
                         splashColor: Theme.of(context)

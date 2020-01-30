@@ -331,7 +331,7 @@ class CustomSearchDelegate extends SearchDelegate {
                           query.toLowerCase(),
                         )) {
                       DateTime timestamp = DateTime.fromMillisecondsSinceEpoch(
-                          userDocuments[i].data['date'] * 1000);
+                          userDocuments[i].data['date'].millisecondsSinceEpoch);
                       historyList.add(FlatButton(
                           padding: EdgeInsets.all(0),
                           splashColor: Theme.of(context)
