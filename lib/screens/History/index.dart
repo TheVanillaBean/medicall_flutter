@@ -7,7 +7,6 @@ import 'package:Medicall/presentation/medicall_icons_icons.dart' as CustomIcons;
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:intl/intl.dart';
@@ -94,7 +93,8 @@ class HistoryScreen extends StatelessWidget {
                 else if (db.userHistory.length > 0) {
                   _historyList = [];
                   for (var i = 0; i < db.userHistory.length; i++) {
-                    Timestamp timestamp = db.userHistory[i].data['date'];
+                    DateTime timestamp = DateTime.fromMillisecondsSinceEpoch(
+                        db.userHistory[i].data['date'] * 1000);
                     _historyList.add(FlatButton(
                         padding: EdgeInsets.all(0),
                         splashColor: Theme.of(context)
@@ -133,7 +133,7 @@ class HistoryScreen extends StatelessWidget {
                                   color: Theme.of(context).primaryColor),
                             ),
                             subtitle: Text(DateFormat('dd MMM h:mm a')
-                                    .format(timestamp.toDate())
+                                    .format(timestamp)
                                     .toString() +
                                 '\n' +
                                 db.userHistory[i].data['type'].toString()),

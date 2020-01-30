@@ -2,7 +2,6 @@ import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/util/app_util.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:google_maps_webservice/places.dart';
@@ -31,7 +30,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
   var providerTitles = '';
   LatLng bounds = LatLng(41.850033, -87.6500523);
   String errorMessage;
-  var db;
+  Database db;
 
   @override
   void initState() {
@@ -41,11 +40,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
 
   Future getAddresses() async {
     addresses = [];
-    return Firestore.instance
-        .collection('users')
-        .where("type", isEqualTo: "provider")
-        .snapshots()
-        .forEach((snap) {
+    return db.getAllProviders().forEach((snap) {
       snap.documents.forEach((doc) =>
           medicallUser.displayName != doc.data["name"]
               ? addresses.add(doc.data["address"])
@@ -119,8 +114,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
                 flex: 1,
                 child: SingleChildScrollView(
                   child: StreamBuilder(
-                      stream:
-                          Firestore.instance.collection('users').snapshots(),
+                      stream: db.getAllUsers(),
                       builder: (context, snapshot) {
                         if (!snapshot.hasData) {
                           return new Text("Loading");

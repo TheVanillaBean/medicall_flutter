@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/database.dart';
 import 'package:Medicall/util/validators.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -145,52 +145,14 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
       MedicallUser user =
           await auth.signInWithPhoneNumber(this.verificationId, this.smsCode);
       await auth.saveRegistrationImages();
-      await _add(user, context);
+      Database _db = Provider.of<Database>(context);
+      await _db.addUser(user, context);
       updateRefreshing(false, mounted);
       Navigator.of(context).pushReplacementNamed('/history');
       return user;
     } catch (e) {
       updateRefreshing(false, mounted);
       rethrow;
-    }
-  }
-
-  Future<Null> _add(user, context) async {
-    var auth = Provider.of<AuthBase>(context);
-    medicallUser = auth.medicallUser;
-    final DocumentReference documentReference =
-        Firestore.instance.document("users/" + user.uid);
-    medicallUser.phoneNumber = user.phoneNumber;
-    Map<String, dynamic> data = <String, dynamic>{
-      "name": medicallUser.displayName,
-      "first_name": medicallUser.firstName,
-      "last_name": medicallUser.lastName,
-      "email": user.email,
-      "gender": medicallUser.gender,
-      "type": medicallUser.type,
-      "address": medicallUser.address,
-      "terms": medicallUser.terms,
-      "policy": medicallUser.policy,
-      "consent": medicallUser.consent,
-      "dob": medicallUser.dob,
-      "phone": user.phoneNumber,
-      "profile_pic": medicallUser.profilePic,
-      "gov_id": medicallUser.govId,
-      "dev_tokens": medicallUser.devTokens,
-    };
-    if (medicallUser.type == 'provider') {
-      data['titles'] = medicallUser.titles;
-      data['npi'] = medicallUser.npi;
-      data['med_license'] = medicallUser.medLicense;
-      data['state_issued'] = medicallUser.medLicenseState;
-    }
-
-    try {
-      await documentReference.setData(data).then((onValue) {
-        print('User added');
-      });
-    } catch (e) {
-      throw e;
     }
   }
 

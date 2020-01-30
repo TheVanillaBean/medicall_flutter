@@ -5,7 +5,6 @@ import 'package:Medicall/screens/Questions/questionsScreen.dart';
 import 'package:Medicall/services/animation_provider.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -32,9 +31,7 @@ class SymptomsScreen extends StatelessWidget {
                 child: Text("Yes"),
                 onPressed: () async {
                   medicallUser.hasMedicalHistory = false;
-                  var historyQuestions = await Firestore.instance
-                      .document('services/general_questions')
-                      .get();
+                  var historyQuestions = await db.getMedicalHistoryQuestions();
                   db.newConsult.historyQuestions =
                       historyQuestions.data['medical_history_questions'];
                   Navigator.of(context).pop();
@@ -292,11 +289,8 @@ class EntryItem extends StatelessWidget {
                                           medicallUser.hasMedicalHistory = true;
                                         }
                                         if (!medicallUser.hasMedicalHistory) {
-                                          var medicalHistoryQuestions =
-                                              await Firestore.instance
-                                                  .document(
-                                                      'services/general_questions')
-                                                  .get();
+                                          var medicalHistoryQuestions = await db
+                                              .getMedicalHistoryQuestions();
                                           db.newConsult.historyQuestions =
                                               medicalHistoryQuestions.data[
                                                   "medical_history_questions"];

@@ -2,7 +2,6 @@ import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/stripe_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -160,43 +159,22 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
                           borderRadius: BorderRadius.all(Radius.circular(5)),
                         ),
                         child: Text(
-                          datePaid.runtimeType == Timestamp
-                              ? db.consultSnapshot.data['shipping_option'] ==
-                                      'delivery'
-                                  ? 'Payment made:' +
-                                      ' ' +
-                                      DateFormat('MM-dd-yyyy hh:mm a')
-                                          .format(datePaid.toDate()) +
-                                      '\nShipping option: Home delivery' +
-                                      '\nShipping Address: ' +
-                                      db.consultSnapshot
-                                          .data['shipping_address']
-                                  : 'Payment made:' +
-                                      ' ' +
-                                      DateFormat('MM-dd-yyyy hh:mm a')
-                                          .format(datePaid.toDate()) +
-                                      '\nShipping option: Local Pharmacy' +
-                                      '\nShipping Address: ' +
-                                      db.consultSnapshot
-                                          .data['shipping_address']
-                              : db.consultSnapshot.data['shipping_option'] ==
-                                      'delivery'
-                                  ? 'Payment made:' +
-                                      ' ' +
-                                      DateFormat('MM-dd-yyyy hh:mm a')
-                                          .format(datePaid) +
-                                      '\nShipping option: Home delivery' +
-                                      '\nShipping Address: ' +
-                                      db.consultSnapshot
-                                          .data['shipping_address']
-                                  : 'Payment made:' +
-                                      ' ' +
-                                      DateFormat('MM-dd-yyyy hh:mm a')
-                                          .format(datePaid) +
-                                      '\nShipping option: Local Pharmacy' +
-                                      '\nShipping Address: ' +
-                                      db.consultSnapshot
-                                          .data['shipping_address'],
+                          db.consultSnapshot.data['shipping_option'] ==
+                                  'delivery'
+                              ? 'Payment made:' +
+                                  ' ' +
+                                  DateFormat('MM-dd-yyyy hh:mm a')
+                                      .format(datePaid) +
+                                  '\nShipping option: Home delivery' +
+                                  '\nShipping Address: ' +
+                                  db.consultSnapshot.data['shipping_address']
+                              : 'Payment made:' +
+                                  ' ' +
+                                  DateFormat('MM-dd-yyyy hh:mm a')
+                                      .format(datePaid) +
+                                  '\nShipping option: Local Pharmacy' +
+                                  '\nShipping Address: ' +
+                                  db.consultSnapshot.data['shipping_address'],
                           style: TextStyle(color: Colors.green, fontSize: 16),
                         ),
                       ),

@@ -142,14 +142,6 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
     print(_error);
   }
 
-  // Future _addUserImages() async {
-  //   // var ref = Firestore.instance.document("users/" + medicallUser.uid);
-  //   // var images = [...this.profileImage, ...this.govIdImage];
-  //   // await saveImages(images, ref.documentID);
-  //   // medicallUser.govId = this.govIdImage as String;
-  //   Navigator.of(context).pushNamed('/consent');
-  // }
-
   @override
   Widget build(BuildContext context) {
     var auth = Provider.of<AuthBase>(context);

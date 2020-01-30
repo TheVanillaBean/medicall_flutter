@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
@@ -63,6 +63,7 @@ class ChatScreenState extends State<ChatScreen> {
   bool isLoading;
   bool isShowSticker;
   String imageUrl;
+  Database _db;
 
   final TextEditingController textEditingController = TextEditingController();
   final ScrollController listScrollController = ScrollController();
@@ -158,30 +159,6 @@ class ChatScreenState extends State<ChatScreen> {
     // type: 0 = text, 1 = image, 2 = sticker
     if (content.trim() != '') {
       textEditingController.clear();
-
-      final DocumentReference documentReference =
-          Firestore.instance.collection('consults').document(this.peerId);
-      Map<String, dynamic> data = {
-        'chat': FieldValue.arrayUnion([
-          {
-            'user_id': medicallUser.uid,
-            'date': DateTime.now(),
-            'txt': content,
-          }
-        ])
-      };
-      documentReference.snapshots().forEach((snap) {
-        if (snap.data['provider_id'] == medicallUser.uid &&
-            snap.data['state'] == 'new') {
-          Map<String, dynamic> consultStateData = {'state': 'in progress'};
-          documentReference.updateData(consultStateData).whenComplete(() {
-            print("Msg Sent");
-          }).catchError((e) => print(e));
-        }
-      });
-      documentReference.updateData(data).whenComplete(() {
-        print("Msg Sent");
-      }).catchError((e) => print(e));
     } else {
       AppUtil().showFlushBar('Nothing to send', context);
     }
@@ -189,7 +166,8 @@ class ChatScreenState extends State<ChatScreen> {
 
   Widget buildItem(int index, Map document) {
     medicallUser = Provider.of<UserProvider>(context).medicallUser;
-    Timestamp timestamp = document['date'];
+    var timestamp =
+        DateTime.fromMillisecondsSinceEpoch(document['date'] * 1000);
     if (document['user_id'] == medicallUser.uid) {
       // Right (my message)
       return Container(
@@ -222,7 +200,7 @@ class ChatScreenState extends State<ChatScreen> {
         ),
         Container(
           child: Text(
-            DateFormat('dd MMM h:mm a').format(timestamp.toDate()).toString(),
+            DateFormat('dd MMM h:mm a').format(timestamp).toString(),
             style: TextStyle(
                 color: greyColor, fontSize: 12.0, fontStyle: FontStyle.italic),
           ),
@@ -266,9 +244,7 @@ class ChatScreenState extends State<ChatScreen> {
             ),
             Container(
               child: Text(
-                DateFormat('dd MMM h:mm a')
-                    .format(timestamp.toDate())
-                    .toString(),
+                DateFormat('dd MMM h:mm a').format(timestamp).toString(),
                 style: TextStyle(
                     color: greyColor,
                     fontSize: 12.0,
@@ -324,6 +300,7 @@ class ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    _db = Provider.of<Database>(context);
     return WillPopScope(
       child: Container(
         color: Theme.of(context).primaryColor.withOpacity(0.05),
@@ -427,10 +404,7 @@ class ChatScreenState extends State<ChatScreen> {
   Widget buildListMessage() {
     return Flexible(
       child: StreamBuilder(
-        stream: Firestore.instance
-            .collection('consults')
-            .document(this.peerId)
-            .snapshots(),
+        stream: _db.getUserHistoryStream(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return Center(

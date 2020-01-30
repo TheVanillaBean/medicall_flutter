@@ -5,8 +5,6 @@ import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/stripe_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -20,7 +18,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
     with SingleTickerProviderStateMixin {
   bool _isLoading = false;
   bool _hasReviewed = false;
-  var _db;
+  Database _db;
   MedicallUser _medicallUser;
   ExtImageProvider _extImageProvider;
   MyStripeProvider _stripeProvider;
@@ -273,11 +271,8 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                             //_isLoading = true;
                                           });
                                           //await _addProviderConsult();
-                                          Firestore.instance
-                                              .collection('cards')
-                                              .document(_medicallUser.uid)
-                                              .collection('sources')
-                                              .getDocuments()
+                                          _db
+                                              .getUserSources()
                                               .then((snap) async {
                                             if (snap.documents.length == 0) {
                                               await _stripeProvider
@@ -296,7 +291,28 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                                             ' consult with ' +
                                                             _db.newConsult
                                                                 .provider);
-                                                _addConsult(context);
+                                                _db
+                                                    .addConsult(
+                                                        context,
+                                                        _db.newConsult,
+                                                        _extImageProvider)
+                                                    .then((onValue) {
+                                                  _extImageProvider
+                                                      .clearImageMemory();
+                                                  Route route =
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              RouteUserOrderScreen(
+                                                                data: {
+                                                                  'user':
+                                                                      _medicallUser,
+                                                                  'consult': _db
+                                                                      .newConsult
+                                                                },
+                                                              ));
+                                                  return Navigator.of(context)
+                                                      .pushReplacement(route);
+                                                });
                                               });
                                             } else {
                                               setState(() {
@@ -310,7 +326,27 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                                           ' consult with ' +
                                                           _db.newConsult
                                                               .provider);
-                                              _addConsult(context);
+                                              _db
+                                                  .addConsult(
+                                                      context,
+                                                      _db.newConsult,
+                                                      _extImageProvider)
+                                                  .then((onValue) {
+                                                _extImageProvider
+                                                    .clearImageMemory();
+                                                Route route = MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        RouteUserOrderScreen(
+                                                          data: {
+                                                            'user':
+                                                                _medicallUser,
+                                                            'consult':
+                                                                _db.newConsult
+                                                          },
+                                                        ));
+                                                return Navigator.of(context)
+                                                    .pushReplacement(route);
+                                              });
                                             }
                                           });
                                         },
@@ -380,69 +416,6 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
         controller: _confirmTabCntrl,
       ),
     );
-  }
-
-  Future _addConsult(context) async {
-    var ref = Firestore.instance.collection('consults').document();
-
-    var imagesList =
-        await saveImages(_extImageProvider.assetList, ref.documentID);
-    Map<String, dynamic> data = <String, dynamic>{
-      "screening_questions": _db.newConsult.screeningQuestions,
-      //"medical_history_questions": _db.newConsult.historyQuestions,
-      "type": _db.newConsult.consultType,
-      "chat": [],
-      "state": "new",
-      "date": DateTime.now(),
-      "medication_name": "",
-      "provider": _db.newConsult.provider,
-      "providerTitles": _db.newConsult.providerTitles,
-      "patient": _medicallUser.displayName,
-      "provider_profile": _db.newConsult.providerProfilePic,
-      "patient_profile": _medicallUser.profilePic,
-      "consult_price": _db.newConsult.price,
-      "provider_id": _db.newConsult.providerId,
-      "patient_id": _medicallUser.uid,
-      "media": _db.newConsult.media.length > 0 ? imagesList : "",
-    };
-    ref.setData(data).whenComplete(() {
-      print("Consult Added");
-      _extImageProvider.clearImageMemory();
-
-      Route route = MaterialPageRoute(
-          builder: (context) => RouteUserOrderScreen(
-                data: {'user': _medicallUser, 'consult': _db.newConsult},
-              ));
-      return Navigator.of(context).pushReplacement(route);
-    }).catchError((e) => print(e));
-  }
-
-  Future saveImages(assets, consultId) async {
-    var allMediaList = [];
-    var allFileNames = [];
-    for (var i = 0; i < assets.length; i++) {
-      if (!allFileNames.contains(assets[i].name)) {
-        allFileNames.add(assets[i].name);
-      } else {
-        allFileNames.add(assets[i].name.split('.')[0] +
-            '_' +
-            i.toString() +
-            '.' +
-            assets[i].name.split('.')[1]);
-      }
-    }
-    for (var i = 0; i < _extImageProvider.listaU8L.length; i++) {
-      StorageReference ref = FirebaseStorage.instance.ref().child("consults/" +
-          _medicallUser.uid +
-          '/' +
-          consultId +
-          "/" +
-          allFileNames[i]);
-      StorageUploadTask uploadTask = ref.putData(_extImageProvider.listaU8L[i]);
-      allMediaList
-          .add(await (await uploadTask.onComplete).ref.getDownloadURL());
-    }
-    return allMediaList;
   }
 
   _buildQuestions() {

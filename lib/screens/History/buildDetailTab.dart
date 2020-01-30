@@ -6,7 +6,6 @@ import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:Medicall/util/build_medical_note.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:provider/provider.dart';
@@ -633,7 +632,18 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                               .secondary
                                           : Colors.green,
                                       onPressed: () async {
-                                        await _updatePrescription();
+                                        await db
+                                            .updatedPrescription(consultFormKey)
+                                            .then(() {
+                                          setState(() {
+                                            buttonTxt = 'Prescription Updated';
+                                          });
+                                          Future.delayed(
+                                              const Duration(
+                                                  milliseconds: 2500), () {
+                                            buttonTxt = 'Send Prescription';
+                                          });
+                                        });
                                       },
                                       child: Text(
                                         buttonTxt,
@@ -681,48 +691,6 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
         peerAvatar: isDone,
       ),
     );
-  }
-
-  Future<void> _updatePrescription() async {
-    final DocumentReference documentReference =
-        Firestore.instance.collection('consults').document(db.currConsultId);
-    Map<String, dynamic> data = <String, dynamic>{
-      "medication_name":
-          consultFormKey.currentState.fields['medName'].currentState.value,
-      "quantity":
-          consultFormKey.currentState.fields['quantity'].currentState.value,
-      "units": consultFormKey.currentState.fields['units'].currentState.value,
-      "refills":
-          consultFormKey.currentState.fields['refills'].currentState.value,
-      "dose": consultFormKey.currentState.fields['dose'].currentState.value,
-      "frequency":
-          consultFormKey.currentState.fields['frequency'].currentState.value,
-      "instructions":
-          consultFormKey.currentState.fields['instructions'].currentState.value,
-      "state": "prescription waiting"
-    };
-    await documentReference.updateData(data).whenComplete(() {
-      setState(() {
-        buttonTxt = 'Prescription Updated';
-      });
-      db.consultSnapshot.data['medication_name'] =
-          consultFormKey.currentState.fields['medName'].currentState.value;
-      db.consultSnapshot.data['quantity'] =
-          consultFormKey.currentState.fields['quantity'].currentState.value;
-      db.consultSnapshot.data['units'] =
-          consultFormKey.currentState.fields['units'].currentState.value;
-      db.consultSnapshot.data['refills'] =
-          consultFormKey.currentState.fields['refills'].currentState.value;
-      db.consultSnapshot.data['frequency'] =
-          consultFormKey.currentState.fields['frequency'].currentState.value;
-      db.consultSnapshot.data['instructions'] =
-          consultFormKey.currentState.fields['instructions'].currentState.value;
-      db.consultSnapshot.data['state'] = "prescription waiting";
-      Future.delayed(const Duration(milliseconds: 2500), () {
-        buttonTxt = 'Send Prescription';
-      });
-      print("Prescription Updated");
-    }).catchError((e) => print(e));
   }
 
   _handleDetailsTabSelection(int index) async {

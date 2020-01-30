@@ -1,10 +1,9 @@
 import 'dart:convert';
-
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:Medicall/util/app_util.dart' as AppUtils;
 import 'package:intl/intl.dart';
@@ -20,6 +19,7 @@ class DoctorSearch extends StatelessWidget {
   Widget build(BuildContext context) {
     var userProvider = Provider.of<UserProvider>(context);
     medicallUser = userProvider.medicallUser;
+    var _db = Provider.of<Database>(context);
     currentOrientation = MediaQuery.of(context).orientation;
     currTab = "Search Doctors";
     String selectedProvider = '';
@@ -61,7 +61,7 @@ class DoctorSearch extends StatelessWidget {
       drawer: DrawerMenu(),
       body: SingleChildScrollView(
         child: StreamBuilder(
-            stream: Firestore.instance.collection('users').snapshots(),
+            stream: _db.getAllUsers(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return Center(
@@ -304,17 +304,13 @@ class CustomSearchDelegate extends SearchDelegate {
     //The Bloc will then handle the searching and add the results to the searchResults stream.
     //This is the equivalent of submitting the search term to whatever search service you are using
     //InheritedBlocs.of(context).searchBloc.searchTerm.add(query);
-
+    var _db = Provider.of<Database>(context);
     if (currTab == 'Search History') {
       return Scaffold(
         resizeToAvoidBottomPadding: false,
         body: SingleChildScrollView(
-          child: StreamBuilder(
-              stream: Firestore.instance
-                  .collection('consults')
-                  .where('patient_id', isEqualTo: medicallUser.uid)
-                  .orderBy('date', descending: true)
-                  .snapshots(),
+          child: FutureBuilder(
+              future: _db.getUserHistory(medicallUser),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return Center(
@@ -334,7 +330,8 @@ class CustomSearchDelegate extends SearchDelegate {
                         .contains(
                           query.toLowerCase(),
                         )) {
-                      Timestamp timestamp = userDocuments[i].data['date'];
+                      DateTime timestamp = DateTime.fromMillisecondsSinceEpoch(
+                          userDocuments[i].data['date'] * 1000);
                       historyList.add(FlatButton(
                           padding: EdgeInsets.all(0),
                           splashColor: Theme.of(context)
@@ -367,7 +364,7 @@ class CustomSearchDelegate extends SearchDelegate {
                                     color: Theme.of(context).primaryColor),
                               ),
                               subtitle: Text(DateFormat('dd MMM h:mm a')
-                                      .format(timestamp.toDate())
+                                      .format(timestamp)
                                       .toString() +
                                   '\n' +
                                   userDocuments[i].data['type'].toString()),
@@ -434,7 +431,7 @@ class CustomSearchDelegate extends SearchDelegate {
         resizeToAvoidBottomPadding: false,
         body: SingleChildScrollView(
           child: StreamBuilder(
-              stream: Firestore.instance.collection('users').snapshots(),
+              stream: _db.getAllUsers(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return Center(
