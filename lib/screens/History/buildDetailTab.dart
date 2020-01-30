@@ -54,43 +54,37 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
     var units = ['Capsule', 'Ointment', 'Cream', 'Solution', 'Foam'];
     if (key == 'details') {
       return Scaffold(
-        bottomNavigationBar: Container(
-            child: Container(
-          padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-          decoration: BoxDecoration(
-            border: Border(top: BorderSide(color: Colors.grey[300], width: 1)),
-          ),
-          child: BottomNavigationBar(
-            onTap: _handleDetailsTabSelection,
-            elevation: 40.0,
-            backgroundColor: Colors.transparent,
-            unselectedItemColor: Colors.grey[500],
-            selectedItemColor: Theme.of(context).colorScheme.secondary,
-            currentIndex:
-                currentDetailsIndex, // this will be set when a new tab is tapped
-            items: medicallUser.type == 'patient'
-                ? [
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.local_pharmacy),
-                      title: Text('Symptom'),
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.perm_media),
-                      title: Text('Pictures'),
-                    )
-                  ]
-                : [
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.assignment_ind),
-                      title: Text('Medical Note'),
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.perm_media),
-                      title: Text('Pictures'),
-                    )
-                  ],
-          ),
-        )),
+        bottomNavigationBar: BottomNavigationBar(
+          onTap: _handleDetailsTabSelection,
+          elevation: 20.0,
+          backgroundColor: Theme.of(context).colorScheme.secondaryVariant,
+          unselectedItemColor:
+              Theme.of(context).colorScheme.onSecondary.withAlpha(150),
+          selectedItemColor: Theme.of(context).colorScheme.onPrimary,
+          currentIndex:
+              currentDetailsIndex, // this will be set when a new tab is tapped
+          items: medicallUser.type == 'patient'
+              ? [
+                  BottomNavigationBarItem(
+                    icon: Container(),
+                    title: Text('Questions'),
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Container(),
+                    title: Text('Pictures'),
+                  )
+                ]
+              : [
+                  BottomNavigationBarItem(
+                    icon: Container(),
+                    title: Text('Medical Note'),
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Container(),
+                    title: Text('Pictures'),
+                  )
+                ],
+        ),
         body: FadeInPlace(
           3,
           Container(
@@ -215,10 +209,13 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                         }
                       }
 
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: finalArray,
+                      return FadeInPlace(
+                        1.0,
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: finalArray,
+                        ),
                       );
                     }),
           ),

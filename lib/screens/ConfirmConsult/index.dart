@@ -118,11 +118,8 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                   ? EdgeInsets.fromLTRB(0, 0, 0, 0)
                   : EdgeInsets.fromLTRB(0, 0, 0, 0),
               decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border(
-                      top: BorderSide(
-                          color: Theme.of(context).primaryColor,
-                          width: _hasReviewed ? 2 : 0))),
+                color: Colors.white,
+              ),
               height: _hasReviewed ? 280 : 56,
               child: _hasReviewed
                   ? Stack(
@@ -131,7 +128,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                         Column(
                           children: <Widget>[
                             Container(
-                                color: Theme.of(context).primaryColor,
+                                color: Theme.of(context).primaryColorDark,
                                 padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
                                 height: 58,
                                 width: MediaQuery.of(context).size.width,
@@ -182,17 +179,25 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                   ],
                                 )),
                             Padding(
-                              padding: EdgeInsets.fromLTRB(20, 2, 20, 10),
+                              padding: EdgeInsets.fromLTRB(20, 12, 20, 5),
                               child: Text(
                                 'Please review and confirm payment below.',
                                 style: TextStyle(
                                     color: Colors.black45, fontSize: 12),
                               ),
-                            )
+                            ),
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(25, 2, 25, 20),
+                              child: Text(
+                                '*Does not include the cost of any recommended prescriptions. If the provider recommends a prescription, we can send it to a local pharmacy or ship it directly to your door.',
+                                style: TextStyle(
+                                    fontSize: 10, color: Colors.black54),
+                              ),
+                            ),
                           ],
                         ),
                         Container(
-                          padding: EdgeInsets.fromLTRB(35, 85, 55, 10),
+                          padding: EdgeInsets.fromLTRB(30, 150, 45, 10),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
@@ -214,9 +219,9 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                             ' ' +
                                             _db.newConsult.providerTitles,
                                     style: TextStyle(
-                                        letterSpacing: 1.3,
+                                        letterSpacing: 1.1,
                                         fontWeight: FontWeight.w700,
-                                        color: Theme.of(context).primaryColor),
+                                        color: Colors.black.withAlpha(150)),
                                   ),
                                 ],
                               ),
@@ -226,9 +231,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                     _db.newConsult.price,
                                     style: TextStyle(
                                         fontSize: 28,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
+                                        color: Colors.black.withAlpha(150),
                                         fontWeight: FontWeight.bold),
                                   ),
                                 ],
@@ -242,17 +245,6 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                               crossAxisAlignment: CrossAxisAlignment.end,
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: <Widget>[
-                                Text(
-                                  '*Does not include the cost of any recommended prescriptions. If the provider recommends a prescription, we can send it to a local pharmacy or ship it directly to your door.',
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondary),
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   mainAxisAlignment: MainAxisAlignment.end,
@@ -264,7 +256,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                             EdgeInsets.fromLTRB(40, 20, 40, 20),
                                         color: Theme.of(context)
                                             .colorScheme
-                                            .secondary,
+                                            .secondaryVariant,
                                         onPressed: () async {
                                           setState(() {
                                             _hasReviewed = true;
@@ -353,9 +345,9 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                         child: Text(
                                           'CONFIRM & PAY',
                                           style: TextStyle(
-                                            color: Colors.white,
-                                            letterSpacing: 1.2,
-                                          ),
+                                              color: Colors.white,
+                                              letterSpacing: 1.2,
+                                              fontWeight: FontWeight.bold),
                                         ),
                                       ),
                                     ))
@@ -375,7 +367,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(0),
                           ),
-                          color: Theme.of(context).colorScheme.secondary,
+                          color: Theme.of(context).colorScheme.secondaryVariant,
                           onPressed: () async {
                             setState(() {
                               _hasReviewed = true;
@@ -396,7 +388,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
             )
           : FlatButton(
               padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
-              color: Theme.of(context).primaryColor,
+              color: Theme.of(context).primaryColorDark,
               onPressed: () {},
               child: CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(Colors.white),

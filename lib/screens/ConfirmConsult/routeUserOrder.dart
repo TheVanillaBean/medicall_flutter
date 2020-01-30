@@ -175,7 +175,7 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                   height: 20,
                 ),
                 FlatButton(
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).colorScheme.secondary,
                   onPressed: () {
                     Navigator.of(context).pushReplacementNamed('/history');
                   },

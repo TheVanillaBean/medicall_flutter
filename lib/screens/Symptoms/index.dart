@@ -254,7 +254,7 @@ class EntryItem extends StatelessWidget {
                                     RaisedButton(
                                       color: Theme.of(context)
                                           .colorScheme
-                                          .secondary,
+                                          .secondaryVariant,
                                       onPressed: () async {
                                         if (db.newConsult == null ||
                                             db.newConsult.provider == null) {

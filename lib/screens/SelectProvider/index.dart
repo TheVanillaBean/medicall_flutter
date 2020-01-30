@@ -127,7 +127,6 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
                                   userDocuments[i].data['name']) {
                             providers.add(userDocuments[i].data['name']);
                             historyList.add(Container(
-                              height: 75,
                               child: ListTile(
                                 dense: true,
                                 title: Text(
