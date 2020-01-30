@@ -21,7 +21,7 @@ abstract class Database {
   Stream<QuerySnapshot> getAllProviders();
   Future<DocumentSnapshot> getMedicalHistoryQuestions();
   Stream getAllUsers();
-  Stream getUserHistoryStream();
+  Stream getUserHistoryStream(medicallUser);
   Future<QuerySnapshot> getUserSources();
   Future<void> addConsult(context, newConsult, extImageProvider);
   updateConsultStatus(Choice choice, MedicallUser medicallUser);
@@ -326,10 +326,10 @@ class FirestoreDatabase implements Database {
     }
   }
 
-  Stream getUserHistoryStream() {
+  Stream getUserHistoryStream(medicallUser) {
     return Firestore.instance
         .collection('consults')
-        .document(medicallUser.uid)
+        .document(currConsultId)
         .snapshots();
   }
 

@@ -64,6 +64,7 @@ class ChatScreenState extends State<ChatScreen> {
   bool isShowSticker;
   String imageUrl;
   Database _db;
+  MedicallUser _medicallUser;
 
   final TextEditingController textEditingController = TextEditingController();
   final ScrollController listScrollController = ScrollController();
@@ -158,10 +159,10 @@ class ChatScreenState extends State<ChatScreen> {
   }
 
   Widget buildItem(int index, Map document) {
-    medicallUser = Provider.of<UserProvider>(context).medicallUser;
-    var timestamp =
-        DateTime.fromMillisecondsSinceEpoch(document['date'].millisecondsSinceEpoch);
-    if (document['user_id'] == medicallUser.uid) {
+    _medicallUser = Provider.of<UserProvider>(context).medicallUser;
+    var timestamp = DateTime.fromMillisecondsSinceEpoch(
+        document['date'].millisecondsSinceEpoch);
+    if (document['user_id'] == _medicallUser.uid) {
       // Right (my message)
       return Container(
           child: Column(children: <Widget>[
@@ -256,7 +257,7 @@ class ChatScreenState extends State<ChatScreen> {
   bool isLastMessageLeft(int index) {
     if ((index > 0 &&
             listMessage != null &&
-            listMessage[index - 1]['user_id'] == medicallUser.uid) ||
+            listMessage[index - 1]['user_id'] == _medicallUser.uid) ||
         index == 0) {
       return true;
     } else {
@@ -267,7 +268,7 @@ class ChatScreenState extends State<ChatScreen> {
   bool isLastMessageRight(int index) {
     if ((index > 0 &&
             listMessage != null &&
-            listMessage[index - 1]['user_id'] != medicallUser.uid) ||
+            listMessage[index - 1]['user_id'] != _medicallUser.uid) ||
         index == 0) {
       return true;
     } else {
@@ -290,6 +291,7 @@ class ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     _db = Provider.of<Database>(context);
+    _medicallUser = Provider.of<UserProvider>(context).medicallUser;
     return WillPopScope(
       child: Container(
         color: Theme.of(context).primaryColor.withOpacity(0.05),
@@ -298,7 +300,7 @@ class ChatScreenState extends State<ChatScreen> {
             Column(
               children: <Widget>[
                 // List of messages
-                buildListMessage(),
+                buildListMessage(_medicallUser),
 
                 // Sticker
                 //(isShowSticker ? buildSticker() : Container()),
@@ -390,10 +392,10 @@ class ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  Widget buildListMessage() {
+  Widget buildListMessage(_medicallUser) {
     return Flexible(
       child: StreamBuilder(
-        stream: _db.getUserHistoryStream(),
+        stream: _db.getUserHistoryStream(_medicallUser),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return Center(
@@ -419,6 +421,7 @@ class ChatScreenState extends State<ChatScreen> {
                     )
                   ]));
             }
+            isLoading = false;
             return ListView.builder(
               padding: EdgeInsets.all(10.0),
               itemBuilder: (context, index) =>
