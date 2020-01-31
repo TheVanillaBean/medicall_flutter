@@ -10,7 +10,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 abstract class Database {
   Future<void> getConsultDetail();
   Future<void> getPatientDetail(MedicallUser medicallUser);
-  Future<void> getUserHistory(MedicallUser medicallUser);
   Future<void> setPrescriptionPayment(state, shipTo, shippingAddress);
   Future<void> updatePrescription(consultFormKey);
   Future<void> addUser(user, context);
@@ -300,27 +299,6 @@ class FirestoreDatabase implements Database {
       await documentReference.then((datasnapshot) {
         if (datasnapshot.documents.length > 0) {
           hasPayment = true;
-        }
-      }).catchError((e) => print(e));
-    }
-  }
-
-  Future<void> getUserHistory(MedicallUser medicallUser) async {
-    if (medicallUser.uid.length > 0) {
-      final Future<QuerySnapshot> documentReference = Firestore.instance
-          .collection('consults')
-          .where(medicallUser.type == 'provider' ? 'provider_id' : 'patient_id',
-              isEqualTo: medicallUser.uid)
-          .orderBy('date', descending: true)
-          .getDocuments();
-      await documentReference.then((datasnapshot) {
-        if (datasnapshot.documents != null) {
-          userHistory = [];
-          for (var i = 0; i < datasnapshot.documents.length; i++) {
-            if (!userHistory.contains(datasnapshot.documents[i])) {
-              userHistory.add(datasnapshot.documents[i]);
-            }
-          }
         }
       }).catchError((e) => print(e));
     }

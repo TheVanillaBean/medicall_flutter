@@ -41,7 +41,7 @@ class LandingPage extends StatelessWidget {
           if (userProvider.medicallUser.phoneNumber == null) {
             return PhoneAuthScreen.create(context);
           }
-
+    
           return userProvider.medicallUser != null
               ? HistoryScreen()
               : Scaffold(

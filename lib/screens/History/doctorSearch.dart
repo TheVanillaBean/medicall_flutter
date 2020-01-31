@@ -2,11 +2,12 @@ import 'dart:convert';
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/screens/History/index.dart';
+import 'package:Medicall/services/appbar_state.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:Medicall/util/app_util.dart' as AppUtils;
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,9 +18,9 @@ bool userHasConsults = false;
 class DoctorSearch extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var userProvider = Provider.of<UserProvider>(context);
+    var userProvider = Provider.of<UserProvider>(context, listen: false);
     medicallUser = userProvider.medicallUser;
-    var _db = Provider.of<Database>(context);
+    var _db = Provider.of<Database>(context, listen: false);
     currentOrientation = MediaQuery.of(context).orientation;
     currTab = "Search Doctors";
     String selectedProvider = '';
@@ -265,10 +266,12 @@ class CustomSearchDelegate extends SearchDelegate {
   String get searchFieldLabel => currTab;
   @override
   List<Widget> buildActions(BuildContext context) {
+    var _appBarState = Provider.of<AppBarState>(context, listen: false);
     return [
       IconButton(
         icon: Icon(Icons.clear),
         onPressed: () {
+          _appBarState.searchInput = '';
           query = '';
         },
       ),
@@ -277,9 +280,12 @@ class CustomSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildLeading(BuildContext context) {
+    var _appBarState = Provider.of<AppBarState>(context, listen: false);
     return IconButton(
       icon: Icon(Icons.arrow_back),
       onPressed: () {
+        _appBarState.setShowAppBar(true);
+        _appBarState.searchInput = '';
         close(context, null);
       },
     );
@@ -304,128 +310,12 @@ class CustomSearchDelegate extends SearchDelegate {
     //The Bloc will then handle the searching and add the results to the searchResults stream.
     //This is the equivalent of submitting the search term to whatever search service you are using
     //InheritedBlocs.of(context).searchBloc.searchTerm.add(query);
-    var _db = Provider.of<Database>(context);
+    var _db = Provider.of<Database>(context, listen: false);
+    var _appBarState = Provider.of<AppBarState>(context, listen: false);
+    _appBarState.searchInput = query;
     if (currTab == 'Search History') {
-      return Scaffold(
-        resizeToAvoidBottomPadding: false,
-        body: SingleChildScrollView(
-          child: FutureBuilder(
-              future: _db.getUserHistory(medicallUser),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return Center(
-                    heightFactor: 35,
-                    child: Text("You have no doctor consult history yet.",
-                        textAlign: TextAlign.center),
-                  );
-                }
-                if (snapshot.data.documents.length > 0) {
-                  userHasConsults = true;
-                  var userDocuments = snapshot.data.documents;
-                  List<Widget> historyList = [];
-                  for (var i = 0; i < userDocuments.length; i++) {
-                    if (userDocuments[i]
-                        .data['provider']
-                        .toLowerCase()
-                        .contains(
-                          query.toLowerCase(),
-                        )) {
-                      DateTime timestamp = DateTime.fromMillisecondsSinceEpoch(
-                          userDocuments[i].data['date'].millisecondsSinceEpoch);
-                      historyList.add(FlatButton(
-                          padding: EdgeInsets.all(0),
-                          splashColor: Theme.of(context)
-                              .colorScheme
-                              .secondary
-                              .withAlpha(70),
-                          onPressed: () {
-                            Navigator.of(context)
-                                .pushNamed('/historyDetail', arguments: {
-                              'isRouted': false,
-                            });
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                                border: Border(
-                                    bottom: BorderSide(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .secondary
-                                            .withAlpha(70)))),
-                            child: ListTile(
-                              dense: true,
-                              isThreeLine: true,
-                              title: Text(
-                                '${userDocuments[i].data['provider'].split(" ")[0][0].toUpperCase()}${userDocuments[i].data['provider'].split(" ")[0].substring(1)} ${userDocuments[i].data['provider'].split(" ")[1][0].toUpperCase()}${userDocuments[i].data['provider'].split(" ")[1].substring(1)} ' +
-                                    userDocuments[i].data['providerTitles'],
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 1.1,
-                                    color: Theme.of(context).primaryColor),
-                              ),
-                              subtitle: Text(DateFormat('dd MMM h:mm a')
-                                      .format(timestamp)
-                                      .toString() +
-                                  '\n' +
-                                  userDocuments[i].data['type'].toString()),
-                              trailing: FlatButton(
-                                splashColor: Colors.transparent,
-                                highlightColor: Colors.transparent,
-                                focusColor: Colors.transparent,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                    userDocuments[i].data['state'].toString() ==
-                                            'done'
-                                        ? Icon(
-                                            Icons.assignment_turned_in,
-                                            color: Colors.green,
-                                          )
-                                        : userDocuments[i]
-                                                    .data['state']
-                                                    .toString() ==
-                                                'in progress'
-                                            ? Icon(
-                                                Icons.assignment,
-                                                color: Colors.blue,
-                                              )
-                                            : Icon(
-                                                Icons.assignment_ind,
-                                                color: Colors.amber,
-                                              ),
-                                    Text(
-                                      userDocuments[i].data['state'].toString(),
-                                      style: TextStyle(
-                                          fontSize: 10,
-                                          color:
-                                              Theme.of(context).primaryColor),
-                                    ),
-                                  ],
-                                ),
-                                onPressed: () {},
-                              ),
-                              leading: Icon(
-                                Icons.account_circle,
-                                color: Theme.of(context)
-                                    .primaryColor
-                                    .withAlpha(170),
-                                size: 50,
-                              ),
-                            ),
-                          )));
-                    }
-                  }
-                  return Column(children: historyList.toList());
-                } else {
-                  return Center(
-                    heightFactor: 35,
-                    child: CircularProgressIndicator(),
-                  );
-                }
-              }),
-        ),
-      );
+      _appBarState.setShowAppBar(false);
+      return HistoryScreen();
     } else {
       return Scaffold(
         resizeToAvoidBottomPadding: false,
@@ -513,7 +403,13 @@ class CustomSearchDelegate extends SearchDelegate {
   @override
   ThemeData appBarTheme(BuildContext context) {
     assert(context != null);
-    final ThemeData theme = Theme.of(context);
+    final ThemeData theme = Theme.of(context).copyWith(
+        brightness: Brightness.light,
+        textTheme: TextTheme(title: TextStyle(color: Colors.white)),
+        inputDecorationTheme: InputDecorationTheme(
+            labelStyle: TextStyle(color: Colors.white),
+            helperStyle: TextStyle(color: Colors.white),
+            hintStyle: TextStyle(color: Colors.white)));
     assert(theme != null);
     return theme;
   }

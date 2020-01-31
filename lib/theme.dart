@@ -43,7 +43,7 @@ final ThemeData myTheme = ThemeData(
       ),
       borderRadius: BorderRadius.all(Radius.circular(2.0)),
     ),
-    alignedDropdown: false,
+    alignedDropdown: true,
     buttonColor: Color(0xffe0e0e0),
     disabledColor: Color(0x61000000),
     highlightColor: Color(0x29000000),

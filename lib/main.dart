@@ -15,6 +15,7 @@ import 'package:Medicall/screens/Registration/registrationType.dart';
 import 'package:Medicall/screens/SelectProvider/index.dart';
 import 'package:Medicall/screens/Terms/index.dart';
 import 'package:Medicall/services/animation_provider.dart';
+import 'package:Medicall/services/appbar_state.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/carousel_state.dart';
 import 'package:Medicall/services/extimage_provider.dart';
@@ -22,6 +23,7 @@ import 'package:Medicall/services/flare_provider.dart';
 import 'package:Medicall/services/history_detail_state.dart';
 import 'package:Medicall/services/medical_history_state.dart';
 import 'package:Medicall/services/stripe_provider.dart';
+import 'package:Medicall/services/user_history_state.dart';
 import 'package:Medicall/theme.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
@@ -92,6 +94,12 @@ class MedicallApp extends StatelessWidget {
         ),
         ChangeNotifierProvider<DetailedHistoryState>(
           create: (_) => DetailedHistoryState(),
+        ),
+        ChangeNotifierProvider<AppBarState>(
+          create: (_) => AppBarState(),
+        ),
+        ChangeNotifierProvider<UserHistoryState>(
+          create: (_) => UserHistoryState(),
         ),
       ],
       child: _buildApp(),
