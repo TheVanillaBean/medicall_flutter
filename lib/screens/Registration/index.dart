@@ -1,8 +1,7 @@
+import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:Medicall/models/reg_user_model.dart';
-import 'package:Medicall/screens/Registration/photoIdScreen.dart';
 import 'package:Medicall/secrets.dart' as secrets;
-import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,7 +14,6 @@ import 'package:provider/provider.dart';
 GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: secrets.kGoogleApiKey);
 
 class RegistrationScreen extends StatefulWidget {
-  const RegistrationScreen({Key key}) : super(key: key);
   @override
   _RegistrationScreenState createState() => _RegistrationScreenState();
 }
@@ -116,8 +114,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var auth = Provider.of<AuthBase>(context);
-    medicallUser = auth.medicallUser;
+    final tempUserProvider = Provider.of<TempUserProvider>(context);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -134,48 +131,22 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           if (!this._addressList.contains(this._typeAheadController.text)) {
             this._typeAheadController.clear();
           }
-          _userRegKey.currentState.save();
-          if (_userRegKey.currentState.validate()) {
-            print('validationSucceded');
-            //print(_userRegKey.currentState.value);
-            //_signUp();
-            auth.tempRegUser = TempRegUser();
-            auth.tempRegUser.username = _userRegKey.currentState.value['Email'];
-            auth.tempRegUser.pass = _userRegKey.currentState.value['Password'];
-            medicallUser = auth.medicallUser;
-            medicallUser.displayName =
-                _userRegKey.currentState.value['First name'] +
-                    ' ' +
-                    _userRegKey.currentState.value['Last name'];
-            medicallUser.firstName =
-                _userRegKey.currentState.value['First name'];
-            medicallUser.lastName = _userRegKey.currentState.value['Last name'];
-            medicallUser.dob = DateFormat('MM-dd-yyyy')
-                .format(_userRegKey.currentState.value['Date of birth'])
-                .toString();
-            medicallUser.gender = _userRegKey.currentState.value['Gender'];
-            medicallUser.email = _userRegKey.currentState.value['Email'];
-            medicallUser.terms =
-                _userRegKey.currentState.value['Terms and conditions'];
-            medicallUser.policy =
-                _userRegKey.currentState.value['accept_privacy_switch'];
-            medicallUser.consent =
-                _userRegKey.currentState.value['accept_consent'];
-            if (medicallUser.type == 'provider') {
-              medicallUser.titles =
-                  _userRegKey.currentState.value['Medical Titles'];
-              medicallUser.npi = _userRegKey.currentState.value['NPI Number'];
-              medicallUser.medLicense =
-                  _userRegKey.currentState.value['License Number'];
-              medicallUser.medLicenseState =
-                  _userRegKey.currentState.value['State Issued'];
-            }
-            medicallUser.address = _typeAheadController.text;
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => PhotoIdScreen()),
-            );
+
+          //you left of here
+          //move on to other reg forms
+          //test successfully creating a new user
+          //then refactor this class to include a state model
+          bool successfullySaveForm =
+              _userRegKey.currentState.saveAndValidate();
+          if (successfullySaveForm) {
+            updateUserWithFormData(tempUserProvider);
+            Navigator.of(context).pushNamed("/photoID");
           } else {
-            print('External FormValidation failed');
+            PlatformAlertDialog(
+              title: 'Registration failed',
+              defaultActionText: "Okay",
+              content: "An error occured processing your information.",
+            ).show(context);
           }
         }, // Switch tabs
 
@@ -485,10 +456,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   suggestionsCallback: (pattern) async {
                     _addressList = [];
                     if (pattern.length > 0) {
-                      return await _places.searchByText(pattern).then((val) {
-                        _addressList.add(val.results.first.formattedAddress);
-                        return _addressList;
-                      });
+                      final PlacesSearchResponse response =
+                          await _places.searchByText(pattern);
+                      _addressList.add(response.results.first.formattedAddress);
+                      return _addressList;
                     } else {
                       return _addressList;
                     }
@@ -557,8 +528,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   label: FlatButton(
                       padding: EdgeInsets.fromLTRB(0, 0, 62, 0),
                       onPressed: () {
-                        Navigator.of(context)
-                            .pushNamed('/privacy');
+                        Navigator.of(context).pushNamed('/privacy');
                       },
                       child: Text('Privacy Policy',
                           style: TextStyle(
@@ -575,5 +545,82 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         ),
       ),
     );
+  }
+
+  void updateUserWithFormData(TempUserProvider tempUserProvider) {
+    tempUserProvider.updateWith(displayName: this.displayName);
+    tempUserProvider.updateWith(firstName: this.firstName);
+    tempUserProvider.updateWith(lastName: this.lastName);
+    tempUserProvider.updateWith(dob: this.dob);
+    tempUserProvider.updateWith(gender: this.gender);
+    tempUserProvider.updateWith(email: this.email);
+    tempUserProvider.updateWith(terms: this.terms);
+    tempUserProvider.updateWith(policy: this.policy);
+    tempUserProvider.updateWith(consent: this.consent);
+    if (tempUserProvider.medicallUser.type == 'provider') {
+      tempUserProvider.updateWith(titles: this.titles);
+      tempUserProvider.updateWith(npi: this.npi);
+      tempUserProvider.updateWith(medLicense: this.medLicense);
+      tempUserProvider.updateWith(medLicenseState: this.medLicenseState);
+    }
+    tempUserProvider.updateWith(address: this.address);
+  }
+
+  String get displayName {
+    return firstName + ' ' + lastName;
+  }
+
+  String get firstName {
+    return _userRegKey.currentState.value['First name'];
+  }
+
+  String get lastName {
+    return _userRegKey.currentState.value['Last name'];
+  }
+
+  String get dob {
+    return DateFormat('MM-dd-yyyy')
+        .format(_userRegKey.currentState.value['Date of birth'])
+        .toString();
+  }
+
+  String get gender {
+    return _userRegKey.currentState.value['Gender'];
+  }
+
+  String get email {
+    return _userRegKey.currentState.value['Email'];
+  }
+
+  bool get terms {
+    return _userRegKey.currentState.value['Terms and conditions'];
+  }
+
+  bool get policy {
+    return _userRegKey.currentState.value['accept_privacy_switch'];
+  }
+
+  bool get consent {
+    return _userRegKey.currentState.value['accept_consent'];
+  }
+
+  String get titles {
+    return _userRegKey.currentState.value['Medical Titles'];
+  }
+
+  String get npi {
+    return _userRegKey.currentState.value['NPI Number'];
+  }
+
+  String get medLicense {
+    return _userRegKey.currentState.value['License Number'];
+  }
+
+  String get medLicenseState {
+    return _userRegKey.currentState.value['State Issued'];
+  }
+
+  String get address {
+    return _typeAheadController.text;
   }
 }

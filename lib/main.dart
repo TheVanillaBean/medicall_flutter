@@ -10,8 +10,10 @@ import 'package:Medicall/screens/History/index.dart';
 import 'package:Medicall/screens/LandingPage/auth_widget_builder.dart';
 import 'package:Medicall/screens/LandingPage/index.dart';
 import 'package:Medicall/screens/Login/index.dart';
+import 'package:Medicall/screens/PhoneAuth/index.dart';
 import 'package:Medicall/screens/Privacy/index.dart';
 import 'package:Medicall/screens/Registration/index.dart';
+import 'package:Medicall/screens/Registration/photoIdScreen.dart';
 import 'package:Medicall/screens/Registration/registrationType.dart';
 import 'package:Medicall/screens/SelectProvider/index.dart';
 import 'package:Medicall/screens/Terms/index.dart';
@@ -92,6 +94,11 @@ class MedicallApp extends StatelessWidget {
                   builder: (_) => LoginPage.create(context),
                   settings: settings,
                 );
+              case '/phoneAuth':
+                return MyCustomRoute(
+                  builder: (_) => PhoneAuthScreen.create(context),
+                  settings: settings,
+                );
               case '/registrationType':
                 return MyCustomRoute(
                   builder: (_) => RegistrationTypeScreen(),
@@ -100,6 +107,11 @@ class MedicallApp extends StatelessWidget {
               case '/registration':
                 return MyCustomRoute(
                   builder: (_) => RegistrationScreen(),
+                  settings: settings,
+                );
+              case '/photoID':
+                return MyCustomRoute(
+                  builder: (_) => PhotoIdScreen(),
                   settings: settings,
                 );
               case '/terms':

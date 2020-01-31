@@ -1,6 +1,7 @@
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/database.dart';
+import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -46,7 +47,10 @@ class AuthWidgetBuilder extends StatelessWidget {
         }
 
         print("Null User ${snapshot.connectionState}");
-        return builder(context, snapshot);
+        return Provider<TempUserProvider>(
+          create: (_) => TempUserProvider(),
+          child: builder(context, snapshot),
+        );
       },
     );
   }

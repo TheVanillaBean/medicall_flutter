@@ -26,7 +26,7 @@ abstract class AuthBase {
   Future<MedicallUser> currentMedicallUser();
   Future<void> signOut();
   signUp(BuildContext context);
-  saveRegistrationImages();
+  saveRegistrationImages(MedicallUser medicallUser);
 }
 
 class Auth implements AuthBase {
@@ -212,7 +212,7 @@ class Auth implements AuthBase {
   }
 
   @override
-  Future<void> saveRegistrationImages() async {
+  Future<MedicallUser> saveRegistrationImages(MedicallUser medicallUser) async {
     if (medicallUser.uid.length > 0) {
       var assets = tempRegUser.images;
       var allMediaList = [];
@@ -224,11 +224,13 @@ class Auth implements AuthBase {
             .child("profile/" + medicallUser.uid + '/' + assets[i].name);
         StorageUploadTask uploadTask = ref.putData(imageData);
 
-        allMediaList
-            .add(await (await uploadTask.onComplete).ref.getDownloadURL());
+        allMediaList.add(
+          await (await uploadTask.onComplete).ref.getDownloadURL(),
+        );
       }
       medicallUser.profilePic = allMediaList[0];
-      medicallUser.govId = allMediaList[1];
+      return medicallUser.govId = allMediaList[1];
     }
+    return medicallUser;
   }
 }

@@ -1,11 +1,11 @@
 import 'dart:async';
+
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/util/validators.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 enum AuthStatus { PHONE_AUTH, SMS_AUTH }
 
@@ -140,14 +140,26 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
         codeAutoRetrievalTimeout: codeAutoRetrievalTimeout);
   }
 
+  //move _add above signInWithPhoneNumber
+  //move _add to UserProvider
+  //rename _add to _createUser
+
+  //MedicallUser medicallUser = TempUserProvider.medicallUser
+  //medicallUser = _add(medicallUser, context)
+  //medicallUser = auth.saveRegistrationImages(medicallUser);
+  //await auth.signInWithPhoneNumber(this.verificationId, this.smsCode);
+
+  //move _add and saveRegistrationImages to TempUserImage
+
+  //UserProvider will have methods for updating UserProvider,
+  // but TempUserProvider will have methods for creating a new user
   Future<MedicallUser> signInWithPhoneNumber(bool mounted, context) async {
     try {
       MedicallUser user =
           await auth.signInWithPhoneNumber(this.verificationId, this.smsCode);
-      await auth.saveRegistrationImages();
+      user = await auth.saveRegistrationImages(user);
       await _add(user, context);
       updateRefreshing(false, mounted);
-      Navigator.of(context).pushReplacementNamed('/history');
       return user;
     } catch (e) {
       updateRefreshing(false, mounted);
@@ -156,33 +168,30 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
   }
 
   Future<Null> _add(user, context) async {
-    var auth = Provider.of<AuthBase>(context);
-    medicallUser = auth.medicallUser;
     final DocumentReference documentReference =
         Firestore.instance.document("users/" + user.uid);
-    medicallUser.phoneNumber = user.phoneNumber;
     Map<String, dynamic> data = <String, dynamic>{
-      "name": medicallUser.displayName,
-      "first_name": medicallUser.firstName,
-      "last_name": medicallUser.lastName,
+      "name": user.displayName,
+      "first_name": user.firstName,
+      "last_name": user.lastName,
       "email": user.email,
-      "gender": medicallUser.gender,
-      "type": medicallUser.type,
-      "address": medicallUser.address,
-      "terms": medicallUser.terms,
-      "policy": medicallUser.policy,
-      "consent": medicallUser.consent,
-      "dob": medicallUser.dob,
+      "gender": user.gender,
+      "type": user.type,
+      "address": user.address,
+      "terms": user.terms,
+      "policy": user.policy,
+      "consent": user.consent,
+      "dob": user.dob,
       "phone": user.phoneNumber,
-      "profile_pic": medicallUser.profilePic,
-      "gov_id": medicallUser.govId,
-      "dev_tokens": medicallUser.devTokens,
+      "profile_pic": user.profilePic,
+      "gov_id": user.govId,
+      "dev_tokens": user.devTokens,
     };
-    if (medicallUser.type == 'provider') {
-      data['titles'] = medicallUser.titles;
-      data['npi'] = medicallUser.npi;
-      data['med_license'] = medicallUser.medLicense;
-      data['state_issued'] = medicallUser.medLicenseState;
+    if (user.type == 'provider') {
+      data['titles'] = user.titles;
+      data['npi'] = user.npi;
+      data['med_license'] = user.medLicense;
+      data['state_issued'] = user.medLicenseState;
     }
 
     try {

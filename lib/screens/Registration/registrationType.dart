@@ -1,13 +1,11 @@
-import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class RegistrationTypeScreen extends StatelessWidget {
-  const RegistrationTypeScreen({Key key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
+    final tempUserProvider = Provider.of<TempUserProvider>(context);
     return Scaffold(
         resizeToAvoidBottomPadding: false,
         appBar: AppBar(
@@ -61,7 +59,7 @@ class RegistrationTypeScreen extends StatelessWidget {
                   ],
                 ),
                 onPressed: () {
-                  Provider.of<AuthBase>(context).medicallUser.type = 'patient';
+                  tempUserProvider.updateWith(userType: 'patient');
                   Navigator.of(context).pushNamed('/registration');
                 },
               ),
@@ -104,9 +102,8 @@ class RegistrationTypeScreen extends StatelessWidget {
                   ],
                 ),
                 onPressed: () {
-                  Provider.of<AuthBase>(context).medicallUser.type = 'provider';
-                  Navigator.of(context)
-                      .pushNamed('/registration', arguments: medicallUser);
+                  tempUserProvider.updateWith(userType: 'provider');
+                  Navigator.of(context).pushNamed('/registration');
                 },
               ),
             )

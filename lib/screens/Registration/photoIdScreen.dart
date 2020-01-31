@@ -1,13 +1,11 @@
-import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/presentation/medicall_icons_icons.dart' as CustomIcons;
+import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
-import 'package:Medicall/presentation/medicall_icons_icons.dart' as CustomIcons;
 import 'package:provider/provider.dart';
 
 class PhotoIdScreen extends StatefulWidget {
-  const PhotoIdScreen({Key key}) : super(key: key);
   @override
   _PhotoIdScreenState createState() => _PhotoIdScreenState();
 }
@@ -138,18 +136,10 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
     print(_error);
   }
 
-  // Future _addUserImages() async {
-  //   // var ref = Firestore.instance.document("users/" + medicallUser.uid);
-  //   // var images = [...this.profileImage, ...this.govIdImage];
-  //   // await saveImages(images, ref.documentID);
-  //   // medicallUser.govId = this.govIdImage as String;
-  //   Navigator.of(context).pushNamed('/consent');
-  // }
-
   @override
   Widget build(BuildContext context) {
-    var auth = Provider.of<AuthBase>(context);
-    medicallUser = auth.medicallUser;
+    final tempUserProvider = Provider.of<TempUserProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -169,7 +159,9 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
             : Colors.grey,
         onPressed: () async {
           if (profileImage.length == 1 && govIdImage.length == 1) {
-            auth.tempRegUser.images = [...profileImage, ...govIdImage];
+            List<Asset> images = [...profileImage, ...govIdImage];
+
+            tempUserProvider.updateWith(images: images);
             Navigator.of(context).pushNamed('/consent');
           }
         },
