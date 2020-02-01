@@ -137,20 +137,24 @@ class EntryItem extends StatelessWidget {
             ? Positioned.fill(
                 child: _animationProvider.returnAnimation(
                     tween: _animationProvider.returnMultiTrackTween([
-                Colors.blueAccent.withAlpha(100),
-                Colors.cyanAccent.withAlpha(50),
-                Colors.cyanAccent.withAlpha(50),
-                Colors.blueAccent.withAlpha(100)
-              ])))
+                      Colors.blueAccent.withAlpha(100),
+                      Colors.cyanAccent.withAlpha(50),
+                      Colors.cyanAccent.withAlpha(50),
+                      Colors.blueAccent.withAlpha(100)
+                    ]),
+                    margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    radius: BorderRadius.all(Radius.circular(10))))
             : root.price != ''
                 ? Positioned.fill(
                     child: _animationProvider.returnAnimation(
                         tween: _animationProvider.returnMultiTrackTween([
-                    Colors.orangeAccent.withAlpha(100),
-                    Colors.purpleAccent.withAlpha(50),
-                    Colors.purpleAccent.withAlpha(50),
-                    Colors.orangeAccent.withAlpha(100)
-                  ])))
+                          Colors.orangeAccent.withAlpha(100),
+                          Colors.purpleAccent.withAlpha(50),
+                          Colors.purpleAccent.withAlpha(50),
+                          Colors.orangeAccent.withAlpha(100)
+                        ]),
+                        margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                        radius: BorderRadius.all(Radius.circular(10))))
                 : Container(),
         Container(
             margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -225,7 +229,8 @@ class EntryItem extends StatelessWidget {
                                         decoration: BoxDecoration(
                                           border: Border(
                                               top: BorderSide(
-                                                  color: Colors.grey.withAlpha(100))),
+                                                  color: Colors.grey
+                                                      .withAlpha(100))),
                                         ),
                                         padding:
                                             EdgeInsets.fromLTRB(0, 10, 0, 0),

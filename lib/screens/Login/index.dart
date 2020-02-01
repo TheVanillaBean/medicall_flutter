@@ -3,8 +3,8 @@ import 'package:Medicall/common_widgets/sign_in_button.dart';
 import 'package:Medicall/common_widgets/social_sign_in_button.dart';
 import 'package:Medicall/screens/Login/sign_in_state_model.dart';
 import 'package:Medicall/screens/Registration/registrationType.dart';
+import 'package:Medicall/services/animation_provider.dart';
 import 'package:Medicall/services/auth.dart';
-import 'package:Medicall/services/flare_provider.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:Medicall/util/firebase_notification_handler.dart';
 import 'package:flutter/cupertino.dart';
@@ -96,15 +96,13 @@ class _LoginScreenState extends State<LoginPage> {
               height: MediaQueryData.fromWindow(ui.window).size.height,
             ),
             child: Container(
-              decoration: _buildContainerDecoration(),
               child: SafeArea(
                 child: GestureDetector(
                   behavior: HitTestBehavior.opaque,
                   onTap: () {
                     FocusScope.of(context).requestFocus(new FocusNode());
                   },
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                  child: Stack(
                     children: _buildChildren(context),
                   ),
                 ),
@@ -117,24 +115,37 @@ class _LoginScreenState extends State<LoginPage> {
   }
 
   List<Widget> _buildChildren(BuildContext context) {
-    MyFlareProvider _flareProvider = Provider.of<MyFlareProvider>(context);
+    MyAnimationProvider _animationProvider =
+        Provider.of<MyAnimationProvider>(context);
+    //MyFlareProvider _flareProvider = Provider.of<MyFlareProvider>(context);
     return [
-      Container(
-        margin: EdgeInsets.only(top: 30),
-        height: 100,
-        child: _flareProvider.returnFlareActor(
-          'assets/headerlogo.flr',
-          fit: BoxFit.fitWidth,
-          snapToEnd: true,
-          animation: 'Untitled',
-        ),
-      ),
+      // Container(
+      //   margin: EdgeInsets.only(top: 30),
+      //   height: 100,
+      //   child: _flareProvider.returnFlareActor(
+      //     'assets/headerlogo.flr',
+      //     fit: BoxFit.fitWidth,
+      //     snapToEnd: true,
+      //     animation: 'Untitled',
+      //   ),
+      // ),
+      Positioned.fill(
+          child: _animationProvider.returnAnimation(
+              tween: _animationProvider.returnMultiTrackTween([
+                Colors.blueAccent.withAlpha(100),
+                Colors.cyanAccent.withAlpha(20),
+                Colors.cyanAccent.withAlpha(20),
+                Colors.blueAccent.withAlpha(100)
+              ]),
+              margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+              radius: BorderRadius.all(Radius.circular(0)))),
       FadeIn(
         2,
         Padding(
             padding: const EdgeInsets.fromLTRB(60, 15, 60, 15),
             child: Column(
               children: <Widget>[
+                _buildHeader(context),
                 SizedBox(height: 10.0),
                 _buildEmailAuthForm(context),
                 SizedBox(height: 16.0),
@@ -187,6 +198,42 @@ class _LoginScreenState extends State<LoginPage> {
             )),
       ),
     ];
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Container(
+          transform: Matrix4.translationValues(12.0, 0.0, 0.0),
+          child: Text('MEDI',
+              style: TextStyle(
+                  fontSize: 26.0,
+                  height: 1.08,
+                  letterSpacing: 2.5,
+                  fontWeight: FontWeight.w700,
+                  color: Theme.of(context).primaryColorDark.withAlpha(100))),
+        ),
+        SizedBox(
+          width: 110,
+          height: 110,
+          child: Image.asset(
+            'assets/icon/logo_fore.png',
+            color: Theme.of(context).primaryColorDark.withAlpha(100),
+          ),
+        ),
+        Container(
+          transform: Matrix4.translationValues(-20.0, 0.0, 0.0),
+          child: Text('CALL',
+              style: TextStyle(
+                  fontSize: 26.0,
+                  height: 1.08,
+                  letterSpacing: 2.5,
+                  fontWeight: FontWeight.w700,
+                  color: Theme.of(context).primaryColorDark.withAlpha(100))),
+        )
+      ],
+    );
   }
 
   Container _buildEmailAuthForm(BuildContext context) {
@@ -272,20 +319,6 @@ class _LoginScreenState extends State<LoginPage> {
         hintText: 'john@doe.com',
         errorText: model.emailErrorText,
         enabled: model.isLoading == false,
-      ),
-    );
-  }
-
-  BoxDecoration _buildContainerDecoration() {
-    return BoxDecoration(
-      gradient: LinearGradient(
-        colors: <Color>[
-          const Color.fromRGBO(220, 255, 255, 0.5),
-          const Color.fromRGBO(88, 178, 214, 0.8),
-        ],
-        stops: [0.1, 1],
-        begin: const FractionalOffset(0.0, 0.0),
-        end: const FractionalOffset(0.0, 1.0),
       ),
     );
   }

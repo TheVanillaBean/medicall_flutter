@@ -28,7 +28,7 @@ class UserHistoryState with ChangeNotifier {
                   .where(medicallUser.type == 'provider' ? 'provider_id' : 'patient_id',
                       isEqualTo: medicallUser.uid)
                   .orderBy(medicallUser.type == 'provider' ? 'patient' : 'provider',
-                      descending: true)
+                      descending: false)
                   .getDocuments()
               : sortBy == 3
                   ? Firestore.instance
@@ -64,7 +64,6 @@ class UserHistoryState with ChangeNotifier {
                                       ? 'provider_id'
                                       : 'patient_id',
                                   isEqualTo: medicallUser.uid)
-                              .where('state', isEqualTo: 'prescription paid')
                               .where('state', isEqualTo: 'done')
                               .orderBy('date', descending: true)
                               .getDocuments();

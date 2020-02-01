@@ -16,17 +16,17 @@ class MyAnimationProvider implements AnimationProvider {
     ]);
   }
 
-  ControlledAnimation returnAnimation({tween}) {
+  ControlledAnimation returnAnimation({tween, margin, radius}) {
     return ControlledAnimation(
       playback: Playback.MIRROR,
       tween: tween,
       duration: tween.duration,
       builder: (context, animation) {
         return Container(
-          margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+          margin: margin,
           padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(10)),
+              borderRadius: radius,
               gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,

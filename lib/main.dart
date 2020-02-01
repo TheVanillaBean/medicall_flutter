@@ -115,7 +115,7 @@ class MedicallApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           theme: myTheme,
           home: _flareProvider.returnFlareSplash(
-              name: 'assets/splash.flr',
+              name: 'assets/headerlogo.flr',
               next: (ctx) => LandingPage(userSnapshot: userSnapshot),
               isLoading: userSnapshot.connectionState != ConnectionState.active,
               background: Colors.white,
