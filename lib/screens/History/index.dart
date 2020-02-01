@@ -172,17 +172,16 @@ class HistoryScreen extends StatelessWidget {
     ExtImageProvider _extImageProvider = Provider.of<ExtImageProvider>(context);
     AppBarState _appBarState = Provider.of<AppBarState>(context);
     UserHistoryState _userHistoryState = Provider.of<UserHistoryState>(context);
-    //_userHistory.setUserHistory(db.userHistory);
     return FutureBuilder(
       future: _userHistoryState.getUserHistory(_medicallUser,
           _appBarState.searchInput, _appBarState.sortBy, context),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          //_userHistory.setUserHistory(snapshot.data);
-          //_userHistory.setUserHistory(snapshot.data);
           return SingleChildScrollView(
-            child: Container(
-              height: 800,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.height,
+                  minHeight: MediaQuery.of(context).size.height),
               child: ListView.builder(
                   itemCount: _userHistoryState.userHistory.length,
                   itemBuilder: (context, index) {

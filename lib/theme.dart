@@ -347,7 +347,6 @@ final ThemeData myTheme = ThemeData(
       fontStyle: FontStyle.normal,
     ),
     errorMaxLines: null,
-    hasFloatingPlaceholder: true,
     isDense: false,
     contentPadding: EdgeInsets.only(top: 12, bottom: 12, left: 10, right: 10),
     isCollapsed: false,

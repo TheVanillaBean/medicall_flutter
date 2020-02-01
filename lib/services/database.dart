@@ -8,7 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 abstract class Database {
-  Future<void> getConsultDetail();
+  Future getConsultDetail();
   Future<void> getPatientDetail(MedicallUser medicallUser);
   Future<void> setPrescriptionPayment(state, shipTo, shippingAddress);
   Future<void> updatePrescription(consultFormKey);
@@ -23,7 +23,7 @@ abstract class Database {
   Stream getUserHistoryStream(medicallUser);
   Future<QuerySnapshot> getUserSources();
   Future<void> addConsult(context, newConsult, extImageProvider);
-  updateConsultStatus(Choice choice, MedicallUser medicallUser);
+  updateConsultStatus(Choice choice, String uid);
   sendChatMsg(
     content,
   );
@@ -72,7 +72,7 @@ class FirestoreDatabase implements Database {
 
   FirestoreDatabase();
   @override
-  Future<void> getConsultDetail() async {
+  Future getConsultDetail() async {
     if (consultSnapshot == null && currConsultId != null ||
         currConsultId != consultSnapshot.documentID) {
       consultRef =
@@ -90,6 +90,7 @@ class FirestoreDatabase implements Database {
             isDone = false;
           }
         }
+        return consultSnapshot;
       }).catchError((e) => print(e));
     }
   }
@@ -257,9 +258,9 @@ class FirestoreDatabase implements Database {
     }).catchError((e) => print(e));
   }
 
-  updateConsultStatus(Choice choice, MedicallUser medicallUser) {
+  updateConsultStatus(Choice choice, String uid) {
     if (consultSnapshot.documentID == currConsultId &&
-        consultSnapshot.data['provider_id'] == medicallUser.uid) {
+        consultSnapshot.data['provider_id'] == uid) {
       if (choice.title == 'Done') {
         consultStateData = {'state': 'done'};
       } else {

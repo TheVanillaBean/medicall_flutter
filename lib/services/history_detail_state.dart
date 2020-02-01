@@ -1,6 +1,4 @@
 import 'package:Medicall/models/consult_status_modal.dart';
-import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:Medicall/services/database.dart';
 import 'package:flutter/material.dart';
 
 class DetailedHistoryState with ChangeNotifier {
@@ -8,7 +6,6 @@ class DetailedHistoryState with ChangeNotifier {
 
   double _currentImageIndex = 0;
   Choice _selectedStatus;
-  Database _db;
   TabController _controller;
   int _currentIndex = 0;
 
@@ -42,6 +39,7 @@ class DetailedHistoryState with ChangeNotifier {
 
   List<Choice> get getChoices => _choices;
   Choice get getConsultStatus => _selectedStatus;
+
   double get getDotsIndex => _currentImageIndex;
   int get getCurrentIndex => _currentIndex;
   bool get getIsConsultOpen => _isConsultOpen;
@@ -84,20 +82,22 @@ class DetailedHistoryState with ChangeNotifier {
     _isDone = isDone;
   }
 
-  setConsultStatus(MedicallUser user) async {
+  setConsultStatus(consultSnapshot, val, uid, updateConsultStatus) async {
     // Causes the app to rebuild with the new _selectedChoice.
-    _db.updateConsultStatus(_selectedStatus, user);
-    if (_db.consultSnapshot.data['provider_id'] == medicallUser.uid) {
-      if (_selectedStatus.title == 'Done') {
+    //setChoices();
+    _selectedStatus = val;
+    if (consultSnapshot.data['provider_id'] == uid) {
+      if (val.title.toLowerCase() == 'done') {
         _selectedStatus.icon = Icon(Icons.check_box, color: Colors.green);
-        _db.consultSnapshot.data['state'] = 'done';
+        consultSnapshot.data['state'] = 'done';
       } else {
         _selectedStatus.icon = Icon(
           Icons.check_box_outline_blank,
           color: Colors.blue,
         );
-        _db.consultSnapshot.data['state'] = 'in progress';
+        consultSnapshot.data['state'] = 'in progress';
       }
+      updateConsultStatus(_selectedStatus, uid);
     }
   }
 }

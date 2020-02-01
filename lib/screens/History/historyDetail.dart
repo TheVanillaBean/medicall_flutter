@@ -26,9 +26,9 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
     medicallUser = Provider.of<UserProvider>(context).medicallUser;
     detailedHistoryState = Provider.of<DetailedHistoryState>(context);
     detailedHistoryState.setControllerTabs(this);
-    return FutureBuilder<void>(
+    return FutureBuilder(
       future: db.getConsultDetail(), // a Future<String> or null
-      builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           if (db.consultSnapshot.data['provider_id'] == medicallUser.uid) {
             if (db.consultSnapshot.data['state'] == 'done') {
@@ -44,14 +44,23 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
   }
 
   Widget returnBody() {
+    //detailedHistoryState.setIsDone(true);
     detailedHistoryState.setChoices();
     return Scaffold(
       appBar: AppBar(
         actions: <Widget>[
           medicallUser.type == 'provider'
               ? PopupMenuButton<Choice>(
-                  onSelected:
-                      detailedHistoryState.setConsultStatus(medicallUser),
+                  onSelected: (val) {
+                    detailedHistoryState.setConsultStatus(db.consultSnapshot,
+                        val, medicallUser.uid, db.updateConsultStatus);
+                    if (db.consultSnapshot.data['state'] == 'done') {
+                      detailedHistoryState.setIsDone(true);
+                    } else {
+                      detailedHistoryState.setIsDone(false);
+                    }
+                    detailedHistoryState.setChoices();
+                  },
                   initialValue: detailedHistoryState.getConsultStatus,
                   itemBuilder: (BuildContext context) {
                     return detailedHistoryState.getChoices.map((Choice choice) {
