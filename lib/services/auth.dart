@@ -100,7 +100,6 @@ class Auth implements AuthBase {
     final authResult = await _firebaseAuth.signInWithEmailAndPassword(
         email: email, password: password);
     final user = authResult.user;
-    user.sendEmailVerification();
     return _userFromFirebase(user);
   }
 
@@ -154,16 +153,20 @@ class Auth implements AuthBase {
 
     final FirebaseUser currentUser = await _firebaseAuth.currentUser();
 
-    final AuthResult authResult =
+    final AuthResult linkPhoneAuthResult =
         await currentUser.linkWithCredential(credential);
 
-    final MedicallUser currentMedicallUser = _userFromFirebase(authResult.user);
+    final MedicallUser currentMedicallUser =
+        _userFromFirebase(linkPhoneAuthResult.user);
 
     if (currentMedicallUser != null &&
         currentMedicallUser.phoneNumber != null &&
         currentMedicallUser.phoneNumber.isNotEmpty) {
-      await _firebaseAuth.signInWithCredential(credential);
-      return currentMedicallUser;
+      final phoneSignInAuthResult =
+          await _firebaseAuth.signInWithCredential(credential);
+      final user = phoneSignInAuthResult.user;
+      user.sendEmailVerification();
+      return _userFromFirebase(user);
     } else {
       throw PlatformException(
         code: 'ERROR_PHONE_AUTH_FAILED',

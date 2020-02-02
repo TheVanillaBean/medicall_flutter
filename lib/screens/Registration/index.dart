@@ -1,5 +1,4 @@
 import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
-import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/secrets.dart' as secrets;
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -115,6 +114,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   @override
   Widget build(BuildContext context) {
     final tempUserProvider = Provider.of<TempUserProvider>(context);
+    final medicallUser = tempUserProvider.medicallUser;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -132,10 +132,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             this._typeAheadController.clear();
           }
 
-          //you left of here
-          //move on to other reg forms
-          //test successfully creating a new user
-          //then refactor this class to include a state model
           bool successfullySaveForm =
               _userRegKey.currentState.saveAndValidate();
           if (successfullySaveForm) {
@@ -548,9 +544,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   void updateUserWithFormData(TempUserProvider tempUserProvider) {
-    tempUserProvider.updateWith(displayName: this.displayName);
     tempUserProvider.updateWith(firstName: this.firstName);
     tempUserProvider.updateWith(lastName: this.lastName);
+    tempUserProvider.updateWith(displayName: this.displayName);
+    tempUserProvider.updateWith(password: this.password);
     tempUserProvider.updateWith(dob: this.dob);
     tempUserProvider.updateWith(gender: this.gender);
     tempUserProvider.updateWith(email: this.email);
@@ -576,6 +573,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   String get lastName {
     return _userRegKey.currentState.value['Last name'];
+  }
+
+  String get password {
+    return _userRegKey.currentState.value['Password'];
   }
 
   String get dob {

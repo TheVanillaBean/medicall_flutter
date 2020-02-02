@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/util/validators.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -140,66 +140,38 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
         codeAutoRetrievalTimeout: codeAutoRetrievalTimeout);
   }
 
-  //move _add above signInWithPhoneNumber
-  //move _add to UserProvider
-  //rename _add to _createUser
-
-  //MedicallUser medicallUser = TempUserProvider.medicallUser
-  //medicallUser = _add(medicallUser, context)
-  //medicallUser = auth.saveRegistrationImages(medicallUser);
-  //await auth.signInWithPhoneNumber(this.verificationId, this.smsCode);
-
-  //move _add and saveRegistrationImages to TempUserImage
-
-  //UserProvider will have methods for updating UserProvider,
-  // but TempUserProvider will have methods for creating a new user
-  Future<MedicallUser> signInWithPhoneNumber(bool mounted, context) async {
+  Future<MedicallUser> signInWithPhoneNumber(
+      bool mounted, TempUserProvider tempUserProvider) async {
     try {
-      MedicallUser user =
+      MedicallUser user = await auth.createUserWithEmailAndPassword(
+          tempUserProvider.medicallUser.email, tempUserProvider.password);
+
+      tempUserProvider.updateWith(
+        uid: user.uid,
+        devTokens: user.devTokens,
+        phoneNumber: this.phoneNumber,
+      );
+
+//      bool successfullySavedImages =
+//          await tempUserProvider.saveRegistrationImages();
+
+//      if (successfullySavedImages) {
+      await tempUserProvider.addNewUserToFirestore();
+      user =
           await auth.signInWithPhoneNumber(this.verificationId, this.smsCode);
-      user = await auth.saveRegistrationImages(user);
-      await _add(user, context);
       updateRefreshing(false, mounted);
       return user;
+//      } else {
+//        updateRefreshing(false, mounted);
+//        throw PlatformException(
+//          code: 'ERROR_PHONE_AUTH_FAILED',
+//          message: 'Failed to create user account.',
+//        );
+//      }
+
     } catch (e) {
       updateRefreshing(false, mounted);
       rethrow;
-    }
-  }
-
-  Future<Null> _add(user, context) async {
-    final DocumentReference documentReference =
-        Firestore.instance.document("users/" + user.uid);
-    Map<String, dynamic> data = <String, dynamic>{
-      "name": user.displayName,
-      "first_name": user.firstName,
-      "last_name": user.lastName,
-      "email": user.email,
-      "gender": user.gender,
-      "type": user.type,
-      "address": user.address,
-      "terms": user.terms,
-      "policy": user.policy,
-      "consent": user.consent,
-      "dob": user.dob,
-      "phone": user.phoneNumber,
-      "profile_pic": user.profilePic,
-      "gov_id": user.govId,
-      "dev_tokens": user.devTokens,
-    };
-    if (user.type == 'provider') {
-      data['titles'] = user.titles;
-      data['npi'] = user.npi;
-      data['med_license'] = user.medLicense;
-      data['state_issued'] = user.medLicenseState;
-    }
-
-    try {
-      await documentReference.setData(data).then((onValue) {
-        print('User added');
-      });
-    } catch (e) {
-      throw e;
     }
   }
 
@@ -228,12 +200,3 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
 mixin VerificationError {
   void onVerificationError(String msg);
 }
-
-//throw exceptions are return user
-//also check the firebase flutter auth repo and double check all other auth methods and see if anything is missing
-//for example the identical check is missing in google auth
-
-//add button to sign out user in PhoneAuthScreen, which will cause a auth update event and return to login
-
-//move verifyPhoneNumber function at the bottom to auth.dart ---wait on this, just test if it works in this class and then move over
-//create variables to hold authcrediential and verificationid and call notifylisteners()

@@ -1,6 +1,7 @@
-import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 String _returnString(user) {
   var fullName = user.displayName;
@@ -86,6 +87,9 @@ Thanks again for using Medicall!''';
 class ConsentScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final tempUserProvider = Provider.of<TempUserProvider>(context);
+    final medicallUser = tempUserProvider.medicallUser;
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -110,8 +114,7 @@ class ConsentScreen extends StatelessWidget {
                       onPressed: () {
                         medicallUser.consent = true;
 
-                        Navigator.of(context)
-                            .pushReplacementNamed('/phoneAuth');
+                        Navigator.of(context).pushNamed('/phoneAuth');
                       },
                       color: Colors.green,
                       child: Text(
