@@ -1,11 +1,11 @@
 import 'dart:async';
+
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/services/auth.dart';
-import 'package:Medicall/services/database.dart';
+import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/util/validators.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 enum AuthStatus { PHONE_AUTH, SMS_AUTH }
 
@@ -140,16 +140,35 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
         codeAutoRetrievalTimeout: codeAutoRetrievalTimeout);
   }
 
-  Future<MedicallUser> signInWithPhoneNumber(bool mounted, context) async {
+  Future<MedicallUser> signInWithPhoneNumber(
+      bool mounted, TempUserProvider tempUserProvider) async {
     try {
-      MedicallUser user =
+      MedicallUser user = await auth.createUserWithEmailAndPassword(
+          tempUserProvider.medicallUser.email, tempUserProvider.password);
+
+      tempUserProvider.updateWith(
+        uid: user.uid,
+        devTokens: user.devTokens,
+        phoneNumber: this.phoneNumber,
+      );
+
+//      bool successfullySavedImages =
+//          await tempUserProvider.saveRegistrationImages();
+
+//      if (successfullySavedImages) {
+      await tempUserProvider.addNewUserToFirestore();
+      user =
           await auth.signInWithPhoneNumber(this.verificationId, this.smsCode);
-      await auth.saveRegistrationImages();
-      Database _db = Provider.of<Database>(context);
-      await _db.addUser(user, context);
       updateRefreshing(false, mounted);
-      Navigator.of(context).pushReplacementNamed('/history');
       return user;
+//      } else {
+//        updateRefreshing(false, mounted);
+//        throw PlatformException(
+//          code: 'ERROR_PHONE_AUTH_FAILED',
+//          message: 'Failed to create user account.',
+//        );
+//      }
+
     } catch (e) {
       updateRefreshing(false, mounted);
       rethrow;
@@ -181,12 +200,3 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
 mixin VerificationError {
   void onVerificationError(String msg);
 }
-
-//throw exceptions are return user
-//also check the firebase flutter auth repo and double check all other auth methods and see if anything is missing
-//for example the identical check is missing in google auth
-
-//add button to sign out user in PhoneAuthScreen, which will cause a auth update event and return to login
-
-//move verifyPhoneNumber function at the bottom to auth.dart ---wait on this, just test if it works in this class and then move over
-//create variables to hold authcrediential and verificationid and call notifylisteners()

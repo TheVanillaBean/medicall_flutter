@@ -26,7 +26,7 @@ abstract class AuthBase {
   Future<MedicallUser> currentMedicallUser();
   Future<void> signOut();
   signUp(BuildContext context);
-  saveRegistrationImages();
+  saveRegistrationImages(MedicallUser medicallUser);
 }
 
 class Auth implements AuthBase {
@@ -100,7 +100,6 @@ class Auth implements AuthBase {
     final authResult = await _firebaseAuth.signInWithEmailAndPassword(
         email: email, password: password);
     final user = authResult.user;
-    user.sendEmailVerification();
     return _userFromFirebase(user);
   }
 
@@ -154,16 +153,20 @@ class Auth implements AuthBase {
 
     final FirebaseUser currentUser = await _firebaseAuth.currentUser();
 
-    final AuthResult authResult =
+    final AuthResult linkPhoneAuthResult =
         await currentUser.linkWithCredential(credential);
 
-    final MedicallUser currentMedicallUser = _userFromFirebase(authResult.user);
+    final MedicallUser currentMedicallUser =
+        _userFromFirebase(linkPhoneAuthResult.user);
 
     if (currentMedicallUser != null &&
         currentMedicallUser.phoneNumber != null &&
         currentMedicallUser.phoneNumber.isNotEmpty) {
-      await _firebaseAuth.signInWithCredential(credential);
-      return currentMedicallUser;
+      final phoneSignInAuthResult =
+          await _firebaseAuth.signInWithCredential(credential);
+      final user = phoneSignInAuthResult.user;
+      user.sendEmailVerification();
+      return _userFromFirebase(user);
     } else {
       throw PlatformException(
         code: 'ERROR_PHONE_AUTH_FAILED',
@@ -212,7 +215,7 @@ class Auth implements AuthBase {
   }
 
   @override
-  Future<void> saveRegistrationImages() async {
+  Future<MedicallUser> saveRegistrationImages(MedicallUser medicallUser) async {
     if (medicallUser.uid.length > 0) {
       var assets = tempRegUser.images;
       var allMediaList = [];
@@ -224,11 +227,13 @@ class Auth implements AuthBase {
             .child("profile/" + medicallUser.uid + '/' + assets[i].name);
         StorageUploadTask uploadTask = ref.putData(imageData);
 
-        allMediaList
-            .add(await (await uploadTask.onComplete).ref.getDownloadURL());
+        allMediaList.add(
+          await (await uploadTask.onComplete).ref.getDownloadURL(),
+        );
       }
       medicallUser.profilePic = allMediaList[0];
-      medicallUser.govId = allMediaList[1];
+      return medicallUser.govId = allMediaList[1];
     }
+    return medicallUser;
   }
 }

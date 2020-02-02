@@ -1,8 +1,9 @@
 import 'dart:ui' as ui;
+
+import 'package:Medicall/common_widgets/platform_exception_alert_dialog.dart';
 import 'package:Medicall/common_widgets/sign_in_button.dart';
 import 'package:Medicall/common_widgets/social_sign_in_button.dart';
 import 'package:Medicall/screens/Login/sign_in_state_model.dart';
-import 'package:Medicall/screens/Registration/registrationType.dart';
 import 'package:Medicall/services/animation_provider.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/util/app_util.dart';
@@ -57,9 +58,11 @@ class _LoginScreenState extends State<LoginPage> {
   Future<void> _submit() async {
     try {
       await model.submit();
-      //Navigator.of(context).pop();
     } on PlatformException catch (e) {
-      AppUtil().showFlushBar(e, context);
+      PlatformExceptionAlertDialog(
+        title: 'Sign in failed',
+        exception: e,
+      ).show(context);
     }
   }
 
@@ -67,14 +70,15 @@ class _LoginScreenState extends State<LoginPage> {
     try {
       await model.signInWithGoogle();
     } on PlatformException catch (e) {
-      AppUtil().showFlushBar(e, context);
+      PlatformExceptionAlertDialog(
+        title: 'Sign in failed',
+        exception: e,
+      ).show(context);
     }
   }
 
-  void _createAccountWithEmail(BuildContext context) {
-    Navigator.of(context).push(CupertinoPageRoute(
-      builder: (context) => RegistrationTypeScreen(),
-    ));
+  void _navigateToRegistrationScreen(BuildContext context) {
+    Navigator.of(context).pushNamed('/registrationType');
   }
 
   void _emailEditingComplete() {
@@ -179,7 +183,7 @@ class _LoginScreenState extends State<LoginPage> {
                         textColor: Colors.white,
                         text: "Create New Account",
                         onPressed: () {
-                          _createAccountWithEmail(context);
+                          _navigateToRegistrationScreen(context);
                         },
                       ),
                     )
@@ -237,15 +241,6 @@ class _LoginScreenState extends State<LoginPage> {
   }
 
   Container _buildEmailAuthForm(BuildContext context) {
-    // if (model.isLoading) {
-    //   return Container(
-    //     height: 225,
-    //     padding: const EdgeInsets.only(bottom: 16.0),
-    //     child: Center(
-    //       child: CircularProgressIndicator(),
-    //     ),
-    //   );
-    // }
     return Container(
       padding: const EdgeInsets.fromLTRB(0, 40, 0, 40),
       child: Column(

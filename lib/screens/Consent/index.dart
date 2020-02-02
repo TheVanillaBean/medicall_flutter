@@ -1,6 +1,4 @@
-import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:Medicall/screens/PhoneAuth/index.dart';
-import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -87,11 +85,11 @@ Thanks again for using Medicall!''';
 }
 
 class ConsentScreen extends StatelessWidget {
-  const ConsentScreen({Key key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
-    medicallUser = Provider.of<AuthBase>(context).medicallUser;
+    final tempUserProvider = Provider.of<TempUserProvider>(context);
+    final medicallUser = tempUserProvider.medicallUser;
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -102,7 +100,9 @@ class ConsentScreen extends StatelessWidget {
           padding: EdgeInsets.fromLTRB(15, 20, 15, 20),
           child: Column(
             children: <Widget>[
-              Text(_returnString(medicallUser)),
+              Text(
+                _returnString(medicallUser),
+              ),
               SizedBox(
                 height: 10,
               ),
@@ -112,14 +112,9 @@ class ConsentScreen extends StatelessWidget {
                     child: FlatButton(
                       padding: EdgeInsets.all(20),
                       onPressed: () {
-                        var auth = Provider.of<AuthBase>(
-                            context);
-                        auth.medicallUser.consent = true;
-                        Route route = MaterialPageRoute(
-                            builder: (context) =>
-                                PhoneAuthScreen.create(context));
-                        Navigator.of(context)
-                            .pushReplacement(route);
+                        medicallUser.consent = true;
+
+                        Navigator.of(context).pushNamed('/phoneAuth');
                       },
                       color: Colors.green,
                       child: Text(

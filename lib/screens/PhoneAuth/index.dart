@@ -1,13 +1,14 @@
 import 'dart:async';
 
-import 'package:Medicall/components/masked_text.dart';
 import 'package:Medicall/components/reactive_refresh_indicator.dart';
 import 'package:Medicall/screens/PhoneAuth/phone_auth_state_model.dart';
 import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
 
 class PhoneAuthScreen extends StatefulWidget {
@@ -16,7 +17,7 @@ class PhoneAuthScreen extends StatefulWidget {
   const PhoneAuthScreen({@required this.model});
 
   static Widget create(BuildContext context) {
-    final AuthBase auth = Provider.of<AuthBase>(context);
+    final AuthBase auth = Provider.of<AuthBase>(context, listen: false);
     return ChangeNotifierProvider<PhoneAuthStateModel>(
       create: (context) => PhoneAuthStateModel(auth: auth),
       child: Consumer<PhoneAuthStateModel>(
@@ -62,7 +63,11 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
   TextEditingController smsCodeController = TextEditingController();
   TextEditingController phoneNumberController = TextEditingController();
 
+  var phoneTextInputFormatter = MaskTextInputFormatter(
+      mask: "(###)###-####", filter: {"#": RegExp(r'[0-9]')});
+
   PhoneAuthStateModel get model => widget.model;
+  TempUserProvider tempUserProvider;
 
   @override
   void dispose() {
@@ -105,19 +110,16 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
       disabledColor: Theme.of(context).buttonColor,
       onPressed: (model.status != AuthStatus.SMS_AUTH)
           ? null
-          : () async {
-              var auth = Provider.of<AuthBase>(context);
-              await auth.signUp(context);
-              model.updateRefreshing(true, mounted);
-            },
+          : () => model.updateRefreshing(true, mounted),
     );
   }
 
   Widget _buildPhoneNumberInput() {
-    return MaskedTextField(
-      mask: "(xxx)xxx-xxxx",
+    return TextField(
+      controller: phoneNumberController,
+      inputFormatters: [phoneTextInputFormatter],
+      autocorrect: false,
       keyboardType: TextInputType.phone,
-      maskedTextFieldController: phoneNumberController,
       maxLength: 13,
       onSubmitted: (_) => model.updateRefreshing(true, mounted),
       onChanged: model.updatePhoneNumber,
@@ -126,7 +128,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
           .textTheme
           .subhead
           .copyWith(fontSize: 18.0, color: Colors.white),
-      inputDecoration: InputDecoration(
+      decoration: InputDecoration(
         border: UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.tealAccent)),
         enabledBorder: UnderlineInputBorder(
@@ -139,7 +141,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
         ),
         labelText: "Phone",
         labelStyle: decorationStyle,
-        hintText: "(999)999-9999",
+        hintText: "(###)###-####",
         hintStyle: hintStyle,
         errorText: model.phoneNumberErrorText,
         enabled: model.status == AuthStatus.PHONE_AUTH,
@@ -182,43 +184,30 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
 
   Widget _buildSmsCodeInput() {
     final enabled = model.status == AuthStatus.SMS_AUTH;
-    var auth = Provider.of<AuthBase>(context);
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Expanded(
-          flex: 1,
-          child: TextField(
-            keyboardType: TextInputType.number,
-            textAlign: TextAlign.center,
-            controller: smsCodeController,
-            onChanged: model.updateSMSCode,
-            maxLength: 6,
-            onSubmitted: (_) async {
-              await auth.signUp(context);
-              model.updateRefreshing(true, mounted);
-            },
-            style: Theme.of(context).textTheme.subhead.copyWith(
-                  fontSize: 32.0,
-                  color: enabled ? Colors.white : Theme.of(context).buttonColor,
-                ),
-            decoration: InputDecoration(
-              border: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.tealAccent),
-              ),
-              enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.tealAccent),
-              ),
-              counterText: "",
-              hintText: "--- ---",
-              hintStyle: hintStyle.copyWith(fontSize: 42.0),
-              errorText: model.smsCodeErrorText,
-              enabled: enabled,
-            ),
+    return TextField(
+      keyboardType: TextInputType.number,
+      textAlign: TextAlign.center,
+      controller: smsCodeController,
+      onChanged: model.updateSMSCode,
+      maxLength: 6,
+      onSubmitted: (_) => model.updateRefreshing(true, mounted),
+      style: Theme.of(context).textTheme.subhead.copyWith(
+            fontSize: 32.0,
+            color: enabled ? Colors.white : Theme.of(context).buttonColor,
           ),
-        )
-      ],
+      decoration: InputDecoration(
+        border: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.tealAccent),
+        ),
+        enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.tealAccent),
+        ),
+        counterText: "",
+        hintText: "--- ---",
+        hintStyle: hintStyle.copyWith(fontSize: 42.0),
+        errorText: model.smsCodeErrorText,
+        enabled: enabled,
+      ),
     );
   }
 
@@ -308,7 +297,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
 
     if (model.status == AuthStatus.SMS_AUTH) {
       try {
-        return await model.signInWithPhoneNumber(mounted, context);
+        return await model.signInWithPhoneNumber(mounted, tempUserProvider);
       } on PlatformException catch (e) {
         _showErrorSnackbar(e.message);
       }
@@ -317,6 +306,8 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
 
   @override
   Widget build(BuildContext context) {
+    tempUserProvider = Provider.of<TempUserProvider>(context);
+
     return Scaffold(
       appBar: AppBar(elevation: 0.0),
       backgroundColor: Theme.of(context).primaryColor,
