@@ -86,7 +86,7 @@ class TempUserProvider {
         StorageUploadTask uploadTask = ref.putData(imageData);
 
         allMediaList.add(
-          (await uploadTask.onComplete).ref.getDownloadURL(),
+          await (await uploadTask.onComplete).ref.getDownloadURL(),
         );
       }
 

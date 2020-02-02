@@ -12,9 +12,9 @@ class PhotoIdScreen extends StatefulWidget {
 }
 
 class _PhotoIdScreenState extends State<PhotoIdScreen> {
-  List images = List();
-  List govIdImage = List();
-  List profileImage = List();
+  List<Asset> images = List<Asset>();
+  List<Asset> govIdImage = List<Asset>();
+  List<Asset> profileImage = List<Asset>();
   String _error = '';
   ExtImageProvider _extImageProvider;
 
@@ -53,19 +53,19 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
   Future<void> deleteGovIdImage() async {
     //await MultiImagePicker.deleteImages(assets: images);
     setState(() {
-      govIdImage = [];
+      govIdImage = List<Asset>();
     });
   }
 
   Future<void> deleteProfileImage() async {
     //await MultiImagePicker.deleteImages(assets: images);
     setState(() {
-      profileImage = [];
+      profileImage = List<Asset>();
     });
   }
 
   Future<void> loadProfileImage() async {
-    List resultList = [];
+    List<Asset> resultList = List<Asset>();
     String error = '';
 
     try {
@@ -103,7 +103,7 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
   }
 
   Future<void> loadGovIdImage() async {
-    List resultList = [];
+    List<Asset> resultList = List<Asset>();
     String error = '';
 
     try {
