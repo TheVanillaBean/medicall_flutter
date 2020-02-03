@@ -12,40 +12,53 @@ class UserHistoryState with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<List<DocumentSnapshot>> getUserHistory(MedicallUser medicallUser,
-      String searchQuery, int sortBy, context) async {
+  getUserHistorySnapshots(
+      MedicallUser medicallUser, String searchQuery, int sortBy, context) {
     if (medicallUser.uid.length > 0) {
-      final Future<QuerySnapshot> documentReference = sortBy == 1
+      return sortBy == 1
           ? Firestore.instance
               .collection('consults')
-              .where(medicallUser.type == 'provider' ? 'provider_id' : 'patient_id',
+              .where(
+                  medicallUser.type == 'provider'
+                      ? 'provider_id'
+                      : 'patient_id',
                   isEqualTo: medicallUser.uid)
               .orderBy('date', descending: true)
-              .getDocuments()
+              .snapshots()
           : sortBy == 2
               ? Firestore.instance
                   .collection('consults')
-                  .where(medicallUser.type == 'provider' ? 'provider_id' : 'patient_id',
+                  .where(
+                      medicallUser.type == 'provider'
+                          ? 'provider_id'
+                          : 'patient_id',
                       isEqualTo: medicallUser.uid)
-                  .orderBy(medicallUser.type == 'provider' ? 'patient' : 'provider',
+                  .orderBy(
+                      medicallUser.type == 'provider' ? 'patient' : 'provider',
                       descending: false)
-                  .getDocuments()
+                  .snapshots()
               : sortBy == 3
                   ? Firestore.instance
                       .collection('consults')
-                      .where(medicallUser.type == 'provider' ? 'provider_id' : 'patient_id',
+                      .where(
+                          medicallUser.type == 'provider'
+                              ? 'provider_id'
+                              : 'patient_id',
                           isEqualTo: medicallUser.uid)
                       .where('state', isEqualTo: 'new')
                       .orderBy('date', descending: true)
-                      .getDocuments()
+                      .snapshots()
                   : sortBy == 4
                       ? Firestore.instance
                           .collection('consults')
-                          .where(medicallUser.type == 'provider' ? 'provider_id' : 'patient_id',
+                          .where(
+                              medicallUser.type == 'provider'
+                                  ? 'provider_id'
+                                  : 'patient_id',
                               isEqualTo: medicallUser.uid)
                           .where('state', isEqualTo: 'in progress')
                           .orderBy('date', descending: true)
-                          .getDocuments()
+                          .snapshots()
                       : sortBy == 5
                           ? Firestore.instance
                               .collection('consults')
@@ -56,7 +69,7 @@ class UserHistoryState with ChangeNotifier {
                                   isEqualTo: medicallUser.uid)
                               .where('state', isEqualTo: 'prescription waiting')
                               .orderBy('date', descending: true)
-                              .getDocuments()
+                              .snapshots()
                           : Firestore.instance
                               .collection('consults')
                               .where(
@@ -66,38 +79,7 @@ class UserHistoryState with ChangeNotifier {
                                   isEqualTo: medicallUser.uid)
                               .where('state', isEqualTo: 'done')
                               .orderBy('date', descending: true)
-                              .getDocuments();
-      await documentReference.then((datasnapshot) {
-        if (datasnapshot.documents != null) {
-          userHistory = [];
-          for (var i = 0; i < datasnapshot.documents.length; i++) {
-            if (!userHistory.contains(datasnapshot.documents[i])) {
-              if (searchQuery.length > 0) {
-                if (datasnapshot.documents[i].data['provider']
-                        .toLowerCase()
-                        .contains(
-                          searchQuery.toLowerCase(),
-                        ) ||
-                    datasnapshot.documents[i].data['state']
-                        .toLowerCase()
-                        .contains(
-                          searchQuery.toLowerCase(),
-                        ) ||
-                    datasnapshot.documents[i].data['type']
-                        .toLowerCase()
-                        .contains(
-                          searchQuery.toLowerCase(),
-                        )) {
-                  userHistory.add(datasnapshot.documents[i]);
-                }
-              } else {
-                userHistory.add(datasnapshot.documents[i]);
-              }
-            }
-          }
-        }
-      }).catchError((e) => print(e));
+                              .snapshots();
     }
-    return userHistory;
   }
 }

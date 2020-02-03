@@ -98,11 +98,12 @@ class DoctorSearch extends StatelessWidget {
                             ),
                           ),
                           Container(
-                            padding: EdgeInsets.all(20),
+                            padding: EdgeInsets.all(10),
                             width: 120,
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton(
                                 isExpanded: true,
+                                isDense: true,
                                 icon: Icon(Icons.more_vert),
                                 items: [
                                   DropdownMenuItem(
@@ -131,7 +132,8 @@ class DoctorSearch extends StatelessWidget {
                                           style: TextStyle(
                                               fontSize: 14,
                                               color: Theme.of(context)
-                                                  .primaryColor,
+                                                  .colorScheme
+                                                  .secondary,
                                               fontWeight: FontWeight.bold),
                                         ),
                                       ),
@@ -161,7 +163,8 @@ class DoctorSearch extends StatelessWidget {
                                           style: TextStyle(
                                               fontSize: 14,
                                               color: Theme.of(context)
-                                                  .primaryColor,
+                                                  .colorScheme
+                                                  .secondary,
                                               fontWeight: FontWeight.bold),
                                         ),
                                       ),

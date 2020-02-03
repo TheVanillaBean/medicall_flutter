@@ -655,25 +655,22 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                         ),
                                       ),
                                     ),
-                                  ))
+                                  )),
+                                  FutureBuilder(
+                                      future: db.getPatientDetail(medicallUser),
+                                      builder: (BuildContext context,
+                                          AsyncSnapshot<void> snapshot) {
+                                        if (snapshot.connectionState ==
+                                                ConnectionState.done &&
+                                            medicallUser.type == 'patient') {
+                                          return PrescriptionPayment();
+                                        } else {
+                                          return Container();
+                                        }
+                                      })
                                 ],
                               )
-                            : consultSnapshot.containsKey('medication_name') &&
-                                    consultSnapshot['medication_name'].length >
-                                        0
-                                ? FutureBuilder(
-                                    future: db.getPatientDetail(medicallUser),
-                                    builder: (BuildContext context,
-                                        AsyncSnapshot<void> snapshot) {
-                                      if (snapshot.connectionState ==
-                                              ConnectionState.done &&
-                                          medicallUser.type == 'patient') {
-                                        return PrescriptionPayment();
-                                      } else {
-                                        return Container();
-                                      }
-                                    })
-                                : Container()
+                            : Container()
                       ],
                     ),
                   )
