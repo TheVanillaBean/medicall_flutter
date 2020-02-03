@@ -39,9 +39,12 @@ dependencies:
   extended_image: ^0.6.9
   #image_picker: ^0.6.3+1
   multi_image_picker: ^4.6.1
+  image_picker: ^0.6.3+1
   #notifications
   flushbar: ^1.9.1
   #flutter_alert: ^0.4.0
+  #chat
+  dash_chat: ^1.0.15
   #state_management
   provider: ^4.0.2
   #animation

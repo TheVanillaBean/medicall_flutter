@@ -680,10 +680,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
     }
     return FadeInPlace(
       3,
-      Chat(
-        peerId: db.currConsultId,
-        peerAvatar: isDone,
-      ),
+      Chat(),
     );
   }
 

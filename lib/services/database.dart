@@ -6,6 +6,7 @@ import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/models/reg_user_model.dart';
 import 'package:Medicall/services/history_detail_state.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dash_chat/dash_chat.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 abstract class Database {
@@ -201,7 +202,6 @@ class FirestoreDatabase implements Database {
       "screening_questions": newConsult.screeningQuestions,
       //"medical_history_questions": _db.newConsult.historyQuestions,
       "type": newConsult.consultType,
-      "chat": [],
       "state": "new",
       "date": DateTime.now(),
       "medication_name": "",
@@ -215,7 +215,32 @@ class FirestoreDatabase implements Database {
       "patient_id": medicallUser.uid,
       "media": newConsult.media.length > 0 ? imagesList : "",
     };
-    return ref.setData(data);
+    return ref.setData(data).then((val) {
+      var chatRef =
+          Firestore.instance.collection('chat').document(ref.documentID);
+      Map<String, dynamic> chatData = <String, dynamic>{
+        "provider": newConsult.provider,
+        "providerTitles": newConsult.providerTitles,
+        "patient": medicallUser.displayName,
+        "provider_profile": newConsult.providerProfilePic,
+        "patient_profile": medicallUser.profilePic,
+        "provider_id": newConsult.providerId,
+        "patient_id": medicallUser.uid,
+      };
+
+      chatRef.setData(chatData);
+      var msgDocument = chatRef
+          .collection('messages')
+          .document(DateTime.now().millisecondsSinceEpoch.toString());
+      var chatContent = ChatMessage(
+              text: "Hello, please take a look at my concerns, thank you.",
+              user: ChatUser(
+                  name: medicallUser.displayName,
+                  uid: medicallUser.uid,
+                  avatar: medicallUser.profilePic))
+          .toJson();
+      msgDocument.setData(chatContent);
+    });
   }
 
   Stream getAllUsers() {
