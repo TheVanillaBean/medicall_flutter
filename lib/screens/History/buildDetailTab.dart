@@ -630,8 +630,8 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                           : Colors.green,
                                       onPressed: () async {
                                         await db
-                                            .updatedPrescription(consultFormKey)
-                                            .then(() {
+                                            .updatePrescription(consultFormKey)
+                                            .then((val) {
                                           setState(() {
                                             buttonTxt = 'Prescription Updated';
                                           });
