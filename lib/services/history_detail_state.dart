@@ -80,6 +80,11 @@ class DetailedHistoryState with ChangeNotifier {
 
   void setIsDone(bool isDone) {
     _isDone = isDone;
+    notifyListeners();
+  }
+
+  bool getIsDone() {
+    return _isDone;
   }
 
   setConsultStatus(consultSnapshot, val, uid, updateConsultStatus) async {

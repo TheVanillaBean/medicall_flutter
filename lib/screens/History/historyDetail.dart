@@ -27,17 +27,9 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
     detailedHistoryState = Provider.of<DetailedHistoryState>(context);
     detailedHistoryState.setControllerTabs(this);
     return FutureBuilder(
-      future: db.getConsultDetail(), // a Future<String> or null
+      future:
+          db.getConsultDetail(detailedHistoryState), // a Future<String> or null
       builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          if (db.consultSnapshot.data['provider_id'] == medicallUser.uid) {
-            if (db.consultSnapshot.data['state'] == 'done') {
-              detailedHistoryState.setIsDone(true);
-            } else {
-              detailedHistoryState.setIsDone(false);
-            }
-          }
-        }
         return returnBody();
       },
     );

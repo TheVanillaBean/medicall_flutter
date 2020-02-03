@@ -4,11 +4,12 @@ import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/consult_status_modal.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/models/reg_user_model.dart';
+import 'package:Medicall/services/history_detail_state.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 abstract class Database {
-  Future getConsultDetail();
+  Future getConsultDetail(DetailedHistoryState detailedHistoryState);
   Future<void> getPatientDetail(MedicallUser medicallUser);
   Future<void> setPrescriptionPayment(state, shipTo, shippingAddress);
   Future<void> updatePrescription(consultFormKey);
@@ -72,7 +73,7 @@ class FirestoreDatabase implements Database {
 
   FirestoreDatabase();
   @override
-  Future getConsultDetail() async {
+  Future getConsultDetail(DetailedHistoryState detailedHistoryState) async {
     if (consultSnapshot == null && currConsultId != null ||
         currConsultId != consultSnapshot.documentID) {
       consultRef =
@@ -85,9 +86,9 @@ class FirestoreDatabase implements Database {
             consultSnapshot['media']
           ];
           if (consultSnapshot['state'] == 'done') {
-            isDone = true;
+            detailedHistoryState.setIsDone(true);
           } else {
-            isDone = false;
+            detailedHistoryState.setIsDone(false);
           }
         }
         return consultSnapshot;

@@ -220,7 +220,7 @@ class Auth implements AuthBase {
       var assets = tempRegUser.images;
       var allMediaList = [];
       for (var i = 0; i < assets.length; i++) {
-        ByteData byteData = await assets[i].requestOriginal();
+        ByteData byteData = await assets[i].getByteData();
         List<int> imageData = byteData.buffer.asUint8List();
         StorageReference ref = FirebaseStorage.instance
             .ref()

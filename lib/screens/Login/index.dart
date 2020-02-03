@@ -1,6 +1,4 @@
 import 'dart:ui' as ui;
-
-import 'package:Medicall/common_widgets/platform_exception_alert_dialog.dart';
 import 'package:Medicall/common_widgets/sign_in_button.dart';
 import 'package:Medicall/common_widgets/social_sign_in_button.dart';
 import 'package:Medicall/screens/Login/sign_in_state_model.dart';
@@ -59,10 +57,7 @@ class _LoginScreenState extends State<LoginPage> {
     try {
       await model.submit();
     } on PlatformException catch (e) {
-      PlatformExceptionAlertDialog(
-        title: 'Sign in failed',
-        exception: e,
-      ).show(context);
+      AppUtil().showFlushBar(e, context);
     }
   }
 
@@ -70,10 +65,7 @@ class _LoginScreenState extends State<LoginPage> {
     try {
       await model.signInWithGoogle();
     } on PlatformException catch (e) {
-      PlatformExceptionAlertDialog(
-        title: 'Sign in failed',
-        exception: e,
-      ).show(context);
+      AppUtil().showFlushBar(e, context);
     }
   }
 
