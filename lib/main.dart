@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:Medicall/screens/Account/index.dart';
 import 'package:Medicall/screens/Account/paymentDetail.dart';
-import 'package:Medicall/screens/Chat/index.dart';
 import 'package:Medicall/screens/ConfirmConsult/index.dart';
 import 'package:Medicall/screens/Consent/index.dart';
 import 'package:Medicall/screens/History/historyDetail.dart';
@@ -182,11 +181,6 @@ class MedicallApp extends StatelessWidget {
               case '/consultReview':
                 return MyCustomRoute(
                   builder: (_) => ConfirmConsultScreen(),
-                  settings: settings,
-                );
-              case '/chat':
-                return MyCustomRoute(
-                  builder: (_) => ChatScreen(),
                   settings: settings,
                 );
               case '/history':

@@ -45,8 +45,10 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
     Database db = Provider.of<Database>(context);
     MedicallUser medicallUser = Provider.of<UserProvider>(context).medicallUser;
     MyStripeProvider _stripeProvider = Provider.of<MyStripeProvider>(context);
-    DateTime datePaid = DateTime.fromMillisecondsSinceEpoch(
-        db.consultSnapshot.data['pay_date'].millisecondsSinceEpoch);
+    DateTime datePaid = db.consultSnapshot.data.containsKey('pay_date')
+        ? DateTime.fromMillisecondsSinceEpoch(
+            db.consultSnapshot.data['pay_date'].millisecondsSinceEpoch)
+        : null;
 
     onChangedCheckBox = (val) async {
       if (val.length > 0) {

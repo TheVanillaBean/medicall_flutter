@@ -666,7 +666,8 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                     builder: (BuildContext context,
                                         AsyncSnapshot<void> snapshot) {
                                       if (snapshot.connectionState ==
-                                          ConnectionState.done) {
+                                              ConnectionState.done &&
+                                          medicallUser.type == 'patient') {
                                         return PrescriptionPayment();
                                       } else {
                                         return Container();
