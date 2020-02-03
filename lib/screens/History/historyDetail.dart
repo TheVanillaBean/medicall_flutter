@@ -38,6 +38,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
   Widget returnBody() {
     //detailedHistoryState.setIsDone(true);
     detailedHistoryState.setChoices();
+    detailedHistoryState.getTabController.index = 0;
     return Scaffold(
       appBar: AppBar(
         actions: <Widget>[

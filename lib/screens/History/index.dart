@@ -193,7 +193,12 @@ class HistoryScreen extends StatelessWidget {
               for (var i = 0; i < snapshot.data.documents.length; i++) {
                 if (!userHistory.contains(snapshot.data.documents[i])) {
                   if (_appBarState.searchInput.length > 0) {
-                    if (snapshot.data.documents[i].data['provider']
+                    if (snapshot.data.documents[i].data['patient']
+                            .toLowerCase()
+                            .contains(
+                              _appBarState.searchInput.toLowerCase(),
+                            ) ||
+                        snapshot.data.documents[i].data['provider']
                             .toLowerCase()
                             .contains(
                               _appBarState.searchInput.toLowerCase(),

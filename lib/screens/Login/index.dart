@@ -82,6 +82,8 @@ class _LoginScreenState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    MyAnimationProvider _animationProvider =
+        Provider.of<MyAnimationProvider>(context);
     return Scaffold(
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.dark,
@@ -91,18 +93,32 @@ class _LoginScreenState extends State<LoginPage> {
             constraints: BoxConstraints.tightFor(
               height: MediaQueryData.fromWindow(ui.window).size.height,
             ),
-            child: Container(
-              child: SafeArea(
-                child: GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: () {
-                    FocusScope.of(context).requestFocus(new FocusNode());
-                  },
-                  child: Stack(
-                    children: _buildChildren(context),
+            child: Stack(
+              children: <Widget>[
+                Positioned.fill(
+                    child: _animationProvider.returnAnimation(
+                        tween: _animationProvider.returnMultiTrackTween([
+                          Colors.blueAccent.withAlpha(100),
+                          Colors.cyanAccent.withAlpha(20),
+                          Colors.cyanAccent.withAlpha(20),
+                          Colors.blueAccent.withAlpha(100)
+                        ]),
+                        margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                        radius: BorderRadius.all(Radius.circular(0)))),
+                Container(
+                  child: SafeArea(
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () {
+                        FocusScope.of(context).requestFocus(new FocusNode());
+                      },
+                      child: Stack(
+                        children: _buildChildren(context),
+                      ),
+                    ),
                   ),
                 ),
-              ),
+              ],
             ),
           ),
         ),
@@ -111,8 +127,6 @@ class _LoginScreenState extends State<LoginPage> {
   }
 
   List<Widget> _buildChildren(BuildContext context) {
-    MyAnimationProvider _animationProvider =
-        Provider.of<MyAnimationProvider>(context);
     //MyFlareProvider _flareProvider = Provider.of<MyFlareProvider>(context);
     return [
       // Container(
@@ -125,16 +139,7 @@ class _LoginScreenState extends State<LoginPage> {
       //     animation: 'Untitled',
       //   ),
       // ),
-      Positioned.fill(
-          child: _animationProvider.returnAnimation(
-              tween: _animationProvider.returnMultiTrackTween([
-                Colors.blueAccent.withAlpha(100),
-                Colors.cyanAccent.withAlpha(20),
-                Colors.cyanAccent.withAlpha(20),
-                Colors.blueAccent.withAlpha(100)
-              ]),
-              margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-              radius: BorderRadius.all(Radius.circular(0)))),
+
       FadeIn(
         2,
         Padding(
@@ -208,14 +213,13 @@ class _LoginScreenState extends State<LoginPage> {
                   height: 1.08,
                   letterSpacing: 2.5,
                   fontWeight: FontWeight.w700,
-                  color: Theme.of(context).primaryColorDark.withAlpha(100))),
+                  color: Theme.of(context).primaryColor)),
         ),
         SizedBox(
           width: 110,
           height: 110,
           child: Image.asset(
             'assets/icon/logo_fore.png',
-            color: Theme.of(context).primaryColorDark.withAlpha(100),
           ),
         ),
         Container(
@@ -226,7 +230,7 @@ class _LoginScreenState extends State<LoginPage> {
                   height: 1.08,
                   letterSpacing: 2.5,
                   fontWeight: FontWeight.w700,
-                  color: Theme.of(context).primaryColorDark.withAlpha(100))),
+                  color: Theme.of(context).colorScheme.secondary)),
         )
       ],
     );

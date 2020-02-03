@@ -83,106 +83,73 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
       typeAheadController.text = '';
     }
     return db.consultSnapshot.data.containsKey('medication_name') &&
-            db.consultSnapshot.data['medication_name'].length > 0
+            db.consultSnapshot.data['medication_name'].length > 0 &&
+            !db.consultSnapshot.data.containsKey('pay_date') &&
+            medicallUser.type == 'patient'
         ? FormBuilder(
             key: prescriptionPaymentKey,
             child: Column(
               children: <Widget>[
-                !db.consultSnapshot.data.containsKey('pay_date')
-                    ? Container(
-                        padding: EdgeInsets.fromLTRB(0, 10, 20, 10),
-                        child: FormBuilderCheckboxList(
-                          leadingInput: true,
-                          attribute: 'shipTo',
-                          initialValue: [shipTo],
-                          validators: [
-                            FormBuilderValidators.required(),
-                          ],
-                          decoration: InputDecoration(
-                              border: InputBorder.none,
-                              disabledBorder: InputBorder.none,
-                              enabledBorder: InputBorder.none,
-                              focusedBorder: InputBorder.none,
-                              contentPadding:
-                                  EdgeInsets.fromLTRB(0, 10, 0, 10)),
-                          onChanged: onChangedCheckBox,
-                          options: [
-                            FormBuilderFieldOption(
-                              value: 'pickup',
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Text(
-                                    'Local pharmacy pickup',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                    ),
-                                    softWrap: true,
-                                  ),
-                                  Text(
-                                    '\*',
-                                    style: TextStyle(fontSize: 21),
-                                  ),
-                                ],
+                Container(
+                  padding: EdgeInsets.fromLTRB(0, 10, 20, 10),
+                  child: FormBuilderCheckboxList(
+                    leadingInput: true,
+                    attribute: 'shipTo',
+                    initialValue: [shipTo],
+                    validators: [
+                      FormBuilderValidators.required(),
+                    ],
+                    decoration: InputDecoration(
+                        border: InputBorder.none,
+                        disabledBorder: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        contentPadding: EdgeInsets.fromLTRB(0, 10, 0, 10)),
+                    onChanged: onChangedCheckBox,
+                    options: [
+                      FormBuilderFieldOption(
+                        value: 'pickup',
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text(
+                              'Local pharmacy pickup',
+                              style: TextStyle(
+                                fontSize: 16,
                               ),
+                              softWrap: true,
                             ),
-                            FormBuilderFieldOption(
-                              value: 'delivery',
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Text(
-                                    'Ship directly to my door.',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                    ),
-                                    softWrap: true,
-                                  ),
-                                  Text(
-                                    '\$60',
-                                    style: TextStyle(fontSize: 21),
-                                  ),
-                                ],
+                            Text(
+                              '\*',
+                              style: TextStyle(fontSize: 21),
+                            ),
+                          ],
+                        ),
+                      ),
+                      FormBuilderFieldOption(
+                        value: 'delivery',
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text(
+                              'Ship directly to my door.',
+                              style: TextStyle(
+                                fontSize: 16,
                               ),
-                            )
+                              softWrap: true,
+                            ),
+                            Text(
+                              '\$60',
+                              style: TextStyle(fontSize: 21),
+                            ),
                           ],
                         ),
                       )
-                    : Container(
-                        padding: EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: Colors.greenAccent.withAlpha(50),
-                          border: Border.all(
-                              color: Colors.grey.withAlpha(100),
-                              style: BorderStyle.solid,
-                              width: 1),
-                          borderRadius: BorderRadius.all(Radius.circular(5)),
-                        ),
-                        child: Text(
-                          db.consultSnapshot.data['shipping_option'] ==
-                                  'delivery'
-                              ? 'Payment made:' +
-                                  ' ' +
-                                  DateFormat('MM-dd-yyyy hh:mm a')
-                                      .format(datePaid) +
-                                  '\nShipping option: Home delivery' +
-                                  '\nShipping Address: ' +
-                                  db.consultSnapshot.data['shipping_address']
-                              : 'Payment made:' +
-                                  ' ' +
-                                  DateFormat('MM-dd-yyyy hh:mm a')
-                                      .format(datePaid) +
-                                  '\nShipping option: Local Pharmacy' +
-                                  '\nShipping Address: ' +
-                                  db.consultSnapshot.data['shipping_address'],
-                          style: TextStyle(color: Colors.green, fontSize: 16),
-                        ),
-                      ),
+                    ],
+                  ),
+                ),
                 Visibility(
-                    visible: userShippingSelected ||
-                        !db.consultSnapshot.data.containsKey('pay_date'),
+                    visible: userShippingSelected,
                     child: Container(
                       padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
                       child: Column(
@@ -381,6 +348,34 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
               ],
             ),
           )
-        : SizedBox();
+        : datePaid != null
+            ? Container(
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.greenAccent.withAlpha(50),
+                  border: Border.all(
+                      color: Colors.grey.withAlpha(100),
+                      style: BorderStyle.solid,
+                      width: 1),
+                  borderRadius: BorderRadius.all(Radius.circular(5)),
+                ),
+                child: Text(
+                  db.consultSnapshot.data['shipping_option'] == 'delivery'
+                      ? 'Payment made:' +
+                          ' ' +
+                          DateFormat('MM-dd-yyyy hh:mm a').format(datePaid) +
+                          '\nShipping option: Home delivery' +
+                          '\nShipping Address: ' +
+                          db.consultSnapshot.data['shipping_address']
+                      : 'Payment made:' +
+                          ' ' +
+                          DateFormat('MM-dd-yyyy hh:mm a').format(datePaid) +
+                          '\nShipping option: Local Pharmacy' +
+                          '\nShipping Address: ' +
+                          db.consultSnapshot.data['shipping_address'],
+                  style: TextStyle(color: Colors.green, fontSize: 16),
+                ),
+              )
+            : Container();
   }
 }
