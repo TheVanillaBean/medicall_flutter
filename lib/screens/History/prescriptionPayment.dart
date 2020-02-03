@@ -1,14 +1,14 @@
 import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/secrets.dart' as secrets;
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/stripe_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
 import 'package:google_maps_webservice/places.dart';
-import 'package:Medicall/secrets.dart' as secrets;
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class PrescriptionPayment extends StatefulWidget {
   PrescriptionPayment({Key key}) : super(key: key);
@@ -88,8 +88,7 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
             key: prescriptionPaymentKey,
             child: Column(
               children: <Widget>[
-                !db.consultSnapshot.data.containsKey('pay_date') &&
-                        db.consultSnapshot.data['state'] != 'done'
+                !db.consultSnapshot.data.containsKey('pay_date')
                     ? Container(
                         padding: EdgeInsets.fromLTRB(0, 10, 20, 10),
                         child: FormBuilderCheckboxList(
