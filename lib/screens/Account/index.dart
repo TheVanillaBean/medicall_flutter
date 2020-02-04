@@ -13,15 +13,23 @@ class AccountScreen extends StatefulWidget {
 }
 
 class _AccountScreenState extends State<AccountScreen> {
+  UserProvider _userProvider;
+  ExtImageProvider _extImageProvider;
   @override
   void initState() {
     super.initState();
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    _userProvider.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    var _userProvider = Provider.of<UserProvider>(context);
-    var _extImageProvider = Provider.of<ExtImageProvider>(context);
+    _userProvider = Provider.of<UserProvider>(context);
+    _extImageProvider = Provider.of<ExtImageProvider>(context);
     return Scaffold(
       //App Bar
       appBar: AppBar(

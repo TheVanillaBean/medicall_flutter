@@ -31,9 +31,9 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
 
   @override
   void dispose() {
+    super.dispose();
     // Dispose of the Tab _confirmTabCntrl
     _confirmTabCntrl.dispose();
-    super.dispose();
   }
 
   @override

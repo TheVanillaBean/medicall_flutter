@@ -1,7 +1,9 @@
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:Medicall/services/carousel_state.dart';
 import 'package:flutter/material.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:provider/provider.dart';
 
@@ -11,6 +13,8 @@ abstract class ExtImageProvider {
   List<Asset> currentAssetList;
   List<Asset> assetList;
   Map convertedImages;
+  setChatImage();
+  File chatMedia;
   CupertinoOptions pickImagesCupertinoOptions(
       {String backgroundColor,
       String selectionFillColor,
@@ -76,6 +80,8 @@ class ExtendedImageProvider implements ExtImageProvider {
   List<Asset> assetList = [];
   @override
   Map convertedImages = {};
+  @override
+  File chatMedia;
   @override
   MaterialOptions pickImagesMaterialOptions(
       {String actionBarColor,
@@ -176,6 +182,15 @@ class ExtendedImageProvider implements ExtImageProvider {
       }
     }
     return true;
+  }
+
+  setChatImage() async {
+    chatMedia = await ImagePicker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 80,
+      maxHeight: 400,
+      maxWidth: 400,
+    );
   }
 
   Future<List<Asset>> pickImages(

@@ -20,6 +20,13 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
   DetailedHistoryState detailedHistoryState;
 
   @override
+  void dispose() {
+    super.dispose();
+    detailedHistoryState.getTabController.index = 0;
+    detailedHistoryState.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     // The app's "state".
     db = Provider.of<Database>(context);
@@ -38,7 +45,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
   Widget returnBody() {
     //detailedHistoryState.setIsDone(true);
     detailedHistoryState.setChoices();
-    detailedHistoryState.getTabController.index = 0;
+    //detailedHistoryState.getTabController.index = 0;
     return Scaffold(
       appBar: AppBar(
         actions: <Widget>[

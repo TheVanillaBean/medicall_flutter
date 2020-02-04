@@ -10,15 +10,22 @@ class PaymentDetail extends StatefulWidget {
 }
 
 class _PaymentDetailState extends State<PaymentDetail> {
+  MyStripeProvider _stripeProvider;
+  Database _db;
   @override
   void initState() {
     super.initState();
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    Database _db = Provider.of<Database>(context);
-    MyStripeProvider _stripeProvider = Provider.of<MyStripeProvider>(context);
+    _db = Provider.of<Database>(context);
+    _stripeProvider = Provider.of<MyStripeProvider>(context);
     return Scaffold(
         //App Bar
         appBar: AppBar(

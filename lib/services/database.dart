@@ -1,5 +1,7 @@
 //import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'dart:io';
+
 import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/consult_status_modal.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
@@ -8,6 +10,7 @@ import 'package:Medicall/services/history_detail_state.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dash_chat/dash_chat.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:path/path.dart' as path;
 
 abstract class Database {
   Future getConsultDetail(DetailedHistoryState detailedHistoryState);
@@ -22,7 +25,10 @@ abstract class Database {
   Stream<QuerySnapshot> getAllProviders();
   Future<DocumentSnapshot> getMedicalHistoryQuestions();
   Stream getAllUsers();
-  Stream getUserHistoryStream(medicallUser);
+  Stream getConsultChat();
+  saveConsultChatImage(MedicallUser _medicallUser, File chatMedia);
+  createNewConsultChatMsg(ChatMessage message);
+  Stream getUserHistoryStream(MedicallUser medicallUser);
   Future<QuerySnapshot> getUserSources();
   Future<void> addConsult(context, newConsult, extImageProvider);
   updateConsultStatus(Choice choice, String uid);
@@ -30,7 +36,7 @@ abstract class Database {
     content,
   );
   Stream<QuerySnapshot> getUserCardSources();
-
+  String consultChatImageUrl;
   DocumentSnapshot consultSnapshot;
   DocumentReference consultRef;
   String currConsultId;
@@ -71,6 +77,8 @@ class FirestoreDatabase implements Database {
   var consultQuestions;
   @override
   TempRegUser tempRegUser;
+  @override
+  String consultChatImageUrl;
 
   FirestoreDatabase();
   @override
@@ -99,6 +107,35 @@ class FirestoreDatabase implements Database {
 
   Future<DocumentSnapshot> getMedicalHistoryQuestions() {
     return Firestore.instance.document('services/general_questions').get();
+  }
+
+  saveConsultChatImage(MedicallUser _medicallUser, File chatMedia) async {
+    final StorageReference storageRef = FirebaseStorage.instance.ref().child(
+        "consults/" +
+            _medicallUser.uid +
+            '/' +
+            currConsultId +
+            '/' +
+            path.basename(chatMedia.path));
+
+    StorageUploadTask uploadTask = storageRef.putFile(
+      chatMedia,
+      StorageMetadata(
+        contentType: 'image/jpg',
+      ),
+    );
+    StorageTaskSnapshot download = await uploadTask.onComplete;
+
+    consultChatImageUrl = await download.ref.getDownloadURL();
+    ChatMessage message = ChatMessage(
+        text: "",
+        user: ChatUser(
+            avatar: _medicallUser.profilePic,
+            uid: _medicallUser.uid,
+            name: _medicallUser.displayName),
+        image: consultChatImageUrl);
+
+    createNewConsultChatMsg(message);
   }
 
   Stream<QuerySnapshot> getUserCardSources() {
@@ -240,6 +277,29 @@ class FirestoreDatabase implements Database {
                   avatar: medicallUser.profilePic))
           .toJson();
       msgDocument.setData(chatContent);
+    });
+  }
+
+  Stream getConsultChat() {
+    return Firestore.instance
+        .collection('chat')
+        .document(currConsultId)
+        .collection('messages')
+        .snapshots();
+  }
+
+  createNewConsultChatMsg(message) {
+    var documentReference = Firestore.instance
+        .collection('chat')
+        .document(currConsultId)
+        .collection('messages')
+        .document(DateTime.now().millisecondsSinceEpoch.toString());
+
+    Firestore.instance.runTransaction((transaction) async {
+      await transaction.set(
+        documentReference,
+        message.toJson(),
+      );
     });
   }
 

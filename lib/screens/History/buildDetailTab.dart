@@ -10,18 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:provider/provider.dart';
 
-int currentDetailsIndex = 0;
-List<dynamic> addressList = [];
-ValueChanged onChangedCheckBox;
-bool addedImages = false;
-bool addedQuestions = false;
-String buttonTxt = "Send Prescription";
-bool isDone = false;
-final GlobalKey<FormBuilderState> consultFormKey =
-    GlobalKey<FormBuilderState>();
-var db;
-MedicallUser medicallUser;
-
 class BuildDetailTab extends StatefulWidget {
   final keyStr;
   final indx;
@@ -32,6 +20,17 @@ class BuildDetailTab extends StatefulWidget {
 }
 
 class _BuildDetailTabState extends State<BuildDetailTab> {
+  int currentDetailsIndex = 0;
+  List<dynamic> addressList = [];
+  ValueChanged onChangedCheckBox;
+  bool addedImages = false;
+  bool addedQuestions = false;
+  String buttonTxt = "Send Prescription";
+  bool isDone = false;
+  final GlobalKey<FormBuilderState> consultFormKey =
+      GlobalKey<FormBuilderState>();
+  var db;
+  MedicallUser medicallUser;
   @override
   void initState() {
     super.initState();

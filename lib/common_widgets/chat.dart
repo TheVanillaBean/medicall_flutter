@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/services/database.dart';
@@ -7,13 +6,10 @@ import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/history_detail_state.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:dash_chat/dash_chat.dart';
 import 'package:provider/provider.dart';
-import 'package:path/path.dart' as path;
 import 'package:url_launcher/url_launcher.dart';
 
 class Chat extends StatefulWidget {
@@ -27,6 +23,7 @@ class _ChatState extends State<Chat> {
   MedicallUser _medicallUser;
   Database _db;
   DetailedHistoryState _detailedHistoryState;
+  ExtImageProvider _extImageProvider;
 
   final GlobalKey<DashChatState> _chatViewKey = GlobalKey<DashChatState>();
 
@@ -42,6 +39,12 @@ class _ChatState extends State<Chat> {
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _detailedHistoryState.dispose();
   }
 
   void systemMessage() {
@@ -65,18 +68,7 @@ class _ChatState extends State<Chat> {
 
   void onSend(ChatMessage message) {
     print(message.toJson());
-    var documentReference = Firestore.instance
-        .collection('chat')
-        .document(_db.currConsultId)
-        .collection('messages')
-        .document(DateTime.now().millisecondsSinceEpoch.toString());
-
-    Firestore.instance.runTransaction((transaction) async {
-      await transaction.set(
-        documentReference,
-        message.toJson(),
-      );
-    });
+    _db.createNewConsultChatMsg(message);
     /* setState(() {
       messages = [...messages, message];
       print(messages.length);
@@ -96,7 +88,7 @@ class _ChatState extends State<Chat> {
     _medicallUser = Provider.of<UserProvider>(context).medicallUser;
     _detailedHistoryState = Provider.of<DetailedHistoryState>(context);
     _db = Provider.of<Database>(context);
-    ExtImageProvider _extImageProvider = Provider.of<ExtImageProvider>(context);
+    _extImageProvider = Provider.of<ExtImageProvider>(context);
     user = ChatUser(
         name: _medicallUser.displayName,
         uid: _medicallUser.uid,
@@ -108,13 +100,9 @@ class _ChatState extends State<Chat> {
         : ChatUser(
             name: _db.consultSnapshot['provider'],
             uid: _db.consultSnapshot['provider_id']);
-    var _stream = Firestore.instance
-        .collection('chat')
-        .document(_db.currConsultId)
-        .collection('messages')
-        .snapshots();
+
     return StreamBuilder(
-        stream: _stream,
+        stream: _db.getConsultChat(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
@@ -130,6 +118,7 @@ class _ChatState extends State<Chat> {
                   items.map((i) => ChatMessage.fromJson(i.data)).toList();
 
               return Container(
+                alignment: Alignment.center,
                 color: Colors.grey.withAlpha(50),
                 child: DashChat(
                   key: _chatViewKey,
@@ -138,8 +127,9 @@ class _ChatState extends State<Chat> {
                   user: user,
                   height: MediaQuery.of(context).size.height -
                       Scaffold.of(context).appBarMaxHeight,
-                  inputDecoration: InputDecoration.collapsed(
-                      hintText: "Add message here..."),
+                  inputDecoration: InputDecoration(
+                    hintText: "Add message here...",
+                  ),
                   dateFormat: DateFormat('MMM-dd-yyyy'),
                   timeFormat: DateFormat('dd MMM h:mm a'),
                   messages: messages,
@@ -152,6 +142,7 @@ class _ChatState extends State<Chat> {
                   onLongPressAvatar: (ChatUser user) {
                     print("OnLongPressAvatar: ${user.name}");
                   },
+                  inputToolbarPadding: EdgeInsets.fromLTRB(4, 10, 4, 4),
                   messageBuilder: (ChatMessage msg) {
                     return MessageContainer(
                       isUser: msg.user.uid == _medicallUser.uid,
@@ -243,51 +234,11 @@ class _ChatState extends State<Chat> {
                     IconButton(
                       icon: Icon(Icons.photo),
                       onPressed: () async {
-                        File result = await ImagePicker.pickImage(
-                          source: ImageSource.gallery,
-                          imageQuality: 80,
-                          maxHeight: 400,
-                          maxWidth: 400,
-                        );
+                        await _extImageProvider.setChatImage();
 
-                        if (result != null) {
-                          final StorageReference storageRef =
-                              FirebaseStorage.instance.ref().child("consults/" +
-                                  _medicallUser.uid +
-                                  '/' +
-                                  _db.currConsultId +
-                                  '/' +
-                                  path.basename(result.path));
-
-                          StorageUploadTask uploadTask = storageRef.putFile(
-                            result,
-                            StorageMetadata(
-                              contentType: 'image/jpg',
-                            ),
-                          );
-                          StorageTaskSnapshot download =
-                              await uploadTask.onComplete;
-
-                          String url = await download.ref.getDownloadURL();
-
-                          ChatMessage message =
-                              ChatMessage(text: "", user: user, image: url);
-
-                          var documentReference = Firestore.instance
-                              .collection('chat')
-                              .document(_db.currConsultId)
-                              .collection('messages')
-                              .document(DateTime.now()
-                                  .millisecondsSinceEpoch
-                                  .toString());
-
-                          Firestore.instance
-                              .runTransaction((transaction) async {
-                            await transaction.set(
-                              documentReference,
-                              message.toJson(),
-                            );
-                          });
+                        if (_extImageProvider.chatMedia != null) {
+                          _db.saveConsultChatImage(
+                              _medicallUser, _extImageProvider.chatMedia);
                         }
                       },
                     )
