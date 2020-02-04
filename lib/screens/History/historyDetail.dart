@@ -23,7 +23,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
   void dispose() {
     super.dispose();
     detailedHistoryState.getTabController.index = 0;
-    detailedHistoryState.dispose();
+    //detailedHistoryState.dispose();
   }
 
   @override

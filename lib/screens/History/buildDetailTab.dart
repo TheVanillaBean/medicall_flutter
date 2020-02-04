@@ -303,7 +303,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                       BorderRadius.all(Radius.circular(5)),
                                 ),
                                 child: Text(
-                                    'Once your doctor reviews the details and if a prescription is nessassary it will appear below. Once it is filled out we will ask you for address & payment below.'),
+                                    'Once your doctor reviews the details and if a prescription is nessassary it will appear below. When you doctor fills out the form below we will ask you for address & payment below.'),
                               )
                             : Container(),
                         Row(
