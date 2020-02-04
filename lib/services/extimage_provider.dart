@@ -49,7 +49,12 @@ abstract class ExtImageProvider {
       MaterialOptions _materialOptions,
       BuildContext context);
   ExtendedImage returnNetworkImage(String url,
-      {double height, double width, BoxFit fit, bool cache});
+      {double height,
+      double width,
+      BoxFit fit,
+      bool cache,
+      ExtendedImageMode mode,
+      GestureConfig Function(ExtendedImageState) initGestureConfigHandler});
   ExtendedImage returnMemoryImage(Uint8List src,
       {double height,
       double width,
@@ -117,9 +122,21 @@ class ExtendedImageProvider implements ExtImageProvider {
 
   @override
   ExtendedImage returnNetworkImage(String _url,
-      {double height, double width, BoxFit fit, bool cache = true}) {
-    return ExtendedImage.network(_url,
-        height: height, width: width, fit: fit, cache: cache);
+      {double height,
+      double width,
+      BoxFit fit,
+      bool cache = true,
+      ExtendedImageMode mode,
+      GestureConfig Function(ExtendedImageState) initGestureConfigHandler}) {
+    return ExtendedImage.network(
+      _url,
+      height: height,
+      width: width,
+      fit: fit,
+      cache: cache,
+      mode: mode,
+      initGestureConfigHandler: initGestureConfigHandler,
+    );
   }
 
   CupertinoOptions pickImagesCupertinoOptions(

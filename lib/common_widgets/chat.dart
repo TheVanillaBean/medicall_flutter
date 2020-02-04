@@ -6,6 +6,7 @@ import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/history_detail_state.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:dash_chat/dash_chat.dart';
@@ -39,12 +40,6 @@ class _ChatState extends State<Chat> {
   @override
   void initState() {
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _detailedHistoryState.dispose();
   }
 
   void systemMessage() {
@@ -116,7 +111,14 @@ class _ChatState extends State<Chat> {
               List<DocumentSnapshot> items = snapshot.data.documents;
               var messages =
                   items.map((i) => ChatMessage.fromJson(i.data)).toList();
-
+              if (_chatViewKey.currentState != null) {
+                _chatViewKey.currentState.scrollController.animateTo(
+                    _chatViewKey.currentState.scrollController.position
+                            .maxScrollExtent +
+                        200,
+                    duration: Duration(milliseconds: 1000),
+                    curve: Curves.easeOut);
+              }
               return Container(
                 alignment: Alignment.center,
                 color: Colors.grey.withAlpha(50),
@@ -130,26 +132,67 @@ class _ChatState extends State<Chat> {
                   inputDecoration: InputDecoration(
                     hintText: "Add message here...",
                   ),
+                  inputMaxLines: 5,
+                  inputTextStyle: TextStyle(fontSize: 14.0, height: 2),
+                  inputContainerStyle: BoxDecoration(
+                    border: Border.all(width: 0.0),
+                    color: Colors.white,
+                  ),
                   dateFormat: DateFormat('MMM-dd-yyyy'),
                   timeFormat: DateFormat('dd MMM h:mm a'),
                   messages: messages,
-                  showUserAvatar: true,
-                  showAvatarForEveryMessage: true,
                   scrollToBottom: false,
+                  scrollToBottomWidget: () {
+                    return Container(
+                      width: 48.0,
+                      height: 48.0,
+                      child: RawMaterialButton(
+                        highlightElevation: 10.0,
+                        fillColor: Theme.of(context).primaryColor,
+                        shape: CircleBorder(),
+                        elevation: 0.0,
+                        child: Icon(
+                          Icons.keyboard_arrow_down,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {
+                          _chatViewKey.currentState.scrollController
+                            ..animateTo(
+                              _chatViewKey.currentState.scrollController
+                                  .position.maxScrollExtent,
+                              curve: Curves.easeOut,
+                              duration: const Duration(milliseconds: 300),
+                            );
+                        },
+                      ),
+                    );
+                  },
+                  showUserAvatar: true,
+                  showAvatarForEveryMessage: false,
                   onPressAvatar: (ChatUser user) {
                     print("OnPressAvatar: ${user.name}");
                   },
                   onLongPressAvatar: (ChatUser user) {
                     print("OnLongPressAvatar: ${user.name}");
                   },
-                  inputToolbarPadding: EdgeInsets.fromLTRB(4, 10, 4, 4),
                   messageBuilder: (ChatMessage msg) {
                     return MessageContainer(
                       isUser: msg.user.uid == _medicallUser.uid,
                       message: msg,
                       timeFormat: DateFormat('dd MMM h:mm a'),
                       messageImageBuilder: (img) {
-                        return _extImageProvider.returnNetworkImage(img);
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (_) {
+                              return DetailScreen(img, _extImageProvider);
+                            }));
+                          },
+                          child: Hero(
+                            tag: img,
+                            child: _extImageProvider.returnNetworkImage(img),
+                          ),
+                        );
                       },
                       messageTimeBuilder: (val) {
                         return Container(
@@ -179,23 +222,15 @@ class _ChatState extends State<Chat> {
                               }
                             }),
                         MatchText(
-                          pattern: '.*',
-                          style: TextStyle(color: Colors.black87),
-                        ),
+                            pattern: '.*',
+                            style: TextStyle(color: Colors.black87),
+                            onTap: () {}),
                         MatchText(type: ParsedType.PHONE),
                         MatchText(type: ParsedType.EMAIL),
                       ],
                     );
                   },
-                  inputMaxLines: 5,
-                  messageContainerPadding:
-                      EdgeInsets.only(left: 5.0, right: 5.0),
                   alwaysShowSend: !_detailedHistoryState.getIsDone(),
-                  inputTextStyle: TextStyle(fontSize: 16.0),
-                  inputContainerStyle: BoxDecoration(
-                    border: Border.all(width: 0.0),
-                    color: Colors.white,
-                  ),
                   onQuickReply: (Reply reply) {
                     setState(() {
                       messages.add(ChatMessage(
@@ -226,7 +261,7 @@ class _ChatState extends State<Chat> {
                     });
                   },
                   onLoadEarlier: () {
-                    print("laoding...");
+                    CircularProgressIndicator();
                   },
                   shouldShowLoadEarlier: false,
                   showTraillingBeforeSend: true,
@@ -247,5 +282,33 @@ class _ChatState extends State<Chat> {
               );
           }
         });
+  }
+}
+
+class DetailScreen extends StatelessWidget {
+  DetailScreen(this.img, this.ext);
+  final String img;
+  final ExtImageProvider ext;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: GestureDetector(
+        child: Center(
+          child: Hero(
+            tag: this.img,
+            child: this
+                .ext
+                .returnNetworkImage(img, mode: ExtendedImageMode.gesture,
+                    initGestureConfigHandler: (state) {
+              return GestureConfig(
+                  inPageView: true, initialScale: 1.0, cacheGesture: false,);
+            }),
+          ),
+        ),
+        onTap: () {
+          Navigator.pop(context);
+        },
+      ),
+    );
   }
 }
