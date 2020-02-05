@@ -7,7 +7,6 @@ import 'package:Medicall/services/appbar_state.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:Medicall/util/app_util.dart' as AppUtils;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -149,76 +148,6 @@ class DoctorSearch extends StatelessWidget {
             }),
       ),
     );
-  }
-}
-
-class CurvePainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    Path path;
-    Path path1;
-    Path path2;
-    //Path path3;
-
-    // The arrows usually looks better with rounded caps.
-    Paint paint = Paint()
-      ..color = Colors.black
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round
-      ..strokeJoin = StrokeJoin.round
-      ..strokeWidth = 2.0;
-
-    /// Draw a single arrow.
-
-    path = Path();
-
-    if (currentOrientation == Orientation.portrait) {
-      path.moveTo(size.width * 0.6, size.height * 0.25);
-      path.relativeCubicTo(10, 0, size.width * 0.19, 0, size.width * 0.165, 85);
-    } else {
-      path.moveTo(size.width * 0.57, size.height * 0.15);
-      path.relativeCubicTo(10, 0, size.width * 0.16, 0, size.width * 0.18, 55);
-    }
-    path = AppUtils.ArrowPath.make(
-      path: path,
-      tipLength: 5,
-    );
-    canvas.drawPath(path, paint..color = Colors.blue.withAlpha(100));
-
-    path1 = Path();
-    if (currentOrientation == Orientation.portrait) {
-      path1.moveTo(size.width * 0.78, size.height / 1.78);
-      path1.relativeCubicTo(0, 60, 0, 110, -60, 110);
-    } else {
-      path1.moveTo(size.width * 0.76, size.height / 1.75);
-      path1.relativeCubicTo(0, 40, 0, 60, -120, 60);
-    }
-
-    path1 = AppUtils.ArrowPath.make(
-      path: path1,
-      tipLength: 5,
-    );
-    canvas.drawPath(path1, paint..color = Colors.blue.withAlpha(100));
-
-    path2 = Path();
-    if (currentOrientation == Orientation.portrait) {
-      path2.moveTo(size.width * 0.36, size.height / 1.35);
-      path2.relativeCubicTo(0, 0, -70, 0, -55, -110);
-    } else {
-      path2.moveTo(size.width * 0.41, size.height / 1.36);
-      path2.relativeCubicTo(-40, 0, -100, 0, -100, -50);
-    }
-
-    path2 = AppUtils.ArrowPath.make(
-      path: path2,
-      tipLength: 5,
-    );
-    canvas.drawPath(path2, paint..color = Colors.blue.withAlpha(100));
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    return false;
   }
 }
 
