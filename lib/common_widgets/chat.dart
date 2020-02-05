@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/screens/History/Detail/history_detail_state.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
-import 'package:Medicall/services/history_detail_state.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:extended_image/extended_image.dart';
