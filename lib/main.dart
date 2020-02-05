@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:Medicall/common_widgets/carousel_state.dart';
+import 'package:Medicall/common_widgets/carousel/carousel_state.dart';
 import 'package:Medicall/screens/Account/index.dart';
 import 'package:Medicall/screens/Account/paymentDetail.dart';
 import 'package:Medicall/screens/ConfirmConsult/index.dart';

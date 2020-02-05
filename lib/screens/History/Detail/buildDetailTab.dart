@@ -1,4 +1,4 @@
-import 'package:Medicall/common_widgets/carousel_with_indicator.dart';
+import 'package:Medicall/common_widgets/carousel/carousel_with_indicator.dart';
 import 'package:Medicall/common_widgets/chat.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/History/Detail/prescriptionPayment.dart';

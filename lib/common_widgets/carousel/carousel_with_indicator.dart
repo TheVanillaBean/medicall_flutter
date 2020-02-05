@@ -1,4 +1,4 @@
-import 'package:Medicall/common_widgets/carousel_state.dart';
+import 'package:Medicall/common_widgets/carousel/carousel_state.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:dots_indicator/dots_indicator.dart';

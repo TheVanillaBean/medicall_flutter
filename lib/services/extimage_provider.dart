@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:Medicall/common_widgets/carousel_state.dart';
+import 'package:Medicall/common_widgets/carousel/carousel_state.dart';
 import 'package:flutter/material.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:image_picker/image_picker.dart';
