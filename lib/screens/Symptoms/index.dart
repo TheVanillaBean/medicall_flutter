@@ -5,6 +5,7 @@ import 'package:Medicall/screens/Questions/questionsScreen.dart';
 import 'package:Medicall/services/animation_provider.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/medical_history_state.dart';
+import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -128,6 +129,7 @@ class EntryItem extends StatelessWidget {
     MyAnimationProvider _animationProvider =
         Provider.of<MyAnimationProvider>(context);
     Database db = Provider.of<Database>(context);
+    MedicallUser medicallUser = Provider.of<UserProvider>(context).medicallUser;
     MedicalHistoryState _newMedicalHistory =
         Provider.of<MedicalHistoryState>(context);
     //_newMedicalHistory.setnewMedicalHistory(false);
