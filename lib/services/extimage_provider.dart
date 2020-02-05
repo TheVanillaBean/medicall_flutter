@@ -1,7 +1,9 @@
+import 'dart:io';
 import 'dart:typed_data';
-import 'package:Medicall/services/carousel_state.dart';
+import 'package:Medicall/common_widgets/carousel/carousel_state.dart';
 import 'package:flutter/material.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:provider/provider.dart';
 
@@ -11,6 +13,8 @@ abstract class ExtImageProvider {
   List<Asset> currentAssetList;
   List<Asset> assetList;
   Map convertedImages;
+  setChatImage();
+  File chatMedia;
   CupertinoOptions pickImagesCupertinoOptions(
       {String backgroundColor,
       String selectionFillColor,
@@ -45,7 +49,12 @@ abstract class ExtImageProvider {
       MaterialOptions _materialOptions,
       BuildContext context);
   ExtendedImage returnNetworkImage(String url,
-      {double height, double width, BoxFit fit, bool cache});
+      {double height,
+      double width,
+      BoxFit fit,
+      bool cache,
+      ExtendedImageMode mode,
+      GestureConfig Function(ExtendedImageState) initGestureConfigHandler});
   ExtendedImage returnMemoryImage(Uint8List src,
       {double height,
       double width,
@@ -76,6 +85,8 @@ class ExtendedImageProvider implements ExtImageProvider {
   List<Asset> assetList = [];
   @override
   Map convertedImages = {};
+  @override
+  File chatMedia;
   @override
   MaterialOptions pickImagesMaterialOptions(
       {String actionBarColor,
@@ -111,9 +122,21 @@ class ExtendedImageProvider implements ExtImageProvider {
 
   @override
   ExtendedImage returnNetworkImage(String _url,
-      {double height, double width, BoxFit fit, bool cache = true}) {
-    return ExtendedImage.network(_url,
-        height: height, width: width, fit: fit, cache: cache);
+      {double height,
+      double width,
+      BoxFit fit,
+      bool cache = true,
+      ExtendedImageMode mode,
+      GestureConfig Function(ExtendedImageState) initGestureConfigHandler}) {
+    return ExtendedImage.network(
+      _url,
+      height: height,
+      width: width,
+      fit: fit,
+      cache: cache,
+      mode: mode,
+      initGestureConfigHandler: initGestureConfigHandler,
+    );
   }
 
   CupertinoOptions pickImagesCupertinoOptions(
@@ -176,6 +199,15 @@ class ExtendedImageProvider implements ExtImageProvider {
       }
     }
     return true;
+  }
+
+  setChatImage() async {
+    chatMedia = await ImagePicker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 80,
+      maxHeight: 400,
+      maxWidth: 400,
+    );
   }
 
   Future<List<Asset>> pickImages(

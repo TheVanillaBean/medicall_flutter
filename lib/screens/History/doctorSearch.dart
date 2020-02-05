@@ -2,12 +2,11 @@ import 'dart:convert';
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/screens/History/appbar_state.dart';
 import 'package:Medicall/screens/History/index.dart';
-import 'package:Medicall/services/appbar_state.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:Medicall/util/app_util.dart' as AppUtils;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -27,15 +26,6 @@ class DoctorSearch extends StatelessWidget {
     String providerTitles = '';
     String providerProfilePic = '';
     ConsultData _consult = ConsultData();
-
-    setConsult() async {
-      SharedPreferences _thisConsult = await SharedPreferences.getInstance();
-      _consult.provider = selectedProvider;
-      _consult.providerTitles = providerTitles;
-      _consult.providerProfilePic = providerProfilePic;
-      String currentConsultString = jsonEncode(_consult);
-      await _thisConsult.setString("consult", currentConsultString);
-    }
 
     return Scaffold(
       resizeToAvoidBottomPadding: false,
@@ -98,78 +88,48 @@ class DoctorSearch extends StatelessWidget {
                             ),
                           ),
                           Container(
-                            padding: EdgeInsets.all(20),
+                            padding: EdgeInsets.all(10),
                             width: 120,
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton(
-                                isExpanded: true,
-                                icon: Icon(Icons.more_vert),
-                                items: [
-                                  DropdownMenuItem(
-                                    value: 'New Request',
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        providerTitles =
-                                            userDocuments[i].data['titles'];
-                                        selectedProvider =
-                                            userDocuments[i].data['name'];
-                                        _consult.provider = selectedProvider;
-                                        _consult.providerTitles =
-                                            providerTitles;
-                                        _consult.providerProfilePic =
-                                            userDocuments[i]
-                                                .data['profile_pic'];
-                                        setConsult();
-                                        Navigator.of(context)
-                                            .pushNamed('/symptoms');
-                                      },
-                                      child: Container(
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          'New Request',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                              fontSize: 14,
-                                              color: Theme.of(context)
-                                                  .primaryColor,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ),
-                                    ),
+                            child: PopupMenuButton(
+                              itemBuilder: (context) {
+                                var list = List<PopupMenuEntry<Object>>();
+                                list.add(
+                                  PopupMenuItem(
+                                    child: Text("New Request"),
+                                    value: 1,
                                   ),
-                                  DropdownMenuItem(
-                                    value: 'Follow Up',
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        providerTitles =
-                                            userDocuments[i].data['titles'];
-                                        selectedProvider =
-                                            userDocuments[i].data['name'];
-                                        _consult.provider = selectedProvider;
-                                        _consult.providerProfilePic =
-                                            userDocuments[i]
-                                                .data['profile_pic'];
-                                        setConsult();
-                                        Navigator.of(context)
-                                            .pushNamed('/symptoms');
-                                      },
-                                      child: Container(
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          'Follow Up',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                              fontSize: 14,
-                                              color: Theme.of(context)
-                                                  .primaryColor,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ),
-                                    ),
+                                );
+                                list.add(
+                                  PopupMenuDivider(
+                                    height: 10,
                                   ),
-                                ],
-                                onChanged: (String newVal) {},
+                                );
+                                list.add(
+                                  PopupMenuItem(
+                                    child: Text("Follow Up"),
+                                    value: 1,
+                                  ),
+                                );
+                                return list;
+                              },
+                              icon: Icon(
+                                Icons.more_vert,
+                                size: 30,
+                                color: Theme.of(context).colorScheme.secondary,
                               ),
+                              offset: Offset.fromDirection(0.0, -20.0),
+                              onSelected: (val) {
+                                providerTitles =
+                                    userDocuments[i].data['titles'];
+                                selectedProvider =
+                                    userDocuments[i].data['name'];
+                                _consult.provider = selectedProvider;
+                                _consult.providerProfilePic =
+                                    userDocuments[i].data['profile_pic'];
+                                setConsult(_consult, selectedProvider,
+                                    providerTitles, providerProfilePic);
+                                Navigator.of(context).pushNamed('/symptoms');
+                              },
                             ),
                           ),
                         ],
@@ -191,77 +151,12 @@ class DoctorSearch extends StatelessWidget {
   }
 }
 
-class CurvePainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    Path path;
-    Path path1;
-    Path path2;
-    //Path path3;
-
-    // The arrows usually looks better with rounded caps.
-    Paint paint = Paint()
-      ..color = Colors.black
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round
-      ..strokeJoin = StrokeJoin.round
-      ..strokeWidth = 2.0;
-
-    /// Draw a single arrow.
-
-    path = Path();
-
-    if (currentOrientation == Orientation.portrait) {
-      path.moveTo(size.width * 0.6, size.height * 0.25);
-      path.relativeCubicTo(10, 0, size.width * 0.19, 0, size.width * 0.165, 85);
-    } else {
-      path.moveTo(size.width * 0.57, size.height * 0.15);
-      path.relativeCubicTo(10, 0, size.width * 0.16, 0, size.width * 0.18, 55);
-    }
-    path = AppUtils.ArrowPath.make(
-      path: path,
-      tipLength: 5,
-    );
-    canvas.drawPath(path, paint..color = Colors.blue.withAlpha(100));
-
-    path1 = Path();
-    if (currentOrientation == Orientation.portrait) {
-      path1.moveTo(size.width * 0.78, size.height / 1.78);
-      path1.relativeCubicTo(0, 60, 0, 110, -60, 110);
-    } else {
-      path1.moveTo(size.width * 0.76, size.height / 1.75);
-      path1.relativeCubicTo(0, 40, 0, 60, -120, 60);
-    }
-
-    path1 = AppUtils.ArrowPath.make(
-      path: path1,
-      tipLength: 5,
-    );
-    canvas.drawPath(path1, paint..color = Colors.blue.withAlpha(100));
-
-    path2 = Path();
-    if (currentOrientation == Orientation.portrait) {
-      path2.moveTo(size.width * 0.36, size.height / 1.35);
-      path2.relativeCubicTo(0, 0, -70, 0, -55, -110);
-    } else {
-      path2.moveTo(size.width * 0.41, size.height / 1.36);
-      path2.relativeCubicTo(-40, 0, -100, 0, -100, -50);
-    }
-
-    path2 = AppUtils.ArrowPath.make(
-      path: path2,
-      tipLength: 5,
-    );
-    canvas.drawPath(path2, paint..color = Colors.blue.withAlpha(100));
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    return false;
-  }
-}
-
 class CustomSearchDelegate extends SearchDelegate {
+  String selectedProvider = '';
+  String providerTitles = '';
+  String providerProfilePic = '';
+  ConsultData _consult = ConsultData();
+
   @override
   String get searchFieldLabel => currTab;
   @override
@@ -371,9 +266,48 @@ class CustomSearchDelegate extends SearchDelegate {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
-                                Icon(
-                                  Icons.more_vert,
-                                  color: Theme.of(context).primaryColor,
+                                PopupMenuButton(
+                                  itemBuilder: (context) {
+                                    var list = List<PopupMenuEntry<Object>>();
+                                    list.add(
+                                      PopupMenuItem(
+                                        child: Text("New Request"),
+                                        value: 1,
+                                      ),
+                                    );
+                                    list.add(
+                                      PopupMenuDivider(
+                                        height: 10,
+                                      ),
+                                    );
+                                    list.add(
+                                      PopupMenuItem(
+                                        child: Text("Follow Up"),
+                                        value: 1,
+                                      ),
+                                    );
+                                    return list;
+                                  },
+                                  icon: Icon(
+                                    Icons.more_vert,
+                                    size: 30,
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
+                                  ),
+                                  offset: Offset.fromDirection(0.0, -20.0),
+                                  onSelected: (val) {
+                                    providerTitles =
+                                        userDocuments[i].data['titles'];
+                                    selectedProvider =
+                                        userDocuments[i].data['name'];
+                                    _consult.provider = selectedProvider;
+                                    _consult.providerProfilePic =
+                                        userDocuments[i].data['profile_pic'];
+                                    setConsult(_consult, selectedProvider,
+                                        providerTitles, providerProfilePic);
+                                    Navigator.of(context)
+                                        .pushNamed('/symptoms');
+                                  },
                                 ),
                               ],
                             ),
@@ -420,4 +354,14 @@ class CustomSearchDelegate extends SearchDelegate {
     // If you want to add search suggestions as the user enters their search term, this is the place to do that.
     return Column();
   }
+}
+
+setConsult(
+    _consult, selectedProvider, providerTitles, providerProfilePic) async {
+  SharedPreferences _thisConsult = await SharedPreferences.getInstance();
+  _consult.provider = selectedProvider;
+  _consult.providerTitles = providerTitles;
+  _consult.providerProfilePic = providerProfilePic;
+  String currentConsultString = jsonEncode(_consult);
+  await _thisConsult.setString("consult", currentConsultString);
 }

@@ -1,6 +1,7 @@
 import 'package:Medicall/presentation/medicall_icons_icons.dart' as CustomIcons;
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
+import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
@@ -87,7 +88,7 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
               allViewTitle: 'All Photos'),
           context);
     } on PlatformException catch (e) {
-      error = e.message;
+      AppUtil().showFlushBar(e, context);
     }
 
     // If the widget was removed from the tree while the asynchronous platform
@@ -126,7 +127,7 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
           ),
           context);
     } on PlatformException catch (e) {
-      error = e.message;
+      AppUtil().showFlushBar(e, context);
     }
 
     // If the widget was removed from the tree while the asynchronous platform

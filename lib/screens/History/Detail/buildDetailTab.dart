@@ -1,7 +1,7 @@
-import 'package:Medicall/common_widgets/carousel_with_indicator.dart';
+import 'package:Medicall/common_widgets/carousel/carousel_with_indicator.dart';
 import 'package:Medicall/common_widgets/chat.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:Medicall/screens/History/prescriptionPayment.dart';
+import 'package:Medicall/screens/History/Detail/prescriptionPayment.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
@@ -9,18 +9,6 @@ import 'package:Medicall/util/build_medical_note.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:provider/provider.dart';
-
-int currentDetailsIndex = 0;
-List<dynamic> addressList = [];
-ValueChanged onChangedCheckBox;
-bool addedImages = false;
-bool addedQuestions = false;
-String buttonTxt = "Send Prescription";
-bool isDone = false;
-final GlobalKey<FormBuilderState> consultFormKey =
-    GlobalKey<FormBuilderState>();
-var db;
-MedicallUser medicallUser;
 
 class BuildDetailTab extends StatefulWidget {
   final keyStr;
@@ -32,6 +20,17 @@ class BuildDetailTab extends StatefulWidget {
 }
 
 class _BuildDetailTabState extends State<BuildDetailTab> {
+  int currentDetailsIndex = 0;
+  List<dynamic> addressList = [];
+  ValueChanged onChangedCheckBox;
+  bool addedImages = false;
+  bool addedQuestions = false;
+  String buttonTxt = "Send Prescription";
+  bool isDone = false;
+  final GlobalKey<FormBuilderState> consultFormKey =
+      GlobalKey<FormBuilderState>();
+  var db;
+  MedicallUser medicallUser;
   @override
   void initState() {
     super.initState();
@@ -304,7 +303,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                       BorderRadius.all(Radius.circular(5)),
                                 ),
                                 child: Text(
-                                    'Once your doctor reviews the details and if a prescription is nessassary it will appear below. Once it is filled out we will ask you for address & payment below.'),
+                                    'Once your doctor reviews the details and if a prescription is nessassary it will appear below. When you doctor fills out the form below we will ask you for address & payment below.'),
                               )
                             : Container(),
                         Row(
@@ -655,25 +654,21 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                         ),
                                       ),
                                     ),
-                                  ))
+                                  )),
                                 ],
                               )
-                            : consultSnapshot.containsKey('medication_name') &&
-                                    consultSnapshot['medication_name'].length >
-                                        0
-                                ? FutureBuilder(
-                                    future: db.getPatientDetail(medicallUser),
-                                    builder: (BuildContext context,
-                                        AsyncSnapshot<void> snapshot) {
-                                      if (snapshot.connectionState ==
-                                              ConnectionState.done &&
-                                          medicallUser.type == 'patient') {
-                                        return PrescriptionPayment();
-                                      } else {
-                                        return Container();
-                                      }
-                                    })
-                                : Container()
+                            : Container(),
+                        FutureBuilder(
+                            future: db.getPatientDetail(medicallUser),
+                            builder: (BuildContext context,
+                                AsyncSnapshot<void> snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.done) {
+                                return PrescriptionPayment();
+                              } else {
+                                return Container();
+                              }
+                            })
                       ],
                     ),
                   )
@@ -684,10 +679,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
     }
     return FadeInPlace(
       3,
-      Chat(
-        peerId: db.currConsultId,
-        peerAvatar: isDone,
-      ),
+      Chat(),
     );
   }
 

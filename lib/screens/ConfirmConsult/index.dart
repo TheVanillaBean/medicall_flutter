@@ -1,4 +1,4 @@
-import 'package:Medicall/common_widgets/carousel_with_indicator.dart';
+import 'package:Medicall/common_widgets/carousel/carousel_with_indicator.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/ConfirmConsult/routeUserOrder.dart';
 import 'package:Medicall/services/database.dart';
@@ -31,9 +31,9 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
 
   @override
   void dispose() {
+    super.dispose();
     // Dispose of the Tab _confirmTabCntrl
     _confirmTabCntrl.dispose();
-    super.dispose();
   }
 
   @override

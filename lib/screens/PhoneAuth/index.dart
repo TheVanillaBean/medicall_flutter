@@ -291,7 +291,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
       try {
         return await model.verifyPhoneNumber(mounted, this);
       } on PlatformException catch (e) {
-        _showErrorSnackbar(e.message);
+        AppUtil().showFlushBar(e, context);
       }
     }
 
@@ -299,7 +299,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
       try {
         return await model.signInWithPhoneNumber(mounted, tempUserProvider);
       } on PlatformException catch (e) {
-        _showErrorSnackbar(e.message);
+        AppUtil().showFlushBar(e, context);
       }
     }
   }

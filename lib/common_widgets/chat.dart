@@ -1,436 +1,312 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/screens/History/Detail/history_detail_state.dart';
 import 'package:Medicall/services/database.dart';
+import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
-import 'package:Medicall/util/app_util.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:intl/intl.dart';
+import 'package:dash_chat/dash_chat.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-final themeColor = Color(0xfff5a623);
-final primaryColor = Color(0xff203152);
-final greyColor = Color(0xffaeaeae);
-final greyColor2 = Color(0xffE8E8E8);
-
-class Chat extends StatelessWidget {
-  final String peerId;
-  final bool peerAvatar;
-
-  Chat({Key key, @required this.peerId, @required this.peerAvatar})
-      : super(key: key);
+class Chat extends StatefulWidget {
+  Chat({Key key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: ChatScreen(
-        peerId: peerId,
-        peerAvatar: peerAvatar,
-      ),
-    );
-  }
+  _ChatState createState() => _ChatState();
 }
 
-class ChatScreen extends StatefulWidget {
-  final String peerId;
-  final bool peerAvatar;
-
-  ChatScreen({Key key, @required this.peerId, @required this.peerAvatar})
-      : super(key: key);
-
-  @override
-  State createState() =>
-      ChatScreenState(peerId: peerId, peerAvatar: peerAvatar);
-}
-
-class ChatScreenState extends State<ChatScreen> {
-  ChatScreenState({Key key, @required this.peerId, @required this.peerAvatar});
-
-  String peerId;
-  bool peerAvatar;
-  String id;
-
-  var listMessage;
-  String groupChatId;
-  SharedPreferences prefs;
-
-  File imageFile;
-  bool isLoading;
-  bool isShowSticker;
-  String imageUrl;
-  Database _db;
+class _ChatState extends State<Chat> {
   MedicallUser _medicallUser;
+  Database _db;
+  DetailedHistoryState _detailedHistoryState;
+  ExtImageProvider _extImageProvider;
 
-  final TextEditingController textEditingController = TextEditingController();
-  final ScrollController listScrollController = ScrollController();
-  final FocusNode focusNode = FocusNode();
+  final GlobalKey<DashChatState> _chatViewKey = GlobalKey<DashChatState>();
+
+  ChatUser user = ChatUser();
+
+  ChatUser otherUser = ChatUser();
+
+  List<ChatMessage> messages = List<ChatMessage>();
+  var m = List<ChatMessage>();
+
+  var i = 0;
 
   @override
   void initState() {
     super.initState();
-    focusNode.addListener(onFocusChange);
-
-    groupChatId = '';
-
-    isLoading = false;
-    isShowSticker = false;
-    imageUrl = '';
-
-    readLocal();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    textEditingController.dispose();
-    listScrollController.dispose();
-    focusNode.dispose();
-  }
-
-  void onFocusChange() {
-    if (focusNode.hasFocus) {
-      // Hide sticker when keyboard appear
-      setState(() {
-        isShowSticker = false;
+  void systemMessage() {
+    Timer(Duration(milliseconds: 300), () {
+      if (i < 6) {
+        setState(() {
+          messages = [...messages, m[i]];
+        });
+        i++;
+      }
+      Timer(Duration(milliseconds: 300), () {
+        _chatViewKey.currentState.scrollController
+          ..animateTo(
+            _chatViewKey.currentState.scrollController.position.maxScrollExtent,
+            curve: Curves.easeOut,
+            duration: const Duration(milliseconds: 300),
+          );
       });
-    }
-  }
-
-  readLocal() async {
-    prefs = await SharedPreferences.getInstance();
-    id = prefs.getString('id') ?? '';
-    if (id.hashCode <= peerId.hashCode) {
-      groupChatId = '$id-$peerId';
-    } else {
-      groupChatId = '$peerId-$id';
-    }
-  }
-
-  // Future getImage() async {
-  //   imageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
-
-  //   if (imageFile != null) {
-  //     setState(() {
-  //       isLoading = true;
-  //     });
-  //     uploadFile();
-  //   }
-  // }
-
-  void getSticker() {
-    // Hide keyboard when sticker appear
-    focusNode.unfocus();
-    setState(() {
-      isShowSticker = !isShowSticker;
     });
   }
 
-  Future uploadFile() async {
-    String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-    StorageReference reference = FirebaseStorage.instance.ref().child(fileName);
-    StorageUploadTask uploadTask = reference.putFile(imageFile);
-    StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
-    storageTaskSnapshot.ref.getDownloadURL().then((downloadUrl) {
-      imageUrl = downloadUrl;
-      setState(() {
-        isLoading = false;
-        onSendMessage(imageUrl, 1);
-      });
-    }, onError: (err) {
-      setState(() {
-        isLoading = false;
-      });
-      AppUtil().showFlushBar('This file is not an image', context);
+  void onSend(ChatMessage message) {
+    print(message.toJson());
+    _db.createNewConsultChatMsg(message);
+    /* setState(() {
+      messages = [...messages, message];
+      print(messages.length);
     });
-  }
-
-  onSendMessage(String content, int type) {
-    // type: 0 = text, 1 = image, 2 = sticker
-    if (content.trim() != '') {
-      textEditingController.clear();
-    } else {
-      AppUtil().showFlushBar('Nothing to send', context);
-    }
-  }
-
-  Widget buildItem(int index, Map document) {
-    _medicallUser = Provider.of<UserProvider>(context).medicallUser;
-    var timestamp = DateTime.fromMillisecondsSinceEpoch(
-        document['date'].millisecondsSinceEpoch);
-    if (document['user_id'] == _medicallUser.uid) {
-      // Right (my message)
-      return Container(
-          child: Column(children: <Widget>[
-        Row(
-          children: <Widget>[
-            Container(
-              child: Linkify(
-                onOpen: (link) async {
-                  if (await canLaunch(link.url)) {
-                    await launch(link.url);
-                  } else {
-                    throw 'Could not launch $link';
-                  }
-                },
-                text: document['txt'],
-                humanize: true,
-                style: TextStyle(color: primaryColor),
-                linkStyle: TextStyle(color: Colors.red),
-              ),
-              padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
-              width: MediaQuery.of(context).size.width * 0.75,
-              decoration: BoxDecoration(
-                  color: greyColor2, borderRadius: BorderRadius.circular(8.0)),
-              margin: EdgeInsets.only(
-                  bottom: isLastMessageRight(index) ? 5.0 : 5.0, right: 5.0),
-            ),
-          ],
-          mainAxisAlignment: MainAxisAlignment.end,
-        ),
-        Container(
-          child: Text(
-            DateFormat('dd MMM h:mm a').format(timestamp).toString(),
-            style: TextStyle(
-                color: greyColor, fontSize: 12.0, fontStyle: FontStyle.italic),
-          ),
-          margin: EdgeInsets.only(left: 50.0, top: 0.0, bottom: 10.0),
-        )
-      ]));
-    } else {
-      // Left (peer message)
-      return Container(
-        child: Column(
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                Material(
-                  child: Container(
-                    child: Linkify(
-                      onOpen: (link) async {
-                        if (await canLaunch(link.url)) {
-                          await launch(link.url);
-                        } else {
-                          throw 'Could not launch $link';
-                        }
-                      },
-                      text: document['txt'],
-                      style: TextStyle(color: Colors.white),
-                      linkStyle: TextStyle(color: Colors.red),
-                    ),
-                    padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
-                    width: MediaQuery.of(context).size.width * 0.75,
-                    decoration: BoxDecoration(
-                        color: primaryColor,
-                        borderRadius: BorderRadius.circular(8.0)),
-                    margin: EdgeInsets.only(left: 10.0),
-                  ),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(18.0),
-                  ),
-                  clipBehavior: Clip.hardEdge,
-                )
-              ],
-            ),
-            Container(
-              child: Text(
-                DateFormat('dd MMM h:mm a').format(timestamp).toString(),
-                style: TextStyle(
-                    color: greyColor,
-                    fontSize: 12.0,
-                    fontStyle: FontStyle.italic),
-              ),
-              margin: EdgeInsets.only(left: 50.0, top: 5.0, bottom: 5.0),
-            )
-          ],
-          crossAxisAlignment: CrossAxisAlignment.start,
-        ),
-        margin: EdgeInsets.only(bottom: 10.0),
-      );
-    }
-  }
-
-  bool isLastMessageLeft(int index) {
-    if ((index > 0 &&
-            listMessage != null &&
-            listMessage[index - 1]['user_id'] == _medicallUser.uid) ||
-        index == 0) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  bool isLastMessageRight(int index) {
-    if ((index > 0 &&
-            listMessage != null &&
-            listMessage[index - 1]['user_id'] != _medicallUser.uid) ||
-        index == 0) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  Future<bool> onBackPress() {
-    if (isShowSticker) {
-      setState(() {
-        isShowSticker = false;
+    if (i == 0) {
+      systemMessage();
+      Timer(Duration(milliseconds: 600), () {
+        systemMessage();
       });
     } else {
-      Navigator.of(context).pop(context);
-    }
-
-    return Future.value(false);
+      systemMessage();
+    } */
   }
 
   @override
   Widget build(BuildContext context) {
-    _db = Provider.of<Database>(context);
     _medicallUser = Provider.of<UserProvider>(context).medicallUser;
-    return WillPopScope(
-      child: Container(
-        color: Theme.of(context).primaryColor.withOpacity(0.05),
-        child: Stack(
-          children: <Widget>[
-            Column(
-              children: <Widget>[
-                // List of messages
-                buildListMessage(_medicallUser),
+    _detailedHistoryState = Provider.of<DetailedHistoryState>(context);
+    _db = Provider.of<Database>(context);
+    _extImageProvider = Provider.of<ExtImageProvider>(context);
+    user = ChatUser(
+        name: _medicallUser.displayName,
+        uid: _medicallUser.uid,
+        avatar: _medicallUser.profilePic);
+    otherUser = _medicallUser.type == 'provider'
+        ? ChatUser(
+            name: _db.consultSnapshot['patient'],
+            uid: _db.consultSnapshot['patient_id'])
+        : ChatUser(
+            name: _db.consultSnapshot['provider'],
+            uid: _db.consultSnapshot['provider_id']);
 
-                // Sticker
-                //(isShowSticker ? buildSticker() : Container()),
-
-                // Input content
-                buildInput(),
-              ],
-            ),
-
-            // Loading
-            buildLoading()
-          ],
-        ),
-      ),
-      onWillPop: onBackPress,
-    );
-  }
-
-  Widget buildLoading() {
-    return Positioned(
-      child: isLoading
-          ? Container(
-              child: Center(
-                child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(themeColor)),
-              ),
-              color: Colors.white.withOpacity(0.8),
-            )
-          : Container(),
-    );
-  }
-
-  Widget buildInput() {
-    return SafeArea(
-      child: Container(
-        child: Row(
-          children: <Widget>[
-            // Edit text
-            Flexible(
-              child: Container(
-                padding: EdgeInsets.only(
-                  left: 10,
-                ),
-                child: TextField(
-                  style: TextStyle(
-                    color: primaryColor,
-                    fontSize: 15.0,
-                  ),
-                  enabled: !this.peerAvatar,
-                  controller: textEditingController,
-                  decoration: InputDecoration.collapsed(
-                    hintText: !this.peerAvatar
-                        ? 'Type your message...'
-                        : 'This consult has finished, chat disabled.',
-                    hintStyle: TextStyle(color: greyColor),
-                  ),
-                  focusNode: focusNode,
-                ),
-              ),
-            ),
-
-            // Button send message
-            Material(
-              child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 8.0),
-                child: IconButton(
-                  icon: Icon(
-                    Icons.send,
-                    color: !this.peerAvatar ? Colors.lightGreen : greyColor,
-                  ),
-                  onPressed: () {
-                    if (!this.peerAvatar) {
-                      onSendMessage(textEditingController.text, 0);
-                    }
-                  },
-                  color: !this.peerAvatar ? primaryColor : greyColor,
-                ),
-              ),
-              color: !peerAvatar ? Colors.white : greyColor2,
-            ),
-          ],
-        ),
-        width: double.infinity,
-        height: 50.0,
-        decoration: BoxDecoration(
-            border: Border(top: BorderSide(color: greyColor2, width: 0.5)),
-            color: !peerAvatar ? Colors.white : greyColor2),
-      ),
-    );
-  }
-
-  Widget buildListMessage(_medicallUser) {
-    return Flexible(
-      child: StreamBuilder(
-        stream: _db.getUserHistoryStream(_medicallUser),
+    return StreamBuilder(
+        stream: _db.getConsultChat(),
         builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return Center(
-                child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(themeColor)));
-          } else {
-            List listMessage = snapshot.data.data["chat"];
-            listMessage = listMessage.reversed.toList();
-            if (listMessage.length == 0) {
-              return Container(
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                    Container(
-                      child: Text(
-                        'Send a message, it will appear here',
-                        style: TextStyle(
-                            color: greyColor,
-                            fontSize: 16.0,
-                            fontStyle: FontStyle.italic),
-                      ),
-                    )
-                  ]));
-            }
-            isLoading = false;
-            return ListView.builder(
-              padding: EdgeInsets.all(10.0),
-              itemBuilder: (context, index) =>
-                  buildItem(index, listMessage[index]),
-              itemCount: listMessage.length,
-              reverse: true,
-              controller: listScrollController,
-            );
+          if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
           }
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            default:
+              List<DocumentSnapshot> items = snapshot.data.documents;
+              var messages =
+                  items.map((i) => ChatMessage.fromJson(i.data)).toList();
+              if (_chatViewKey.currentState != null) {
+                _chatViewKey.currentState.scrollController.animateTo(
+                    _chatViewKey.currentState.scrollController.position
+                            .maxScrollExtent +
+                        200,
+                    duration: Duration(milliseconds: 1000),
+                    curve: Curves.easeOut);
+              }
+              return Container(
+                alignment: Alignment.center,
+                color: Colors.grey.withAlpha(50),
+                child: DashChat(
+                  key: _chatViewKey,
+                  inverted: false,
+                  onSend: onSend,
+                  user: user,
+                  height: MediaQuery.of(context).size.height -
+                      Scaffold.of(context).appBarMaxHeight,
+                  inputDecoration: InputDecoration(
+                    hintText: "Add message here...",
+                  ),
+                  inputMaxLines: 5,
+                  inputTextStyle: TextStyle(fontSize: 14.0, height: 2),
+                  inputContainerStyle: BoxDecoration(
+                    border: Border.all(width: 0.0),
+                    color: Colors.white,
+                  ),
+                  dateFormat: DateFormat('MMM-dd-yyyy'),
+                  timeFormat: DateFormat('dd MMM h:mm a'),
+                  messages: messages,
+                  scrollToBottom: false,
+                  scrollToBottomWidget: () {
+                    return Container(
+                      width: 48.0,
+                      height: 48.0,
+                      child: RawMaterialButton(
+                        highlightElevation: 10.0,
+                        fillColor: Theme.of(context).primaryColor,
+                        shape: CircleBorder(),
+                        elevation: 0.0,
+                        child: Icon(
+                          Icons.keyboard_arrow_down,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {
+                          _chatViewKey.currentState.scrollController
+                            ..animateTo(
+                              _chatViewKey.currentState.scrollController
+                                  .position.maxScrollExtent,
+                              curve: Curves.easeOut,
+                              duration: const Duration(milliseconds: 300),
+                            );
+                        },
+                      ),
+                    );
+                  },
+                  showUserAvatar: true,
+                  showAvatarForEveryMessage: false,
+                  onPressAvatar: (ChatUser user) {
+                    print("OnPressAvatar: ${user.name}");
+                  },
+                  onLongPressAvatar: (ChatUser user) {
+                    print("OnLongPressAvatar: ${user.name}");
+                  },
+                  messageBuilder: (ChatMessage msg) {
+                    return MessageContainer(
+                      isUser: msg.user.uid == _medicallUser.uid,
+                      message: msg,
+                      timeFormat: DateFormat('dd MMM h:mm a'),
+                      messageImageBuilder: (img) {
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (_) {
+                              return DetailScreen(img, _extImageProvider);
+                            }));
+                          },
+                          child: Hero(
+                            tag: img,
+                            child: _extImageProvider.returnNetworkImage(img),
+                          ),
+                        );
+                      },
+                      messageTimeBuilder: (val) {
+                        return Container(
+                          padding: EdgeInsets.fromLTRB(0, 8, 0, 0),
+                          child: Text(
+                            val,
+                            style:
+                                TextStyle(color: Colors.black54, fontSize: 10),
+                          ),
+                        );
+                      },
+                      messageContainerDecoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.onBackground,
+                          borderRadius: BorderRadius.all(Radius.circular(5))),
+                      parsePatterns: [
+                        MatchText(
+                            type: ParsedType.URL,
+                            style: TextStyle(color: Colors.blue),
+                            onTap: (url) async {
+                              if (!url.contains('http://')) {
+                                url = 'http://' + url;
+                              }
+                              if (await canLaunch(url)) {
+                                await launch(url);
+                              } else {
+                                throw 'Could not launch $url';
+                              }
+                            }),
+                        MatchText(
+                            pattern: '.*',
+                            style: TextStyle(color: Colors.black87),
+                            onTap: () {}),
+                        MatchText(type: ParsedType.PHONE),
+                        MatchText(type: ParsedType.EMAIL),
+                      ],
+                    );
+                  },
+                  alwaysShowSend: !_detailedHistoryState.getIsDone(),
+                  onQuickReply: (Reply reply) {
+                    setState(() {
+                      messages.add(ChatMessage(
+                          text: reply.value,
+                          createdAt: DateTime.now(),
+                          user: user));
+
+                      messages = [...messages];
+                    });
+
+                    Timer(Duration(milliseconds: 300), () {
+                      _chatViewKey.currentState.scrollController
+                        ..animateTo(
+                          _chatViewKey.currentState.scrollController.position
+                              .maxScrollExtent,
+                          curve: Curves.easeOut,
+                          duration: const Duration(milliseconds: 300),
+                        );
+
+                      if (i == 0) {
+                        systemMessage();
+                        Timer(Duration(milliseconds: 600), () {
+                          systemMessage();
+                        });
+                      } else {
+                        systemMessage();
+                      }
+                    });
+                  },
+                  onLoadEarlier: () {
+                    CircularProgressIndicator();
+                  },
+                  shouldShowLoadEarlier: false,
+                  showTraillingBeforeSend: true,
+                  trailing: <Widget>[
+                    IconButton(
+                      icon: Icon(Icons.photo),
+                      onPressed: () async {
+                        await _extImageProvider.setChatImage();
+
+                        if (_extImageProvider.chatMedia != null) {
+                          _db.saveConsultChatImage(
+                              _medicallUser, _extImageProvider.chatMedia);
+                        }
+                      },
+                    )
+                  ],
+                ),
+              );
+          }
+        });
+  }
+}
+
+class DetailScreen extends StatelessWidget {
+  DetailScreen(this.img, this.ext);
+  final String img;
+  final ExtImageProvider ext;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: GestureDetector(
+        child: Center(
+          child: Hero(
+            tag: this.img,
+            child: this
+                .ext
+                .returnNetworkImage(img, mode: ExtendedImageMode.gesture,
+                    initGestureConfigHandler: (state) {
+              return GestureConfig(
+                  inPageView: true, initialScale: 1.0, cacheGesture: false,);
+            }),
+          ),
+        ),
+        onTap: () {
+          Navigator.pop(context);
         },
       ),
     );

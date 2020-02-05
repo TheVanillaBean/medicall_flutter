@@ -89,14 +89,37 @@ class ConsentScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final tempUserProvider = Provider.of<TempUserProvider>(context);
     final medicallUser = tempUserProvider.medicallUser;
+    final _scrollController = ScrollController();
 
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         title: Text('Telemedicine Consent'),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: Padding(
+          padding: const EdgeInsets.only(bottom: 150.0),
+          child: FloatingActionButton(
+              child: Icon(
+                Icons.arrow_drop_down,
+                size: 40,
+              ),
+              backgroundColor: Colors.blueGrey.withAlpha(100),
+              elevation: 0,
+              focusElevation: 0,
+              highlightElevation: 0,
+              hoverElevation: 0,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(5.0))),
+              onPressed: () {
+                _scrollController.animateTo(
+                    _scrollController.position.maxScrollExtent,
+                    duration: Duration(seconds: 3),
+                    curve: Curves.ease);
+              })),
       body: Container(
         child: SingleChildScrollView(
+          controller: _scrollController,
           padding: EdgeInsets.fromLTRB(15, 20, 15, 20),
           child: Column(
             children: <Widget>[

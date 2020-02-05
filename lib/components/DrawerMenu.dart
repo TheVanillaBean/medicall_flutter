@@ -16,125 +16,109 @@ class DrawerMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     medicallUser = Provider.of<UserProvider>(context).medicallUser;
     return (Drawer(
-        child: Stack(
-      children: <Widget>[
-        Container(
-          color: Colors.white,
-          child: ListView(
-            children: <Widget>[
-              medicallUser.type == 'provider'
-                  ? SizedBox(
-                      height: 80,
-                    )
-                  : ListTile(
-                      dense: true,
-                      contentPadding: EdgeInsets.fromLTRB(16, 80, 0, 0),
-                      leading: Icon(
-                        Icons.local_hospital,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                      title: Text(
-                        'Find A Doctor',
-                        style: TextStyle(
-                          color: Theme.of(context).primaryColor,
-                        ),
-                      ),
-                      onTap: () async {
-                        SharedPreferences _thisConsult =
-                            await SharedPreferences.getInstance();
-                        String currentConsultString = jsonEncode(ConsultData());
-                        await _thisConsult.setString(
-                            "consult", currentConsultString);
-                        Navigator.of(context).pop();
-                        Navigator.of(context).pushNamed(
-                            '/symptoms',
-                            arguments: {'user': medicallUser});
-                      }),
-              ListTile(
-                  dense: true,
-                  leading: Icon(
-                    Icons.recent_actors,
-                    color: Theme.of(context).primaryColor,
-                  ),
-                  title: Text(
-                    'History',
-                    style: TextStyle(
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  ),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context)
-                        .pushReplacementNamed('/history');
-                  }),
-              ListTile(
-                  leading: Icon(
-                    Icons.account_circle,
-                    color: Theme.of(context).primaryColor,
-                  ),
-                  title: Text(
-                    'Account',
-                    style: TextStyle(
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  ),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).pushNamed('/account',
-                        arguments: {'user': medicallUser});
-                  }),
-              Divider(
-                height: 0,
-                color: Colors.grey[400],
-              ),
-              ListTile(
-                leading: Icon(
-                  Icons.exit_to_app,
-                  color: Theme.of(context).colorScheme.error,
+      child: ListView(
+        children: <Widget>[
+          Container(
+              height: 80,
+              child: DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor,
                 ),
-                title: Text(
-                  'Sign Out',
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.error,
-                  ),
-                ),
-                onTap: () => _signOut(context),
-              ),
-            ],
-          ),
-        ),
-        Container(
-          height: 108.0,
-          child: DrawerHeader(
-              padding: EdgeInsets.fromLTRB(0, 0, 50, 0),
-              decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor,
-              ),
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Icon(CustomIcons.MedicallApp.logo,
+                child: Row(
+                  children: <Widget>[
+                    Icon(CustomIcons.MedicallApp.logo,
                         size: 40.0,
                         color: Theme.of(context).colorScheme.onPrimary),
-                  ),
-                  Expanded(
-                      flex: 4,
-                      child: Padding(
-                        padding: EdgeInsets.fromLTRB(21, 0, 0, 0),
-                        child: Text(
-                          'MEDICALL',
-                          style: TextStyle(
-                            fontSize: 18.0,
-                            letterSpacing: 1.5,
-                            color: Theme.of(context).colorScheme.onPrimary,
-                          ),
-                        ),
-                      ))
-                ],
+                    Text(
+                      'MEDICALL',
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        letterSpacing: 1.5,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                    ),
+                  ],
+                ),
               )),
-        ),
-      ],
-    )));
+          medicallUser.type == 'provider'
+              ? Container()
+              : ListTile(
+                  contentPadding: EdgeInsets.fromLTRB(16, 10, 0, 10),
+                  leading: Icon(
+                    Icons.local_hospital,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                  title: Text(
+                    'Find A Doctor',
+                    style: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
+                  onTap: () async {
+                    SharedPreferences _thisConsult =
+                        await SharedPreferences.getInstance();
+                    String currentConsultString = jsonEncode(ConsultData());
+                    await _thisConsult.setString(
+                        "consult", currentConsultString);
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pushNamed('/symptoms',
+                        arguments: {'user': medicallUser});
+                  }),
+          ListTile(
+              contentPadding: EdgeInsets.fromLTRB(16, 10, 0, 10),
+              dense: true,
+              leading: Icon(
+                Icons.recent_actors,
+                color: Theme.of(context).primaryColor,
+              ),
+              title: Text(
+                'History',
+                style: TextStyle(
+                  color: Theme.of(context).primaryColor,
+                ),
+              ),
+              onTap: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pushReplacementNamed('/history');
+              }),
+          ListTile(
+              contentPadding: EdgeInsets.fromLTRB(16, 10, 0, 10),
+              leading: Icon(
+                Icons.account_circle,
+                color: Theme.of(context).primaryColor,
+              ),
+              title: Text(
+                'Account',
+                style: TextStyle(
+                  color: Theme.of(context).primaryColor,
+                ),
+              ),
+              onTap: () {
+                Navigator.of(context).pop();
+                Navigator.of(context)
+                    .pushNamed('/account', arguments: {'user': medicallUser});
+              }),
+          Divider(
+            height: 0,
+            color: Colors.grey[400],
+          ),
+          ListTile(
+            contentPadding: EdgeInsets.fromLTRB(16, 10, 0, 10),
+            leading: Icon(
+              Icons.exit_to_app,
+              color: Theme.of(context).colorScheme.error,
+            ),
+            title: Text(
+              'Sign Out',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.error,
+              ),
+            ),
+            onTap: () => _signOut(context),
+          )
+        ],
+      ),
+    ));
   }
 
   Future<void> _signOut(BuildContext context) async {

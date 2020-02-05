@@ -1,7 +1,7 @@
 import 'package:Medicall/models/consult_status_modal.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/screens/History/Detail/history_detail_state.dart';
 import 'package:Medicall/services/database.dart';
-import 'package:Medicall/services/history_detail_state.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -20,6 +20,13 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
   DetailedHistoryState detailedHistoryState;
 
   @override
+  void dispose() {
+    super.dispose();
+    detailedHistoryState.getTabController.index = 0;
+    //detailedHistoryState.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     // The app's "state".
     db = Provider.of<Database>(context);
@@ -27,17 +34,9 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
     detailedHistoryState = Provider.of<DetailedHistoryState>(context);
     detailedHistoryState.setControllerTabs(this);
     return FutureBuilder(
-      future: db.getConsultDetail(), // a Future<String> or null
+      future:
+          db.getConsultDetail(detailedHistoryState), // a Future<String> or null
       builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          if (db.consultSnapshot.data['provider_id'] == medicallUser.uid) {
-            if (db.consultSnapshot.data['state'] == 'done') {
-              detailedHistoryState.setIsDone(true);
-            } else {
-              detailedHistoryState.setIsDone(false);
-            }
-          }
-        }
         return returnBody();
       },
     );
@@ -46,6 +45,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
   Widget returnBody() {
     //detailedHistoryState.setIsDone(true);
     detailedHistoryState.setChoices();
+    //detailedHistoryState.getTabController.index = 0;
     return Scaffold(
       appBar: AppBar(
         actions: <Widget>[
