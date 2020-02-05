@@ -28,15 +28,6 @@ class DoctorSearch extends StatelessWidget {
     String providerProfilePic = '';
     ConsultData _consult = ConsultData();
 
-    setConsult() async {
-      SharedPreferences _thisConsult = await SharedPreferences.getInstance();
-      _consult.provider = selectedProvider;
-      _consult.providerTitles = providerTitles;
-      _consult.providerProfilePic = providerProfilePic;
-      String currentConsultString = jsonEncode(_consult);
-      await _thisConsult.setString("consult", currentConsultString);
-    }
-
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       appBar: AppBar(
@@ -100,79 +91,46 @@ class DoctorSearch extends StatelessWidget {
                           Container(
                             padding: EdgeInsets.all(10),
                             width: 120,
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton(
-                                isExpanded: true,
-                                isDense: true,
-                                icon: Icon(Icons.more_vert),
-                                items: [
-                                  DropdownMenuItem(
-                                    value: 'New Request',
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        providerTitles =
-                                            userDocuments[i].data['titles'];
-                                        selectedProvider =
-                                            userDocuments[i].data['name'];
-                                        _consult.provider = selectedProvider;
-                                        _consult.providerTitles =
-                                            providerTitles;
-                                        _consult.providerProfilePic =
-                                            userDocuments[i]
-                                                .data['profile_pic'];
-                                        setConsult();
-                                        Navigator.of(context)
-                                            .pushNamed('/symptoms');
-                                      },
-                                      child: Container(
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          'New Request',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                              fontSize: 14,
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .secondary,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ),
-                                    ),
+                            child: PopupMenuButton(
+                              itemBuilder: (context) {
+                                var list = List<PopupMenuEntry<Object>>();
+                                list.add(
+                                  PopupMenuItem(
+                                    child: Text("New Request"),
+                                    value: 1,
                                   ),
-                                  DropdownMenuItem(
-                                    value: 'Follow Up',
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        providerTitles =
-                                            userDocuments[i].data['titles'];
-                                        selectedProvider =
-                                            userDocuments[i].data['name'];
-                                        _consult.provider = selectedProvider;
-                                        _consult.providerProfilePic =
-                                            userDocuments[i]
-                                                .data['profile_pic'];
-                                        setConsult();
-                                        Navigator.of(context)
-                                            .pushNamed('/symptoms');
-                                      },
-                                      child: Container(
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          'Follow Up',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                              fontSize: 14,
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .secondary,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ),
-                                    ),
+                                );
+                                list.add(
+                                  PopupMenuDivider(
+                                    height: 10,
                                   ),
-                                ],
-                                onChanged: (String newVal) {},
+                                );
+                                list.add(
+                                  PopupMenuItem(
+                                    child: Text("Follow Up"),
+                                    value: 1,
+                                  ),
+                                );
+                                return list;
+                              },
+                              icon: Icon(
+                                Icons.more_vert,
+                                size: 30,
+                                color: Theme.of(context).colorScheme.secondary,
                               ),
+                              offset: Offset.fromDirection(0.0, -20.0),
+                              onSelected: (val) {
+                                providerTitles =
+                                    userDocuments[i].data['titles'];
+                                selectedProvider =
+                                    userDocuments[i].data['name'];
+                                _consult.provider = selectedProvider;
+                                _consult.providerProfilePic =
+                                    userDocuments[i].data['profile_pic'];
+                                setConsult(_consult, selectedProvider,
+                                    providerTitles, providerProfilePic);
+                                Navigator.of(context).pushNamed('/symptoms');
+                              },
                             ),
                           ),
                         ],
@@ -265,6 +223,11 @@ class CurvePainter extends CustomPainter {
 }
 
 class CustomSearchDelegate extends SearchDelegate {
+  String selectedProvider = '';
+  String providerTitles = '';
+  String providerProfilePic = '';
+  ConsultData _consult = ConsultData();
+
   @override
   String get searchFieldLabel => currTab;
   @override
@@ -374,9 +337,48 @@ class CustomSearchDelegate extends SearchDelegate {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
-                                Icon(
-                                  Icons.more_vert,
-                                  color: Theme.of(context).primaryColor,
+                                PopupMenuButton(
+                                  itemBuilder: (context) {
+                                    var list = List<PopupMenuEntry<Object>>();
+                                    list.add(
+                                      PopupMenuItem(
+                                        child: Text("New Request"),
+                                        value: 1,
+                                      ),
+                                    );
+                                    list.add(
+                                      PopupMenuDivider(
+                                        height: 10,
+                                      ),
+                                    );
+                                    list.add(
+                                      PopupMenuItem(
+                                        child: Text("Follow Up"),
+                                        value: 1,
+                                      ),
+                                    );
+                                    return list;
+                                  },
+                                  icon: Icon(
+                                    Icons.more_vert,
+                                    size: 30,
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
+                                  ),
+                                  offset: Offset.fromDirection(0.0, -20.0),
+                                  onSelected: (val) {
+                                    providerTitles =
+                                        userDocuments[i].data['titles'];
+                                    selectedProvider =
+                                        userDocuments[i].data['name'];
+                                    _consult.provider = selectedProvider;
+                                    _consult.providerProfilePic =
+                                        userDocuments[i].data['profile_pic'];
+                                    setConsult(_consult, selectedProvider,
+                                        providerTitles, providerProfilePic);
+                                    Navigator.of(context)
+                                        .pushNamed('/symptoms');
+                                  },
                                 ),
                               ],
                             ),
@@ -423,4 +425,14 @@ class CustomSearchDelegate extends SearchDelegate {
     // If you want to add search suggestions as the user enters their search term, this is the place to do that.
     return Column();
   }
+}
+
+setConsult(
+    _consult, selectedProvider, providerTitles, providerProfilePic) async {
+  SharedPreferences _thisConsult = await SharedPreferences.getInstance();
+  _consult.provider = selectedProvider;
+  _consult.providerTitles = providerTitles;
+  _consult.providerProfilePic = providerProfilePic;
+  String currentConsultString = jsonEncode(_consult);
+  await _thisConsult.setString("consult", currentConsultString);
 }
