@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/models/reg_user_model.dart';
 import 'package:Medicall/util/app_util.dart';
@@ -13,6 +15,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 abstract class AuthBase {
   Stream<MedicallUser> get onAuthStateChanged;
   Future<MedicallUser> currentUser();
+  bool newUser;
   MedicallUser medicallUser;
   TempRegUser tempRegUser;
   Future<MedicallUser> signInAnonymously();
@@ -37,6 +40,23 @@ class Auth implements AuthBase {
   TempRegUser tempRegUser;
   @override
   MedicallUser medicallUser;
+
+  // ignore: close_sinks
+  StreamController<MedicallUser> authStreamController;
+
+  bool newUser = false;
+
+  Auth() {
+    authStreamController = StreamController();
+    _firebaseAuth.onAuthStateChanged.listen((user) {
+      if (!newUser) {
+        print("Existing User");
+        authStreamController.sink.add(_userFromFirebase(user));
+      } else {
+        print("New User");
+      }
+    });
+  }
 
   Future<MedicallUser> _getMedicallUser(String uid) async {
     if (uid != null) {
@@ -68,7 +88,8 @@ class Auth implements AuthBase {
 
   @override
   Stream<MedicallUser> get onAuthStateChanged {
-    return _firebaseAuth.onAuthStateChanged.map(_userFromFirebase);
+    return authStreamController.stream;
+//    return _firebaseAuth.onAuthStateChanged.map(_userFromFirebase);
   }
 
   @override
@@ -166,6 +187,7 @@ class Auth implements AuthBase {
           await _firebaseAuth.signInWithCredential(credential);
       final user = phoneSignInAuthResult.user;
       user.sendEmailVerification();
+      authStreamController.sink.add(_userFromFirebase(user));
       return _userFromFirebase(user);
     } else {
       throw PlatformException(

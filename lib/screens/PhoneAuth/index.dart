@@ -225,7 +225,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
         child: RichText(
           textAlign: TextAlign.center,
           text: TextSpan(
-            text: "If your code does not arrive in 1 minute, touch",
+            text: "If your code does not arrive in 3 minute, touch",
             style: decorationStyle,
             children: <TextSpan>[
               TextSpan(

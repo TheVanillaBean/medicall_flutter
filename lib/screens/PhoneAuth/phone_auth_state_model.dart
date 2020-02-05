@@ -6,6 +6,7 @@ import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/util/validators.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 enum AuthStatus { PHONE_AUTH, SMS_AUTH }
 
@@ -20,7 +21,7 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
   AuthCredential authCredential;
 
   final AuthBase auth;
-  Duration timeoutDuration = Duration(minutes: 1);
+  Duration timeoutDuration = Duration(minutes: 3);
   VerificationError verificationError;
 
   PhoneAuthStateModel({
@@ -140,9 +141,10 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
         codeAutoRetrievalTimeout: codeAutoRetrievalTimeout);
   }
 
-  Future<MedicallUser> signInWithPhoneNumber(
+  Future<void> signInWithPhoneNumber(
       bool mounted, TempUserProvider tempUserProvider) async {
     try {
+      auth.newUser = true;
       MedicallUser user = await auth.createUserWithEmailAndPassword(
           tempUserProvider.medicallUser.email, tempUserProvider.password);
 
@@ -152,23 +154,20 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
         phoneNumber: this.phoneNumber,
       );
 
-//      bool successfullySavedImages =
-//          await tempUserProvider.saveRegistrationImages();
+      bool successfullySavedImages =
+          await tempUserProvider.saveRegistrationImages();
 
-//      if (successfullySavedImages) {
-      await tempUserProvider.addNewUserToFirestore();
-      user =
-          await auth.signInWithPhoneNumber(this.verificationId, this.smsCode);
-      updateRefreshing(false, mounted);
-      return user;
-//      } else {
-//        updateRefreshing(false, mounted);
-//        throw PlatformException(
-//          code: 'ERROR_PHONE_AUTH_FAILED',
-//          message: 'Failed to create user account.',
-//        );
-//      }
-
+      if (successfullySavedImages) {
+        await tempUserProvider.addNewUserToFirestore();
+        auth.newUser = false;
+        await auth.signInWithPhoneNumber(this.verificationId, this.smsCode);
+      } else {
+        updateRefreshing(false, mounted);
+        throw PlatformException(
+          code: 'ERROR_PHONE_AUTH_FAILED',
+          message: 'Failed to create user account.',
+        );
+      }
     } catch (e) {
       updateRefreshing(false, mounted);
       rethrow;
