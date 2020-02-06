@@ -21,8 +21,8 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
   AuthCredential authCredential;
 
   final AuthBase auth;
-  Duration timeoutDuration = Duration(minutes: 3);
-  VerificationError verificationError;
+  Duration timeoutDuration = Duration(minutes: 1);
+  VerificationStatus verificationStatus;
 
   PhoneAuthStateModel({
     @required this.auth,
@@ -91,8 +91,8 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
   }
 
   Future<void> verifyPhoneNumber(
-      bool mounted, VerificationError verificationError) async {
-    this.verificationError = verificationError;
+      bool mounted, VerificationStatus verificationError) async {
+    this.verificationStatus = verificationError;
     FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
     final PhoneVerificationCompleted verificationCompleted =
@@ -106,7 +106,7 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
     final PhoneVerificationFailed verificationFailed =
         (AuthException authException) {
       updateRefreshing(false, mounted);
-      this.verificationError.onVerificationError(
+      this.verificationStatus.onVerificationError(
           'Phone number verification failed. ${authException.message}');
     };
 
@@ -114,7 +114,7 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
         (String verificationId, [int forceResendingToken]) {
       Timer _ = Timer(this.timeoutDuration, () {
         updateWith(codeTimedOut: true);
-        this.verificationError.onVerificationError(
+        this.verificationStatus.onVerificationError(
             'Your phone verification session has timed out. Retry to receive another code.');
       });
       updateWith(
@@ -128,7 +128,7 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
         (String verificationId) {
       updateRefreshing(false, mounted);
       updateWith(verificationId: verificationId, codeTimedOut: true);
-      this.verificationError.onVerificationError(
+      this.verificationStatus.onVerificationError(
           'Your phone verification session has timed out. Retry to receive another code.');
     };
 
@@ -145,22 +145,30 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
       bool mounted, TempUserProvider tempUserProvider) async {
     try {
       auth.newUser = true;
+
       MedicallUser user = await auth.createUserWithEmailAndPassword(
           tempUserProvider.medicallUser.email, tempUserProvider.password);
+
+      user =
+          await auth.signInWithPhoneNumber(this.verificationId, this.smsCode);
 
       tempUserProvider.updateWith(
         uid: user.uid,
         devTokens: user.devTokens,
-        phoneNumber: this.phoneNumber,
+        phoneNumber: user.phoneNumber,
       );
+
+      this.verificationStatus.onVerificationSuccess("Saving User Details...");
 
       bool successfullySavedImages =
           await tempUserProvider.saveRegistrationImages();
 
+      this.verificationStatus.onVerificationSuccess("Almost finished...");
+
       if (successfullySavedImages) {
         await tempUserProvider.addNewUserToFirestore();
         auth.newUser = false;
-        await auth.signInWithPhoneNumber(this.verificationId, this.smsCode);
+        auth.addUserToAuthStream(user);
       } else {
         updateRefreshing(false, mounted);
         throw PlatformException(
@@ -196,6 +204,7 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
   }
 }
 
-mixin VerificationError {
+mixin VerificationStatus {
   void onVerificationError(String msg);
+  void onVerificationSuccess(String msg);
 }

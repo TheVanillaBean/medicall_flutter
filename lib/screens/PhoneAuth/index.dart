@@ -59,7 +59,7 @@ class NumberTextInputFormatter extends TextInputFormatter {
 }
 
 class _PhoneAuthScreenState extends State<PhoneAuthScreen>
-    with VerificationError {
+    with VerificationStatus {
   TextEditingController smsCodeController = TextEditingController();
   TextEditingController phoneNumberController = TextEditingController();
 
@@ -76,7 +76,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
     super.dispose();
   }
 
-  _showErrorSnackbar(String message) {
+  _showFlushBarMessage(String message) {
     AppUtil().showFlushBar(message, context);
   }
 
@@ -217,7 +217,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
         if (model.codeTimedOut) {
           await model.verifyPhoneNumber(mounted, this);
         } else {
-          _showErrorSnackbar("You can't retry yet!");
+          _showFlushBarMessage("You can't retry yet!");
         }
       },
       child: Padding(
@@ -225,7 +225,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
         child: RichText(
           textAlign: TextAlign.center,
           text: TextSpan(
-            text: "If your code does not arrive in 3 minute, touch",
+            text: "If your code does not arrive in 1 minute, touch",
             style: decorationStyle,
             children: <TextSpan>[
               TextSpan(
@@ -327,6 +327,11 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
 
   @override
   void onVerificationError(String msg) {
-    _showErrorSnackbar(msg);
+    _showFlushBarMessage(msg);
+  }
+
+  @override
+  void onVerificationSuccess(String msg) {
+    _showFlushBarMessage(msg);
   }
 }

@@ -16,6 +16,7 @@ abstract class AuthBase {
   Stream<MedicallUser> get onAuthStateChanged;
   Future<MedicallUser> currentUser();
   bool newUser;
+  void addUserToAuthStream(MedicallUser user);
   MedicallUser medicallUser;
   TempRegUser tempRegUser;
   Future<MedicallUser> signInAnonymously();
@@ -56,6 +57,10 @@ class Auth implements AuthBase {
         print("New User");
       }
     });
+  }
+
+  void addUserToAuthStream(MedicallUser user) {
+    authStreamController.sink.add(user);
   }
 
   Future<MedicallUser> _getMedicallUser(String uid) async {
@@ -187,7 +192,6 @@ class Auth implements AuthBase {
           await _firebaseAuth.signInWithCredential(credential);
       final user = phoneSignInAuthResult.user;
       user.sendEmailVerification();
-      authStreamController.sink.add(_userFromFirebase(user));
       return _userFromFirebase(user);
     } else {
       throw PlatformException(
