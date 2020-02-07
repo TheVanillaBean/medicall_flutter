@@ -314,8 +314,8 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
       body: Container(
         child: ReactiveRefreshIndicator(
           onRefresh: _onRefresh,
-          color: Theme.of(context).colorScheme.secondary,
-          backgroundColor: Theme.of(context).colorScheme.background,
+          color: Theme.of(context).colorScheme.primary,
+          backgroundColor: Theme.of(context).colorScheme.onPrimary,
           isRefreshing: model.isRefreshing,
           child: Container(
             child: _buildBody(),

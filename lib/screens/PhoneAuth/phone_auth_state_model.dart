@@ -21,7 +21,7 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
   AuthCredential authCredential;
 
   final AuthBase auth;
-  Duration timeoutDuration = Duration(minutes: 1);
+  Duration timeoutDuration = Duration(milliseconds: 5000);
   VerificationStatus verificationStatus;
 
   PhoneAuthStateModel({
@@ -112,11 +112,11 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
 
     final PhoneCodeSent codeSent =
         (String verificationId, [int forceResendingToken]) {
-      Timer _ = Timer(this.timeoutDuration, () {
-        updateWith(codeTimedOut: true);
-        this.verificationStatus.onVerificationError(
-            'Your phone verification session has timed out. Retry to receive another code.');
-      });
+      // Timer _ = Timer(this.timeoutDuration, () {
+      //   updateWith(codeTimedOut: true);
+      //   this.verificationStatus.onVerificationError(
+      //       'Your phone verification session has timed out. Retry to receive another code.');
+      // });
       updateWith(
         verificationId: verificationId,
         status: AuthStatus.SMS_AUTH,
@@ -132,13 +132,17 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
           'Your phone verification session has timed out. Retry to receive another code.');
     };
 
-    await firebaseAuth.verifyPhoneNumber(
-        phoneNumber: this.phoneNumber,
-        timeout: this.timeoutDuration,
-        verificationCompleted: verificationCompleted,
-        verificationFailed: verificationFailed,
-        codeSent: codeSent,
-        codeAutoRetrievalTimeout: codeAutoRetrievalTimeout);
+    await firebaseAuth
+        .verifyPhoneNumber(
+            phoneNumber: this.phoneNumber,
+            timeout: this.timeoutDuration,
+            verificationCompleted: verificationCompleted,
+            verificationFailed: verificationFailed,
+            codeSent: codeSent,
+            codeAutoRetrievalTimeout: codeAutoRetrievalTimeout)
+        .then((onValue) {
+      print('d');
+    });
   }
 
   Future<void> signInWithPhoneNumber(
@@ -162,8 +166,6 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
 
       bool successfullySavedImages =
           await tempUserProvider.saveRegistrationImages();
-
-      this.verificationStatus.onVerificationSuccess("Almost finished...");
 
       if (successfullySavedImages) {
         await tempUserProvider.addNewUserToFirestore();

@@ -188,11 +188,11 @@ class Auth implements AuthBase {
     if (currentMedicallUser != null &&
         currentMedicallUser.phoneNumber != null &&
         currentMedicallUser.phoneNumber.isNotEmpty) {
-      final phoneSignInAuthResult =
-          await _firebaseAuth.signInWithCredential(credential);
-      final user = phoneSignInAuthResult.user;
-      user.sendEmailVerification();
-      return _userFromFirebase(user);
+      // final phoneSignInAuthResult =
+      //     await _firebaseAuth.signInWithCredential(credential);
+      // final user = phoneSignInAuthResult.user;
+      currentUser.sendEmailVerification();
+      return _userFromFirebase(currentUser);
     } else {
       throw PlatformException(
         code: 'ERROR_PHONE_AUTH_FAILED',
