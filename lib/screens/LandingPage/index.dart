@@ -2,6 +2,7 @@ import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/History/index.dart';
 import 'package:Medicall/screens/Login/index.dart';
 import 'package:Medicall/screens/PhoneAuth/index.dart';
+import 'package:Medicall/screens/Registration/registrationType.dart';
 import 'package:Medicall/secrets.dart';
 import 'package:Medicall/services/stripe_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
@@ -31,6 +32,7 @@ class LandingPage extends StatelessWidget {
 
           if (userProvider.medicallUser == null) {
             print('In-Progress');
+            return RegistrationTypeScreen();
           } else {
             print("Active: ${userProvider.medicallUser.uid}");
             //setting stripe key once user is logged in
@@ -41,7 +43,7 @@ class LandingPage extends StatelessWidget {
           if (userProvider.medicallUser.phoneNumber == null) {
             return PhoneAuthScreen.create(context);
           }
-    
+
           return userProvider.medicallUser != null
               ? HistoryScreen()
               : Scaffold(

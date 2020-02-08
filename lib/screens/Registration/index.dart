@@ -1,5 +1,6 @@
 import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
 import 'package:Medicall/secrets.dart' as secrets;
+import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -115,6 +116,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   Widget build(BuildContext context) {
     final tempUserProvider = Provider.of<TempUserProvider>(context);
     final medicallUser = tempUserProvider.medicallUser;
+    final AuthBase auth = Provider.of<AuthBase>(context);
+    if (auth.medicallUser.uid != null && auth.medicallUser.uid.length > 0) {
+      medicallUser.uid = auth.medicallUser.uid;
+      medicallUser.email = auth.medicallUser.email;
+      medicallUser.displayName = auth.medicallUser.displayName;
+      medicallUser.firstName = auth.medicallUser.firstName;
+      medicallUser.lastName = auth.medicallUser.lastName;
+    }
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -169,10 +179,17 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       child: FormBuilderTextField(
                         attribute: "First name",
                         initialValue: medicallUser.firstName,
+                        readOnly: medicallUser.firstName != null &&
+                                medicallUser.firstName.length > 0
+                            ? true
+                            : false,
                         decoration: InputDecoration(
                             labelText: 'First Name',
                             fillColor: Color.fromRGBO(35, 179, 232, 0.1),
-                            filled: true,
+                            filled: medicallUser.firstName != null &&
+                                    medicallUser.firstName.length > 0
+                                ? false
+                                : true,
                             disabledBorder: InputBorder.none,
                             enabledBorder: InputBorder.none,
                             border: InputBorder.none),
@@ -188,10 +205,17 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       child: FormBuilderTextField(
                         attribute: "Last name",
                         initialValue: medicallUser.lastName,
+                        readOnly: medicallUser.firstName != null &&
+                                medicallUser.firstName.length > 0
+                            ? true
+                            : false,
                         decoration: InputDecoration(
                             labelText: 'Last Name',
                             fillColor: Color.fromRGBO(35, 179, 232, 0.1),
-                            filled: true,
+                            filled: medicallUser.firstName != null &&
+                                    medicallUser.firstName.length > 0
+                                ? false
+                                : true,
                             disabledBorder: InputBorder.none,
                             enabledBorder: InputBorder.none,
                             border: InputBorder.none),
@@ -344,11 +368,18 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 FormBuilderTextField(
                   attribute: "Email",
                   initialValue: medicallUser.email,
+                  readOnly:
+                      medicallUser.uid != null && medicallUser.uid.length > 0
+                          ? true
+                          : false,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
                       labelText: 'Email',
                       fillColor: Color.fromRGBO(35, 179, 232, 0.1),
-                      filled: true,
+                      filled: medicallUser.uid != null &&
+                              medicallUser.uid.length > 0
+                          ? false
+                          : true,
                       disabledBorder: InputBorder.none,
                       enabledBorder: InputBorder.none,
                       border: InputBorder.none),
@@ -357,67 +388,75 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     FormBuilderValidators.required(),
                   ],
                 ),
-                SizedBox(
-                  height: formSpacing,
-                ),
-                FormBuilderTextField(
-                  attribute: "Password",
-                  initialValue: "",
-                  maxLines: 1,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                      hintText:
-                          'Must be 8 characters or more and have at least one uppercase, a lowercase, a number, special character \(\!\@\#\$\&\*\~\)',
-                      hintMaxLines: 2,
-                      errorMaxLines: 2,
-                      hintStyle: TextStyle(fontSize: 12),
-                      labelText: 'Password',
-                      fillColor: Color.fromRGBO(35, 179, 232, 0.1),
-                      filled: true,
-                      disabledBorder: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                      border: InputBorder.none),
-                  validators: [
-                    FormBuilderValidators.required(),
-                    FormBuilderValidators.min(8),
-                    FormBuilderValidators.pattern(
-                        r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$',
-                        errorText:
-                            'Requires at least one uppercase, a lowercase, a number, special character \(\!\@\#\$\&\*\~\)'),
-                  ],
-                ),
+                medicallUser.uid == null
+                    ? SizedBox(
+                        height: formSpacing,
+                      )
+                    : Container(),
+                medicallUser.uid == null
+                    ? FormBuilderTextField(
+                        attribute: "Password",
+                        initialValue: "",
+                        maxLines: 1,
+                        obscureText: true,
+                        decoration: InputDecoration(
+                            hintText:
+                                'Must be 8 characters or more and have at least one uppercase, a lowercase, a number, special character \(\!\@\#\$\&\*\~\)',
+                            hintMaxLines: 2,
+                            errorMaxLines: 2,
+                            hintStyle: TextStyle(fontSize: 12),
+                            labelText: 'Password',
+                            fillColor: Color.fromRGBO(35, 179, 232, 0.1),
+                            filled: true,
+                            disabledBorder: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            border: InputBorder.none),
+                        validators: [
+                          FormBuilderValidators.required(),
+                          FormBuilderValidators.min(8),
+                          FormBuilderValidators.pattern(
+                              r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$',
+                              errorText:
+                                  'Requires at least one uppercase, a lowercase, a number, special character \(\!\@\#\$\&\*\~\)'),
+                        ],
+                      )
+                    : Container(),
                 SizedBox(
                   height: 5,
                 ),
-                FormBuilderTextField(
-                  attribute: "ConfirmPassword",
-                  initialValue: "",
-                  maxLines: 1,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                      hintText: 'Must match your password exactly',
-                      hintStyle: TextStyle(fontSize: 12),
-                      labelText: 'Confirm Password',
-                      fillColor: Color.fromRGBO(35, 179, 232, 0.1),
-                      filled: true,
-                      disabledBorder: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                      border: InputBorder.none),
-                  validators: [
-                    FormBuilderValidators.required(),
-                    (val) {
-                      var _passW = _userRegKey
-                          .currentState.fields['Password'].currentState.value;
-                      if (val == _passW)
-                        return null;
-                      else
-                        return "What you entered is not matching your password";
-                    },
-                  ],
-                ),
-                SizedBox(
-                  height: formSpacing,
-                ),
+                medicallUser.uid == null
+                    ? FormBuilderTextField(
+                        attribute: "ConfirmPassword",
+                        initialValue: "",
+                        maxLines: 1,
+                        obscureText: true,
+                        decoration: InputDecoration(
+                            hintText: 'Must match your password exactly',
+                            hintStyle: TextStyle(fontSize: 12),
+                            labelText: 'Confirm Password',
+                            fillColor: Color.fromRGBO(35, 179, 232, 0.1),
+                            filled: true,
+                            disabledBorder: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            border: InputBorder.none),
+                        validators: [
+                          FormBuilderValidators.required(),
+                          (val) {
+                            var _passW = _userRegKey.currentState
+                                .fields['Password'].currentState.value;
+                            if (val == _passW)
+                              return null;
+                            else
+                              return "What you entered is not matching your password";
+                          },
+                        ],
+                      )
+                    : Container(),
+                medicallUser.uid == null
+                    ? SizedBox(
+                        height: formSpacing,
+                      )
+                    : Container(),
                 TypeAheadFormField(
                   hideOnEmpty: true,
                   suggestionsBoxVerticalOffset: 5.0,

@@ -448,47 +448,37 @@ class HistoryScreen extends StatelessWidget {
                                 foregroundPainter: CurvePainter(),
                               ),
                             ),
-                            Positioned(
-                              top: ScreenUtil.mediaQueryData.orientation ==
-                                      Orientation.portrait
-                                  ? 10
-                                  : 0,
-                              right: ScreenUtil.mediaQueryData.orientation ==
-                                      Orientation.portrait
-                                  ? (ScreenUtil.screenWidthDp) / 5
-                                  : (ScreenUtil.screenWidthDp - 260) / 2,
-                              child: Column(
-                                children: <Widget>[
-                                  Text(
-                                    'Connect with patients now!',
+                            Column(
+                              children: <Widget>[
+                                Text(
+                                  'Connect with patients now!',
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary),
+                                ),
+                                Container(
+                                  width: ScreenUtil.screenWidthDp,
+                                  margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                                  padding: EdgeInsets.all(5),
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue.withAlpha(50),
+                                    border: Border.all(
+                                        color: Colors.grey.withAlpha(100),
+                                        style: BorderStyle.solid,
+                                        width: 1),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(5)),
+                                  ),
+                                  child: Text(
+                                    'You will now show up in our network when patients request for care. Once a patient selects you, a record of that request will show up here. By tapping on a request once it shows up in "History" you will be able to see detailed answers/photos from the patient, chat directly, and provide a prescription to them if needed.',
                                     style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary),
+                                        fontSize: 12, color: Colors.black54),
                                   ),
-                                  Container(
-                                    width: ScreenUtil.screenWidth - 20,
-                                    margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                                    padding: EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                      color: Colors.blue.withAlpha(50),
-                                      border: Border.all(
-                                          color: Colors.grey.withAlpha(100),
-                                          style: BorderStyle.solid,
-                                          width: 1),
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(5)),
-                                    ),
-                                    child: Text(
-                                      'You will now show up in our network when patients request for care. Once a patient selects you, a record of that request will show up here. By tapping on a request once it shows up in "History" you will be able to see detailed answers/photos from the patient, chat directly, and provide a prescription to them if needed.',
-                                      style: TextStyle(
-                                          fontSize: 12, color: Colors.black54),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                             Positioned(
                               top: ScreenUtil.mediaQueryData.orientation ==

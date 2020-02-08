@@ -84,6 +84,11 @@ class Auth implements AuthBase {
       return null;
     }
     medicallUser = MedicallUser(
+      displayName: user.displayName != null ? user.displayName : null,
+      firstName:
+          user.displayName != null ? user.displayName.split(' ')[0] : null,
+      lastName:
+          user.displayName != null ? user.displayName.split(' ')[1] : null,
       uid: user.uid,
       phoneNumber: user.phoneNumber,
       email: user.email,

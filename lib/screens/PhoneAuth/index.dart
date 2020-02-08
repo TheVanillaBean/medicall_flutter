@@ -306,7 +306,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
 
   @override
   Widget build(BuildContext context) {
-    tempUserProvider = Provider.of<TempUserProvider>(context);
+    tempUserProvider = Provider.of<TempUserProvider>(context, listen: false);
 
     return Scaffold(
       appBar: AppBar(elevation: 0.0),

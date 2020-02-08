@@ -25,6 +25,7 @@ import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/flare_provider.dart';
 import 'package:Medicall/services/stripe_provider.dart';
+import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/theme.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
@@ -86,6 +87,9 @@ class MedicallApp extends StatelessWidget {
         ),
         Provider<MyFlareProvider>(
           create: (_) => MyFlareProvider(),
+        ),
+        Provider<TempUserProvider>(
+          create: (_) => TempUserProvider(),
         ),
         ChangeNotifierProvider<CarouselState>(
           create: (_) => CarouselState(),
