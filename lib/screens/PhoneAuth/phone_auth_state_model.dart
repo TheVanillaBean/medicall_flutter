@@ -145,25 +145,26 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
       bool mounted, TempUserProvider tempUserProvider) async {
     try {
       MedicallUser user;
-      if (tempUserProvider.medicallUser.uid == null ||
-          tempUserProvider.medicallUser.uid.length == 0) {
+      if (!tempUserProvider.newGoogleUser) {
         auth.newUser = true;
 
         user = await auth.createUserWithEmailAndPassword(
             tempUserProvider.medicallUser.email, tempUserProvider.password);
-
-        user =
-            await auth.signInWithPhoneNumber(this.verificationId, this.smsCode);
-
         tempUserProvider.updateWith(
           uid: user.uid,
           devTokens: user.devTokens,
-          phoneNumber: user.phoneNumber,
+          phoneNumber: this.phoneNumber,
         );
+
+        user =
+            await auth.signInWithPhoneNumber(this.verificationId, this.smsCode);
       } else {
         auth.newUser = false;
         user =
             await auth.signInWithPhoneNumber(this.verificationId, this.smsCode);
+        MedicallUser userPlusPhoneNum = tempUserProvider.medicallUser;
+        userPlusPhoneNum.phoneNumber = user.phoneNumber;
+        user = userPlusPhoneNum;
         tempUserProvider.updateWith(
           uid: user.uid,
           devTokens: user.devTokens,
@@ -178,11 +179,7 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
 
       if (successfullySavedImages) {
         await tempUserProvider.addNewUserToFirestore();
-        if (tempUserProvider.medicallUser.uid != null &&
-            tempUserProvider.medicallUser.uid.length > 0) {
-          auth.newUser = false;
-          user = tempUserProvider.medicallUser;
-        }
+
         auth.addUserToAuthStream(user);
       } else {
         updateRefreshing(false, mounted);

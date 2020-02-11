@@ -18,7 +18,8 @@ abstract class AuthBase {
   bool newUser;
   void addUserToAuthStream(MedicallUser user);
   MedicallUser medicallUser;
-  TempRegUser tempRegUser;
+  bool isGoogleUser;
+  bool hasAccount;
   Future<MedicallUser> signInAnonymously();
   Future<MedicallUser> signInWithEmailAndPassword(
       String email, String password);
@@ -28,6 +29,7 @@ abstract class AuthBase {
   Future<MedicallUser> signInWithPhoneNumber(
       String verificationId, String smsCode);
   Future<MedicallUser> currentMedicallUser();
+  Future<MedicallUser> getMedicallUser(String uid);
   Future<void> signOut();
   signUp(BuildContext context);
   saveRegistrationImages(MedicallUser medicallUser);
@@ -38,7 +40,9 @@ class Auth implements AuthBase {
   final FirebaseAnonymouslyUtil firebaseAnonymouslyUtil =
       FirebaseAnonymouslyUtil();
   @override
-  TempRegUser tempRegUser;
+  bool isGoogleUser = false;
+  @override
+  bool hasAccount = false;
   @override
   MedicallUser medicallUser;
 
@@ -63,7 +67,7 @@ class Auth implements AuthBase {
     authStreamController.sink.add(user);
   }
 
-  Future<MedicallUser> _getMedicallUser(String uid) async {
+  Future<MedicallUser> getMedicallUser(String uid) async {
     if (uid != null) {
       final DocumentReference documentReference =
           Firestore.instance.collection('users').document(uid);
@@ -83,6 +87,18 @@ class Auth implements AuthBase {
     if (user == null) {
       return null;
     }
+    for (var i = 0; i < user.providerData.length; i++) {
+      if (user.providerData[i].providerId == 'google.com') {
+        isGoogleUser = true;
+      }
+    }
+    getMedicallUser(user.uid).then((MedicallUser onValue) {
+      if (onValue != null &&
+          onValue.address.length > 0 &&
+          onValue.consent == true) {
+        hasAccount = true;
+      }
+    });
     medicallUser = MedicallUser(
       displayName: user.displayName != null ? user.displayName : null,
       firstName:
@@ -112,9 +128,9 @@ class Auth implements AuthBase {
   Future<MedicallUser> currentMedicallUser() async {
     final user = await _firebaseAuth.currentUser();
     if (user != null) {
-      return _getMedicallUser(user.uid);
+      return getMedicallUser(user.uid);
     } else {
-      return _getMedicallUser(null);
+      return getMedicallUser(null);
     }
   }
 

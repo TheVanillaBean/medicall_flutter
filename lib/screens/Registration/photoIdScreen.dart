@@ -169,7 +169,7 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
             List<Asset> images = [...profileImage, ...govIdImage];
 
             tempUserProvider.updateWith(images: images);
-            Navigator.of(context).pushNamed('/consent');
+            Navigator.of(context).pushReplacementNamed('/consent');
           }
         },
         child: Text(

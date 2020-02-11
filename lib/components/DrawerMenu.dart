@@ -17,10 +17,13 @@ class DrawerMenu extends StatelessWidget {
     medicallUser = Provider.of<UserProvider>(context).medicallUser;
     return (Drawer(
       child: ListView(
+        padding: const EdgeInsets.all(0.0),
         children: <Widget>[
           Container(
-              height: 80,
+              height: 100,
               child: DrawerHeader(
+                margin: EdgeInsets.all(0),
+                padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
                 decoration: BoxDecoration(
                   color: Theme.of(context).primaryColor,
                 ),
@@ -29,6 +32,7 @@ class DrawerMenu extends StatelessWidget {
                     Icon(CustomIcons.MedicallApp.logo,
                         size: 40.0,
                         color: Theme.of(context).colorScheme.onPrimary),
+                    SizedBox(width: 15),
                     Text(
                       'MEDICALL',
                       style: TextStyle(

@@ -4,6 +4,7 @@ import 'package:Medicall/components/reactive_refresh_indicator.dart';
 import 'package:Medicall/screens/PhoneAuth/phone_auth_state_model.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
+import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -68,6 +69,8 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
 
   PhoneAuthStateModel get model => widget.model;
   TempUserProvider tempUserProvider;
+  UserProvider userProvider;
+  AuthBase auth;
 
   @override
   void dispose() {
@@ -307,6 +310,8 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
   @override
   Widget build(BuildContext context) {
     tempUserProvider = Provider.of<TempUserProvider>(context, listen: false);
+    userProvider = Provider.of<UserProvider>(context, listen: false);
+    auth = Provider.of<AuthBase>(context, listen: false);
 
     return Scaffold(
       appBar: AppBar(elevation: 0.0),

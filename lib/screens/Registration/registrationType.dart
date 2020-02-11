@@ -1,3 +1,4 @@
+import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -6,11 +7,21 @@ class RegistrationTypeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tempUserProvider = Provider.of<TempUserProvider>(context);
+    final auth = Provider.of<AuthBase>(context, listen: false);
+
     return Scaffold(
         resizeToAvoidBottomPadding: false,
         appBar: AppBar(
           centerTitle: true,
           elevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              if (tempUserProvider.newGoogleUser) {
+                auth.signOut();
+              }
+            },
+          ),
           title: Text(
             'Create New Account',
             style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
