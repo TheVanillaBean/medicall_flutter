@@ -36,20 +36,17 @@ class LandingPage extends StatelessWidget {
               Provider.of<MyStripeProvider>(context);
           print("Active: ${userSnapshot.connectionState} ");
           // case for if user has logged in with google but has no account in db
-
-          if (auth.isGoogleUser && !auth.hasAccount) {
-            tempUserProvider.setNewGoogleUser(true);
+          if (auth.isGoogleUser && !userProvider.hasAccount) {
             tempUserProvider.updateWith(
-              firstName: auth.medicallUser.firstName,
-              lastName: auth.medicallUser.lastName,
-              displayName: auth.medicallUser.displayName,
-              email: auth.medicallUser.email,
-              uid: auth.medicallUser.uid,
+              firstName: userSnapshot.data.firstName,
+              lastName: userSnapshot.data.lastName,
+              displayName: userSnapshot.data.displayName,
+              email: userSnapshot.data.email,
+              uid: userSnapshot.data.uid,
             );
-          }
-          if (!auth.hasAccount) {
             return RegistrationTypeScreen();
           }
+
           if (userProvider.medicallUser == null) {
             print('In-Progress');
           } else {

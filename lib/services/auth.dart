@@ -5,9 +5,7 @@ import 'package:Medicall/models/reg_user_model.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:Medicall/util/firebase_anonymously_util.dart';
 import 'package:Medicall/util/firebase_auth_codes.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -17,9 +15,7 @@ abstract class AuthBase {
   Future<MedicallUser> currentUser();
   bool newUser;
   void addUserToAuthStream(MedicallUser user);
-  MedicallUser medicallUser;
   bool isGoogleUser;
-  bool hasAccount;
   Future<MedicallUser> signInAnonymously();
   Future<MedicallUser> signInWithEmailAndPassword(
       String email, String password);
@@ -28,11 +24,8 @@ abstract class AuthBase {
   Future<MedicallUser> signInWithGoogle();
   Future<MedicallUser> signInWithPhoneNumber(
       String verificationId, String smsCode);
-  Future<MedicallUser> currentMedicallUser();
-  Future<MedicallUser> getMedicallUser(String uid);
   Future<void> signOut();
   signUp(BuildContext context);
-  saveRegistrationImages(MedicallUser medicallUser);
 }
 
 class Auth implements AuthBase {
@@ -41,10 +34,6 @@ class Auth implements AuthBase {
       FirebaseAnonymouslyUtil();
   @override
   bool isGoogleUser = false;
-  @override
-  bool hasAccount = false;
-  @override
-  MedicallUser medicallUser;
 
   // ignore: close_sinks
   StreamController<MedicallUser> authStreamController;
@@ -67,38 +56,16 @@ class Auth implements AuthBase {
     authStreamController.sink.add(user);
   }
 
-  Future<MedicallUser> getMedicallUser(String uid) async {
-    if (uid != null) {
-      final DocumentReference documentReference =
-          Firestore.instance.collection('users').document(uid);
-
-      try {
-        final snapshot = await documentReference.get();
-        medicallUser = MedicallUser.from(uid, snapshot);
-      } catch (e) {
-        print('Error getting user');
-      }
-    }
-
-    return medicallUser;
-  }
-
   MedicallUser _userFromFirebase(FirebaseUser user) {
     if (user == null) {
       return null;
     }
+    //check google sign in
     for (var i = 0; i < user.providerData.length; i++) {
       if (user.providerData[i].providerId == 'google.com') {
         isGoogleUser = true;
       }
     }
-    getMedicallUser(user.uid).then((MedicallUser onValue) {
-      if (onValue != null &&
-          onValue.address.length > 0 &&
-          onValue.consent == true) {
-        hasAccount = true;
-      }
-    });
     medicallUser = MedicallUser(
       displayName: user.displayName != null ? user.displayName : null,
       firstName:
@@ -122,16 +89,6 @@ class Auth implements AuthBase {
   Future<MedicallUser> currentUser() async {
     final user = await _firebaseAuth.currentUser();
     return _userFromFirebase(user);
-  }
-
-  @override
-  Future<MedicallUser> currentMedicallUser() async {
-    final user = await _firebaseAuth.currentUser();
-    if (user != null) {
-      return getMedicallUser(user.uid);
-    } else {
-      return getMedicallUser(null);
-    }
   }
 
   @override
@@ -159,6 +116,8 @@ class Auth implements AuthBase {
     return _userFromFirebase(user);
   }
 
+  //returnGoogleCreds
+
   @override
   Future<MedicallUser> signInWithGoogle() async {
     final GoogleSignIn googleSignIn = GoogleSignIn();
@@ -168,6 +127,7 @@ class Auth implements AuthBase {
           await googleAccount.authentication;
 
       if (googleAuth.accessToken != null && googleAuth.idToken != null) {
+        //return credential
         final authResult = await _firebaseAuth.signInWithCredential(
           GoogleAuthProvider.getCredential(
               idToken: googleAuth.idToken, accessToken: googleAuth.accessToken),
@@ -213,7 +173,7 @@ class Auth implements AuthBase {
       //     await _firebaseAuth.signInWithCredential(credential);
       // final user = phoneSignInAuthResult.user;
       currentUser.sendEmailVerification();
-      return _userFromFirebase(currentUser);
+      return currentMedicallUser;
     } else {
       throw PlatformException(
         code: 'ERROR_PHONE_AUTH_FAILED',
@@ -259,28 +219,5 @@ class Auth implements AuthBase {
 
   loginError(e, context) {
     AppUtil().showFlushBar(e, context);
-  }
-
-  @override
-  Future<MedicallUser> saveRegistrationImages(MedicallUser medicallUser) async {
-    if (medicallUser.uid.length > 0) {
-      var assets = tempRegUser.images;
-      var allMediaList = [];
-      for (var i = 0; i < assets.length; i++) {
-        ByteData byteData = await assets[i].getByteData();
-        List<int> imageData = byteData.buffer.asUint8List();
-        StorageReference ref = FirebaseStorage.instance
-            .ref()
-            .child("profile/" + medicallUser.uid + '/' + assets[i].name);
-        StorageUploadTask uploadTask = ref.putData(imageData);
-
-        allMediaList.add(
-          await (await uploadTask.onComplete).ref.getDownloadURL(),
-        );
-      }
-      medicallUser.profilePic = allMediaList[0];
-      return medicallUser.govId = allMediaList[1];
-    }
-    return medicallUser;
   }
 }

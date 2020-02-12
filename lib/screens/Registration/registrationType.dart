@@ -17,8 +17,10 @@ class RegistrationTypeScreen extends StatelessWidget {
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () {
-              if (tempUserProvider.newGoogleUser) {
+              if (auth.isGoogleUser) {
                 auth.signOut();
+              }else{
+                Navigator.of(context).pop();
               }
             },
           ),

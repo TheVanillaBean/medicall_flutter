@@ -1,5 +1,6 @@
 import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
 import 'package:Medicall/secrets.dart' as secrets;
+import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -115,7 +116,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   Widget build(BuildContext context) {
     final tempUserProvider = Provider.of<TempUserProvider>(context);
     final medicallUser = tempUserProvider.medicallUser;
-
+    final auth = Provider.of<AuthBase>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -170,12 +171,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       child: FormBuilderTextField(
                         attribute: "First name",
                         initialValue: medicallUser.firstName,
-                        readOnly: tempUserProvider.newGoogleUser ? true : false,
+                        readOnly: false,
                         decoration: InputDecoration(
                             labelText: 'First Name',
                             fillColor: Color.fromRGBO(35, 179, 232, 0.1),
-                            filled:
-                                tempUserProvider.newGoogleUser ? false : true,
+                            filled: true,
                             disabledBorder: InputBorder.none,
                             enabledBorder: InputBorder.none,
                             border: InputBorder.none),
@@ -191,12 +191,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       child: FormBuilderTextField(
                         attribute: "Last name",
                         initialValue: medicallUser.lastName,
-                        readOnly: tempUserProvider.newGoogleUser ? true : false,
+                        readOnly: false,
                         decoration: InputDecoration(
                             labelText: 'Last Name',
                             fillColor: Color.fromRGBO(35, 179, 232, 0.1),
-                            filled:
-                                tempUserProvider.newGoogleUser ? false : true,
+                            filled: true,
                             disabledBorder: InputBorder.none,
                             enabledBorder: InputBorder.none,
                             border: InputBorder.none),
@@ -349,12 +348,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 FormBuilderTextField(
                   attribute: "Email",
                   initialValue: medicallUser.email,
-                  readOnly: tempUserProvider.newGoogleUser ? true : false,
+                  readOnly: auth.isGoogleUser,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
                       labelText: 'Email',
                       fillColor: Color.fromRGBO(35, 179, 232, 0.1),
-                      filled: tempUserProvider.newGoogleUser ? false : true,
+                      filled: !auth.isGoogleUser,
                       disabledBorder: InputBorder.none,
                       enabledBorder: InputBorder.none,
                       border: InputBorder.none),
@@ -363,12 +362,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     FormBuilderValidators.required(),
                   ],
                 ),
-                !tempUserProvider.newGoogleUser
+                !auth.isGoogleUser
                     ? SizedBox(
                         height: formSpacing,
                       )
                     : Container(),
-                !tempUserProvider.newGoogleUser
+                !auth.isGoogleUser
                     ? FormBuilderTextField(
                         attribute: "Password",
                         initialValue: "",
@@ -399,7 +398,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 SizedBox(
                   height: 5,
                 ),
-                !tempUserProvider.newGoogleUser
+                !auth.isGoogleUser
                     ? FormBuilderTextField(
                         attribute: "ConfirmPassword",
                         initialValue: "",
@@ -427,7 +426,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         ],
                       )
                     : Container(),
-                !tempUserProvider.newGoogleUser
+                !auth.isGoogleUser
                     ? SizedBox(
                         height: formSpacing,
                       )

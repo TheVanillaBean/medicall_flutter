@@ -9,7 +9,6 @@ class TempUserProvider {
   MedicallUser _medicallUser;
   List<Asset> _images;
   String _password;
-  bool _newGoogleUser = false;
 
   MedicallUser get medicallUser {
     return _medicallUser;
@@ -21,14 +20,6 @@ class TempUserProvider {
 
   String get password {
     return _password;
-  }
-
-  bool get newGoogleUser {
-    return _newGoogleUser;
-  }
-
-  void setNewGoogleUser(bool val) {
-    _newGoogleUser = val;
   }
 
   TempUserProvider() {

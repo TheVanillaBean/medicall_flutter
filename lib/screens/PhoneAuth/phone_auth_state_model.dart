@@ -145,7 +145,7 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
       bool mounted, TempUserProvider tempUserProvider) async {
     try {
       MedicallUser user;
-      if (!tempUserProvider.newGoogleUser) {
+      if (!auth.isGoogleUser) {
         auth.newUser = true;
 
         user = await auth.createUserWithEmailAndPassword(
@@ -162,9 +162,9 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
         auth.newUser = false;
         user =
             await auth.signInWithPhoneNumber(this.verificationId, this.smsCode);
-        MedicallUser userPlusPhoneNum = tempUserProvider.medicallUser;
-        userPlusPhoneNum.phoneNumber = user.phoneNumber;
-        user = userPlusPhoneNum;
+        // MedicallUser userPlusPhoneNum = tempUserProvider.medicallUser;
+        // userPlusPhoneNum.phoneNumber = user.phoneNumber;
+        // user = userPlusPhoneNum;
         tempUserProvider.updateWith(
           uid: user.uid,
           devTokens: user.devTokens,
@@ -179,7 +179,6 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
 
       if (successfullySavedImages) {
         await tempUserProvider.addNewUserToFirestore();
-
         auth.addUserToAuthStream(user);
       } else {
         updateRefreshing(false, mounted);

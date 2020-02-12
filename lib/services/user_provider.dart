@@ -1,10 +1,10 @@
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class UserProvider with ChangeNotifier {
   MedicallUser _medicallUser;
+  bool hasAccount;
 
   MedicallUser get medicallUser {
     return _medicallUser;
@@ -19,19 +19,20 @@ class UserProvider with ChangeNotifier {
   }
 
   Future<void> _getMedicallUser({@required String uid}) async {
-    final DocumentReference documentReference =
-        Firestore.instance.collection('users').document(uid);
-
     try {
+      final DocumentReference documentReference =
+        Firestore.instance.collection('users').document(uid);
       final snapshot = await documentReference.get();
       this._medicallUser = MedicallUser.from(uid, snapshot);
       medicallUser = MedicallUser.from(uid, snapshot);
       notifyListeners();
+      hasAccount = true;
     } catch (e) {
-      throw PlatformException(
-        code: 'ERROR_RETRIEVE_USER',
-        message: 'User could not be retrieved from database.',
-      );
+      hasAccount = false;
+      // throw PlatformException(
+      //   code: 'ERROR_RETRIEVE_USER',
+      //   message: 'User could not be retrieved from database.',
+      // );
     }
   }
 }
