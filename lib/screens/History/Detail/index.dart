@@ -55,9 +55,9 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                     detailedHistoryState.setConsultStatus(db.consultSnapshot,
                         val, medicallUser.uid, db.updateConsultStatus);
                     if (db.consultSnapshot.data['state'] == 'done') {
-                      detailedHistoryState.setIsDone(true);
+                      detailedHistoryState.updateWith(isDone: true);
                     } else {
-                      detailedHistoryState.setIsDone(false);
+                      detailedHistoryState.updateWith(isDone: false);
                     }
                     detailedHistoryState.setChoices();
                   },

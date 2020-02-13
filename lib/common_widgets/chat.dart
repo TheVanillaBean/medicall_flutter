@@ -230,7 +230,7 @@ class _ChatState extends State<Chat> {
                       ],
                     );
                   },
-                  alwaysShowSend: !_detailedHistoryState.getIsDone(),
+                  alwaysShowSend: !_detailedHistoryState.isDone,
                   onQuickReply: (Reply reply) {
                     setState(() {
                       messages.add(ChatMessage(

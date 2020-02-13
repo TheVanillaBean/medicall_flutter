@@ -95,9 +95,9 @@ class FirestoreDatabase implements Database {
             consultSnapshot['media']
           ];
           if (consultSnapshot['state'] == 'done') {
-            detailedHistoryState.setIsDone(true);
+            detailedHistoryState.updateWith(isDone: true);
           } else {
-            detailedHistoryState.setIsDone(false);
+            detailedHistoryState.updateWith(isDone: false);
           }
         }
         return consultSnapshot;

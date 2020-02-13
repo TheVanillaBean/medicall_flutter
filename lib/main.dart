@@ -4,11 +4,10 @@ import 'package:Medicall/screens/Account/index.dart';
 import 'package:Medicall/screens/Account/paymentDetail.dart';
 import 'package:Medicall/screens/ConfirmConsult/index.dart';
 import 'package:Medicall/screens/Consent/index.dart';
-import 'package:Medicall/screens/History/Detail/historyDetail.dart';
+import 'package:Medicall/screens/History/Detail/index.dart';
 import 'package:Medicall/screens/History/Detail/history_detail_state.dart';
-import 'package:Medicall/screens/History/appbar_state.dart';
 import 'package:Medicall/screens/History/index.dart';
-import 'package:Medicall/screens/History/user_history_state.dart';
+import 'package:Medicall/screens/History/history_state.dart';
 import 'package:Medicall/screens/LandingPage/auth_widget_builder.dart';
 import 'package:Medicall/screens/LandingPage/index.dart';
 import 'package:Medicall/screens/Login/index.dart';
@@ -100,11 +99,8 @@ class MedicallApp extends StatelessWidget {
         ChangeNotifierProvider<DetailedHistoryState>(
           create: (_) => DetailedHistoryState(),
         ),
-        ChangeNotifierProvider<AppBarState>(
-          create: (_) => AppBarState(),
-        ),
-        ChangeNotifierProvider<UserHistoryState>(
-          create: (_) => UserHistoryState(),
+        ChangeNotifierProvider<HistoryState>(
+          create: (_) => HistoryState(),
         ),
       ],
       child: _buildApp(),

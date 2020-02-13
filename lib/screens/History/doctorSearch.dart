@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:Medicall/screens/History/appbar_state.dart';
 import 'package:Medicall/screens/History/index.dart';
+import 'package:Medicall/screens/History/history_state.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
@@ -161,12 +161,12 @@ class CustomSearchDelegate extends SearchDelegate {
   String get searchFieldLabel => currTab;
   @override
   List<Widget> buildActions(BuildContext context) {
-    var _appBarState = Provider.of<AppBarState>(context, listen: false);
+    var _userHistoryState = Provider.of<HistoryState>(context, listen: false);
     return [
       IconButton(
         icon: Icon(Icons.clear),
         onPressed: () {
-          _appBarState.searchInput = '';
+          _userHistoryState.searchInput = '';
           query = '';
         },
       ),
@@ -175,12 +175,12 @@ class CustomSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildLeading(BuildContext context) {
-    var _appBarState = Provider.of<AppBarState>(context, listen: false);
+    var _userHistoryState = Provider.of<HistoryState>(context, listen: false);
     return IconButton(
       icon: Icon(Icons.arrow_back),
       onPressed: () {
-        _appBarState.setShowAppBar(true);
-        _appBarState.searchInput = '';
+        _userHistoryState.setShowAppBar(true);
+        _userHistoryState.searchInput = '';
         close(context, null);
       },
     );
@@ -206,10 +206,10 @@ class CustomSearchDelegate extends SearchDelegate {
     //This is the equivalent of submitting the search term to whatever search service you are using
     //InheritedBlocs.of(context).searchBloc.searchTerm.add(query);
     var _db = Provider.of<Database>(context, listen: false);
-    var _appBarState = Provider.of<AppBarState>(context, listen: false);
-    _appBarState.searchInput = query;
+    var _userHistoryState = Provider.of<HistoryState>(context, listen: false);
+    _userHistoryState.searchInput = query;
     if (currTab == 'Search History') {
-      _appBarState.setShowAppBar(false);
+      _userHistoryState.setShowAppBar(false);
       return HistoryScreen();
     } else {
       return Scaffold(
@@ -247,21 +247,7 @@ class CustomSearchDelegate extends SearchDelegate {
                           subtitle:
                               Text(userDocuments[i].data['address'].toString()),
                           trailing: FlatButton(
-                            onPressed: () {
-                              // setState(() {
-                              //   _consult.provider =
-                              //       userDocuments[i].data['name'];
-                              //   _consult.providerTitles =
-                              //       userDocuments[i].data['titles'];
-                              //   _consult.providerDevTokens =
-                              //       userDocuments[i].data['dev_tokens'];
-                              //   _consult.providerId =
-                              //       userDocuments[i].documentID;
-                              //   _selectProvider(
-                              //       userDocuments[i].data['name'],
-                              //       userDocuments[i].data['titles']);
-                              // });
-                            },
+                            onPressed: () {},
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.center,
