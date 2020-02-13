@@ -156,12 +156,12 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
           phoneNumber: this.phoneNumber,
         );
 
-        user =
-            await auth.signInWithPhoneNumber(this.verificationId, this.smsCode);
+        user = await auth.linkPhoneNumberWithCurrentUser(
+            this.verificationId, this.smsCode);
       } else {
         auth.newUser = false;
-        user =
-            await auth.signInWithPhoneNumber(this.verificationId, this.smsCode);
+        user = await auth.linkPhoneNumberWithCurrentUser(
+            this.verificationId, this.smsCode);
         // MedicallUser userPlusPhoneNum = tempUserProvider.medicallUser;
         // userPlusPhoneNum.phoneNumber = user.phoneNumber;
         // user = userPlusPhoneNum;

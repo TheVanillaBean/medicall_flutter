@@ -1,4 +1,4 @@
-import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/screens/Login/google_auth_model.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/util/validators.dart';
 import 'package:flutter/material.dart';
@@ -49,10 +49,23 @@ class SignInStateModel with EmailAndPasswordValidators, ChangeNotifier {
     }
   }
 
-  Future<MedicallUser> signInWithGoogle() async {
+  Future<void> signInWithGooglePressed() async {
     updateWith(submitted: true, isLoading: true);
     try {
-      return await auth.signInWithGoogle();
+      GoogleAuthModel googleAuthModel =
+          await auth.fetchGoogleSignInCredential();
+      List<String> providers =
+          await auth.fetchProvidersForEmail(email: googleAuthModel.email);
+
+      if (providers != null && providers.length > 0) {
+        if (providers.contains("google.com")) {
+          await auth.signInWithGoogle();
+        } else {
+          throw "Account linked with different sign in method";
+        }
+      } else {
+        // TODO Refactor temp user provider to include credential instance variable
+      }
     } catch (e) {
       updateWith(isLoading: false);
       rethrow;

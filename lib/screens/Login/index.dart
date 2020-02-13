@@ -1,4 +1,5 @@
 import 'dart:ui' as ui;
+
 import 'package:Medicall/common_widgets/sign_in_button.dart';
 import 'package:Medicall/common_widgets/social_sign_in_button.dart';
 import 'package:Medicall/screens/Login/sign_in_state_model.dart';
@@ -63,7 +64,7 @@ class _LoginScreenState extends State<LoginPage> {
 
   Future<void> _signInWithGoogle(BuildContext context) async {
     try {
-      await model.signInWithGoogle();
+      await model.signInWithGooglePressed();
     } on PlatformException catch (e) {
       AppUtil().showFlushBar(e, context);
     }

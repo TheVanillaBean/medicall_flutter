@@ -1,31 +1,30 @@
 import 'dart:async';
 
 import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:Medicall/models/reg_user_model.dart';
-import 'package:Medicall/util/app_util.dart';
+import 'package:Medicall/screens/Login/google_auth_model.dart';
 import 'package:Medicall/util/firebase_anonymously_util.dart';
-import 'package:Medicall/util/firebase_auth_codes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 abstract class AuthBase {
+  bool newUser;
+  bool isGoogleUser;
   Stream<MedicallUser> get onAuthStateChanged;
   Future<MedicallUser> currentUser();
-  bool newUser;
   void addUserToAuthStream(MedicallUser user);
-  bool isGoogleUser;
   Future<MedicallUser> signInAnonymously();
   Future<MedicallUser> signInWithEmailAndPassword(
       String email, String password);
   Future<MedicallUser> createUserWithEmailAndPassword(
       String email, String password);
+  Future<List<String>> fetchProvidersForEmail({String email});
+  Future<GoogleAuthModel> fetchGoogleSignInCredential();
+  Future<AuthCredential> fetchPhoneAuthCredential(
+      {String verificationId, String smsCode});
   Future<MedicallUser> signInWithGoogle();
-  Future<MedicallUser> signInWithPhoneNumber(
-      String verificationId, String smsCode);
-  Future<void> signOut();
-  signUp(BuildContext context);
+  Future<MedicallUser> linkCredentialWithCurrentUser(
+      {AuthCredential credential});
 }
 
 class Auth implements AuthBase {
@@ -57,26 +56,34 @@ class Auth implements AuthBase {
   }
 
   MedicallUser _userFromFirebase(FirebaseUser user) {
+//    if (user == null) {
+//      return null;
+//    }
+//    //check google sign in
+//    for (var i = 0; i < user.providerData.length; i++) {
+//      if (user.providerData[i].providerId == 'google.com') {
+//        isGoogleUser = true;
+//      }
+//    }
+//    medicallUser = MedicallUser(
+//      displayName: user.displayName != null ? user.displayName : null,
+//      firstName:
+//          user.displayName != null ? user.displayName.split(' ')[0] : null,
+//      lastName:
+//          user.displayName != null ? user.displayName.split(' ')[1] : null,
+//      uid: user.uid,
+//      phoneNumber: user.phoneNumber,
+//      email: user.email,
+//    );
+//    return medicallUser;
     if (user == null) {
       return null;
     }
-    //check google sign in
-    for (var i = 0; i < user.providerData.length; i++) {
-      if (user.providerData[i].providerId == 'google.com') {
-        isGoogleUser = true;
-      }
-    }
-    medicallUser = MedicallUser(
-      displayName: user.displayName != null ? user.displayName : null,
-      firstName:
-          user.displayName != null ? user.displayName.split(' ')[0] : null,
-      lastName:
-          user.displayName != null ? user.displayName.split(' ')[1] : null,
+    return MedicallUser(
       uid: user.uid,
       phoneNumber: user.phoneNumber,
       email: user.email,
     );
-    return medicallUser;
   }
 
   @override
@@ -116,10 +123,11 @@ class Auth implements AuthBase {
     return _userFromFirebase(user);
   }
 
-  //returnGoogleCreds
+  Future<List<String>> fetchProvidersForEmail({String email}) async {
+    return await _firebaseAuth.fetchSignInMethodsForEmail(email: email);
+  }
 
-  @override
-  Future<MedicallUser> signInWithGoogle() async {
+  Future<GoogleAuthModel> fetchGoogleSignInCredential() async {
     final GoogleSignIn googleSignIn = GoogleSignIn();
     final GoogleSignInAccount googleAccount = await googleSignIn.signIn();
     if (googleAccount != null) {
@@ -127,13 +135,11 @@ class Auth implements AuthBase {
           await googleAccount.authentication;
 
       if (googleAuth.accessToken != null && googleAuth.idToken != null) {
-        //return credential
-        final authResult = await _firebaseAuth.signInWithCredential(
-          GoogleAuthProvider.getCredential(
-              idToken: googleAuth.idToken, accessToken: googleAuth.accessToken),
-        );
+        final AuthCredential credential = GoogleAuthProvider.getCredential(
+            idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
 
-        return _userFromFirebase(authResult.user);
+        return GoogleAuthModel(
+            email: googleAccount.email, credential: credential);
       } else {
         throw PlatformException(
           code: 'ERROR_MISSING_GOOGLE_AUTH_TOKEN',
@@ -148,30 +154,32 @@ class Auth implements AuthBase {
     }
   }
 
-  @override
-  Future<MedicallUser> signInWithPhoneNumber(
+  Future<AuthCredential> fetchPhoneAuthCredential({
     String verificationId,
     String smsCode,
-  ) async {
-    final AuthCredential credential = PhoneAuthProvider.getCredential(
-      verificationId: verificationId,
-      smsCode: smsCode,
-    );
+  }) async {
+    return PhoneAuthProvider.getCredential(
+        verificationId: verificationId, smsCode: smsCode);
+  }
 
+  @override
+  Future<MedicallUser> signInWithGoogle({AuthCredential credential}) async {
+    final authResult = await _firebaseAuth.signInWithCredential(credential);
+    return _userFromFirebase(authResult.user);
+  }
+
+  @override
+  Future<MedicallUser> linkCredentialWithCurrentUser(
+      {AuthCredential credential}) async {
     final FirebaseUser currentUser = await _firebaseAuth.currentUser();
 
-    final AuthResult linkPhoneAuthResult =
+    final AuthResult linkCredentialAuthResult =
         await currentUser.linkWithCredential(credential);
 
     final MedicallUser currentMedicallUser =
-        _userFromFirebase(linkPhoneAuthResult.user);
+        _userFromFirebase(linkCredentialAuthResult.user);
 
-    if (currentMedicallUser != null &&
-        currentMedicallUser.phoneNumber != null &&
-        currentMedicallUser.phoneNumber.isNotEmpty) {
-      // final phoneSignInAuthResult =
-      //     await _firebaseAuth.signInWithCredential(credential);
-      // final user = phoneSignInAuthResult.user;
+    if (currentMedicallUser != null) {
       currentUser.sendEmailVerification();
       return currentMedicallUser;
     } else {
@@ -180,44 +188,5 @@ class Auth implements AuthBase {
         message: 'Phone Sign In Failed.',
       );
     }
-  }
-
-  @override
-  Future<void> signOut() async {
-    medicallUser = MedicallUser(displayName: 'logout');
-    await GoogleSignIn().signOut();
-    await _firebaseAuth.signOut();
-  }
-
-  Future login(String email, String pass, context) async {
-    firebaseAnonymouslyUtil.signIn(email, pass).then((onValue) {
-      medicallUser.uid = onValue.uid;
-      return print('Login Success');
-    }).catchError((e) => loginError(getErrorMessage(error: e), context));
-  }
-
-  String getErrorMessage({dynamic error}) {
-    if (error.code == FirebaseAuthCodes.ERROR_USER_NOT_FOUND) {
-      return "A user with this email does not exist. Register first.";
-    } else if (error.code == FirebaseAuthCodes.ERROR_USER_DISABLED) {
-      return "This user account has been disabled.";
-    } else if (error.code == FirebaseAuthCodes.ERROR_USER_TOKEN_EXPIRED) {
-      return "A password change is in the process.";
-    } else {
-      return error.message;
-    }
-  }
-
-  @override
-  signUp(context) async {
-    await firebaseAnonymouslyUtil
-        .createUser(tempRegUser.username, tempRegUser.pass)
-        .then((String user) async {
-      await login(tempRegUser.username, tempRegUser.pass, context);
-    }).catchError((e) => loginError(getErrorMessage(error: e), context));
-  }
-
-  loginError(e, context) {
-    AppUtil().showFlushBar(e, context);
   }
 }
