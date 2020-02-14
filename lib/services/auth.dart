@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/Login/google_auth_model.dart';
-import 'package:Medicall/util/firebase_anonymously_util.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -12,25 +12,25 @@ abstract class AuthBase {
   bool isGoogleUser;
   Stream<MedicallUser> get onAuthStateChanged;
   Future<MedicallUser> currentUser();
-  void addUserToAuthStream(MedicallUser user);
+  void addUserToAuthStream({@required MedicallUser user});
   Future<MedicallUser> signInAnonymously();
   Future<MedicallUser> signInWithEmailAndPassword(
-      String email, String password);
+      {@required String email, @required String password});
   Future<MedicallUser> createUserWithEmailAndPassword(
-      String email, String password);
-  Future<List<String>> fetchProvidersForEmail({String email});
+      {@required String email, @required String password});
+  Future<List<String>> fetchProvidersForEmail({@required String email});
   Future<GoogleAuthModel> fetchGoogleSignInCredential();
   Future<AuthCredential> fetchPhoneAuthCredential(
-      {String verificationId, String smsCode});
+      {@required String verificationId, @required String smsCode});
   Future<MedicallUser> signInWithGoogle();
   Future<MedicallUser> linkCredentialWithCurrentUser(
-      {AuthCredential credential});
+      {@required AuthCredential credential});
+  Future<void> signOut();
 }
 
 class Auth implements AuthBase {
   final _firebaseAuth = FirebaseAuth.instance;
-  final FirebaseAnonymouslyUtil firebaseAnonymouslyUtil =
-      FirebaseAnonymouslyUtil();
+
   @override
   bool isGoogleUser = false;
 
@@ -51,7 +51,7 @@ class Auth implements AuthBase {
     });
   }
 
-  void addUserToAuthStream(MedicallUser user) {
+  void addUserToAuthStream({@required MedicallUser user}) {
     authStreamController.sink.add(user);
   }
 
@@ -107,7 +107,7 @@ class Auth implements AuthBase {
 
   @override
   Future<MedicallUser> signInWithEmailAndPassword(
-      String email, String password) async {
+      {@required String email, @required String password}) async {
     final authResult = await _firebaseAuth.signInWithEmailAndPassword(
         email: email, password: password);
     final user = authResult.user;
@@ -116,14 +116,14 @@ class Auth implements AuthBase {
 
   @override
   Future<MedicallUser> createUserWithEmailAndPassword(
-      String email, String password) async {
+      {@required String email, @required String password}) async {
     final authResult = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email, password: password);
     final user = authResult.user;
     return _userFromFirebase(user);
   }
 
-  Future<List<String>> fetchProvidersForEmail({String email}) async {
+  Future<List<String>> fetchProvidersForEmail({@required String email}) async {
     return await _firebaseAuth.fetchSignInMethodsForEmail(email: email);
   }
 
@@ -155,15 +155,16 @@ class Auth implements AuthBase {
   }
 
   Future<AuthCredential> fetchPhoneAuthCredential({
-    String verificationId,
-    String smsCode,
+    @required String verificationId,
+    @required String smsCode,
   }) async {
     return PhoneAuthProvider.getCredential(
         verificationId: verificationId, smsCode: smsCode);
   }
 
   @override
-  Future<MedicallUser> signInWithGoogle({AuthCredential credential}) async {
+  Future<MedicallUser> signInWithGoogle(
+      {@required AuthCredential credential}) async {
     final authResult = await _firebaseAuth.signInWithCredential(credential);
     return _userFromFirebase(authResult.user);
   }
@@ -188,5 +189,11 @@ class Auth implements AuthBase {
         message: 'Phone Sign In Failed.',
       );
     }
+  }
+
+  @override
+  Future<void> signOut() async {
+    await GoogleSignIn().signOut();
+    await _firebaseAuth.signOut();
   }
 }
