@@ -22,7 +22,7 @@ abstract class AuthBase {
   Future<GoogleAuthModel> fetchGoogleSignInCredential();
   Future<AuthCredential> fetchPhoneAuthCredential(
       {@required String verificationId, @required String smsCode});
-  Future<MedicallUser> signInWithGoogle();
+  Future<MedicallUser> signInWithGoogle({@required AuthCredential credential});
   Future<MedicallUser> linkCredentialWithCurrentUser(
       {@required AuthCredential credential});
   Future<void> signOut();
@@ -138,8 +138,15 @@ class Auth implements AuthBase {
         final AuthCredential credential = GoogleAuthProvider.getCredential(
             idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
 
+        List<String> providers =
+            await this.fetchProvidersForEmail(email: googleAccount.email);
+
         return GoogleAuthModel(
-            email: googleAccount.email, credential: credential);
+          email: googleAccount.email,
+          credential: credential,
+          displayName: googleAccount.displayName,
+          providers: providers,
+        );
       } else {
         throw PlatformException(
           code: 'ERROR_MISSING_GOOGLE_AUTH_TOKEN',

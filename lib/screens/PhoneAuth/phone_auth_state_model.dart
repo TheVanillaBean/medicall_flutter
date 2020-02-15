@@ -18,7 +18,7 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
   bool isRefreshing;
   bool codeTimedOut;
   String verificationId;
-  AuthCredential authCredential;
+  AuthCredential phoneAuthCredential;
 
   final AuthBase auth;
   Duration timeoutDuration = Duration(seconds: 5);
@@ -33,7 +33,7 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
     this.isRefreshing = false,
     this.codeTimedOut = false,
     this.verificationId = '',
-    this.authCredential,
+    this.phoneAuthCredential,
   });
 
   bool get canSubmitPhoneNumber {
@@ -112,11 +112,6 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
 
     final PhoneCodeSent codeSent =
         (String verificationId, [int forceResendingToken]) {
-      // Timer _ = Timer(this.timeoutDuration, () {
-      //   updateWith(codeTimedOut: true);
-      //   this.verificationStatus.onVerificationError(
-      //       'Your phone verification session has timed out. Retry to receive another code.');
-      // });
       updateWith(
         verificationId: verificationId,
         status: AuthStatus.SMS_AUTH,
@@ -145,32 +140,26 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
       bool mounted, TempUserProvider tempUserProvider) async {
     try {
       MedicallUser user;
-      if (!auth.isGoogleUser) {
-        auth.newUser = true;
+      auth.newUser = true;
 
-        user = await auth.createUserWithEmailAndPassword(
-            tempUserProvider.medicallUser.email, tempUserProvider.password);
-        tempUserProvider.updateWith(
-          uid: user.uid,
-          devTokens: user.devTokens,
-          phoneNumber: this.phoneNumber,
-        );
-
-        user = await auth.linkPhoneNumberWithCurrentUser(
-            this.verificationId, this.smsCode);
+      if (tempUserProvider.googleAuthModel != null) {
+        user = await auth.signInWithGoogle(
+            credential: tempUserProvider.googleAuthModel.credential);
       } else {
-        auth.newUser = false;
-        user = await auth.linkPhoneNumberWithCurrentUser(
-            this.verificationId, this.smsCode);
-        // MedicallUser userPlusPhoneNum = tempUserProvider.medicallUser;
-        // userPlusPhoneNum.phoneNumber = user.phoneNumber;
-        // user = userPlusPhoneNum;
-        tempUserProvider.updateWith(
-          uid: user.uid,
-          devTokens: user.devTokens,
-          phoneNumber: user.phoneNumber,
+        user = await auth.createUserWithEmailAndPassword(
+          email: tempUserProvider.medicallUser.email,
+          password: tempUserProvider.password,
         );
       }
+
+      user = await auth.linkCredentialWithCurrentUser(
+          credential: phoneAuthCredential);
+
+      tempUserProvider.updateWith(
+        uid: user.uid,
+        devTokens: user.devTokens,
+        phoneNumber: user.phoneNumber,
+      );
 
       this.verificationStatus.onVerificationSuccess("Saving User Details...");
 
@@ -179,7 +168,7 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
 
       if (successfullySavedImages) {
         await tempUserProvider.addNewUserToFirestore();
-        auth.addUserToAuthStream(user);
+        auth.addUserToAuthStream(user: user);
       } else {
         updateRefreshing(false, mounted);
         throw PlatformException(
@@ -210,7 +199,7 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
     this.isRefreshing = isRefreshing ?? this.isRefreshing;
     this.codeTimedOut = codeTimedOut ?? this.codeTimedOut;
     this.verificationId = verificationId ?? this.verificationId;
-    this.authCredential = authCredential ?? this.authCredential;
+    this.phoneAuthCredential = authCredential ?? this.phoneAuthCredential;
     notifyListeners();
   }
 }

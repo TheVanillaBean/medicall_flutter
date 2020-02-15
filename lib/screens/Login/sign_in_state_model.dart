@@ -1,5 +1,6 @@
 import 'package:Medicall/screens/Login/google_auth_model.dart';
 import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/util/validators.dart';
 import 'package:flutter/material.dart';
 
@@ -9,10 +10,13 @@ class SignInStateModel with EmailAndPasswordValidators, ChangeNotifier {
   bool autoValidate;
   bool isLoading;
   bool submitted;
+  GoogleAuthModel googleAuthModel;
   final AuthBase auth;
+  final TempUserProvider tempUserProvider;
 
   SignInStateModel({
     @required this.auth,
+    @required this.tempUserProvider,
     this.email = '',
     this.password = '',
     this.autoValidate = false,
@@ -42,7 +46,8 @@ class SignInStateModel with EmailAndPasswordValidators, ChangeNotifier {
   Future<void> submit() async {
     updateWith(submitted: true, isLoading: true);
     try {
-      await auth.signInWithEmailAndPassword(this.email, this.password);
+      await auth.signInWithEmailAndPassword(
+          email: this.email, password: this.password);
     } catch (e) {
       updateWith(isLoading: false);
       rethrow;
@@ -54,17 +59,18 @@ class SignInStateModel with EmailAndPasswordValidators, ChangeNotifier {
     try {
       GoogleAuthModel googleAuthModel =
           await auth.fetchGoogleSignInCredential();
-      List<String> providers =
-          await auth.fetchProvidersForEmail(email: googleAuthModel.email);
 
-      if (providers != null && providers.length > 0) {
-        if (providers.contains("google.com")) {
-          await auth.signInWithGoogle();
+      if (googleAuthModel.providers != null &&
+          googleAuthModel.providers.length > 0) {
+        if (googleAuthModel.providers.contains("google.com")) {
+          await auth.signInWithGoogle(credential: googleAuthModel.credential);
         } else {
-          throw "Account linked with different sign in method";
+          throw "Account already linked with different sign in method.";
         }
       } else {
-        // TODO Refactor temp user provider to include credential instance variable
+        updateWith(
+          googleAuthModel: googleAuthModel,
+        );
       }
     } catch (e) {
       updateWith(isLoading: false);
@@ -78,12 +84,14 @@ class SignInStateModel with EmailAndPasswordValidators, ChangeNotifier {
     bool autoValidate,
     bool isLoading,
     bool submitted,
+    GoogleAuthModel googleAuthModel,
   }) {
     this.email = email ?? this.email;
     this.password = password ?? this.password;
     this.autoValidate = autoValidate ?? this.autoValidate;
     this.isLoading = isLoading ?? this.isLoading;
     this.submitted = submitted ?? this.submitted;
+    this.googleAuthModel = googleAuthModel ?? this.googleAuthModel;
     notifyListeners();
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/screens/Login/google_auth_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
@@ -9,6 +10,7 @@ class TempUserProvider {
   MedicallUser _medicallUser;
   List<Asset> _images;
   String _password;
+  GoogleAuthModel _googleAuthModel;
 
   MedicallUser get medicallUser {
     return _medicallUser;
@@ -20,6 +22,10 @@ class TempUserProvider {
 
   String get password {
     return _password;
+  }
+
+  GoogleAuthModel get googleAuthModel {
+    return _googleAuthModel;
   }
 
   TempUserProvider() {
@@ -47,6 +53,7 @@ class TempUserProvider {
     String address,
     List<Asset> images,
     String password,
+    GoogleAuthModel googleAuthModel,
   }) {
     this._medicallUser.uid = uid ?? this._medicallUser.uid;
     this._medicallUser.devTokens = devTokens ?? this._medicallUser.devTokens;
@@ -71,6 +78,7 @@ class TempUserProvider {
     this._medicallUser.address = address ?? this._medicallUser.address;
     this._images = images ?? this._images;
     this._password = password ?? this._password;
+    this._googleAuthModel = googleAuthModel ?? this._googleAuthModel;
   }
 
   Future<bool> saveRegistrationImages() async {

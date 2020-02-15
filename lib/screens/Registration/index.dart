@@ -2,7 +2,6 @@ import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
 import 'package:Medicall/secrets.dart' as secrets;
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -28,7 +27,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   List<dynamic> _addressList = [];
   double formSpacing = 20;
   bool showSegmentedControl = true;
-  FirebaseUser firebaseUser;
   List<String> states = [
     'Alabama',
     'Alaska',
@@ -362,12 +360,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     FormBuilderValidators.required(),
                   ],
                 ),
-                !auth.isGoogleUser
+                tempUserProvider.googleAuthModel != null
                     ? SizedBox(
                         height: formSpacing,
                       )
                     : Container(),
-                !auth.isGoogleUser
+                tempUserProvider.googleAuthModel != null
                     ? FormBuilderTextField(
                         attribute: "Password",
                         initialValue: "",
@@ -398,7 +396,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 SizedBox(
                   height: 5,
                 ),
-                !auth.isGoogleUser
+                tempUserProvider.googleAuthModel != null
                     ? FormBuilderTextField(
                         attribute: "ConfirmPassword",
                         initialValue: "",
@@ -426,7 +424,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         ],
                       )
                     : Container(),
-                !auth.isGoogleUser
+                tempUserProvider.googleAuthModel != null
                     ? SizedBox(
                         height: formSpacing,
                       )

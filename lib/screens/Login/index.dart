@@ -5,6 +5,7 @@ import 'package:Medicall/common_widgets/social_sign_in_button.dart';
 import 'package:Medicall/screens/Login/sign_in_state_model.dart';
 import 'package:Medicall/services/animation_provider.dart';
 import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:Medicall/util/firebase_notification_handler.dart';
 import 'package:flutter/cupertino.dart';
@@ -17,8 +18,13 @@ class LoginPage extends StatefulWidget {
 
   static Widget create(BuildContext context) {
     final AuthBase auth = Provider.of<AuthBase>(context);
+    final TempUserProvider tempUserProvider =
+        Provider.of<TempUserProvider>(context);
     return ChangeNotifierProvider<SignInStateModel>(
-      create: (context) => SignInStateModel(auth: auth),
+      create: (context) => SignInStateModel(
+        auth: auth,
+        tempUserProvider: tempUserProvider,
+      ),
       child: Consumer<SignInStateModel>(
         builder: (_, model, __) => LoginPage(
           model: model,
@@ -65,6 +71,16 @@ class _LoginScreenState extends State<LoginPage> {
   Future<void> _signInWithGoogle(BuildContext context) async {
     try {
       await model.signInWithGooglePressed();
+      if (model.googleAuthModel != null) {
+        model.tempUserProvider.updateWith(
+          email: model.googleAuthModel.email,
+          displayName: model.googleAuthModel.displayName,
+          firstName: model.googleAuthModel.firstName,
+          lastName: model.googleAuthModel.lastName,
+          googleAuthModel: model.googleAuthModel,
+        );
+        _navigateToRegistrationScreen(context);
+      }
     } on PlatformException catch (e) {
       AppUtil().showFlushBar(e, context);
     }
@@ -128,19 +144,7 @@ class _LoginScreenState extends State<LoginPage> {
   }
 
   List<Widget> _buildChildren(BuildContext context) {
-    //MyFlareProvider _flareProvider = Provider.of<MyFlareProvider>(context);
     return [
-      // Container(
-      //   margin: EdgeInsets.only(top: 30),
-      //   height: 100,
-      //   child: _flareProvider.returnFlareActor(
-      //     'assets/headerlogo.flr',
-      //     fit: BoxFit.fitWidth,
-      //     snapToEnd: true,
-      //     animation: 'Untitled',
-      //   ),
-      // ),
-
       FadeIn(
         2,
         Padding(
