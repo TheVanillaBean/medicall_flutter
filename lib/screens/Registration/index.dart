@@ -346,12 +346,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 FormBuilderTextField(
                   attribute: "Email",
                   initialValue: medicallUser.email,
-                  readOnly: auth.isGoogleUser,
+                  readOnly: tempUserProvider.googleAuthModel != null,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
                       labelText: 'Email',
                       fillColor: Color.fromRGBO(35, 179, 232, 0.1),
-                      filled: !auth.isGoogleUser,
+                      filled: tempUserProvider.googleAuthModel != null,
                       disabledBorder: InputBorder.none,
                       enabledBorder: InputBorder.none,
                       border: InputBorder.none),
@@ -360,12 +360,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     FormBuilderValidators.required(),
                   ],
                 ),
-                tempUserProvider.googleAuthModel != null
+                tempUserProvider.googleAuthModel == null
                     ? SizedBox(
                         height: formSpacing,
                       )
                     : Container(),
-                tempUserProvider.googleAuthModel != null
+                tempUserProvider.googleAuthModel == null
                     ? FormBuilderTextField(
                         attribute: "Password",
                         initialValue: "",
@@ -396,7 +396,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 SizedBox(
                   height: 5,
                 ),
-                tempUserProvider.googleAuthModel != null
+                tempUserProvider.googleAuthModel == null
                     ? FormBuilderTextField(
                         attribute: "ConfirmPassword",
                         initialValue: "",
@@ -424,7 +424,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         ],
                       )
                     : Container(),
-                tempUserProvider.googleAuthModel != null
+                tempUserProvider.googleAuthModel == null
                     ? SizedBox(
                         height: formSpacing,
                       )

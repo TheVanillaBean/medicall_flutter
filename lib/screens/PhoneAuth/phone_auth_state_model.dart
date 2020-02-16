@@ -98,7 +98,7 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
     final PhoneVerificationCompleted verificationCompleted =
         (AuthCredential phoneAuthCredential) {
       updateWith(
-          authCredential: phoneAuthCredential,
+          phoneAuthCredential: phoneAuthCredential,
           status: AuthStatus
               .SMS_AUTH); //this won't actually change anything as the user will be redirected anyway.
     };
@@ -152,6 +152,9 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
         );
       }
 
+      this.phoneAuthCredential = await auth.fetchPhoneAuthCredential(
+          verificationId: this.verificationId, smsCode: this.smsCode);
+
       user = await auth.linkCredentialWithCurrentUser(
           credential: phoneAuthCredential);
 
@@ -190,7 +193,7 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
     bool isRefreshing,
     bool codeTimedOut,
     String verificationId,
-    AuthCredential authCredential,
+    AuthCredential phoneAuthCredential,
   }) {
     this.status = status ?? this.status;
     this.phoneNumber = phoneNumber ?? this.phoneNumber;
@@ -199,7 +202,7 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
     this.isRefreshing = isRefreshing ?? this.isRefreshing;
     this.codeTimedOut = codeTimedOut ?? this.codeTimedOut;
     this.verificationId = verificationId ?? this.verificationId;
-    this.phoneAuthCredential = authCredential ?? this.phoneAuthCredential;
+    this.phoneAuthCredential = phoneAuthCredential ?? this.phoneAuthCredential;
     notifyListeners();
   }
 }
