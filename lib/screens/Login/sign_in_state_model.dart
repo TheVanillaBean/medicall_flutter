@@ -1,4 +1,5 @@
 import 'package:Medicall/screens/Login/google_auth_model.dart';
+import 'package:Medicall/services/animation_provider.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
@@ -14,10 +15,12 @@ class SignInStateModel with EmailAndPasswordValidators, ChangeNotifier {
   GoogleAuthModel googleAuthModel;
   final AuthBase auth;
   final TempUserProvider tempUserProvider;
+  final MyAnimationProvider animationProvider;
 
   SignInStateModel({
     @required this.auth,
     @required this.tempUserProvider,
+    @required this.animationProvider,
     this.email = '',
     this.password = '',
     this.autoValidate = false,

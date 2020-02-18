@@ -21,10 +21,13 @@ class LoginPage extends StatefulWidget {
     final AuthBase auth = Provider.of<AuthBase>(context);
     final TempUserProvider tempUserProvider =
         Provider.of<TempUserProvider>(context);
+       final MyAnimationProvider animationProvider =
+        Provider.of<MyAnimationProvider>(context);
     return ChangeNotifierProvider<SignInStateModel>(
       create: (context) => SignInStateModel(
         auth: auth,
         tempUserProvider: tempUserProvider,
+        animationProvider: animationProvider,
       ),
       child: Consumer<SignInStateModel>(
         builder: (_, model, __) => LoginPage(
@@ -100,8 +103,7 @@ class _LoginScreenState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    MyAnimationProvider _animationProvider =
-        Provider.of<MyAnimationProvider>(context);
+    
     return Scaffold(
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.dark,
@@ -114,8 +116,8 @@ class _LoginScreenState extends State<LoginPage> {
             child: Stack(
               children: <Widget>[
                 Positioned.fill(
-                    child: _animationProvider.returnAnimation(
-                        tween: _animationProvider.returnMultiTrackTween([
+                    child: model.animationProvider.returnAnimation(
+                        tween: model.animationProvider.returnMultiTrackTween([
                           Colors.blueAccent.withAlpha(100),
                           Colors.cyanAccent.withAlpha(20),
                           Colors.cyanAccent.withAlpha(20),
@@ -186,10 +188,8 @@ class _LoginScreenState extends State<LoginPage> {
                         textColor: Colors.white,
                         text: "Create New Account",
                         onPressed: () {
-                          final tempUserProvider =
-                              Provider.of<TempUserProvider>(context, listen: false);
-                          tempUserProvider.setMedicallUser(MedicallUser());
-                          tempUserProvider.setGoogleAuthModel(null);
+                          model.tempUserProvider.setMedicallUser(MedicallUser());
+                          model.tempUserProvider.setGoogleAuthModel(null);
                           _navigateToRegistrationScreen(context);
                         },
                       ),
