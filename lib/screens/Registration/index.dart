@@ -1,6 +1,5 @@
 import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
 import 'package:Medicall/secrets.dart' as secrets;
-import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -114,7 +113,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   Widget build(BuildContext context) {
     final tempUserProvider = Provider.of<TempUserProvider>(context);
     final medicallUser = tempUserProvider.medicallUser;
-    final auth = Provider.of<AuthBase>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,

@@ -70,7 +70,7 @@ class _LoginScreenState extends State<LoginPage> {
 
   Future<void> _signInWithGoogle(BuildContext context) async {
     try {
-      await model.signInWithGooglePressed();
+      await model.signInWithGooglePressed(context);
       if (model.googleAuthModel != null) {
         model.tempUserProvider.updateWith(
           email: model.googleAuthModel.email,

@@ -1,6 +1,7 @@
 import 'package:Medicall/screens/Login/google_auth_model.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
+import 'package:Medicall/util/app_util.dart';
 import 'package:Medicall/util/validators.dart';
 import 'package:flutter/material.dart';
 
@@ -54,7 +55,7 @@ class SignInStateModel with EmailAndPasswordValidators, ChangeNotifier {
     }
   }
 
-  Future<void> signInWithGooglePressed() async {
+  Future<void> signInWithGooglePressed(context) async {
     updateWith(submitted: true, isLoading: true);
     try {
       GoogleAuthModel googleAuthModel =
@@ -65,7 +66,7 @@ class SignInStateModel with EmailAndPasswordValidators, ChangeNotifier {
         if (googleAuthModel.providers.contains("google.com")) {
           await auth.signInWithGoogle(credential: googleAuthModel.credential);
         } else {
-          throw "Account already linked with different sign in method.";
+          AppUtil().showFlushBar("Account already linked with different sign in method.", context);
         }
       } else {
         updateWith(
