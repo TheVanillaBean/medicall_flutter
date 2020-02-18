@@ -2,6 +2,7 @@ import 'dart:ui' as ui;
 
 import 'package:Medicall/common_widgets/sign_in_button.dart';
 import 'package:Medicall/common_widgets/social_sign_in_button.dart';
+import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/Login/sign_in_state_model.dart';
 import 'package:Medicall/services/animation_provider.dart';
 import 'package:Medicall/services/auth.dart';
@@ -185,6 +186,10 @@ class _LoginScreenState extends State<LoginPage> {
                         textColor: Colors.white,
                         text: "Create New Account",
                         onPressed: () {
+                          final tempUserProvider =
+                              Provider.of<TempUserProvider>(context, listen: false);
+                          tempUserProvider.setMedicallUser(MedicallUser());
+                          tempUserProvider.setGoogleAuthModel(null);
                           _navigateToRegistrationScreen(context);
                         },
                       ),

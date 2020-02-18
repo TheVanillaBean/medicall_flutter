@@ -16,6 +16,10 @@ class TempUserProvider {
     return _medicallUser;
   }
 
+  void setMedicallUser(MedicallUser user){
+    _medicallUser = user;
+  }
+
   List<Asset> get images {
     return _images;
   }
@@ -26,6 +30,10 @@ class TempUserProvider {
 
   GoogleAuthModel get googleAuthModel {
     return _googleAuthModel;
+  }
+
+  void setGoogleAuthModel(GoogleAuthModel model){
+    _googleAuthModel = model;
   }
 
   TempUserProvider() {

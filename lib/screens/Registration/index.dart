@@ -344,12 +344,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 FormBuilderTextField(
                   attribute: "Email",
                   initialValue: medicallUser.email,
-                  readOnly: tempUserProvider.googleAuthModel != null,
+                  readOnly: tempUserProvider.googleAuthModel != null ? true : false,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
                       labelText: 'Email',
                       fillColor: Color.fromRGBO(35, 179, 232, 0.1),
-                      filled: tempUserProvider.googleAuthModel != null,
+                      filled: tempUserProvider.googleAuthModel != null ? false : true,
                       disabledBorder: InputBorder.none,
                       enabledBorder: InputBorder.none,
                       border: InputBorder.none),
