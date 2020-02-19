@@ -1,32 +1,36 @@
 import 'package:Medicall/services/extimage_provider.dart';
-import 'package:Medicall/util/validators.dart';
+import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 
-class PhotoIdScreenModel with EmailAndPasswordValidators, ChangeNotifier {
+class PhotoIdScreenModel with ChangeNotifier {
   ExtImageProvider extImageProvider;
-  List<Asset> images = List<Asset>();
-  List<Asset> govIdImage = List<Asset>();
-  List<Asset> profileImage = List<Asset>();
-  String error = '';
+  TempUserProvider tempUserProvider;
+  List<Asset> images;
+  List<Asset> govIdImage;
+  List<Asset> profileImage;
+  String error;
 
 
   PhotoIdScreenModel({
     @required this.extImageProvider,
-    this.images,
-    this.govIdImage,
-    this.profileImage,
-    this.error,
+    @required this.tempUserProvider,
+    this.images = const [],
+    this.govIdImage = const [],
+    this.profileImage = const [],
+    this.error = '',
   });
 
   void updateWith({
     ExtImageProvider extImageProvider,
+    TempUserProvider tempUserProvider,
     List<Asset> images,
     List<Asset> govIdImage,
     List<Asset> profileImage,
     String error,
   }) {
     this.extImageProvider = extImageProvider ?? this.extImageProvider;
+    this.tempUserProvider = tempUserProvider ?? this.tempUserProvider;
     this.images = images ?? this.images;
     this.govIdImage = govIdImage ?? this.govIdImage;
     this.profileImage = profileImage ?? this.profileImage;

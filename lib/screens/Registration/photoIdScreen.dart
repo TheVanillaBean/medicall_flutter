@@ -14,9 +14,11 @@ class PhotoIdScreen extends StatefulWidget {
   static Widget create(BuildContext context) {
     final ExtImageProvider _extImageProvider =
         Provider.of<ExtImageProvider>(context);
+    final _tempUserProvider = Provider.of<TempUserProvider>(context);
     return ChangeNotifierProvider<PhotoIdScreenModel>(
       create: (context) => PhotoIdScreenModel(
         extImageProvider: _extImageProvider,
+        tempUserProvider: _tempUserProvider,
       ),
       child: Consumer<PhotoIdScreenModel>(
         builder: (_, model, __) => PhotoIdScreen(
@@ -145,9 +147,6 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
 
   @override
   Widget build(BuildContext context) {
-    widget.model.extImageProvider = Provider.of<ExtImageProvider>(context);
-    final tempUserProvider = Provider.of<TempUserProvider>(context);
-
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -174,7 +173,7 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
               ...widget.model.govIdImage
             ];
 
-            tempUserProvider.updateWith(images: images);
+            widget.model.tempUserProvider.updateWith(images: images);
             Navigator.of(context).pushReplacementNamed('/consent');
           }
         },
