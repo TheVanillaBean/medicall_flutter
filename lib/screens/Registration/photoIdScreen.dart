@@ -1,4 +1,5 @@
 import 'package:Medicall/presentation/medicall_icons_icons.dart' as CustomIcons;
+import 'package:Medicall/screens/Registration/photo_id_model.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
@@ -8,17 +9,29 @@ import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:provider/provider.dart';
 
 class PhotoIdScreen extends StatefulWidget {
+  final PhotoIdScreenModel model;
+
+  static Widget create(BuildContext context) {
+    final ExtImageProvider _extImageProvider =
+        Provider.of<ExtImageProvider>(context);
+    return ChangeNotifierProvider<PhotoIdScreenModel>(
+      create: (context) => PhotoIdScreenModel(
+        extImageProvider: _extImageProvider,
+      ),
+      child: Consumer<PhotoIdScreenModel>(
+        builder: (_, model, __) => PhotoIdScreen(
+          model: model,
+        ),
+      ),
+    );
+  }
+
+  PhotoIdScreen({@required this.model});
   @override
   _PhotoIdScreenState createState() => _PhotoIdScreenState();
 }
 
 class _PhotoIdScreenState extends State<PhotoIdScreen> {
-  List<Asset> images = List<Asset>();
-  List<Asset> govIdImage = List<Asset>();
-  List<Asset> profileImage = List<Asset>();
-  String _error = '';
-  ExtImageProvider _extImageProvider;
-
   @override
   void initState() {
     super.initState();
@@ -29,7 +42,7 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
         onTap: loadGovIdImage,
         child: ClipRRect(
           borderRadius: new BorderRadius.circular(8.0),
-          child: _extImageProvider.returnAssetThumb(
+          child: widget.model.extImageProvider.returnAssetThumb(
             asset: asset,
             height: 200,
             width: 340,
@@ -42,7 +55,7 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
       onTap: loadProfileImage,
       child: ClipRRect(
         borderRadius: new BorderRadius.circular(1000.0),
-        child: _extImageProvider.returnAssetThumb(
+        child: widget.model.extImageProvider.returnAssetThumb(
           asset: asset,
           height: 200,
           width: 200,
@@ -53,16 +66,12 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
 
   Future<void> deleteGovIdImage() async {
     //await MultiImagePicker.deleteImages(assets: images);
-    setState(() {
-      govIdImage = List<Asset>();
-    });
+    widget.model.updateWith(govIdImage: List<Asset>());
   }
 
   Future<void> deleteProfileImage() async {
     //await MultiImagePicker.deleteImages(assets: images);
-    setState(() {
-      profileImage = List<Asset>();
-    });
+    widget.model.updateWith(profileImage: List<Asset>());
   }
 
   Future<void> loadProfileImage() async {
@@ -70,12 +79,13 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
     String error = '';
 
     try {
-      resultList = await _extImageProvider.pickImages(
-          profileImage,
+      resultList = await widget.model.extImageProvider.pickImages(
+          widget.model.profileImage,
           1,
           true,
-          _extImageProvider.pickImagesCupertinoOptions(takePhotoIcon: 'camera'),
-          _extImageProvider.pickImagesMaterialOptions(
+          widget.model.extImageProvider
+              .pickImagesCupertinoOptions(takePhotoIcon: 'camera'),
+          widget.model.extImageProvider.pickImagesMaterialOptions(
               useDetailsView: true,
               actionBarColor:
                   '#${Theme.of(context).primaryColor.value.toRadixString(16).toUpperCase().substring(2)}',
@@ -93,14 +103,9 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
 
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
     if (!mounted) return;
-
-    setState(() {
-      profileImage = resultList;
-      if (error == null) _error = 'No Error Dectected';
-    });
-    print(_error);
+    widget.model.updateWith(profileImage: resultList);
+    if (error == null) widget.model.updateWith(error: 'No Error Dectected');
   }
 
   Future<void> loadGovIdImage() async {
@@ -108,12 +113,13 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
     String error = '';
 
     try {
-      resultList = await _extImageProvider.pickImages(
-          govIdImage,
+      resultList = await widget.model.extImageProvider.pickImages(
+          widget.model.govIdImage,
           1,
           true,
-          _extImageProvider.pickImagesCupertinoOptions(takePhotoIcon: 'camera'),
-          _extImageProvider.pickImagesMaterialOptions(
+          widget.model.extImageProvider
+              .pickImagesCupertinoOptions(takePhotoIcon: 'camera'),
+          widget.model.extImageProvider.pickImagesMaterialOptions(
             useDetailsView: true,
             actionBarColor:
                 '#${Theme.of(context).primaryColor.value.toRadixString(16).toUpperCase().substring(2)}',
@@ -132,19 +138,14 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
 
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
     if (!mounted) return;
-
-    setState(() {
-      govIdImage = resultList;
-      if (error == null) _error = 'No Error Dectected';
-    });
-    print(_error);
+    widget.model.updateWith(govIdImage: resultList);
+    if (error == null) widget.model.updateWith(error: 'No Error Dectected');
   }
 
   @override
   Widget build(BuildContext context) {
-    _extImageProvider = Provider.of<ExtImageProvider>(context);
+    widget.model.extImageProvider = Provider.of<ExtImageProvider>(context);
     final tempUserProvider = Provider.of<TempUserProvider>(context);
 
     return Scaffold(
@@ -161,19 +162,25 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
       ),
       bottomNavigationBar: FlatButton(
         padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
-        color: profileImage.length == 1 && govIdImage.length == 1
+        color: widget.model.profileImage.length == 1 &&
+                widget.model.govIdImage.length == 1
             ? Theme.of(context).primaryColor
             : Colors.grey,
         onPressed: () async {
-          if (profileImage.length == 1 && govIdImage.length == 1) {
-            List<Asset> images = [...profileImage, ...govIdImage];
+          if (widget.model.profileImage.length == 1 &&
+              widget.model.govIdImage.length == 1) {
+            List<Asset> images = [
+              ...widget.model.profileImage,
+              ...widget.model.govIdImage
+            ];
 
             tempUserProvider.updateWith(images: images);
             Navigator.of(context).pushReplacementNamed('/consent');
           }
         },
         child: Text(
-          profileImage.length == 1 && govIdImage.length == 1
+          widget.model.profileImage.length == 1 &&
+                  widget.model.govIdImage.length == 1
               ? 'CONTINUE'
               : 'IMAGES REQUIRED',
           style: TextStyle(
@@ -196,8 +203,10 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
                 ),
                 Column(
                   children: <Widget>[
-                    profileImage.length > 0 && (profileImage.length) >= index
-                        ? buildProfileImgView(index, profileImage[index])
+                    widget.model.profileImage.length > 0 &&
+                            (widget.model.profileImage.length) >= index
+                        ? buildProfileImgView(
+                            index, widget.model.profileImage[index])
                         : Container(
                             height: 200,
                             width: MediaQuery.of(context).size.width,
@@ -217,8 +226,9 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
                         style: TextStyle(fontSize: 12, color: Colors.black87),
                       ),
                     ),
-                    govIdImage.length > 0 && (govIdImage.length) >= index
-                        ? buildGridView(index, govIdImage[index])
+                    widget.model.govIdImage.length > 0 &&
+                            (widget.model.govIdImage.length) >= index
+                        ? buildGridView(index, widget.model.govIdImage[index])
                         : Container(
                             height: 200,
                             width: MediaQuery.of(context).size.width,

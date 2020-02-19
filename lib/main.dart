@@ -145,7 +145,7 @@ class MedicallApp extends StatelessWidget {
                 );
               case '/photoID':
                 return MyCustomRoute(
-                  builder: (_) => PhotoIdScreen(),
+                  builder: (_) => PhotoIdScreen.create(context),
                   settings: settings,
                 );
               case '/terms':
