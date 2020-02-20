@@ -1,13 +1,14 @@
 import 'dart:async';
+
 import 'package:Medicall/common_widgets/carousel/carousel_state.dart';
 import 'package:Medicall/screens/Account/index.dart';
 import 'package:Medicall/screens/Account/paymentDetail.dart';
 import 'package:Medicall/screens/ConfirmConsult/index.dart';
 import 'package:Medicall/screens/Consent/index.dart';
-import 'package:Medicall/screens/History/Detail/index.dart';
 import 'package:Medicall/screens/History/Detail/history_detail_state.dart';
-import 'package:Medicall/screens/History/index.dart';
+import 'package:Medicall/screens/History/Detail/index.dart';
 import 'package:Medicall/screens/History/history_state.dart';
+import 'package:Medicall/screens/History/index.dart';
 import 'package:Medicall/screens/LandingPage/auth_widget_builder.dart';
 import 'package:Medicall/screens/LandingPage/index.dart';
 import 'package:Medicall/screens/Login/index.dart';
@@ -24,13 +25,13 @@ import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/flare_provider.dart';
 import 'package:Medicall/services/stripe_provider.dart';
-import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/theme.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_crashlytics/flutter_crashlytics.dart';
 import 'package:provider/provider.dart';
+
 import 'screens/Questions/questionsScreen.dart';
 import 'screens/Symptoms/index.dart';
 
@@ -87,9 +88,9 @@ class MedicallApp extends StatelessWidget {
         Provider<MyFlareProvider>(
           create: (_) => MyFlareProvider(),
         ),
-        Provider<TempUserProvider>(
-          create: (_) => TempUserProvider(),
-        ),
+//        Provider<TempUserProvider>(
+//          create: (_) => TempUserProvider(),
+//        ),
         ChangeNotifierProvider<CarouselState>(
           create: (_) => CarouselState(),
         ),

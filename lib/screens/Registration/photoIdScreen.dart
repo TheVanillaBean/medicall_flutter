@@ -14,11 +14,11 @@ class PhotoIdScreen extends StatefulWidget {
   static Widget create(BuildContext context) {
     final ExtImageProvider _extImageProvider =
         Provider.of<ExtImageProvider>(context);
-    final _tempUserProvider = Provider.of<TempUserProvider>(context);
+//    final _tempUserProvider = Provider.of<TempUserProvider>(context); //Previous code
     return ChangeNotifierProvider<PhotoIdScreenModel>(
       create: (context) => PhotoIdScreenModel(
         extImageProvider: _extImageProvider,
-        tempUserProvider: _tempUserProvider,
+//        tempUserProvider: _tempUserProvider, //Previous Code
       ),
       child: Consumer<PhotoIdScreenModel>(
         builder: (_, model, __) => PhotoIdScreen(
@@ -34,6 +34,8 @@ class PhotoIdScreen extends StatefulWidget {
 }
 
 class _PhotoIdScreenState extends State<PhotoIdScreen> {
+  //We should prob convert this to a stateless widget
+
   @override
   void initState() {
     super.initState();
@@ -147,6 +149,10 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final TempUserProvider tempUserProvider =
+        Provider.of<TempUserProvider>(context);
+    widget.model.setTempUserProvider(
+        tempUserProvider); //This sets the provider with the correct context.
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -173,7 +179,9 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
               ...widget.model.govIdImage
             ];
 
-            widget.model.tempUserProvider.updateWith(images: images);
+            widget.model.tempUserProvider.updateWith(
+                images:
+                    images); //You can make further changes here. Technically the model is not updated here, we are just calling tempUserprovider.updateWith() which is separate from the model class created here. We could do  widget.model.updateWith(images: images), but I'll leave you to do that.
             Navigator.of(context).pushReplacementNamed('/consent');
           }
         },
