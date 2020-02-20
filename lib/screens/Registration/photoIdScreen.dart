@@ -14,11 +14,9 @@ class PhotoIdScreen extends StatefulWidget {
   static Widget create(BuildContext context) {
     final ExtImageProvider _extImageProvider =
         Provider.of<ExtImageProvider>(context);
-//    final _tempUserProvider = Provider.of<TempUserProvider>(context); //Previous code
     return ChangeNotifierProvider<PhotoIdScreenModel>(
       create: (context) => PhotoIdScreenModel(
         extImageProvider: _extImageProvider,
-//        tempUserProvider: _tempUserProvider, //Previous Code
       ),
       child: Consumer<PhotoIdScreenModel>(
         builder: (_, model, __) => PhotoIdScreen(

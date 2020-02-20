@@ -210,7 +210,7 @@ class CustomSearchDelegate extends SearchDelegate {
     _userHistoryState.searchInput = query;
     if (currTab == 'Search History') {
       _userHistoryState.setShowAppBar(false);
-      return HistoryScreen();
+      return HistoryScreen.create(context);
     } else {
       return Scaffold(
         resizeToAvoidBottomPadding: false,

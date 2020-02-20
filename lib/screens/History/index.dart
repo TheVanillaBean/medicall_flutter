@@ -12,15 +12,36 @@ import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class HistoryScreen extends StatelessWidget {
+  final HistoryState model;
+
+  const HistoryScreen({Key key, @required this.model}) : super(key: key);
+
+  static Widget create(BuildContext context) {
+    MedicallUser _medicallUser =
+        Provider.of<UserProvider>(context).medicallUser;
+    Database _db = Provider.of<Database>(context);
+    ExtImageProvider _extendedImageProvider =
+        Provider.of<ExtImageProvider>(context);
+    return ChangeNotifierProvider<HistoryState>(
+      create: (context) => HistoryState(
+          medicallUser: _medicallUser,
+          extendedImageProvider: _extendedImageProvider,
+          db: _db),
+      child: Consumer<HistoryState>(
+        builder: (_, model, __) => HistoryScreen(
+          model: model,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    Database _db = Provider.of<Database>(context);
-    HistoryState _userHistoryState = Provider.of<HistoryState>(context);
     ScreenUtil.init(context);
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       drawer: DrawerMenu(),
-      appBar: _userHistoryState.getShowAppBar()
+      appBar: model.getShowAppBar()
           ? AppBar(
               centerTitle: true,
               leading: Builder(
@@ -34,22 +55,17 @@ class HistoryScreen extends StatelessWidget {
                 },
               ),
               title: Text('History'),
-              actions: buildActions(context, _userHistoryState, _db),
+              actions: buildActions(context, model),
             )
           : null,
-      body: _buildBody("consults", context, _userHistoryState, _db),
+      body: _buildBody(),
     );
   }
 
-  StreamBuilder _buildBody(questions, context, HistoryState _userHistory, _db) {
-    List<Widget> _historyWidgetList;
-    MedicallUser _medicallUser =
-        Provider.of<UserProvider>(context).medicallUser;
-    ExtImageProvider _extImageProvider = Provider.of<ExtImageProvider>(context);
-    HistoryState _userHistoryState = Provider.of<HistoryState>(context);
+  StreamBuilder _buildBody() {
     return StreamBuilder(
-      stream: _userHistoryState.getUserHistorySnapshot(_medicallUser,
-          _userHistoryState.searchInput, _userHistoryState.sortBy, context),
+      stream: model.getUserHistorySnapshot(
+          model.medicallUser, model.searchInput, model.sortBy),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
@@ -61,10 +77,9 @@ class HistoryScreen extends StatelessWidget {
             );
           default:
             if (snapshot.data.documents.length == 0) {
-              return buildNewUserPlaceholder(context, _medicallUser);
+              return NewUserPlaceHolder(medicallUser: model.medicallUser);
             }
-            return buildHistoryTiles(snapshot, _historyWidgetList,
-                _medicallUser, _extImageProvider, _db);
+            return HistoryTiles(model: model);
         }
       },
     );

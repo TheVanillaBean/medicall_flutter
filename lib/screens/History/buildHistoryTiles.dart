@@ -1,34 +1,42 @@
-import 'package:Medicall/services/database.dart';
+import 'package:Medicall/screens/History/history_state.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:Medicall/presentation/medicall_icons_icons.dart' as CustomIcons;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-Widget buildHistoryTiles(snapshot, List<Widget> _historyWidgetList,
-      _medicallUser, _extImageProvider, Database _db) {
+class HistoryTiles extends StatelessWidget {
+  final HistoryState model;
+  const HistoryTiles({Key key, @required this.model}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     return SingleChildScrollView(
         child: ConstrainedBox(
             constraints: BoxConstraints(
                 maxHeight: ScreenUtil.screenHeight,
                 minHeight: ScreenUtil.screenHeight),
             child: ListView.builder(
-                itemCount: snapshot.data.documents.length,
+                itemCount: model.historySnapshot.data.documents.length,
                 itemBuilder: (context, index) {
-                  _historyWidgetList = [];
-                  DateTime timestamp = DateTime.fromMillisecondsSinceEpoch(
-                      snapshot.data.documents[index].data['date']
-                          .millisecondsSinceEpoch);
+                  List<Widget> _historyWidgetList = [];
+                  DateTime timestamp = DateTime.fromMillisecondsSinceEpoch(model
+                      .historySnapshot
+                      .data
+                      .documents[index]
+                      .data['date']
+                      .millisecondsSinceEpoch);
                   _historyWidgetList.add(FlatButton(
                       padding: EdgeInsets.all(0),
                       splashColor:
                           Theme.of(context).colorScheme.secondary.withAlpha(70),
                       onPressed: () {
-                        _db.consultSnapshot = snapshot.data.documents[index];
-                        _db.consultQuestions = snapshot
-                            .data.documents[index].data['screening_questions'];
-                        _db.consultSnapshot.data['details'] = [
-                          _db.consultSnapshot['screening_questions'],
-                          _db.consultSnapshot['media']
+                        model.db.consultSnapshot =
+                            model.historySnapshot.data.documents[index];
+                        model.db.consultQuestions = model.historySnapshot.data
+                            .documents[index].data['screening_questions'];
+                        model.db.consultSnapshot.data['details'] = [
+                          model.db.consultSnapshot['screening_questions'],
+                          model.db.consultSnapshot['media']
                         ];
                         Navigator.of(context)
                             .pushNamed('/historyDetail', arguments: {
@@ -47,25 +55,26 @@ Widget buildHistoryTiles(snapshot, List<Widget> _historyWidgetList,
                           dense: true,
                           isThreeLine: true,
                           title: Text(
-                            _medicallUser.type == 'patient'
-                                ? '${snapshot.data.documents[index].data['provider'].split(" ")[0][0].toUpperCase()}${snapshot.data.documents[index].data['provider'].split(" ")[0].substring(1)} ${snapshot.data.documents[index].data['provider'].split(" ")[1][0].toUpperCase()}${snapshot.data.documents[index].data['provider'].split(" ")[1].substring(1)} ' +
+                            model.medicallUser.type == 'patient'
+                                ? '${model.historySnapshot.data.documents[index].data['provider'].split(" ")[0][0].toUpperCase()}${model.historySnapshot.data.documents[index].data['provider'].split(" ")[0].substring(1)} ${model.historySnapshot.data.documents[index].data['provider'].split(" ")[1][0].toUpperCase()}${model.historySnapshot.data.documents[index].data['provider'].split(" ")[1].substring(1)} ' +
                                     ' ' +
-                                    snapshot.data.documents[index]
+                                    model.historySnapshot.data.documents[index]
                                         .data['providerTitles']
-                                : '${snapshot.data.documents[index].data['patient'].split(" ")[0][0].toUpperCase()}${snapshot.data.documents[index].data['patient'].split(" ")[0].substring(1)} ${snapshot.data.documents[index].data['patient'].split(" ")[1][0].toUpperCase()}${snapshot.data.documents[index].data['patient'].split(" ")[1].substring(1)}',
+                                : '${model.historySnapshot.data.documents[index].data['patient'].split(" ")[0][0].toUpperCase()}${model.historySnapshot.data.documents[index].data['patient'].split(" ")[0].substring(1)} ${model.historySnapshot.data.documents[index].data['patient'].split(" ")[1][0].toUpperCase()}${model.historySnapshot.data.documents[index].data['patient'].split(" ")[1].substring(1)}',
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 1.1,
                                 color: Theme.of(context).primaryColor),
                           ),
-                          subtitle: snapshot
-                                      .data.documents[index].data['type'] !=
+                          subtitle: model.historySnapshot.data.documents[index]
+                                      .data['type'] !=
                                   'Lesion'
                               ? Text(DateFormat('dd MMM h:mm a')
                                       .format(timestamp)
                                       .toString() +
                                   '\n' +
-                                  snapshot.data.documents[index].data['type']
+                                  model.historySnapshot.data.documents[index]
+                                      .data['type']
                                       .toString())
                               : Text(DateFormat('dd MMM h:mm a')
                                       .format(timestamp)
@@ -80,22 +89,26 @@ Widget buildHistoryTiles(snapshot, List<Widget> _historyWidgetList,
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: <Widget>[
-                                snapshot.data.documents[index].data['state']
+                                model.historySnapshot.data.documents[index]
+                                            .data['state']
                                             .toString() ==
                                         'prescription paid'
                                     ? Icon(
                                         CustomIcons.MedicallIcons.ambulance,
                                         color: Colors.indigo,
                                       )
-                                    : snapshot.data.documents[index]
-                                                .data['state']
+                                    : model.historySnapshot.data
+                                                .documents[index].data['state']
                                                 .toString() ==
                                             'prescription waiting'
                                         ? Icon(
                                             CustomIcons.MedicallIcons.medkit,
                                             color: Colors.green,
                                           )
-                                        : snapshot.data.documents[index]
+                                        : model
+                                                    .historySnapshot
+                                                    .data
+                                                    .documents[index]
                                                     .data['state']
                                                     .toString() ==
                                                 'done'
@@ -103,7 +116,10 @@ Widget buildHistoryTiles(snapshot, List<Widget> _historyWidgetList,
                                                 Icons.assignment_turned_in,
                                                 color: Colors.green,
                                               )
-                                            : snapshot.data.documents[index]
+                                            : model
+                                                        .historySnapshot
+                                                        .data
+                                                        .documents[index]
                                                         .data['state']
                                                         .toString() ==
                                                     'in progress'
@@ -118,7 +134,8 @@ Widget buildHistoryTiles(snapshot, List<Widget> _historyWidgetList,
                                 Container(
                                   width: 80,
                                   child: Text(
-                                    snapshot.data.documents[index].data['state']
+                                    model.historySnapshot.data.documents[index]
+                                        .data['state']
                                         .toString(),
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
@@ -130,20 +147,28 @@ Widget buildHistoryTiles(snapshot, List<Widget> _historyWidgetList,
                             ),
                             onPressed: () {},
                           ),
-                          leading: _medicallUser.type == 'patient'
+                          leading: model.medicallUser.type ==
+                                  'patient'
                               ? CircleAvatar(
                                   radius: 20,
                                   backgroundColor: Colors.grey.withAlpha(100),
-                                  child: snapshot.data.documents[index].data
+                                  child: model.historySnapshot.data
+                                              .documents[index].data
                                               .containsKey(
                                                   'provider_profile') &&
-                                          snapshot.data.documents[index]
+                                          model
+                                                  .historySnapshot
+                                                  .data
+                                                  .documents[index]
                                                   .data['provider_profile'] !=
                                               null
                                       ? ClipOval(
-                                          child: _extImageProvider
+                                          child: model.extendedImageProvider
                                               .returnNetworkImage(
-                                                  snapshot.data.documents[index]
+                                                  model
+                                                      .historySnapshot
+                                                      .data
+                                                      .documents[index]
                                                       .data['provider_profile'],
                                                   width: 100.0,
                                                   height: 100.0,
@@ -158,19 +183,26 @@ Widget buildHistoryTiles(snapshot, List<Widget> _historyWidgetList,
                               : CircleAvatar(
                                   radius: 20,
                                   backgroundColor: Colors.grey.withAlpha(100),
-                                  child: snapshot.data.documents[index]
+                                  child: model
+                                                  .historySnapshot
+                                                  .data
+                                                  .documents[index]
                                                   .data['patient_profile'] !=
                                               null &&
-                                          snapshot
+                                          model
+                                                  .historySnapshot
                                                   .data
                                                   .documents[index]
                                                   .data['patient_profile']
                                                   .length >
                                               0
                                       ? ClipOval(
-                                          child: _extImageProvider
+                                          child: model.extendedImageProvider
                                               .returnNetworkImage(
-                                            snapshot.data.documents[index]
+                                            model
+                                                .historySnapshot
+                                                .data
+                                                .documents[index]
                                                 .data['patient_profile'],
                                             width: 100,
                                             height: 100,
@@ -187,3 +219,4 @@ Widget buildHistoryTiles(snapshot, List<Widget> _historyWidgetList,
                   return Column(children: _historyWidgetList.toList());
                 })));
   }
+}

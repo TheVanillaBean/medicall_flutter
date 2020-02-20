@@ -3,7 +3,6 @@ import 'package:Medicall/screens/History/index.dart';
 import 'package:Medicall/screens/Login/index.dart';
 import 'package:Medicall/screens/PhoneAuth/index.dart';
 import 'package:Medicall/secrets.dart';
-import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/stripe_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
@@ -20,8 +19,6 @@ class LandingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print("Connection State: ${userSnapshot.connectionState} ");
-    final auth = Provider.of<AuthBase>(context, listen: false);
-
     if (userSnapshot.connectionState == ConnectionState.active) {
       if (userSnapshot.hasData) {
         try {
@@ -45,7 +42,7 @@ class LandingPage extends StatelessWidget {
           }
 
           return userProvider.medicallUser != null
-              ? HistoryScreen()
+              ? HistoryScreen.create(context)
               : Scaffold(
                   body: Center(
                     child: CircularProgressIndicator(),
