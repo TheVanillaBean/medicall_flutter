@@ -1,9 +1,9 @@
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:Medicall/screens/History/buildActions.dart';
-import 'package:Medicall/screens/History/buildHistoryTiles.dart';
-import 'package:Medicall/screens/History/buildNewUserPlaceholder.dart';
+import 'package:Medicall/screens/History/historyTiles.dart';
 import 'package:Medicall/screens/History/history_state.dart';
+import 'package:Medicall/screens/History/newUserPlaceholder.dart';
+import 'package:Medicall/screens/History/trailingActions.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
