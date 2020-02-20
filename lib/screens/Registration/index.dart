@@ -1,6 +1,6 @@
-import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
 import 'package:Medicall/secrets.dart' as secrets;
 import 'package:Medicall/services/temp_user_provider.dart';
+import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -132,15 +132,20 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
           bool successfullySaveForm =
               _userRegKey.currentState.saveAndValidate();
-          if (successfullySaveForm) {
+          if (successfullySaveForm &&
+              _userRegKey.currentState.value['Terms and conditions'] &&
+              _userRegKey.currentState.value['accept_privacy_switch']) {
             updateUserWithFormData(tempUserProvider);
             Navigator.of(context).pushReplacementNamed("/photoID");
           } else {
-            PlatformAlertDialog(
-              title: 'Registration failed',
-              defaultActionText: "Okay",
-              content: "An error occured processing your information.",
-            ).show(context);
+            String msg = '';
+            if(!_userRegKey.currentState.value['Terms and conditions']){
+              msg = 'Please accept the "Terms & Conditions" to continue.';
+            }
+            if(!_userRegKey.currentState.value['accept_privacy_switch']){
+              msg = 'Please accept the "Privacy Policy" to continue.';
+            }
+            AppUtil().showFlushBar(msg, context);
           }
         }, // Switch tabs
 
@@ -344,12 +349,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 FormBuilderTextField(
                   attribute: "Email",
                   initialValue: medicallUser.email,
-                  readOnly: tempUserProvider.googleAuthModel != null ? true : false,
+                  readOnly:
+                      tempUserProvider.googleAuthModel != null ? true : false,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
                       labelText: 'Email',
                       fillColor: Color.fromRGBO(35, 179, 232, 0.1),
-                      filled: tempUserProvider.googleAuthModel != null ? false : true,
+                      filled: tempUserProvider.googleAuthModel != null
+                          ? false
+                          : true,
                       disabledBorder: InputBorder.none,
                       enabledBorder: InputBorder.none,
                       border: InputBorder.none),
@@ -429,7 +437,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     : Container(),
                 TypeAheadFormField(
                   hideOnEmpty: true,
-                  suggestionsBoxVerticalOffset: 5.0,
+                  suggestionsBoxVerticalOffset: 1.0,
                   hideOnError: true,
                   suggestionsBoxDecoration: SuggestionsBoxDecoration(
                     color: Colors.white,
