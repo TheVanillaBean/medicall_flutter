@@ -7,6 +7,7 @@ import 'package:Medicall/services/animation_provider.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 class SymptomsScreen extends StatelessWidget {
@@ -150,10 +151,10 @@ class EntryItem extends StatelessWidget {
                 ? Positioned.fill(
                     child: _animationProvider.returnAnimation(
                         tween: _animationProvider.returnMultiTrackTween([
-                          Colors.orangeAccent.withAlpha(100),
                           Colors.purpleAccent.withAlpha(50),
-                          Colors.purpleAccent.withAlpha(50),
-                          Colors.orangeAccent.withAlpha(100)
+                          Colors.blueAccent.withAlpha(50),
+                          Colors.blueAccent.withAlpha(50),
+                          Colors.purpleAccent.withAlpha(50)
                         ]),
                         margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
                         radius: BorderRadius.all(Radius.circular(10))))
@@ -224,40 +225,57 @@ class EntryItem extends StatelessWidget {
                               ? Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: <Widget>[
-                                    Container(
-                                        margin:
-                                            EdgeInsets.fromLTRB(0, 0, 60, 0),
-                                        width: 160,
-                                        decoration: BoxDecoration(
-                                          border: Border(
-                                              top: BorderSide(
-                                                  color: Colors.grey
-                                                      .withAlpha(100))),
-                                        ),
-                                        padding:
-                                            EdgeInsets.fromLTRB(0, 10, 0, 0),
-                                        child: Column(
-                                          children: <Widget>[
-                                            Text(
-                                              'Change in medical history?',
-                                              style: TextStyle(fontSize: 12),
+                                    medicallUser.hasMedicalHistory
+                                        ? Container(
+                                            margin: EdgeInsets.fromLTRB(
+                                                0, 0, 60, 0),
+                                            width: 160,
+                                            decoration: BoxDecoration(
+                                              border: Border(
+                                                  top: BorderSide(
+                                                      color: Colors.grey
+                                                          .withAlpha(100))),
                                             ),
-                                            Switch(
-                                              value: _newMedicalHistory
-                                                  .getnewMedicalHistory(),
-                                              onChanged: (value) {
-                                                _newMedicalHistory =
-                                                    _newMedicalHistory
-                                                        .setnewMedicalHistory(
-                                                            value);
-                                              },
-                                              activeTrackColor: Colors.white,
-                                              activeColor: Theme.of(context)
-                                                  .colorScheme
-                                                  .secondary,
+                                            padding: EdgeInsets.fromLTRB(
+                                                0, 10, 0, 0),
+                                            child: Column(
+                                              children: <Widget>[
+                                                Text(
+                                                  'Change in medical history?',
+                                                  style:
+                                                      TextStyle(fontSize: 12),
+                                                ),
+                                                Switch(
+                                                  value: _newMedicalHistory
+                                                      .getnewMedicalHistory(),
+                                                  onChanged: (value) {
+                                                    _newMedicalHistory =
+                                                        _newMedicalHistory
+                                                            .setnewMedicalHistory(
+                                                                value);
+                                                  },
+                                                  activeTrackColor:
+                                                      Colors.white,
+                                                  activeColor: Theme.of(context)
+                                                      .colorScheme
+                                                      .secondary,
+                                                ),
+                                              ],
+                                            ))
+                                        : Container(
+                                            width:
+                                                ScreenUtil.screenWidthDp / 1.8,
+                                            padding:
+                                                EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                            child: Text(
+                                              'You currently have no medical history on file, we will redirect you to your medical history before taking you to the ' +
+                                                  root.title +
+                                                  ' questions',
+                                              style: TextStyle(
+                                                  fontSize: 10,
+                                                  color: Colors.black45),
                                             ),
-                                          ],
-                                        )),
+                                          ),
                                     RaisedButton(
                                       color: Theme.of(context)
                                           .colorScheme
