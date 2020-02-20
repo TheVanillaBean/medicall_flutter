@@ -68,17 +68,15 @@ class SignInStateModel with EmailAndPasswordValidators, ChangeNotifier {
           googleAuthModel.providers.length > 0) {
         if (googleAuthModel.providers.contains("google.com")) {
           await auth.signInWithGoogle(credential: googleAuthModel.credential);
-          updateWith(isLoading: false);
         } else {
           AppUtil().showFlushBar(
               "Account already linked with different sign in method, please use your email and password creditials.",
               context);
-              updateWith(isLoading: false);
+          updateWith(isLoading: false);
         }
       } else {
         updateWith(googleAuthModel: googleAuthModel, isLoading: false);
       }
-      
     } catch (e) {
       updateWith(isLoading: false);
       rethrow;
