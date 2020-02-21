@@ -46,59 +46,62 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
     _pageController.dispose();
   }
 
-  Future<void> _onIntroEnd() async {
+  Future<void> _onIntroEnd(context, questionsLength) async {
     //await setConsult(context);
-
-    if (_currentQuestions == 'Medical History') {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          // return object of type Dialog
-          return AlertDialog(
-            title: Text("Medical History Complete"),
-            content: Text(
-                "Thank you for filling out your account medical history, this is now saved to your account, it will only need to be updated if you have changes in your medical history."),
-            actions: <Widget>[
-              // usually buttons at the bottom of the dialog
-              FlatButton(
-                color: Theme.of(context).primaryColor,
-                child: Text(
-                    "Continue to " + _db.newConsult.consultType == 'Lesion'
-                        ? 'Spot'
-                        : "Continue to " +
-                            _db.newConsult.consultType +
-                            ' treatment'),
-                onPressed: () async {
-                  medicallUser.hasMedicalHistory = true;
-                  await _db.addUserMedicalHistory(medicallUser);
-                  Navigator.of(context).pop();
-                  Navigator.of(context)
-                      .pushReplacementNamed('/questionsScreen');
-                },
-              ),
-            ],
-          );
-        },
-      );
-    } else {
-      _db.newConsult.consultType = _db.newConsult.consultType;
-      //switch for if provider has already been selected
-      if (_db.newConsult == null || _db.newConsult.provider == null) {
-        Navigator.of(context).pushNamed(
-          '/selectProvider',
+    if (_checkQuestion(questionsLength, context, questionsLength)) {
+      if (_currentQuestions == 'Medical History') {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            // return object of type Dialog
+            return AlertDialog(
+              title: Text("Medical History Complete"),
+              content: Text(
+                  "Thank you for filling out your account medical history, this is now saved to your account, it will only need to be updated if you have changes in your medical history."),
+              actions: <Widget>[
+                // usually buttons at the bottom of the dialog
+                FlatButton(
+                  color: Theme.of(context).primaryColor,
+                  child: Text(
+                      "Continue to " + _db.newConsult.consultType == 'Lesion'
+                          ? 'Spot'
+                          : "Continue to " +
+                              _db.newConsult.consultType +
+                              ' treatment'),
+                  onPressed: () async {
+                    medicallUser.hasMedicalHistory = true;
+                    await _db.addUserMedicalHistory(medicallUser);
+                    Navigator.of(context).pop();
+                    Navigator.of(context)
+                        .pushReplacementNamed('/questionsScreen');
+                  },
+                ),
+              ],
+            );
+          },
         );
       } else {
-        Navigator.of(context).pushNamed(
-          '/consultReview',
-        );
+        _db.newConsult.consultType = _db.newConsult.consultType;
+        //switch for if provider has already been selected
+        if (_db.newConsult == null || _db.newConsult.provider == null) {
+          Navigator.of(context).pushNamed(
+            '/selectProvider',
+          );
+        } else {
+          Navigator.of(context).pushNamed(
+            '/consultReview',
+          );
+        }
       }
     }
   }
 
-  void _checkQuestion(index, context) {
-    setState(() {
-      _currentPage = index;
-    });
+  bool _checkQuestion(index, context, questionsLength) {
+    if (index != questionsLength) {
+      setState(() {
+        _currentPage = index;
+      });
+    }
     var listKeys = [];
     var currentKeys = [];
     for (var i = 0; i < _combinedList.length; i++) {
@@ -109,8 +112,12 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
       }
     }
     var formAnswer = listKeys[index != 0 ? index - 1 : index]['answer'];
-    var currentState = currentKeys[index].currentState;
-
+    var currentState;
+    if (index != questionsLength) {
+      currentState = currentKeys[index].currentState;
+    } else {
+      currentState = currentKeys[index - 1].currentState;
+    }
     if (formAnswer != null &&
         formAnswer.length > 0 &&
         formAnswer[0] != null &&
@@ -133,13 +140,17 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
         duration: Duration(milliseconds: 200),
         curve: Curves.linear,
       );
+      return true;
     } else {
-      _pageController.animateToPage(
-        index != 0 ? index - 1 : index,
-        duration: Duration(milliseconds: 200),
-        curve: Curves.linear,
-      );
+      if (index != questionsLength) {
+        _pageController.animateToPage(
+          index != 0 ? index - 1 : index,
+          duration: Duration(milliseconds: 200),
+          curve: Curves.linear,
+        );
+      }
       AppUtil().showFlushBar('Please fill out the required question.', context);
+      return false;
     }
   }
 
@@ -231,13 +242,13 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
           ? IntroductionScreen(
               pages: pageViewList,
               pageController: _pageController,
-              onDone: () => _onIntroEnd(),
+              onDone: () => _onIntroEnd(context, pageViewList.length),
               //onSkip: () => _onIntroEnd(context), // You can override onSkip callback
               showSkipButton: true,
               curve: Curves.easeInOutSine,
               skipFlex: 0,
               nextFlex: 0,
-              onChange: (i) => _checkQuestion(i, context),
+              onChange: (i) => _checkQuestion(i, context, pageViewList.length),
 
               skip: IconButton(
                 icon: Icon(
