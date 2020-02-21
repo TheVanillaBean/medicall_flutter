@@ -224,7 +224,8 @@ class EntryItem extends StatelessWidget {
                               ? Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: <Widget>[
-                                    medicallUser.hasMedicalHistory
+                                    db.userMedicalRecord != null &&
+                                            db.userMedicalRecord.data != null
                                         ? Container(
                                             margin: EdgeInsets.fromLTRB(
                                                 0, 0, 60, 0),

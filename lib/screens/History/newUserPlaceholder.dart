@@ -279,59 +279,60 @@ class NewUserPlaceHolder extends StatelessWidget {
               ],
             ),
       Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
+          FlatButton(
+            onPressed: () async {
+              Navigator.of(context).pushReplacementNamed('/symptoms');
+            },
+            color: Colors.green,
+            child: Text(
+              'Get Care',
+              style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+            ),
+          ),
           SizedBox(
             width: 15,
           ),
-          Column(
-            children: <Widget>[
-              FlatButton(
-                onPressed: () async {
-                  Navigator.of(context).pushReplacementNamed('/symptoms');
-                },
-                color: Colors.green,
-                child: Text(
-                  'Get Care',
-                  style:
-                      TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-                ),
-              ),
-              Text(
-                'select this if you\n need care now',
-                style: TextStyle(
-                  fontSize: 10,
-                ),
-              ),
-            ],
-          ),
-          Text('  - or -  ',
+          FlatButton(
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => DoctorSearch()),
+              );
+            },
+            color: Colors.blueAccent,
+            child: Text(
+              'Find Doctor',
+              style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+            ),
+          )
+        ],
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          Container(
+            width: 160,
+            child: Text(
+              'I have a specific issue and am open\nto which doctor I connect with',
               style: TextStyle(
-                fontSize: 12,
-                color: Theme.of(context).primaryColor,
-              )),
-          Column(
-            children: <Widget>[
-              FlatButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => DoctorSearch()),
-                  );
-                },
-                color: Colors.blueAccent,
-                child: Text(
-                  'Find Doctor',
-                  style:
-                      TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-                ),
+                fontSize: 10,
               ),
-              Text(
-                'select this if you\nknow your doctor.',
-                style: TextStyle(
-                  fontSize: 10,
-                ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          SizedBox(
+            width: 15,
+          ),
+          Container(
+            width: 165,
+            child: Text(
+              'select this if you have a specific\ndoctor you want to connect with',
+              style: TextStyle(
+                fontSize: 10,
               ),
-            ],
+              textAlign: TextAlign.center,
+            ),
           ),
         ],
       )
