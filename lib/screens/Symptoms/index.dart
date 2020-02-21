@@ -7,7 +7,6 @@ import 'package:Medicall/services/animation_provider.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 class SymptomsScreen extends StatelessWidget {
@@ -263,19 +262,19 @@ class EntryItem extends StatelessWidget {
                                               ],
                                             ))
                                         : Container(
-                                            width:
-                                                ScreenUtil.screenWidthDp / 1.8,
-                                            padding:
-                                                EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                            child: Text(
-                                              'You currently have no medical history on file, we will redirect you to your medical history before taking you to the ' +
-                                                  root.title +
-                                                  ' questions',
-                                              style: TextStyle(
-                                                  fontSize: 10,
-                                                  color: Colors.black45),
+                                            // width:
+                                            //     ScreenUtil.screenWidthDp / 1.8,
+                                            // padding:
+                                            //     EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                            // child: Text(
+                                            //   'You currently have no medical history on file, we will redirect you to your medical history before taking you to the ' +
+                                            //       root.title +
+                                            //       ' questions',
+                                            //   style: TextStyle(
+                                            //       fontSize: 10,
+                                            //       color: Colors.black45),
+                                            // ),
                                             ),
-                                          ),
                                     RaisedButton(
                                       color: Theme.of(context)
                                           .colorScheme

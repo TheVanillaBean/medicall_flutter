@@ -233,28 +233,30 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
               pageController: _pageController,
               onDone: () => _onIntroEnd(),
               //onSkip: () => _onIntroEnd(context), // You can override onSkip callback
-              showSkipButton: false,
+              showSkipButton: true,
               curve: Curves.easeInOutSine,
               skipFlex: 0,
               nextFlex: 0,
               onChange: (i) => _checkQuestion(i, context),
-              skip: Text(
-                'Skip',
-                style: TextStyle(color: Theme.of(context).primaryColor),
-              ),
-              next: Container(
-                padding: EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                      color: Theme.of(context).colorScheme.secondary,
-                      width: 2.0,
-                      style: BorderStyle.solid),
-                ),
-                child: Icon(
-                  Icons.arrow_forward_ios,
+
+              skip: IconButton(
+                icon: Icon(
+                  Icons.arrow_back_ios,
                   color: Theme.of(context).colorScheme.secondary,
                 ),
+                onPressed: () {
+                  if (_currentPage == 0) {
+                    _extImageProvider.clearImageMemory();
+                    Navigator.of(context).pop(false);
+                  } else {
+                    _pageController.previousPage(
+                        curve: Curves.ease, duration: Duration(seconds: 1));
+                  }
+                },
+              ),
+              next: Icon(
+                Icons.arrow_forward_ios,
+                color: Theme.of(context).colorScheme.secondary,
               ),
               done: Text(
                 'Finish',
