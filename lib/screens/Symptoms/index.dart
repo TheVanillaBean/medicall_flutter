@@ -14,6 +14,7 @@ class SymptomsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Database db = Provider.of<Database>(context);
     void _showDialog() {
       showDialog(
         context: context,
@@ -78,11 +79,23 @@ class SymptomsScreen extends StatelessWidget {
       //       foregroundColor: Theme.of(context).colorScheme.onPrimary);
       // }),
       //Content of tabs
-      body: ListView.builder(
-        itemBuilder: (BuildContext context, int index) =>
-            EntryItem(data[index], _showDialog, context),
-        itemCount: data.length,
-      ),
+      body: FutureBuilder(
+          future: db.getUserMedicalHistory(medicallUser),
+          builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              if (db.userMedicalRecord != null &&
+                  db.userMedicalRecord.data != null) {
+                medicallUser.hasMedicalHistory = true;
+              }
+              return ListView.builder(
+                itemBuilder: (BuildContext context, int index) =>
+                    EntryItem(data[index], _showDialog, context),
+                itemCount: data.length,
+              );
+            } else {
+              return Container();
+            }
+          }),
     );
   }
 }
@@ -224,8 +237,7 @@ class EntryItem extends StatelessWidget {
                               ? Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: <Widget>[
-                                    db.userMedicalRecord != null &&
-                                            db.userMedicalRecord.data != null
+                                    medicallUser.hasMedicalHistory
                                         ? Container(
                                             margin: EdgeInsets.fromLTRB(
                                                 0, 0, 60, 0),
@@ -295,14 +307,8 @@ class EntryItem extends StatelessWidget {
                                             root.title == 'Spot'
                                                 ? 'Lesion'
                                                 : root.title;
-                                        await db.getUserMedicalHistory(
-                                            medicallUser);
                                         await db
                                             .getConsultQuestions(medicallUser);
-                                        if (db.userMedicalRecord != null &&
-                                            db.userMedicalRecord.data != null) {
-                                          medicallUser.hasMedicalHistory = true;
-                                        }
                                         if (!medicallUser.hasMedicalHistory ||
                                             _newMedicalHistory
                                                 .getnewMedicalHistory()) {
