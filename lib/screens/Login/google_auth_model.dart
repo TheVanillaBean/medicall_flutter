@@ -13,12 +13,4 @@ class GoogleAuthModel {
     @required this.email,
     @required this.providers,
   });
-
-  String get firstName {
-    return displayName != null ? displayName.split(' ')[0] : "";
-  }
-
-  String get lastName {
-    return displayName != null ? displayName.split(' ')[1] : "";
-  }
 }

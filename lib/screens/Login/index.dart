@@ -79,8 +79,6 @@ class _LoginScreenState extends State<LoginPage> {
         model.tempUserProvider.updateWith(
           email: model.googleAuthModel.email,
           displayName: model.googleAuthModel.displayName,
-          firstName: model.googleAuthModel.firstName,
-          lastName: model.googleAuthModel.lastName,
           googleAuthModel: model.googleAuthModel,
         );
         _navigateToRegistrationScreen(context);

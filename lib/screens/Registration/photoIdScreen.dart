@@ -225,9 +225,9 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
                             ),
                           ),
                     Padding(
-                      padding: EdgeInsets.fromLTRB(20, 30, 20, 10),
+                      padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
                       child: Text(
-                        "Also need a government issued id, tap the icon below.",
+                        "Also need a government issued id, tap the icon below. This is required by law, all your information will be encrypted and never distributed for any reason.",
                         style: TextStyle(fontSize: 12, color: Colors.black87),
                       ),
                     ),
