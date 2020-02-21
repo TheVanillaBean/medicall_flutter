@@ -5,7 +5,6 @@ import 'package:Medicall/screens/Account/index.dart';
 import 'package:Medicall/screens/Account/paymentDetail.dart';
 import 'package:Medicall/screens/ConfirmConsult/index.dart';
 import 'package:Medicall/screens/Consent/index.dart';
-import 'package:Medicall/screens/History/Detail/history_detail_state.dart';
 import 'package:Medicall/screens/History/Detail/index.dart';
 import 'package:Medicall/screens/History/index.dart';
 import 'package:Medicall/screens/LandingPage/auth_widget_builder.dart';
@@ -92,9 +91,6 @@ class MedicallApp extends StatelessWidget {
         ),
         ChangeNotifierProvider<MedicalHistoryState>(
           create: (_) => MedicalHistoryState(),
-        ),
-        ChangeNotifierProvider<DetailedHistoryState>(
-          create: (_) => DetailedHistoryState(),
         ),
       ],
       child: _buildApp(),
@@ -184,7 +180,7 @@ class MedicallApp extends StatelessWidget {
                 );
               case '/historyDetail':
                 return MyCustomRoute(
-                  builder: (_) => HistoryDetailScreen(),
+                  builder: (_) => HistoryDetailScreen.create(context),
                   settings: settings,
                 );
               case '/account':

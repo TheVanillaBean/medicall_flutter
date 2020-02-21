@@ -79,6 +79,7 @@ class HistoryScreen extends StatelessWidget {
             if (snapshot.data.documents.length == 0) {
               return NewUserPlaceHolder(medicallUser: model.medicallUser);
             }
+            model.historySnapshot = snapshot;
             return HistoryTiles(model: model);
         }
       },

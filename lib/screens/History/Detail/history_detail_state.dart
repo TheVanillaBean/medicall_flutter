@@ -1,8 +1,12 @@
 import 'package:Medicall/models/consult_status_modal.dart';
+import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/services/database.dart';
 import 'package:flutter/material.dart';
 
 class DetailedHistoryState with ChangeNotifier {
-  DetailedHistoryState();
+  MedicallUser medicallUser;
+  Database db;
+  DetailedHistoryState({@required this.medicallUser, @required this.db});
   String documentId;
   TabController controller;
   double currentImageIndex = 0;
@@ -71,8 +75,6 @@ class DetailedHistoryState with ChangeNotifier {
     this.isConsultOpen = isConsultOpen ?? this.isConsultOpen;
     notifyListeners();
   }
-
-
 
   setConsultStatus(consultSnapshot, val, uid, updateConsultStatus) async {
     // Causes the app to rebuild with the new _selectedChoice.

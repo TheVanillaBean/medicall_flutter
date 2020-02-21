@@ -8,34 +8,48 @@ import 'package:provider/provider.dart';
 import 'buildDetailTab.dart';
 
 class HistoryDetailScreen extends StatefulWidget {
-  HistoryDetailScreen({Key key}) : super(key: key);
+  final DetailedHistoryState model;
 
+  static Widget create(BuildContext context) {
+    final Database _db = Provider.of<Database>(context);
+    final MedicallUser _medicallUser =
+        Provider.of<UserProvider>(context).medicallUser;
+
+    return ChangeNotifierProvider<DetailedHistoryState>(
+      create: (context) => DetailedHistoryState(
+        db: _db,
+        medicallUser: _medicallUser,
+      ),
+      child: Consumer<DetailedHistoryState>(
+        builder: (_, model, __) => HistoryDetailScreen(
+          model: model,
+        ),
+      ),
+    );
+  }
+
+  HistoryDetailScreen({@required this.model});
+  @override
   _HistoryDetailScreenState createState() => _HistoryDetailScreenState();
 }
 
 class _HistoryDetailScreenState extends State<HistoryDetailScreen>
     with SingleTickerProviderStateMixin {
-  Database db;
-  MedicallUser medicallUser;
-  DetailedHistoryState detailedHistoryState;
-
   @override
   void dispose() {
     super.dispose();
-    detailedHistoryState.getTabController.index = 0;
+    widget.model.getTabController.index = 0;
     //detailedHistoryState.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     // The app's "state".
-    db = Provider.of<Database>(context);
-    medicallUser = Provider.of<UserProvider>(context).medicallUser;
-    detailedHistoryState = Provider.of<DetailedHistoryState>(context);
-    detailedHistoryState.setControllerTabs(this);
+
+    widget.model.setControllerTabs(this);
     return FutureBuilder(
-      future:
-          db.getConsultDetail(detailedHistoryState), // a Future<String> or null
+      future: widget.model.db
+          .getConsultDetail(widget.model), // a Future<String> or null
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         return returnBody();
       },
@@ -44,26 +58,30 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
 
   Widget returnBody() {
     //detailedHistoryState.setIsDone(true);
-    detailedHistoryState.setChoices();
+    widget.model.setChoices();
     //detailedHistoryState.getTabController.index = 0;
     return Scaffold(
       appBar: AppBar(
         actions: <Widget>[
-          medicallUser.type == 'provider'
+          widget.model.medicallUser.type == 'provider'
               ? PopupMenuButton<Choice>(
                   onSelected: (val) {
-                    detailedHistoryState.setConsultStatus(db.consultSnapshot,
-                        val, medicallUser.uid, db.updateConsultStatus);
-                    if (db.consultSnapshot.data['state'] == 'done') {
-                      detailedHistoryState.updateWith(isDone: true);
+                    widget.model.setConsultStatus(
+                        widget.model.db.consultSnapshot,
+                        val,
+                        widget.model.medicallUser.uid,
+                        widget.model.db.updateConsultStatus);
+                    if (widget.model.db.consultSnapshot.data['state'] ==
+                        'done') {
+                      widget.model.updateWith(isDone: true);
                     } else {
-                      detailedHistoryState.updateWith(isDone: false);
+                      widget.model.updateWith(isDone: false);
                     }
-                    detailedHistoryState.setChoices();
+                    widget.model.setChoices();
                   },
-                  initialValue: detailedHistoryState.getConsultStatus,
+                  initialValue: widget.model.getConsultStatus,
                   itemBuilder: (BuildContext context) {
-                    return detailedHistoryState.getChoices.map((Choice choice) {
+                    return widget.model.getChoices.map((Choice choice) {
                       return PopupMenuItem<Choice>(
                         value: choice,
                         child: Container(
@@ -85,16 +103,17 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            db.consultSnapshot != null &&
-                    db.consultSnapshot.data['provider'] != null
+            widget.model.db.consultSnapshot != null &&
+                    widget.model.db.consultSnapshot.data['provider'] != null
                 ? Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        medicallUser.type == 'patient'
-                            ? '${db.consultSnapshot.data['provider'].split(" ")[0][0].toUpperCase()}${db.consultSnapshot.data['provider'].split(" ")[0].substring(1)} ${db.consultSnapshot.data['provider'].split(" ")[1][0].toUpperCase()}${db.consultSnapshot.data['provider'].split(" ")[1].substring(1)} ' +
-                                db.consultSnapshot.data['providerTitles']
-                            : '${db.consultSnapshot.data['patient'].split(" ")[0][0].toUpperCase()}${db.consultSnapshot.data['patient'].split(" ")[0].substring(1)} ${db.consultSnapshot.data['patient'].split(" ")[1][0].toUpperCase()}${db.consultSnapshot.data['patient'].split(" ")[1].substring(1)} ',
+                        widget.model.medicallUser.type == 'patient'
+                            ? '${widget.model.db.consultSnapshot.data['provider'].split(" ")[0][0].toUpperCase()}${widget.model.db.consultSnapshot.data['provider'].split(" ")[0].substring(1)} ${widget.model.db.consultSnapshot.data['provider'].split(" ")[1][0].toUpperCase()}${widget.model.db.consultSnapshot.data['provider'].split(" ")[1].substring(1)} ' +
+                                widget.model.db.consultSnapshot
+                                    .data['providerTitles']
+                            : '${widget.model.db.consultSnapshot.data['patient'].split(" ")[0][0].toUpperCase()}${widget.model.db.consultSnapshot.data['patient'].split(" ")[0].substring(1)} ${widget.model.db.consultSnapshot.data['patient'].split(" ")[1][0].toUpperCase()}${widget.model.db.consultSnapshot.data['patient'].split(" ")[1].substring(1)} ',
                         style: TextStyle(
                           fontSize:
                               Theme.of(context).platform == TargetPlatform.iOS
@@ -103,10 +122,11 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                         ),
                       ),
                       Text(
-                        db.consultSnapshot.data['type'] == 'Lesion'
+                        widget.model.db.consultSnapshot.data['type'] == 'Lesion'
                             ? 'Spot'
-                            : db.consultSnapshot.data['type'] != 'Lesion'
-                                ? db.consultSnapshot.data['type']
+                            : widget.model.db.consultSnapshot.data['type'] !=
+                                    'Lesion'
+                                ? widget.model.db.consultSnapshot.data['type']
                                 : '',
                         style: TextStyle(
                           fontSize:
@@ -124,7 +144,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
           indicatorColor: Theme.of(context).primaryColor,
           indicatorWeight: 3,
           labelStyle: TextStyle(fontSize: 12),
-          tabs: medicallUser.type == 'patient'
+          tabs: widget.model.medicallUser.type == 'patient'
               ? <Tab>[
                   Tab(
                     // set icon to the tab
@@ -160,7 +180,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                   ),
                 ],
           // setup the controller
-          controller: detailedHistoryState.getTabController,
+          controller: widget.model.getTabController,
         ),
         leading: BackButton(
           onPressed: () {
@@ -169,8 +189,9 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
         ),
         elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
       ),
-      body: db.consultSnapshot != null
-          ? medicallUser.type == 'patient' && db.consultSnapshot != null
+      body: widget.model.db.consultSnapshot != null
+          ? widget.model.medicallUser.type == 'patient' &&
+                  widget.model.db.consultSnapshot != null
               ? TabBarView(
                   // Add tabs as widgets
                   children: <Widget>[
@@ -188,7 +209,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                     )
                   ],
                   // set the controller
-                  controller: detailedHistoryState.getTabController,
+                  controller: widget.model.getTabController,
                 )
               : TabBarView(
                   children: <Widget>[
@@ -205,7 +226,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                       indx: 2,
                     )
                   ],
-                  controller: detailedHistoryState.getTabController,
+                  controller: widget.model.getTabController,
                 )
           : Container(),
     );
