@@ -16,7 +16,7 @@ class TempUserProvider {
     return _medicallUser;
   }
 
-  void setMedicallUser(MedicallUser user){
+  void setMedicallUser(MedicallUser user) {
     _medicallUser = user;
   }
 
@@ -32,7 +32,7 @@ class TempUserProvider {
     return _googleAuthModel;
   }
 
-  void setGoogleAuthModel(GoogleAuthModel model){
+  void setGoogleAuthModel(GoogleAuthModel model) {
     _googleAuthModel = model;
   }
 
@@ -90,27 +90,24 @@ class TempUserProvider {
   }
 
   Future<bool> saveRegistrationImages() async {
-    if (this.medicallUser.uid.length > 0) {
-      var assets = this.images;
-      var allMediaList = [];
-      for (var i = 0; i < assets.length; i++) {
-        ByteData byteData = await assets[i].getByteData();
-        List<int> imageData = byteData.buffer.asUint8List();
-        StorageReference ref = FirebaseStorage.instance
-            .ref()
-            .child("profile/" + medicallUser.uid + '/' + assets[i].name);
-        StorageUploadTask uploadTask = ref.putData(imageData);
+    var assets = this.images;
+    var allMediaList = [];
+    for (var i = 0; i < assets.length; i++) {
+      ByteData byteData = await assets[i].getByteData();
+      List<int> imageData = byteData.buffer.asUint8List();
+      StorageReference ref = FirebaseStorage.instance
+          .ref()
+          .child("profile/" + medicallUser.uid + '/' + assets[i].name);
+      StorageUploadTask uploadTask = ref.putData(imageData);
 
-        allMediaList.add(
-          await (await uploadTask.onComplete).ref.getDownloadURL(),
-        );
-      }
-
-      medicallUser.profilePic = allMediaList[0];
-      medicallUser.govId = allMediaList[1];
-      return true;
+      allMediaList.add(
+        await (await uploadTask.onComplete).ref.getDownloadURL(),
+      );
     }
-    return false;
+
+    medicallUser.profilePic = allMediaList[0];
+    medicallUser.govId = allMediaList[1];
+    return true;
   }
 
   Future<void> addNewUserToFirestore() async {
