@@ -13,10 +13,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class HistoryScreen extends StatelessWidget {
   final HistoryState model;
+  final bool showAppBar;
+  final String query;
 
-  const HistoryScreen({Key key, @required this.model}) : super(key: key);
+  const HistoryScreen(
+      {Key key, @required this.model, this.showAppBar, this.query})
+      : super(key: key);
 
-  static Widget create(BuildContext context) {
+  static Widget create(BuildContext context, bool showAppBar, String query) {
     MedicallUser _medicallUser =
         Provider.of<UserProvider>(context).medicallUser;
     Database _db = Provider.of<Database>(context);
@@ -30,6 +34,8 @@ class HistoryScreen extends StatelessWidget {
       child: Consumer<HistoryState>(
         builder: (_, model, __) => HistoryScreen(
           model: model,
+          showAppBar: showAppBar,
+          query: query,
         ),
       ),
     );
@@ -41,7 +47,7 @@ class HistoryScreen extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       drawer: DrawerMenu(),
-      appBar: model.getShowAppBar()
+      appBar: this.showAppBar
           ? AppBar(
               centerTitle: true,
               leading: Builder(
@@ -65,7 +71,7 @@ class HistoryScreen extends StatelessWidget {
   StreamBuilder _buildBody() {
     return StreamBuilder(
       stream: model.getUserHistorySnapshot(
-          model.medicallUser, model.searchInput, model.sortBy),
+          model.medicallUser, this.query, model.sortBy),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
@@ -80,7 +86,10 @@ class HistoryScreen extends StatelessWidget {
               return NewUserPlaceHolder(medicallUser: model.medicallUser);
             }
             model.historySnapshot = snapshot;
-            return HistoryTiles(model: model);
+            return HistoryTiles(
+              model: model,
+              searchInput: this.query,
+            );
         }
       },
     );

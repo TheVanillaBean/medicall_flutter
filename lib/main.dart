@@ -175,7 +175,7 @@ class MedicallApp extends StatelessWidget {
                 );
               case '/history':
                 return MyCustomRoute(
-                  builder: (_) => HistoryScreen.create(context),
+                  builder: (_) => HistoryScreen.create(context, true, ''),
                   settings: settings,
                 );
               case '/historyDetail':

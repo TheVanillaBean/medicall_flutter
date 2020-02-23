@@ -3,7 +3,6 @@ import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/History/index.dart';
-import 'package:Medicall/screens/History/history_state.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
@@ -161,12 +160,11 @@ class CustomSearchDelegate extends SearchDelegate {
   String get searchFieldLabel => currTab;
   @override
   List<Widget> buildActions(BuildContext context) {
-    var _userHistoryState = Provider.of<HistoryState>(context, listen: false);
     return [
       IconButton(
         icon: Icon(Icons.clear),
         onPressed: () {
-          _userHistoryState.searchInput = '';
+          //_userHistoryState.searchInput = '';
           query = '';
         },
       ),
@@ -175,12 +173,12 @@ class CustomSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildLeading(BuildContext context) {
-    var _userHistoryState = Provider.of<HistoryState>(context, listen: false);
+    //var _userHistoryState = Provider.of<HistoryState>(context, listen: false);
     return IconButton(
       icon: Icon(Icons.arrow_back),
       onPressed: () {
-        _userHistoryState.setShowAppBar(true);
-        _userHistoryState.searchInput = '';
+        // _userHistoryState.setShowAppBar(true);
+        // _userHistoryState.searchInput = '';
         close(context, null);
       },
     );
@@ -206,11 +204,11 @@ class CustomSearchDelegate extends SearchDelegate {
     //This is the equivalent of submitting the search term to whatever search service you are using
     //InheritedBlocs.of(context).searchBloc.searchTerm.add(query);
     var _db = Provider.of<Database>(context, listen: false);
-    var _userHistoryState = Provider.of<HistoryState>(context, listen: false);
-    _userHistoryState.searchInput = query;
+    // var _userHistoryState = Provider.of<HistoryState>(context, listen: false);
+    //_userHistoryState.searchInput = query;
     if (currTab == 'Search History') {
-      _userHistoryState.setShowAppBar(false);
-      return HistoryScreen.create(context);
+      //_userHistoryState.setShowAppBar(false);
+      return HistoryScreen.create(context, false, query);
     } else {
       return Scaffold(
         resizeToAvoidBottomPadding: false,
@@ -318,20 +316,6 @@ class CustomSearchDelegate extends SearchDelegate {
         ),
       );
     }
-  }
-
-  @override
-  ThemeData appBarTheme(BuildContext context) {
-    assert(context != null);
-    final ThemeData theme = Theme.of(context).copyWith(
-        brightness: Brightness.light,
-        textTheme: TextTheme(title: TextStyle(color: Colors.white)),
-        inputDecorationTheme: InputDecorationTheme(
-            labelStyle: TextStyle(color: Colors.white),
-            helperStyle: TextStyle(color: Colors.white),
-            hintStyle: TextStyle(color: Colors.white)));
-    assert(theme != null);
-    return theme;
   }
 
   @override

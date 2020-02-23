@@ -19,18 +19,7 @@ class HistoryState with ChangeNotifier {
     userHistory = snapshot;
     notifyListeners();
   }
-
-  bool showAppBar = true;
-  String searchInput = '';
   int sortBy = 1;
-
-  void setShowAppBar(bool val) {
-    showAppBar = val;
-  }
-
-  bool getShowAppBar() {
-    return showAppBar;
-  }
 
   getUserHistorySnapshot(
       MedicallUser medicallUser, String searchQuery, int sortBy) {
@@ -101,30 +90,30 @@ class HistoryState with ChangeNotifier {
     var sortedUserHistory = [];
     if (snapshot.data.documents != null) {
       for (var i = 0; i < snapshot.data.documents.length; i++) {
-        if (!sortedUserHistory.contains(snapshot.data.documents[i])) {
-          if (searchInput.length > 0) {
-            if (snapshot.data.documents[i].data['patient']
-                    .toLowerCase()
-                    .contains(
-                      searchInput.toLowerCase(),
-                    ) ||
-                snapshot.data.documents[i].data['provider']
-                    .toLowerCase()
-                    .contains(
-                      searchInput.toLowerCase(),
-                    ) ||
-                snapshot.data.documents[i].data['state'].toLowerCase().contains(
-                      searchInput.toLowerCase(),
-                    ) ||
-                snapshot.data.documents[i].data['type'].toLowerCase().contains(
-                      searchInput.toLowerCase(),
-                    )) {
-              sortedUserHistory.add(snapshot.data.documents[i]);
-            }
-          } else {
-            sortedUserHistory.add(snapshot.data.documents[i]);
-          }
-        }
+        // if (!sortedUserHistory.contains(snapshot.data.documents[i])) {
+        //   if (searchInput.length > 0) {
+        //     if (snapshot.data.documents[i].data['patient']
+        //             .toLowerCase()
+        //             .contains(
+        //               searchInput.toLowerCase(),
+        //             ) ||
+        //         snapshot.data.documents[i].data['provider']
+        //             .toLowerCase()
+        //             .contains(
+        //               searchInput.toLowerCase(),
+        //             ) ||
+        //         snapshot.data.documents[i].data['state'].toLowerCase().contains(
+        //               searchInput.toLowerCase(),
+        //             ) ||
+        //         snapshot.data.documents[i].data['type'].toLowerCase().contains(
+        //               searchInput.toLowerCase(),
+        //             )) {
+        //       sortedUserHistory.add(snapshot.data.documents[i]);
+        //     }
+        //   } else {
+        //     sortedUserHistory.add(snapshot.data.documents[i]);
+        //   }
+        // }
       }
     }
     return sortedUserHistory;

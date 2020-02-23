@@ -42,7 +42,7 @@ class LandingPage extends StatelessWidget {
           }
 
           return userProvider.medicallUser != null
-              ? HistoryScreen.create(context)
+              ? HistoryScreen.create(context, true, '')
               : Scaffold(
                   body: Center(
                     child: CircularProgressIndicator(),
