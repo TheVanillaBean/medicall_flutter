@@ -34,10 +34,6 @@ class HistoryTiles extends StatelessWidget {
                             model.historySnapshot.data.documents[index];
                         model.db.consultQuestions = model.historySnapshot.data
                             .documents[index].data['screening_questions'];
-                        model.db.consultSnapshot.data['details'] = [
-                          model.db.consultSnapshot['screening_questions'],
-                          model.db.consultSnapshot['media']
-                        ];
                         Navigator.of(context)
                             .pushNamed('/historyDetail', arguments: {
                           'isRouted': false,

@@ -47,6 +47,10 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
     var ind = widget.indx;
     var consultSnapshot = db.consultSnapshot.data;
     List<String> mediaList = [];
+    consultSnapshot['details'] = [
+      consultSnapshot['screening_questions'],
+      consultSnapshot['media']
+    ];
     for (var i = 0; i < consultSnapshot['media'].length; i++) {
       mediaList.add(consultSnapshot['media'][i]);
     }

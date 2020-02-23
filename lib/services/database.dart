@@ -39,7 +39,6 @@ abstract class Database {
   String consultChatImageUrl;
   DocumentSnapshot consultSnapshot;
   DocumentReference consultRef;
-  String currConsultId;
   Map<String, dynamic> consultStateData;
   bool isDone;
   MedicallUser patientDetail;
@@ -57,8 +56,6 @@ class FirestoreDatabase implements Database {
   DocumentSnapshot consultSnapshot;
   @override
   DocumentReference consultRef;
-  @override
-  String currConsultId;
   @override
   Map<String, dynamic> consultStateData;
   @override
@@ -83,10 +80,10 @@ class FirestoreDatabase implements Database {
   FirestoreDatabase();
   @override
   Future getConsultDetail(DetailedHistoryState detailedHistoryState) async {
-    if (consultSnapshot == null && currConsultId != null ||
-        currConsultId != consultSnapshot.documentID) {
+    if (consultSnapshot == null && consultSnapshot.documentID != null &&
+        consultSnapshot.documentID != consultSnapshot.documentID) {
       consultRef =
-          Firestore.instance.collection('consults').document(currConsultId);
+          Firestore.instance.collection('consults').document(consultSnapshot.documentID);
       await consultRef.get().then((datasnapshot) async {
         if (datasnapshot.data != null) {
           consultSnapshot = datasnapshot;
@@ -114,7 +111,7 @@ class FirestoreDatabase implements Database {
         "consults/" +
             _medicallUser.uid +
             '/' +
-            currConsultId +
+            consultSnapshot.documentID +
             '/' +
             path.basename(chatMedia.path));
 
@@ -186,7 +183,7 @@ class FirestoreDatabase implements Database {
   Future<void> setPrescriptionPayment(state, shipTo, shippingAddress) {
     return Firestore.instance
         .collection("consults")
-        .document(currConsultId)
+        .document(consultSnapshot.documentID)
         .updateData({
       'state': 'prescription paid',
       'pay_date': DateTime.now(),
@@ -283,15 +280,15 @@ class FirestoreDatabase implements Database {
   Stream getConsultChat() {
     return Firestore.instance
         .collection('chat')
-        .document(currConsultId)
+        .document(consultSnapshot.documentID)
         .collection('messages')
         .snapshots();
   }
 
-  createNewConsultChatMsg(message) {
+  createNewConsultChatMsg(ChatMessage message) {
     var documentReference = Firestore.instance
         .collection('chat')
-        .document(currConsultId)
+        .document(consultSnapshot.documentID)
         .collection('messages')
         .document(DateTime.now().millisecondsSinceEpoch.toString());
 
@@ -309,7 +306,7 @@ class FirestoreDatabase implements Database {
 
   Future<void> updatePrescription(consultFormKey) async {
     final DocumentReference documentReference =
-        Firestore.instance.collection('consults').document(currConsultId);
+        Firestore.instance.collection('consults').document(consultSnapshot.documentID);
     Map<String, dynamic> data = <String, dynamic>{
       "medication_name":
           consultFormKey.currentState.fields['medName'].currentState.value,
@@ -345,7 +342,7 @@ class FirestoreDatabase implements Database {
   }
 
   updateConsultStatus(Choice choice, String uid) {
-    if (consultSnapshot.documentID == currConsultId &&
+    if (consultSnapshot.documentID == consultSnapshot.documentID &&
         consultSnapshot.data['provider_id'] == uid) {
       if (choice.title == 'Done') {
         consultStateData = {'state': 'done'};
@@ -394,7 +391,7 @@ class FirestoreDatabase implements Database {
   Stream getUserHistoryStream(medicallUser) {
     return Firestore.instance
         .collection('consults')
-        .document(currConsultId)
+        .document(consultSnapshot.documentID)
         .snapshots();
   }
 
@@ -451,7 +448,7 @@ class FirestoreDatabase implements Database {
     content,
   ) {
     final DocumentReference documentReference =
-        Firestore.instance.collection('consults').document(currConsultId);
+        Firestore.instance.collection('consults').document(consultSnapshot.documentID);
     Map<String, dynamic> data = {
       'chat': FieldValue.arrayUnion([
         {
