@@ -5,8 +5,6 @@ import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:google_maps_webservice/places.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart' as LocationManager;
 import 'package:provider/provider.dart';
 
 //GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: secrets.kGoogleApiKey);
@@ -19,8 +17,6 @@ class SelectProviderScreen extends StatefulWidget {
 
 class _SelectProviderScreenState extends State<SelectProviderScreen> {
   //GoogleMapController mapController;
-  Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
-  MarkerId selectedMarker;
   //int _markerIdCounter = 1;
   List<PlacesSearchResult> places = [];
   List<String> addresses = [];
@@ -28,7 +24,6 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
   bool isLoading = true;
   var selectedProvider = '';
   var providerTitles = '';
-  LatLng bounds = LatLng(41.850033, -87.6500523);
   String errorMessage;
   Database db;
 
@@ -248,20 +243,20 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
     //await setConsult();
   }
 
-  Future<LatLng> getUserLocation() async {
-    LocationManager.LocationData currentLocation;
-    final location = LocationManager.Location();
-    try {
-      currentLocation = await location.getLocation();
-      final lat = currentLocation.latitude;
-      final lng = currentLocation.longitude;
-      final center = LatLng(lat, lng);
-      return center;
-    } on Exception {
-      currentLocation = null;
-      return null;
-    }
-  }
+  // Future<LatLng> getUserLocation() async {
+  //   LocationManager.LocationData currentLocation;
+  //   final location = LocationManager.Location();
+  //   try {
+  //     currentLocation = await location.getLocation();
+  //     final lat = currentLocation.latitude;
+  //     final lng = currentLocation.longitude;
+  //     final center = LatLng(lat, lng);
+  //     return center;
+  //   } on Exception {
+  //     currentLocation = null;
+  //     return null;
+  //   }
+  // }
 
   // void getNearbyPlaces(LatLng center) async {
   //   var placesList = [];

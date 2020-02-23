@@ -113,7 +113,6 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
   Future<void> loadGovIdImage() async {
     List<Asset> resultList = List<Asset>();
     String error = '';
-
     try {
       resultList = await widget.model.extImageProvider.pickImages(
           widget.model.govIdImage,
