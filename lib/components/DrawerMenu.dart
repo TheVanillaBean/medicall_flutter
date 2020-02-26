@@ -47,7 +47,7 @@ class DrawerMenu extends StatelessWidget {
           medicallUser.type == 'provider'
               ? Container()
               : ListTile(
-                  contentPadding: EdgeInsets.fromLTRB(16, 10, 0, 10),
+                  contentPadding: EdgeInsets.fromLTRB(16, 25, 0, 10),
                   leading: Icon(
                     Icons.local_hospital,
                     color: Theme.of(context).primaryColor,
@@ -86,7 +86,7 @@ class DrawerMenu extends StatelessWidget {
                 Navigator.of(context).pushReplacementNamed('/history');
               }),
           ListTile(
-              contentPadding: EdgeInsets.fromLTRB(16, 10, 0, 10),
+              contentPadding: EdgeInsets.fromLTRB(16, 10, 0, 25),
               leading: Icon(
                 Icons.account_circle,
                 color: Theme.of(context).primaryColor,
@@ -107,7 +107,7 @@ class DrawerMenu extends StatelessWidget {
             color: Colors.grey[400],
           ),
           ListTile(
-            contentPadding: EdgeInsets.fromLTRB(16, 10, 0, 10),
+            contentPadding: EdgeInsets.fromLTRB(16, 20, 0, 10),
             leading: Icon(
               Icons.exit_to_app,
               color: Theme.of(context).colorScheme.error,
