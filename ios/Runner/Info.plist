@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
-	<string>en</string>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
 	<string>Medicall</string>
 	<key>CFBundleExecutable</key>
@@ -50,7 +50,7 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Example usage description</string>
+	<string>This app needs access to the camera to upload profile data and to complete consultations.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>This app needs access to location when open and in the background.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
@@ -58,16 +58,18 @@
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This app needs access to location in the background.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Example usage description</string>
+	<string>This app needs access to the photo library to upload profile data and to complete consultations.</string>
 	<key>UIBackgroundModes</key>
 	<array>
-		<string>fetch</string>
+		<string>processing</string>
 		<string>remote-notification</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
+	<key>UIStatusBarHidden</key>
+	<false/>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
