@@ -1,4 +1,3 @@
-import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/History/historyTiles.dart';
 import 'package:Medicall/screens/History/history_state.dart';
@@ -45,25 +44,6 @@ class HistoryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     ScreenUtil.init(context);
     return Scaffold(
-      resizeToAvoidBottomPadding: false,
-      drawer: DrawerMenu(),
-      appBar: this.showAppBar
-          ? AppBar(
-              centerTitle: true,
-              leading: Builder(
-                builder: (BuildContext context) {
-                  return IconButton(
-                    onPressed: () {
-                      Scaffold.of(context).openDrawer();
-                    },
-                    icon: Icon(Icons.home),
-                  );
-                },
-              ),
-              title: Text('History'),
-              actions: buildActions(context, model),
-            )
-          : null,
       body: _buildBody(),
     );
   }
@@ -86,9 +66,27 @@ class HistoryScreen extends StatelessWidget {
               return NewUserPlaceHolder(medicallUser: model.medicallUser);
             }
             model.historySnapshot = snapshot;
-            return HistoryTiles(
-              model: model,
-              searchInput: this.query,
+            return SingleChildScrollView(
+              child: Stack(
+                children: <Widget>[
+                  HistoryTiles(
+                    model: model,
+                    searchInput: this.query,
+                  ),
+                  Positioned(
+                    right: 0,
+                    top: ScreenUtil.screenHeightDp / 2,
+                    child: Container(
+                      width: 50,
+                      color: Colors.white.withAlpha(200),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: buildActions(context, model),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             );
         }
       },

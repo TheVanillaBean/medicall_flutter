@@ -1,5 +1,5 @@
+import 'package:Medicall/components/heartBeatPage.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:Medicall/screens/History/index.dart';
 import 'package:Medicall/screens/Login/index.dart';
 import 'package:Medicall/screens/PhoneAuth/index.dart';
 import 'package:Medicall/secrets.dart';
@@ -15,7 +15,7 @@ import 'package:provider/provider.dart';
 class LandingPage extends StatelessWidget {
   const LandingPage({Key key, @required this.userSnapshot}) : super(key: key);
   final AsyncSnapshot<MedicallUser> userSnapshot;
-
+  
   @override
   Widget build(BuildContext context) {
     print("Connection State: ${userSnapshot.connectionState} ");
@@ -42,7 +42,9 @@ class LandingPage extends StatelessWidget {
           }
 
           return userProvider.medicallUser != null
-              ? HistoryScreen.create(context, true, '')
+              ? HeartBeatPage(
+                  to: 1,
+                )
               : Scaffold(
                   body: Center(
                     child: CircularProgressIndicator(),

@@ -1,12 +1,13 @@
-import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/screens/History/doctorSearch.dart';
 import 'package:Medicall/screens/Questions/questionsScreen.dart';
 import 'package:Medicall/screens/Symptoms/medical_history_state.dart';
 import 'package:Medicall/services/animation_provider.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 class SymptomsScreen extends StatelessWidget {
@@ -15,6 +16,8 @@ class SymptomsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Database db = Provider.of<Database>(context);
+    MedicallUser medicallUser = Provider.of<UserProvider>(context).medicallUser;
+    ScreenUtil.init(context);
     void _showDialog() {
       showDialog(
         context: context,
@@ -43,28 +46,6 @@ class SymptomsScreen extends StatelessWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
-              icon: Icon(Icons.home),
-            );
-          },
-        ),
-        centerTitle: true,
-        title: Text(
-          'What can a doctor help you with?',
-          style: TextStyle(
-            fontSize:
-                Theme.of(context).platform == TargetPlatform.iOS ? 17.0 : 20.0,
-          ),
-        ),
-        elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
-      ),
-      drawer: DrawerMenu(),
       // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       // floatingActionButton: Builder(builder: (BuildContext context) {
       //   return FloatingActionButton(
@@ -87,10 +68,54 @@ class SymptomsScreen extends StatelessWidget {
                   db.userMedicalRecord.data != null) {
                 medicallUser.hasMedicalHistory = true;
               }
-              return ListView.builder(
-                itemBuilder: (BuildContext context, int index) =>
-                    EntryItem(data[index], _showDialog, context),
-                itemCount: data.length,
+              return Column(
+                children: <Widget>[
+                  Expanded(
+                    child: ListView.builder(
+                      itemBuilder: (BuildContext context, int index) =>
+                          EntryItem(data[index], _showDialog, context),
+                      itemCount: data.length,
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Stack(
+                        children: <Widget>[
+                          Container(
+                              height: 150,
+                              width: ScreenUtil.screenWidthDp,
+                              color: Colors.transparent,
+                              child: Column(
+                                children: <Widget>[
+                                  SizedBox(height: 10),
+                                  Container(
+                                    child: Text(
+                                        'Do you already know which doctor you need to see?'),
+                                  ),
+                                  SizedBox(height: 5),
+                                  FlatButton(
+                                    onPressed: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                DoctorSearch()),
+                                      );
+                                    },
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
+                                    child: Text(
+                                      'Find my doctor',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  )
+                                ],
+                              )),
+                        ],
+                      )
+                    ],
+                  ),
+                ],
               );
             } else {
               return Container();
@@ -142,7 +167,8 @@ class EntryItem extends StatelessWidget {
     MyAnimationProvider _animationProvider =
         Provider.of<MyAnimationProvider>(context);
     Database db = Provider.of<Database>(context);
-    MedicallUser medicallUser = Provider.of<UserProvider>(context).medicallUser;
+    UserProvider userProvider = Provider.of<UserProvider>(context);
+    MedicallUser medicallUser = userProvider.medicallUser;
     MedicalHistoryState _newMedicalHistory =
         Provider.of<MedicalHistoryState>(context);
     //_newMedicalHistory.setnewMedicalHistory(false);
@@ -367,7 +393,7 @@ class EntryItem extends StatelessWidget {
                       ),
                     ),
                   ),
-                )))
+                ))),
       ],
     );
   }

@@ -13,11 +13,12 @@ class HistoryTiles extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-        child: ConstrainedBox(
-            constraints: BoxConstraints(
-                maxHeight: ScreenUtil.screenHeight,
-                minHeight: ScreenUtil.screenHeight),
+        child: Column(
+      children: <Widget>[
+        Container(
+            height: ScreenUtil.screenHeightDp,
             child: ListView.builder(
+                padding: EdgeInsets.all(0),
                 itemCount: model.historySnapshot.data.documents.length,
                 itemBuilder: (context, index) {
                   List<Widget> _historyWidgetList = [];
@@ -244,6 +245,8 @@ class HistoryTiles extends StatelessWidget {
                         )));
                   }
                   return Column(children: _historyWidgetList.toList());
-                })));
+                }))
+      ],
+    ));
   }
 }

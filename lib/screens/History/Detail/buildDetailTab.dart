@@ -8,6 +8,7 @@ import 'package:Medicall/util/app_util.dart';
 import 'package:Medicall/util/build_medical_note.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 class BuildDetailTab extends StatefulWidget {
@@ -57,35 +58,72 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
     var units = ['Capsule', 'Ointment', 'Cream', 'Solution', 'Foam'];
     if (key == 'details') {
       return Scaffold(
-        bottomNavigationBar: BottomNavigationBar(
-          onTap: _handleDetailsTabSelection,
-          elevation: 20.0,
-          backgroundColor: Theme.of(context).colorScheme.secondaryVariant,
-          unselectedItemColor:
-              Theme.of(context).colorScheme.onSecondary.withAlpha(150),
-          selectedItemColor: Theme.of(context).colorScheme.onPrimary,
-          currentIndex:
-              currentDetailsIndex, // this will be set when a new tab is tapped
-          items: medicallUser.type == 'patient'
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          automaticallyImplyLeading: false,
+          actions: medicallUser.type == 'patient'
               ? [
-                  BottomNavigationBarItem(
-                    icon: Container(),
-                    title: Text('Questions'),
+                  Container(
+                    width: ScreenUtil.screenWidthDp / 2,
+                    child: FlatButton(
+                      color: currentDetailsIndex == 0
+                          ? Colors.grey[50]
+                          : Colors.grey[250],
+                      onPressed: () {
+                        _handleDetailsTabSelection(0);
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            'Questions',
+                            style: TextStyle(
+                                fontWeight: currentDetailsIndex == 0
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                                color: currentDetailsIndex == 0
+                                    ? Theme.of(context).colorScheme.secondary
+                                    : Colors.black38),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                  BottomNavigationBarItem(
-                    icon: Container(),
-                    title: Text('Pictures'),
-                  )
+                  Container(
+                    width: ScreenUtil.screenWidthDp / 2,
+                    child: FlatButton(
+                        color: currentDetailsIndex == 1
+                            ? Colors.grey[50]
+                            : Colors.white,
+                        onPressed: () {
+                          _handleDetailsTabSelection(1);
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text('Your Images'),
+                            // Icon(Icons.photo_library,
+                            //     color: currentDetailsIndex == 1
+                            //         ? Theme.of(context).colorScheme.secondary
+                            //         : Colors.black38),
+                          ],
+                        )),
+                  ),
                 ]
               : [
-                  BottomNavigationBarItem(
-                    icon: Container(),
-                    title: Text('Medical Note'),
+                  FlatButton(
+                    onPressed: () {
+                      _handleDetailsTabSelection(0);
+                    },
+                    child: Text('Medical Note'),
                   ),
-                  BottomNavigationBarItem(
-                    icon: Container(),
-                    title: Text('Pictures'),
-                  )
+                  FlatButton(
+                    onPressed: () {
+                      _handleDetailsTabSelection(1);
+                    },
+                    child: Text('Pictures'),
+                  ),
                 ],
         ),
         body: FadeInPlace(
