@@ -1,9 +1,6 @@
 import 'package:Medicall/components/heartBeatPage.dart';
 import 'package:flutter/material.dart';
 
-// HeartBeat Painter
-import 'heartBeatPainter.dart';
-
 class HeartBeatAppBar extends StatelessWidget {
   final int from, to;
 
@@ -42,12 +39,9 @@ class _HeartBeatAppBarContentState extends State<HeartBeatAppBarContent>
   AnimationController _animationController;
   Animation<double> _activatingOpacity;
   Animation<double> _deactivatingOpacity;
-  Animation<double> _heartBeatAnimation;
 
   int _activated;
   int _nextActivated;
-
-  List<double> _positions = [0, 0, 0];
 
   Opacity fadableIcon(final Widget icon, final int index) {
     // Will animate the opacity from 1.0 to 0.5
@@ -75,9 +69,8 @@ class _HeartBeatAppBarContentState extends State<HeartBeatAppBarContent>
     if (!_animationController.isAnimating && activated != _activated) {
       // Calculates  animation duration depending on how distant the 2 icons are
       // from each other
-      int animationDuration = 1000 + ((activated - _activated).abs()) * 100;
 
-      _animationController.duration = Duration(milliseconds: animationDuration);
+      _animationController.duration = Duration(milliseconds: 1000);
 
       setState(() => _nextActivated = activated);
 
@@ -119,11 +112,6 @@ class _HeartBeatAppBarContentState extends State<HeartBeatAppBarContent>
   void initState() {
     super.initState();
     print(widget.device.width);
-    _positions = [
-      widget.device.width * 0.175,
-      widget.device.width * 0.43,
-      widget.device.width * 0.79,
-    ];
 
     _activated = widget.from;
     _nextActivated = 0;
@@ -135,14 +123,14 @@ class _HeartBeatAppBarContentState extends State<HeartBeatAppBarContent>
     _deactivatingOpacity = Tween<double>(begin: 1.0, end: 0.5).animate(
       CurvedAnimation(
         parent: _animationController,
-        curve: Curves.easeOut,
+        curve: Curves.linear,
       ),
     );
 
     _activatingOpacity = Tween<double>(begin: 0.5, end: 1.0).animate(
       CurvedAnimation(
         parent: _animationController,
-        curve: Curves.easeOut,
+        curve: Curves.linear,
       ),
     );
 
@@ -166,7 +154,6 @@ class _HeartBeatAppBarContentState extends State<HeartBeatAppBarContent>
 
   @override
   Widget build(BuildContext context) {
-    final Size device = MediaQuery.of(context).size;
     return Row(
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.spaceAround,

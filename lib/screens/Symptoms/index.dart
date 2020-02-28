@@ -83,7 +83,7 @@ class SymptomsScreen extends StatelessWidget {
                       Stack(
                         children: <Widget>[
                           Container(
-                              height: 150,
+                              height: 100,
                               width: ScreenUtil.screenWidthDp,
                               color: Colors.transparent,
                               child: Column(

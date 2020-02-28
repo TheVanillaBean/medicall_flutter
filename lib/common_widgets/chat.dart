@@ -8,6 +8,7 @@ import 'package:Medicall/services/user_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:dash_chat/dash_chat.dart';
 import 'package:provider/provider.dart';
@@ -127,8 +128,7 @@ class _ChatState extends State<Chat> {
                   inverted: false,
                   onSend: onSend,
                   user: user,
-                  height: MediaQuery.of(context).size.height -
-                      Scaffold.of(context).appBarMaxHeight,
+                  height: ScreenUtil.screenHeightDp - 240,
                   inputDecoration: InputDecoration(
                     hintText: "Add message here...",
                   ),
@@ -301,7 +301,10 @@ class DetailScreen extends StatelessWidget {
                 .returnNetworkImage(img, mode: ExtendedImageMode.gesture,
                     initGestureConfigHandler: (state) {
               return GestureConfig(
-                  inPageView: true, initialScale: 1.0, cacheGesture: false,);
+                inPageView: true,
+                initialScale: 1.0,
+                cacheGesture: false,
+              );
             }),
           ),
         ),

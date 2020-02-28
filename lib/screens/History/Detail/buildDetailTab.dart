@@ -58,209 +58,242 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
     var units = ['Capsule', 'Ointment', 'Cream', 'Solution', 'Foam'];
     if (key == 'details') {
       return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          automaticallyImplyLeading: false,
-          actions: medicallUser.type == 'patient'
-              ? [
-                  Container(
-                    width: ScreenUtil.screenWidthDp / 2,
-                    child: FlatButton(
-                      color: currentDetailsIndex == 0
-                          ? Colors.grey[50]
-                          : Colors.grey[250],
-                      onPressed: () {
-                        _handleDetailsTabSelection(0);
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            'Questions',
-                            style: TextStyle(
-                                fontWeight: currentDetailsIndex == 0
-                                    ? FontWeight.bold
-                                    : FontWeight.normal,
-                                color: currentDetailsIndex == 0
-                                    ? Theme.of(context).colorScheme.secondary
-                                    : Colors.black38),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: ScreenUtil.screenWidthDp / 2,
-                    child: FlatButton(
-                        color: currentDetailsIndex == 1
-                            ? Colors.grey[50]
-                            : Colors.white,
-                        onPressed: () {
-                          _handleDetailsTabSelection(1);
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Text('Your Images'),
-                            // Icon(Icons.photo_library,
-                            //     color: currentDetailsIndex == 1
-                            //         ? Theme.of(context).colorScheme.secondary
-                            //         : Colors.black38),
-                          ],
-                        )),
-                  ),
-                ]
-              : [
-                  FlatButton(
-                    onPressed: () {
-                      _handleDetailsTabSelection(0);
-                    },
-                    child: Text('Medical Note'),
-                  ),
-                  FlatButton(
-                    onPressed: () {
-                      _handleDetailsTabSelection(1);
-                    },
-                    child: Text('Pictures'),
-                  ),
-                ],
-        ),
+        resizeToAvoidBottomInset: false,
+        resizeToAvoidBottomPadding: false,
         body: FadeInPlace(
-          3,
-          Container(
-            child: currentDetailsIndex == 1
-                ? CarouselWithIndicator(imgList: mediaList, from: 'detailTab')
-                : ListView.builder(
-                    itemCount: consultSnapshot['details'] != null
-                        ? consultSnapshot['details'].length
-                        : 3,
-                    itemBuilder: (context, i) {
-                      List<Widget> finalArray = [];
-                      if (medicallUser.type == 'patient') {
-                        if (currentDetailsIndex == i) {
-                          for (var y = 0;
-                              y < consultSnapshot['details'][i].length;
-                              y++) {
-                            if (i != 2) {
-                              if (consultSnapshot['details'][i][y]['visible'] &&
-                                  consultSnapshot['details'][i][y]['options']
-                                      is String) {
-                                finalArray.add(ListTile(
-                                  title: Text(
-                                    consultSnapshot['details'][i][y]
-                                        ['question'],
-                                    style: TextStyle(fontSize: 14.0),
-                                  ),
-                                  subtitle: Text(
-                                    consultSnapshot['details'][i][y]['answer'],
-                                    style: TextStyle(
-                                        height: 1.2,
-                                        fontWeight: FontWeight.bold,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .secondary),
-                                  ),
-                                ));
-                              } else {
-                                finalArray.add(
-                                    consultSnapshot['details'][i][y]['visible']
-                                        ? ListTile(
-                                            title: Text(
-                                              consultSnapshot['details'][i][y]
-                                                  ['question'],
-                                              style: TextStyle(fontSize: 14.0),
-                                            ),
-                                            subtitle: Text(
-                                              consultSnapshot['details'][i][y]
-                                                      ['answer']
-                                                  .toString()
-                                                  .replaceAll(']', '')
-                                                  .replaceAll('[', '')
-                                                  .replaceAll('null', '')
-                                                  .replaceFirst(', ', ''),
-                                              style: TextStyle(
-                                                  height: 1.2,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Theme.of(context)
+            3,
+            Column(
+              children: <Widget>[
+                Container(
+                    height: 40,
+                    color: Theme.of(context).primaryColor,
+                    width: ScreenUtil.screenWidthDp,
+                    child: Row(
+                        children: medicallUser.type == 'patient'
+                            ? [
+                                Container(
+                                  width: ScreenUtil.screenWidthDp / 2,
+                                  child: FlatButton(
+                                    color: currentDetailsIndex == 0
+                                        ? Colors.grey[50]
+                                        : Colors.black12,
+                                    onPressed: () {
+                                      _handleDetailsTabSelection(0);
+                                    },
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        Text(
+                                          'Questions',
+                                          style: TextStyle(
+                                              fontWeight:
+                                                  currentDetailsIndex == 0
+                                                      ? FontWeight.bold
+                                                      : FontWeight.normal,
+                                              color: currentDetailsIndex == 0
+                                                  ? Theme.of(context)
                                                       .colorScheme
-                                                      .secondary),
-                                            ),
-                                          )
-                                        : SizedBox());
+                                                      .secondary
+                                                  : Colors.black38),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  width: ScreenUtil.screenWidthDp / 2,
+                                  child: FlatButton(
+                                      color: currentDetailsIndex == 1
+                                          ? Colors.grey[50]
+                                          : Colors.black12,
+                                      onPressed: () {
+                                        _handleDetailsTabSelection(1);
+                                      },
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          Text(
+                                            'Your Images',
+                                            style: TextStyle(
+                                                fontWeight:
+                                                    currentDetailsIndex == 1
+                                                        ? FontWeight.bold
+                                                        : FontWeight.normal,
+                                                color: currentDetailsIndex == 1
+                                                    ? Theme.of(context)
+                                                        .colorScheme
+                                                        .secondary
+                                                    : Colors.black38),
+                                          ),
+                                          // Icon(Icons.photo_library,
+                                          //     color: currentDetailsIndex == 1
+                                          //         ? Theme.of(context).colorScheme.secondary
+                                          //         : Colors.black38),
+                                        ],
+                                      )),
+                                ),
+                              ]
+                            : [
+                                FlatButton(
+                                  onPressed: () {
+                                    _handleDetailsTabSelection(0);
+                                  },
+                                  child: Text('Medical Note'),
+                                ),
+                                FlatButton(
+                                  onPressed: () {
+                                    _handleDetailsTabSelection(1);
+                                  },
+                                  child: Text('Pictures'),
+                                ),
+                              ])),
+                Container(
+                  height: ScreenUtil.screenHeightDp - 80,
+                  child: currentDetailsIndex == 1
+                      ? Container(
+                          padding: EdgeInsets.fromLTRB(0, 3, 0, 0),
+                          child: CarouselWithIndicator(
+                              imgList: mediaList, from: 'detailTab'))
+                      : ListView.builder(
+                          itemCount: consultSnapshot['details'] != null
+                              ? consultSnapshot['details'].length
+                              : 3,
+                          itemBuilder: (context, i) {
+                            List<Widget> finalArray = [];
+                            if (medicallUser.type == 'patient') {
+                              if (currentDetailsIndex == i) {
+                                for (var y = 0;
+                                    y < consultSnapshot['details'][i].length;
+                                    y++) {
+                                  if (i != 2) {
+                                    if (consultSnapshot['details'][i][y]
+                                            ['visible'] &&
+                                        consultSnapshot['details'][i][y]
+                                            ['options'] is String) {
+                                      finalArray.add(ListTile(
+                                        title: Text(
+                                          consultSnapshot['details'][i][y]
+                                              ['question'],
+                                          style: TextStyle(fontSize: 14.0),
+                                        ),
+                                        subtitle: Text(
+                                          consultSnapshot['details'][i][y]
+                                              ['answer'],
+                                          style: TextStyle(
+                                              height: 1.2,
+                                              fontWeight: FontWeight.bold,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .secondary),
+                                        ),
+                                      ));
+                                    } else {
+                                      finalArray.add(consultSnapshot['details']
+                                              [i][y]['visible']
+                                          ? ListTile(
+                                              title: Text(
+                                                consultSnapshot['details'][i][y]
+                                                    ['question'],
+                                                style:
+                                                    TextStyle(fontSize: 14.0),
+                                              ),
+                                              subtitle: Text(
+                                                consultSnapshot['details'][i][y]
+                                                        ['answer']
+                                                    .toString()
+                                                    .replaceAll(']', '')
+                                                    .replaceAll('[', '')
+                                                    .replaceAll('null', '')
+                                                    .replaceFirst(', ', ''),
+                                                style: TextStyle(
+                                                    height: 1.2,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .secondary),
+                                              ),
+                                            )
+                                          : SizedBox());
+                                    }
+                                  } else {
+                                    if (ind == i && y == 0 && i == 2) {
+                                      if (currentDetailsIndex == 2) {
+                                        //print(consultSnapshot['details'][i]);
+                                        List<String> urlImgs = [
+                                          ...consultSnapshot['details'][i]
+                                        ];
+                                        //print(consultSnapshot['details'][i]);
+                                        finalArray.add(CarouselWithIndicator(
+                                            imgList: urlImgs,
+                                            from: 'detailTab'));
+                                      }
+                                    }
+                                  }
+                                }
                               }
                             } else {
-                              if (ind == i && y == 0 && i == 2) {
-                                if (currentDetailsIndex == 2) {
-                                  //print(consultSnapshot['details'][i]);
+                              if (i == 0 &&
+                                  currentDetailsIndex == 0 &&
+                                  ind == 0) {
+                                finalArray.add(FutureBuilder(
+                                  future: db.getPatientDetail(medicallUser),
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot<void> snapshot) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.done) {
+                                      return ListTile(
+                                        title: Text(
+                                          buildMedicalNote(
+                                              consultSnapshot,
+                                              db.patientDetail,
+                                              db.userMedicalRecord.data),
+                                          style: TextStyle(fontSize: 14.0),
+                                        ),
+                                      );
+                                    }
+                                    return Container();
+                                  },
+                                ));
+                              }
+
+                              for (var y = 0;
+                                  y < consultSnapshot['details'][i].length;
+                                  y++) {
+                                if (currentDetailsIndex == 1 &&
+                                    !addedQuestions) {
+                                  addedQuestions = true;
+                                }
+                                if (i == 2 &&
+                                    currentDetailsIndex == 1 &&
+                                    !addedImages) {
                                   List<String> urlImgs = [
                                     ...consultSnapshot['details'][i]
                                   ];
                                   //print(consultSnapshot['details'][i]);
-                                  finalArray.add(CarouselWithIndicator(
-                                      imgList: urlImgs, from: 'detailTab'));
+                                  if (y == 0) {
+                                    finalArray.add(CarouselWithIndicator(
+                                        imgList: urlImgs, from: 'detailTab'));
+                                  }
+
+                                  //addedImages = true;
                                 }
                               }
                             }
-                          }
-                        }
-                      } else {
-                        if (i == 0 && currentDetailsIndex == 0 && ind == 0) {
-                          finalArray.add(FutureBuilder(
-                            future: db.getPatientDetail(medicallUser),
-                            builder: (BuildContext context,
-                                AsyncSnapshot<void> snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.done) {
-                                return ListTile(
-                                  title: Text(
-                                    buildMedicalNote(
-                                        consultSnapshot,
-                                        db.patientDetail,
-                                        db.userMedicalRecord.data),
-                                    style: TextStyle(fontSize: 14.0),
-                                  ),
-                                );
-                              }
-                              return Container();
-                            },
-                          ));
-                        }
 
-                        for (var y = 0;
-                            y < consultSnapshot['details'][i].length;
-                            y++) {
-                          if (currentDetailsIndex == 1 && !addedQuestions) {
-                            addedQuestions = true;
-                          }
-                          if (i == 2 &&
-                              currentDetailsIndex == 1 &&
-                              !addedImages) {
-                            List<String> urlImgs = [
-                              ...consultSnapshot['details'][i]
-                            ];
-                            //print(consultSnapshot['details'][i]);
-                            if (y == 0) {
-                              finalArray.add(CarouselWithIndicator(
-                                  imgList: urlImgs, from: 'detailTab'));
-                            }
-
-                            //addedImages = true;
-                          }
-                        }
-                      }
-
-                      return FadeInPlace(
-                        1.0,
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: finalArray,
-                        ),
-                      );
-                    }),
-          ),
-        ),
+                            return FadeInPlace(
+                              1.0,
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: finalArray,
+                              ),
+                            );
+                          }),
+                ),
+              ],
+            )),
       );
     }
 

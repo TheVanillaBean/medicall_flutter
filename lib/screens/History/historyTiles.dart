@@ -64,13 +64,7 @@ class HistoryTiles extends StatelessWidget {
                           });
                         },
                         child: Container(
-                          decoration: BoxDecoration(
-                              border: Border(
-                                  bottom: BorderSide(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondary
-                                          .withAlpha(70)))),
+                          decoration: BoxDecoration(color: Colors.black.withAlpha(7)),
                           child: ListTile(
                             dense: true,
                             isThreeLine: true,

@@ -69,20 +69,16 @@ class HistoryScreen extends StatelessWidget {
             return SingleChildScrollView(
               child: Stack(
                 children: <Widget>[
-                  HistoryTiles(
-                    model: model,
-                    searchInput: this.query,
+                  Padding(
+                    padding: const EdgeInsets.only(top: 49),
+                    child: HistoryTiles(
+                      model: model,
+                      searchInput: this.query,
+                    ),
                   ),
-                  Positioned(
-                    right: 0,
-                    top: ScreenUtil.screenHeightDp / 2,
-                    child: Container(
-                      width: 50,
-                      color: Colors.white.withAlpha(200),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: buildActions(context, model),
-                      ),
+                  Container(
+                    child: Row(
+                      children: buildActions(context, model),
                     ),
                   ),
                 ],
