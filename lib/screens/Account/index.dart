@@ -36,6 +36,7 @@ class _AccountScreenState extends State<AccountScreen> {
       //Content of tabs
       body: Column(
         children: <Widget>[
+          SizedBox(height: 40),
           Padding(
             padding: const EdgeInsets.all(15.0),
             child: Column(

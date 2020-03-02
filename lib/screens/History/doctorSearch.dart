@@ -118,15 +118,12 @@ class DoctorSearch extends StatelessWidget {
                               ),
                               offset: Offset.fromDirection(0.0, -20.0),
                               onSelected: (val) {
-                                providerTitles =
-                                    userDocuments[i].data['titles'];
-                                selectedProvider =
-                                    userDocuments[i].data['name'];
-                                _consult.provider = selectedProvider;
-                                _consult.providerProfilePic =
+                                _db.newConsult.provider = userDocuments[i].data['name'];
+                                _db.newConsult.providerTitles = userDocuments[i].data['titles'];
+                                _db.newConsult.providerId = userDocuments[i].data['provider_id'];
+                                _db.newConsult.providerProfilePic =
                                     userDocuments[i].data['profile_pic'];
-                                setConsult(_consult, selectedProvider,
-                                    providerTitles, providerProfilePic);
+
                                 Navigator.of(context).pushNamed('/symptoms');
                               },
                             ),
@@ -328,10 +325,10 @@ class CustomSearchDelegate extends SearchDelegate {
 
 setConsult(
     _consult, selectedProvider, providerTitles, providerProfilePic) async {
-  SharedPreferences _thisConsult = await SharedPreferences.getInstance();
-  _consult.provider = selectedProvider;
-  _consult.providerTitles = providerTitles;
-  _consult.providerProfilePic = providerProfilePic;
-  String currentConsultString = jsonEncode(_consult);
-  await _thisConsult.setString("consult", currentConsultString);
+  // SharedPreferences _thisConsult = await SharedPreferences.getInstance();
+  // _consult.provider = selectedProvider;
+  // _consult.providerTitles = providerTitles;
+  // _consult.providerProfilePic = providerProfilePic;
+  // String currentConsultString = jsonEncode(_consult);
+  // await _thisConsult.setString("consult", currentConsultString);
 }

@@ -30,14 +30,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_crashlytics/flutter_crashlytics.dart';
 import 'package:provider/provider.dart';
-
 import 'screens/Questions/questionsScreen.dart';
 import 'screens/Symptoms/index.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   bool isInDebugMode = false;
-  await SystemChrome.setEnabledSystemUIOverlays([]);
+  //await SystemChrome.setEnabledSystemUIOverlays([]);
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent,
+    statusBarIconBrightness: Brightness.dark,
+  ));
   FlutterError.onError = (FlutterErrorDetails details) {
     if (isInDebugMode) {
       // In development mode simply print to console.

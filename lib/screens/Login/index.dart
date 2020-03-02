@@ -102,8 +102,6 @@ class _LoginScreenState extends State<LoginPage> {
   Widget build(BuildContext context) {
     ScreenUtil.init(context);
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      resizeToAvoidBottomPadding: false,
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.dark,
         sized: false,

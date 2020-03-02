@@ -32,6 +32,12 @@ class CarouselWithIndicator extends StatelessWidget {
                   dotsCount: imgList.length,
                   position: _carouselState.getDotsIndex(imgList.length),
                   decorator: DotsDecorator(
+                      activeShape: CircleBorder(
+                          side: BorderSide(
+                              color: Theme.of(context).colorScheme.onSecondary,
+                              style: BorderStyle.solid,
+                              width: 4)),
+                      activeSize: Size(20, 20),
                       activeColor: Theme.of(context).colorScheme.secondary),
                 ),
               )

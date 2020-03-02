@@ -7,6 +7,7 @@ import 'package:Medicall/services/animation_provider.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
@@ -45,6 +46,11 @@ class SymptomsScreen extends StatelessWidget {
       );
     }
 
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+    ));
+
     return Scaffold(
       // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       // floatingActionButton: Builder(builder: (BuildContext context) {
@@ -60,6 +66,39 @@ class SymptomsScreen extends StatelessWidget {
       //       foregroundColor: Theme.of(context).colorScheme.onPrimary);
       // }),
       //Content of tabs
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(40),
+        child: AppBar(
+          backgroundColor: Colors.grey[50],
+          brightness: Brightness.light,
+          elevation: 0,
+          centerTitle: true,
+          leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back,
+              color: Theme.of(context).colorScheme.secondary,
+            ),
+            onPressed: () {
+              db.newConsult.provider = null;
+              db.newConsult.providerTitles = null;
+              db.newConsult.providerId = null;
+              db.newConsult.providerProfilePic = null;
+              Navigator.of(context).pop(false);
+            },
+          ),
+          title: Text(
+            db.newConsult == null || db.newConsult.provider == null
+                ? "What can a doctor help you with?"
+                : "How can " +
+                    db.newConsult.provider +
+                    " " +
+                    db.newConsult.providerTitles +
+                    " help you?",
+            style: TextStyle(
+                color: Theme.of(context).colorScheme.primary, fontSize: 18),
+          ),
+        ),
+      ),
       body: FutureBuilder(
           future: db.getUserMedicalHistory(medicallUser),
           builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
@@ -77,44 +116,49 @@ class SymptomsScreen extends StatelessWidget {
                       itemCount: data.length,
                     ),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Stack(
-                        children: <Widget>[
-                          Container(
-                              height: 100,
-                              width: ScreenUtil.screenWidthDp,
-                              color: Colors.transparent,
-                              child: Column(
-                                children: <Widget>[
-                                  SizedBox(height: 10),
-                                  Container(
-                                    child: Text(
-                                        'Do you already know which doctor you need to see?'),
-                                  ),
-                                  SizedBox(height: 5),
-                                  FlatButton(
-                                    onPressed: () {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                DoctorSearch()),
-                                      );
-                                    },
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
-                                    child: Text(
-                                      'Find my doctor',
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                  )
-                                ],
-                              )),
-                        ],
-                      )
-                    ],
-                  ),
+                  db.newConsult == null || db.newConsult.provider == null
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Stack(
+                              children: <Widget>[
+                                Container(
+                                    height: 100,
+                                    margin: EdgeInsets.fromLTRB(0, 0, 0, 60),
+                                    width: ScreenUtil.screenWidthDp,
+                                    color: Colors.transparent,
+                                    child: Column(
+                                      children: <Widget>[
+                                        SizedBox(height: 10),
+                                        Container(
+                                          child: Text(
+                                              'Do you already know which doctor you need to see?'),
+                                        ),
+                                        SizedBox(height: 5),
+                                        FlatButton(
+                                          onPressed: () {
+                                            Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      DoctorSearch()),
+                                            );
+                                          },
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .secondary,
+                                          child: Text(
+                                            'Find my doctor',
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                        )
+                                      ],
+                                    )),
+                              ],
+                            )
+                          ],
+                        )
+                      : Container(),
                 ],
               );
             } else {
@@ -267,7 +311,6 @@ class EntryItem extends StatelessWidget {
                                         ? Container(
                                             margin: EdgeInsets.fromLTRB(
                                                 0, 0, 60, 0),
-                                            width: 160,
                                             decoration: BoxDecoration(
                                               border: Border(
                                                   top: BorderSide(

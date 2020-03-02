@@ -48,6 +48,7 @@ abstract class Database {
   ConsultData newConsult;
   var consultQuestions;
   TempRegUser tempRegUser;
+  var chatViewKey;
 }
 
 class FirestoreDatabase implements Database {
@@ -76,14 +77,18 @@ class FirestoreDatabase implements Database {
   TempRegUser tempRegUser;
   @override
   String consultChatImageUrl;
+  @override
+  var chatViewKey;
 
   FirestoreDatabase();
   @override
   Future getConsultDetail(DetailedHistoryState detailedHistoryState) async {
-    if (consultSnapshot == null && consultSnapshot.documentID != null &&
+    if (consultSnapshot == null &&
+        consultSnapshot.documentID != null &&
         consultSnapshot.documentID != consultSnapshot.documentID) {
-      consultRef =
-          Firestore.instance.collection('consults').document(consultSnapshot.documentID);
+      consultRef = Firestore.instance
+          .collection('consults')
+          .document(consultSnapshot.documentID);
       await consultRef.get().then((datasnapshot) async {
         if (datasnapshot.data != null) {
           consultSnapshot = datasnapshot;
@@ -305,8 +310,9 @@ class FirestoreDatabase implements Database {
   }
 
   Future<void> updatePrescription(consultFormKey) async {
-    final DocumentReference documentReference =
-        Firestore.instance.collection('consults').document(consultSnapshot.documentID);
+    final DocumentReference documentReference = Firestore.instance
+        .collection('consults')
+        .document(consultSnapshot.documentID);
     Map<String, dynamic> data = <String, dynamic>{
       "medication_name":
           consultFormKey.currentState.fields['medName'].currentState.value,
@@ -427,7 +433,7 @@ class FirestoreDatabase implements Database {
   }
 
   Future<void> getPatientMedicalHistory(MedicallUser medicallUser) async {
-    if (medicallUser.uid.length > 0) {
+    if (medicallUser != null && medicallUser.uid.length > 0) {
       userMedicalRecord = await Firestore.instance
           .collection('medical_history')
           .document(consultSnapshot.data['patient_id'])
@@ -447,8 +453,9 @@ class FirestoreDatabase implements Database {
   sendChatMsg(
     content,
   ) {
-    final DocumentReference documentReference =
-        Firestore.instance.collection('consults').document(consultSnapshot.documentID);
+    final DocumentReference documentReference = Firestore.instance
+        .collection('consults')
+        .document(consultSnapshot.documentID);
     Map<String, dynamic> data = {
       'chat': FieldValue.arrayUnion([
         {

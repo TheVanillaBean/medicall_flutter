@@ -10,7 +10,6 @@ List<Widget> buildActions(BuildContext context, HistoryState model) {
       children: <Widget>[
         Container(
             width: ScreenUtil.screenWidthDp,
-            padding: EdgeInsets.only(bottom: 3),
             child: Text(
               'History',
               textAlign: TextAlign.center,

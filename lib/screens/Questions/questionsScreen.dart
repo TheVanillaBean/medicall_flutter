@@ -207,36 +207,47 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            if (_currentPage == 0) {
-              _extImageProvider.clearImageMemory();
-              Navigator.of(context).pop(false);
-            } else {
-              _pageController.previousPage(
-                  curve: Curves.ease, duration: Duration(seconds: 1));
-            }
-          },
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(40),
+        child: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          centerTitle: true,
+          leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back,
+              color: Theme.of(context).colorScheme.secondary,
+            ),
+            onPressed: () {
+              if (_currentPage == 0) {
+                _extImageProvider.clearImageMemory();
+                Navigator.of(context).pop(false);
+              } else {
+                _pageController.previousPage(
+                    curve: Curves.ease, duration: Duration(seconds: 1));
+              }
+            },
+          ),
+          title: Text(
+            _currentQuestions == 'symptom'
+                ? _db.newConsult.consultType == 'Lesion'
+                    ? 'Spot' +
+                        ' Question: ' +
+                        (_currentPage + 1).toString() +
+                        '/' +
+                        pageViewList.length.toString()
+                    : _db.newConsult.consultType +
+                        ' Question: ' +
+                        (_currentPage + 1).toString() +
+                        '/' +
+                        pageViewList.length.toString()
+                : "Medical History Question: " +
+                    (_currentPage + 1).toString() +
+                    '/' +
+                    pageViewList.length.toString(),
+            style: TextStyle(color: Theme.of(context).colorScheme.primary),
+          ),
         ),
-        title: Text(_currentQuestions == 'symptom'
-            ? _db.newConsult.consultType == 'Lesion'
-                ? 'Spot' +
-                    ' Question: ' +
-                    (_currentPage + 1).toString() +
-                    '/' +
-                    pageViewList.length.toString()
-                : _db.newConsult.consultType +
-                    ' Question: ' +
-                    (_currentPage + 1).toString() +
-                    '/' +
-                    pageViewList.length.toString()
-            : "Medical History Question: " +
-                (_currentPage + 1).toString() +
-                '/' +
-                pageViewList.length.toString()),
       ),
       body: pageViewList.length > 0
           ? IntroductionScreen(

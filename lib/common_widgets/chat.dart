@@ -85,6 +85,7 @@ class _ChatState extends State<Chat> {
     _detailedHistoryState = Provider.of<DetailedHistoryState>(context);
     _db = Provider.of<Database>(context);
     _extImageProvider = Provider.of<ExtImageProvider>(context);
+    ScreenUtil.init(context);
     user = ChatUser(
         name: _medicallUser.displayName,
         uid: _medicallUser.uid,
@@ -97,18 +98,20 @@ class _ChatState extends State<Chat> {
             name: _db.consultSnapshot['provider'],
             uid: _db.consultSnapshot['provider_id']);
 
-    return StreamBuilder(
-        stream: _db.getConsultChat(),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          }
-          switch (snapshot.connectionState) {
-            case ConnectionState.waiting:
+    return Scaffold(
+      backgroundColor: Colors.grey.withAlpha(50),
+      body: StreamBuilder(
+          stream: _db.getConsultChat(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
               return Center(
-                child: CircularProgressIndicator(),
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    Theme.of(context).primaryColor,
+                  ),
+                ),
               );
-            default:
+            } else {
               List<DocumentSnapshot> items = snapshot.data.documents;
               var messages =
                   items.map((i) => ChatMessage.fromJson(i.data)).toList();
@@ -120,168 +123,168 @@ class _ChatState extends State<Chat> {
                     duration: Duration(milliseconds: 1000),
                     curve: Curves.easeOut);
               }
-              return Container(
-                alignment: Alignment.center,
-                color: Colors.grey.withAlpha(50),
-                child: DashChat(
-                  key: _chatViewKey,
-                  inverted: false,
-                  onSend: onSend,
-                  user: user,
-                  height: ScreenUtil.screenHeightDp - 240,
-                  inputDecoration: InputDecoration(
-                    hintText: "Add message here...",
-                  ),
-                  inputMaxLines: 5,
-                  inputTextStyle: TextStyle(fontSize: 14.0, height: 2),
-                  inputContainerStyle: BoxDecoration(
-                    border: Border.all(width: 0.0),
-                    color: Colors.white,
-                  ),
-                  dateFormat: DateFormat('MMM-dd-yyyy'),
-                  timeFormat: DateFormat('dd MMM h:mm a'),
-                  messages: messages,
-                  scrollToBottom: false,
-                  scrollToBottomWidget: () {
-                    return Container(
-                      width: 48.0,
-                      height: 48.0,
-                      child: RawMaterialButton(
-                        highlightElevation: 10.0,
-                        fillColor: Theme.of(context).primaryColor,
-                        shape: CircleBorder(),
-                        elevation: 0.0,
-                        child: Icon(
-                          Icons.keyboard_arrow_down,
-                          color: Colors.white,
-                        ),
-                        onPressed: () {
-                          _chatViewKey.currentState.scrollController
-                            ..animateTo(
-                              _chatViewKey.currentState.scrollController
-                                  .position.maxScrollExtent,
-                              curve: Curves.easeOut,
-                              duration: const Duration(milliseconds: 300),
-                            );
-                        },
-                      ),
-                    );
-                  },
-                  showUserAvatar: true,
-                  showAvatarForEveryMessage: false,
-                  onPressAvatar: (ChatUser user) {
-                    print("OnPressAvatar: ${user.name}");
-                  },
-                  onLongPressAvatar: (ChatUser user) {
-                    print("OnLongPressAvatar: ${user.name}");
-                  },
-                  messageBuilder: (ChatMessage msg) {
-                    return MessageContainer(
-                      isUser: msg.user.uid == _medicallUser.uid,
-                      message: msg,
-                      timeFormat: DateFormat('dd MMM h:mm a'),
-                      messageImageBuilder: (img) {
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (_) {
-                              return DetailScreen(img, _extImageProvider);
-                            }));
-                          },
-                          child: Hero(
-                            tag: img,
-                            child: _extImageProvider.returnNetworkImage(img),
-                          ),
-                        );
-                      },
-                      messageTimeBuilder: (val) {
-                        return Container(
-                          padding: EdgeInsets.fromLTRB(0, 8, 0, 0),
-                          child: Text(
-                            val,
-                            style:
-                                TextStyle(color: Colors.black54, fontSize: 10),
-                          ),
-                        );
-                      },
-                      messageContainerDecoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.onBackground,
-                          borderRadius: BorderRadius.all(Radius.circular(5))),
-                      parsePatterns: [
-                        MatchText(
-                            type: ParsedType.URL,
-                            style: TextStyle(color: Colors.blue),
-                            onTap: (url) async {
-                              if (!url.contains('http://')) {
-                                url = 'http://' + url;
-                              }
-                              if (await canLaunch(url)) {
-                                await launch(url);
-                              } else {
-                                throw 'Could not launch $url';
-                              }
-                            }),
-                        MatchText(
-                            pattern: '.*',
-                            style: TextStyle(color: Colors.black87),
-                            onTap: () {}),
-                        MatchText(type: ParsedType.PHONE),
-                        MatchText(type: ParsedType.EMAIL),
-                      ],
-                    );
-                  },
-                  alwaysShowSend: !_detailedHistoryState.isDone,
-                  onQuickReply: (Reply reply) {
-                    setState(() {
-                      messages.add(ChatMessage(
-                          text: reply.value,
-                          createdAt: DateTime.now(),
-                          user: user));
-
-                      messages = [...messages];
-                    });
-
-                    Timer(Duration(milliseconds: 300), () {
-                      _chatViewKey.currentState.scrollController
-                        ..animateTo(
-                          _chatViewKey.currentState.scrollController.position
-                              .maxScrollExtent,
-                          curve: Curves.easeOut,
-                          duration: const Duration(milliseconds: 300),
-                        );
-
-                      if (i == 0) {
-                        systemMessage();
-                        Timer(Duration(milliseconds: 600), () {
-                          systemMessage();
-                        });
-                      } else {
-                        systemMessage();
-                      }
-                    });
-                  },
-                  onLoadEarlier: () {
-                    CircularProgressIndicator();
-                  },
-                  shouldShowLoadEarlier: false,
-                  showTraillingBeforeSend: true,
-                  trailing: <Widget>[
-                    IconButton(
-                      icon: Icon(Icons.photo),
-                      onPressed: () async {
-                        await _extImageProvider.setChatImage();
-
-                        if (_extImageProvider.chatMedia != null) {
-                          _db.saveConsultChatImage(
-                              _medicallUser, _extImageProvider.chatMedia);
-                        }
-                      },
-                    )
-                  ],
+              return DashChat(
+                key: _chatViewKey,
+                inverted: false,
+                height: ScreenUtil.screenHeightDp - 140,
+                onSend: onSend,
+                user: user,
+                inputDecoration: InputDecoration(
+                  hintText: "Enter message here...",
                 ),
+                inputMaxLines: 5,
+                inputTextStyle: TextStyle(fontSize: 14.0, height: 2),
+                inputContainerStyle: BoxDecoration(
+                  border: Border.all(width: 0.0),
+                  color: Colors.white,
+                ),
+                dateFormat: DateFormat('MMM-dd-yyyy'),
+                timeFormat: DateFormat('dd MMM h:mm a'),
+                messages: messages,
+                scrollToBottom: false,
+                // scrollToBottomWidget: () {
+                //   return Container(
+                //     width: 48.0,
+                //     height: 48.0,
+                //     child: RawMaterialButton(
+                //       highlightElevation: 10.0,
+                //       fillColor: Theme.of(context).primaryColor,
+                //       shape: CircleBorder(),
+                //       elevation: 0.0,
+                //       child: Icon(
+                //         Icons.keyboard_arrow_down,
+                //         color: Colors.white,
+                //       ),
+                //       onPressed: () {
+                //         _chatViewKey.currentState.scrollController
+                //           ..animateTo(
+                //             _chatViewKey.currentState.scrollController
+                //                 .position.maxScrollExtent,
+                //             curve: Curves.easeOut,
+                //             duration: const Duration(milliseconds: 300),
+                //           );
+                //       },
+                //     ),
+                //   );
+                // },
+                showUserAvatar: true,
+                showAvatarForEveryMessage: false,
+                onPressAvatar: (ChatUser user) {
+                  print("OnPressAvatar: ${user.name}");
+                },
+                onLongPressAvatar: (ChatUser user) {
+                  print("OnLongPressAvatar: ${user.name}");
+                },
+                messageBuilder: (ChatMessage msg) {
+                  return MessageContainer(
+                    isUser: msg.user.uid == _medicallUser.uid,
+                    message: msg,
+                    timeFormat: DateFormat('dd MMM h:mm a'),
+                    messageImageBuilder: (img) {
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (_) {
+                            return DetailScreen(img, _extImageProvider);
+                          }));
+                        },
+                        child: Hero(
+                          tag: img,
+                          child: _extImageProvider.returnNetworkImage(img),
+                        ),
+                      );
+                    },
+                    messageTimeBuilder: (val) {
+                      return Container(
+                        padding: EdgeInsets.fromLTRB(0, 8, 0, 0),
+                        child: Text(
+                          val,
+                          style:
+                              TextStyle(color: Colors.black54, fontSize: 10),
+                        ),
+                      );
+                    },
+                    messageContainerDecoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.onBackground,
+                        borderRadius: BorderRadius.all(Radius.circular(5))),
+                    parsePatterns: [
+                      MatchText(
+                          type: ParsedType.URL,
+                          style: TextStyle(color: Colors.blue),
+                          onTap: (url) async {
+                            if (!url.contains('http://')) {
+                              url = 'http://' + url;
+                            }
+                            if (await canLaunch(url)) {
+                              await launch(url);
+                            } else {
+                              throw 'Could not launch $url';
+                            }
+                          }),
+                      MatchText(
+                          pattern: '.*',
+                          style: TextStyle(color: Colors.black87),
+                          onTap: () {}),
+                      MatchText(type: ParsedType.PHONE),
+                      MatchText(type: ParsedType.EMAIL),
+                    ],
+                  );
+                },
+                alwaysShowSend: !_detailedHistoryState.isDone,
+                onQuickReply: (Reply reply) {
+                  setState(() {
+                    messages.add(ChatMessage(
+                        text: reply.value,
+                        createdAt: DateTime.now(),
+                        user: user));
+
+                    messages = [...messages];
+                  });
+
+                  Timer(Duration(milliseconds: 300), () {
+                    _chatViewKey.currentState.scrollController
+                      ..animateTo(
+                        _chatViewKey.currentState.scrollController.position
+                            .maxScrollExtent,
+                        curve: Curves.easeOut,
+                        duration: const Duration(milliseconds: 300),
+                      );
+
+                    if (i == 0) {
+                      systemMessage();
+                      Timer(Duration(milliseconds: 600), () {
+                        systemMessage();
+                      });
+                    } else {
+                      systemMessage();
+                    }
+                  });
+                },
+                onLoadEarlier: () {
+                  CircularProgressIndicator();
+                },
+                shouldShowLoadEarlier: false,
+                showTraillingBeforeSend: true,
+                trailing: <Widget>[
+                  IconButton(
+                    icon: Icon(
+                      Icons.photo,
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                    onPressed: () async {
+                      await _extImageProvider.setChatImage();
+
+                      if (_extImageProvider.chatMedia != null) {
+                        _db.saveConsultChatImage(
+                            _medicallUser, _extImageProvider.chatMedia);
+                      }
+                    },
+                  )
+                ],
               );
-          }
-        });
+            }
+          }),
+    );
   }
 }
 

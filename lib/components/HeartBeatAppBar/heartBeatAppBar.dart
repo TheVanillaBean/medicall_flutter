@@ -70,7 +70,7 @@ class _HeartBeatAppBarContentState extends State<HeartBeatAppBarContent>
       // Calculates  animation duration depending on how distant the 2 icons are
       // from each other
 
-      _animationController.duration = Duration(milliseconds: 1000);
+      _animationController.duration = Duration(milliseconds: 0);
 
       setState(() => _nextActivated = activated);
 
@@ -167,6 +167,7 @@ class _HeartBeatAppBarContentState extends State<HeartBeatAppBarContent>
                 nextPageBody: HeartBeatPage.defaultPages[0]);
           },
           child: Container(
+            width: 80,
             child: fadableIcon(
               Column(
                 children: <Widget>[
@@ -196,6 +197,7 @@ class _HeartBeatAppBarContentState extends State<HeartBeatAppBarContent>
                 nextPageBody: HeartBeatPage.defaultPages[1]);
           },
           child: Container(
+            width: 80,
             child: fadableIcon(
               Column(
                 children: <Widget>[
@@ -224,24 +226,27 @@ class _HeartBeatAppBarContentState extends State<HeartBeatAppBarContent>
                 to: 2,
                 nextPageBody: HeartBeatPage.defaultPages[2]);
           },
-          child: fadableIcon(
-            Column(
-              children: <Widget>[
-                Icon(
-                  Icons.account_circle,
-                  color: Colors.white,
-                ),
-                Text(
-                  'Account',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 10,
+          child: Container(
+            width: 80,
+            child: fadableIcon(
+              Column(
+                children: <Widget>[
+                  Icon(
+                    Icons.account_circle,
                     color: Colors.white,
                   ),
-                ),
-              ],
+                  Text(
+                    'Account',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+              2,
             ),
-            2,
           ),
         ),
       ],

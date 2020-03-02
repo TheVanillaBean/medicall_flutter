@@ -70,13 +70,14 @@ class HistoryScreen extends StatelessWidget {
               child: Stack(
                 children: <Widget>[
                   Padding(
-                    padding: const EdgeInsets.only(top: 49),
+                    padding: const EdgeInsets.only(top: 80),
                     child: HistoryTiles(
                       model: model,
                       searchInput: this.query,
                     ),
                   ),
                   Container(
+                    height: 100,
                     child: Row(
                       children: buildActions(context, model),
                     ),
