@@ -1,6 +1,5 @@
 import UIKit
 import Flutter
-import GoogleMaps
 import Fabric
 import Crashlytics
 
@@ -10,7 +9,6 @@ import Crashlytics
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?
   ) -> Bool {
-    GMSServices.provideAPIKey(GoogleMapsApiKey)
     GeneratedPluginRegistrant.register(with: self)
     Fabric.with([Crashlytics.self])
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
