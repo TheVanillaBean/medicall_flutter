@@ -111,6 +111,8 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
       updateWith(
         phoneAuthCredential: phoneAuthCredential,
         status: AuthStatus.STATE_VERIFY_SUCCESS,
+        verificationStatus:
+            'Phone number successfully verified in background. Please wait...',
       );
       signInWithPhoneAuthCredential(mounted);
     };
@@ -118,9 +120,11 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
     final PhoneVerificationFailed verificationFailed =
         (AuthException authException) {
       updateRefreshing(false, mounted);
-      updateWith(status: AuthStatus.STATE_VERIFY_FAILED);
-      this.verificationStatus =
-          'Phone number verification failed. ${authException.message}';
+      updateWith(
+        status: AuthStatus.STATE_VERIFY_FAILED,
+        verificationStatus:
+            'Phone number verification failed. ${authException.message}',
+      );
     };
 
     final PhoneCodeSent codeSent =
@@ -129,6 +133,8 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
       updateWith(
         verificationId: verificationId,
         status: AuthStatus.STATE_CODE_SENT,
+        verificationStatus:
+            'An SMS text message code has been sent to your phone number.',
       );
     };
 
@@ -150,16 +156,15 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
   Future<void> signInWithPhoneAuthCredential(bool mounted) async {
     try {
       MedicallUser user;
-      this.auth.newUser = true;
+      this.auth.triggerAuthStream = false;
 
       if (this.tempUserProvider.googleAuthModel != null) {
         user = await this.auth.signInWithGoogle(
             credential: this.tempUserProvider.googleAuthModel.credential);
       } else {
         user = await this.auth.createUserWithEmailAndPassword(
-              email: this.tempUserProvider.medicallUser.email,
-              password: this.tempUserProvider.password,
-            );
+            email: this.tempUserProvider.medicallUser.email,
+            password: this.tempUserProvider.password);
       }
 
       this.phoneAuthCredential = this.phoneAuthCredential ??
@@ -175,17 +180,17 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
             phoneNumber: user.phoneNumber,
           );
 
-      this.verificationStatus = "Saving User Details...";
+      updateWith(verificationStatus: "Saving User Details...");
 
       bool successfullySavedImages =
           await tempUserProvider.saveRegistrationImages();
 
+      this.auth.triggerAuthStream = true;
+
       if (successfullySavedImages) {
-        this.auth.newUser = false;
         await this.tempUserProvider.addNewUserToFirestore();
         this.auth.addUserToAuthStream(user: user);
       } else {
-        this.auth.newUser = false;
         updateRefreshing(false, mounted);
         throw PlatformException(
           code: 'ERROR_PHONE_AUTH_FAILED',
@@ -193,7 +198,7 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
         );
       }
     } catch (e) {
-      this.auth.newUser = false;
+      this.auth.triggerAuthStream = true;
       updateRefreshing(false, mounted);
       rethrow;
     }
@@ -207,6 +212,7 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
     bool isRefreshing,
     bool codeTimedOut,
     String verificationId,
+    String verificationStatus,
     AuthCredential phoneAuthCredential,
   }) {
     this.status = status ?? this.status;
@@ -216,6 +222,7 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
     this.isRefreshing = isRefreshing ?? this.isRefreshing;
     this.codeTimedOut = codeTimedOut ?? this.codeTimedOut;
     this.verificationId = verificationId ?? this.verificationId;
+    this.verificationStatus = verificationStatus ?? this.verificationStatus;
     this.phoneAuthCredential = phoneAuthCredential ?? this.phoneAuthCredential;
     notifyListeners();
   }

@@ -1,4 +1,3 @@
-import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -7,7 +6,6 @@ class RegistrationTypeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tempUserProvider = Provider.of<TempUserProvider>(context);
-    final auth = Provider.of<AuthBase>(context, listen: false);
 
     return Scaffold(
         resizeToAvoidBottomPadding: false,
@@ -17,11 +15,7 @@ class RegistrationTypeScreen extends StatelessWidget {
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () {
-              if (auth.isGoogleUser) {
-                auth.signOut();
-              }else{
-                Navigator.of(context).pop();
-              }
+              Navigator.of(context).pop();
             },
           ),
           title: Text(

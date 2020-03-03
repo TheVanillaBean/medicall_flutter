@@ -8,8 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 abstract class AuthBase {
-  bool newUser;
-  bool isGoogleUser;
+  bool triggerAuthStream;
   Stream<MedicallUser> get onAuthStateChanged;
   Future<MedicallUser> currentUser();
   void addUserToAuthStream({@required MedicallUser user});
@@ -31,22 +30,16 @@ abstract class AuthBase {
 class Auth implements AuthBase {
   final _firebaseAuth = FirebaseAuth.instance;
 
-  @override
-  bool isGoogleUser = false;
-
   // ignore: close_sinks
   StreamController<MedicallUser> authStreamController;
 
-  bool newUser = false;
+  bool triggerAuthStream = true;
 
   Auth() {
     authStreamController = StreamController();
     _firebaseAuth.onAuthStateChanged.listen((user) {
-      if (!newUser) {
-        print("Existing User");
+      if (triggerAuthStream) {
         authStreamController.sink.add(_userFromFirebase(user));
-      } else {
-        print("New User");
       }
     });
   }
@@ -56,26 +49,6 @@ class Auth implements AuthBase {
   }
 
   MedicallUser _userFromFirebase(FirebaseUser user) {
-//    if (user == null) {
-//      return null;
-//    }
-//    //check google sign in
-//    for (var i = 0; i < user.providerData.length; i++) {
-//      if (user.providerData[i].providerId == 'google.com') {
-//        isGoogleUser = true;
-//      }
-//    }
-//    medicallUser = MedicallUser(
-//      displayName: user.displayName != null ? user.displayName : null,
-//      firstName:
-//          user.displayName != null ? user.displayName.split(' ')[0] : null,
-//      lastName:
-//          user.displayName != null ? user.displayName.split(' ')[1] : null,
-//      uid: user.uid,
-//      phoneNumber: user.phoneNumber,
-//      email: user.email,
-//    );
-//    return medicallUser;
     if (user == null) {
       return null;
     }
@@ -89,7 +62,6 @@ class Auth implements AuthBase {
   @override
   Stream<MedicallUser> get onAuthStateChanged {
     return authStreamController.stream;
-//    return _firebaseAuth.onAuthStateChanged.map(_userFromFirebase);
   }
 
   @override
