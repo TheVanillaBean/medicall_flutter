@@ -8,7 +8,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-enum AuthStatus { PHONE_AUTH, SMS_AUTH }
+enum AuthStatus {
+  STATE_INITIALIZED,
+  STATE_CODE_SENT,
+  STATE_VERIFY_FAILED,
+  STATE_VERIFY_SUCCESS,
+  STATE_SIGN_IN_FAILED,
+  STATE_SIGN_IN_SUCCESS,
+}
 
 class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
   AuthStatus status;
@@ -18,23 +25,29 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
   bool isRefreshing;
   bool codeTimedOut;
   String verificationId;
+  String verificationStatus;
   AuthCredential phoneAuthCredential;
+  TempUserProvider tempUserProvider;
 
   final AuthBase auth;
-  Duration timeoutDuration = Duration(seconds: 5);
-  VerificationStatus verificationStatus;
+  Duration timeoutDuration = Duration(seconds: 60);
 
   PhoneAuthStateModel({
     @required this.auth,
-    this.status = AuthStatus.PHONE_AUTH,
+    this.status = AuthStatus.STATE_INITIALIZED,
     this.phoneNumber = '',
     this.smsCode = '',
     this.submitted = false,
     this.isRefreshing = false,
     this.codeTimedOut = false,
     this.verificationId = '',
+    this.verificationStatus = '',
     this.phoneAuthCredential,
   });
+
+  void setTempUserProvider(TempUserProvider tempUserProvider) {
+    this.tempUserProvider = tempUserProvider;
+  }
 
   bool get canSubmitPhoneNumber {
     return phoneNumberEmptyValidator.isValid(phoneNumber) &&
@@ -78,9 +91,8 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
 
   void updatePhoneNumber(String number) =>
       updateWith(phoneNumber: '+1$number'.trim());
-  void updateSMSCode(String code) {
-    updateWith(smsCode: code);
-  }
+
+  void updateSMSCode(String code) => updateWith(smsCode: code);
 
   Future<void> updateRefreshing(bool isRefreshing, bool isMounted) async {
     if (isRefreshing) {
@@ -90,41 +102,40 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
     updateWith(isRefreshing: isRefreshing);
   }
 
-  Future<void> verifyPhoneNumber(
-      bool mounted, VerificationStatus verificationError) async {
-    this.verificationStatus = verificationError;
+  Future<void> verifyPhoneNumber(bool mounted) async {
     FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
     final PhoneVerificationCompleted verificationCompleted =
         (AuthCredential phoneAuthCredential) {
+      updateRefreshing(false, mounted);
       updateWith(
-          phoneAuthCredential: phoneAuthCredential,
-          status: AuthStatus
-              .SMS_AUTH); //this won't actually change anything as the user will be redirected anyway.
+        phoneAuthCredential: phoneAuthCredential,
+        status: AuthStatus.STATE_VERIFY_SUCCESS,
+      );
+      signInWithPhoneAuthCredential(mounted);
     };
 
     final PhoneVerificationFailed verificationFailed =
         (AuthException authException) {
       updateRefreshing(false, mounted);
-      this.verificationStatus.onVerificationError(
-          'Phone number verification failed. ${authException.message}');
+      updateWith(status: AuthStatus.STATE_VERIFY_FAILED);
+      this.verificationStatus =
+          'Phone number verification failed. ${authException.message}';
     };
 
     final PhoneCodeSent codeSent =
         (String verificationId, [int forceResendingToken]) {
+      updateRefreshing(false, mounted);
       updateWith(
         verificationId: verificationId,
-        status: AuthStatus.SMS_AUTH,
+        status: AuthStatus.STATE_CODE_SENT,
       );
-      updateRefreshing(false, mounted);
     };
 
     final PhoneCodeAutoRetrievalTimeout codeAutoRetrievalTimeout =
         (String verificationId) {
       updateRefreshing(false, mounted);
       updateWith(verificationId: verificationId, codeTimedOut: true);
-      this.verificationStatus.onVerificationError(
-          'Your phone verification session has timed out. Retry to receive another code.');
     };
 
     await firebaseAuth.verifyPhoneNumber(
@@ -136,43 +147,45 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
         codeAutoRetrievalTimeout: codeAutoRetrievalTimeout);
   }
 
-  Future<void> signInWithPhoneNumber(
-      bool mounted, TempUserProvider tempUserProvider) async {
+  Future<void> signInWithPhoneAuthCredential(bool mounted) async {
     try {
       MedicallUser user;
-      auth.newUser = true;
+      this.auth.newUser = true;
 
-      if (tempUserProvider.googleAuthModel != null) {
-        user = await auth.signInWithGoogle(
-            credential: tempUserProvider.googleAuthModel.credential);
+      if (this.tempUserProvider.googleAuthModel != null) {
+        user = await this.auth.signInWithGoogle(
+            credential: this.tempUserProvider.googleAuthModel.credential);
       } else {
-        user = await auth.createUserWithEmailAndPassword(
-          email: tempUserProvider.medicallUser.email,
-          password: tempUserProvider.password,
-        );
+        user = await this.auth.createUserWithEmailAndPassword(
+              email: this.tempUserProvider.medicallUser.email,
+              password: this.tempUserProvider.password,
+            );
       }
 
-      this.phoneAuthCredential = await auth.fetchPhoneAuthCredential(
-          verificationId: this.verificationId, smsCode: this.smsCode);
+      this.phoneAuthCredential = this.phoneAuthCredential ??
+          await auth.fetchPhoneAuthCredential(
+              verificationId: this.verificationId, smsCode: this.smsCode);
 
       user = await auth.linkCredentialWithCurrentUser(
-          credential: phoneAuthCredential);
+          credential: this.phoneAuthCredential);
 
-      tempUserProvider.updateWith(
-        uid: user.uid,
-        devTokens: user.devTokens,
-        phoneNumber: user.phoneNumber,
-      );
+      this.tempUserProvider.updateWith(
+            uid: user.uid,
+            devTokens: user.devTokens,
+            phoneNumber: user.phoneNumber,
+          );
 
-      this.verificationStatus.onVerificationSuccess("Saving User Details...");
+      this.verificationStatus = "Saving User Details...";
 
       bool successfullySavedImages =
           await tempUserProvider.saveRegistrationImages();
 
       if (successfullySavedImages) {
-        await tempUserProvider.addNewUserToFirestore();
-        auth.addUserToAuthStream(user: user);
+        this.auth.newUser = false;
+        await this.tempUserProvider.addNewUserToFirestore();
+        this.auth.addUserToAuthStream(user: user);
       } else {
+        this.auth.newUser = false;
         updateRefreshing(false, mounted);
         throw PlatformException(
           code: 'ERROR_PHONE_AUTH_FAILED',
@@ -180,6 +193,7 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
         );
       }
     } catch (e) {
+      this.auth.newUser = false;
       updateRefreshing(false, mounted);
       rethrow;
     }
@@ -205,9 +219,4 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
     this.phoneAuthCredential = phoneAuthCredential ?? this.phoneAuthCredential;
     notifyListeners();
   }
-}
-
-mixin VerificationStatus {
-  void onVerificationError(String msg);
-  void onVerificationSuccess(String msg);
 }
