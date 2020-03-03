@@ -32,7 +32,8 @@ class PhoneAuthScreen extends StatefulWidget {
   _PhoneAuthScreenState createState() => _PhoneAuthScreenState();
 }
 
-class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
+class _PhoneAuthScreenState extends State<PhoneAuthScreen>
+    with VerificationStatus {
   TextEditingController smsCodeController = TextEditingController();
   TextEditingController phoneNumberController = TextEditingController();
 
@@ -62,9 +63,8 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
       padding: EdgeInsets.all(10),
       color: Colors.white,
       disabledColor: Theme.of(context).buttonColor,
-      onPressed: (condition && !model.isRefreshing)
-          ? null
-          : () => model.updateRefreshing(true, mounted),
+      onPressed:
+          (condition) ? () => model.updateRefreshing(true, mounted) : null,
     );
   }
 
@@ -128,7 +128,8 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
               Flexible(
                 flex: 1,
                 child: _buildInputButton(
-                    model.status == AuthStatus.STATE_INITIALIZED),
+                    model.status == AuthStatus.STATE_INITIALIZED &&
+                        model.canSubmitPhoneNumber),
               )
             ],
           ),
@@ -220,9 +221,10 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
               Flexible(
                 flex: 1,
                 child: _buildInputButton(
-                    model.status == AuthStatus.STATE_CODE_SENT ||
-                        model.status == AuthStatus.STATE_VERIFY_FAILED ||
-                        model.status == AuthStatus.STATE_SIGN_IN_FAILED),
+                    (model.status == AuthStatus.STATE_CODE_SENT ||
+                            model.status == AuthStatus.STATE_VERIFY_FAILED ||
+                            model.status == AuthStatus.STATE_SIGN_IN_FAILED) &&
+                        model.canSubmitSMSCode),
               )
             ],
           ),
@@ -245,7 +247,6 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
         model.status == AuthStatus.STATE_SIGN_IN_FAILED) {
       body = _buildSmsAuthBody();
     }
-    _showFlushBarMessage(model.verificationStatus);
     return body;
   }
 
@@ -273,6 +274,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
   Widget build(BuildContext context) {
     tempUserProvider = Provider.of<TempUserProvider>(context, listen: false);
     model.setTempUserProvider(tempUserProvider);
+    model.setVerificationStatus(this);
 
     return Scaffold(
       appBar: AppBar(elevation: 0.0),
@@ -293,5 +295,10 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
 
   void _showFlushBarMessage(String message) {
     AppUtil().showFlushBar(message, context);
+  }
+
+  @override
+  void updateStatus(String msg) {
+    _showFlushBarMessage(msg);
   }
 }

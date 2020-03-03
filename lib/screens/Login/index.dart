@@ -2,7 +2,6 @@ import 'dart:ui' as ui;
 
 import 'package:Medicall/common_widgets/sign_in_button.dart';
 import 'package:Medicall/common_widgets/social_sign_in_button.dart';
-import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/Login/sign_in_state_model.dart';
 import 'package:Medicall/services/animation_provider.dart';
 import 'package:Medicall/services/auth.dart';
@@ -21,7 +20,7 @@ class LoginPage extends StatefulWidget {
     final AuthBase auth = Provider.of<AuthBase>(context);
     final TempUserProvider tempUserProvider =
         Provider.of<TempUserProvider>(context);
-       final MyAnimationProvider animationProvider =
+    final MyAnimationProvider animationProvider =
         Provider.of<MyAnimationProvider>(context);
     return ChangeNotifierProvider<SignInStateModel>(
       create: (context) => SignInStateModel(
@@ -101,7 +100,6 @@ class _LoginScreenState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.dark,
@@ -186,8 +184,6 @@ class _LoginScreenState extends State<LoginPage> {
                         textColor: Colors.white,
                         text: "Create New Account",
                         onPressed: () {
-                          model.tempUserProvider.setMedicallUser(MedicallUser());
-                          model.tempUserProvider.setGoogleAuthModel(null);
                           _navigateToRegistrationScreen(context);
                         },
                       ),

@@ -25,12 +25,12 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
   bool isRefreshing;
   bool codeTimedOut;
   String verificationId;
-  String verificationStatus;
   AuthCredential phoneAuthCredential;
   TempUserProvider tempUserProvider;
 
   final AuthBase auth;
   Duration timeoutDuration = Duration(seconds: 60);
+  VerificationStatus verificationStatus;
 
   PhoneAuthStateModel({
     @required this.auth,
@@ -41,12 +41,15 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
     this.isRefreshing = false,
     this.codeTimedOut = false,
     this.verificationId = '',
-    this.verificationStatus = '',
     this.phoneAuthCredential,
   });
 
   void setTempUserProvider(TempUserProvider tempUserProvider) {
     this.tempUserProvider = tempUserProvider;
+  }
+
+  void setVerificationStatus(VerificationStatus verificationStatus) {
+    this.verificationStatus = verificationStatus;
   }
 
   bool get canSubmitPhoneNumber {
@@ -111,9 +114,9 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
       updateWith(
         phoneAuthCredential: phoneAuthCredential,
         status: AuthStatus.STATE_VERIFY_SUCCESS,
-        verificationStatus:
-            'Phone number successfully verified in background. Please wait...',
       );
+      this.verificationStatus.updateStatus(
+          'Phone number successfully verified in background. Please wait...');
       signInWithPhoneAuthCredential(mounted);
     };
 
@@ -122,9 +125,9 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
       updateRefreshing(false, mounted);
       updateWith(
         status: AuthStatus.STATE_VERIFY_FAILED,
-        verificationStatus:
-            'Phone number verification failed. ${authException.message}',
       );
+      this.verificationStatus.updateStatus(
+          'Phone number verification failed. ${authException.message}');
     };
 
     final PhoneCodeSent codeSent =
@@ -133,9 +136,9 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
       updateWith(
         verificationId: verificationId,
         status: AuthStatus.STATE_CODE_SENT,
-        verificationStatus:
-            'An SMS text message code has been sent to your phone number.',
       );
+      this.verificationStatus.updateStatus(
+          'An SMS text message code has been sent to your phone number.');
     };
 
     final PhoneCodeAutoRetrievalTimeout codeAutoRetrievalTimeout =
@@ -180,7 +183,7 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
             phoneNumber: user.phoneNumber,
           );
 
-      updateWith(verificationStatus: "Saving User Details...");
+      this.verificationStatus.updateStatus('Saving User Details...');
 
       bool successfullySavedImages =
           await tempUserProvider.saveRegistrationImages();
@@ -212,7 +215,6 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
     bool isRefreshing,
     bool codeTimedOut,
     String verificationId,
-    String verificationStatus,
     AuthCredential phoneAuthCredential,
   }) {
     this.status = status ?? this.status;
@@ -222,8 +224,11 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
     this.isRefreshing = isRefreshing ?? this.isRefreshing;
     this.codeTimedOut = codeTimedOut ?? this.codeTimedOut;
     this.verificationId = verificationId ?? this.verificationId;
-    this.verificationStatus = verificationStatus ?? this.verificationStatus;
     this.phoneAuthCredential = phoneAuthCredential ?? this.phoneAuthCredential;
     notifyListeners();
   }
+}
+
+mixin VerificationStatus {
+  void updateStatus(String msg);
 }

@@ -138,14 +138,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             updateUserWithFormData(tempUserProvider);
             Navigator.of(context).pushReplacementNamed("/photoID");
           } else {
-            String msg = '';
-            if(!_userRegKey.currentState.value['Terms and conditions']){
-              msg = 'Please accept the "Terms & Conditions" to continue.';
+            if (!_userRegKey.currentState.value['Terms and conditions']) {
+              AppUtil().showFlushBar(
+                  'Please accept the "Terms & Conditions" to continue.',
+                  context);
             }
-            if(!_userRegKey.currentState.value['accept_privacy_switch']){
-              msg = 'Please accept the "Privacy Policy" to continue.';
+            if (!_userRegKey.currentState.value['accept_privacy_switch']) {
+              AppUtil().showFlushBar(
+                  'Please accept the "Privacy Policy" to continue.', context);
             }
-            AppUtil().showFlushBar(msg, context);
           }
         }, // Switch tabs
 
