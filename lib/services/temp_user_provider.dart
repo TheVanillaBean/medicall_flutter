@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/Login/google_auth_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 
@@ -113,6 +114,11 @@ class TempUserProvider {
   Future<void> addNewUserToFirestore() async {
     final DocumentReference documentReference =
         Firestore.instance.document("users/" + medicallUser.uid);
+    FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+    await _firebaseMessaging.getToken().then((String token) {
+      assert(token != null);
+      medicallUser.devTokens = [token];
+    });
     Map<String, dynamic> data = <String, dynamic>{
       "name": medicallUser.displayName,
       "first_name": medicallUser.firstName,

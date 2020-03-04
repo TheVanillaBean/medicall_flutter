@@ -211,21 +211,17 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
         preferredSize: Size.fromHeight(40),
         child: AppBar(
           backgroundColor: Colors.white,
+          brightness: Brightness.light,
           elevation: 0,
           centerTitle: true,
           leading: IconButton(
             icon: Icon(
-              Icons.arrow_back,
+              Icons.close,
               color: Theme.of(context).colorScheme.secondary,
             ),
             onPressed: () {
-              if (_currentPage == 0) {
-                _extImageProvider.clearImageMemory();
-                Navigator.of(context).pop(false);
-              } else {
-                _pageController.previousPage(
-                    curve: Curves.ease, duration: Duration(seconds: 1));
-              }
+              _extImageProvider.clearImageMemory();
+              Navigator.of(context).pop(false);
             },
           ),
           title: Text(

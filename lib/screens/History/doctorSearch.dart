@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
@@ -7,7 +6,6 @@ import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 String currTab = 'Search History';
 Orientation currentOrientation;
@@ -21,10 +19,6 @@ class DoctorSearch extends StatelessWidget {
     var _db = Provider.of<Database>(context, listen: false);
     currentOrientation = MediaQuery.of(context).orientation;
     currTab = "Search Doctors";
-    String selectedProvider = '';
-    String providerTitles = '';
-    String providerProfilePic = '';
-    ConsultData _consult = ConsultData();
 
     return Scaffold(
       resizeToAvoidBottomPadding: false,
