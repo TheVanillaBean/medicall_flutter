@@ -112,6 +112,7 @@ class TempUserProvider {
       medicallUser.devTokens = [token];
     });
     Map<String, dynamic> data = <String, dynamic>{
+      "date": DateTime.now(),
       "name": medicallUser.displayName,
       "first_name": medicallUser.firstName,
       "last_name": medicallUser.lastName,
