@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/screens/Login/apple_sign_in_model.dart';
 import 'package:Medicall/screens/Login/google_auth_model.dart';
+import 'package:apple_sign_in/apple_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -21,7 +23,11 @@ abstract class AuthBase {
   Future<GoogleAuthModel> fetchGoogleSignInCredential();
   Future<AuthCredential> fetchPhoneAuthCredential(
       {@required String verificationId, @required String smsCode});
+  Future<AppleSignInModel> fetchAppleSignInCredential(
+      {List<Scope> scopes = const []});
   Future<MedicallUser> signInWithGoogle({@required AuthCredential credential});
+  Future<MedicallUser> signInWithApple(
+      {@required AuthCredential appleIdCredential});
   Future<MedicallUser> linkCredentialWithCurrentUser(
       {@required AuthCredential credential});
   Future<void> signOut();
@@ -141,10 +147,57 @@ class Auth implements AuthBase {
         verificationId: verificationId, smsCode: smsCode);
   }
 
+  Future<AppleSignInModel> fetchAppleSignInCredential(
+      {List<Scope> scopes = const []}) async {
+    final result = await AppleSignIn.performRequests(
+        [AppleIdRequest(requestedScopes: scopes)]);
+    switch (result.status) {
+      case AuthorizationStatus.authorized:
+        final appleIdCredential = result.credential;
+        final oAuthProvider = OAuthProvider(providerId: 'apple.com');
+        final credential = oAuthProvider.getCredential(
+          idToken: String.fromCharCodes(appleIdCredential.identityToken),
+          accessToken:
+              String.fromCharCodes(appleIdCredential.authorizationCode),
+        );
+
+        List<String> providers =
+            await this.fetchProvidersForEmail(email: appleIdCredential.email);
+
+        return AppleSignInModel(
+          email: appleIdCredential.email,
+          credential: credential,
+          displayName: appleIdCredential.fullName.givenName,
+          providers: providers,
+        );
+      case AuthorizationStatus.error:
+        print(result.error.toString());
+        throw PlatformException(
+          code: 'ERROR_AUTHORIZATION_DENIED',
+          message: result.error.toString(),
+        );
+
+      case AuthorizationStatus.cancelled:
+        throw PlatformException(
+          code: 'ERROR_ABORTED_BY_USER',
+          message: 'Sign in aborted by user',
+        );
+    }
+    return null;
+  }
+
   @override
   Future<MedicallUser> signInWithGoogle(
       {@required AuthCredential credential}) async {
     final authResult = await _firebaseAuth.signInWithCredential(credential);
+    return _userFromFirebase(authResult.user);
+  }
+
+  @override
+  Future<MedicallUser> signInWithApple(
+      {@required AuthCredential appleIdCredential}) async {
+    final authResult =
+        await _firebaseAuth.signInWithCredential(appleIdCredential);
     return _userFromFirebase(authResult.user);
   }
 

@@ -24,6 +24,7 @@ import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/flare_provider.dart';
 import 'package:Medicall/services/stripe_provider.dart';
 import 'package:Medicall/theme.dart';
+import 'package:Medicall/util/apple_sign_in_available.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
@@ -50,8 +51,13 @@ void main() async {
 
   await FlutterCrashlytics().initialize();
 
+  final appleSignInAvailable = await AppleSignInAvailable.check();
+
   runZoned<Future<Null>>(() async {
-    runApp(MedicallApp());
+    runApp(Provider<AppleSignInAvailable>.value(
+      value: appleSignInAvailable,
+      child: MedicallApp(),
+    ));
   }, onError: (error, stackTrace) async {
     // Whenever an error occurs, call the `reportCrash` function. This will send
     // Dart errors to our dev console or Crashlytics depending on the environment.

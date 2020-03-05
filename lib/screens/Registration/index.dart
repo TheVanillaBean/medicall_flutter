@@ -350,13 +350,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 FormBuilderTextField(
                   attribute: "Email",
                   initialValue: medicallUser.email,
-                  readOnly:
-                      tempUserProvider.googleAuthModel != null ? true : false,
+                  readOnly: tempUserProvider.googleAuthModel != null ||
+                          tempUserProvider.appleSignInModel != null
+                      ? true
+                      : false,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
                       labelText: 'Email',
                       fillColor: Color.fromRGBO(35, 179, 232, 0.1),
-                      filled: tempUserProvider.googleAuthModel != null
+                      filled: tempUserProvider.googleAuthModel != null ||
+                              tempUserProvider.appleSignInModel != null
                           ? false
                           : true,
                       disabledBorder: InputBorder.none,
@@ -367,12 +370,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     FormBuilderValidators.required(),
                   ],
                 ),
-                tempUserProvider.googleAuthModel == null
+                tempUserProvider.googleAuthModel == null &&
+                        tempUserProvider.appleSignInModel == null
                     ? SizedBox(
                         height: formSpacing,
                       )
                     : Container(),
-                tempUserProvider.googleAuthModel == null
+                tempUserProvider.googleAuthModel == null &&
+                        tempUserProvider.appleSignInModel == null
                     ? FormBuilderTextField(
                         attribute: "Password",
                         initialValue: "",
@@ -403,7 +408,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 SizedBox(
                   height: 5,
                 ),
-                tempUserProvider.googleAuthModel == null
+                tempUserProvider.googleAuthModel == null &&
+                        tempUserProvider.appleSignInModel == null
                     ? FormBuilderTextField(
                         attribute: "ConfirmPassword",
                         initialValue: "",
@@ -431,7 +437,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         ],
                       )
                     : Container(),
-                tempUserProvider.googleAuthModel == null
+                tempUserProvider.googleAuthModel == null &&
+                        tempUserProvider.appleSignInModel == null
                     ? SizedBox(
                         height: formSpacing,
                       )

@@ -7,7 +7,9 @@ import 'package:Medicall/services/animation_provider.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
+import 'package:Medicall/util/apple_sign_in_available.dart';
 import 'package:Medicall/util/firebase_notification_handler.dart';
+import 'package:apple_sign_in/apple_sign_in_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -87,6 +89,22 @@ class _LoginScreenState extends State<LoginPage> {
     }
   }
 
+  Future<void> _signInWithApple(BuildContext context) async {
+    try {
+      await model.signInWithApplePressed(context);
+      if (model.appleSignInModel != null) {
+        model.tempUserProvider.updateWith(
+          email: model.appleSignInModel.email,
+          displayName: model.appleSignInModel.displayName,
+          appleSignInModel: model.appleSignInModel,
+        );
+        _navigateToRegistrationScreen(context);
+      }
+    } on PlatformException catch (e) {
+      AppUtil().showFlushBar(e, context);
+    }
+  }
+
   void _navigateToRegistrationScreen(BuildContext context) {
     Navigator.of(context).pushNamed('/registrationType');
   }
@@ -143,6 +161,9 @@ class _LoginScreenState extends State<LoginPage> {
   }
 
   List<Widget> _buildChildren(BuildContext context) {
+    final appleSignInAvailable =
+        Provider.of<AppleSignInAvailable>(context, listen: false);
+
     return [
       FadeIn(
         2,
@@ -199,6 +220,15 @@ class _LoginScreenState extends State<LoginPage> {
                   onPressed:
                       model.isLoading ? null : () => _signInWithGoogle(context),
                 ),
+                if (appleSignInAvailable.isAvailable) SizedBox(height: 8),
+                if (appleSignInAvailable.isAvailable)
+                  AppleSignInButton(
+                    style: ButtonStyle.black, // style as needed
+                    type: ButtonType.signIn, // style as needed
+                    onPressed: model.isLoading
+                        ? null
+                        : () => _signInWithApple(context),
+                  ),
               ],
             )),
       ),

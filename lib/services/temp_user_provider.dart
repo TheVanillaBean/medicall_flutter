@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/screens/Login/apple_sign_in_model.dart';
 import 'package:Medicall/screens/Login/google_auth_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -12,6 +13,7 @@ class TempUserProvider {
   List<Asset> _images;
   String _password;
   GoogleAuthModel _googleAuthModel;
+  AppleSignInModel _appleSignInModel;
 
   MedicallUser get medicallUser {
     return _medicallUser;
@@ -28,6 +30,8 @@ class TempUserProvider {
   GoogleAuthModel get googleAuthModel {
     return _googleAuthModel;
   }
+
+  AppleSignInModel get appleSignInModel => _appleSignInModel;
 
   TempUserProvider() {
     _medicallUser = MedicallUser();
@@ -55,6 +59,7 @@ class TempUserProvider {
     List<Asset> images,
     String password,
     GoogleAuthModel googleAuthModel,
+    AppleSignInModel appleSignInModel,
   }) {
     this._medicallUser.uid = uid ?? this._medicallUser.uid;
     this._medicallUser.devTokens = devTokens ?? this._medicallUser.devTokens;
@@ -80,6 +85,7 @@ class TempUserProvider {
     this._images = images ?? this._images;
     this._password = password ?? this._password;
     this._googleAuthModel = googleAuthModel ?? this._googleAuthModel;
+    this._appleSignInModel = appleSignInModel ?? this._appleSignInModel;
   }
 
   Future<bool> saveRegistrationImages() async {

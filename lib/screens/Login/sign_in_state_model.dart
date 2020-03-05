@@ -1,9 +1,11 @@
+import 'package:Medicall/screens/Login/apple_sign_in_model.dart';
 import 'package:Medicall/screens/Login/google_auth_model.dart';
 import 'package:Medicall/services/animation_provider.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:Medicall/util/validators.dart';
+import 'package:apple_sign_in/scope.dart';
 import 'package:flutter/material.dart';
 
 class SignInStateModel with EmailAndPasswordValidators, ChangeNotifier {
@@ -13,6 +15,7 @@ class SignInStateModel with EmailAndPasswordValidators, ChangeNotifier {
   bool isLoading;
   bool submitted;
   GoogleAuthModel googleAuthModel;
+  AppleSignInModel appleSignInModel;
   final AuthBase auth;
   final TempUserProvider tempUserProvider;
   final MyAnimationProvider animationProvider;
@@ -58,6 +61,35 @@ class SignInStateModel with EmailAndPasswordValidators, ChangeNotifier {
     }
   }
 
+  Future<void> signInWithApplePressed(BuildContext context) async {
+    updateWith(submitted: true, isLoading: true);
+    try {
+      AppleSignInModel appleSignInModel = await auth
+          .fetchAppleSignInCredential(scopes: [Scope.email, Scope.fullName]);
+
+      if (appleSignInModel.providers != null &&
+          appleSignInModel.providers.length > 0) {
+        if (appleSignInModel.providers.contains("apple.com")) {
+          await auth.signInWithApple(
+              appleIdCredential: appleSignInModel.credential);
+        } else {
+          AppUtil().showFlushBar(
+              "Account already linked with different sign in method, please use your email and password credentials.",
+              context);
+          updateWith(submitted: false, isLoading: false);
+        }
+      } else {
+        updateWith(
+            appleSignInModel: appleSignInModel,
+            submitted: false,
+            isLoading: false);
+      }
+    } catch (e) {
+      updateWith(submitted: false, isLoading: false);
+      rethrow;
+    }
+  }
+
   Future<void> signInWithGooglePressed(context) async {
     updateWith(submitted: true, isLoading: true);
     try {
@@ -93,6 +125,7 @@ class SignInStateModel with EmailAndPasswordValidators, ChangeNotifier {
     bool isLoading,
     bool submitted,
     GoogleAuthModel googleAuthModel,
+    AppleSignInModel appleSignInModel,
   }) {
     this.email = email ?? this.email;
     this.password = password ?? this.password;
@@ -100,6 +133,7 @@ class SignInStateModel with EmailAndPasswordValidators, ChangeNotifier {
     this.isLoading = isLoading ?? this.isLoading;
     this.submitted = submitted ?? this.submitted;
     this.googleAuthModel = googleAuthModel ?? this.googleAuthModel;
+    this.appleSignInModel = appleSignInModel ?? this.appleSignInModel;
     notifyListeners();
   }
 }
