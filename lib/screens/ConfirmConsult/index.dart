@@ -90,7 +90,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
           ],
         ),
         bottom: TabBar(
-          indicatorColor: Colors.white,
+          indicatorColor: Theme.of(context).colorScheme.secondary,
           tabs: <Tab>[
             Tab(
               // set icon to the tab
@@ -109,7 +109,6 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
           // setup the _confirmTabCntrl
           controller: _confirmTabCntrl,
         ),
-        elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       bottomNavigationBar: !_isLoading

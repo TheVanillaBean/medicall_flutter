@@ -51,7 +51,6 @@ class _AccountScreenState extends State<AccountScreen> {
                 Theme.of(context).platform == TargetPlatform.iOS ? 17.0 : 20.0,
           ),
         ),
-        elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
       ),
       drawer: DrawerMenu(),
       //Content of tabs

@@ -187,7 +187,6 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
             Navigator.of(context).pop(context);
           },
         ),
-        elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
       ),
       body: widget.model.db.consultSnapshot != null
           ? widget.model.medicallUser.type == 'patient' &&

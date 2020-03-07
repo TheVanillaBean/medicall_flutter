@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:Medicall/presentation/medicall_app_icons.dart' as CustomIcons;
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
@@ -16,47 +15,65 @@ class DrawerMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     medicallUser = Provider.of<UserProvider>(context).medicallUser;
     return (Drawer(
-      child: ListView(
-        padding: const EdgeInsets.all(0.0),
+      child: Column(
         children: <Widget>[
           Container(
-              height: 100,
-              child: DrawerHeader(
-                margin: EdgeInsets.all(0),
-                padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor,
-                ),
-                child: Row(
-                  children: <Widget>[
-                    Icon(CustomIcons.MedicallApp.logo,
-                        size: 40.0,
-                        color: Theme.of(context).colorScheme.onPrimary),
-                    SizedBox(width: 15),
-                    Text(
-                      'MEDICALL',
+            height: 90,
+            color: Theme.of(context).colorScheme.primary.withAlpha(15),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  transform: Matrix4.translationValues(10.0, 0.0, 0.0),
+                  child: Text('MEDI',
                       style: TextStyle(
-                        fontSize: 18.0,
-                        letterSpacing: 1.5,
-                        color: Theme.of(context).colorScheme.onPrimary,
-                      ),
-                    ),
-                  ],
+                          fontSize: 18.0,
+                          height: 1.08,
+                          letterSpacing: 2.5,
+                          fontWeight: FontWeight.w700,
+                          color: Theme.of(context).colorScheme.primary)),
                 ),
-              )),
+                SizedBox(
+                  width: 70,
+                  height: 70,
+                  child: Image.asset(
+                    'assets/icon/logo_fore.png',
+                  ),
+                ),
+                Container(
+                  transform: Matrix4.translationValues(-15.0, 0.0, 0.0),
+                  child: Text('CALL',
+                      style: TextStyle(
+                          fontSize: 18.0,
+                          height: 1.08,
+                          letterSpacing: 2.5,
+                          fontWeight: FontWeight.w700,
+                          color: Theme.of(context).colorScheme.secondary)),
+                )
+              ],
+            ),
+          ),
           medicallUser.type == 'provider'
               ? Container()
               : ListTile(
-                  contentPadding: EdgeInsets.fromLTRB(16, 25, 0, 10),
-                  leading: Icon(
-                    Icons.local_hospital,
-                    color: Theme.of(context).primaryColor,
-                  ),
-                  title: Text(
-                    'Find A Doctor',
-                    style: TextStyle(
-                      color: Theme.of(context).primaryColor,
-                    ),
+                  contentPadding: EdgeInsets.fromLTRB(0, 25, 0, 10),
+                  title: Stack(
+                    alignment: Alignment.center,
+                    overflow: Overflow.visible,
+                    children: <Widget>[
+                      Positioned(
+                        left: 30,
+                        child: Icon(
+                          Icons.local_hospital,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                      Text(
+                        'Find A Doctor',
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary),
+                      ),
+                    ],
                   ),
                   onTap: () async {
                     SharedPreferences _thisConsult =
@@ -69,33 +86,49 @@ class DrawerMenu extends StatelessWidget {
                         arguments: {'user': medicallUser});
                   }),
           ListTile(
-              contentPadding: EdgeInsets.fromLTRB(16, 10, 0, 10),
-              dense: true,
-              leading: Icon(
-                Icons.recent_actors,
-                color: Theme.of(context).primaryColor,
-              ),
-              title: Text(
-                'History',
-                style: TextStyle(
-                  color: Theme.of(context).primaryColor,
-                ),
+              contentPadding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+              title: Stack(
+                alignment: Alignment.center,
+                overflow: Overflow.visible,
+                children: <Widget>[
+                  Positioned(
+                    left: 30,
+                    child: Icon(
+                      Icons.recent_actors,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                  Text(
+                    'History',
+                    style:
+                        TextStyle(color: Theme.of(context).colorScheme.primary),
+                  ),
+                ],
               ),
               onTap: () {
                 Navigator.of(context).pop();
                 Navigator.of(context).pushReplacementNamed('/history');
               }),
           ListTile(
-              contentPadding: EdgeInsets.fromLTRB(16, 10, 0, 25),
-              leading: Icon(
-                Icons.account_circle,
-                color: Theme.of(context).primaryColor,
-              ),
-              title: Text(
-                'Account',
-                style: TextStyle(
-                  color: Theme.of(context).primaryColor,
-                ),
+              contentPadding: EdgeInsets.fromLTRB(0, 10, 0, 25),
+              title: Stack(
+                alignment: Alignment.center,
+                overflow: Overflow.visible,
+                children: <Widget>[
+                  Positioned(
+                    left: 30,
+                    child: Icon(
+                      Icons.account_circle,
+                      color: Theme.of(context).colorScheme.primary,
+                      size: 25,
+                    ),
+                  ),
+                  Text(
+                    'Account',
+                    style:
+                        TextStyle(color: Theme.of(context).colorScheme.primary),
+                  ),
+                ],
               ),
               onTap: () {
                 Navigator.of(context).pop();
@@ -107,16 +140,22 @@ class DrawerMenu extends StatelessWidget {
             color: Colors.grey[400],
           ),
           ListTile(
-            contentPadding: EdgeInsets.fromLTRB(16, 20, 0, 10),
-            leading: Icon(
-              Icons.exit_to_app,
-              color: Theme.of(context).colorScheme.error,
-            ),
-            title: Text(
-              'Sign Out',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.error,
-              ),
+            contentPadding: EdgeInsets.fromLTRB(0, 20, 0, 10),
+            title: Stack(
+              alignment: Alignment.center,
+              children: <Widget>[
+                Positioned(
+                  left: 30,
+                  child: Icon(
+                    Icons.exit_to_app,
+                    color: Theme.of(context).colorScheme.error,
+                  ),
+                ),
+                Text(
+                  'Sign Out',
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+                ),
+              ],
             ),
             onTap: () => _signOut(context),
           )

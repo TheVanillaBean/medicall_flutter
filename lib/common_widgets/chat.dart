@@ -132,6 +132,14 @@ class _ChatState extends State<Chat> {
                   inputDecoration: InputDecoration(
                     hintText: "Add message here...",
                   ),
+                  sendButtonBuilder: (fn) {
+                    return IconButton(
+                        icon: Icon(
+                          Icons.send,
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                        onPressed: fn);
+                  },
                   inputMaxLines: 5,
                   inputTextStyle: TextStyle(fontSize: 14.0, height: 2),
                   inputContainerStyle: BoxDecoration(
@@ -267,7 +275,10 @@ class _ChatState extends State<Chat> {
                   showTraillingBeforeSend: true,
                   trailing: <Widget>[
                     IconButton(
-                      icon: Icon(Icons.photo),
+                      icon: Icon(
+                        Icons.photo,
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
                       onPressed: () async {
                         await _extImageProvider.setChatImage();
 
@@ -301,7 +312,10 @@ class DetailScreen extends StatelessWidget {
                 .returnNetworkImage(img, mode: ExtendedImageMode.gesture,
                     initGestureConfigHandler: (state) {
               return GestureConfig(
-                  inPageView: true, initialScale: 1.0, cacheGesture: false,);
+                inPageView: true,
+                initialScale: 1.0,
+                cacheGesture: false,
+              );
             }),
           ),
         ),

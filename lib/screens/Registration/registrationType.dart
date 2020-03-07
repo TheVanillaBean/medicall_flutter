@@ -11,7 +11,6 @@ class RegistrationTypeScreen extends StatelessWidget {
         resizeToAvoidBottomPadding: false,
         appBar: AppBar(
           centerTitle: true,
-          elevation: 0,
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () {
@@ -20,7 +19,6 @@ class RegistrationTypeScreen extends StatelessWidget {
           ),
           title: Text(
             'Create New Account',
-            style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
           ),
         ),
         body: Flex(
@@ -47,7 +45,7 @@ class RegistrationTypeScreen extends StatelessWidget {
                         Icon(
                           Icons.person,
                           size: 40,
-                          color: Theme.of(context).primaryColor,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       ],
                     ),
@@ -55,13 +53,13 @@ class RegistrationTypeScreen extends StatelessWidget {
                       'Patient',
                       style: TextStyle(
                           fontSize: 20.0,
-                          color: Theme.of(context).primaryColor),
+                          color: Theme.of(context).colorScheme.primary),
                     ),
                     Text(
                         'If you are looking to get a consult by a healthcare professional, tap here.',
                         style: TextStyle(
                             fontSize: 14.0,
-                            color: Theme.of(context).primaryColor),
+                            color: Theme.of(context).colorScheme.primary),
                         textAlign: TextAlign.center),
                   ],
                 ),
