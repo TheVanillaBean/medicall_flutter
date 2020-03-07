@@ -238,57 +238,64 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
                 '/' +
                 pageViewList.length.toString()),
       ),
-      body: pageViewList.length > 0
-          ? IntroductionScreen(
-              pages: pageViewList,
-              pageController: _pageController,
-              onDone: () => _onIntroEnd(context, pageViewList.length),
-              //onSkip: () => _onIntroEnd(context), // You can override onSkip callback
-              showSkipButton: true,
-              curve: Curves.easeInOutSine,
-              skipFlex: 0,
-              nextFlex: 0,
-              onChange: (i) => _checkQuestion(i, context, pageViewList.length),
+      body: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          FocusScope.of(context).requestFocus(new FocusNode());
+        },
+        child: pageViewList.length > 0
+            ? IntroductionScreen(
+                pages: pageViewList,
+                pageController: _pageController,
+                onDone: () => _onIntroEnd(context, pageViewList.length),
+                //onSkip: () => _onIntroEnd(context), // You can override onSkip callback
+                showSkipButton: true,
+                curve: Curves.easeInOutSine,
+                skipFlex: 0,
+                nextFlex: 0,
+                onChange: (i) =>
+                    _checkQuestion(i, context, pageViewList.length),
 
-              skip: IconButton(
-                icon: Icon(
-                  Icons.arrow_back_ios,
+                skip: IconButton(
+                  icon: Icon(
+                    Icons.arrow_back_ios,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                  onPressed: () {
+                    if (_currentPage == 0) {
+                      _extImageProvider.clearImageMemory();
+                      Navigator.of(context).pop(false);
+                    } else {
+                      _pageController.previousPage(
+                          curve: Curves.ease, duration: Duration(seconds: 1));
+                    }
+                  },
+                ),
+                next: Icon(
+                  Icons.arrow_forward_ios,
                   color: Theme.of(context).colorScheme.secondary,
                 ),
-                onPressed: () {
-                  if (_currentPage == 0) {
-                    _extImageProvider.clearImageMemory();
-                    Navigator.of(context).pop(false);
-                  } else {
-                    _pageController.previousPage(
-                        curve: Curves.ease, duration: Duration(seconds: 1));
-                  }
-                },
-              ),
-              next: Icon(
-                Icons.arrow_forward_ios,
-                color: Theme.of(context).colorScheme.secondary,
-              ),
-              done: Text(
-                'Finish',
-                style: TextStyle(
-                    fontSize: 18,
-                    color: Theme.of(context).colorScheme.secondary,
-                    fontWeight: FontWeight.bold),
-              ),
-              dotsFlex: 1,
-              dotsDecorator: DotsDecorator(
-                size: Size(10.0, 10.0),
-                spacing: EdgeInsets.all(1),
-                color: Colors.grey,
-                activeColor: Theme.of(context).primaryColor,
-                activeSize: Size(22.0, 10.0),
-                activeShape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(25.0)),
+                done: Text(
+                  'Finish',
+                  style: TextStyle(
+                      fontSize: 18,
+                      color: Theme.of(context).colorScheme.secondary,
+                      fontWeight: FontWeight.bold),
                 ),
-              ),
-            )
-          : SizedBox(),
+                dotsFlex: 1,
+                dotsDecorator: DotsDecorator(
+                  size: Size(10.0, 10.0),
+                  spacing: EdgeInsets.all(1),
+                  color: Colors.grey,
+                  activeColor: Theme.of(context).primaryColor,
+                  activeSize: Size(22.0, 10.0),
+                  activeShape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(25.0)),
+                  ),
+                ),
+              )
+            : SizedBox(),
+      ),
     );
   }
 }

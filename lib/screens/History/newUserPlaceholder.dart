@@ -1,9 +1,9 @@
 import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:Medicall/screens/History/doctorSearch.dart';
-import 'package:flutter/material.dart';
-import 'package:Medicall/util/app_util.dart' as AppUtils;
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:Medicall/presentation/medicall_icons_icons.dart' as CustomIcons;
+import 'package:Medicall/screens/History/doctorSearch.dart';
+import 'package:Medicall/util/app_util.dart' as AppUtils;
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class NewUserPlaceHolder extends StatelessWidget {
   final MedicallUser medicallUser;
@@ -21,7 +21,7 @@ class NewUserPlaceHolder extends StatelessWidget {
                   height: ScreenUtil.mediaQueryData.orientation ==
                           Orientation.portrait
                       ? ScreenUtil.screenHeightDp -
-                          135 -
+                          200 -
                           ScreenUtil.statusBarHeight
                       : ScreenUtil.screenHeightDp -
                           135 -

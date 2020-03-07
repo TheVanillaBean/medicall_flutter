@@ -185,6 +185,11 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                                       borderSide: BorderSide(
                                           color: Colors.grey, width: 1),
                                     ),
+                                    focusedBorder: OutlineInputBorder(
+                                      // width: 0.0 produces a thin "hairline" border
+                                      borderSide: BorderSide(
+                                          color: Colors.grey, width: 1),
+                                    ),
                                   ),
                                   validators: [
                                     //FormBuilderValidators.required(),
