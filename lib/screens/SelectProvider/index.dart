@@ -77,7 +77,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
         ),
         bottomNavigationBar: FlatButton(
           padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
-          color: Theme.of(context).primaryColor,
+          color: Theme.of(context).colorScheme.secondary,
           onPressed: () async {
             if (selectedProvider.length > 0) {
               //await setConsult();
@@ -89,8 +89,9 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
           child: Text(
             'CONTINUE',
             style: TextStyle(
-              color: Theme.of(context).colorScheme.onPrimary,
+              color: Theme.of(context).colorScheme.onSecondary,
               letterSpacing: 2,
+              fontWeight: FontWeight.bold
             ),
           ),
         ),

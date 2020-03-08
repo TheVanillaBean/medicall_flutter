@@ -90,9 +90,9 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
           widget.model.extImageProvider.pickImagesMaterialOptions(
               useDetailsView: true,
               actionBarColor:
-                  '#${Theme.of(context).primaryColor.value.toRadixString(16).toUpperCase().substring(2)}',
+                  '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
               statusBarColor:
-                  '#${Theme.of(context).primaryColor.value.toRadixString(16).toUpperCase().substring(2)}',
+                  '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
               lightStatusBar: false,
               autoCloseOnSelectionLimit: true,
               startInAllView: true,
@@ -123,9 +123,9 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
           widget.model.extImageProvider.pickImagesMaterialOptions(
             useDetailsView: true,
             actionBarColor:
-                '#${Theme.of(context).primaryColor.value.toRadixString(16).toUpperCase().substring(2)}',
+                '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
             statusBarColor:
-                '#${Theme.of(context).primaryColor.value.toRadixString(16).toUpperCase().substring(2)}',
+                '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
             lightStatusBar: false,
             autoCloseOnSelectionLimit: true,
             startInAllView: true,
@@ -160,13 +160,12 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
                 Theme.of(context).platform == TargetPlatform.iOS ? 17.0 : 20.0,
           ),
         ),
-        elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
       ),
       bottomNavigationBar: FlatButton(
         padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
         color: widget.model.profileImage.length == 1 &&
                 widget.model.govIdImage.length == 1
-            ? Theme.of(context).primaryColor
+            ? Theme.of(context).colorScheme.primary
             : Colors.grey,
         onPressed: () async {
           if (widget.model.profileImage.length == 1 &&

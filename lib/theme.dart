@@ -2,16 +2,18 @@ import 'package:flutter/material.dart';
 
 final ThemeData myTheme = ThemeData(
   primarySwatch: Colors.blue,
-  brightness: Brightness.light,
-  primaryColor: Color(0xFF2F97C1),
-  primaryColorBrightness: Brightness.dark,
+  primaryColor: Colors.white,
+  primaryColorBrightness: Brightness.light,
+  brightness: Brightness.dark,
   primaryColorLight: Color(0xffbbdefb),
   primaryColorDark: Color(0xff107FA2),
   accentColor: Color(0xff2196f3),
   accentColorBrightness: Brightness.dark,
   canvasColor: Color(0xfffafafa),
   scaffoldBackgroundColor: Color(0xfffafafa),
-  bottomAppBarColor: Color(0xffffffff),
+  bottomAppBarColor: Color(0xFF2F97C1),
+  appBarTheme: AppBarTheme(elevation: 0, brightness: Brightness.light),
+  bottomAppBarTheme: BottomAppBarTheme(elevation: 0, color: Color(0xFF2F97C1),),
   cardColor: Color(0xffffffff),
   dividerColor: Color(0x1f000000),
   highlightColor: Color(0x66bcbcbc),
@@ -193,7 +195,7 @@ final ThemeData myTheme = ThemeData(
       fontStyle: FontStyle.normal,
     ),
     title: TextStyle(
-      color: Color(0xffffffff),
+      color: Color(0xFF2F97C1),
       fontSize: null,
       fontWeight: FontWeight.w400,
       fontStyle: FontStyle.normal,
@@ -425,7 +427,7 @@ final ThemeData myTheme = ThemeData(
     size: 24,
   ),
   primaryIconTheme: IconThemeData(
-    color: Color(0xffffffff),
+    color: Color(0xfff16477),
     opacity: 1,
     size: 24,
   ),
@@ -456,9 +458,9 @@ final ThemeData myTheme = ThemeData(
     ),
   ),
   tabBarTheme: TabBarTheme(
-    indicatorSize: TabBarIndicatorSize.tab,
-    labelColor: Color(0xffffffff),
-    unselectedLabelColor: Color(0xb2ffffff),
+    indicatorSize: TabBarIndicatorSize.label,
+    labelColor: Color(0xfff16477),
+    unselectedLabelColor: Color(0xfff16477).withAlpha(100),
   ),
   chipTheme: ChipThemeData(
     backgroundColor: Color(0x1f000000),

@@ -123,7 +123,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             : Container(),
       ),
       bottomNavigationBar: FlatButton(
-        color: Theme.of(context).primaryColor,
+        color: Theme.of(context).colorScheme.primary,
         padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
         onPressed: () {
           if (!this._addressList.contains(this._typeAheadController.text)) {

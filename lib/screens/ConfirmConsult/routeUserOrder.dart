@@ -35,8 +35,6 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
             leading: Container(),
             centerTitle: true,
             title: Text('Order Confirmation'),
-            elevation:
-                Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
           ),
           body: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -51,8 +49,7 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                         'Thank you for your payment of ${_consult.price},',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            fontSize: 16,
-                            color: Theme.of(context).primaryColor),
+                            fontSize: 16,),
                       ),
                     )
                   ],
@@ -68,8 +65,7 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                         'Doctor',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            fontSize: 16,
-                            color: Theme.of(context).primaryColor),
+                            fontSize: 16,),
                       ),
                     )
                   ],
@@ -111,8 +107,7 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                         _consult.provider + ' ' + _consult.providerTitles,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            fontSize: 16,
-                            color: Theme.of(context).primaryColor),
+                            fontSize: 16,),
                       ),
                     )
                   ],
@@ -126,7 +121,7 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             fontSize: 16,
-                            color: Theme.of(context).primaryColor),
+                            ),
                       ),
                     )
                   ],
@@ -146,7 +141,7 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                         style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: Theme.of(context).primaryColor),
+                            ),
                       ),
                     )
                   ],
@@ -165,7 +160,7 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: 14,
-                              color: Theme.of(context).primaryColor),
+                              ),
                         ),
                       ),
                     ],
@@ -175,14 +170,13 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                   height: 20,
                 ),
                 FlatButton(
-                  color: Theme.of(context).colorScheme.secondary,
+                  color: Theme.of(context).colorScheme.secondaryVariant,
                   onPressed: () {
                     Navigator.of(context).pushReplacementNamed('/history');
                   },
+                  textColor: Theme.of(context).colorScheme.onSecondary,
                   child: Text(
                     'Go to History',
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.onPrimary),
                   ),
                 )
               ]),

@@ -277,8 +277,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
     model.setVerificationStatus(this);
 
     return Scaffold(
-      appBar: AppBar(elevation: 0.0),
-      backgroundColor: Theme.of(context).primaryColor,
+      backgroundColor: Theme.of(context).colorScheme.primary,
       body: Container(
         child: ReactiveRefreshIndicator(
           onRefresh: _onRefresh,

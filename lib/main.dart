@@ -28,6 +28,7 @@ import 'package:Medicall/util/apple_sign_in_available.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_crashlytics/flutter_crashlytics.dart';
 import 'package:provider/provider.dart';
 
@@ -37,7 +38,8 @@ import 'screens/Symptoms/index.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   bool isInDebugMode = false;
-
+  SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(statusBarColor: Colors.transparent));
   FlutterError.onError = (FlutterErrorDetails details) {
     if (isInDebugMode) {
       // In development mode simply print to console.

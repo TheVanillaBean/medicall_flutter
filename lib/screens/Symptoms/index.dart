@@ -62,7 +62,6 @@ class SymptomsScreen extends StatelessWidget {
                 Theme.of(context).platform == TargetPlatform.iOS ? 17.0 : 20.0,
           ),
         ),
-        elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
       ),
       drawer: DrawerMenu(),
       // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -152,10 +151,10 @@ class EntryItem extends StatelessWidget {
             ? Positioned.fill(
                 child: _animationProvider.returnAnimation(
                     tween: _animationProvider.returnMultiTrackTween([
-                      Colors.blueAccent.withAlpha(100),
+                      Colors.blueAccent.withAlpha(20),
                       Colors.cyanAccent.withAlpha(50),
                       Colors.cyanAccent.withAlpha(50),
-                      Colors.blueAccent.withAlpha(100)
+                      Colors.blueAccent.withAlpha(20)
                     ]),
                     margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
                     radius: BorderRadius.all(Radius.circular(10))))
@@ -163,10 +162,10 @@ class EntryItem extends StatelessWidget {
                 ? Positioned.fill(
                     child: _animationProvider.returnAnimation(
                         tween: _animationProvider.returnMultiTrackTween([
-                          Colors.purpleAccent.withAlpha(50),
-                          Colors.blueAccent.withAlpha(50),
-                          Colors.blueAccent.withAlpha(50),
-                          Colors.purpleAccent.withAlpha(50)
+                          Colors.greenAccent.withAlpha(50),
+                          Colors.blueAccent.withAlpha(20),
+                          Colors.blueAccent.withAlpha(20),
+                          Colors.greenAccent.withAlpha(50)
                         ]),
                         margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
                         radius: BorderRadius.all(Radius.circular(10))))

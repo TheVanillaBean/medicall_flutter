@@ -63,13 +63,10 @@ class HistoryTiles extends StatelessWidget {
                           });
                         },
                         child: Container(
+                          margin: EdgeInsets.only(top: 2),
                           decoration: BoxDecoration(
-                              border: Border(
-                                  bottom: BorderSide(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondary
-                                          .withAlpha(70)))),
+                            color: Theme.of(context).colorScheme.surface,
+                          ),
                           child: ListTile(
                             dense: true,
                             isThreeLine: true,
@@ -86,7 +83,7 @@ class HistoryTiles extends StatelessWidget {
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 1.1,
-                                  color: Theme.of(context).primaryColor),
+                                  color: Theme.of(context).colorScheme.primary),
                             ),
                             subtitle: model.historySnapshot.data
                                         .documents[index].data['type'] !=
@@ -165,8 +162,9 @@ class HistoryTiles extends StatelessWidget {
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                           fontSize: 10,
-                                          color:
-                                              Theme.of(context).primaryColor),
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary),
                                     ),
                                   )
                                 ],

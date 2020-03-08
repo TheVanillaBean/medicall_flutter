@@ -179,7 +179,7 @@ class _LoginScreenState extends State<LoginPage> {
                   children: <Widget>[
                     Expanded(
                       child: SignInButton(
-                        color: Theme.of(context).primaryColor,
+                        color: Theme.of(context).colorScheme.primary,
                         textColor: Colors.white,
                         text: "Sign in",
                         onPressed: model.canSubmit ? _submit : _submit,
@@ -201,7 +201,7 @@ class _LoginScreenState extends State<LoginPage> {
                   children: <Widget>[
                     Expanded(
                       child: SignInButton(
-                        color: Theme.of(context).primaryColor.withBlue(3000),
+                        color: Theme.of(context).colorScheme.primary.withBlue(150),
                         textColor: Colors.white,
                         text: "Create New Account",
                         onPressed: () {
@@ -247,7 +247,7 @@ class _LoginScreenState extends State<LoginPage> {
                   height: 1.08,
                   letterSpacing: 2.5,
                   fontWeight: FontWeight.w700,
-                  color: Theme.of(context).primaryColor)),
+                  color: Theme.of(context).colorScheme.primary)),
         ),
         SizedBox(
           width: 110,

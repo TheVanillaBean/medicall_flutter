@@ -210,15 +210,10 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
       appBar: AppBar(
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: Icon(Icons.close),
           onPressed: () {
-            if (_currentPage == 0) {
-              _extImageProvider.clearImageMemory();
-              Navigator.of(context).pop(false);
-            } else {
-              _pageController.previousPage(
-                  curve: Curves.ease, duration: Duration(seconds: 1));
-            }
+            _extImageProvider.clearImageMemory();
+            Navigator.of(context).pop(false);
           },
         ),
         title: Text(_currentQuestions == 'symptom'
