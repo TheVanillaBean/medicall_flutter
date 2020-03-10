@@ -66,71 +66,57 @@ class DoctorSearch extends StatelessWidget {
                   if (userDocuments[i].data['type'] == 'provider' &&
                       medicallUser.displayName !=
                           userDocuments[i].data['name']) {
-                    historyList.add(Container(
-                      height: 75,
-                      child: Stack(
-                        alignment: Alignment.centerRight,
-                        fit: StackFit.loose,
-                        children: <Widget>[
-                          ListTile(
-                            dense: true,
-                            title: Text(
-                                '${userDocuments[i].data['name'].split(" ")[0][0].toUpperCase()}${userDocuments[i].data['name'].split(" ")[0].substring(1)} ${userDocuments[i].data['name'].split(" ")[1][0].toUpperCase()}${userDocuments[i].data['name'].split(" ")[1].substring(1)}' +
-                                    " " +
-                                    userDocuments[i].data['titles']),
-                            subtitle: Text(
-                                userDocuments[i].data['address'].toString()),
-                            leading: Icon(
-                              Icons.account_circle,
-                              size: 50,
+                    historyList.add(ListTile(
+                      dense: true,
+                      contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                      title: Text(
+                          '${userDocuments[i].data['name'].split(" ")[0][0].toUpperCase()}${userDocuments[i].data['name'].split(" ")[0].substring(1)} ${userDocuments[i].data['name'].split(" ")[1][0].toUpperCase()}${userDocuments[i].data['name'].split(" ")[1].substring(1)}' +
+                              " " +
+                              userDocuments[i].data['titles']),
+                      subtitle:
+                          Text(userDocuments[i].data['address'].toString()),
+                      leading: Icon(
+                        Icons.account_circle,
+                        size: 50,
+                      ),
+                      trailing: PopupMenuButton(
+                        itemBuilder: (context) {
+                          var list = List<PopupMenuEntry<Object>>();
+                          list.add(
+                            PopupMenuItem(
+                              child: Text("New Request"),
+                              value: 1,
                             ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.all(10),
-                            width: 120,
-                            child: PopupMenuButton(
-                              itemBuilder: (context) {
-                                var list = List<PopupMenuEntry<Object>>();
-                                list.add(
-                                  PopupMenuItem(
-                                    child: Text("New Request"),
-                                    value: 1,
-                                  ),
-                                );
-                                list.add(
-                                  PopupMenuDivider(
-                                    height: 10,
-                                  ),
-                                );
-                                list.add(
-                                  PopupMenuItem(
-                                    child: Text("Follow Up"),
-                                    value: 1,
-                                  ),
-                                );
-                                return list;
-                              },
-                              icon: Icon(
-                                Icons.more_vert,
-                                size: 30,
-                                color: Theme.of(context).colorScheme.secondary,
-                              ),
-                              offset: Offset.fromDirection(0.0, -20.0),
-                              onSelected: (val) {
-                                providerTitles =
-                                    userDocuments[i].data['titles'];
-                                selectedProvider =
-                                    userDocuments[i].data['name'];
-                                _consult.provider = selectedProvider;
-                                _consult.providerProfilePic =
-                                    userDocuments[i].data['profile_pic'];
-                                setConsult(_consult, selectedProvider,
-                                    providerTitles, providerProfilePic);
-                                Navigator.of(context).pushNamed('/symptoms');
-                              },
+                          );
+                          list.add(
+                            PopupMenuDivider(
+                              height: 10,
                             ),
-                          ),
-                        ],
+                          );
+                          list.add(
+                            PopupMenuItem(
+                              child: Text("Follow Up"),
+                              value: 1,
+                            ),
+                          );
+                          return list;
+                        },
+                        icon: Icon(
+                          Icons.more_vert,
+                          size: 30,
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                        offset: Offset.fromDirection(0.0, -20.0),
+                        onSelected: (val) {
+                          providerTitles = userDocuments[i].data['titles'];
+                          selectedProvider = userDocuments[i].data['name'];
+                          _consult.provider = selectedProvider;
+                          _consult.providerProfilePic =
+                              userDocuments[i].data['profile_pic'];
+                          setConsult(_consult, selectedProvider,
+                              providerTitles, providerProfilePic);
+                          Navigator.of(context).pushNamed('/symptoms');
+                        },
                       ),
                     ));
                   }

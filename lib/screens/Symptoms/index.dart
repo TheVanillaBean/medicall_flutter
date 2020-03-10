@@ -1,6 +1,7 @@
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/screens/History/doctorSearch.dart';
 import 'package:Medicall/screens/Questions/questionsScreen.dart';
 import 'package:Medicall/screens/Symptoms/medical_history_state.dart';
 import 'package:Medicall/services/animation_provider.dart';
@@ -56,12 +57,18 @@ class SymptomsScreen extends StatelessWidget {
         ),
         centerTitle: true,
         title: Text(
-          'What can a doctor help you with?',
-          style: TextStyle(
-            fontSize:
-                Theme.of(context).platform == TargetPlatform.iOS ? 17.0 : 20.0,
-          ),
+          'How can doctors help?',
         ),
+        actions: <Widget>[
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => DoctorSearch()),
+              );
+            },
+            icon: Icon(Icons.search),
+          )
+        ],
       ),
       drawer: DrawerMenu(),
       // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
