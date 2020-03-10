@@ -3,6 +3,7 @@ import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:google_maps_webservice/places.dart';
@@ -211,23 +212,59 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 SizedBox(
                   height: 10,
                 ),
-                FormBuilderDateTimePicker(
-                  attribute: "Date of birth",
-                  inputType: InputType.date,
-                  initialDatePickerMode: DatePickerMode.year,
-                  initialDate: DateTime.utc(DateTime.now().year - 19, 1, 1),
-                  format: DateFormat("MM-dd-yyyy"),
-                  decoration: InputDecoration(
-                      labelText: 'Date of Birth',
-                      fillColor: Color.fromRGBO(35, 179, 232, 0.1),
-                      filled: true,
-                      disabledBorder: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                      border: InputBorder.none),
-                  validators: [
-                    FormBuilderValidators.required(),
-                  ],
-                ),
+                FormBuilderCustomField(
+                    attribute: "Date of birth",
+                    formField: FormField(builder: (context) {
+                      return Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: FlatButton(
+                                padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
+                                color: Color.fromRGBO(35, 179, 232, 0.1),
+                                onPressed: () {
+                                  DatePicker.showDatePicker(this.context,
+                                      showTitleActions: true,
+                                      maxTime: DateTime(2001, 6, 7),
+                                      onChanged: (date) {}, onConfirm: (date) {
+                                    tempUserProvider.updateWith(
+                                        dob: DateFormat('MM-dd-yyyy')
+                                            .format(date)
+                                            .toString());
+                                    setState(() {});
+                                  },
+                                      currentTime: DateTime.now(),
+                                      locale: LocaleType.en);
+                                },
+                                child: Text(
+                                  tempUserProvider.medicallUser.dob == null ||
+                                          tempUserProvider
+                                                  .medicallUser.dob.length ==
+                                              0
+                                      ? 'Date of Birth'
+                                      : tempUserProvider.medicallUser.dob,
+                                  style: TextStyle(fontSize: 16),
+                                )),
+                          ),
+                        ],
+                      );
+                    })),
+                // FormBuilderDateTimePicker(
+                //   attribute: "Date of birth",
+                //   inputType: InputType.date,
+                //   initialDatePickerMode: DatePickerMode.day,
+                //   initialDate: DateTime.utc(DateTime.now().year - 19, 1, 1),
+                //   format: DateFormat("MM-dd-yyyy"),
+                //   decoration: InputDecoration(
+                //       labelText: 'Date of Birth',
+                //       fillColor: Color.fromRGBO(35, 179, 232, 0.1),
+                //       filled: true,
+                //       disabledBorder: InputBorder.none,
+                //       enabledBorder: InputBorder.none,
+                //       border: InputBorder.none),
+                //   validators: [
+                //     FormBuilderValidators.required(),
+                //   ],
+                // ),
                 SizedBox(
                   height: 10,
                 ),
@@ -569,23 +606,24 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   void updateUserWithFormData(TempUserProvider tempUserProvider) {
-    tempUserProvider.updateWith(firstName: this.firstName);
-    tempUserProvider.updateWith(lastName: this.lastName);
-    tempUserProvider.updateWith(displayName: this.displayName);
-    tempUserProvider.updateWith(password: this.password);
-    tempUserProvider.updateWith(dob: this.dob);
-    tempUserProvider.updateWith(gender: this.gender);
-    tempUserProvider.updateWith(email: this.email);
-    tempUserProvider.updateWith(terms: this.terms);
-    tempUserProvider.updateWith(policy: this.policy);
-    tempUserProvider.updateWith(consent: this.consent);
+    tempUserProvider.updateWith(
+        firstName: this.firstName,
+        lastName: this.lastName,
+        displayName: this.displayName,
+        password: this.password,
+        gender: this.gender,
+        email: this.email,
+        terms: this.terms,
+        policy: this.policy,
+        consent: this.consent,
+        address: this.address);
     if (tempUserProvider.medicallUser.type == 'provider') {
-      tempUserProvider.updateWith(titles: this.titles);
-      tempUserProvider.updateWith(npi: this.npi);
-      tempUserProvider.updateWith(medLicense: this.medLicense);
-      tempUserProvider.updateWith(medLicenseState: this.medLicenseState);
+      tempUserProvider.updateWith(
+          titles: this.titles,
+          npi: this.npi,
+          medLicense: this.medLicense,
+          medLicenseState: this.medLicenseState);
     }
-    tempUserProvider.updateWith(address: this.address);
   }
 
   String get displayName {
@@ -602,12 +640,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   String get password {
     return _userRegKey.currentState.value['Password'];
-  }
-
-  String get dob {
-    return DateFormat('MM-dd-yyyy')
-        .format(_userRegKey.currentState.value['Date of birth'])
-        .toString();
   }
 
   String get gender {

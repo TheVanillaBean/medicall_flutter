@@ -51,18 +51,19 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
   }
 
   // Widgets
-  final decorationStyle = TextStyle(color: Colors.grey[50], fontSize: 16.0);
-  final hintStyle = TextStyle(color: Colors.white24);
+  final decorationStyle = TextStyle(color: Colors.black45, fontSize: 16.0);
+  final hintStyle = TextStyle(color: Colors.black26);
 
   Widget _buildInputButton(bool condition) {
-    return IconButton(
-      icon: Icon(
-        Icons.check_circle,
-        size: 50,
-      ),
-      padding: EdgeInsets.all(10),
-      color: Colors.white,
+    return FlatButton(
+      padding: EdgeInsets.all(20),
+      color: Theme.of(this.context).colorScheme.secondary,
       disabledColor: Theme.of(context).buttonColor,
+      textColor: Colors.white,
+      child: Text(
+        'Continue',
+        style: TextStyle(fontSize: 18),
+      ),
       onPressed:
           (condition) ? () => model.updateRefreshing(true, mounted) : null,
     );
@@ -81,17 +82,17 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
       style: Theme.of(context)
           .textTheme
           .subhead
-          .copyWith(fontSize: 18.0, color: Colors.white),
+          .copyWith(fontSize: 18.0, color: Colors.black),
       decoration: InputDecoration(
-        border: UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.tealAccent)),
-        enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.tealAccent)),
+        border:
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+        enabledBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
         isDense: false,
         counterText: "",
         icon: const Icon(
           Icons.phone,
-          color: Colors.white,
+          color: Colors.black,
         ),
         labelText: "Phone",
         labelStyle: decorationStyle,
@@ -105,9 +106,10 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
 
   Widget _buildPhoneAuthBody() {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Padding(
+        Container(
+          margin: EdgeInsets.fromLTRB(0, 120, 0, 0),
           padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
           child: Text(
             "We'll send an SMS message to verify your identity, please enter your phone number below!",
@@ -125,15 +127,18 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
                 flex: 5,
                 child: _buildPhoneNumberInput(),
               ),
-              Flexible(
-                flex: 1,
-                child: _buildInputButton(
-                    model.status == AuthStatus.STATE_INITIALIZED &&
-                        model.canSubmitPhoneNumber),
-              )
             ],
           ),
         ),
+        Row(
+          children: <Widget>[
+            Expanded(
+              child: _buildInputButton(
+                  model.status == AuthStatus.STATE_INITIALIZED &&
+                      model.canSubmitPhoneNumber),
+            ),
+          ],
+        )
       ],
     );
   }
@@ -151,7 +156,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
       onSubmitted: (_) => model.updateRefreshing(true, mounted),
       style: Theme.of(context).textTheme.subhead.copyWith(
             fontSize: 32.0,
-            color: enabled ? Colors.white : Theme.of(context).buttonColor,
+            color: enabled ? Colors.black : Theme.of(context).buttonColor,
           ),
       decoration: InputDecoration(
         border: UnderlineInputBorder(
@@ -277,7 +282,6 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
     model.setVerificationStatus(this);
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primary,
       body: Container(
         child: ReactiveRefreshIndicator(
           onRefresh: _onRefresh,
