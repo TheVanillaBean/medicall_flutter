@@ -240,7 +240,6 @@ class EntryItem extends StatelessWidget {
                                         ? Container(
                                             margin: EdgeInsets.fromLTRB(
                                                 0, 0, 60, 0),
-                                            width: 160,
                                             decoration: BoxDecoration(
                                               border: Border(
                                                   top: BorderSide(
@@ -256,21 +255,36 @@ class EntryItem extends StatelessWidget {
                                                   style:
                                                       TextStyle(fontSize: 12),
                                                 ),
-                                                Switch(
-                                                  value: _newMedicalHistory
-                                                      .getnewMedicalHistory(),
-                                                  onChanged: (value) {
-                                                    _newMedicalHistory =
-                                                        _newMedicalHistory
-                                                            .setnewMedicalHistory(
-                                                                value);
-                                                  },
-                                                  activeTrackColor:
-                                                      Colors.white,
-                                                  activeColor: Theme.of(context)
-                                                      .colorScheme
-                                                      .secondary,
-                                                ),
+                                                Row(
+                                                  children: <Widget>[
+                                                    Text(
+                                                      'No',
+                                                      style: TextStyle(
+                                                          fontSize: 14),
+                                                    ),
+                                                    Switch(
+                                                      value: _newMedicalHistory
+                                                          .getnewMedicalHistory(),
+                                                      onChanged: (value) {
+                                                        _newMedicalHistory =
+                                                            _newMedicalHistory
+                                                                .setnewMedicalHistory(
+                                                                    value);
+                                                      },
+                                                      activeTrackColor:
+                                                          Colors.white,
+                                                      activeColor:
+                                                          Theme.of(context)
+                                                              .colorScheme
+                                                              .secondary,
+                                                    ),
+                                                    Text(
+                                                      'Yes',
+                                                      style: TextStyle(
+                                                          fontSize: 14),
+                                                    ),
+                                                  ],
+                                                )
                                               ],
                                             ))
                                         : Container(
@@ -330,10 +344,8 @@ class EntryItem extends StatelessWidget {
                                         } else {
                                           if (_newMedicalHistory
                                               .getnewMedicalHistory()) {
-                                            medicallUser.hasMedicalHistory =
-                                                false;
                                             _newMedicalHistory
-                                                .setnewMedicalHistory(false);
+                                                .setnewMedicalHistory(true);
                                             Navigator.of(context).push(
                                               MaterialPageRoute(
                                                   builder: (_) =>

@@ -1,4 +1,5 @@
 import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/screens/Symptoms/medical_history_state.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
@@ -158,6 +159,8 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
   Widget build(BuildContext context) {
     medicallUser = Provider.of<UserProvider>(context).medicallUser;
     _db = Provider.of<Database>(context);
+    MedicalHistoryState _newMedicalHistory =
+        Provider.of<MedicalHistoryState>(context, listen: false);
     _extImageProvider = Provider.of<ExtImageProvider>(context);
     const bodyStyle = TextStyle(fontSize: 19.0);
     const pageDecoration = const PageDecoration(
@@ -168,7 +171,8 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
       contentPadding: EdgeInsets.zero,
       imagePadding: EdgeInsets.zero,
     );
-    if (medicallUser.hasMedicalHistory) {
+    if (medicallUser.hasMedicalHistory &&
+        !_newMedicalHistory.getnewMedicalHistory()) {
       _combinedList = [
         ..._db.newConsult.screeningQuestions,
         ..._db.newConsult.uploadQuestions
@@ -213,6 +217,9 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
           icon: Icon(Icons.close),
           onPressed: () {
             _extImageProvider.clearImageMemory();
+            if (_newMedicalHistory.getnewMedicalHistory()) {
+              _newMedicalHistory.setnewMedicalHistory(false);
+            }
             Navigator.of(context).pop(false);
           },
         ),
@@ -282,7 +289,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
                   size: Size(10.0, 10.0),
                   spacing: EdgeInsets.all(1),
                   color: Colors.grey,
-                  activeColor: Theme.of(context).primaryColor,
+                  activeColor: Theme.of(context).colorScheme.primary,
                   activeSize: Size(22.0, 10.0),
                   activeShape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(25.0)),

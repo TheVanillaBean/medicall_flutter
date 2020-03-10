@@ -113,35 +113,35 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                     ),
                   ),
                   type == 'dropdown'
-                      ? DropdownButtonHideUnderline(
-                          child: Theme(
-                            data: ThemeData(),
-                            child: FormBuilderDropdown(
-                              attribute: 'question0',
-                              initialValue: question['answer'] != null
-                                  ? questions['answer'].runtimeType == List &&
-                                          questions['answer'].length > 0
-                                      ? questions['answer'][1]
-                                      : questions['answer'].runtimeType ==
-                                              String
-                                          ? questions['answer']
-                                          : questions['answer'][0]
-                                  : null,
-                              decoration: InputDecoration(
-                                  fillColor: Color.fromRGBO(35, 179, 232, 0.2),
-                                  filled: true,
-                                  contentPadding:
-                                      EdgeInsets.fromLTRB(10, 10, 10, 10),
-                                  border: InputBorder.none),
-                              validators: [
-                                FormBuilderValidators.required(),
-                              ],
-                              onChanged: _onChangedDropDown,
-                              items: _options
-                                  .map((lang) => DropdownMenuItem(
-                                      value: lang, child: Text(lang)))
-                                  .toList(),
-                            ),
+                      ? Theme(
+                          data: ThemeData(
+                              buttonTheme:
+                                  ButtonThemeData(alignedDropdown: true)),
+                          child: FormBuilderDropdown(
+                            isExpanded: true,
+                            attribute: 'question0',
+                            initialValue: question['answer'] != null
+                                ? questions['answer'].runtimeType == List &&
+                                        questions['answer'].length > 0
+                                    ? questions['answer'][1]
+                                    : questions['answer'].runtimeType == String
+                                        ? questions['answer']
+                                        : questions['answer'][0]
+                                : null,
+                            decoration: InputDecoration(
+                                fillColor: Color.fromRGBO(35, 179, 232, 0.2),
+                                filled: true,
+                                contentPadding:
+                                    EdgeInsets.fromLTRB(10, 10, 10, 10),
+                                border: InputBorder.none),
+                            validators: [
+                              FormBuilderValidators.required(),
+                            ],
+                            onChanged: _onChangedDropDown,
+                            items: _options
+                                .map((lang) => DropdownMenuItem(
+                                    value: lang, child: Text(lang)))
+                                .toList(),
                           ),
                         )
                       : type == 'checkbox'
@@ -213,7 +213,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
         Map fields = key.currentState.fields;
         fields.forEach((k, v) {
           if (fields[k].currentState.value == val) {
-            data["answer"] = [val];
+            data["answer"] = val;
           }
         });
       };

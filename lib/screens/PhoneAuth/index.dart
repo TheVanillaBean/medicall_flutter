@@ -57,7 +57,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
   Widget _buildInputButton(bool condition) {
     return FlatButton(
       padding: EdgeInsets.all(20),
-      color: Theme.of(this.context).colorScheme.secondary,
+      color: Theme.of(context).colorScheme.secondary,
       disabledColor: Theme.of(context).buttonColor,
       textColor: Colors.white,
       child: Text(
