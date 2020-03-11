@@ -59,16 +59,6 @@ class SymptomsScreen extends StatelessWidget {
         title: Text(
           'How can doctors help?',
         ),
-        actions: <Widget>[
-          IconButton(
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => DoctorSearch()),
-              );
-            },
-            icon: Icon(Icons.search),
-          )
-        ],
       ),
       drawer: DrawerMenu(),
       // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -93,10 +83,41 @@ class SymptomsScreen extends StatelessWidget {
                   db.userMedicalRecord.data != null) {
                 medicallUser.hasMedicalHistory = true;
               }
-              return ListView.builder(
-                itemBuilder: (BuildContext context, int index) =>
-                    EntryItem(data[index], _showDialog, context),
-                itemCount: data.length,
+              return Column(
+                children: <Widget>[
+                  Expanded(
+                    flex: 9,
+                    child: ListView.builder(
+                      itemBuilder: (BuildContext context, int index) =>
+                          EntryItem(data[index], _showDialog, context),
+                      itemCount: data.length,
+                    ),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                              'If you already know who your doctor is, tap below'),
+                          FlatButton(
+                            color: Theme.of(context).colorScheme.secondary,
+                            colorBrightness: Brightness.dark,
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                    builder: (context) => DoctorSearch()),
+                              );
+                            },
+                            child: Text('Find my doctor'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
               );
             } else {
               return Container();
