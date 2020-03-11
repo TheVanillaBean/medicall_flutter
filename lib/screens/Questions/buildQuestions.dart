@@ -49,23 +49,18 @@ class _BuildQuestionsState extends State<BuildQuestions> {
 
       _returnListWidget.add(Visibility(
           visible: questions['visible'],
-          child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    question['question'],
+          child: Container(
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      question['question'],
+                    ),
                   ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Container(
-                  alignment: Alignment.topCenter,
-                  padding: EdgeInsets.all(0),
-                  child: FlatButton(
+                  FlatButton(
                     padding: EdgeInsets.all(0),
                     onPressed: loadAssets,
                     child: FutureBuilder(
@@ -92,8 +87,8 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                           }
                         }),
                   ),
-                ),
-              ])));
+                ]),
+          )));
     } else {
       if (index == null) {
         String type = questions['type'];
@@ -458,6 +453,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
               children: <Widget>[
                 _extImageProvider.returnNetworkImage(
                   question['media'],
+                  height: 440,
                   cache: true,
                   fit: BoxFit.fill,
                 ),

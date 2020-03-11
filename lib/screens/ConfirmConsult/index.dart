@@ -119,7 +119,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
               decoration: BoxDecoration(
                 color: Colors.white,
               ),
-              height: _hasReviewed ? 280 : 56,
+              height: _hasReviewed ? MediaQuery.of(context).size.height : 56,
               child: _hasReviewed
                   ? Stack(
                       fit: StackFit.expand,
@@ -127,12 +127,11 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                         Column(
                           children: <Widget>[
                             Container(
-                                color: Theme.of(context).primaryColorDark,
                                 padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
-                                height: 58,
+                                height: 70,
                                 width: MediaQuery.of(context).size.width,
                                 child: Stack(
-                                  alignment: Alignment.center,
+                                  alignment: Alignment.bottomCenter,
                                   children: <Widget>[
                                     Row(
                                       mainAxisAlignment:
@@ -140,33 +139,35 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                       crossAxisAlignment:
                                           CrossAxisAlignment.center,
                                       children: <Widget>[
-                                        Text(
-                                          'Consult Review and Payment',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onPrimary,
-                                            letterSpacing: 1.0,
-                                            fontWeight: FontWeight.bold,
+                                        Container(
+                                          padding: EdgeInsets.all(10),
+                                          child: Text(
+                                            'Consult Review and Payment',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary,
+                                              letterSpacing: 1.0,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
                                         )
                                       ],
                                     ),
                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      mainAxisAlignment: MainAxisAlignment.start,
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.center,
+                                          CrossAxisAlignment.end,
                                       children: <Widget>[
                                         IconButton(
-                                          alignment: Alignment.center,
-                                          padding: EdgeInsets.all(5),
+                                          alignment: Alignment.bottomCenter,
                                           iconSize: 28,
-                                          icon: Icon(Icons.close),
+                                          icon: Icon(Icons.arrow_back),
                                           color: Theme.of(context)
                                               .colorScheme
-                                              .onPrimary,
+                                              .secondary,
                                           onPressed: () {
                                             setState(() {
                                               _hasReviewed = false;

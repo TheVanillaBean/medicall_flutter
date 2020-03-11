@@ -89,10 +89,9 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
           child: Text(
             'CONTINUE',
             style: TextStyle(
-              color: Theme.of(context).colorScheme.onSecondary,
-              letterSpacing: 2,
-              fontWeight: FontWeight.bold
-            ),
+                color: Theme.of(context).colorScheme.onSecondary,
+                letterSpacing: 2,
+                fontWeight: FontWeight.bold),
           ),
         ),
         body: Column(
@@ -124,6 +123,8 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
                             providers.add(userDocuments[i].data['name']);
                             historyList.add(Container(
                               child: ListTile(
+                                contentPadding:
+                                    EdgeInsets.fromLTRB(10, 10, 10, 10),
                                 dense: true,
                                 title: Text(
                                     '${userDocuments[i].data['name'].split(" ")[0][0].toUpperCase()}${userDocuments[i].data['name'].split(" ")[0].substring(1)} ${userDocuments[i].data['name'].split(" ")[1][0].toUpperCase()}${userDocuments[i].data['name'].split(" ")[1].substring(1)}' +

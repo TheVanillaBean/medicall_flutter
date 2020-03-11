@@ -108,17 +108,11 @@ class MedicallApp extends StatelessWidget {
   AuthWidgetBuilder _buildApp() {
     return AuthWidgetBuilder(
       builder: (context, userSnapshot) {
-        MyFlareProvider _flareProvider = Provider.of<MyFlareProvider>(context);
         return MaterialApp(
           title: 'Medicall',
           debugShowCheckedModeBanner: false,
           theme: myTheme,
-          home: _flareProvider.returnFlareSplash(
-              name: 'assets/headerlogo.flr',
-              next: (ctx) => LandingPage(userSnapshot: userSnapshot),
-              isLoading: userSnapshot.connectionState != ConnectionState.active,
-              background: Colors.white,
-              startAnimation: 'Untitled'),
+          home: LandingPage(userSnapshot: userSnapshot),
           onGenerateRoute: (RouteSettings settings) {
             switch (settings.name) {
               case '/login':
