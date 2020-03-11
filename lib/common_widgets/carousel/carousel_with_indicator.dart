@@ -73,7 +73,7 @@ class CarouselWithIndicator extends StatelessWidget {
                       Container(
                         child: GridView.count(
                             crossAxisCount: 2,
-                            childAspectRatio: 0.88,
+                            childAspectRatio: 0.75,
                             padding: const EdgeInsets.all(0.0),
                             mainAxisSpacing: 1.0,
                             crossAxisSpacing: 1.0,

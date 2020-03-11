@@ -347,12 +347,11 @@ class _BuildQuestionsState extends State<BuildQuestions> {
     List<Widget> _returnListWidget = [];
     if (widget.data['data']['image'].length > 0) {
       return Container(
-        height: MediaQuery.of(context).size.height - 255,
+        height: MediaQuery.of(context).size.height * 0.62,
         child: Stack(
           alignment: Alignment.bottomCenter,
           children: <Widget>[
             Container(
-              height: MediaQuery.of(context).size.height - 255,
               width: MediaQuery.of(context).size.width,
               child: CarouselWithIndicator(
                   imgList: widget.data['data']['image'],
@@ -395,7 +394,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
     ));
 
     return Container(
-      height: MediaQuery.of(context).size.height - 140,
+      height: MediaQuery.of(context).size.height * 0.68,
       child: Column(
         children: _returnListWidget,
       ),
@@ -453,9 +452,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
   returnPlaceHolder(question) {
     return question['media'].length > 0
         ? Container(
-            padding: EdgeInsets.fromLTRB(0, 0, 0, 40),
             alignment: Alignment.center,
-            height: MediaQuery.of(context).size.height * 0.68,
             child: Stack(
               alignment: Alignment.bottomCenter,
               children: <Widget>[
