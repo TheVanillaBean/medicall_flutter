@@ -81,6 +81,7 @@ class _AccountScreenState extends State<AccountScreen> {
                   height: 10,
                 ),
                 Text(medicallUser.displayName),
+                Text(_userProvider.medicallUser.type),
               ],
             ),
           ),
@@ -116,22 +117,6 @@ class _AccountScreenState extends State<AccountScreen> {
                       ? medicallUser.phoneNumber
                       : ''),
                   leading: Icon(Icons.phone),
-                  onTap: () {},
-                  contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                ),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  border: Border(
-                    top: BorderSide(
-                      color:
-                          Theme.of(context).colorScheme.secondary.withAlpha(70),
-                    ),
-                  ),
-                ),
-                child: ListTile(
-                  title: Text('Patient'),
-                  leading: Icon(Icons.person),
                   onTap: () {},
                   contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                 ),
