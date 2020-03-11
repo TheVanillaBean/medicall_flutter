@@ -218,12 +218,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
         });
       };
       _onChangedInput = (val) {
-        Map fields = key.currentState.fields;
-        fields.forEach((k, v) {
-          if (fields[k].currentState.value == val) {
-            data["answer"] = val;
-          }
-        });
+        data["answer"] = val;
       };
       _onChangedCheckBox = (val) {
         if (val.length >= 2 && val[1] == 'Yes') {
