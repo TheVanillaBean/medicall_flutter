@@ -23,7 +23,6 @@ class _AccountScreenState extends State<AccountScreen> {
   @override
   void dispose() {
     super.dispose();
-    _userProvider.dispose();
   }
 
   @override
@@ -88,15 +87,8 @@ class _AccountScreenState extends State<AccountScreen> {
           Column(
             children: <Widget>[
               Container(
-                decoration: BoxDecoration(
-                  border: Border(
-                    top: BorderSide(
-                      color:
-                          Theme.of(context).colorScheme.secondary.withAlpha(70),
-                    ),
-                  ),
-                ),
                 child: ListTile(
+                  enabled: false,
                   title: Text(medicallUser.email),
                   leading: Icon(Icons.email),
                   onTap: () {},
@@ -104,15 +96,8 @@ class _AccountScreenState extends State<AccountScreen> {
                 ),
               ),
               Container(
-                decoration: BoxDecoration(
-                  border: Border(
-                    top: BorderSide(
-                      color:
-                          Theme.of(context).colorScheme.secondary.withAlpha(70),
-                    ),
-                  ),
-                ),
                 child: ListTile(
+                  enabled: false,
                   title: Text(medicallUser.phoneNumber != null
                       ? medicallUser.phoneNumber
                       : ''),
@@ -125,6 +110,10 @@ class _AccountScreenState extends State<AccountScreen> {
                 decoration: BoxDecoration(
                   border: Border(
                     top: BorderSide(
+                      color:
+                          Theme.of(context).colorScheme.secondary.withAlpha(70),
+                    ),
+                    bottom: BorderSide(
                       color:
                           Theme.of(context).colorScheme.secondary.withAlpha(70),
                     ),
