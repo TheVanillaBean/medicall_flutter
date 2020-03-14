@@ -19,7 +19,7 @@ class EmailAndPasswordValidators {
 class PhoneNumberStringValidator implements StringValidator {
   @override
   bool isValid(String value) {
-    return value.length >= 14;
+    return value.length >= 15;
   }
 }
 

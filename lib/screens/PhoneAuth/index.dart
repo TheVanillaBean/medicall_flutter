@@ -84,10 +84,15 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
           .subhead
           .copyWith(fontSize: 18.0, color: Colors.black),
       decoration: InputDecoration(
-        border:
-            UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-        enabledBorder:
-            UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+        border: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.teal),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.teal),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.teal),
+        ),
         isDense: false,
         counterText: "",
         icon: const Icon(
@@ -123,10 +128,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
             direction: Axis.horizontal,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              Flexible(
-                flex: 5,
-                child: _buildPhoneNumberInput(),
-              ),
+              Flexible(flex: 5, child: _buildPhoneNumberInput()),
             ],
           ),
         ),
@@ -159,11 +161,14 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
             color: enabled ? Colors.black : Theme.of(context).buttonColor,
           ),
       decoration: InputDecoration(
-        border: UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.tealAccent),
+        border: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.teal),
         ),
-        enabledBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.tealAccent),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.teal),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.teal),
         ),
         counterText: "",
         hintText: "--- ---",
@@ -206,11 +211,11 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
 
   Widget _buildSmsAuthBody() {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
+        Container(
+          margin: EdgeInsets.fromLTRB(0, 120, 0, 0),
+          padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
           child: Text(
             "Verification code",
             style: decorationStyle,
@@ -218,21 +223,25 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
           ),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 64.0),
+          padding: EdgeInsets.fromLTRB(20, 0, 20, 160),
           child: Flex(
             direction: Axis.horizontal,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              Flexible(flex: 10, child: _buildSmsCodeInput()),
-              Flexible(
-                flex: 1,
-                child: _buildInputButton(
-                    (model.status == AuthStatus.STATE_CODE_SENT ||
-                            model.status == AuthStatus.STATE_VERIFY_FAILED ||
-                            model.status == AuthStatus.STATE_SIGN_IN_FAILED) &&
-                        model.canSubmitSMSCode),
-              )
+              Flexible(flex: 5, child: _buildSmsCodeInput()),
             ],
           ),
+        ),
+        Row(
+          children: <Widget>[
+            Expanded(
+              child: _buildInputButton(
+                  (model.status == AuthStatus.STATE_CODE_SENT ||
+                          model.status == AuthStatus.STATE_VERIFY_FAILED ||
+                          model.status == AuthStatus.STATE_SIGN_IN_FAILED) &&
+                      model.canSubmitSMSCode),
+            ),
+          ],
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -288,7 +297,11 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
           color: Theme.of(context).colorScheme.primary,
           backgroundColor: Theme.of(context).colorScheme.onPrimary,
           isRefreshing: model.isRefreshing,
-          child: Container(
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () {
+              FocusScope.of(context).requestFocus(new FocusNode());
+            },
             child: _buildBody(),
           ),
         ),
