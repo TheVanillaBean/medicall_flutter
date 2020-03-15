@@ -161,6 +161,10 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
       MedicallUser user;
       this.auth.triggerAuthStream = false;
 
+      this.phoneAuthCredential = this.phoneAuthCredential ??
+          await auth.fetchPhoneAuthCredential(
+              verificationId: this.verificationId, smsCode: this.smsCode);
+
       if (this.tempUserProvider.googleAuthModel != null) {
         user = await this.auth.signInWithGoogle(
             credential: this.tempUserProvider.googleAuthModel.credential);
@@ -169,10 +173,6 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
             email: this.tempUserProvider.medicallUser.email,
             password: this.tempUserProvider.password);
       }
-
-      this.phoneAuthCredential = this.phoneAuthCredential ??
-          await auth.fetchPhoneAuthCredential(
-              verificationId: this.verificationId, smsCode: this.smsCode);
 
       user = await auth.linkCredentialWithCurrentUser(
           credential: this.phoneAuthCredential);

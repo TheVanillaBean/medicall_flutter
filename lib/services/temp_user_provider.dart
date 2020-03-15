@@ -88,18 +88,34 @@ class TempUserProvider {
     this._appleSignInModel = appleSignInModel ?? this._appleSignInModel;
   }
 
+  //The purpose of this function is too ensure the image that gets uploaded
+  //is no greater than 300k bytes. By setting quality to something standard,
+  //the size is not guaranteed. An image uploaded by a phone with a low resolution
+  //would produce an even lower size bytedata. This function ensures consistency.
+  Future<ByteData> getAccurateByteData(Asset asset) async {
+    ByteData byteData;
+    int size = 0; // represents the size of the image in bytes
+    int quality = 100;
+
+    do {
+      byteData = await asset.getByteData(quality: quality);
+      size = byteData.buffer.lengthInBytes;
+      quality = quality - 10;
+    } while (size > 500000 && quality > 40);
+
+    return byteData;
+  }
+
   Future<bool> saveRegistrationImages() async {
     var assets = this.images;
     var allMediaList = [];
     for (var i = 0; i < assets.length; i++) {
-      ByteData byteData =
-          await assets[i].getThumbByteData(300, 300, quality: 100);
+      ByteData byteData = await getAccurateByteData(assets[i]);
       List<int> imageData = byteData.buffer.asUint8List();
       StorageReference ref = FirebaseStorage.instance
           .ref()
           .child("profile/" + medicallUser.uid + '/' + assets[i].name);
       StorageUploadTask uploadTask = ref.putData(imageData);
-
       allMediaList.add(
         await (await uploadTask.onComplete).ref.getDownloadURL(),
       );
