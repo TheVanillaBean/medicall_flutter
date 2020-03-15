@@ -110,11 +110,12 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
   }
 
   Widget _buildPhoneAuthBody() {
+    final heightMargin = MediaQuery.of(context).size.height * 0.08;
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Container(
-          margin: EdgeInsets.fromLTRB(0, 120, 0, 0),
+          margin: EdgeInsets.fromLTRB(0, heightMargin, 0, 16),
           padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
           child: Text(
             "We'll send an SMS message to verify your identity, please enter your phone number below!",
@@ -123,14 +124,8 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
           ),
         ),
         Padding(
-          padding: EdgeInsets.fromLTRB(20, 0, 20, 160),
-          child: Flex(
-            direction: Axis.horizontal,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              Flexible(flex: 5, child: _buildPhoneNumberInput()),
-            ],
-          ),
+          padding: EdgeInsets.fromLTRB(20, 0, 20, heightMargin),
+          child: _buildPhoneNumberInput(),
         ),
         Row(
           children: <Widget>[
@@ -188,33 +183,31 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
           _showFlushBarMessage("You can't retry yet!");
         }
       },
-      child: Padding(
-        padding: const EdgeInsets.all(4.0),
-        child: RichText(
-          textAlign: TextAlign.center,
-          text: TextSpan(
-            text: "If your code does not arrive in 1 minute, touch",
-            style: decorationStyle,
-            children: <TextSpan>[
-              TextSpan(
-                text: " here",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
+      child: RichText(
+        textAlign: TextAlign.center,
+        text: TextSpan(
+          text: "If your code does not arrive in 1 minute, touch",
+          style: decorationStyle,
+          children: <TextSpan>[
+            TextSpan(
+              text: " here",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 
   Widget _buildSmsAuthBody() {
+    final heightMargin = MediaQuery.of(context).size.height * 0.08;
     return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
         Container(
-          margin: EdgeInsets.fromLTRB(0, 120, 0, 0),
+          margin: EdgeInsets.fromLTRB(0, heightMargin, 0, 16),
           padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
           child: Text(
             "Verification code",
@@ -223,14 +216,8 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
           ),
         ),
         Padding(
-          padding: EdgeInsets.fromLTRB(20, 0, 20, 160),
-          child: Flex(
-            direction: Axis.horizontal,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              Flexible(flex: 5, child: _buildSmsCodeInput()),
-            ],
-          ),
+          padding: EdgeInsets.fromLTRB(20, 0, 20, heightMargin),
+          child: _buildSmsCodeInput(),
         ),
         Row(
           children: <Widget>[
@@ -291,7 +278,11 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
     model.setVerificationStatus(this);
 
     return Scaffold(
-      body: Container(
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text('Phone Number Verification'),
+      ),
+      body: SafeArea(
         child: ReactiveRefreshIndicator(
           onRefresh: _onRefresh,
           color: Theme.of(context).colorScheme.primary,

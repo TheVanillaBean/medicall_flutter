@@ -137,7 +137,7 @@ class ConsentScreen extends StatelessWidget {
                       onPressed: () {
                         medicallUser.consent = true;
 
-                        Navigator.of(context).pushReplacementNamed('/phoneAuth');
+                        Navigator.of(context).pushNamed('/phoneAuth');
                       },
                       color: Colors.green,
                       child: Text(

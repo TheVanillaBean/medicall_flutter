@@ -137,7 +137,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               _userRegKey.currentState.value['Terms and conditions'] &&
               _userRegKey.currentState.value['accept_privacy_switch']) {
             updateUserWithFormData(tempUserProvider);
-            Navigator.of(context).pushReplacementNamed("/photoID");
+            Navigator.of(context).pushNamed("/photoID");
           } else {
             if (!_userRegKey.currentState.value['Terms and conditions']) {
               AppUtil().showFlushBar(
