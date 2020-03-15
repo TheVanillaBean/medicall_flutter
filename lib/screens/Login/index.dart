@@ -129,16 +129,7 @@ class _LoginScreenState extends State<LoginPage> {
             ),
             child: Stack(
               children: <Widget>[
-                Positioned.fill(
-                    child: model.animationProvider.returnAnimation(
-                        tween: model.animationProvider.returnMultiTrackTween([
-                          Colors.blueAccent.withAlpha(100),
-                          Colors.cyanAccent.withAlpha(20),
-                          Colors.cyanAccent.withAlpha(20),
-                          Colors.blueAccent.withAlpha(100)
-                        ]),
-                        margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                        radius: BorderRadius.all(Radius.circular(0)))),
+                Positioned.fill(child: Container(color: Colors.blueAccent.withAlpha(40),)),
                 Container(
                   child: SafeArea(
                     child: GestureDetector(
@@ -201,7 +192,8 @@ class _LoginScreenState extends State<LoginPage> {
                   children: <Widget>[
                     Expanded(
                       child: SignInButton(
-                        color: Theme.of(context).colorScheme.primary.withBlue(150),
+                        color:
+                            Theme.of(context).colorScheme.primary.withBlue(150),
                         textColor: Colors.white,
                         text: "Create New Account",
                         onPressed: () {

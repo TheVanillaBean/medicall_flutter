@@ -1,6 +1,5 @@
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/presentation/medicall_icons_icons.dart' as CustomIcons;
-import 'package:Medicall/screens/History/doctorSearch.dart';
 import 'package:Medicall/util/app_util.dart' as AppUtils;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -54,20 +53,26 @@ class NewUserPlaceHolder extends StatelessWidget {
                       ? (ScreenUtil.screenHeightDp) / 10
                       : 25,
                   right: (ScreenUtil.screenWidthDp - 85) / 2,
-                  child: Column(
-                    children: <Widget>[
-                      Icon(
-                        CustomIcons.MedicallIcons.live_help,
-                        size: 60,
-                        color: Colors.purple.withAlpha(140),
-                      ),
-                      Text('Select medical \nconcern',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.black54,
-                          ))
-                    ],
+                  child: Container(
+                    color: Colors.grey[50],
+                    height: 100,
+                    padding: EdgeInsets.all(5),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Icon(
+                          CustomIcons.MedicallIcons.live_help,
+                          size: 60,
+                          color: Colors.purple.withAlpha(140),
+                        ),
+                        Text('Select medical \nconcern',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.black54,
+                            ))
+                      ],
+                    ),
                   ),
                 ),
                 Positioned(
@@ -79,19 +84,24 @@ class NewUserPlaceHolder extends StatelessWidget {
                           Orientation.portrait
                       ? 30
                       : (ScreenUtil.screenWidthDp) * 0.1,
-                  child: Column(
-                    children: <Widget>[
-                      Icon(
-                        CustomIcons.MedicallIcons.medkit,
-                        size: 60,
-                        color: Colors.redAccent.withAlpha(200),
-                      ),
-                      Text(
-                        'If needed meds\nare delivered',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 12, color: Colors.black54),
-                      ),
-                    ],
+                  child: Container(
+                    color: Colors.grey[50],
+                    height: 100,
+                    padding: EdgeInsets.all(5),
+                    child: Column(
+                      children: <Widget>[
+                        Icon(
+                          CustomIcons.MedicallIcons.medkit,
+                          size: 60,
+                          color: Colors.redAccent.withAlpha(200),
+                        ),
+                        Text(
+                          'If needed meds\nare delivered',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 12, color: Colors.black54),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 Positioned(
@@ -103,19 +113,24 @@ class NewUserPlaceHolder extends StatelessWidget {
                           Orientation.portrait
                       ? 30
                       : (ScreenUtil.screenWidthDp) * 0.1,
-                  child: Column(
-                    children: <Widget>[
-                      Icon(
-                        CustomIcons.MedicallIcons.clipboard_1,
-                        size: 60,
-                        color: Colors.green.withAlpha(200),
-                      ),
-                      Text(
-                        'Answer\nquestions',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 12, color: Colors.black54),
-                      )
-                    ],
+                  child: Container(
+                    color: Colors.grey[50],
+                    height: 100,
+                    padding: EdgeInsets.all(5),
+                    child: Column(
+                      children: <Widget>[
+                        Icon(
+                          CustomIcons.MedicallIcons.clipboard_1,
+                          size: 60,
+                          color: Colors.green.withAlpha(200),
+                        ),
+                        Text(
+                          'Answer\nquestions',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 12, color: Colors.black54),
+                        )
+                      ],
+                    ),
                   ),
                 ),
                 Positioned(
@@ -124,19 +139,24 @@ class NewUserPlaceHolder extends StatelessWidget {
                       ? (ScreenUtil.screenHeightDp) / 1.8
                       : (ScreenUtil.screenHeightDp) / 2.9,
                   left: (ScreenUtil.screenWidthDp - 100) / 2,
-                  child: Column(
-                    children: <Widget>[
-                      Icon(
-                        CustomIcons.MedicallIcons.stethoscope,
-                        size: 60,
-                        color: Colors.blueAccent.withAlpha(200),
-                      ),
-                      Text(
-                        'Doctor reviews &\n provides diagnosis',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 12, color: Colors.black54),
-                      ),
-                    ],
+                  child: Container(
+                    color: Colors.grey[50],
+                    height: 100,
+                    padding: EdgeInsets.all(5),
+                    child: Column(
+                      children: <Widget>[
+                        Icon(
+                          CustomIcons.MedicallIcons.stethoscope,
+                          size: 60,
+                          color: Colors.blueAccent.withAlpha(200),
+                        ),
+                        Text(
+                          'Doctor reviews &\n provides diagnosis',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 12, color: Colors.black54),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -144,14 +164,6 @@ class NewUserPlaceHolder extends StatelessWidget {
           : Stack(
               children: <Widget>[
                 Container(
-                  height: ScreenUtil.mediaQueryData.orientation ==
-                          Orientation.portrait
-                      ? ScreenUtil.screenHeightDp -
-                          80 -
-                          ScreenUtil.statusBarHeight
-                      : ScreenUtil.screenHeightDp -
-                          50 -
-                          ScreenUtil.statusBarHeight,
                   width: ScreenUtil.screenWidth,
                   child: CustomPaint(
                     foregroundPainter: CurvePainter(),
@@ -191,20 +203,25 @@ class NewUserPlaceHolder extends StatelessWidget {
                       ? (ScreenUtil.screenHeightDp) / 6
                       : 25,
                   right: (ScreenUtil.screenWidthDp - 85) / 2,
-                  child: Column(
-                    children: <Widget>[
-                      Icon(
-                        CustomIcons.MedicallIcons.live_help,
-                        size: 60,
-                        color: Colors.purple.withAlpha(140),
-                      ),
-                      Text('Receive patient \nrequests',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.black54,
-                          ))
-                    ],
+                  child: Container(
+                    color: Colors.grey[50],
+                    height: 100,
+                    padding: EdgeInsets.all(5),
+                    child: Column(
+                      children: <Widget>[
+                        Icon(
+                          CustomIcons.MedicallIcons.live_help,
+                          size: 60,
+                          color: Colors.purple.withAlpha(140),
+                        ),
+                        Text('Receive patient \nrequests',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.black54,
+                            ))
+                      ],
+                    ),
                   ),
                 ),
                 Positioned(
@@ -216,19 +233,24 @@ class NewUserPlaceHolder extends StatelessWidget {
                           Orientation.portrait
                       ? 30
                       : (ScreenUtil.screenWidthDp) * 0.1,
-                  child: Column(
-                    children: <Widget>[
-                      Icon(
-                        CustomIcons.MedicallIcons.medkit,
-                        size: 60,
-                        color: Colors.redAccent.withAlpha(200),
-                      ),
-                      Text(
-                        'Provide\nprescription\nif needed',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 12, color: Colors.black54),
-                      ),
-                    ],
+                  child: Container(
+                    color: Colors.grey[50],
+                    height: 100,
+                    padding: EdgeInsets.all(5),
+                    child: Column(
+                      children: <Widget>[
+                        Icon(
+                          CustomIcons.MedicallIcons.medkit,
+                          size: 60,
+                          color: Colors.redAccent.withAlpha(200),
+                        ),
+                        Text(
+                          'Provide\nprescription\nif needed',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 12, color: Colors.black54),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 Positioned(
@@ -240,19 +262,24 @@ class NewUserPlaceHolder extends StatelessWidget {
                           Orientation.portrait
                       ? 30
                       : (ScreenUtil.screenWidthDp) * 0.1,
-                  child: Column(
-                    children: <Widget>[
-                      Icon(
-                        CustomIcons.MedicallIcons.clipboard_1,
-                        size: 60,
-                        color: Colors.green.withAlpha(200),
-                      ),
-                      Text(
-                        'View request\ndetails',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 12, color: Colors.black54),
-                      )
-                    ],
+                  child: Container(
+                    color: Colors.grey[50],
+                    height: 100,
+                    padding: EdgeInsets.all(5),
+                    child: Column(
+                      children: <Widget>[
+                        Icon(
+                          CustomIcons.MedicallIcons.clipboard_1,
+                          size: 60,
+                          color: Colors.green.withAlpha(200),
+                        ),
+                        Text(
+                          'View request\ndetails',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 12, color: Colors.black54),
+                        )
+                      ],
+                    ),
                   ),
                 ),
                 Positioned(
@@ -261,81 +288,29 @@ class NewUserPlaceHolder extends StatelessWidget {
                       ? (ScreenUtil.screenHeightDp) / 1.5
                       : (ScreenUtil.screenHeightDp) / 1.8,
                   left: (ScreenUtil.screenWidthDp - 100) / 2,
-                  child: Column(
-                    children: <Widget>[
-                      Icon(
-                        CustomIcons.MedicallIcons.stethoscope,
-                        size: 60,
-                        color: Colors.blueAccent.withAlpha(200),
-                      ),
-                      Text(
-                        'Review &\n provide diagnosis',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 12, color: Colors.black54),
-                      ),
-                    ],
+                  child: Container(
+                    color: Colors.grey[50],
+                    height: 100,
+                    padding: EdgeInsets.all(5),
+                    child: Column(
+                      children: <Widget>[
+                        Icon(
+                          CustomIcons.MedicallIcons.stethoscope,
+                          size: 60,
+                          color: Colors.blueAccent.withAlpha(200),
+                        ),
+                        Text(
+                          'Review &\n provide diagnosis',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 12, color: Colors.black54),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
             ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          FlatButton(
-            onPressed: () async {
-              Navigator.of(context).pushReplacementNamed('/symptoms');
-            },
-            color: Colors.green,
-            child: Text(
-              'Get Care',
-              style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-            ),
-          ),
-          SizedBox(
-            width: 15,
-          ),
-          FlatButton(
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => DoctorSearch()),
-              );
-            },
-            color: Colors.blueAccent,
-            child: Text(
-              'Find Doctor',
-              style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-            ),
-          )
-        ],
-      ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          Container(
-            width: 160,
-            child: Text(
-              'I have a specific issue and am open\nto which doctor I connect with',
-              style: TextStyle(
-                fontSize: 10,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-          SizedBox(
-            width: 15,
-          ),
-          Container(
-            width: 165,
-            child: Text(
-              'select this if you have a specific\ndoctor you want to connect with',
-              style: TextStyle(
-                fontSize: 10,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ],
-      )
+            
     ]));
   }
 }
