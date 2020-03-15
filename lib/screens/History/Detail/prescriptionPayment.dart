@@ -11,7 +11,9 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class PrescriptionPayment extends StatefulWidget {
-  PrescriptionPayment({Key key}) : super(key: key);
+  final ScrollController pageScrollCtrl;
+  PrescriptionPayment({Key key, @required this.pageScrollCtrl})
+      : super(key: key);
 
   @override
   _PrescriptionPaymentState createState() => _PrescriptionPaymentState();
@@ -51,6 +53,16 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
         : null;
 
     onChangedCheckBox = (val) async {
+      shippingAddress = '';
+      Future.delayed(const Duration(milliseconds: 100), () {
+        //scroll to bottom
+        widget.pageScrollCtrl.animateTo(
+            widget.pageScrollCtrl.position.maxScrollExtent,
+            duration: Duration(seconds: 1),
+            curve: Curves.ease);
+        //
+      });
+
       if (val.length > 0) {
         if (val.length >= 2 && val[1] == 'pickup') {
           val.removeAt(0);
@@ -187,6 +199,18 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
                               },
                               controller: typeAheadController,
                               maxLines: 2,
+                              onTap: () {
+                                Future.delayed(
+                                    const Duration(milliseconds: 100), () {
+                                  //scroll to bottom
+                                  widget.pageScrollCtrl.animateTo(
+                                      widget.pageScrollCtrl.position
+                                          .maxScrollExtent,
+                                      duration: Duration(seconds: 1),
+                                      curve: Curves.ease);
+                                  //
+                                });
+                              },
                               decoration: InputDecoration(
                                   hintText: shipTo == 'delivery'
                                       ? medicallUser.address
@@ -244,7 +268,7 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
                             },
                           ),
                           SizedBox(
-                            height: 20,
+                            height: 60,
                           ),
                           shippingAddress.length > 0 &&
                                   !db.consultSnapshot.data

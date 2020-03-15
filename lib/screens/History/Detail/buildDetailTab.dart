@@ -29,6 +29,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
   bool isDone = false;
   final GlobalKey<FormBuilderState> consultFormKey =
       GlobalKey<FormBuilderState>();
+  final _scrollController = ScrollController();
   var db;
   MedicallUser medicallUser;
   @override
@@ -230,6 +231,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
       return Scaffold(
         body: SingleChildScrollView(
             padding: EdgeInsets.fromLTRB(10, 0, 10, 80),
+            controller: _scrollController,
             child: FadeInPlace(
               3,
               Column(
@@ -674,7 +676,9 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                 AsyncSnapshot<void> snapshot) {
                               if (snapshot.connectionState ==
                                   ConnectionState.done) {
-                                return PrescriptionPayment();
+                                return PrescriptionPayment(
+                                  pageScrollCtrl: this._scrollController,
+                                );
                               } else {
                                 return Container();
                               }
