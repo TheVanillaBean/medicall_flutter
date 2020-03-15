@@ -150,12 +150,13 @@ class HistoryScreen extends StatelessWidget {
                           ),
                         ),
                       );
+                    } else {
+                      return SizedBox();
                     }
-                    return Container();
                 }
               },
             )
-          : Container(),
+          : SizedBox(),
       appBar: this.showAppBar
           ? AppBar(
               centerTitle: true,

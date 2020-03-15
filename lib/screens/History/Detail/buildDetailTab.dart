@@ -400,6 +400,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                   MediaQuery.of(context).size.width / 3 - 6.7,
                               padding: EdgeInsets.fromLTRB(10, 10, 0, 0),
                               child: FormBuilderDropdown(
+                                isExpanded: true,
                                 initialValue:
                                     consultSnapshot.containsKey('units') &&
                                             consultSnapshot['units'].length > 0
@@ -414,7 +415,8 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                     ? true
                                     : false,
                                 decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.all(9),
+                                    contentPadding:
+                                        EdgeInsets.fromLTRB(5, 9, 5, 9),
                                     labelStyle:
                                         TextStyle(color: Colors.black45),
                                     labelText: 'Units',
@@ -445,6 +447,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                   MediaQuery.of(context).size.width / 3 - 6.7,
                               padding: EdgeInsets.fromLTRB(10, 10, 0, 0),
                               child: FormBuilderDropdown(
+                                isExpanded: true,
                                 initialValue:
                                     consultSnapshot.containsKey('refills')
                                         ? consultSnapshot['refills']
@@ -458,7 +461,9 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                 iconSize:
                                     medicallUser.type == 'patient' ? 0 : 24,
                                 decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.all(9),
+                                    alignLabelWithHint: true,
+                                    contentPadding:
+                                        EdgeInsets.fromLTRB(5, 9, 5, 9),
                                     labelStyle:
                                         TextStyle(color: Colors.black45),
                                     labelText: 'Refills',
@@ -476,6 +481,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                 validators: [
                                   FormBuilderValidators.required(),
                                 ],
+                                isDense: true,
                                 items: Iterable<int>.generate(10)
                                     .map((unit) => DropdownMenuItem(
                                           value: unit,

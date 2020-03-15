@@ -411,7 +411,7 @@ class FirestoreDatabase implements Database {
 
   Future<void> getUserMedicalHistory(MedicallUser medicallUser) async {
     if (medicallUser.uid.length > 0) {
-      userMedicalRecord = await Firestore.instance
+      return await Firestore.instance
           .collection('medical_history')
           .document(medicallUser.uid)
           .get();
