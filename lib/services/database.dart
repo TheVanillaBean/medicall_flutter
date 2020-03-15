@@ -238,6 +238,7 @@ class FirestoreDatabase implements Database {
       "type": newConsult.consultType,
       "state": "new",
       "date": DateTime.now(),
+      "pay_date": null,
       "medication_name": "",
       "provider": newConsult.provider,
       "providerTitles": newConsult.providerTitles,
@@ -411,7 +412,7 @@ class FirestoreDatabase implements Database {
 
   Future<void> getUserMedicalHistory(MedicallUser medicallUser) async {
     if (medicallUser.uid.length > 0) {
-      return await Firestore.instance
+      userMedicalRecord = await Firestore.instance
           .collection('medical_history')
           .document(medicallUser.uid)
           .get();

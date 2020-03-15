@@ -47,7 +47,7 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
     Database db = Provider.of<Database>(context);
     MedicallUser medicallUser = Provider.of<UserProvider>(context).medicallUser;
     MyStripeProvider _stripeProvider = Provider.of<MyStripeProvider>(context);
-    DateTime datePaid = db.consultSnapshot.data.containsKey('pay_date')
+    DateTime datePaid = db.consultSnapshot.data['pay_date'] != null
         ? DateTime.fromMillisecondsSinceEpoch(
             db.consultSnapshot.data['pay_date'].millisecondsSinceEpoch)
         : null;
@@ -96,7 +96,7 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
     }
     return db.consultSnapshot.data.containsKey('medication_name') &&
             db.consultSnapshot.data['medication_name'].length > 0 &&
-            !db.consultSnapshot.data.containsKey('pay_date') &&
+            db.consultSnapshot.data['pay_date'] == null &&
             medicallUser.type == 'patient'
         ? FormBuilder(
             key: prescriptionPaymentKey,
@@ -271,8 +271,7 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
                             height: 60,
                           ),
                           shippingAddress.length > 0 &&
-                                  !db.consultSnapshot.data
-                                      .containsKey('pay_date')
+                                  db.consultSnapshot.data['pay_date'] == null
                               ? FlatButton(
                                   padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
                                   color:
@@ -291,19 +290,7 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
                                           'prescription paid',
                                           shipTo,
                                           shippingAddress);
-
-                                      setState(() {
-                                        db.consultSnapshot.data['state'] =
-                                            'prescription paid';
-                                        db.consultSnapshot.data['pay_date'] =
-                                            DateTime.now();
-                                        db.consultSnapshot
-                                            .data['shipping_option'] = shipTo;
-                                        db.consultSnapshot
-                                                .data['shipping_address'] =
-                                            shippingAddress;
-                                      });
-
+                                      Navigator.of(context).pop(context);
                                       showDialog(
                                         context: context,
                                         builder: (BuildContext context) {

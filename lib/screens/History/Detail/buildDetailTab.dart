@@ -329,7 +329,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                 maxLines: 1,
                                 readOnly: consultSnapshot['state'] == 'done' ||
                                         medicallUser.type == 'patient' ||
-                                        consultSnapshot.containsKey('pay_date')
+                                        consultSnapshot['pay_date'] != null
                                     ? true
                                     : false,
                                 decoration: InputDecoration(
@@ -372,7 +372,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                 maxLines: 1,
                                 readOnly: consultSnapshot['state'] == 'done' ||
                                         medicallUser.type == 'patient' ||
-                                        consultSnapshot.containsKey('pay_date')
+                                        consultSnapshot['pay_date'] != null
                                     ? true
                                     : false,
                                 decoration: InputDecoration(
@@ -413,7 +413,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                     medicallUser.type == 'patient' ? 0 : 24,
                                 readOnly: consultSnapshot['state'] == 'done' ||
                                         medicallUser.type == 'patient' ||
-                                        consultSnapshot.containsKey('pay_date')
+                                        consultSnapshot['pay_date'] != null
                                     ? true
                                     : false,
                                 decoration: InputDecoration(
@@ -457,7 +457,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                 attribute: "refills",
                                 readOnly: consultSnapshot['state'] == 'done' ||
                                         medicallUser.type == 'patient' ||
-                                        consultSnapshot.containsKey('pay_date')
+                                        consultSnapshot['pay_date'] != null
                                     ? true
                                     : false,
                                 iconSize:
@@ -509,7 +509,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                 maxLines: 1,
                                 readOnly: consultSnapshot['state'] == 'done' ||
                                         medicallUser.type == 'patient' ||
-                                        consultSnapshot.containsKey('pay_date')
+                                        consultSnapshot['pay_date'] != null
                                     ? true
                                     : false,
                                 decoration: InputDecoration(
@@ -546,7 +546,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                 maxLines: 1,
                                 readOnly: consultSnapshot['state'] == 'done' ||
                                         medicallUser.type == 'patient' ||
-                                        consultSnapshot.containsKey('pay_date')
+                                        consultSnapshot['pay_date'] != null
                                     ? true
                                     : false,
                                 decoration: InputDecoration(
@@ -588,7 +588,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                 maxLines: 3,
                                 readOnly: consultSnapshot['state'] == 'done' ||
                                         medicallUser.type == 'patient' ||
-                                        consultSnapshot.containsKey('pay_date')
+                                        consultSnapshot['pay_date'] != null
                                     ? true
                                     : false,
                                 decoration: InputDecoration(
@@ -618,7 +618,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                           height: 10,
                         ),
                         medicallUser.type == 'provider' &&
-                                !consultSnapshot.containsKey('pay_date') &&
+                                consultSnapshot['pay_date'] == null &&
                                 consultSnapshot['state'] != 'done'
                             ? Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -646,6 +646,38 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                           setState(() {
                                             buttonTxt = 'Prescription Updated';
                                           });
+                                          Navigator.of(context).pop(context);
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              // return object of type Dialog
+                                              return AlertDialog(
+                                                title: Text(
+                                                    "Prescription Submitted"),
+                                                content: Container(
+                                                  child: Row(
+                                                    children: <Widget>[
+                                                      Expanded(
+                                                        child: Text(
+                                                            "We have sent your prescription to the patient, they will be notified. Once they review and pay, the prescription will be updated."),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                                actions: <Widget>[
+                                                  // usually buttons at the bottom of the dialog
+                                                  FlatButton(
+                                                    color: Theme.of(context)
+                                                        .primaryColor,
+                                                    child: Text("Continue"),
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                    },
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
                                           Future.delayed(
                                               const Duration(
                                                   milliseconds: 2500), () {
