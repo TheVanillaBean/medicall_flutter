@@ -110,13 +110,13 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
 
     final PhoneVerificationCompleted verificationCompleted =
         (AuthCredential phoneAuthCredential) {
-      updateRefreshing(false, mounted);
       updateWith(
         phoneAuthCredential: phoneAuthCredential,
         status: AuthStatus.STATE_VERIFY_SUCCESS,
       );
       this.verificationStatus.updateStatus(
           'Phone number successfully verified in background. Please wait...');
+
       signInWithPhoneAuthCredential(mounted);
     };
 
@@ -183,7 +183,8 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
             phoneNumber: user.phoneNumber,
           );
 
-      this.verificationStatus.updateStatus('Saving User Details...');
+      this.verificationStatus.updateStatus(
+          'Saving User Details. This may take several seconds...');
 
       bool successfullySavedImages =
           await tempUserProvider.saveRegistrationImages();

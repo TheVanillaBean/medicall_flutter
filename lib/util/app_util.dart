@@ -1,8 +1,8 @@
-import 'package:flushbar/flushbar.dart';
-import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'dart:ui';
 
+import 'package:flushbar/flushbar.dart';
+import 'package:flutter/material.dart';
 import 'package:simple_animations/simple_animations.dart';
 
 class AppUtil {
