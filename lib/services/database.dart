@@ -238,6 +238,7 @@ class FirestoreDatabase implements Database {
       "type": newConsult.consultType,
       "state": "new",
       "date": DateTime.now(),
+      "pay_date": null,
       "medication_name": "",
       "provider": newConsult.provider,
       "providerTitles": newConsult.providerTitles,

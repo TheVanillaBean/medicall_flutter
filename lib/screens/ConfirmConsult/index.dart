@@ -157,7 +157,8 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                       ],
                                     ),
                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
                                       crossAxisAlignment:
                                           CrossAxisAlignment.end,
                                       children: <Widget>[
@@ -257,91 +258,103 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                         color: Theme.of(context)
                                             .colorScheme
                                             .secondaryVariant,
-                                        onPressed: () async {
-                                          setState(() {
-                                            _hasReviewed = true;
-                                            //_isLoading = true;
-                                          });
-                                          //await _addProviderConsult();
-                                          _db
-                                              .getUserSources()
-                                              .then((snap) async {
-                                            if (snap.documents.length == 0) {
-                                              await _stripeProvider
-                                                  .addSource()
-                                                  .then((String token) async {
-                                                await _stripeProvider
-                                                    .addCard(token);
+                                        onPressed: !_isLoading
+                                            ? () async {
                                                 setState(() {
-                                                  _isLoading = true;
+                                                  _hasReviewed = true;
+                                                  //_isLoading = true;
                                                 });
-                                                await _stripeProvider
-                                                    .chargePayment(
-                                                        _db.newConsult.price,
-                                                        _db.newConsult
-                                                                .consultType +
-                                                            ' consult with ' +
-                                                            _db.newConsult
-                                                                .provider);
+                                                //await _addProviderConsult();
                                                 _db
-                                                    .addConsult(
-                                                        context,
-                                                        _db.newConsult,
-                                                        _extImageProvider)
-                                                    .then((onValue) {
-                                                  _extImageProvider
-                                                      .clearImageMemory();
-                                                  Route route =
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              RouteUserOrderScreen(
-                                                                data: {
-                                                                  'user':
-                                                                      _medicallUser,
-                                                                  'consult': _db
-                                                                      .newConsult
-                                                                },
-                                                              ));
-                                                  return Navigator.of(context)
-                                                      .pushReplacement(route);
-                                                });
-                                              });
-                                            } else {
-                                              setState(() {
-                                                _isLoading = true;
-                                              });
-                                              await _stripeProvider
-                                                  .chargePayment(
-                                                      _db.newConsult.price,
-                                                      _db.newConsult
-                                                              .consultType +
-                                                          ' consult with ' +
-                                                          _db.newConsult
-                                                              .provider);
-                                              _db
-                                                  .addConsult(
-                                                      context,
-                                                      _db.newConsult,
-                                                      _extImageProvider)
-                                                  .then((onValue) {
-                                                _extImageProvider
-                                                    .clearImageMemory();
-                                                Route route = MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        RouteUserOrderScreen(
-                                                          data: {
-                                                            'user':
-                                                                _medicallUser,
-                                                            'consult':
+                                                    .getUserSources()
+                                                    .then((snap) async {
+                                                  if (snap.documents.length ==
+                                                      0) {
+                                                    await _stripeProvider
+                                                        .addSource()
+                                                        .then((String
+                                                            token) async {
+                                                      await _stripeProvider
+                                                          .addCard(token);
+                                                      setState(() {
+                                                        _isLoading = true;
+                                                      });
+                                                      await _stripeProvider
+                                                          .chargePayment(
+                                                              _db.newConsult
+                                                                  .price,
+                                                              _db.newConsult
+                                                                      .consultType +
+                                                                  ' consult with ' +
+                                                                  _db.newConsult
+                                                                      .provider);
+                                                      _db
+                                                          .addConsult(
+                                                              context,
+                                                              _db.newConsult,
+                                                              _extImageProvider)
+                                                          .then((onValue) {
+                                                        _extImageProvider
+                                                            .clearImageMemory();
+                                                        Route route =
+                                                            MaterialPageRoute(
+                                                                builder:
+                                                                    (context) =>
+                                                                        RouteUserOrderScreen(
+                                                                          data: {
+                                                                            'user':
+                                                                                _medicallUser,
+                                                                            'consult':
+                                                                                _db.newConsult
+                                                                          },
+                                                                        ));
+                                                        return Navigator.of(
+                                                                context)
+                                                            .pushReplacement(
+                                                                route);
+                                                      });
+                                                    });
+                                                  } else {
+                                                    setState(() {
+                                                      _isLoading = true;
+                                                    });
+                                                    await _stripeProvider
+                                                        .chargePayment(
+                                                            _db.newConsult
+                                                                .price,
+                                                            _db.newConsult
+                                                                    .consultType +
+                                                                ' consult with ' +
                                                                 _db.newConsult
-                                                          },
-                                                        ));
-                                                return Navigator.of(context)
-                                                    .pushReplacement(route);
-                                              });
-                                            }
-                                          });
-                                        },
+                                                                    .provider);
+                                                    _db
+                                                        .addConsult(
+                                                            context,
+                                                            _db.newConsult,
+                                                            _extImageProvider)
+                                                        .then((onValue) {
+                                                      _extImageProvider
+                                                          .clearImageMemory();
+                                                      Route route =
+                                                          MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  RouteUserOrderScreen(
+                                                                    data: {
+                                                                      'user':
+                                                                          _medicallUser,
+                                                                      'consult':
+                                                                          _db.newConsult
+                                                                    },
+                                                                  ));
+                                                      return Navigator.of(
+                                                              context)
+                                                          .pushReplacement(
+                                                              route);
+                                                    });
+                                                  }
+                                                });
+                                              }
+                                            : () {},
                                         child: Text(
                                           'CONFIRM & PAY',
                                           style: TextStyle(

@@ -29,6 +29,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
   bool isDone = false;
   final GlobalKey<FormBuilderState> consultFormKey =
       GlobalKey<FormBuilderState>();
+  final _scrollController = ScrollController();
   var db;
   MedicallUser medicallUser;
   @override
@@ -230,6 +231,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
       return Scaffold(
         body: SingleChildScrollView(
             padding: EdgeInsets.fromLTRB(10, 0, 10, 80),
+            controller: _scrollController,
             child: FadeInPlace(
               3,
               Column(
@@ -327,7 +329,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                 maxLines: 1,
                                 readOnly: consultSnapshot['state'] == 'done' ||
                                         medicallUser.type == 'patient' ||
-                                        consultSnapshot.containsKey('pay_date')
+                                        consultSnapshot['pay_date'] != null
                                     ? true
                                     : false,
                                 decoration: InputDecoration(
@@ -370,7 +372,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                 maxLines: 1,
                                 readOnly: consultSnapshot['state'] == 'done' ||
                                         medicallUser.type == 'patient' ||
-                                        consultSnapshot.containsKey('pay_date')
+                                        consultSnapshot['pay_date'] != null
                                     ? true
                                     : false,
                                 decoration: InputDecoration(
@@ -400,6 +402,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                   MediaQuery.of(context).size.width / 3 - 6.7,
                               padding: EdgeInsets.fromLTRB(10, 10, 0, 0),
                               child: FormBuilderDropdown(
+                                isExpanded: true,
                                 initialValue:
                                     consultSnapshot.containsKey('units') &&
                                             consultSnapshot['units'].length > 0
@@ -410,11 +413,12 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                     medicallUser.type == 'patient' ? 0 : 24,
                                 readOnly: consultSnapshot['state'] == 'done' ||
                                         medicallUser.type == 'patient' ||
-                                        consultSnapshot.containsKey('pay_date')
+                                        consultSnapshot['pay_date'] != null
                                     ? true
                                     : false,
                                 decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.all(9),
+                                    contentPadding:
+                                        EdgeInsets.fromLTRB(5, 9, 5, 9),
                                     labelStyle:
                                         TextStyle(color: Colors.black45),
                                     labelText: 'Units',
@@ -445,6 +449,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                   MediaQuery.of(context).size.width / 3 - 6.7,
                               padding: EdgeInsets.fromLTRB(10, 10, 0, 0),
                               child: FormBuilderDropdown(
+                                isExpanded: true,
                                 initialValue:
                                     consultSnapshot.containsKey('refills')
                                         ? consultSnapshot['refills']
@@ -452,13 +457,15 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                 attribute: "refills",
                                 readOnly: consultSnapshot['state'] == 'done' ||
                                         medicallUser.type == 'patient' ||
-                                        consultSnapshot.containsKey('pay_date')
+                                        consultSnapshot['pay_date'] != null
                                     ? true
                                     : false,
                                 iconSize:
                                     medicallUser.type == 'patient' ? 0 : 24,
                                 decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.all(9),
+                                    alignLabelWithHint: true,
+                                    contentPadding:
+                                        EdgeInsets.fromLTRB(5, 9, 5, 9),
                                     labelStyle:
                                         TextStyle(color: Colors.black45),
                                     labelText: 'Refills',
@@ -476,6 +483,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                 validators: [
                                   FormBuilderValidators.required(),
                                 ],
+                                isDense: true,
                                 items: Iterable<int>.generate(10)
                                     .map((unit) => DropdownMenuItem(
                                           value: unit,
@@ -501,7 +509,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                 maxLines: 1,
                                 readOnly: consultSnapshot['state'] == 'done' ||
                                         medicallUser.type == 'patient' ||
-                                        consultSnapshot.containsKey('pay_date')
+                                        consultSnapshot['pay_date'] != null
                                     ? true
                                     : false,
                                 decoration: InputDecoration(
@@ -538,7 +546,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                 maxLines: 1,
                                 readOnly: consultSnapshot['state'] == 'done' ||
                                         medicallUser.type == 'patient' ||
-                                        consultSnapshot.containsKey('pay_date')
+                                        consultSnapshot['pay_date'] != null
                                     ? true
                                     : false,
                                 decoration: InputDecoration(
@@ -580,7 +588,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                 maxLines: 3,
                                 readOnly: consultSnapshot['state'] == 'done' ||
                                         medicallUser.type == 'patient' ||
-                                        consultSnapshot.containsKey('pay_date')
+                                        consultSnapshot['pay_date'] != null
                                     ? true
                                     : false,
                                 decoration: InputDecoration(
@@ -610,7 +618,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                           height: 10,
                         ),
                         medicallUser.type == 'provider' &&
-                                !consultSnapshot.containsKey('pay_date') &&
+                                consultSnapshot['pay_date'] == null &&
                                 consultSnapshot['state'] != 'done'
                             ? Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -638,6 +646,38 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                           setState(() {
                                             buttonTxt = 'Prescription Updated';
                                           });
+                                          Navigator.of(context).pop(context);
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              // return object of type Dialog
+                                              return AlertDialog(
+                                                title: Text(
+                                                    "Prescription Submitted"),
+                                                content: Container(
+                                                  child: Row(
+                                                    children: <Widget>[
+                                                      Expanded(
+                                                        child: Text(
+                                                            "We have sent your prescription to the patient, they will be notified. Once they review and pay, the prescription will be updated."),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                                actions: <Widget>[
+                                                  // usually buttons at the bottom of the dialog
+                                                  FlatButton(
+                                                    color: Theme.of(context)
+                                                        .primaryColor,
+                                                    child: Text("Continue"),
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                    },
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
                                           Future.delayed(
                                               const Duration(
                                                   milliseconds: 2500), () {
@@ -668,7 +708,9 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                 AsyncSnapshot<void> snapshot) {
                               if (snapshot.connectionState ==
                                   ConnectionState.done) {
-                                return PrescriptionPayment();
+                                return PrescriptionPayment(
+                                  pageScrollCtrl: this._scrollController,
+                                );
                               } else {
                                 return Container();
                               }
