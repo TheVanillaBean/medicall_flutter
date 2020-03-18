@@ -20,15 +20,20 @@ abstract class AuthBase {
   Future<MedicallUser> createUserWithEmailAndPassword(
       {@required String email, @required String password});
   Future<List<String>> fetchProvidersForEmail({@required String email});
+  Future<AuthCredential> fetchEmailAndPasswordCredential(
+      {@required String email, @required String password});
   Future<GoogleAuthModel> fetchGoogleSignInCredential();
-  Future<AuthCredential> fetchPhoneAuthCredential(
-      {@required String verificationId, @required String smsCode});
   Future<AppleSignInModel> fetchAppleSignInCredential(
       {List<Scope> scopes = const []});
+  Future<AuthCredential> fetchPhoneAuthCredential(
+      {@required String verificationId, @required String smsCode});
   Future<MedicallUser> signInWithGoogle({@required AuthCredential credential});
   Future<MedicallUser> signInWithApple(
       {@required AuthCredential appleIdCredential});
+  @deprecated
   Future<MedicallUser> linkCredentialWithCurrentUser(
+      {@required AuthCredential credential});
+  Future<MedicallUser> signInWithPhoneNumber(
       {@required AuthCredential credential});
   Future<void> signOut();
 }
@@ -103,6 +108,12 @@ class Auth implements AuthBase {
 
   Future<List<String>> fetchProvidersForEmail({@required String email}) async {
     return await _firebaseAuth.fetchSignInMethodsForEmail(email: email);
+  }
+
+  @override
+  Future<AuthCredential> fetchEmailAndPasswordCredential(
+      {String email, String password}) async {
+    return EmailAuthProvider.getCredential(email: email, password: password);
   }
 
   Future<GoogleAuthModel> fetchGoogleSignInCredential() async {
@@ -201,8 +212,31 @@ class Auth implements AuthBase {
     return _userFromFirebase(authResult.user);
   }
 
+  @deprecated
   @override
   Future<MedicallUser> linkCredentialWithCurrentUser(
+      {AuthCredential credential}) async {
+    final FirebaseUser currentUser = await _firebaseAuth.currentUser();
+
+    final AuthResult linkCredentialAuthResult =
+        await currentUser.linkWithCredential(credential);
+
+    final MedicallUser currentMedicallUser =
+        _userFromFirebase(linkCredentialAuthResult.user);
+
+    if (currentMedicallUser != null) {
+      currentUser.sendEmailVerification();
+      return currentMedicallUser;
+    } else {
+      throw PlatformException(
+        code: 'ERROR_PHONE_AUTH_FAILED',
+        message: 'Phone Sign In Failed.',
+      );
+    }
+  }
+
+  @override
+  Future<MedicallUser> signInWithPhoneNumber(
       {AuthCredential credential}) async {
     final FirebaseUser currentUser = await _firebaseAuth.currentUser();
 
