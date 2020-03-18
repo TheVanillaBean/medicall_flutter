@@ -41,7 +41,7 @@ class AppUtil {
         duration: Duration(seconds: 5),
       )..show(context);
     } else {
-      exMsg = e.message;
+      exMsg = e.message ?? "There was an error...";
       return Flushbar(
         message: exMsg,
         flushbarPosition: FlushbarPosition.TOP,

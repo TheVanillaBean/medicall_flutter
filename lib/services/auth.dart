@@ -171,8 +171,17 @@ class Auth implements AuthBase {
               String.fromCharCodes(appleIdCredential.authorizationCode),
         );
 
-        List<String> providers =
-            await this.fetchProvidersForEmail(email: appleIdCredential.email);
+        List<String> providers = List<String>();
+        try {
+          providers =
+              await this.fetchProvidersForEmail(email: appleIdCredential.email);
+        } catch (e) {
+          //Intentionally empty catch block because empty provider list is fine.
+//          throw PlatformException(
+//            code: 'ERROR_AUTHORIZATION_DENIED',
+//            message: e ?? "Apple Sign In Error",
+//          );
+        }
 
         return AppleSignInModel(
           email: appleIdCredential.email,
@@ -181,7 +190,6 @@ class Auth implements AuthBase {
           providers: providers,
         );
       case AuthorizationStatus.error:
-        print(result.error.toString());
         throw PlatformException(
           code: 'ERROR_AUTHORIZATION_DENIED',
           message: result.error.toString(),

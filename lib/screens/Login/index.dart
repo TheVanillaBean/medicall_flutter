@@ -100,7 +100,7 @@ class _LoginScreenState extends State<LoginPage> {
         );
         _navigateToRegistrationScreen(context);
       }
-    } on PlatformException catch (e) {
+    } catch (e) {
       AppUtil().showFlushBar(e, context);
     }
   }
@@ -182,8 +182,7 @@ class _LoginScreenState extends State<LoginPage> {
                     )
                   ],
                 ),
-                SizedBox(height: 24),
-                SizedBox(height: 12),
+                SizedBox(height: 32),
                 Row(
                   children: <Widget>[
                     Expanded(
@@ -199,15 +198,6 @@ class _LoginScreenState extends State<LoginPage> {
                     )
                   ],
                 ),
-                SizedBox(height: 12),
-                SocialSignInButton(
-                  imgPath: "assets/images/google-logo.png",
-                  text: "Sign in with Google",
-                  color: Colors.white,
-                  textColor: Colors.black87,
-                  onPressed:
-                      model.isLoading ? null : () => _signInWithGoogle(context),
-                ),
                 if (appleSignInAvailable.isAvailable) SizedBox(height: 12),
                 if (appleSignInAvailable.isAvailable)
                   AppleSignInButton(
@@ -217,6 +207,15 @@ class _LoginScreenState extends State<LoginPage> {
                         ? null
                         : () => _signInWithApple(context),
                   ),
+                SizedBox(height: 12),
+                SocialSignInButton(
+                  imgPath: "assets/images/google-logo.png",
+                  text: "Sign in with Google",
+                  color: Colors.white,
+                  textColor: Colors.black87,
+                  onPressed:
+                      model.isLoading ? null : () => _signInWithGoogle(context),
+                ),
               ],
             )),
       ),
