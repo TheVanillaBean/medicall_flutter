@@ -118,6 +118,9 @@ class _LoginScreenState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+            statusBarBrightness: Brightness.light) // Or Brightness.dark
+        );
     return Scaffold(
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.dark,
@@ -125,11 +128,15 @@ class _LoginScreenState extends State<LoginPage> {
         child: SingleChildScrollView(
           child: ConstrainedBox(
             constraints: BoxConstraints.tightFor(
-              height: MediaQueryData.fromWindow(ui.window).size.height,
+              height: MediaQueryData.fromWindow(ui.window).size.height * 1.1,
             ),
             child: Stack(
               children: <Widget>[
-                Positioned.fill(child: Container(color: Colors.blueAccent.withAlpha(40),)),
+                Positioned.fill(
+                  child: Container(
+                    color: Colors.blueAccent.withAlpha(40),
+                  ),
+                ),
                 Container(
                   child: SafeArea(
                     child: GestureDetector(
@@ -154,7 +161,7 @@ class _LoginScreenState extends State<LoginPage> {
   List<Widget> _buildChildren(BuildContext context) {
     final appleSignInAvailable =
         Provider.of<AppleSignInAvailable>(context, listen: false);
-
+    final height = MediaQuery.of(context).size.height;
     return [
       FadeIn(
         2,
@@ -163,7 +170,7 @@ class _LoginScreenState extends State<LoginPage> {
             child: Column(
               children: <Widget>[
                 _buildHeader(context),
-                SizedBox(height: 10.0),
+                SizedBox(height: height * 0.05),
                 _buildEmailAuthForm(context),
                 SizedBox(height: 16.0),
                 Row(
@@ -178,15 +185,7 @@ class _LoginScreenState extends State<LoginPage> {
                     )
                   ],
                 ),
-                SizedBox(height: 12),
-                Text(
-                  "",
-                  style: TextStyle(
-                    fontSize: 14.0,
-                    color: Colors.black87,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
+                SizedBox(height: 24),
                 SizedBox(height: 12),
                 Row(
                   children: <Widget>[
@@ -203,7 +202,7 @@ class _LoginScreenState extends State<LoginPage> {
                     )
                   ],
                 ),
-                SizedBox(height: 8),
+                SizedBox(height: 12),
                 SocialSignInButton(
                   imgPath: "assets/images/google-logo.png",
                   text: "Sign in with Google",
@@ -212,7 +211,7 @@ class _LoginScreenState extends State<LoginPage> {
                   onPressed:
                       model.isLoading ? null : () => _signInWithGoogle(context),
                 ),
-                if (appleSignInAvailable.isAvailable) SizedBox(height: 8),
+                if (appleSignInAvailable.isAvailable) SizedBox(height: 12),
                 if (appleSignInAvailable.isAvailable)
                   AppleSignInButton(
                     style: ButtonStyle.black, // style as needed
@@ -228,6 +227,8 @@ class _LoginScreenState extends State<LoginPage> {
   }
 
   Widget _buildHeader(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -242,8 +243,8 @@ class _LoginScreenState extends State<LoginPage> {
                   color: Theme.of(context).colorScheme.primary)),
         ),
         SizedBox(
-          width: 110,
-          height: 110,
+          width: width * 0.25,
+          height: height * 0.15,
           child: Image.asset(
             'assets/icon/logo_fore.png',
           ),
@@ -264,7 +265,6 @@ class _LoginScreenState extends State<LoginPage> {
 
   Container _buildEmailAuthForm(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(0, 40, 0, 40),
       child: Column(
         children: <Widget>[
           Container(
