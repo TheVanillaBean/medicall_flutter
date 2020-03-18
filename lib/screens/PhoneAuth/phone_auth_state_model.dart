@@ -186,17 +186,30 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
       } else {
         this.verificationStatus.updateStatus('Creating Account...');
 
-        if (this.tempUserProvider.googleAuthModel != null) {
-          user = await this.auth.signInWithGoogle(
-              credential: this.tempUserProvider.googleAuthModel.credential);
-        } else {
-          user = await this.auth.createUserWithEmailAndPassword(
-              email: this.tempUserProvider.medicallUser.email,
-              password: this.tempUserProvider.password);
+        user = await auth.signInWithPhoneNumber(
+            credential: this.phoneAuthCredential);
+
+        if (user == null) {
+          this.auth.triggerAuthStream = true;
+          reinitState();
+          updateRefreshing(false, mounted);
+          throw "The SMS code you entered is invalid. Please try again...";
         }
 
-        user = await auth.linkCredentialWithCurrentUser(
-            credential: this.phoneAuthCredential);
+        if (this.tempUserProvider.googleAuthModel != null) {
+          auth.linkCredentialWithCurrentUser(
+              credential: this.tempUserProvider.googleAuthModel.credential);
+        } else if (this.tempUserProvider.appleSignInModel != null) {
+          auth.linkCredentialWithCurrentUser(
+              credential: this.tempUserProvider.appleSignInModel.credential);
+        } else {
+          AuthCredential emailCredential =
+              await auth.fetchEmailAndPasswordCredential(
+            email: this.tempUserProvider.medicallUser.email,
+            password: this.tempUserProvider.password,
+          );
+          auth.linkCredentialWithCurrentUser(credential: emailCredential);
+        }
 
         this.tempUserProvider.updateWith(
               uid: user.uid,
@@ -230,6 +243,16 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
       reinitState();
       updateRefreshing(false, mounted);
       throw "Security Check Failed...";
+    } on PlatformException catch (e) {
+      this.auth.triggerAuthStream = true;
+      reinitState();
+      updateRefreshing(false, mounted);
+      if (e.code == "ERROR_INVALID_VERIFICATION_CODE") {
+        throw "The SMS code you entered is invalid...";
+      } else if (e.message.toLowerCase().contains('The sms code has expired')) {
+        throw "The SMS code has expired.";
+      } else
+        throw e.message;
     } catch (e) {
       this.auth.triggerAuthStream = true;
       reinitState();

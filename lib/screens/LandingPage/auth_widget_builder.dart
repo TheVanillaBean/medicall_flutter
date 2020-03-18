@@ -18,7 +18,7 @@ class AuthWidgetBuilder extends StatelessWidget {
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthBase>(context, listen: false);
     print("---");
-//    authService.signOut();
+    authService.signOut();
     return StreamBuilder<MedicallUser>(
       stream: authService.onAuthStateChanged,
       builder: (BuildContext context, AsyncSnapshot<MedicallUser> snapshot) {

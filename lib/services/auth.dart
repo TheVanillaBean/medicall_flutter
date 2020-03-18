@@ -30,10 +30,9 @@ abstract class AuthBase {
   Future<MedicallUser> signInWithGoogle({@required AuthCredential credential});
   Future<MedicallUser> signInWithApple(
       {@required AuthCredential appleIdCredential});
-  @deprecated
-  Future<MedicallUser> linkCredentialWithCurrentUser(
-      {@required AuthCredential credential});
   Future<MedicallUser> signInWithPhoneNumber(
+      {@required AuthCredential credential});
+  Future<MedicallUser> linkCredentialWithCurrentUser(
       {@required AuthCredential credential});
   Future<void> signOut();
 }
@@ -212,7 +211,6 @@ class Auth implements AuthBase {
     return _userFromFirebase(authResult.user);
   }
 
-  @deprecated
   @override
   Future<MedicallUser> linkCredentialWithCurrentUser(
       {AuthCredential credential}) async {
@@ -225,7 +223,6 @@ class Auth implements AuthBase {
         _userFromFirebase(linkCredentialAuthResult.user);
 
     if (currentMedicallUser != null) {
-      currentUser.sendEmailVerification();
       return currentMedicallUser;
     } else {
       throw PlatformException(
@@ -238,23 +235,8 @@ class Auth implements AuthBase {
   @override
   Future<MedicallUser> signInWithPhoneNumber(
       {AuthCredential credential}) async {
-    final FirebaseUser currentUser = await _firebaseAuth.currentUser();
-
-    final AuthResult linkCredentialAuthResult =
-        await currentUser.linkWithCredential(credential);
-
-    final MedicallUser currentMedicallUser =
-        _userFromFirebase(linkCredentialAuthResult.user);
-
-    if (currentMedicallUser != null) {
-      currentUser.sendEmailVerification();
-      return currentMedicallUser;
-    } else {
-      throw PlatformException(
-        code: 'ERROR_PHONE_AUTH_FAILED',
-        message: 'Phone Sign In Failed.',
-      );
-    }
+    final authResult = await _firebaseAuth.signInWithCredential(credential);
+    return _userFromFirebase(authResult.user);
   }
 
   @override

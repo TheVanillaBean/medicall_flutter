@@ -256,6 +256,10 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
       try {
         return await model.verifyPhoneNumber(mounted);
       } catch (e) {
+        phoneNumberController.text = "";
+        smsCodeController.text = "";
+        phoneTextInputFormatter = MaskTextInputFormatter(
+            mask: "(###)###-####", filter: {"#": RegExp(r'[0-9]')});
         AppUtil().showFlushBar(e, context);
       }
     }
