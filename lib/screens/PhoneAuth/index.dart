@@ -255,7 +255,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
     if (model.status == AuthStatus.STATE_INITIALIZED) {
       try {
         return await model.verifyPhoneNumber(mounted);
-      } on PlatformException catch (e) {
+      } catch (e) {
         AppUtil().showFlushBar(e, context);
       }
     }
@@ -265,7 +265,11 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
         model.status == AuthStatus.STATE_SIGN_IN_FAILED) {
       try {
         return await model.signInWithPhoneAuthCredential(mounted);
-      } on PlatformException catch (e) {
+      } catch (e) {
+        phoneNumberController.text = "";
+        smsCodeController.text = "";
+        phoneTextInputFormatter = MaskTextInputFormatter(
+            mask: "(###)###-####", filter: {"#": RegExp(r'[0-9]')});
         AppUtil().showFlushBar(e, context);
       }
     }

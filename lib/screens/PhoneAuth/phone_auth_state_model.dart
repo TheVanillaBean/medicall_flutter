@@ -4,6 +4,7 @@ import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/util/validators.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -165,47 +166,89 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
           await auth.fetchPhoneAuthCredential(
               verificationId: this.verificationId, smsCode: this.smsCode);
 
-      if (this.tempUserProvider.googleAuthModel != null) {
-        user = await this.auth.signInWithGoogle(
-            credential: this.tempUserProvider.googleAuthModel.credential);
-      } else {
-        user = await this.auth.createUserWithEmailAndPassword(
-            email: this.tempUserProvider.medicallUser.email,
-            password: this.tempUserProvider.password);
-      }
+      this.verificationStatus.updateStatus('Performing Security Check...');
 
-      user = await auth.linkCredentialWithCurrentUser(
-          credential: this.phoneAuthCredential);
+      final HttpsCallable callable = CloudFunctions.instance
+          .getHttpsCallable(functionName: 'checkPhoneNumberAlreadyUsed')
+            ..timeout = const Duration(seconds: 30);
 
-      this.tempUserProvider.updateWith(
-            uid: user.uid,
-            devTokens: user.devTokens,
-            phoneNumber: user.phoneNumber,
-          );
+      final HttpsCallableResult result = await callable.call(
+        <String, dynamic>{
+          'phoneNumber': this.phoneNumber,
+        },
+      );
 
-      this.verificationStatus.updateStatus(
-          'Saving User Details. This may take several seconds...');
-
-      bool successfullySavedImages =
-          await tempUserProvider.saveRegistrationImages();
-
-      this.auth.triggerAuthStream = true;
-
-      if (successfullySavedImages) {
-        await this.tempUserProvider.addNewUserToFirestore();
-        this.auth.addUserToAuthStream(user: user);
-      } else {
+      if (!["NONE", null, false, 0].contains(result.data)) {
+        this.auth.triggerAuthStream = true;
+        reinitState();
         updateRefreshing(false, mounted);
-        throw PlatformException(
-          code: 'ERROR_PHONE_AUTH_FAILED',
-          message: 'Failed to create user account.',
-        );
+        throw 'This phone number has already been used. Please use a different number.';
+      } else {
+        this.verificationStatus.updateStatus('Creating Account...');
+
+        if (this.tempUserProvider.googleAuthModel != null) {
+          user = await this.auth.signInWithGoogle(
+              credential: this.tempUserProvider.googleAuthModel.credential);
+        } else {
+          user = await this.auth.createUserWithEmailAndPassword(
+              email: this.tempUserProvider.medicallUser.email,
+              password: this.tempUserProvider.password);
+        }
+
+        user = await auth.linkCredentialWithCurrentUser(
+            credential: this.phoneAuthCredential);
+
+        this.tempUserProvider.updateWith(
+              uid: user.uid,
+              devTokens: user.devTokens,
+              phoneNumber: user.phoneNumber,
+            );
+
+        this.verificationStatus.updateStatus(
+            'Saving User Details. This may take several seconds...');
+
+        bool successfullySavedImages =
+            await tempUserProvider.saveRegistrationImages();
+
+        this.auth.triggerAuthStream = true;
+
+        if (successfullySavedImages) {
+          await this.tempUserProvider.addNewUserToFirestore();
+          this.auth.addUserToAuthStream(user: user);
+        } else {
+          this.auth.triggerAuthStream = true;
+          reinitState();
+          updateRefreshing(false, mounted);
+          throw PlatformException(
+            code: 'ERROR_PHONE_AUTH_FAILED',
+            message: 'Failed to create user account.',
+          );
+        }
       }
+    } on CloudFunctionsException {
+      this.auth.triggerAuthStream = true;
+      reinitState();
+      updateRefreshing(false, mounted);
+      throw "Security Check Failed...";
     } catch (e) {
       this.auth.triggerAuthStream = true;
+      reinitState();
       updateRefreshing(false, mounted);
       rethrow;
     }
+  }
+
+  //Called if phone number is already used
+  void reinitState() {
+    updateWith(
+      status: AuthStatus.STATE_INITIALIZED,
+      phoneNumber: '',
+      smsCode: '',
+      submitted: false,
+      codeTimedOut: false,
+      verificationId: '',
+      phoneAuthCredential: null,
+    );
   }
 
   void updateWith({

@@ -38,7 +38,7 @@ class AppUtil {
           size: 28.0,
           color: Colors.blue[300],
         ),
-        duration: Duration(seconds: 3),
+        duration: Duration(seconds: 5),
       )..show(context);
     } else {
       exMsg = e.message;
