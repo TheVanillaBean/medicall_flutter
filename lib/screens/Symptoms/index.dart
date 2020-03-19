@@ -267,7 +267,7 @@ class EntryItem extends StatelessWidget {
                                     medicallUser.hasMedicalHistory
                                         ? Container(
                                             margin: EdgeInsets.fromLTRB(
-                                                0, 0, 60, 0),
+                                                0, 0, 35, 0),
                                             decoration: BoxDecoration(
                                               border: Border(
                                                   top: BorderSide(

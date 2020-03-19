@@ -1,3 +1,4 @@
+import 'package:Medicall/screens/Malpractice/malpractice.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -136,8 +137,7 @@ class ConsentScreen extends StatelessWidget {
                       padding: EdgeInsets.all(20),
                       onPressed: () {
                         medicallUser.consent = true;
-
-                        Navigator.of(context).pushNamed('/phoneAuth');
+                        MalpracticeScreen.create(context);
                       },
                       color: Colors.green,
                       child: Text(

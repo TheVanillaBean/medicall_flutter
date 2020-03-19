@@ -10,6 +10,7 @@ import 'package:multi_image_picker/multi_image_picker.dart';
 
 class TempUserProvider {
   MedicallUser _medicallUser;
+  List<dynamic> malpracticeQuestions;
   List<Asset> _images;
   String _password;
   GoogleAuthModel _googleAuthModel;
@@ -35,6 +36,14 @@ class TempUserProvider {
 
   TempUserProvider() {
     _medicallUser = MedicallUser();
+  }
+
+  getMalpracticeQuestions() {
+    final DocumentReference ref =
+        Firestore.instance.document('services/malpractice_questions');
+    ref.get().then((val) {
+      this.malpracticeQuestions = val.data['malpractice_questions'];
+    });
   }
 
   void updateWith({
@@ -124,6 +133,20 @@ class TempUserProvider {
     medicallUser.profilePic = allMediaList[0];
     medicallUser.govId = allMediaList[1];
     return true;
+  }
+
+  Future<void> addProviderMalPractice() async {
+    if (medicallUser.uid.length > 0) {
+      final DocumentReference ref = Firestore.instance
+          .collection('malpractice')
+          .document(medicallUser.uid);
+      Map<String, dynamic> data = <String, dynamic>{
+        "malpractice_questions": this.malpracticeQuestions,
+      };
+      ref.setData(data).whenComplete(() {
+        print("Questions Added");
+      }).catchError((e) => print(e));
+    }
   }
 
   Future<void> addNewUserToFirestore() async {

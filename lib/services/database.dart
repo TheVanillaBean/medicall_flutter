@@ -80,10 +80,12 @@ class FirestoreDatabase implements Database {
   FirestoreDatabase();
   @override
   Future getConsultDetail(DetailedHistoryState detailedHistoryState) async {
-    if (consultSnapshot == null && consultSnapshot.documentID != null &&
+    if (consultSnapshot == null &&
+        consultSnapshot.documentID != null &&
         consultSnapshot.documentID != consultSnapshot.documentID) {
-      consultRef =
-          Firestore.instance.collection('consults').document(consultSnapshot.documentID);
+      consultRef = Firestore.instance
+          .collection('consults')
+          .document(consultSnapshot.documentID);
       await consultRef.get().then((datasnapshot) async {
         if (datasnapshot.data != null) {
           consultSnapshot = datasnapshot;
@@ -306,8 +308,9 @@ class FirestoreDatabase implements Database {
   }
 
   Future<void> updatePrescription(consultFormKey) async {
-    final DocumentReference documentReference =
-        Firestore.instance.collection('consults').document(consultSnapshot.documentID);
+    final DocumentReference documentReference = Firestore.instance
+        .collection('consults')
+        .document(consultSnapshot.documentID);
     Map<String, dynamic> data = <String, dynamic>{
       "medication_name":
           consultFormKey.currentState.fields['medName'].currentState.value,
@@ -448,8 +451,9 @@ class FirestoreDatabase implements Database {
   sendChatMsg(
     content,
   ) {
-    final DocumentReference documentReference =
-        Firestore.instance.collection('consults').document(consultSnapshot.documentID);
+    final DocumentReference documentReference = Firestore.instance
+        .collection('consults')
+        .document(consultSnapshot.documentID);
     Map<String, dynamic> data = {
       'chat': FieldValue.arrayUnion([
         {

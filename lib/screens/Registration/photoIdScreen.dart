@@ -178,7 +178,11 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
             widget.model.tempUserProvider.updateWith(
                 images:
                     images); //You can make further changes here. Technically the model is not updated here, we are just calling tempUserprovider.updateWith() which is separate from the model class created here. We could do  widget.model.updateWith(images: images), but I'll leave you to do that.
-            Navigator.of(context).pushNamed('/consent');
+            if (widget.model.tempUserProvider.medicallUser.type == 'patient') {
+              Navigator.of(context).pushNamed('/consent');
+            } else {
+              Navigator.of(context).pushNamed('/malpractice');
+            }
           }
         },
         child: Text(
