@@ -127,8 +127,8 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                         Column(
                           children: <Widget>[
                             Container(
-                                padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
-                                height: 70,
+                                padding: EdgeInsets.fromLTRB(4, 0, 0, 5),
+                                height: 77,
                                 width: MediaQuery.of(context).size.width,
                                 child: Stack(
                                   alignment: Alignment.bottomCenter,
@@ -164,7 +164,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                       children: <Widget>[
                                         IconButton(
                                           alignment: Alignment.bottomCenter,
-                                          iconSize: 28,
+                                          iconSize: 24,
                                           icon: Icon(Icons.arrow_back),
                                           color: Theme.of(context)
                                               .colorScheme
