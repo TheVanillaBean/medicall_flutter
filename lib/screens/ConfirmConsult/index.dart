@@ -1,4 +1,5 @@
 import 'package:Medicall/common_widgets/carousel/carousel_with_indicator.dart';
+import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/ConfirmConsult/routeUserOrder.dart';
 import 'package:Medicall/services/database.dart';
@@ -296,6 +297,8 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                                           .then((onValue) {
                                                         _extImageProvider
                                                             .clearImageMemory();
+                                                        _db.newConsult =
+                                                            ConsultData();
                                                         Route route =
                                                             MaterialPageRoute(
                                                                 builder:
@@ -335,6 +338,8 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                                         .then((onValue) {
                                                       _extImageProvider
                                                           .clearImageMemory();
+                                                      _db.newConsult =
+                                                          ConsultData();
                                                       Route route =
                                                           MaterialPageRoute(
                                                               builder: (context) =>

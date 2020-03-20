@@ -1,3 +1,4 @@
+import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/Symptoms/medical_history_state.dart';
 import 'package:Medicall/services/database.dart';
@@ -220,6 +221,8 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
             if (_newMedicalHistory.getnewMedicalHistory()) {
               _newMedicalHistory.setnewMedicalHistory(false);
             }
+            _db.newConsult = ConsultData();
+
             Navigator.of(context).pop(false);
           },
         ),

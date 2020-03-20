@@ -325,12 +325,8 @@ class EntryItem extends StatelessWidget {
                                             db.newConsult.provider == null) {
                                           db.newConsult = ConsultData();
                                         }
-
-                                        for (var i = 0; i < data.length; i++) {
-                                          if (data[i].title == root.title) {
-                                            db.newConsult.price = data[i].price;
-                                          }
-                                        }
+                                        
+                                        db.newConsult.price = this.entry.price;
                                         db.newConsult.consultType =
                                             "${root.title[0].toUpperCase()}${root.title.substring(1)}" ==
                                                     'Spot'
