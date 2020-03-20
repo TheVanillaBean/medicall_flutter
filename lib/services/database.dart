@@ -20,6 +20,7 @@ abstract class Database {
   Future<void> addUser(user, context);
   addUserMedicalHistory(MedicallUser medicallUser);
   getUserMedicalHistory(MedicallUser medicallUser);
+  getSymptoms(MedicallUser medicallUser);
   getPatientMedicalHistory(MedicallUser medicallUser);
   getConsultQuestions(MedicallUser medicallUser);
   Stream<QuerySnapshot> getAllProviders();
@@ -419,6 +420,17 @@ class FirestoreDatabase implements Database {
           .collection('medical_history')
           .document(medicallUser.uid)
           .get();
+    }
+  }
+
+  Future<dynamic> getSymptoms(MedicallUser medicallUser) async {
+    if (medicallUser.uid.length > 0) {
+      userMedicalRecord = await Firestore.instance
+          .collection('medical_history')
+          .document(medicallUser.uid)
+          .get();
+      return Firestore.instance.collection('services')
+          .document('dermatology').collection('symptoms').getDocuments();
     }
   }
 
