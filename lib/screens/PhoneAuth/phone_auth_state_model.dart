@@ -162,6 +162,16 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
       MedicallUser user;
       this.auth.triggerAuthStream = false;
 
+      List<String> providers = await auth.fetchProvidersForEmail(
+          email: this.tempUserProvider.medicallUser.email);
+
+      if (providers != null && providers.length > 0) {
+        this.auth.triggerAuthStream = true;
+        reinitState();
+        updateRefreshing(false, mounted);
+        throw 'This email address is taken.';
+      }
+
       this.phoneAuthCredential = this.phoneAuthCredential ??
           await auth.fetchPhoneAuthCredential(
               verificationId: this.verificationId, smsCode: this.smsCode);
