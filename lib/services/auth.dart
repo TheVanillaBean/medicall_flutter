@@ -4,6 +4,7 @@ import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/Login/apple_sign_in_model.dart';
 import 'package:Medicall/screens/Login/google_auth_model.dart';
 import 'package:apple_sign_in/apple_sign_in.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -34,6 +35,9 @@ abstract class AuthBase {
       {@required AuthCredential credential});
   Future<FirebaseUser> linkCredentialWithCurrentUser(
       {@required AuthCredential credential});
+  Future<bool> emailAlreadyUsed({@required String email});
+  Future<bool> phoneNumberAlreadyUsed({@required String phoneNumber});
+
   Future<void> signOut();
 }
 
@@ -245,6 +249,28 @@ class Auth implements AuthBase {
       {AuthCredential credential}) async {
     final authResult = await _firebaseAuth.signInWithCredential(credential);
     return _userFromFirebase(authResult.user);
+  }
+
+  @override
+  Future<bool> emailAlreadyUsed({@required String email}) async {
+    List<String> providers = await this.fetchProvidersForEmail(email: email);
+
+    return (providers != null && providers.length > 0);
+  }
+
+  @override
+  Future<bool> phoneNumberAlreadyUsed({@required String phoneNumber}) async {
+    final HttpsCallable callable = CloudFunctions.instance
+        .getHttpsCallable(functionName: 'checkPhoneNumberAlreadyUsed')
+          ..timeout = const Duration(seconds: 30);
+
+    final HttpsCallableResult result = await callable.call(
+      <String, dynamic>{
+        'phoneNumber': phoneNumber,
+      },
+    );
+
+    return (!["NONE", null, false, 0].contains(result.data));
   }
 
   @override

@@ -162,33 +162,20 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
       MedicallUser user;
       this.auth.triggerAuthStream = false;
 
-      List<String> providers = await auth.fetchProvidersForEmail(
+      bool emailAlreadyUsed = await auth.emailAlreadyUsed(
           email: this.tempUserProvider.medicallUser.email);
 
-      if (providers != null && providers.length > 0) {
+      if (emailAlreadyUsed) {
         this.auth.triggerAuthStream = true;
         reinitState();
         updateRefreshing(false, mounted);
         throw 'This email address is taken.';
       }
 
-      this.phoneAuthCredential = this.phoneAuthCredential ??
-          await auth.fetchPhoneAuthCredential(
-              verificationId: this.verificationId, smsCode: this.smsCode);
+      bool phoneNumberAlreadyUsed =
+          await auth.phoneNumberAlreadyUsed(phoneNumber: this.phoneNumber);
 
-      this.verificationStatus.updateStatus('Performing Security Check...');
-
-      final HttpsCallable callable = CloudFunctions.instance
-          .getHttpsCallable(functionName: 'checkPhoneNumberAlreadyUsed')
-            ..timeout = const Duration(seconds: 30);
-
-      final HttpsCallableResult result = await callable.call(
-        <String, dynamic>{
-          'phoneNumber': this.phoneNumber,
-        },
-      );
-
-      if (!["NONE", null, false, 0].contains(result.data)) {
+      if (phoneNumberAlreadyUsed) {
         this.auth.triggerAuthStream = true;
         reinitState();
         updateRefreshing(false, mounted);
