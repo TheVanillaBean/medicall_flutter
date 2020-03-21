@@ -224,6 +224,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                                 onPressed: () {
                                   DatePicker.showDatePicker(this.context,
                                       showTitleActions: true,
+                                      minTime: DateTime(1900, 1, 1),
                                       maxTime: DateTime(2001, 6, 7),
                                       onChanged: (date) {}, onConfirm: (date) {
                                     tempUserProvider.updateWith(
@@ -504,7 +505,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     },
                     controller: this._typeAheadController,
                     decoration: InputDecoration(
-                        labelText: 'Street Address',
+                        labelText:
+                            tempUserProvider.medicallUser.type == 'patient'
+                                ? 'Street Address'
+                                : 'Health Practice Address',
                         fillColor: Color.fromRGBO(35, 179, 232, 0.1),
                         filled: true,
                         disabledBorder: InputBorder.none,

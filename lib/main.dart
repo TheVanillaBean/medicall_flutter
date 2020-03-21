@@ -10,6 +10,7 @@ import 'package:Medicall/screens/History/index.dart';
 import 'package:Medicall/screens/LandingPage/auth_widget_builder.dart';
 import 'package:Medicall/screens/LandingPage/index.dart';
 import 'package:Medicall/screens/Login/index.dart';
+import 'package:Medicall/screens/Malpractice/malpractice.dart';
 import 'package:Medicall/screens/PhoneAuth/index.dart';
 import 'package:Medicall/screens/Privacy/index.dart';
 import 'package:Medicall/screens/Registration/index.dart';
@@ -153,6 +154,11 @@ class MedicallApp extends StatelessWidget {
               case '/consent':
                 return MyCustomRoute(
                   builder: (_) => ConsentScreen(),
+                  settings: settings,
+                );
+              case '/malpractice':
+                return MyCustomRoute(
+                  builder: (_) => MalpracticeScreen.create(context),
                   settings: settings,
                 );
               case '/symptoms':

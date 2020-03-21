@@ -213,34 +213,34 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
             left: 0.0,
             right: 0.0,
             child: SafeArea(
-              child: Row(
+              child: Stack(
+                alignment: Alignment.bottomCenter,
                 children: [
-                  Expanded(
-                    flex: widget.skipFlex,
-                    child: isSkipBtn
-                        ? skipBtn
-                        : Opacity(opacity: 0.0, child: skipBtn),
+                  Row(
+                    children: <Widget>[
+                      isSkipBtn
+                          ? skipBtn
+                          : Opacity(opacity: 0.0, child: skipBtn),
+                    ],
                   ),
-                  Expanded(
-                    flex: widget.dotsFlex,
-                    child: Center(
-                      child: widget.isProgress
-                          ? DotsIndicator(
-                              dotsCount: widget.pages.length,
-                              position: _currentPage,
-                              decorator: widget.dotsDecorator,
-                            )
-                          : const SizedBox(),
-                    ),
+                  Positioned(
+                    bottom: 17,
+                    child: widget.isProgress
+                        ? DotsIndicator(
+                            dotsCount: widget.pages.length,
+                            position: _currentPage,
+                            decorator: widget.dotsDecorator,
+                          )
+                        : const SizedBox(),
                   ),
-                  Expanded(
-                    flex: widget.nextFlex,
+                  Positioned(
+                    right: 0,
                     child: isLastPage
                         ? doneBtn
                         : widget.showNextButton
                             ? nextBtn
                             : Opacity(opacity: 0.0, child: nextBtn),
-                  ),
+                  )
                 ],
               ),
             ),

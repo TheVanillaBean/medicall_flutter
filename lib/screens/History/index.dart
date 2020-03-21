@@ -64,7 +64,7 @@ class HistoryScreen extends StatelessWidget {
                       return BottomAppBar(
                         color: Colors.transparent,
                         child: Container(
-                          height: 65,
+                          height: 70,
                           child: Column(
                             children: <Widget>[
                               Row(

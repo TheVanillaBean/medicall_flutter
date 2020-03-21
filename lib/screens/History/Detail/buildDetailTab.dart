@@ -360,7 +360,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                           children: <Widget>[
                             Container(
                               width:
-                                  MediaQuery.of(context).size.width / 3 - 6.7,
+                                  MediaQuery.of(context).size.width / 2 - 10,
                               padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
                               child: FormBuilderTextField(
                                 initialValue: consultSnapshot
@@ -399,54 +399,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                             ),
                             Container(
                               width:
-                                  MediaQuery.of(context).size.width / 3 - 6.7,
-                              padding: EdgeInsets.fromLTRB(10, 10, 0, 0),
-                              child: FormBuilderDropdown(
-                                isExpanded: true,
-                                initialValue:
-                                    consultSnapshot.containsKey('units') &&
-                                            consultSnapshot['units'].length > 0
-                                        ? consultSnapshot['units']
-                                        : 'Capsule',
-                                attribute: "units",
-                                iconSize:
-                                    medicallUser.type == 'patient' ? 0 : 24,
-                                readOnly: consultSnapshot['state'] == 'done' ||
-                                        medicallUser.type == 'patient' ||
-                                        consultSnapshot['pay_date'] != null
-                                    ? true
-                                    : false,
-                                decoration: InputDecoration(
-                                    contentPadding:
-                                        EdgeInsets.fromLTRB(5, 9, 5, 9),
-                                    labelStyle:
-                                        TextStyle(color: Colors.black45),
-                                    labelText: 'Units',
-                                    fillColor: consultSnapshot['state'] ==
-                                                'done' ||
-                                            medicallUser.type == 'patient' ||
-                                            consultSnapshot
-                                                .containsKey('pay_date')
-                                        ? Colors.grey.withAlpha(30)
-                                        : Color.fromRGBO(35, 179, 232, 0.1),
-                                    filled: true,
-                                    disabledBorder: InputBorder.none,
-                                    enabledBorder: InputBorder.none,
-                                    border: InputBorder.none),
-                                validators: [
-                                  FormBuilderValidators.required(),
-                                ],
-                                items: units
-                                    .map((unit) => DropdownMenuItem(
-                                          value: unit,
-                                          child: Text('$unit'),
-                                        ))
-                                    .toList(),
-                              ),
-                            ),
-                            Container(
-                              width:
-                                  MediaQuery.of(context).size.width / 3 - 6.7,
+                                  MediaQuery.of(context).size.width / 2 - 10,
                               padding: EdgeInsets.fromLTRB(10, 10, 0, 0),
                               child: FormBuilderDropdown(
                                 isExpanded: true,
@@ -485,6 +438,56 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                 ],
                                 isDense: true,
                                 items: Iterable<int>.generate(10)
+                                    .map((unit) => DropdownMenuItem(
+                                          value: unit,
+                                          child: Text('$unit'),
+                                        ))
+                                    .toList(),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: <Widget>[
+                            Container(
+                              width: MediaQuery.of(context).size.width - 20,
+                              padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                              child: FormBuilderDropdown(
+                                isExpanded: true,
+                                initialValue:
+                                    consultSnapshot.containsKey('units') &&
+                                            consultSnapshot['units'].length > 0
+                                        ? consultSnapshot['units']
+                                        : 'Capsule',
+                                attribute: "units",
+                                iconSize:
+                                    medicallUser.type == 'patient' ? 0 : 24,
+                                readOnly: consultSnapshot['state'] == 'done' ||
+                                        medicallUser.type == 'patient' ||
+                                        consultSnapshot['pay_date'] != null
+                                    ? true
+                                    : false,
+                                decoration: InputDecoration(
+                                    contentPadding:
+                                        EdgeInsets.fromLTRB(5, 9, 5, 9),
+                                    labelStyle:
+                                        TextStyle(color: Colors.black45),
+                                    labelText: 'Units',
+                                    fillColor: consultSnapshot['state'] ==
+                                                'done' ||
+                                            medicallUser.type == 'patient' ||
+                                            consultSnapshot
+                                                .containsKey('pay_date')
+                                        ? Colors.grey.withAlpha(30)
+                                        : Color.fromRGBO(35, 179, 232, 0.1),
+                                    filled: true,
+                                    disabledBorder: InputBorder.none,
+                                    enabledBorder: InputBorder.none,
+                                    border: InputBorder.none),
+                                validators: [
+                                  FormBuilderValidators.required(),
+                                ],
+                                items: units
                                     .map((unit) => DropdownMenuItem(
                                           value: unit,
                                           child: Text('$unit'),

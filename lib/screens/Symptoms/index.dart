@@ -61,27 +61,27 @@ class SymptomsScreen extends StatelessWidget {
         ),
       ),
       drawer: DrawerMenu(),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      // floatingActionButton: Builder(builder: (BuildContext context) {
-      //   return FloatingActionButton(
-      //       child: Icon(
-      //         CustomIcons.MedicallApp.logo_m,
-      //         size: 35.0,
-      //       ),
-      //       onPressed: () {
-      //         Scaffold.of(context).openDrawer();
-      //       },
-      //       backgroundColor: Theme.of(context).colorScheme.secondary,
-      //       foregroundColor: Theme.of(context).colorScheme.onPrimary);
-      // }),
-      //Content of tabs
       body: FutureBuilder(
-          future: db.getUserMedicalHistory(medicallUser),
-          builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+          future: db.getSymptoms(medicallUser),
+          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               if (db.userMedicalRecord != null &&
                   db.userMedicalRecord.data != null) {
                 medicallUser.hasMedicalHistory = true;
+              }
+              final List<Entry> data = <Entry>[];
+              if (snapshot.data.documents.length > 0) {
+                for (var i = 0; i < snapshot.data.documents.length; i++) {
+                  data.add(Entry(
+                      "${snapshot.data.documents[i].documentID[0].toUpperCase()}${snapshot.data.documents[i].documentID.substring(1)}",
+                      snapshot.data.documents[i].data['duration'],
+                      ('\$' +
+                          snapshot.data.documents[i].data['price'].toString()),
+                      <Entry>[
+                        Entry(snapshot.data.documents[i].documentID,
+                            snapshot.data.documents[i].data['description'], '')
+                      ]));
+                }
               }
               return Column(
                 children: <Widget>[
@@ -137,20 +137,7 @@ class Entry {
 }
 
 // The entire multilevel list displayed by this app.
-final List<Entry> data = <Entry>[
-  Entry('Hairloss', '9 minutes to complete', '\$39', <Entry>[
-    Entry(
-        'Hairloss',
-        'Most cases of hair loss are hereditary and can be treated with both prescription and non-prescription medications. It takes the providers on Medicall usually 24 hours to make a diagnosis. Medications not included in the consultation fee. However, we offer some of the lowest prices in the nation with 90 day supply of Finasteride/Propecia costing \$12.99 with free shipping.',
-        '')
-  ]),
-  Entry('Spot', '7 minutes to complete', '\$35', <Entry>[
-    Entry(
-        'Spot',
-        'The provider will evaluate the photographs and information you provide to make a diagnosis within 24 hours. Most spots are not dangerous and do not require treatment. In some cases, such as in the case of skin cancer, the provider may need to see you in person to confirm the diagnosis (e.g. biopsy) or to provide treatment. These are additional services not included in the consultation fee.',
-        '')
-  ]),
-];
+final List<Entry> data = <Entry>[];
 
 class EntryItem extends StatelessWidget {
   const EntryItem(this.entry, this._showDialog, this.context);
@@ -267,7 +254,7 @@ class EntryItem extends StatelessWidget {
                                     medicallUser.hasMedicalHistory
                                         ? Container(
                                             margin: EdgeInsets.fromLTRB(
-                                                0, 0, 60, 0),
+                                                0, 0, 35, 0),
                                             decoration: BoxDecoration(
                                               border: Border(
                                                   top: BorderSide(
@@ -338,16 +325,13 @@ class EntryItem extends StatelessWidget {
                                             db.newConsult.provider == null) {
                                           db.newConsult = ConsultData();
                                         }
-
-                                        for (var i = 0; i < data.length; i++) {
-                                          if (data[i].title == root.title) {
-                                            db.newConsult.price = data[i].price;
-                                          }
-                                        }
+                                        
+                                        db.newConsult.price = this.entry.price;
                                         db.newConsult.consultType =
-                                            root.title == 'Spot'
+                                            "${root.title[0].toUpperCase()}${root.title.substring(1)}" ==
+                                                    'Spot'
                                                 ? 'Lesion'
-                                                : root.title;
+                                                : "${root.title[0].toUpperCase()}${root.title.substring(1)}";
                                         await db
                                             .getConsultQuestions(medicallUser);
                                         if (!medicallUser.hasMedicalHistory ||

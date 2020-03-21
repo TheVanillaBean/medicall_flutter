@@ -61,7 +61,7 @@ class CarouselWithIndicator extends StatelessWidget {
           : imgList.length == 1
               ? _extImageProvider.returnMemoryImage(
                   _extImageProvider.convertedImages[imgList[0].name],
-                  fit: BoxFit.fill,
+                  fit: BoxFit.cover,
                   mode: ExtendedImageMode.gesture,
                   memCache: true, initGestureConfigHandler: (state) {
                   return GestureConfig(
@@ -83,7 +83,7 @@ class CarouselWithIndicator extends StatelessWidget {
                                 return _extImageProvider.returnMemoryImage(
                                     _extImageProvider
                                         .convertedImages[asset.name],
-                                    fit: BoxFit.fill,
+                                    fit: BoxFit.cover,
                                     mode: ExtendedImageMode.gesture,
                                     memCache: true,
                                     initGestureConfigHandler: (state) {

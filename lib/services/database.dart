@@ -20,6 +20,7 @@ abstract class Database {
   Future<void> addUser(user, context);
   addUserMedicalHistory(MedicallUser medicallUser);
   getUserMedicalHistory(MedicallUser medicallUser);
+  getSymptoms(MedicallUser medicallUser);
   getPatientMedicalHistory(MedicallUser medicallUser);
   getConsultQuestions(MedicallUser medicallUser);
   Stream<QuerySnapshot> getAllProviders();
@@ -80,10 +81,12 @@ class FirestoreDatabase implements Database {
   FirestoreDatabase();
   @override
   Future getConsultDetail(DetailedHistoryState detailedHistoryState) async {
-    if (consultSnapshot == null && consultSnapshot.documentID != null &&
+    if (consultSnapshot == null &&
+        consultSnapshot.documentID != null &&
         consultSnapshot.documentID != consultSnapshot.documentID) {
-      consultRef =
-          Firestore.instance.collection('consults').document(consultSnapshot.documentID);
+      consultRef = Firestore.instance
+          .collection('consults')
+          .document(consultSnapshot.documentID);
       await consultRef.get().then((datasnapshot) async {
         if (datasnapshot.data != null) {
           consultSnapshot = datasnapshot;
@@ -306,8 +309,9 @@ class FirestoreDatabase implements Database {
   }
 
   Future<void> updatePrescription(consultFormKey) async {
-    final DocumentReference documentReference =
-        Firestore.instance.collection('consults').document(consultSnapshot.documentID);
+    final DocumentReference documentReference = Firestore.instance
+        .collection('consults')
+        .document(consultSnapshot.documentID);
     Map<String, dynamic> data = <String, dynamic>{
       "medication_name":
           consultFormKey.currentState.fields['medName'].currentState.value,
@@ -419,6 +423,17 @@ class FirestoreDatabase implements Database {
     }
   }
 
+  Future<dynamic> getSymptoms(MedicallUser medicallUser) async {
+    if (medicallUser.uid.length > 0) {
+      userMedicalRecord = await Firestore.instance
+          .collection('medical_history')
+          .document(medicallUser.uid)
+          .get();
+      return Firestore.instance.collection('services')
+          .document('dermatology').collection('symptoms').getDocuments();
+    }
+  }
+
   Future<QuerySnapshot> getUserSources() {
     return Firestore.instance
         .collection('cards')
@@ -448,8 +463,9 @@ class FirestoreDatabase implements Database {
   sendChatMsg(
     content,
   ) {
-    final DocumentReference documentReference =
-        Firestore.instance.collection('consults').document(consultSnapshot.documentID);
+    final DocumentReference documentReference = Firestore.instance
+        .collection('consults')
+        .document(consultSnapshot.documentID);
     Map<String, dynamic> data = {
       'chat': FieldValue.arrayUnion([
         {
