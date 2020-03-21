@@ -32,7 +32,7 @@ abstract class AuthBase {
       {@required AuthCredential appleIdCredential});
   Future<MedicallUser> signInWithPhoneNumber(
       {@required AuthCredential credential});
-  Future<MedicallUser> linkCredentialWithCurrentUser(
+  Future<FirebaseUser> linkCredentialWithCurrentUser(
       {@required AuthCredential credential});
   Future<void> signOut();
 }
@@ -176,11 +176,11 @@ class Auth implements AuthBase {
           providers =
               await this.fetchProvidersForEmail(email: appleIdCredential.email);
         } catch (e) {
-          //Intentionally empty catch block because empty provider list is fine.
-//          throw PlatformException(
-//            code: 'ERROR_AUTHORIZATION_DENIED',
-//            message: e ?? "Apple Sign In Error",
-//          );
+          throw PlatformException(
+            code: 'ERROR_AUTHORIZATION_DENIED',
+            message:
+                "Apple Sign In Error. Please go to Settings -> [Your Apple ID] (First List Item) -> Password and Security -> Apps using Your Apple ID -> Medicall -> Stop Using Apple ID. Then Try Again.",
+          );
         }
 
         return AppleSignInModel(
@@ -220,7 +220,7 @@ class Auth implements AuthBase {
   }
 
   @override
-  Future<MedicallUser> linkCredentialWithCurrentUser(
+  Future<FirebaseUser> linkCredentialWithCurrentUser(
       {AuthCredential credential}) async {
     final FirebaseUser currentUser = await _firebaseAuth.currentUser();
 
@@ -231,7 +231,7 @@ class Auth implements AuthBase {
         _userFromFirebase(linkCredentialAuthResult.user);
 
     if (currentMedicallUser != null) {
-      return currentMedicallUser;
+      return currentUser;
     } else {
       throw PlatformException(
         code: 'ERROR_PHONE_AUTH_FAILED',

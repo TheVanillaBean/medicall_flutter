@@ -5,17 +5,22 @@ version: 1.0.2+1
 
 environment:
   sdk: '>=2.2.2 <3.0.0'
-
+https://github:
+  com/FirebaseExtended/flutterfire/commit/3fc3ca8e8f2f2577b1553e3513a7dba45da31b37:
 dependencies:
   flutter:
     sdk: flutter
   #firebase
   firebase_core: 0.4.4+3
-  firebase_auth: 0.15.4
+  firebase_auth:
+    git:
+      url: https://github.com/FirebaseExtended/flutterfire.git
+      ref: 4d7b2bdd7fbdee65551754968b140653ea16128f
+      path: packages/firebase_auth/firebase_auth
   cloud_firestore: 0.13.4+2
-  firebase_messaging: ^6.0.9
+  firebase_messaging: 6.0.13
   cloud_functions: ^0.4.2+3
-  firebase_storage: ^3.1.1
+  firebase_storage: 3.1.1
   firebase_analytics: ^5.0.11
   flutter_crashlytics: ^1.0.0
   #apple
@@ -56,6 +61,7 @@ dependencies:
   flare_splash_screen: ^3.0.0
   simple_animations: ^1.3.4
   mask_text_input_formatter: ^1.0.6
+  uuid: ^2.0.4
 
 dev_dependencies:
   flutter_test:

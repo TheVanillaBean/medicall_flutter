@@ -196,11 +196,13 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
           throw "The SMS code you entered is invalid. Please try again...";
         }
 
+        FirebaseUser currentFirebaseUser;
+
         if (this.tempUserProvider.googleAuthModel != null) {
-          auth.linkCredentialWithCurrentUser(
+          currentFirebaseUser = await auth.linkCredentialWithCurrentUser(
               credential: this.tempUserProvider.googleAuthModel.credential);
         } else if (this.tempUserProvider.appleSignInModel != null) {
-          auth.linkCredentialWithCurrentUser(
+          currentFirebaseUser = await auth.linkCredentialWithCurrentUser(
               credential: this.tempUserProvider.appleSignInModel.credential);
         } else {
           AuthCredential emailCredential =
@@ -208,7 +210,8 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
             email: this.tempUserProvider.medicallUser.email,
             password: this.tempUserProvider.password,
           );
-          auth.linkCredentialWithCurrentUser(credential: emailCredential);
+          currentFirebaseUser = await auth.linkCredentialWithCurrentUser(
+              credential: emailCredential);
         }
 
         this.tempUserProvider.updateWith(
@@ -227,6 +230,7 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
 
         if (successfullySavedImages) {
           await this.tempUserProvider.addNewUserToFirestore();
+          currentFirebaseUser.sendEmailVerification();
           this.auth.addUserToAuthStream(user: user);
         } else {
           this.auth.triggerAuthStream = true;

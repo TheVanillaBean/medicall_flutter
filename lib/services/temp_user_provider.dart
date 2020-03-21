@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:uuid/uuid.dart';
 
 class TempUserProvider {
   MedicallUser _medicallUser;
@@ -106,15 +107,21 @@ class TempUserProvider {
     return byteData;
   }
 
+  String getImageName(String assetName) {
+    Uuid uuid = Uuid();
+    return assetName.split(".").first +
+        uuid.v1(); //image name without extension
+  }
+
   Future<bool> saveRegistrationImages() async {
     var assets = this.images;
     var allMediaList = [];
-    for (var i = 0; i < assets.length; i++) {
-      ByteData byteData = await getAccurateByteData(assets[i]);
+    for (Asset asset in assets) {
+      ByteData byteData = await getAccurateByteData(asset);
       List<int> imageData = byteData.buffer.asUint8List();
       StorageReference ref = FirebaseStorage.instance
           .ref()
-          .child("profile/" + medicallUser.uid + '/' + assets[i].name);
+          .child("profile/${medicallUser.uid}/${getImageName(asset.name)}.JPG");
       StorageUploadTask uploadTask = ref.putData(imageData);
       allMediaList.add(
         await (await uploadTask.onComplete).ref.getDownloadURL(),
