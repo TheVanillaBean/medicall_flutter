@@ -162,6 +162,12 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
       MedicallUser user;
       this.auth.triggerAuthStream = false;
 
+      this.phoneAuthCredential = this.phoneAuthCredential ??
+          await auth.fetchPhoneAuthCredential(
+              verificationId: this.verificationId, smsCode: this.smsCode);
+
+      this.verificationStatus.updateStatus('Performing Security Check...');
+
       bool emailAlreadyUsed = await auth.emailAlreadyUsed(
           email: this.tempUserProvider.medicallUser.email);
 
@@ -263,7 +269,6 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
     }
   }
 
-  //Called if phone number is already used
   void reinitState() {
     updateWith(
       status: AuthStatus.STATE_INITIALIZED,
