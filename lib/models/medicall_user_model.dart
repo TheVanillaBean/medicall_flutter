@@ -1,7 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-MedicallUser medicallUser;
-
 class MedicallUser {
   String uid;
   List<dynamic> devTokens;

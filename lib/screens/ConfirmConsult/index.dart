@@ -267,7 +267,8 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                                 });
                                                 //await _addProviderConsult();
                                                 _db
-                                                    .getUserSources()
+                                                    .getUserSources(
+                                                        uid: _medicallUser.uid)
                                                     .then((snap) async {
                                                   if (snap.documents.length ==
                                                       0) {
@@ -293,7 +294,9 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                                           .addConsult(
                                                               context,
                                                               _db.newConsult,
-                                                              _extImageProvider)
+                                                              _extImageProvider,
+                                                              medicallUser:
+                                                                  _medicallUser)
                                                           .then((onValue) {
                                                         _extImageProvider
                                                             .clearImageMemory();
@@ -334,7 +337,9 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                                         .addConsult(
                                                             context,
                                                             _db.newConsult,
-                                                            _extImageProvider)
+                                                            _extImageProvider,
+                                                            medicallUser:
+                                                                _medicallUser)
                                                         .then((onValue) {
                                                       _extImageProvider
                                                           .clearImageMemory();

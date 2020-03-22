@@ -8,9 +8,10 @@ import 'package:Medicall/screens/History/trailingActions.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
+import 'package:Medicall/util/firebase_notification_handler.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
 class HistoryScreen extends StatelessWidget {
   final HistoryState model;
@@ -24,6 +25,7 @@ class HistoryScreen extends StatelessWidget {
   static Widget create(BuildContext context, bool showAppBar, String query) {
     MedicallUser _medicallUser =
         Provider.of<UserProvider>(context).medicallUser;
+    FirebaseNotifications().setUpFirebase(medicallUser: _medicallUser);
     Database _db = Provider.of<Database>(context);
     ExtImageProvider _extendedImageProvider =
         Provider.of<ExtImageProvider>(context);

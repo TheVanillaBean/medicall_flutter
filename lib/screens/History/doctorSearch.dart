@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
@@ -17,7 +18,7 @@ class DoctorSearch extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var userProvider = Provider.of<UserProvider>(context, listen: false);
-    medicallUser = userProvider.medicallUser;
+    MedicallUser medicallUser = userProvider.medicallUser;
     var _db = Provider.of<Database>(context, listen: false);
     currentOrientation = MediaQuery.of(context).orientation;
     currTab = "Search Doctors";
@@ -41,7 +42,7 @@ class DoctorSearch extends StatelessWidget {
             onPressed: () {
               showSearch(
                 context: context,
-                delegate: CustomSearchDelegate(),
+                delegate: CustomSearchDelegate(medicallUser: medicallUser),
               );
             },
           ),
@@ -50,7 +51,7 @@ class DoctorSearch extends StatelessWidget {
       drawer: DrawerMenu(),
       body: SingleChildScrollView(
         child: StreamBuilder(
-            stream: _db.getAllUsers(),
+            stream: _db.getAllProviders(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return Center(
@@ -63,16 +64,18 @@ class DoctorSearch extends StatelessWidget {
                 var userDocuments = snapshot.data.documents;
                 List<Widget> historyList = [];
                 for (var i = 0; i < userDocuments.length; i++) {
-                  if (userDocuments[i].data['type'] == 'provider' &&
-                      medicallUser.displayName !=
-                          userDocuments[i].data['name']) {
+                  if (medicallUser.displayName !=
+                      userDocuments[i].data['name']) {
                     historyList.add(ListTile(
                       dense: true,
                       contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                       title: Text(
-                          '${userDocuments[i].data['name'].split(" ")[0][0].toUpperCase()}${userDocuments[i].data['name'].split(" ")[0].substring(1)} ${userDocuments[i].data['name'].split(" ")[1][0].toUpperCase()}${userDocuments[i].data['name'].split(" ")[1].substring(1)}' +
-                              " " +
-                              userDocuments[i].data['titles']),
+                        getFormattedProviderName(
+                          firstName: userDocuments[i].data['first_name'],
+                          lastName: userDocuments[i].data['last_name'],
+                          titles: userDocuments[i].data['titles'],
+                        ),
+                      ),
                       subtitle:
                           Text(userDocuments[i].data['address'].toString()),
                       leading: Icon(
@@ -113,8 +116,8 @@ class DoctorSearch extends StatelessWidget {
                           _consult.provider = selectedProvider;
                           _consult.providerProfilePic =
                               userDocuments[i].data['profile_pic'];
-                          setConsult(_consult, selectedProvider,
-                              providerTitles, providerProfilePic);
+                          setConsult(_consult, selectedProvider, providerTitles,
+                              providerProfilePic);
                           Navigator.of(context).pushNamed('/symptoms');
                         },
                       ),
@@ -133,6 +136,18 @@ class DoctorSearch extends StatelessWidget {
       ),
     );
   }
+
+  String getFormattedProviderName({
+    @required String firstName,
+    @required String lastName,
+    @required String titles,
+  }) {
+    return '${capitalize(firstName)} ${capitalize(lastName)} $titles';
+  }
+
+  String capitalize(String s) {
+    return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
+  }
 }
 
 class CustomSearchDelegate extends SearchDelegate {
@@ -140,6 +155,10 @@ class CustomSearchDelegate extends SearchDelegate {
   String providerTitles = '';
   String providerProfilePic = '';
   ConsultData _consult = ConsultData();
+
+  MedicallUser medicallUser = MedicallUser();
+
+  CustomSearchDelegate({this.medicallUser});
 
   @override
   String get searchFieldLabel => currTab;

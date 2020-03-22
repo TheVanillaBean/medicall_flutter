@@ -8,7 +8,6 @@ import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:Medicall/util/apple_sign_in_available.dart';
-import 'package:Medicall/util/firebase_notification_handler.dart';
 import 'package:apple_sign_in/apple_sign_in_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -49,12 +48,6 @@ class _LoginScreenState extends State<LoginPage> {
   final FocusNode _emailFocusNode = FocusNode();
   final FocusNode _passwordFocusNode = FocusNode();
   SignInStateModel get model => widget.model;
-
-  @override
-  void initState() {
-    super.initState();
-    FirebaseNotifications().setUpFirebase();
-  }
 
   @override
   void dispose() {

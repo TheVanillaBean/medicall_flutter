@@ -1,5 +1,7 @@
+import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/stripe_provider.dart';
+import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -12,6 +14,7 @@ class PaymentDetail extends StatefulWidget {
 class _PaymentDetailState extends State<PaymentDetail> {
   MyStripeProvider _stripeProvider;
   Database _db;
+  MedicallUser medicallUser = MedicallUser();
   @override
   void initState() {
     super.initState();
@@ -26,6 +29,7 @@ class _PaymentDetailState extends State<PaymentDetail> {
   Widget build(BuildContext context) {
     _db = Provider.of<Database>(context);
     _stripeProvider = Provider.of<MyStripeProvider>(context);
+    medicallUser = Provider.of<UserProvider>(context).medicallUser;
     return Scaffold(
         //App Bar
         appBar: AppBar(
@@ -50,7 +54,7 @@ class _PaymentDetailState extends State<PaymentDetail> {
 
         //Content of tabs
         body: StreamBuilder(
-            stream: _db.getUserCardSources(),
+            stream: _db.getUserCardSources(uid: medicallUser.uid),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 List<Widget> cardList = [];

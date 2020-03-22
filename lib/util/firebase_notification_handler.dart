@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -9,8 +10,10 @@ class FirebaseNotifications {
   FirebaseMessaging _firebaseMessaging;
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   FirebaseUser firebaseUser;
+  MedicallUser medicallUser = MedicallUser();
 
-  setUpFirebase() {
+  setUpFirebase({@required MedicallUser medicallUser}) {
+    this.medicallUser = medicallUser;
     _firebaseMessaging = FirebaseMessaging();
     firebaseCloudMessagingListeners();
   }

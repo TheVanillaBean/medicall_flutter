@@ -16,6 +16,7 @@ class SymptomsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Database db = Provider.of<Database>(context);
+    MedicallUser medicallUser = Provider.of<UserProvider>(context).medicallUser;
     void _showDialog() {
       showDialog(
         context: context,
@@ -325,7 +326,7 @@ class EntryItem extends StatelessWidget {
                                             db.newConsult.provider == null) {
                                           db.newConsult = ConsultData();
                                         }
-                                        
+
                                         db.newConsult.price = this.entry.price;
                                         db.newConsult.consultType =
                                             "${root.title[0].toUpperCase()}${root.title.substring(1)}" ==

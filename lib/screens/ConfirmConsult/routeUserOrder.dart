@@ -18,6 +18,8 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
     return false;
   }
 
+  MedicallUser medicallUser = MedicallUser();
+
   @override
   void initState() {
     _consult = widget.data['consult'];
@@ -49,7 +51,8 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                         'Thank you for your payment of ${_consult.price},',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            fontSize: 16,),
+                          fontSize: 16,
+                        ),
                       ),
                     )
                   ],
@@ -65,7 +68,8 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                         'Doctor',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            fontSize: 16,),
+                          fontSize: 16,
+                        ),
                       ),
                     )
                   ],
@@ -107,7 +111,8 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                         _consult.provider + ' ' + _consult.providerTitles,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            fontSize: 16,),
+                          fontSize: 16,
+                        ),
                       ),
                     )
                   ],
@@ -120,8 +125,8 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                         'will provide care for your',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            fontSize: 16,
-                            ),
+                          fontSize: 16,
+                        ),
                       ),
                     )
                   ],
@@ -139,9 +144,9 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                             : _consult.consultType,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            ),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     )
                   ],
@@ -159,8 +164,8 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                           'We will now take you to your history where you can view the status of your orders, interact with doctors, and order prescriptions. Please allow 24 hours for the doctor to respond.',
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                              fontSize: 14,
-                              ),
+                            fontSize: 14,
+                          ),
                         ),
                       ),
                     ],

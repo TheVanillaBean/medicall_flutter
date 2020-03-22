@@ -15,10 +15,6 @@ class AccountScreen extends StatefulWidget {
 class _AccountScreenState extends State<AccountScreen> {
   UserProvider _userProvider;
   ExtImageProvider _extImageProvider;
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   void dispose() {
@@ -29,6 +25,7 @@ class _AccountScreenState extends State<AccountScreen> {
   Widget build(BuildContext context) {
     _userProvider = Provider.of<UserProvider>(context);
     _extImageProvider = Provider.of<ExtImageProvider>(context);
+    final MedicallUser medicallUser = _userProvider.medicallUser;
     return Scaffold(
       //App Bar
       appBar: AppBar(

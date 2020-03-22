@@ -35,6 +35,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
   Database _db;
   ExtImageProvider _extImageProvider;
   List<dynamic> _combinedList = [];
+  MedicallUser medicallUser = MedicallUser();
 
   @override
   void initState() {

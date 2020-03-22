@@ -13,7 +13,8 @@ class DrawerMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    medicallUser = Provider.of<UserProvider>(context).medicallUser;
+    final MedicallUser medicallUser =
+        Provider.of<UserProvider>(context).medicallUser;
     return (Drawer(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,

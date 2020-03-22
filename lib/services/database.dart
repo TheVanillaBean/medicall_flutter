@@ -10,6 +10,7 @@ import 'package:Medicall/screens/History/Detail/history_detail_state.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dash_chat/dash_chat.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart' as path;
 
 abstract class Database {
@@ -17,7 +18,6 @@ abstract class Database {
   Future<void> getPatientDetail(MedicallUser medicallUser);
   Future<void> setPrescriptionPayment(state, shipTo, shippingAddress);
   Future<void> updatePrescription(consultFormKey);
-  Future<void> addUser(user, context);
   addUserMedicalHistory(MedicallUser medicallUser);
   getUserMedicalHistory(MedicallUser medicallUser);
   getSymptoms(MedicallUser medicallUser);
@@ -30,13 +30,12 @@ abstract class Database {
   saveConsultChatImage(MedicallUser _medicallUser, File chatMedia);
   createNewConsultChatMsg(ChatMessage message);
   Stream getUserHistoryStream(MedicallUser medicallUser);
-  Future<QuerySnapshot> getUserSources();
-  Future<void> addConsult(context, newConsult, extImageProvider);
+  Future<QuerySnapshot> getUserSources({@required String uid});
+  Future<void> addConsult(context, newConsult, extImageProvider,
+      {@required MedicallUser medicallUser});
   updateConsultStatus(Choice choice, String uid);
-  sendChatMsg(
-    content,
-  );
-  Stream<QuerySnapshot> getUserCardSources();
+  sendChatMsg(content, {@required String uid});
+  Stream<QuerySnapshot> getUserCardSources({@required String uid});
   String consultChatImageUrl;
   DocumentSnapshot consultSnapshot;
   DocumentReference consultRef;
@@ -79,6 +78,7 @@ class FirestoreDatabase implements Database {
   String consultChatImageUrl;
 
   FirestoreDatabase();
+
   @override
   Future getConsultDetail(DetailedHistoryState detailedHistoryState) async {
     if (consultSnapshot == null &&
@@ -138,49 +138,12 @@ class FirestoreDatabase implements Database {
     createNewConsultChatMsg(message);
   }
 
-  Stream<QuerySnapshot> getUserCardSources() {
+  Stream<QuerySnapshot> getUserCardSources({@required String uid}) {
     return Firestore.instance
         .collection('cards')
-        .document(medicallUser.uid)
+        .document(uid)
         .collection('sources')
         .snapshots();
-  }
-
-  Future<void> addUser(user, context) async {
-    final DocumentReference documentReference =
-        Firestore.instance.document("users/" + user.uid);
-    medicallUser.phoneNumber = user.phoneNumber;
-    Map<String, dynamic> data = <String, dynamic>{
-      "name": medicallUser.displayName,
-      "first_name": medicallUser.firstName,
-      "last_name": medicallUser.lastName,
-      "email": user.email,
-      "gender": medicallUser.gender,
-      "type": medicallUser.type,
-      "address": medicallUser.address,
-      "terms": medicallUser.terms,
-      "policy": medicallUser.policy,
-      "consent": medicallUser.consent,
-      "dob": medicallUser.dob,
-      "phone": user.phoneNumber,
-      "profile_pic": medicallUser.profilePic,
-      "gov_id": medicallUser.govId,
-      "dev_tokens": medicallUser.devTokens,
-    };
-    if (medicallUser.type == 'provider') {
-      data['titles'] = medicallUser.titles;
-      data['npi'] = medicallUser.npi;
-      data['med_license'] = medicallUser.medLicense;
-      data['state_issued'] = medicallUser.medLicenseState;
-    }
-
-    try {
-      await documentReference.setData(data).then((onValue) {
-        print('User added');
-      });
-    } catch (e) {
-      throw e;
-    }
   }
 
   Future<void> setPrescriptionPayment(state, shipTo, shippingAddress) {
@@ -195,7 +158,7 @@ class FirestoreDatabase implements Database {
     });
   }
 
-  Future saveImages(assets, consultId, listaU8L) async {
+  Future saveImages(assets, consultId, listaU8L, {@required String uid}) async {
     var allMediaList = [];
     var allFileNames = [];
     for (var i = 0; i < assets.length; i++) {
@@ -210,12 +173,9 @@ class FirestoreDatabase implements Database {
       }
     }
     for (var i = 0; i < listaU8L.length; i++) {
-      StorageReference ref = FirebaseStorage.instance.ref().child("consults/" +
-          medicallUser.uid +
-          '/' +
-          consultId +
-          "/" +
-          allFileNames[i]);
+      StorageReference ref = FirebaseStorage.instance
+          .ref()
+          .child("consults/" + uid + '/' + consultId + "/" + allFileNames[i]);
       StorageUploadTask uploadTask = ref.putData(listaU8L[i]);
       allMediaList
           .add(await (await uploadTask.onComplete).ref.getDownloadURL());
@@ -230,11 +190,13 @@ class FirestoreDatabase implements Database {
         .snapshots();
   }
 
-  Future<void> addConsult(context, newConsult, extImageProvider) async {
+  Future<void> addConsult(context, newConsult, extImageProvider,
+      {@required MedicallUser medicallUser}) async {
     var ref = Firestore.instance.collection('consults').document();
 
     var imagesList = await saveImages(
-        extImageProvider.assetList, ref.documentID, extImageProvider.listaU8L);
+        extImageProvider.assetList, ref.documentID, extImageProvider.listaU8L,
+        uid: medicallUser.uid);
     Map<String, dynamic> data = <String, dynamic>{
       "screening_questions": newConsult.screeningQuestions,
       //"medical_history_questions": _db.newConsult.historyQuestions,
@@ -429,15 +391,18 @@ class FirestoreDatabase implements Database {
           .collection('medical_history')
           .document(medicallUser.uid)
           .get();
-      return Firestore.instance.collection('services')
-          .document('dermatology').collection('symptoms').getDocuments();
+      return Firestore.instance
+          .collection('services')
+          .document('dermatology')
+          .collection('symptoms')
+          .getDocuments();
     }
   }
 
-  Future<QuerySnapshot> getUserSources() {
+  Future<QuerySnapshot> getUserSources({@required String uid}) {
     return Firestore.instance
         .collection('cards')
-        .document(medicallUser.uid)
+        .document(uid)
         .collection('sources')
         .getDocuments();
   }
@@ -460,24 +425,21 @@ class FirestoreDatabase implements Database {
     }
   }
 
-  sendChatMsg(
-    content,
-  ) {
+  sendChatMsg(content, {@required String uid}) {
     final DocumentReference documentReference = Firestore.instance
         .collection('consults')
         .document(consultSnapshot.documentID);
     Map<String, dynamic> data = {
       'chat': FieldValue.arrayUnion([
         {
-          'user_id': medicallUser.uid,
+          'user_id': uid,
           'date': DateTime.now(),
           'txt': content,
         }
       ])
     };
     documentReference.snapshots().forEach((snap) {
-      if (snap.data['provider_id'] == medicallUser.uid &&
-          snap.data['state'] == 'new') {
+      if (snap.data['provider_id'] == uid && snap.data['state'] == 'new') {
         Map<String, dynamic> consultStateData = {'state': 'in progress'};
         documentReference.updateData(consultStateData).whenComplete(() {
           print("Msg Sent");

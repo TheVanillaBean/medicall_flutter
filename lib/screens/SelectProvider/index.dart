@@ -1,9 +1,10 @@
+import 'dart:async';
+
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
-import 'dart:async';
 import 'package:google_maps_webservice/places.dart';
 import 'package:provider/provider.dart';
 
@@ -26,6 +27,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
   var providerTitles = '';
   String errorMessage;
   Database db;
+  final MedicallUser medicallUser = MedicallUser();
 
   @override
   void initState() {
