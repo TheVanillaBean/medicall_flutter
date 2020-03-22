@@ -5,6 +5,7 @@ import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'buildDetailTab.dart';
 
 class HistoryDetailScreen extends StatefulWidget {
@@ -110,10 +111,8 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                     children: <Widget>[
                       Text(
                         widget.model.medicallUser.type == 'patient'
-                            ? '${widget.model.db.consultSnapshot.data['provider'].split(" ")[0][0].toUpperCase()}${widget.model.db.consultSnapshot.data['provider'].split(" ")[0].substring(1)} ${widget.model.db.consultSnapshot.data['provider'].split(" ")[1][0].toUpperCase()}${widget.model.db.consultSnapshot.data['provider'].split(" ")[1].substring(1)} ' +
-                                widget.model.db.consultSnapshot
-                                    .data['providerTitles']
-                            : '${widget.model.db.consultSnapshot.data['patient'].split(" ")[0][0].toUpperCase()}${widget.model.db.consultSnapshot.data['patient'].split(" ")[0].substring(1)} ${widget.model.db.consultSnapshot.data['patient'].split(" ")[1][0].toUpperCase()}${widget.model.db.consultSnapshot.data['patient'].split(" ")[1].substring(1)} ',
+                            ? '${widget.model.db.consultSnapshot.data['provider']} ${widget.model.db.consultSnapshot.data['providerTitles']}'
+                            : '${widget.model.db.consultSnapshot.data['patient']}',
                         style: TextStyle(
                           fontSize:
                               Theme.of(context).platform == TargetPlatform.iOS

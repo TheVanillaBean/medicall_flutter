@@ -213,8 +213,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   height: 10,
                 ),
                 FormBuilderCustomField(
-                    attribute: "Date of birth",
-                    formField: FormField(builder: (context) {
+                  attribute: "Date of birth",
+                  formField: FormField(
+                    builder: (context) {
                       return Row(
                         children: <Widget>[
                           Expanded(
@@ -248,24 +249,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                           ),
                         ],
                       );
-                    })),
-                // FormBuilderDateTimePicker(
-                //   attribute: "Date of birth",
-                //   inputType: InputType.date,
-                //   initialDatePickerMode: DatePickerMode.day,
-                //   initialDate: DateTime.utc(DateTime.now().year - 19, 1, 1),
-                //   format: DateFormat("MM-dd-yyyy"),
-                //   decoration: InputDecoration(
-                //       labelText: 'Date of Birth',
-                //       fillColor: Color.fromRGBO(35, 179, 232, 0.1),
-                //       filled: true,
-                //       disabledBorder: InputBorder.none,
-                //       enabledBorder: InputBorder.none,
-                //       border: InputBorder.none),
-                //   validators: [
-                //     FormBuilderValidators.required(),
-                //   ],
-                // ),
+                    },
+                  ),
+                ),
                 SizedBox(
                   height: 10,
                 ),
@@ -337,10 +323,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                               FormBuilderValidators.required(),
                             ],
                             items: states
-                                .map((state) => DropdownMenuItem(
-                                      value: state,
-                                      child: Text('$state'),
-                                    ))
+                                .map(
+                                  (state) => DropdownMenuItem(
+                                    value: state,
+                                    child: Text('$state'),
+                                  ),
+                                )
                                 .toList(),
                           ),
                         ],
@@ -635,15 +623,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   String get firstName {
-    return _userRegKey.currentState.value['First name'];
+    return _userRegKey.currentState.value['First name'].toString().trim();
   }
 
   String get lastName {
-    return _userRegKey.currentState.value['Last name'];
+    return _userRegKey.currentState.value['Last name'].toString().trim();
   }
 
   String get password {
-    return _userRegKey.currentState.value['Password'];
+    return _userRegKey.currentState.value['Password'].toString().trim();
   }
 
   String get gender {
@@ -651,7 +639,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   String get email {
-    return _userRegKey.currentState.value['Email'];
+    return _userRegKey.currentState.value['Email'].toString().trim();
   }
 
   bool get terms {
@@ -667,15 +655,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   String get titles {
-    return _userRegKey.currentState.value['Medical Titles'];
+    return _userRegKey.currentState.value['Medical Titles'].toString().trim();
   }
 
   String get npi {
-    return _userRegKey.currentState.value['NPI Number'];
+    return _userRegKey.currentState.value['NPI Number'].toString().trim();
   }
 
   String get medLicense {
-    return _userRegKey.currentState.value['License Number'];
+    return _userRegKey.currentState.value['License Number'].toString().trim();
   }
 
   String get medLicenseState {

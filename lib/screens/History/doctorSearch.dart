@@ -6,6 +6,7 @@ import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/History/index.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
+import 'package:Medicall/util/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -70,7 +71,7 @@ class DoctorSearch extends StatelessWidget {
                       dense: true,
                       contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                       title: Text(
-                        getFormattedProviderName(
+                        StringUtils.getFormattedProviderName(
                           firstName: userDocuments[i].data['first_name'],
                           lastName: userDocuments[i].data['last_name'],
                           titles: userDocuments[i].data['titles'],
@@ -135,18 +136,6 @@ class DoctorSearch extends StatelessWidget {
             }),
       ),
     );
-  }
-
-  String getFormattedProviderName({
-    @required String firstName,
-    @required String lastName,
-    @required String titles,
-  }) {
-    return '${capitalize(firstName)} ${capitalize(lastName)} $titles';
-  }
-
-  String capitalize(String s) {
-    return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
   }
 }
 

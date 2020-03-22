@@ -1,8 +1,8 @@
-import 'package:Medicall/screens/History/history_state.dart';
-import 'package:intl/intl.dart';
-import 'package:flutter/material.dart';
 import 'package:Medicall/presentation/medicall_icons_icons.dart' as CustomIcons;
+import 'package:Medicall/screens/History/history_state.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 
 class HistoryTiles extends StatelessWidget {
   final HistoryState model;
@@ -72,13 +72,7 @@ class HistoryTiles extends StatelessWidget {
                             isThreeLine: true,
                             title: Text(
                               model.medicallUser.type == 'patient'
-                                  ? '${model.historySnapshot.data.documents[index].data['provider'].split(" ")[0][0].toUpperCase()}${model.historySnapshot.data.documents[index].data['provider'].split(" ")[0].substring(1)} ${model.historySnapshot.data.documents[index].data['provider'].split(" ")[1][0].toUpperCase()}${model.historySnapshot.data.documents[index].data['provider'].split(" ")[1].substring(1)} ' +
-                                      ' ' +
-                                      model
-                                          .historySnapshot
-                                          .data
-                                          .documents[index]
-                                          .data['providerTitles']
+                                  ? '${model.historySnapshot.data.documents[index].data['provider']} ${model.historySnapshot.data.documents[index].data['providerTitles']}'
                                   : '${model.historySnapshot.data.documents[index].data['patient'].split(" ")[0][0].toUpperCase()}${model.historySnapshot.data.documents[index].data['patient'].split(" ")[0].substring(1)} ${model.historySnapshot.data.documents[index].data['patient'].split(" ")[1][0].toUpperCase()}${model.historySnapshot.data.documents[index].data['patient'].split(" ")[1].substring(1)}',
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,

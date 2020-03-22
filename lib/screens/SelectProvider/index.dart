@@ -4,6 +4,7 @@ import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/util/app_util.dart';
+import 'package:Medicall/util/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:provider/provider.dart';
@@ -111,7 +112,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
                 flex: 1,
                 child: SingleChildScrollView(
                   child: StreamBuilder(
-                      stream: db.getAllUsers(),
+                      stream: db.getAllProviders(),
                       builder: (context, snapshot) {
                         if (!snapshot.hasData) {
                           return new Text("Loading");
@@ -119,9 +120,8 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
                         var userDocuments = snapshot.data.documents;
                         List<Widget> historyList = [];
                         for (var i = 0; i < userDocuments.length; i++) {
-                          if (userDocuments[i].data['type'] == 'provider' &&
-                              medicallUser.displayName !=
-                                  userDocuments[i].data['name']) {
+                          if (medicallUser.displayName !=
+                              userDocuments[i].data['name']) {
                             providers.add(userDocuments[i].data['name']);
                             historyList.add(Container(
                               child: ListTile(
@@ -129,9 +129,14 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
                                     EdgeInsets.fromLTRB(10, 10, 10, 10),
                                 dense: true,
                                 title: Text(
-                                    '${userDocuments[i].data['name'].split(" ")[0][0].toUpperCase()}${userDocuments[i].data['name'].split(" ")[0].substring(1)} ${userDocuments[i].data['name'].split(" ")[1][0].toUpperCase()}${userDocuments[i].data['name'].split(" ")[1].substring(1)}' +
-                                        " " +
-                                        userDocuments[i].data['titles']),
+                                  StringUtils.getFormattedProviderName(
+                                    firstName:
+                                        userDocuments[i].data['first_name'],
+                                    lastName:
+                                        userDocuments[i].data['last_name'],
+                                    titles: userDocuments[i].data['titles'],
+                                  ),
+                                ),
                                 subtitle: Text(userDocuments[i]
                                     .data['address']
                                     .toString()),

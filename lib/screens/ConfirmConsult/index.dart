@@ -79,8 +79,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
             ),
             Text(
               _db.newConsult != null
-                  ? 'With ${_db.newConsult.provider.split(" ")[0][0].toUpperCase()}${_db.newConsult.provider.split(" ")[0].substring(1)} ${_db.newConsult.provider.split(" ")[1][0].toUpperCase()}${_db.newConsult.provider.split(" ")[1].substring(1)} ' +
-                      _db.newConsult.providerTitles
+                  ? '${_db.newConsult.provider} ${_db.newConsult.providerTitles}'
                   : _db.newConsult != null ? _db.newConsult.provider : '',
               style: TextStyle(
                 fontSize: Theme.of(context).platform == TargetPlatform.iOS
