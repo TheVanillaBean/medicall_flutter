@@ -102,6 +102,10 @@ class _LoginScreenState extends State<LoginPage> {
     Navigator.of(context).pushNamed('/registrationType');
   }
 
+  void _navigateToResetPasswordScreen(BuildContext context) {
+    Navigator.of(context).pushNamed('/reset_password');
+  }
+
   void _emailEditingComplete() {
     final newFocus = model.emailValidator.isValid(model.email)
         ? _passwordFocusNode
@@ -170,7 +174,7 @@ class _LoginScreenState extends State<LoginPage> {
                         color: Theme.of(context).colorScheme.primary,
                         textColor: Colors.white,
                         text: "Sign in",
-                        onPressed: model.canSubmit ? _submit : _submit,
+                        onPressed: model.canSubmit ? _submit : null,
                       ),
                     )
                   ],
@@ -208,6 +212,14 @@ class _LoginScreenState extends State<LoginPage> {
                   textColor: Colors.black87,
                   onPressed:
                       model.isLoading ? null : () => _signInWithGoogle(context),
+                ),
+                SizedBox(height: 12),
+                InkWell(
+                  child: Text(
+                    'Reset Password',
+                    style: TextStyle(color: Colors.black87),
+                  ),
+                  onTap: () => _navigateToResetPasswordScreen(context),
                 ),
               ],
             )),

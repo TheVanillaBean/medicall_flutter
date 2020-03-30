@@ -11,6 +11,7 @@ import 'package:Medicall/screens/LandingPage/auth_widget_builder.dart';
 import 'package:Medicall/screens/LandingPage/index.dart';
 import 'package:Medicall/screens/Login/index.dart';
 import 'package:Medicall/screens/Malpractice/malpractice.dart';
+import 'package:Medicall/screens/PasswordReset/index.dart';
 import 'package:Medicall/screens/PhoneAuth/index.dart';
 import 'package:Medicall/screens/Privacy/index.dart';
 import 'package:Medicall/screens/Registration/index.dart';
@@ -134,6 +135,11 @@ class MedicallApp extends StatelessWidget {
               case '/registration':
                 return MyCustomRoute(
                   builder: (_) => RegistrationScreen(),
+                  settings: settings,
+                );
+              case '/reset_password':
+                return MyCustomRoute(
+                  builder: (_) => PasswordResetScreen.create(context),
                   settings: settings,
                 );
               case '/photoID':

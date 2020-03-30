@@ -1,3 +1,5 @@
+import 'package:Medicall/util/string_utils.dart';
+
 abstract class StringValidator {
   bool isValid(String value);
 }
@@ -9,10 +11,17 @@ class NonEmptyStringValidator implements StringValidator {
   }
 }
 
+class EmailValidator implements StringValidator {
+  @override
+  bool isValid(String value) {
+    return StringUtils.isEmail(value);
+  }
+}
+
 class EmailAndPasswordValidators {
-  final StringValidator emailValidator = NonEmptyStringValidator();
+  final StringValidator emailValidator = EmailValidator();
   final StringValidator passwordValidator = NonEmptyStringValidator();
-  final String invalidEmailErrorText = 'Email can\'t be empty';
+  final String invalidEmailErrorText = 'Incorrect email format';
   final String invalidPasswordErrorText = 'Password can\'t be empty';
 }
 

@@ -37,7 +37,7 @@ abstract class AuthBase {
       {@required AuthCredential credential});
   Future<bool> emailAlreadyUsed({@required String email});
   Future<bool> phoneNumberAlreadyUsed({@required String phoneNumber});
-
+  Future<void> resetPassword({@required String email});
   Future<void> signOut();
 }
 
@@ -271,6 +271,11 @@ class Auth implements AuthBase {
     );
 
     return (!["NONE", null, false, 0].contains(result.data));
+  }
+
+  @override
+  Future<void> resetPassword({@required String email}) {
+    return _firebaseAuth.sendPasswordResetEmail(email: email);
   }
 
   @override
