@@ -16,6 +16,7 @@ class MedicallUser {
   String medLicense;
   String medLicenseState;
   String npi;
+  bool stripeConnectAuthorized;
   String profilePic;
   String govId;
   bool terms;
@@ -39,6 +40,7 @@ class MedicallUser {
     this.npi = '',
     this.medLicense = '',
     this.medLicenseState = '',
+    this.stripeConnectAuthorized = false,
     this.profilePic = '',
     this.govId = '',
     this.terms = false,
@@ -67,6 +69,9 @@ class MedicallUser {
         snapshot.data['profile_pic'] ?? medicallUser.profilePic;
     medicallUser.govId = snapshot.data['gov_id'] ?? medicallUser.govId;
     medicallUser.titles = snapshot.data['titles'] ?? medicallUser.titles;
+    medicallUser.stripeConnectAuthorized =
+        snapshot.data['stripeConnectAuthorized'] ??
+            medicallUser.stripeConnectAuthorized;
     medicallUser.type = snapshot.data['type'] ?? medicallUser.type;
     medicallUser.email = snapshot.data['email'] ?? medicallUser.email;
     medicallUser.phoneNumber =

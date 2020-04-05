@@ -2,6 +2,7 @@ import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/History/index.dart';
 import 'package:Medicall/screens/Login/index.dart';
 import 'package:Medicall/screens/PhoneAuth/index.dart';
+import 'package:Medicall/screens/StripeConnect/index.dart';
 import 'package:Medicall/secrets.dart';
 import 'package:Medicall/services/stripe_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
@@ -41,13 +42,20 @@ class LandingPage extends StatelessWidget {
             return PhoneAuthScreen.create(context);
           }
 
-          return userProvider.medicallUser != null
-              ? HistoryScreen.create(context, true, '')
-              : Scaffold(
-                  body: Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                );
+          if (userProvider.medicallUser != null) {
+            if (userProvider.medicallUser.type == "provider" &&
+                !userProvider.medicallUser.stripeConnectAuthorized) {
+              return StripeConnect.create(context);
+            } else {
+              return HistoryScreen.create(context, true, '');
+            }
+          } else {
+            return Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          }
         } catch (e) {
           return Scaffold(
             body: Center(
