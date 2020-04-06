@@ -1,5 +1,6 @@
 import 'package:Medicall/screens/StripeConnect/stripe_connect_state_model.dart';
 import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -10,8 +11,11 @@ class StripeConnect extends StatelessWidget {
 
   static Widget create(BuildContext context) {
     final AuthBase auth = Provider.of<AuthBase>(context, listen: false);
+    final UserProvider userProvider =
+        Provider.of<UserProvider>(context, listen: false);
     return ChangeNotifierProvider<StripeConnectStateModel>(
-      create: (context) => StripeConnectStateModel(auth: auth),
+      create: (context) =>
+          StripeConnectStateModel(auth: auth, userProvider: userProvider),
       child: Consumer<StripeConnectStateModel>(
         builder: (_, model, __) => StripeConnect(
           model: model,
@@ -20,7 +24,7 @@ class StripeConnect extends StatelessWidget {
     );
   }
 
-  void navigateToStripeURL() {
+  void _navigateToStripeURL() {
     String url = model.getStripeConnectURL();
     print(url);
   }
@@ -55,15 +59,12 @@ class StripeConnect extends StatelessWidget {
     final width = MediaQuery.of(context).size.width;
     return Material(
       color: Colors.transparent,
-      child: AbsorbPointer(
-        absorbing: !model.submitted,
-        child: InkWell(
-          onTap: () => navigateToStripeURL(),
-          child: Image.asset(
-            "assets/images/stripe-connect-button.png",
-            width: width * 0.5,
-            fit: BoxFit.cover,
-          ),
+      child: InkWell(
+        onTap: model.submitted ? null : _navigateToStripeURL,
+        child: Image.asset(
+          "assets/images/stripe-connect-button.png",
+          width: width * 0.5,
+          fit: BoxFit.cover,
         ),
       ),
     );
