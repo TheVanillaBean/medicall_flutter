@@ -14,6 +14,7 @@ abstract class AuthBase {
   bool triggerAuthStream;
   Stream<MedicallUser> get onAuthStateChanged;
   Future<MedicallUser> currentUser();
+  Future<String> currentUserIdToken();
   void addUserToAuthStream({@required MedicallUser user});
   Future<MedicallUser> signInAnonymously();
   Future<MedicallUser> signInWithEmailAndPassword(
@@ -82,6 +83,14 @@ class Auth implements AuthBase {
   Future<MedicallUser> currentUser() async {
     final user = await _firebaseAuth.currentUser();
     return _userFromFirebase(user);
+  }
+
+  @override
+  Future<String> currentUserIdToken() async {
+    final user = await _firebaseAuth.currentUser();
+    await user.reload();
+    final IdTokenResult idToken = await user.getIdToken(refresh: true);
+    return idToken.token;
   }
 
   @override

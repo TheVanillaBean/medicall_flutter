@@ -3,6 +3,7 @@ import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class StripeConnect extends StatelessWidget {
   final StripeConnectStateModel model;
@@ -24,9 +25,13 @@ class StripeConnect extends StatelessWidget {
     );
   }
 
-  void _navigateToStripeURL() {
-    String url = model.getStripeConnectURL();
-    print(url);
+  void _navigateToStripeURL() async {
+    String url = await model.getStripeConnectURL();
+    if (await canLaunch(url)) {
+      await launch(url, enableJavaScript: true);
+    } else {
+      throw 'Could not launch url';
+    }
   }
 
   @override
@@ -42,13 +47,18 @@ class StripeConnect extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Text(
-              "Before you can begin accepting patient consultations, you must first connect your bank account information to Medicall. "
+              "You are almost done with your account registration, but there is just one more step. Before you can begin accepting patient consultations, you must first connect your bank account information to Medicall. "
               "This ensures that you can get paid for each consultation.",
-              style: TextStyle(color: Colors.black87),
+              style: TextStyle(color: Colors.black87, fontSize: 15),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 8),
-            _buildStripeButton(context)
+            SizedBox(height: 12),
+            _buildStripeButton(context),
+            SizedBox(height: 16),
+            if (model.isLoading)
+              Center(
+                child: CircularProgressIndicator(),
+              ),
           ],
         ),
       ),
@@ -60,10 +70,11 @@ class StripeConnect extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: model.submitted ? null : _navigateToStripeURL,
+        splashColor: Colors.red[300],
+        onTap: model.isLoading ? null : _navigateToStripeURL,
         child: Image.asset(
           "assets/images/stripe-connect-button.png",
-          width: width * 0.5,
+          width: width * 0.6,
           fit: BoxFit.cover,
         ),
       ),

@@ -64,6 +64,7 @@ dependencies:
   uuid: ^2.0.4
   fluri: ^1.2.8
 
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

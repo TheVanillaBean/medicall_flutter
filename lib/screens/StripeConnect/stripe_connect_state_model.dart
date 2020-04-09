@@ -1,59 +1,47 @@
-import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:Medicall/secrets.dart';
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/user_provider.dart';
-import 'package:fluri/fluri.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:uuid/uuid.dart';
+import 'package:http/http.dart' as http;
 
 class StripeConnectStateModel with ChangeNotifier {
   final AuthBase auth;
   final UserProvider userProvider;
-  bool submitted;
+  bool isLoading;
 
   StripeConnectStateModel({
     @required this.auth,
     @required this.userProvider,
-    this.submitted = false,
+    this.isLoading = false,
   });
 
-  String getStripeConnectURL() {
-    updateWith(submitted: true);
-    MedicallUser medicallUser = userProvider.medicallUser;
+  Future<String> getStripeConnectURL() async {
+    updateWith(isLoading: true);
 
-    Uuid uuid = Uuid();
-    String state = uuid.v1();
+    String idToken = await auth.currentUserIdToken();
 
-    final Map<String, Iterable<String>> queryParams = {
-      "client_id": [stripeClientID],
-      "state": [state],
-      "redirect_uri": [stripeConnectRedirectURl],
-      'stripe_user[business_type]': ['individual'],
-      'stripe_user[first_name]': [medicallUser.firstName],
-      'stripe_user[last_name]': [medicallUser.lastName],
-      'stripe_user[email]': [medicallUser.email],
-      'stripe_user[country]': ["USA"],
-    };
+    final response = await http.get(
+      'https://us-central1-telmed-216305.cloudfunctions.net/api/stripe/authorize',
+      headers: {HttpHeaders.authorizationHeader: "Bearer $idToken"},
+    );
 
-    Fluri fluri = new Fluri()
-      ..scheme = 'https'
-      ..host = 'connect.stripe.com'
-      ..path = 'express/oauth/authorize';
+    updateWith(isLoading: false);
 
-    fluri.queryParametersAll = queryParams;
+    if (response.statusCode == 200) {
+      final responseJson = json.decode(response.body);
+      String url = responseJson['url'];
+      return url;
+    }
 
-    String url = fluri.toString();
-
-    updateWith(submitted: false);
-
-    return url;
-
-//    return "https://connect.stripe.com/express/oauth/authorize/?$urlParams";
+    return "";
   }
 
   void updateWith({
-    bool submitted,
+    bool isLoading,
   }) {
-    this.submitted = submitted ?? this.submitted;
+    this.isLoading = isLoading ?? this.isLoading;
+    notifyListeners();
   }
 }
