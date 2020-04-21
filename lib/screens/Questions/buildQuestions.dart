@@ -1,4 +1,5 @@
 import 'package:Medicall/common_widgets/carousel/carousel_with_indicator.dart';
+import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -18,10 +19,12 @@ class _BuildQuestionsState extends State<BuildQuestions> {
   List<Widget> _returnListWidget = [];
   List<dynamic> _options = [];
   ExtImageProvider _extImageProvider;
+  Database _db;
 
   @override
   Widget build(BuildContext context) {
     _extImageProvider = Provider.of<ExtImageProvider>(context);
+    _db = Provider.of<Database>(context);
     _extImageProvider.currentAssetList = [];
     return buildQuestions(
         widget.data['data'],
@@ -172,8 +175,15 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                                 )
                               : FormBuilderTextField(
                                   onChanged: _onChangedInput,
-                                  initialValue: null,
+                                  initialValue: questions['answer'] != null &&
+                                          questions['answer'].length > 0
+                                      ? questions['parent_question'] ==
+                                              'Diagnosis:'
+                                          ? formatDiagnosisQuestion(questions)
+                                          : questions['answer']
+                                      : null,
                                   attribute: 'question0',
+                                  minLines: 10,
                                   decoration: InputDecoration(
                                     enabledBorder: OutlineInputBorder(
                                       // width: 0.0 produces a thin "hairline" border
@@ -200,6 +210,55 @@ class _BuildQuestionsState extends State<BuildQuestions> {
     return _returnListWidget;
   }
 
+  formatDiagnosisQuestion(question) {
+    String strNum = question['answer'];
+    final newString =
+        strNum.replaceAllMapped(RegExp(r'\[([^\[\]]*)\]'), (match) {
+      var goup = match.group(0);
+      if (goup == '[NAME]') {
+        String name = _db.consultSnapshot.data['patient']
+                .split(' ')[0][0]
+                .toUpperCase() +
+            _db.consultSnapshot.data['patient'].split(' ')[0].substring(1) +
+            ' ' +
+            _db.consultSnapshot.data['patient'].split(' ')[1][0].toUpperCase() +
+            _db.consultSnapshot.data['patient'].split(' ')[1].substring(1) +
+            ', \n\n';
+        return name;
+      }
+      List conList;
+      if (_db.consultSnapshot.data['type'] == 'Hairloss' &&
+          goup.contains('*')) {
+        String conditionStr;
+        String oldStr =
+            goup.replaceAllMapped(RegExp(r'\*([^\*\*\]]*)\*'), (match) {
+          conditionStr = match.group(0);
+          return match.group(0);
+        });
+        conList =
+            conditionStr.replaceAll('[', '').replaceAll('*', '').split(',');
+        for (var i = 0; i < widget.data['questions'].length; i++) {
+          if (widget.data['questions'][i]['visible'] &&
+              widget.data['questions'][i]['question'] == "Treatment:" &&
+              widget.data['questions'][i]['answer'].length > 0) {
+            String ans = widget.data['questions'][i]['answer'][0].toLowerCase();
+            for (var x = 0; x < conList.length; x++) {
+              if (ans.contains(conList[x].toLowerCase())) {
+                int firstInx = oldStr.lastIndexOf('*');
+                return '\n\n' +
+                    oldStr.substring(firstInx + 2, oldStr.length - 1) +
+                    '\n\n';
+              }
+            }
+          }
+        }
+      }
+      return '';
+    });
+    question['answer'] = newString;
+    return newString;
+  }
+
   buildQuestions(
       data, questionIndex, dynamicAdd, parent, widget, key, questions) {
     var questions = data;
@@ -216,10 +275,16 @@ class _BuildQuestionsState extends State<BuildQuestions> {
         data["answer"] = val;
       };
       _onChangedCheckBox = (val) {
-        if (val.length >= 2 && val[1] == 'Yes') {
+        if (val.length >= 2 && val[1] == 'Yes' ||
+            val.length >= 2 && data['question'] == 'Diagnosis:' ||
+            val.length >= 2 && data['question'] == 'Exam:' ||
+            val.length >= 2 && data['question'] == 'Treatment:') {
           val.removeAt(0);
         }
-        if (val.length >= 2 && val[1] == 'No') {
+        if (val.length >= 2 && val[1] == 'No' ||
+            val.length >= 2 && data['question'] == 'Diagnosis:' ||
+            val.length >= 2 && data['question'] == 'Exam:' ||
+            val.length >= 2 && data['question'] == 'Treatment:') {
           val.removeAt(0);
         }
         setState(() {
@@ -266,6 +331,9 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                           var widgetIndex =
                               this.widget.data['questions'][i]['index'];
                           if (currIndex == widgetIndex &&
+                              currQuestionObj['index'] ==
+                                  this.widget.data['questions'][i]
+                                      ['parent_index'] &&
                               !this.widget.data['questions'][i]["visible"] &&
                               currQuestionObj["answer"].indexOf(
                                       currQuestionObj["options"][this

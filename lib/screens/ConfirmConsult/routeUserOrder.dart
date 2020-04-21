@@ -1,5 +1,6 @@
 import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -30,6 +31,7 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
   @override
   Widget build(BuildContext context) {
     var _extImageProvider = Provider.of<ExtImageProvider>(context);
+    Database _db = Provider.of<Database>(context);
     return WillPopScope(
         onWillPop: _onWillPop,
         child: Scaffold(
@@ -178,6 +180,7 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                   color: Theme.of(context).colorScheme.secondaryVariant,
                   onPressed: () {
                     Navigator.of(context).pushReplacementNamed('/history');
+                    _db.newConsult = ConsultData();
                   },
                   textColor: Theme.of(context).colorScheme.onSecondary,
                   child: Text(
