@@ -232,7 +232,7 @@ class DetailsLandingScreen extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                           builder: (context) => BuildDetailTab(
-                                keyStr: 'Doctor Notes',
+                                keyStr: 'Doctor Note',
                                 indx: 0,
                               )),
                     );
@@ -251,7 +251,7 @@ class DetailsLandingScreen extends StatelessWidget {
                       Positioned(
                         top: 45,
                         child: Text(
-                          'Doctor Notes',
+                          'Doctor Note',
                           style: TextStyle(color: Colors.blueGrey),
                           textAlign: TextAlign.center,
                         ),

@@ -386,6 +386,9 @@ class FirestoreDatabase implements Database {
   }
 
   updateConsultStatus(Choice choice, String uid) {
+    consultRef = Firestore.instance
+          .collection('consults')
+          .document(consultSnapshot.documentID);
     if (consultSnapshot.documentID == consultSnapshot.documentID &&
         consultSnapshot.data['provider_id'] == uid) {
       if (choice.title == 'Done') {

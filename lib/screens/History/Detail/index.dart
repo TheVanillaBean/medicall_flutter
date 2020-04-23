@@ -1,3 +1,4 @@
+import 'package:Medicall/models/consult_status_modal.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/History/Detail/detailsLanding.dart';
 import 'package:Medicall/screens/History/Detail/history_detail_state.dart';
@@ -186,50 +187,148 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
             },
           ),
         ),
-        bottomNavigationBar: widget.model.medicallUser.type == 'provider' ? Row(
-          mainAxisSize: MainAxisSize.max,
-          children: <Widget>[
-            Expanded(
-                child: Container(
-              height: 50,
-              margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-              child: FlatButton(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                      side: BorderSide(
-                        color: Colors.green,
-                      )),
-                  onPressed: () async {
-                    await widget.model.db.getDiagnosisQuestions(widget.model.db.consultSnapshot.data['type']);
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => QuestionsScreen(data: 'diagnosis',)),
-                    );
-                  },
-                  child: Text(
-                    'Complete',
-                    style: TextStyle(color: Colors.green),
+        bottomNavigationBar: widget.model.medicallUser.type == 'provider'
+            ? Row(
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  Expanded(
+                      child: Container(
+                    height: 50,
+                    margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                    child: FlatButton(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                            side: BorderSide(
+                              color: Colors.green,
+                            )),
+                        onPressed: () async {
+                          await widget.model.db.getDiagnosisQuestions(
+                              widget.model.db.consultSnapshot.data['type']);
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (_) => QuestionsScreen(
+                                      data: 'diagnosis',
+                                    )),
+                          );
+                        },
+                        child: Text(
+                          'Complete',
+                          style: TextStyle(color: Colors.green),
+                        )),
                   )),
-            )),
-            Expanded(
-              child: Container(
-                  height: 50,
-                  margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                  child: FlatButton(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                          side: BorderSide(
-                            color: Colors.red,
-                          )),
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      padding: EdgeInsets.all(0),
-                      onPressed: () {},
-                      child: Text(
-                        'Close',
-                        style: TextStyle(color: Colors.red),
-                      ))),
-            )
-          ],
-        ): SizedBox(),
+                  Expanded(
+                    child: Container(
+                        height: 50,
+                        margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                        child: FlatButton(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                                side: BorderSide(
+                                  color: widget.model.db.consultSnapshot
+                                              .data['state'] !=
+                                          'done'
+                                      ? Colors.red
+                                      : Colors.purple,
+                                )),
+                            materialTapTargetSize:
+                                MaterialTapTargetSize.shrinkWrap,
+                            padding: EdgeInsets.all(0),
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  // return object of type Dialog
+                                  return AlertDialog(
+                                    title: Text("Confirm Consult"),
+                                    content: Text(widget
+                                                .model
+                                                .db
+                                                .consultSnapshot
+                                                .data['state'] !=
+                                            'done'
+                                        ? "Please confirm closure of consult, this will mark this consult as done disabling further interaction with the patient."
+                                        : "Please confirm that you want to reopen this consult."),
+                                    actions: <Widget>[
+                                      // usually buttons at the bottom of the dialog
+                                      widget
+                                                .model
+                                                .db
+                                                .consultSnapshot
+                                                .data['state'] !=
+                                            'done' ? FlatButton(
+                                        color: Theme.of(context).primaryColor,
+                                        child: Text("Close Consult"),
+                                        onPressed: () async {
+                                          widget.model.setConsultStatus(
+                                              widget.model.db.consultSnapshot,
+                                              Choice(
+                                                  title: 'Done',
+                                                  icon: Icon(Icons.check_box,
+                                                      color: Colors.green)),
+                                              widget.model.medicallUser.uid,
+                                              widget.model.db
+                                                  .updateConsultStatus);
+                                          if (widget.model.db.consultSnapshot
+                                                  .data['state'] ==
+                                              'done') {
+                                            widget.model
+                                                .updateWith(isDone: true);
+                                          } else {
+                                            widget.model
+                                                .updateWith(isDone: false);
+                                          }
+                                          widget.model.setChoices();
+                                          Navigator.pop(context);
+                                          Navigator.pop(context);
+                                        },
+                                      ) : FlatButton(
+                                        color: Theme.of(context).primaryColor,
+                                        child: Text("Reopen Consult"),
+                                        onPressed: () async {
+                                          widget.model.setConsultStatus(
+                                              widget.model.db.consultSnapshot,
+                                              Choice(
+                                                  title: 'Active',
+                                                  icon: Icon(Icons.check_box,
+                                                      color: Colors.green)),
+                                              widget.model.medicallUser.uid,
+                                              widget.model.db
+                                                  .updateConsultStatus);
+                                          if (widget.model.db.consultSnapshot
+                                                  .data['state'] ==
+                                              'done') {
+                                            widget.model
+                                                .updateWith(isDone: true);
+                                          } else {
+                                            widget.model
+                                                .updateWith(isDone: false);
+                                          }
+                                          widget.model.setChoices();
+                                          Navigator.pop(context);
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                            child: Text(
+                              widget.model.db.consultSnapshot.data['state'] !=
+                                      'done'
+                                  ? 'Close'
+                                  : 'Reopen Consult',
+                              style: TextStyle(
+                                  color: widget.model.db.consultSnapshot
+                                              .data['state'] !=
+                                          'done'
+                                      ? Colors.red
+                                      : Colors.purple),
+                            ))),
+                  )
+                ],
+              )
+            : SizedBox(),
         body: DetailsLandingScreen(
           isDone: widget.model.isDone,
         ));
