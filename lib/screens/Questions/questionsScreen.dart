@@ -219,7 +219,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
       contentPadding: EdgeInsets.zero,
       imagePadding: EdgeInsets.zero,
     );
-    
+
     if (medicallUser.hasMedicalHistory &&
         !_newMedicalHistory.getnewMedicalHistory()) {
       _combinedList = [
@@ -232,7 +232,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
         ..._db.newConsult.historyQuestions,
       ];
     }
-    
+
     for (var i = 0; i < _combinedList.length; i++) {
       _globalKeyList['questionKey' + i.toString()] =
           GlobalKey<FormBuilderState>();
@@ -241,6 +241,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
     List<PageViewModel> pageViewList = [];
     if (_combinedList != null) {
       if (widget.data == 'diagnosis') {
+        _currentQuestions = "Complete Consult";
         for (var i = 0; i < _combinedList.length; i++) {
           if (_combinedList[i]['visible']) {
             pageViewList.add(PageViewModel(

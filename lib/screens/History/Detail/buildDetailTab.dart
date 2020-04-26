@@ -109,7 +109,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
               ),
       );
     }
-    if (key == 'Doctor Notes') {
+    if (key == 'Doctor Note') {
       return Scaffold(
         appBar: AppBar(
           title: Text(consultSnapshot['type'] == 'Lesion'
