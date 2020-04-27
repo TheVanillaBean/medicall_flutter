@@ -359,19 +359,13 @@ class EntryItem extends StatelessWidget {
                                               .getnewMedicalHistory()) {
                                             _newMedicalHistory
                                                 .setnewMedicalHistory(true);
-                                            Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                  builder: (_) =>
-                                                      QuestionsScreen()),
-                                            );
+                                            Navigator.of(context)
+                                                .pushNamed('/questionsScreen');
                                           } else {
                                             _newMedicalHistory
                                                 .setnewMedicalHistory(false);
-                                            Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                  builder: (_) =>
-                                                      QuestionsScreen()),
-                                            );
+                                            Navigator.of(context)
+                                                .pushNamed('/questionsScreen');
                                           }
                                           //_showMedDialog();
                                         }

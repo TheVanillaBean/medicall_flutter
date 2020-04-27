@@ -25,6 +25,8 @@ abstract class Database {
   getConsultQuestions(MedicallUser medicallUser);
   Stream<QuerySnapshot> getAllProviders();
   Future<DocumentSnapshot> getMedicalHistoryQuestions();
+  Future getDiagnosisQuestions(String type);
+  Future<void> setDiagnosisQuestions(questions);
   Stream getAllUsers();
   Stream getConsultChat();
   saveConsultChatImage(MedicallUser _medicallUser, File chatMedia);
@@ -107,6 +109,78 @@ class FirestoreDatabase implements Database {
 
   Future<DocumentSnapshot> getMedicalHistoryQuestions() {
     return Firestore.instance.document('services/general_questions').get();
+  }
+
+  Future getDiagnosisQuestions(String type) async {
+    consultRef = Firestore.instance.document('services/dermatology/symptoms/' +
+        type.toLowerCase() +
+        '/diagnosis/questions');
+    await consultRef.get().then((datasnapshot) async {
+      newConsult = ConsultData(
+          historyQuestions: datasnapshot.data['diagnosis questions']);
+      return datasnapshot.data['diagnosis questions'];
+    }).catchError((e) {
+      print(e);
+    });
+  }
+
+  Future<void> setDiagnosisQuestions(questions) async {
+    //if not over the counter write prescription
+    List<String> medicationName = questions[2]['answer'][0].split(';');
+    String medName = medicationName[0].split(' ')[0];
+    List<String> medDoseList = medicationName[0].split(' ').toList();
+    String units = '';
+    if (medicationName[0].contains('foam')) {
+      units = 'foam';
+    }
+    if (medicationName[0].contains('pill')) {
+      units = 'pill';
+    }
+    if (medicationName[0].contains('ointment')) {
+      units = 'ointment';
+    }
+    medDoseList.removeAt(0);
+    final DocumentReference documentReference = Firestore.instance
+        .collection('consults')
+        .document(consultSnapshot.documentID)
+        .collection('prescriptions')
+        .document();
+    final Future<DocumentSnapshot> priceDocument = Firestore.instance
+        .collection('services/dermatology/symptoms/' +
+            consultSnapshot.data['type'].toLowerCase() +
+            '/treatment')
+        .document(medName)
+        .get();
+    await priceDocument.then((onValue) async {
+      Map<String, dynamic> data = <String, dynamic>{
+        "date": DateTime.now(),
+        "pay_date": null,
+        "shipping_address": null,
+        "medication_name": medName,
+        "quantity": medicationName[1].split(':')[1],
+        "units": units,
+        "refills": int.parse(medicationName[2].split(':')[1]),
+        "dose": medDoseList[0],
+        "price": onValue.data["price"],
+        "instructions": medicationName[3].split(':')[1],
+        "state": "prescription waiting"
+      };
+      await documentReference.setData(data).whenComplete(() {
+        print("Prescription Updated");
+      }).catchError((e) => print(e));
+    });
+
+    //write the rest of the diagnosis questions
+    return Firestore.instance
+        .collection("consults")
+        .document(consultSnapshot.documentID)
+        .updateData({
+      'diagnosis': questions[0]['answer'][0],
+      'exam': questions[1]['answer'],
+      'education': questions[3]['answer'],
+      'doctor_notes': questions[4]['answer'],
+      'follow_up': questions[5]['answer'],
+    });
   }
 
   saveConsultChatImage(MedicallUser _medicallUser, File chatMedia) async {
@@ -199,12 +273,10 @@ class FirestoreDatabase implements Database {
         uid: medicallUser.uid);
     Map<String, dynamic> data = <String, dynamic>{
       "screening_questions": newConsult.screeningQuestions,
-      //"medical_history_questions": _db.newConsult.historyQuestions,
       "type": newConsult.consultType,
       "state": "new",
       "date": DateTime.now(),
-      "pay_date": null,
-      "medication_name": "",
+      "doctor_notes": "",
       "provider": newConsult.provider,
       "providerTitles": newConsult.providerTitles,
       "patient": medicallUser.displayName,
@@ -273,8 +345,13 @@ class FirestoreDatabase implements Database {
   Future<void> updatePrescription(consultFormKey) async {
     final DocumentReference documentReference = Firestore.instance
         .collection('consults')
-        .document(consultSnapshot.documentID);
+        .document(consultSnapshot.documentID)
+        .collection('prescriptions')
+        .document();
     Map<String, dynamic> data = <String, dynamic>{
+      "date": DateTime.now(),
+      "pay_date": null,
+      "shipping_address": null,
       "medication_name":
           consultFormKey.currentState.fields['medName'].currentState.value,
       "quantity":
@@ -289,7 +366,7 @@ class FirestoreDatabase implements Database {
           consultFormKey.currentState.fields['instructions'].currentState.value,
       "state": "prescription waiting"
     };
-    await documentReference.updateData(data).whenComplete(() {
+    await documentReference.setData(data).whenComplete(() {
       consultSnapshot.data['medication_name'] =
           consultFormKey.currentState.fields['medName'].currentState.value;
       consultSnapshot.data['quantity'] =
@@ -309,6 +386,9 @@ class FirestoreDatabase implements Database {
   }
 
   updateConsultStatus(Choice choice, String uid) {
+    consultRef = Firestore.instance
+          .collection('consults')
+          .document(consultSnapshot.documentID);
     if (consultSnapshot.documentID == consultSnapshot.documentID &&
         consultSnapshot.data['provider_id'] == uid) {
       if (choice.title == 'Done') {

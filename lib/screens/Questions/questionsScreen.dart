@@ -84,16 +84,55 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
           },
         );
       } else {
-        _db.newConsult.consultType = _db.newConsult.consultType;
-        //switch for if provider has already been selected
-        if (_db.newConsult == null || _db.newConsult.provider == null) {
-          Navigator.of(context).pushNamed(
-            '/selectProvider',
+        if (_currentQuestions == 'Complete Consult') {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              // return object of type Dialog
+              return AlertDialog(
+                title: Text("Confirm Complete"),
+                content: Text(
+                    "You have finished the consult, once submitted your patient will get automatically notified."),
+                actions: <Widget>[
+                  // usually buttons at the bottom of the dialog
+                  FlatButton(
+                    color: Theme.of(context).primaryColor,
+                    child: Text("Cancel"),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  FlatButton(
+                    color: Theme.of(context).primaryColor,
+                    child: Text("Submit Consult"),
+                    onPressed: () async {
+                      var questions = [];
+                      for (var i = 0; i < this._combinedList.length; i++) {
+                        if (this._combinedList[i]['visible']) {
+                          questions.add(this._combinedList[i]);
+                        }
+                      }
+                      await _db.setDiagnosisQuestions(questions);
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    },
+                  ),
+                ],
+              );
+            },
           );
         } else {
-          Navigator.of(context).pushNamed(
-            '/consultReview',
-          );
+          _db.newConsult.consultType = _db.newConsult.consultType;
+          //switch for if provider has already been selected
+          if (_db.newConsult == null || _db.newConsult.provider == null) {
+            Navigator.of(context).pushNamed(
+              '/selectProvider',
+            );
+          } else {
+            Navigator.of(context).pushNamed(
+              '/consultReview',
+            );
+          }
         }
       }
     }
@@ -115,6 +154,13 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
       }
     }
     var formAnswer = listKeys[index != 0 ? index - 1 : index]['answer'];
+    if (formAnswer == null) {
+      _pageController.animateToPage(
+        index != 0 ? index - 1 : index,
+        duration: Duration(milliseconds: 200),
+        curve: Curves.linear,
+      );
+    }
     var currentState;
     if (index != questionsLength) {
       currentState = currentKeys[index].currentState;
@@ -173,6 +219,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
       contentPadding: EdgeInsets.zero,
       imagePadding: EdgeInsets.zero,
     );
+
     if (medicallUser.hasMedicalHistory &&
         !_newMedicalHistory.getnewMedicalHistory()) {
       _combinedList = [
@@ -185,6 +232,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
         ..._db.newConsult.historyQuestions,
       ];
     }
+
     for (var i = 0; i < _combinedList.length; i++) {
       _globalKeyList['questionKey' + i.toString()] =
           GlobalKey<FormBuilderState>();
@@ -192,22 +240,44 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
 
     List<PageViewModel> pageViewList = [];
     if (_combinedList != null) {
-      for (var i = 0; i < _combinedList.length; i++) {
-        if (_combinedList[i]['visible']) {
-          pageViewList.add(PageViewModel(
-              titleWidget: SizedBox(),
-              bodyWidget: BuildQuestions(
-                data: {
-                  'data': _combinedList[i],
-                  'questionIndex': 'screening_questions',
-                  'dynamicAdd': null,
-                  'parent': context,
-                  'widget': widget,
-                  'questions': _combinedList,
-                  'key': _globalKeyList['questionKey' + i.toString()],
-                },
-              ),
-              decoration: pageDecoration));
+      if (widget.data == 'diagnosis') {
+        _currentQuestions = "Complete Consult";
+        for (var i = 0; i < _combinedList.length; i++) {
+          if (_combinedList[i]['visible']) {
+            pageViewList.add(PageViewModel(
+                titleWidget: SizedBox(),
+                bodyWidget: BuildQuestions(
+                  data: {
+                    'data': _combinedList[i],
+                    'questionIndex': 'screening_questions',
+                    'dynamicAdd': null,
+                    'parent': context,
+                    'widget': widget,
+                    'questions': _combinedList,
+                    'key': _globalKeyList['questionKey' + i.toString()],
+                  },
+                ),
+                decoration: pageDecoration));
+          }
+        }
+      } else {
+        for (var i = 0; i < _combinedList.length; i++) {
+          if (_combinedList[i]['visible']) {
+            pageViewList.add(PageViewModel(
+                titleWidget: SizedBox(),
+                bodyWidget: BuildQuestions(
+                  data: {
+                    'data': _combinedList[i],
+                    'questionIndex': 'screening_questions',
+                    'dynamicAdd': null,
+                    'parent': context,
+                    'widget': widget,
+                    'questions': _combinedList,
+                    'key': _globalKeyList['questionKey' + i.toString()],
+                  },
+                ),
+                decoration: pageDecoration));
+          }
         }
       }
     }
@@ -239,7 +309,8 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
                     (_currentPage + 1).toString() +
                     '/' +
                     pageViewList.length.toString()
-            : "Medical History Question: " +
+            : _currentQuestions +
+                ": " +
                 (_currentPage + 1).toString() +
                 '/' +
                 pageViewList.length.toString()),

@@ -13,10 +13,8 @@ class HistoryTiles extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-        child: ConstrainedBox(
-            constraints: BoxConstraints(
-                maxHeight: ScreenUtil.screenHeight,
-                minHeight: ScreenUtil.screenHeight),
+        child: Container(
+          height: ScreenUtil.screenHeightDp - 80,
             child: ListView.builder(
                 itemCount: model.historySnapshot.data.documents.length,
                 itemBuilder: (context, index) {
