@@ -2,12 +2,21 @@ import 'dart:async';
 
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/util/validators.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
-enum AuthStatus { PHONE_AUTH, SMS_AUTH }
+enum AuthStatus {
+  STATE_INITIALIZED,
+  STATE_CODE_SENT,
+  STATE_VERIFY_FAILED,
+  STATE_VERIFY_SUCCESS,
+  STATE_SIGN_IN_FAILED,
+  STATE_SIGN_IN_SUCCESS,
+}
 
 class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
   AuthStatus status;
@@ -17,23 +26,32 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
   bool isRefreshing;
   bool codeTimedOut;
   String verificationId;
-  AuthCredential authCredential;
+  AuthCredential phoneAuthCredential;
+  TempUserProvider tempUserProvider;
 
   final AuthBase auth;
-  Duration timeoutDuration = Duration(minutes: 1);
-  VerificationError verificationError;
+  Duration timeoutDuration = Duration(seconds: 60);
+  VerificationStatus verificationStatus;
 
   PhoneAuthStateModel({
     @required this.auth,
-    this.status = AuthStatus.PHONE_AUTH,
+    this.status = AuthStatus.STATE_INITIALIZED,
     this.phoneNumber = '',
     this.smsCode = '',
     this.submitted = false,
     this.isRefreshing = false,
     this.codeTimedOut = false,
     this.verificationId = '',
-    this.authCredential,
+    this.phoneAuthCredential,
   });
+
+  void setTempUserProvider(TempUserProvider tempUserProvider) {
+    this.tempUserProvider = tempUserProvider;
+  }
+
+  void setVerificationStatus(VerificationStatus verificationStatus) {
+    this.verificationStatus = verificationStatus;
+  }
 
   bool get canSubmitPhoneNumber {
     return phoneNumberEmptyValidator.isValid(phoneNumber) &&
@@ -77,6 +95,7 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
 
   void updatePhoneNumber(String number) =>
       updateWith(phoneNumber: '+1$number'.trim());
+
   void updateSMSCode(String code) => updateWith(smsCode: code);
 
   Future<void> updateRefreshing(bool isRefreshing, bool isMounted) async {
@@ -87,46 +106,46 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
     updateWith(isRefreshing: isRefreshing);
   }
 
-  Future<void> verifyPhoneNumber(
-      bool mounted, VerificationError verificationError) async {
-    this.verificationError = verificationError;
+  Future<void> verifyPhoneNumber(bool mounted) async {
     FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
     final PhoneVerificationCompleted verificationCompleted =
         (AuthCredential phoneAuthCredential) {
       updateWith(
-          authCredential: phoneAuthCredential,
-          status: AuthStatus
-              .SMS_AUTH); //this won't actually change anything as the user will be redirected anyway.
+        phoneAuthCredential: phoneAuthCredential,
+        status: AuthStatus.STATE_VERIFY_SUCCESS,
+      );
+      this.verificationStatus.updateStatus(
+          'Phone number successfully verified in background. Please wait...');
+
+      signInWithPhoneAuthCredential(mounted);
     };
 
     final PhoneVerificationFailed verificationFailed =
         (AuthException authException) {
       updateRefreshing(false, mounted);
-      this.verificationError.onVerificationError(
+      updateWith(
+        status: AuthStatus.STATE_VERIFY_FAILED,
+      );
+      this.verificationStatus.updateStatus(
           'Phone number verification failed. ${authException.message}');
     };
 
     final PhoneCodeSent codeSent =
         (String verificationId, [int forceResendingToken]) {
-      Timer _ = Timer(this.timeoutDuration, () {
-        updateWith(codeTimedOut: true);
-        this.verificationError.onVerificationError(
-            'Your phone verification session has timed out. Retry to receive another code.');
-      });
+      updateRefreshing(false, mounted);
       updateWith(
         verificationId: verificationId,
-        status: AuthStatus.SMS_AUTH,
+        status: AuthStatus.STATE_CODE_SENT,
       );
-      updateRefreshing(false, mounted);
+      this.verificationStatus.updateStatus(
+          'An SMS text message code has been sent to your phone number.');
     };
 
     final PhoneCodeAutoRetrievalTimeout codeAutoRetrievalTimeout =
         (String verificationId) {
       updateRefreshing(false, mounted);
       updateWith(verificationId: verificationId, codeTimedOut: true);
-      this.verificationError.onVerificationError(
-          'Your phone verification session has timed out. Retry to receive another code.');
     };
 
     await firebaseAuth.verifyPhoneNumber(
@@ -138,44 +157,128 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
         codeAutoRetrievalTimeout: codeAutoRetrievalTimeout);
   }
 
-  Future<MedicallUser> signInWithPhoneNumber(bool mounted) async {
+  Future<void> signInWithPhoneAuthCredential(bool mounted) async {
     try {
-      MedicallUser user =
-          await auth.signInWithPhoneNumber(this.verificationId, this.smsCode);
-      _add(user);
+      MedicallUser user;
+      this.auth.triggerAuthStream = false;
+
+      this.phoneAuthCredential = this.phoneAuthCredential ??
+          await auth.fetchPhoneAuthCredential(
+              verificationId: this.verificationId, smsCode: this.smsCode);
+
+      this.verificationStatus.updateStatus('Performing Security Check...');
+
+      bool emailAlreadyUsed = await auth.emailAlreadyUsed(
+          email: this.tempUserProvider.medicallUser.email);
+
+      if (emailAlreadyUsed) {
+        this.auth.triggerAuthStream = true;
+        reinitState();
+        updateRefreshing(false, mounted);
+        throw 'This email address is taken.';
+      }
+
+      bool phoneNumberAlreadyUsed =
+          await auth.phoneNumberAlreadyUsed(phoneNumber: this.phoneNumber);
+
+      if (phoneNumberAlreadyUsed) {
+        this.auth.triggerAuthStream = true;
+        reinitState();
+        updateRefreshing(false, mounted);
+        throw 'This phone number has already been used. Please use a different number.';
+      } else {
+        this.verificationStatus.updateStatus('Creating Account...');
+
+        user = await auth.signInWithPhoneNumber(
+            credential: this.phoneAuthCredential);
+
+        if (user == null) {
+          this.auth.triggerAuthStream = true;
+          reinitState();
+          updateRefreshing(false, mounted);
+          throw "The SMS code you entered is invalid. Please try again...";
+        }
+
+        FirebaseUser currentFirebaseUser;
+
+        if (this.tempUserProvider.googleAuthModel != null) {
+          currentFirebaseUser = await auth.linkCredentialWithCurrentUser(
+              credential: this.tempUserProvider.googleAuthModel.credential);
+        } else if (this.tempUserProvider.appleSignInModel != null) {
+          currentFirebaseUser = await auth.linkCredentialWithCurrentUser(
+              credential: this.tempUserProvider.appleSignInModel.credential);
+        } else {
+          AuthCredential emailCredential =
+              await auth.fetchEmailAndPasswordCredential(
+            email: this.tempUserProvider.medicallUser.email,
+            password: this.tempUserProvider.password,
+          );
+          currentFirebaseUser = await auth.linkCredentialWithCurrentUser(
+              credential: emailCredential);
+        }
+
+        this.tempUserProvider.updateWith(
+              uid: user.uid,
+              devTokens: user.devTokens,
+              phoneNumber: user.phoneNumber,
+            );
+
+        this.verificationStatus.updateStatus(
+            'Saving User Details. This may take several seconds...');
+
+        bool successfullySavedImages =
+            await tempUserProvider.saveRegistrationImages();
+
+        this.auth.triggerAuthStream = true;
+
+        if (successfullySavedImages) {
+          await this.tempUserProvider.addNewUserToFirestore();
+          await this.tempUserProvider.addProviderMalPractice();
+          currentFirebaseUser.sendEmailVerification();
+          this.auth.addUserToAuthStream(user: user);
+        } else {
+          this.auth.triggerAuthStream = true;
+          reinitState();
+          updateRefreshing(false, mounted);
+          throw PlatformException(
+            code: 'ERROR_PHONE_AUTH_FAILED',
+            message: 'Failed to create user account.',
+          );
+        }
+      }
+    } on CloudFunctionsException {
+      this.auth.triggerAuthStream = true;
+      reinitState();
       updateRefreshing(false, mounted);
-      return user;
+      throw "Security Check Failed...";
+    } on PlatformException catch (e) {
+      this.auth.triggerAuthStream = true;
+      reinitState();
+      updateRefreshing(false, mounted);
+      if (e.code == "ERROR_INVALID_VERIFICATION_CODE") {
+        throw "The SMS code you entered is invalid...";
+      } else if (e.message.toLowerCase().contains('The sms code has expired')) {
+        throw "The SMS code has expired.";
+      } else
+        throw e.message;
     } catch (e) {
+      this.auth.triggerAuthStream = true;
+      reinitState();
       updateRefreshing(false, mounted);
       rethrow;
     }
   }
 
-  Future<Null> _add(user) async {
-    final DocumentReference documentReference =
-        Firestore.instance.document("users/" + user.uid);
-    medicallUser.phoneNumber = user.phoneNumber;
-    Map<String, dynamic> data = <String, dynamic>{
-      "name": medicallUser.displayName,
-      "first_name": medicallUser.firstName,
-      "last_name": medicallUser.lastName,
-      "email": user.email,
-      "gender": medicallUser.gender,
-      "address": medicallUser.address,
-      "terms": medicallUser.terms,
-      "policy": medicallUser.policy,
-      "consent": medicallUser.consent,
-      "dob": medicallUser.dob,
-      "phone": user.phoneNumber,
-      "profile_pic": medicallUser.profilePic,
-      "gov_id": medicallUser.govId,
-    };
-
-    try {
-      await documentReference.setData(data);
-    } catch (e) {
-      throw e;
-    }
+  void reinitState() {
+    updateWith(
+      status: AuthStatus.STATE_INITIALIZED,
+      phoneNumber: '',
+      smsCode: '',
+      submitted: false,
+      codeTimedOut: false,
+      verificationId: '',
+      phoneAuthCredential: null,
+    );
   }
 
   void updateWith({
@@ -186,7 +289,7 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
     bool isRefreshing,
     bool codeTimedOut,
     String verificationId,
-    AuthCredential authCredential,
+    AuthCredential phoneAuthCredential,
   }) {
     this.status = status ?? this.status;
     this.phoneNumber = phoneNumber ?? this.phoneNumber;
@@ -195,20 +298,11 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
     this.isRefreshing = isRefreshing ?? this.isRefreshing;
     this.codeTimedOut = codeTimedOut ?? this.codeTimedOut;
     this.verificationId = verificationId ?? this.verificationId;
-    this.authCredential = authCredential ?? this.authCredential;
+    this.phoneAuthCredential = phoneAuthCredential ?? this.phoneAuthCredential;
     notifyListeners();
   }
 }
 
-mixin VerificationError {
-  void onVerificationError(String msg);
+mixin VerificationStatus {
+  void updateStatus(String msg);
 }
-
-//throw exceptions are return user
-//also check the firebase flutter auth repo and double check all other auth methods and see if anything is missing
-//for example the identical check is missing in google auth
-
-//add button to sign out user in authscreen, which will cause a auth update event and return to login
-
-//move verifyPhoneNumber function at the bottom to auth.dart ---wait on this, just test if it works in this class and then move over
-//create variables to hold authcrediential and verificationid and call notifylisteners()

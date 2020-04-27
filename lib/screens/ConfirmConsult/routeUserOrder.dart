@@ -1,7 +1,8 @@
 import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:Medicall/services/extimage_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class RouteUserOrderScreen extends StatefulWidget {
   final data;
@@ -17,6 +18,8 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
     return false;
   }
 
+  MedicallUser medicallUser = MedicallUser();
+
   @override
   void initState() {
     _consult = widget.data['consult'];
@@ -26,6 +29,7 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var _extImageProvider = Provider.of<ExtImageProvider>(context);
     return WillPopScope(
         onWillPop: _onWillPop,
         child: Scaffold(
@@ -33,8 +37,6 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
             leading: Container(),
             centerTitle: true,
             title: Text('Order Confirmation'),
-            elevation:
-                Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
           ),
           body: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -49,8 +51,8 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                         'Thank you for your payment of ${_consult.price},',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            fontSize: 16,
-                            color: Theme.of(context).colorScheme.primary),
+                          fontSize: 16,
+                        ),
                       ),
                     )
                   ],
@@ -66,39 +68,40 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                         'Doctor',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            fontSize: 16,
-                            color: Theme.of(context).colorScheme.primary),
-                      ),
-                    )
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Expanded(
-                      flex: 1,
-                      child: Container(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(160.0),
-                          child: medicallUser.profilePic != null
-                              ? CachedNetworkImage(
-                                  height: 160,
-                                  width: 160,
-                                  fit: BoxFit.cover,
-                                  imageUrl: medicallUser.profilePic,
-                                  placeholder: (context, url) =>
-                                      CircularProgressIndicator(),
-                                  errorWidget: (context, url, error) =>
-                                      Icon(Icons.error),
-                                )
-                              : Icon(
-                                  Icons.account_circle,
-                                  size: 160,
-                                ),
+                          fontSize: 16,
                         ),
                       ),
                     )
                   ],
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Container(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(140.0),
+                        child: _consult != null &&
+                                _consult.providerProfilePic != null
+                            ? Container(
+                                child: _extImageProvider.returnNetworkImage(
+                                    _consult.providerProfilePic,
+                                    cache: true,
+                                    fit: BoxFit.cover,
+                                    height: 140,
+                                    width: 140))
+                            : Icon(
+                                Icons.account_circle,
+                                size: 160,
+                              ),
+                      ),
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: 10,
                 ),
                 Row(
                   children: <Widget>[
@@ -108,8 +111,8 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                         _consult.provider + ' ' + _consult.providerTitles,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            fontSize: 16,
-                            color: Theme.of(context).colorScheme.primary),
+                          fontSize: 16,
+                        ),
                       ),
                     )
                   ],
@@ -122,8 +125,8 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                         'will provide care for your',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            fontSize: 16,
-                            color: Theme.of(context).colorScheme.primary),
+                          fontSize: 16,
+                        ),
                       ),
                     )
                   ],
@@ -141,9 +144,9 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                             : _consult.consultType,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.primary),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     )
                   ],
@@ -161,8 +164,8 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                           'We will now take you to your history where you can view the status of your orders, interact with doctors, and order prescriptions. Please allow 24 hours for the doctor to respond.',
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                              fontSize: 14,
-                              color: Theme.of(context).colorScheme.primary),
+                            fontSize: 14,
+                          ),
                         ),
                       ),
                     ],
@@ -172,12 +175,14 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                   height: 20,
                 ),
                 FlatButton(
-                  color: Theme.of(context).colorScheme.primary,
+                  color: Theme.of(context).colorScheme.secondaryVariant,
                   onPressed: () {
-                    Navigator.pushReplacementNamed(context, '/history',
-                        arguments: {'consult': _consult, 'user': medicallUser});
+                    Navigator.of(context).pushReplacementNamed('/history');
                   },
-                  child: Text('Go to History'),
+                  textColor: Theme.of(context).colorScheme.onSecondary,
+                  child: Text(
+                    'Go to History',
+                  ),
                 )
               ]),
         ));

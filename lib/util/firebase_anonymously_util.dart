@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:Medicall/util/firebase_listenter.dart';
+import 'package:Medicall/util/firebase_listener.dart';
 
 class FirebaseAnonymouslyUtil {
   static final FirebaseAnonymouslyUtil _instance =

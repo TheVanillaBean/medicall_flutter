@@ -9,10 +9,19 @@ class IntroButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FlatButton(
-      onPressed: onPressed,
-      child: child,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+    return Theme(
+      data: ThemeData(
+        splashColor: Colors.transparent,
+        focusColor: Colors.transparent,
+        hoverColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+        buttonColor: Colors.transparent,
+      ),
+      child: FlatButton(
+        onPressed: onPressed,
+        child: child,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+      ),
     );
   }
 }

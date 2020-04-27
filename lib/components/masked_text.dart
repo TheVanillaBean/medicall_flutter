@@ -1,6 +1,7 @@
 library masked_text;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 // Adapted from https://pub.dartlang.org/packages/masked_text
 
@@ -39,6 +40,12 @@ class MaskedTextField extends StatefulWidget {
 
 class MaskedTextFieldState extends State<MaskedTextField> {
   @override
+  void dispose() {
+    super.dispose();
+    widget.maskedTextFieldController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var lastTextSize = 0;
 
@@ -47,6 +54,10 @@ class MaskedTextFieldState extends State<MaskedTextField> {
       maxLength: widget.maxLength,
       keyboardType: widget.keyboardType,
       decoration: widget.inputDecoration,
+      inputFormatters: [
+        WhitelistingTextInputFormatter(
+            RegExp(r"^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$"))
+      ],
       textAlign: widget.textAlign ?? TextAlign.start,
       style: widget.style ?? Theme.of(context).textTheme.subhead,
       onSubmitted: (String text) => widget?.onSubmitted(unmaskedText),
@@ -73,8 +84,13 @@ class MaskedTextFieldState extends State<MaskedTextField> {
             }
 
             if (widget.mask[position] != widget.escapeCharacter) {
-              widget.maskedTextFieldController.text =
-                  '${widget.maskedTextFieldController.text}${widget.mask[position]}';
+              if (position == 8 || position == 4 || position == 0) {
+                widget.maskedTextFieldController.text =
+                    '${widget.maskedTextFieldController.text}';
+              } else {
+                widget.maskedTextFieldController.text =
+                    '${widget.maskedTextFieldController.text}${widget.mask[position]}';
+              }
             }
           }
 

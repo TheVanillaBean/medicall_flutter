@@ -1,73 +1,44 @@
-import 'dart:convert';
-
-import 'package:Medicall/models/consult_data_model.dart';
-import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:Medicall/secrets.dart' as secrets;
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:google_maps_webservice/places.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart' as LocationManager;
-import 'package:oktoast/oktoast.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: secrets.kGoogleApiKey);
+import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/services/database.dart';
+import 'package:Medicall/services/extimage_provider.dart';
+import 'package:Medicall/util/app_util.dart';
+import 'package:Medicall/util/string_utils.dart';
+import 'package:flutter/material.dart';
+import 'package:google_maps_webservice/places.dart';
+import 'package:provider/provider.dart';
+
+//GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: secrets.kGoogleApiKey);
 
 class SelectProviderScreen extends StatefulWidget {
-  final data;
-
-  const SelectProviderScreen({Key key, @required this.data}) : super(key: key);
+  const SelectProviderScreen({Key key}) : super(key: key);
   @override
   _SelectProviderScreenState createState() => _SelectProviderScreenState();
 }
 
 class _SelectProviderScreenState extends State<SelectProviderScreen> {
-  final homeScaffoldKey = GlobalKey<ScaffoldState>();
-  GoogleMapController mapController;
-  Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
-  MarkerId selectedMarker;
-  int _markerIdCounter = 1;
+  //GoogleMapController mapController;
+  //int _markerIdCounter = 1;
   List<PlacesSearchResult> places = [];
   List<String> addresses = [];
   List<String> providers = [];
   bool isLoading = true;
   var selectedProvider = '';
   var providerTitles = '';
-  LatLng bounds = LatLng(41.850033, -87.6500523);
   String errorMessage;
-  ConsultData _consult = ConsultData();
+  Database db;
+  final MedicallUser medicallUser = MedicallUser();
 
   @override
   void initState() {
     super.initState();
-    medicallUser = widget.data['user'];
-    _consult = widget.data['consult'];
     getAddresses();
-    getConsult();
-  }
-
-  Future getConsult() async {
-    if (_consult.provider != null && _consult.provider.length > 0) {
-      selectedProvider = _consult.provider;
-    }
-  }
-
-  setConsult() async {
-    SharedPreferences _thisConsult = await SharedPreferences.getInstance();
-    _consult.provider = selectedProvider;
-    _consult.providerTitles = providerTitles;
-    String currentConsultString = jsonEncode(_consult);
-    await _thisConsult.setString("consult", currentConsultString);
   }
 
   Future getAddresses() async {
     addresses = [];
-    return Firestore.instance
-        .collection('users')
-        .where("type", isEqualTo: "provider")
-        .snapshots()
-        .forEach((snap) {
+    return db.getAllProviders().forEach((snap) {
       snap.documents.forEach((doc) =>
           medicallUser.displayName != doc.data["name"]
               ? addresses.add(doc.data["address"])
@@ -87,8 +58,9 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
     // } else {
     //   expandedChild = buildPlacesList();
     // }
+    db = Provider.of<Database>(context);
+    var _extImageProvider = Provider.of<ExtImageProvider>(context);
     return Scaffold(
-        key: homeScaffoldKey,
         appBar: AppBar(
           centerTitle: true,
           title: const Text('Select Provider'),
@@ -108,12 +80,11 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
         ),
         bottomNavigationBar: FlatButton(
           padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
-          color: Theme.of(context).colorScheme.primary,
+          color: Theme.of(context).colorScheme.secondary,
           onPressed: () async {
             if (selectedProvider.length > 0) {
               //await setConsult();
-              Navigator.pushNamed(context, '/consultReview',
-                  arguments: {'consult': _consult, 'user': medicallUser});
+              Navigator.of(context).pushNamed('/consultReview');
             } else {
               _showMessageDialog();
             }
@@ -121,9 +92,9 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
           child: Text(
             'CONTINUE',
             style: TextStyle(
-              color: Theme.of(context).colorScheme.onPrimary,
-              letterSpacing: 2,
-            ),
+                color: Theme.of(context).colorScheme.onSecondary,
+                letterSpacing: 2,
+                fontWeight: FontWeight.bold),
           ),
         ),
         body: Column(
@@ -141,8 +112,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
                 flex: 1,
                 child: SingleChildScrollView(
                   child: StreamBuilder(
-                      stream:
-                          Firestore.instance.collection('users').snapshots(),
+                      stream: db.getAllProviders(),
                       builder: (context, snapshot) {
                         if (!snapshot.hasData) {
                           return new Text("Loading");
@@ -150,32 +120,39 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
                         var userDocuments = snapshot.data.documents;
                         List<Widget> historyList = [];
                         for (var i = 0; i < userDocuments.length; i++) {
-                          if (userDocuments[i].data['type'] == 'provider' &&
-                              medicallUser.displayName !=
-                                  userDocuments[i].data['name']) {
+                          if (medicallUser.displayName !=
+                              userDocuments[i].data['name']) {
                             providers.add(userDocuments[i].data['name']);
                             historyList.add(Container(
-                              height: 75,
                               child: ListTile(
+                                contentPadding:
+                                    EdgeInsets.fromLTRB(10, 10, 10, 10),
                                 dense: true,
                                 title: Text(
-                                    '${userDocuments[i].data['name'].split(" ")[0][0].toUpperCase()}${userDocuments[i].data['name'].split(" ")[0].substring(1)} ${userDocuments[i].data['name'].split(" ")[1][0].toUpperCase()}${userDocuments[i].data['name'].split(" ")[1].substring(1)}' +
-                                        " " +
-                                        userDocuments[i].data['titles']),
+                                  StringUtils.getFormattedProviderName(
+                                    firstName:
+                                        userDocuments[i].data['first_name'],
+                                    lastName:
+                                        userDocuments[i].data['last_name'],
+                                    titles: userDocuments[i].data['titles'],
+                                  ),
+                                ),
                                 subtitle: Text(userDocuments[i]
                                     .data['address']
                                     .toString()),
                                 trailing: FlatButton(
                                   onPressed: () {
                                     setState(() {
-                                      _consult.provider =
+                                      db.newConsult.provider =
                                           userDocuments[i].data['name'];
-                                      _consult.providerTitles =
+                                      db.newConsult.providerTitles =
                                           userDocuments[i].data['titles'];
-                                      _consult.providerDevTokens =
+                                      db.newConsult.providerDevTokens =
                                           userDocuments[i].data['dev_tokens'];
-                                      _consult.providerId =
+                                      db.newConsult.providerId =
                                           userDocuments[i].documentID;
+                                      db.newConsult.providerProfilePic =
+                                          userDocuments[i].data['profile_pic'];
                                       _selectProvider(
                                           userDocuments[i].data['name'],
                                           userDocuments[i].data['titles']);
@@ -211,10 +188,36 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
                                     ],
                                   ),
                                 ),
-                                leading: Icon(
-                                  Icons.account_circle,
-                                  size: 50,
-                                ),
+                                leading: userDocuments[i]
+                                        .data
+                                        .containsKey('profile_pic')
+                                    ? CircleAvatar(
+                                        radius: 20,
+                                        backgroundColor:
+                                            Colors.grey.withAlpha(100),
+                                        child: userDocuments[i]
+                                                    .data['profile_pic'] !=
+                                                null
+                                            ? ClipOval(
+                                                child: _extImageProvider
+                                                    .returnNetworkImage(
+                                                  userDocuments[i]
+                                                      .data['profile_pic'],
+                                                  width: 100,
+                                                  height: 100,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              )
+                                            : Icon(
+                                                Icons.account_circle,
+                                                size: 40,
+                                                color: Colors.grey,
+                                              ))
+                                    : Icon(
+                                        Icons.account_circle,
+                                        size: 40,
+                                        color: Colors.grey,
+                                      ),
                               ),
                             ));
                           }
@@ -227,14 +230,14 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
   }
 
   void _showMessageDialog() {
-    showToast('Please select one of the providers in order to continue',
-        duration: Duration(seconds: 4), backgroundColor: Colors.deepOrange);
+    AppUtil().showFlushBar(
+        'Please select one of the providers in order to continue', context);
   }
 
-  void refresh() async {
-    final center = null;
-    getNearbyPlaces(center);
-  }
+  // void refresh() async {
+  //   final center = null;
+  //   getNearbyPlaces(center);
+  // }
 
   // void _onMapCreated(GoogleMapController controller) async {
   //   mapController = controller;
@@ -244,94 +247,92 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
   Future _selectProvider(provider, titles) async {
     selectedProvider = provider;
     providerTitles = titles;
-    _consult.provider = selectedProvider;
-    _consult.providerTitles = providerTitles;
+    db.newConsult.provider = selectedProvider;
+    db.newConsult.providerTitles = providerTitles;
     //await setConsult();
   }
 
-  Future<LatLng> getUserLocation() async {
-    LocationManager.LocationData currentLocation;
-    final location = LocationManager.Location();
-    try {
-      currentLocation = await location.getLocation();
-      final lat = currentLocation.latitude;
-      final lng = currentLocation.longitude;
-      final center = LatLng(lat, lng);
-      return center;
-    } on Exception {
-      currentLocation = null;
-      return null;
-    }
-  }
+  // Future<LatLng> getUserLocation() async {
+  //   LocationManager.LocationData currentLocation;
+  //   final location = LocationManager.Location();
+  //   try {
+  //     currentLocation = await location.getLocation();
+  //     final lat = currentLocation.latitude;
+  //     final lng = currentLocation.longitude;
+  //     final center = LatLng(lat, lng);
+  //     return center;
+  //   } on Exception {
+  //     currentLocation = null;
+  //     return null;
+  //   }
+  // }
 
-  void getNearbyPlaces(LatLng center) async {
-    var placesList = [];
-    double minLat = 9999.9;
-    double minLng = 9999.9;
-    double maxLat = -9999.9;
-    double maxLng = -9999.9;
-    LatLngBounds bound;
+  // void getNearbyPlaces(LatLng center) async {
+  //   var placesList = [];
+  //   double minLat = 9999.9;
+  //   double minLng = 9999.9;
+  //   double maxLat = -9999.9;
+  //   double maxLng = -9999.9;
+  //   LatLngBounds bound;
 
-    for (var i = 0; i < addresses.length; i++) {
-      placesList.add(await _places.searchByText(addresses[i]));
+  //   for (var i = 0; i < addresses.length; i++) {
+  //     placesList.add(await _places.searchByText(addresses[i]));
 
-      if (placesList[i].status == 'OK') {
-        placesList[i].results.first.types.first = providers[i];
-        this.places.add(placesList[i].results.first);
+  //     if (placesList[i].status == 'OK') {
+  //       placesList[i].results.first.types.first = providers[i];
+  //       this.places.add(placesList[i].results.first);
 
-        placesList[i].results.forEach((f) {
-          if (f.geometry.location.lat < minLat) {
-            minLat = f.geometry.location.lat;
-          }
-          if (f.geometry.location.lng < minLng) {
-            minLng = f.geometry.location.lng;
-          }
-          if (f.geometry.location.lat > maxLat) {
-            maxLat = f.geometry.location.lat;
-          }
-          if (f.geometry.location.lng > maxLng) {
-            maxLng = f.geometry.location.lng;
-          }
-          final String markerIdVal = 'marker_id_$_markerIdCounter';
-          _markerIdCounter++;
-          final MarkerId markerId = MarkerId(markerIdVal);
+  //       placesList[i].results.forEach((f) {
+  //         if (f.geometry.location.lat < minLat) {
+  //           minLat = f.geometry.location.lat;
+  //         }
+  //         if (f.geometry.location.lng < minLng) {
+  //           minLng = f.geometry.location.lng;
+  //         }
+  //         if (f.geometry.location.lat > maxLat) {
+  //           maxLat = f.geometry.location.lat;
+  //         }
+  //         if (f.geometry.location.lng > maxLng) {
+  //           maxLng = f.geometry.location.lng;
+  //         }
+  //         final String markerIdVal = 'marker_id_$_markerIdCounter';
+  //         _markerIdCounter++;
+  //         final MarkerId markerId = MarkerId(markerIdVal);
 
-          final Marker marker = Marker(
-            markerId: markerId,
-            position: LatLng(f.geometry.location.lat, f.geometry.location.lng),
-            infoWindow:
-                InfoWindow(title: '${f.name}', snippet: '${f.types?.first}'),
-          );
-          markers[markerId] = marker;
+  //         final Marker marker = Marker(
+  //           markerId: markerId,
+  //           position: LatLng(f.geometry.location.lat, f.geometry.location.lng),
+  //           infoWindow:
+  //               InfoWindow(title: '${f.name}', snippet: '${f.types?.first}'),
+  //         );
+  //         markers[markerId] = marker;
 
-          LatLng latLng_1 = LatLng(minLat, minLng);
-          LatLng latLng_2 = LatLng(maxLat, maxLng);
-          bound = LatLngBounds(southwest: latLng_1, northeast: latLng_2);
-          CameraUpdate u2 = CameraUpdate.newLatLngBounds(bound, 50);
-          this.mapController.animateCamera(u2);
-        });
-      }
-    }
-    setState(() {
-      isLoading = false;
-    });
-  }
+  //         LatLng latLng_1 = LatLng(minLat, minLng);
+  //         LatLng latLng_2 = LatLng(maxLat, maxLng);
+  //         bound = LatLngBounds(southwest: latLng_1, northeast: latLng_2);
+  //         CameraUpdate u2 = CameraUpdate.newLatLngBounds(bound, 50);
+  //         this.mapController.animateCamera(u2);
+  //       });
+  //     }
+  //   }
+  //   setState(() {
+  //     isLoading = false;
+  //   });
+  // }
 
-  void check(CameraUpdate u, GoogleMapController c) async {
-    c.animateCamera(u);
-    mapController.animateCamera(u);
-    LatLngBounds l1 = await c.getVisibleRegion();
-    LatLngBounds l2 = await c.getVisibleRegion();
-    print(l1.toString());
-    print(l2.toString());
-    if (l1.southwest.latitude == -90 || l2.southwest.latitude == -90)
-      check(u, c);
-  }
+  // void check(CameraUpdate u, GoogleMapController c) async {
+  //   c.animateCamera(u);
+  //   mapController.animateCamera(u);
+  //   LatLngBounds l1 = await c.getVisibleRegion();
+  //   LatLngBounds l2 = await c.getVisibleRegion();
+  //   print(l1.toString());
+  //   print(l2.toString());
+  //   if (l1.southwest.latitude == -90 || l2.southwest.latitude == -90)
+  //     check(u, c);
+  // }
 
   void onError(PlacesAutocompleteResponse response) {
-    homeScaffoldKey.currentState.showSnackBar(
-      SnackBar(content: Text(response.errorMessage)),
-    );
+    AppUtil().showFlushBar(response.errorMessage, context);
   }
 
   Future<Null> showDetailPlace(String placeId) async {

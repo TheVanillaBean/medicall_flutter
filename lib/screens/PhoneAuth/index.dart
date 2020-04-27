@@ -1,25 +1,27 @@
 import 'dart:async';
 
-import 'package:Medicall/components/masked_text.dart';
 import 'package:Medicall/components/reactive_refresh_indicator.dart';
 import 'package:Medicall/screens/PhoneAuth/phone_auth_state_model.dart';
 import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/temp_user_provider.dart';
+import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
 
-class AuthScreen extends StatefulWidget {
+class PhoneAuthScreen extends StatefulWidget {
   final PhoneAuthStateModel model;
 
-  const AuthScreen({@required this.model});
+  const PhoneAuthScreen({@required this.model});
 
   static Widget create(BuildContext context) {
-    final AuthBase auth = Provider.of<AuthBase>(context);
+    final AuthBase auth = Provider.of<AuthBase>(context, listen: false);
     return ChangeNotifierProvider<PhoneAuthStateModel>(
       create: (context) => PhoneAuthStateModel(auth: auth),
       child: Consumer<PhoneAuthStateModel>(
-        builder: (_, model, __) => AuthScreen(
+        builder: (_, model, __) => PhoneAuthScreen(
           model: model,
         ),
       ),
@@ -27,16 +29,19 @@ class AuthScreen extends StatefulWidget {
   }
 
   @override
-  _AuthScreenState createState() => _AuthScreenState();
+  _PhoneAuthScreenState createState() => _PhoneAuthScreenState();
 }
 
-class _AuthScreenState extends State<AuthScreen> with VerificationError {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
+class _PhoneAuthScreenState extends State<PhoneAuthScreen>
+    with VerificationStatus {
   TextEditingController smsCodeController = TextEditingController();
   TextEditingController phoneNumberController = TextEditingController();
 
+  MaskTextInputFormatter phoneTextInputFormatter = MaskTextInputFormatter(
+      mask: "(###)###-####", filter: {"#": RegExp(r'[0-9]')});
+
   PhoneAuthStateModel get model => widget.model;
+  TempUserProvider tempUserProvider;
 
   @override
   void dispose() {
@@ -45,77 +50,72 @@ class _AuthScreenState extends State<AuthScreen> with VerificationError {
     super.dispose();
   }
 
-  _showErrorSnackbar(String message) {
-    _scaffoldKey.currentState.showSnackBar(
-      SnackBar(content: Text(message)),
-    );
-  }
-
   // Widgets
-  final decorationStyle = TextStyle(color: Colors.grey[50], fontSize: 16.0);
-  final hintStyle = TextStyle(color: Colors.white24);
+  final decorationStyle = TextStyle(color: Colors.black45, fontSize: 16.0);
+  final hintStyle = TextStyle(color: Colors.black26);
 
-  Widget _buildConfirmPhoneButton() {
-    return IconButton(
-      icon: Icon(Icons.check_circle),
-      color: Colors.white,
+  Widget _buildInputButton(bool condition) {
+    return FlatButton(
+      padding: EdgeInsets.all(20),
+      color: Theme.of(context).colorScheme.secondary,
       disabledColor: Theme.of(context).buttonColor,
-      onPressed: (model.status != AuthStatus.PHONE_AUTH)
-          ? null
-          : () => model.updateRefreshing(true, mounted),
-    );
-  }
-
-  Widget _buildConfirmSMSCodeButton() {
-    return IconButton(
-      icon: Icon(Icons.check_circle),
-      color: Colors.white,
-      disabledColor: Theme.of(context).buttonColor,
-      onPressed: (model.status != AuthStatus.SMS_AUTH)
-          ? null
-          : () => model.updateRefreshing(true, mounted),
+      textColor: Colors.white,
+      child: Text(
+        'Continue',
+        style: TextStyle(fontSize: 18),
+      ),
+      onPressed:
+          (condition) ? () => model.updateRefreshing(true, mounted) : null,
     );
   }
 
   Widget _buildPhoneNumberInput() {
-    return MaskedTextField(
-      mask: "(xxx) xxx-xxxx",
-      keyboardType: TextInputType.number,
-      maskedTextFieldController: phoneNumberController,
-      maxLength: 14,
+    return TextField(
+      controller: phoneNumberController,
+      inputFormatters: [phoneTextInputFormatter],
+      autocorrect: false,
+      keyboardType: TextInputType.phone,
+      maxLength: 13,
       onSubmitted: (_) => model.updateRefreshing(true, mounted),
       onChanged: model.updatePhoneNumber,
       textAlign: TextAlign.center,
       style: Theme.of(context)
           .textTheme
           .subhead
-          .copyWith(fontSize: 18.0, color: Colors.white),
-      inputDecoration: InputDecoration(
-        border: UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.tealAccent)),
-        enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.tealAccent)),
+          .copyWith(fontSize: 18.0, color: Colors.black),
+      decoration: InputDecoration(
+        border: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.teal),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.teal),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.teal),
+        ),
         isDense: false,
         counterText: "",
         icon: const Icon(
           Icons.phone,
-          color: Colors.white,
+          color: Colors.black,
         ),
         labelText: "Phone",
         labelStyle: decorationStyle,
-        hintText: "(999) 999-9999",
+        hintText: "(###)###-####",
         hintStyle: hintStyle,
         errorText: model.phoneNumberErrorText,
-        enabled: model.status == AuthStatus.PHONE_AUTH,
+        enabled: model.status == AuthStatus.STATE_INITIALIZED,
       ),
     );
   }
 
   Widget _buildPhoneAuthBody() {
+    final heightMargin = MediaQuery.of(context).size.height * 0.08;
     return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Padding(
+        Container(
+          margin: EdgeInsets.fromLTRB(0, heightMargin, 0, 16),
           padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
           child: Text(
             "We'll send an SMS message to verify your identity, please enter your phone number below!",
@@ -124,61 +124,53 @@ class _AuthScreenState extends State<AuthScreen> with VerificationError {
           ),
         ),
         Padding(
-          padding: EdgeInsets.fromLTRB(20, 0, 20, 160),
-          child: Flex(
-            direction: Axis.horizontal,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              Flexible(
-                flex: 5,
-                child: _buildPhoneNumberInput(),
-              ),
-              Flexible(
-                flex: 1,
-                child: _buildConfirmPhoneButton(),
-              )
-            ],
-          ),
+          padding: EdgeInsets.fromLTRB(20, 0, 20, heightMargin),
+          child: _buildPhoneNumberInput(),
         ),
+        Row(
+          children: <Widget>[
+            Expanded(
+              child: _buildInputButton(
+                  model.status == AuthStatus.STATE_INITIALIZED &&
+                      model.canSubmitPhoneNumber),
+            ),
+          ],
+        )
       ],
     );
   }
 
   Widget _buildSmsCodeInput() {
-    final enabled = model.status == AuthStatus.SMS_AUTH;
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Expanded(
-          flex: 1,
-          child: TextField(
-            keyboardType: TextInputType.number,
-            textAlign: TextAlign.center,
-            controller: smsCodeController,
-            onChanged: model.updateSMSCode,
-            maxLength: 6,
-            onSubmitted: (_) => model.updateRefreshing(true, mounted),
-            style: Theme.of(context).textTheme.subhead.copyWith(
-                  fontSize: 32.0,
-                  color: enabled ? Colors.white : Theme.of(context).buttonColor,
-                ),
-            decoration: InputDecoration(
-              border: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.tealAccent),
-              ),
-              enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.tealAccent),
-              ),
-              counterText: "",
-              hintText: "--- ---",
-              hintStyle: hintStyle.copyWith(fontSize: 42.0),
-              errorText: model.smsCodeErrorText,
-              enabled: enabled,
-            ),
+    final enabled = model.status == AuthStatus.STATE_CODE_SENT ||
+        model.status == AuthStatus.STATE_VERIFY_FAILED ||
+        model.status == AuthStatus.STATE_SIGN_IN_FAILED;
+    return TextField(
+      keyboardType: TextInputType.number,
+      textAlign: TextAlign.center,
+      controller: smsCodeController,
+      onChanged: model.updateSMSCode,
+      maxLength: 6,
+      onSubmitted: (_) => model.updateRefreshing(true, mounted),
+      style: Theme.of(context).textTheme.subhead.copyWith(
+            fontSize: 32.0,
+            color: enabled ? Colors.black : Theme.of(context).buttonColor,
           ),
-        )
-      ],
+      decoration: InputDecoration(
+        border: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.teal),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.teal),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.teal),
+        ),
+        counterText: "",
+        hintText: "--- ---",
+        hintStyle: hintStyle.copyWith(fontSize: 42.0),
+        errorText: model.smsCodeErrorText,
+        enabled: enabled,
+      ),
     );
   }
 
@@ -186,39 +178,37 @@ class _AuthScreenState extends State<AuthScreen> with VerificationError {
     return InkWell(
       onTap: () async {
         if (model.codeTimedOut) {
-          await model.verifyPhoneNumber(mounted, this);
+          await model.verifyPhoneNumber(mounted);
         } else {
-          _showErrorSnackbar("You can't retry yet!");
+          _showFlushBarMessage("You can't retry yet!");
         }
       },
-      child: Padding(
-        padding: const EdgeInsets.all(4.0),
-        child: RichText(
-          textAlign: TextAlign.center,
-          text: TextSpan(
-            text: "If your code does not arrive in 1 minute, touch",
-            style: decorationStyle,
-            children: <TextSpan>[
-              TextSpan(
-                text: " here",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
+      child: RichText(
+        textAlign: TextAlign.center,
+        text: TextSpan(
+          text: "If your code does not arrive in 1 minute, touch",
+          style: decorationStyle,
+          children: <TextSpan>[
+            TextSpan(
+              text: " here",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 
   Widget _buildSmsAuthBody() {
+    final heightMargin = MediaQuery.of(context).size.height * 0.08;
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
+        Container(
+          margin: EdgeInsets.fromLTRB(0, heightMargin, 0, 16),
+          padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
           child: Text(
             "Verification code",
             style: decorationStyle,
@@ -226,15 +216,19 @@ class _AuthScreenState extends State<AuthScreen> with VerificationError {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 64.0),
-          child: Flex(
-            direction: Axis.horizontal,
-            //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Flexible(flex: 10, child: _buildSmsCodeInput()),
-              Flexible(flex: 1, child: _buildConfirmSMSCodeButton())
-            ],
-          ),
+          padding: EdgeInsets.fromLTRB(20, 0, 20, heightMargin),
+          child: _buildSmsCodeInput(),
+        ),
+        Row(
+          children: <Widget>[
+            Expanded(
+              child: _buildInputButton(
+                  (model.status == AuthStatus.STATE_CODE_SENT ||
+                          model.status == AuthStatus.STATE_VERIFY_FAILED ||
+                          model.status == AuthStatus.STATE_SIGN_IN_FAILED) &&
+                      model.canSubmitSMSCode),
+            ),
+          ],
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -246,48 +240,67 @@ class _AuthScreenState extends State<AuthScreen> with VerificationError {
 
   Widget _buildBody() {
     Widget body;
-    switch (model.status) {
-      case AuthStatus.PHONE_AUTH:
-        body = _buildPhoneAuthBody();
-        break;
-      case AuthStatus.SMS_AUTH:
-        body = _buildSmsAuthBody();
-        break;
+    if (model.status == AuthStatus.STATE_INITIALIZED) {
+      body = _buildPhoneAuthBody();
+    }
+    if (model.status == AuthStatus.STATE_CODE_SENT ||
+        model.status == AuthStatus.STATE_VERIFY_FAILED ||
+        model.status == AuthStatus.STATE_SIGN_IN_FAILED) {
+      body = _buildSmsAuthBody();
     }
     return body;
   }
 
   Future<void> _onRefresh() async {
-    if (model.status == AuthStatus.PHONE_AUTH) {
+    if (model.status == AuthStatus.STATE_INITIALIZED) {
       try {
-        return await model.verifyPhoneNumber(mounted, this);
-      } on PlatformException catch (e) {
-        _showErrorSnackbar(e.message);
+        return await model.verifyPhoneNumber(mounted);
+      } catch (e) {
+        phoneNumberController.text = "";
+        smsCodeController.text = "";
+        phoneTextInputFormatter = MaskTextInputFormatter(
+            mask: "(###)###-####", filter: {"#": RegExp(r'[0-9]')});
+        AppUtil().showFlushBar(e, context);
       }
     }
 
-    if (model.status == AuthStatus.SMS_AUTH) {
+    if (model.status == AuthStatus.STATE_CODE_SENT ||
+        model.status == AuthStatus.STATE_VERIFY_FAILED ||
+        model.status == AuthStatus.STATE_SIGN_IN_FAILED) {
       try {
-        return await model.signInWithPhoneNumber(mounted);
-      } on PlatformException catch (e) {
-        _showErrorSnackbar(e.message);
+        return await model.signInWithPhoneAuthCredential(mounted);
+      } catch (e) {
+        phoneNumberController.text = "";
+        smsCodeController.text = "";
+        phoneTextInputFormatter = MaskTextInputFormatter(
+            mask: "(###)###-####", filter: {"#": RegExp(r'[0-9]')});
+        AppUtil().showFlushBar(e, context);
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    tempUserProvider = Provider.of<TempUserProvider>(context, listen: false);
+    model.setTempUserProvider(tempUserProvider);
+    model.setVerificationStatus(this);
+
     return Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(elevation: 0.0),
-      backgroundColor: Theme.of(context).primaryColor,
-      body: Container(
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text('Phone Number Verification'),
+      ),
+      body: SafeArea(
         child: ReactiveRefreshIndicator(
           onRefresh: _onRefresh,
-          color: Theme.of(context).colorScheme.secondary,
-          backgroundColor: Theme.of(context).colorScheme.background,
+          color: Theme.of(context).colorScheme.primary,
+          backgroundColor: Theme.of(context).colorScheme.onPrimary,
           isRefreshing: model.isRefreshing,
-          child: Container(
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () {
+              FocusScope.of(context).requestFocus(new FocusNode());
+            },
             child: _buildBody(),
           ),
         ),
@@ -295,8 +308,12 @@ class _AuthScreenState extends State<AuthScreen> with VerificationError {
     );
   }
 
+  void _showFlushBarMessage(String message) {
+    AppUtil().showFlushBar(message, context);
+  }
+
   @override
-  void onVerificationError(String msg) {
-    _showErrorSnackbar(msg);
+  void updateStatus(String msg) {
+    _showFlushBarMessage(msg);
   }
 }

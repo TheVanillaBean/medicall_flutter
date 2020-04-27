@@ -1,30 +1,37 @@
 import 'dart:async';
 
-import 'package:Medicall/models/global_nav_key.dart';
+import 'package:Medicall/common_widgets/carousel/carousel_state.dart';
 import 'package:Medicall/screens/Account/index.dart';
 import 'package:Medicall/screens/Account/paymentDetail.dart';
-import 'package:Medicall/screens/Chat/index.dart';
 import 'package:Medicall/screens/ConfirmConsult/index.dart';
 import 'package:Medicall/screens/Consent/index.dart';
-import 'package:Medicall/screens/History/historyDetail.dart';
+import 'package:Medicall/screens/History/Detail/index.dart';
 import 'package:Medicall/screens/History/index.dart';
-import 'package:Medicall/screens/Home/index.dart';
+import 'package:Medicall/screens/LandingPage/auth_widget_builder.dart';
 import 'package:Medicall/screens/LandingPage/index.dart';
 import 'package:Medicall/screens/Login/index.dart';
-import 'package:Medicall/screens/OtpVerification/index.dart';
+import 'package:Medicall/screens/Malpractice/malpractice.dart';
+import 'package:Medicall/screens/PasswordReset/index.dart';
+import 'package:Medicall/screens/PhoneAuth/index.dart';
 import 'package:Medicall/screens/Privacy/index.dart';
-import 'package:Medicall/screens/QuestionsUpload/index.dart';
-import 'package:Medicall/screens/Registration/RegistrationType/index.dart';
 import 'package:Medicall/screens/Registration/index.dart';
+import 'package:Medicall/screens/Registration/photoIdScreen.dart';
+import 'package:Medicall/screens/Registration/registrationType.dart';
 import 'package:Medicall/screens/SelectProvider/index.dart';
+import 'package:Medicall/screens/Symptoms/medical_history_state.dart';
 import 'package:Medicall/screens/Terms/index.dart';
+import 'package:Medicall/services/animation_provider.dart';
 import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/extimage_provider.dart';
+import 'package:Medicall/services/flare_provider.dart';
+import 'package:Medicall/services/stripe_provider.dart';
+import 'package:Medicall/theme.dart';
+import 'package:Medicall/util/apple_sign_in_available.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_crashlytics/flutter_crashlytics.dart';
-import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
 
 import 'screens/Questions/questionsScreen.dart';
@@ -33,7 +40,8 @@ import 'screens/Symptoms/index.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   bool isInDebugMode = false;
-
+  SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(statusBarColor: Colors.transparent));
   FlutterError.onError = (FlutterErrorDetails details) {
     if (isInDebugMode) {
       // In development mode simply print to console.
@@ -47,8 +55,13 @@ void main() async {
 
   await FlutterCrashlytics().initialize();
 
+  final appleSignInAvailable = await AppleSignInAvailable.check();
+
   runZoned<Future<Null>>(() async {
-    runApp(MedicallApp());
+    runApp(Provider<AppleSignInAvailable>.value(
+      value: appleSignInAvailable,
+      child: MedicallApp(),
+    ));
   }, onError: (error, stackTrace) async {
     // Whenever an error occurs, call the `reportCrash` function. This will send
     // Dart errors to our dev console or Crashlytics depending on the environment.
@@ -57,70 +70,51 @@ void main() async {
   });
 }
 
-class MedicallApp extends StatefulWidget {
-  MedicallApp({Key key}) : super(key: key);
-
-  _MedicallAppState createState() => _MedicallAppState();
-}
-
-const Color background = Color(0xFFFFFFFF);
-const Color primaryColor = Color.fromRGBO(29, 164, 204, 1);
-const Color onPrimary = Color(0xFFFFFFFF);
-const Color primaryVariant = Color(0xFF48ACF0);
-const Color secondaryColor = Color.fromRGBO(241, 100, 119, 1);
-const Color onSecondary = Color(0xFF0E202C);
-const Color onSurface = Color.fromRGBO(33, 136, 181, 1);
-
-const Color secondaryVariant = Color(0xFF47E5BC);
-const Color accentColor = Color.fromRGBO(241, 100, 119, 1);
-final ColorScheme colorScheme = const ColorScheme.dark().copyWith(
-  primary: primaryColor,
-  onPrimary: onPrimary,
-  background: background,
-  onSurface: onSurface,
-  secondary: secondaryColor,
-  onSecondary: onSecondary,
-  primaryVariant: primaryVariant,
-  secondaryVariant: secondaryVariant,
-);
-
-class _MedicallAppState extends State<MedicallApp> {
+class MedicallApp extends StatelessWidget {
   static FirebaseAnalytics analytics = FirebaseAnalytics();
   static FirebaseAnalyticsObserver observer =
       FirebaseAnalyticsObserver(analytics: analytics);
 
   @override
   Widget build(BuildContext context) {
+    //SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.values[0]]);
+    //SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
     return MultiProvider(
       providers: [
-        Provider<AuthBase>(create: (_) => Auth()),
+        Provider<AuthBase>(
+          create: (_) => Auth(),
+        ),
+        Provider<ExtImageProvider>(
+          create: (_) => ExtendedImageProvider(),
+        ),
+        Provider<MyStripeProvider>(
+          create: (_) => MyStripeProvider(),
+        ),
+        Provider<MyAnimationProvider>(
+          create: (_) => MyAnimationProvider(),
+        ),
+        Provider<MyFlareProvider>(
+          create: (_) => MyFlareProvider(),
+        ),
+        ChangeNotifierProvider<CarouselState>(
+          create: (_) => CarouselState(),
+        ),
+        ChangeNotifierProvider<MedicalHistoryState>(
+          create: (_) => MedicalHistoryState(),
+        ),
       ],
-      child: OKToast(
-        child: MaterialApp(
+      child: _buildApp(),
+    );
+  }
+
+  AuthWidgetBuilder _buildApp() {
+    return AuthWidgetBuilder(
+      builder: (context, userSnapshot) {
+        return MaterialApp(
           title: 'Medicall',
           debugShowCheckedModeBanner: false,
-          navigatorKey: GlobalNavigatorKey.key,
-          navigatorObservers: <NavigatorObserver>[observer],
-          theme: ThemeData(
-              primaryColor: primaryColor,
-              accentColor: accentColor,
-              colorScheme: colorScheme,
-              buttonTheme: ButtonThemeData(
-                shape: new RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(0.0)),
-              ),
-              brightness: Brightness.light,
-              canvasColor: Colors.blue.shade200,
-              dialogBackgroundColor: onPrimary,
-              highlightColor: Color.fromRGBO(35, 179, 232, 0),
-              splashColor: Colors.transparent,
-              scaffoldBackgroundColor: Theme.of(context).colorScheme.onPrimary,
-              toggleableActiveColor: Color.fromRGBO(241, 100, 119, 1),
-              textSelectionColor: Color.fromRGBO(241, 100, 119, 0.5),
-              textSelectionHandleColor: Color.fromRGBO(35, 179, 232, 1),
-              cursorColor: Color.fromRGBO(35, 179, 232, 1),
-              backgroundColor: Theme.of(context).colorScheme.onPrimary),
-          home: LandingPage(),
+          theme: myTheme,
+          home: LandingPage(userSnapshot: userSnapshot),
           onGenerateRoute: (RouteSettings settings) {
             switch (settings.name) {
               case '/login':
@@ -128,9 +122,9 @@ class _MedicallAppState extends State<MedicallApp> {
                   builder: (_) => LoginPage.create(context),
                   settings: settings,
                 );
-              case '/verification':
+              case '/phoneAuth':
                 return MyCustomRoute(
-                  builder: (_) => OtpVerificationScreen(),
+                  builder: (_) => PhoneAuthScreen.create(context),
                   settings: settings,
                 );
               case '/registrationType':
@@ -140,7 +134,17 @@ class _MedicallAppState extends State<MedicallApp> {
                 );
               case '/registration':
                 return MyCustomRoute(
-                  builder: (_) => RegistrationScreen(data: settings.arguments),
+                  builder: (_) => RegistrationScreen(),
+                  settings: settings,
+                );
+              case '/reset_password':
+                return MyCustomRoute(
+                  builder: (_) => PasswordResetScreen.create(context),
+                  settings: settings,
+                );
+              case '/photoID':
+                return MyCustomRoute(
+                  builder: (_) => PhotoIdScreen.create(context),
                   settings: settings,
                 );
               case '/terms':
@@ -155,60 +159,47 @@ class _MedicallAppState extends State<MedicallApp> {
                 );
               case '/consent':
                 return MyCustomRoute(
-                  builder: (_) => ConsentScreen(data: settings.arguments),
+                  builder: (_) => ConsentScreen(),
                   settings: settings,
                 );
-              case '/home':
+              case '/malpractice':
                 return MyCustomRoute(
-                  builder: (_) => HomeScreen(),
+                  builder: (_) => MalpracticeScreen.create(context),
                   settings: settings,
                 );
-              case '/doctors':
+              case '/symptoms':
                 return MyCustomRoute(
-                  builder: (_) => SymptomsScreen(data: settings.arguments),
+                  builder: (_) => SymptomsScreen(),
                   settings: settings,
                 );
               case '/questionsScreen':
                 return MyCustomRoute(
-                  builder: (_) => QuestionsScreen(data: settings.arguments),
+                  builder: (_) => QuestionsScreen(),
                   settings: settings,
                 );
               case '/selectProvider':
                 return MyCustomRoute(
-                  builder: (_) =>
-                      SelectProviderScreen(data: settings.arguments),
-                  settings: settings,
-                );
-              case '/questionsUpload':
-                return MyCustomRoute(
-                  builder: (_) =>
-                      QuestionsUploadScreen(data: settings.arguments),
-                  settings: settings,
-                );
-              case '/chat':
-                return MyCustomRoute(
-                  builder: (_) => ChatScreen(),
+                  builder: (_) => SelectProviderScreen(),
                   settings: settings,
                 );
               case '/consultReview':
                 return MyCustomRoute(
-                  builder: (_) =>
-                      ConfirmConsultScreen(data: settings.arguments),
+                  builder: (_) => ConfirmConsultScreen(),
                   settings: settings,
                 );
               case '/history':
                 return MyCustomRoute(
-                  builder: (_) => HistoryScreen(),
+                  builder: (_) => HistoryScreen.create(context, true, ''),
                   settings: settings,
                 );
               case '/historyDetail':
                 return MyCustomRoute(
-                  builder: (_) => HistoryDetailScreen(data: settings.arguments),
+                  builder: (_) => HistoryDetailScreen.create(context),
                   settings: settings,
                 );
               case '/account':
                 return MyCustomRoute(
-                  builder: (_) => AccountScreen(data: settings.arguments),
+                  builder: (_) => AccountScreen(),
                   settings: settings,
                 );
               case '/paymentDetail':
@@ -216,14 +207,18 @@ class _MedicallAppState extends State<MedicallApp> {
                   builder: (_) => PaymentDetail(),
                   settings: settings,
                 );
+              default:
+                return MaterialPageRoute(
+                  builder: (_) => Scaffold(
+                    body: Center(
+                      child: Text('No route defined for ${settings.name}'),
+                    ),
+                  ),
+                );
             }
-            return MyCustomRoute(
-              builder: (_) => LandingPage(),
-              settings: settings,
-            );
           },
-        ),
-      ),
+        );
+      },
     );
   }
 }

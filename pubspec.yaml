@@ -5,54 +5,65 @@ version: 1.0.2+1
 
 environment:
   sdk: '>=2.2.2 <3.0.0'
-
+https://github:
+  com/FirebaseExtended/flutterfire/commit/3fc3ca8e8f2f2577b1553e3513a7dba45da31b37:
 dependencies:
   flutter:
     sdk: flutter
   #firebase
-  firebase_core: ^0.4.1+5
-  firebase_auth: ^0.15.0+1
-  cloud_firestore: ^0.12.10+2
-  firebase_messaging: ^5.1.8
-  cloud_functions: ^0.4.1+4
-  firebase_analytics: ^5.0.6
-  firebase_storage: ^3.0.8
+  firebase_core: 0.4.4+3
+  firebase_auth:
+    git:
+      url: https://github.com/FirebaseExtended/flutterfire.git
+      ref: 4d7b2bdd7fbdee65551754968b140653ea16128f
+      path: packages/firebase_auth/firebase_auth
+  cloud_firestore: 0.13.4+2
+  firebase_messaging: 6.0.13
+  cloud_functions: ^0.4.2+3
+  firebase_storage: 3.1.1
+  firebase_analytics: ^5.0.11
   flutter_crashlytics: ^1.0.0
+  #apple
+  apple_sign_in: ^0.1.0
   #google
-  google_sign_in: ^4.0.14
-  google_maps_flutter: ^0.5.21+15
-  flutter_google_places: ^0.2.3
+  google_sign_in: ^4.1.4
+  #google_maps_flutter: ^0.5.21+15
+  flutter_google_places: ^0.2.4
+  #stripe
+  stripe_payment: ^0.1.1
   #utils
+  flutter_screenutil: ^1.0.2
   cupertino_icons: ^0.1.0
-  url_launcher: ^5.4.1
+  url_launcher: ^5.4.2
   flutter_linkify: ^2.1.0
   location: ^2.3.5
   http: ^0.12.0
-  stripe_payment: ^0.1.1
-  dots_indicator: ^1.0.0
+  flutter_datetime_picker: ^1.3.5
   json_serializable: ^2.2.1
-  shared_preferences: ^0.5.3+1
-  simple_animations: ^1.3.4
-  #keyboard_visibility: ^0.5.6
-  #bubble_tab_indicator: ^0.1.4
+  shared_preferences: ^0.5.6+2
   flutter_auth_buttons: ^0.3.1
   flutter_form_builder: '3.6.0'
-  flutter_bloc: ^2.1.1
   flutter_typeahead: ^1.7.0
   #camera/images
-  multi_image_picker: ^4.6.0
-  carousel_slider: ^1.4.0
-  cached_network_image: ^2.0.0-rc.1
+  dots_indicator: ^1.0.0
+  extended_image: ^0.6.9
+  #image_picker: ^0.6.3+1
+  multi_image_picker: ^4.6.1
+  image_picker: ^0.6.3+1
   #notifications
+  flushbar: 1.9.1
   #flutter_alert: ^0.4.0
-  oktoast: ^2.1.7
-  fluttertoast: ^3.1.0
-  image_picker: ^0.6.1+3
+  #chat
+  dash_chat: ^1.0.15
   #state_management
-  provider: ^3.2.0
+  provider: ^4.0.2
+  #animation
+  flare_splash_screen: ^3.0.0
+  simple_animations: ^1.3.4
+  mask_text_input_formatter: ^1.0.6
+  uuid: ^2.0.4
+  fluri: ^1.2.8
 
-dependency_overrides:
-  intl: ^0.16.0
 
 dev_dependencies:
   flutter_test:
@@ -93,6 +104,9 @@ flutter:
   assets:
     - assets/images/
     - assets/icon/
+    - splash.flr
+    - logout.flr
+    - headerlogo.flr
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/.
   # For details regarding adding assets from package dependencies, see

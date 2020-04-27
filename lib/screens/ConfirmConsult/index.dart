@@ -1,61 +1,63 @@
-import 'dart:typed_data';
-
+import 'package:Medicall/common_widgets/carousel/carousel_with_indicator.dart';
 import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/ConfirmConsult/routeUserOrder.dart';
-import 'package:Medicall/secrets.dart';
-import 'package:Medicall/util/stripe_payment_handler.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:Medicall/services/database.dart';
+import 'package:Medicall/services/extimage_provider.dart';
+import 'package:Medicall/services/stripe_provider.dart';
+import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:multi_image_picker/multi_image_picker.dart';
-import 'package:stripe_payment/stripe_payment.dart';
+import 'package:provider/provider.dart';
 
 class ConfirmConsultScreen extends StatefulWidget {
-  final data;
-
-  const ConfirmConsultScreen({Key key, @required this.data}) : super(key: key);
+  const ConfirmConsultScreen({Key key}) : super(key: key);
   @override
   _ConfirmConsultScreenState createState() => _ConfirmConsultScreenState();
 }
 
 class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
     with SingleTickerProviderStateMixin {
-  bool isLoading = false;
-  double price = 39.00;
-  bool hasReviewed = false;
-  ConsultData _consult;
+  bool _isLoading = false;
+  bool _hasReviewed = false;
+  Database _db;
+  MedicallUser _medicallUser;
+  ExtImageProvider _extImageProvider;
+  MyStripeProvider _stripeProvider;
   TabController _confirmTabCntrl;
   @override
   void initState() {
     super.initState();
-    _consult = widget.data['consult'];
-    medicallUser = widget.data['user'];
     _confirmTabCntrl = TabController(length: 2, vsync: this);
-    StripeSource.setPublishableKey(stripeKey);
-  }
-
-  Future getConsult() async {
-    // SharedPreferences pref = await SharedPreferences.getInstance();
-    // var perfConsult = jsonDecode(pref.getString('consult'));
-    // _consult.consultType = perfConsult["consultType"];
-    // _consult.provider = perfConsult["provider"];
-    // _consult.providerTitles = perfConsult["providerTitles"];
-    // _consult.screeningQuestions = perfConsult["screeningQuestions"];
-    // _consult.historyQuestions = perfConsult["historyQuestions"];
-    return _consult;
   }
 
   @override
   void dispose() {
+    super.dispose();
     // Dispose of the Tab _confirmTabCntrl
     _confirmTabCntrl.dispose();
-    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    _db = Provider.of<Database>(context);
+    _medicallUser = Provider.of<UserProvider>(context).medicallUser;
+    _extImageProvider = Provider.of<ExtImageProvider>(context);
+    _stripeProvider = Provider.of<MyStripeProvider>(context);
+    _db.newConsult.media = [];
+    var _mediaList = [];
+    if (_db.newConsult.uploadQuestions.length > 0) {
+      for (var i = 0; i < _db.newConsult.uploadQuestions.length; i++) {
+        if (_db.newConsult.uploadQuestions[i].containsKey('image') &&
+            _db.newConsult.uploadQuestions[i]['visible']) {
+          for (var x = 0;
+              x < _db.newConsult.uploadQuestions[i]['image'].length;
+              x++) {
+            _mediaList.add(_db.newConsult.uploadQuestions[i]['image'][x]);
+          }
+        }
+      }
+      _db.newConsult.media = _mediaList;
+    }
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -64,11 +66,11 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              _consult != null
-                  ? _consult.consultType == 'Lesion'
+              _db.newConsult != null
+                  ? _db.newConsult.consultType == 'Lesion'
                       ? 'Review Spot Consult'
-                      : 'Review ' + _consult.consultType + ' Consult'
-                  : _consult != null ? _consult.provider : '',
+                      : 'Review ' + _db.newConsult.consultType + ' Consult'
+                  : _db.newConsult != null ? _db.newConsult.provider : '',
               style: TextStyle(
                 fontSize: Theme.of(context).platform == TargetPlatform.iOS
                     ? 17.0
@@ -76,10 +78,9 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
               ),
             ),
             Text(
-              _consult != null
-                  ? 'With ${_consult.provider.split(" ")[0][0].toUpperCase()}${_consult.provider.split(" ")[0].substring(1)} ${_consult.provider.split(" ")[1][0].toUpperCase()}${_consult.provider.split(" ")[1].substring(1)} ' +
-                      _consult.providerTitles
-                  : _consult != null ? _consult.provider : '',
+              _db.newConsult != null
+                  ? '${_db.newConsult.provider} ${_db.newConsult.providerTitles}'
+                  : _db.newConsult != null ? _db.newConsult.provider : '',
               style: TextStyle(
                 fontSize: Theme.of(context).platform == TargetPlatform.iOS
                     ? 12.0
@@ -89,7 +90,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
           ],
         ),
         bottom: TabBar(
-          indicatorColor: Colors.white,
+          indicatorColor: Theme.of(context).colorScheme.secondary,
           tabs: <Tab>[
             Tab(
               // set icon to the tab
@@ -108,34 +109,29 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
           // setup the _confirmTabCntrl
           controller: _confirmTabCntrl,
         ),
-        elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      bottomNavigationBar: !isLoading
+      bottomNavigationBar: !_isLoading
           ? Container(
-              padding: hasReviewed
+              padding: _hasReviewed
                   ? EdgeInsets.fromLTRB(0, 0, 0, 0)
                   : EdgeInsets.fromLTRB(0, 0, 0, 0),
               decoration: BoxDecoration(
-                  color: Colors.blue[100].withAlpha(50),
-                  border: Border(
-                      top: BorderSide(
-                          color: Theme.of(context).colorScheme.primary,
-                          width: hasReviewed ? 2 : 0))),
-              height: hasReviewed ? 280 : 56,
-              child: hasReviewed
+                color: Colors.white,
+              ),
+              height: _hasReviewed ? MediaQuery.of(context).size.height : 56,
+              child: _hasReviewed
                   ? Stack(
                       fit: StackFit.expand,
                       children: <Widget>[
                         Column(
                           children: <Widget>[
                             Container(
-                                color: Theme.of(context).colorScheme.primary,
-                                padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
-                                height: 58,
+                                padding: EdgeInsets.fromLTRB(4, 0, 0, 5),
+                                height: 77,
                                 width: MediaQuery.of(context).size.width,
                                 child: Stack(
-                                  alignment: Alignment.center,
+                                  alignment: Alignment.bottomCenter,
                                   children: <Widget>[
                                     Row(
                                       mainAxisAlignment:
@@ -143,36 +139,39 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                       crossAxisAlignment:
                                           CrossAxisAlignment.center,
                                       children: <Widget>[
-                                        Text(
-                                          'Consult Review and Payment',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onPrimary,
-                                            letterSpacing: 1.0,
-                                            fontWeight: FontWeight.bold,
+                                        Container(
+                                          padding: EdgeInsets.all(10),
+                                          child: Text(
+                                            'Consult Review and Payment',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary,
+                                              letterSpacing: 1.0,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
                                         )
                                       ],
                                     ),
                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.center,
+                                          CrossAxisAlignment.end,
                                       children: <Widget>[
                                         IconButton(
-                                          alignment: Alignment.center,
-                                          padding: EdgeInsets.all(5),
-                                          iconSize: 28,
-                                          icon: Icon(Icons.close),
+                                          alignment: Alignment.bottomCenter,
+                                          iconSize: 24,
+                                          icon: Icon(Icons.arrow_back),
                                           color: Theme.of(context)
                                               .colorScheme
-                                              .onPrimary,
+                                              .secondary,
                                           onPressed: () {
                                             setState(() {
-                                              hasReviewed = false;
+                                              _hasReviewed = false;
                                             });
                                           },
                                         ),
@@ -181,17 +180,25 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                   ],
                                 )),
                             Padding(
-                              padding: EdgeInsets.fromLTRB(20, 2, 20, 10),
+                              padding: EdgeInsets.fromLTRB(20, 12, 20, 5),
                               child: Text(
                                 'Please review and confirm payment below.',
                                 style: TextStyle(
                                     color: Colors.black45, fontSize: 12),
                               ),
-                            )
+                            ),
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(25, 2, 25, 20),
+                              child: Text(
+                                '*Does not include the cost of any recommended prescriptions. If the provider recommends a prescription, we can send it to a local pharmacy or ship it directly to your door.',
+                                style: TextStyle(
+                                    fontSize: 10, color: Colors.black54),
+                              ),
+                            ),
                           ],
                         ),
                         Container(
-                          padding: EdgeInsets.fromLTRB(35, 85, 55, 10),
+                          padding: EdgeInsets.fromLTRB(30, 150, 45, 10),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
@@ -200,36 +207,32 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Text(
-                                    _consult.consultType != 'Lesion'
+                                    _db.newConsult.consultType != 'Lesion'
                                         ? 'Contact ' +
-                                            _consult.provider +
+                                            _db.newConsult.provider +
                                             ' ' +
-                                            _consult.providerTitles +
+                                            _db.newConsult.providerTitles +
                                             '\nabout your ' +
-                                            _consult.consultType
+                                            _db.newConsult.consultType
                                         : 'Spot' +
                                             ' consultation with \n' +
-                                            _consult.provider +
+                                            _db.newConsult.provider +
                                             ' ' +
-                                            _consult.providerTitles,
+                                            _db.newConsult.providerTitles,
                                     style: TextStyle(
-                                        letterSpacing: 1.3,
+                                        letterSpacing: 1.1,
                                         fontWeight: FontWeight.w700,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary),
+                                        color: Colors.black.withAlpha(150)),
                                   ),
                                 ],
                               ),
                               Column(
                                 children: <Widget>[
                                   Text(
-                                    _consult.price,
+                                    _db.newConsult.price,
                                     style: TextStyle(
                                         fontSize: 28,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .secondary,
+                                        color: Colors.black.withAlpha(150),
                                         fontWeight: FontWeight.bold),
                                   ),
                                 ],
@@ -243,17 +246,6 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                               crossAxisAlignment: CrossAxisAlignment.end,
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: <Widget>[
-                                Text(
-                                  '*Does not include the cost of any recommended prescriptions. If the provider recommends a prescription, we can send it to a local pharmacy or ship it directly to your door.',
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondary),
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   mainAxisAlignment: MainAxisAlignment.end,
@@ -265,67 +257,119 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                             EdgeInsets.fromLTRB(40, 20, 40, 20),
                                         color: Theme.of(context)
                                             .colorScheme
-                                            .secondary,
-                                        onPressed: () async {
-                                          setState(() {
-                                            hasReviewed = true;
-                                            //isLoading = true;
-                                          });
-                                          //await _addProviderConsult();
-                                          Firestore.instance
-                                              .collection('cards')
-                                              .document(medicallUser.uid)
-                                              .collection('sources')
-                                              .getDocuments()
-                                              .then((snap) async {
-                                            if (snap.documents.length == 0) {
-                                              // await StripeSource.addSource()
-                                              //     .then((String token) async {
-                                              //   PaymentService().addCard(token);
-                                              //   setState(() {
-                                              //     isLoading = true;
-                                              //   });
-                                              //return await _addConsult();
-                                              //});
-                                              await StripeSource.addSource()
-                                                  .then((String token) async {
-                                                PaymentService().addCard(token);
-                                                //return await _addConsult();
-                                              });
-                                            } else {
-                                              setState(() {
-                                                isLoading = true;
-                                              });
-                                              await PaymentService()
-                                                  .chargePayment(
-                                                      price,
-                                                      _consult.consultType +
-                                                          ' consult with ' +
-                                                          _consult.provider);
-                                              _addConsult();
-
-                                              // await PaymentService()
-                                              //     .chargePayment(
-                                              //         price,
-                                              //         _consult.consultType +
-                                              //             ' consult with ' +
-                                              //             _consult.provider);
-                                              // return await _addConsult();
-                                            }
-                                            // return Navigator.pushNamed(
-                                            //     context, '/history',
-                                            //     arguments: {
-                                            //       'consult': _consult,
-                                            //       'user': medicallUser
-                                            //     });
-                                          });
-                                        },
+                                            .secondaryVariant,
+                                        onPressed: !_isLoading
+                                            ? () async {
+                                                setState(() {
+                                                  _hasReviewed = true;
+                                                  //_isLoading = true;
+                                                });
+                                                //await _addProviderConsult();
+                                                _db
+                                                    .getUserSources(
+                                                        uid: _medicallUser.uid)
+                                                    .then((snap) async {
+                                                  if (snap.documents.length ==
+                                                      0) {
+                                                    await _stripeProvider
+                                                        .addSource()
+                                                        .then((String
+                                                            token) async {
+                                                      await _stripeProvider
+                                                          .addCard(token);
+                                                      setState(() {
+                                                        _isLoading = true;
+                                                      });
+                                                      await _stripeProvider
+                                                          .chargePayment(
+                                                              _db.newConsult
+                                                                  .price,
+                                                              _db.newConsult
+                                                                      .consultType +
+                                                                  ' consult with ' +
+                                                                  _db.newConsult
+                                                                      .provider);
+                                                      _db
+                                                          .addConsult(
+                                                              context,
+                                                              _db.newConsult,
+                                                              _extImageProvider,
+                                                              medicallUser:
+                                                                  _medicallUser)
+                                                          .then((onValue) {
+                                                        _extImageProvider
+                                                            .clearImageMemory();
+                                                        _db.newConsult =
+                                                            ConsultData();
+                                                        Route route =
+                                                            MaterialPageRoute(
+                                                                builder:
+                                                                    (context) =>
+                                                                        RouteUserOrderScreen(
+                                                                          data: {
+                                                                            'user':
+                                                                                _medicallUser,
+                                                                            'consult':
+                                                                                _db.newConsult
+                                                                          },
+                                                                        ));
+                                                        return Navigator.of(
+                                                                context)
+                                                            .pushReplacement(
+                                                                route);
+                                                      });
+                                                    });
+                                                  } else {
+                                                    setState(() {
+                                                      _isLoading = true;
+                                                    });
+                                                    await _stripeProvider
+                                                        .chargePayment(
+                                                            _db.newConsult
+                                                                .price,
+                                                            _db.newConsult
+                                                                    .consultType +
+                                                                ' consult with ' +
+                                                                _db.newConsult
+                                                                    .provider);
+                                                    _db
+                                                        .addConsult(
+                                                            context,
+                                                            _db.newConsult,
+                                                            _extImageProvider,
+                                                            medicallUser:
+                                                                _medicallUser)
+                                                        .then((onValue) {
+                                                      _extImageProvider
+                                                          .clearImageMemory();
+                                                      _db.newConsult =
+                                                          ConsultData();
+                                                      Route route =
+                                                          MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  RouteUserOrderScreen(
+                                                                    data: {
+                                                                      'user':
+                                                                          _medicallUser,
+                                                                      'consult':
+                                                                          _db.newConsult
+                                                                    },
+                                                                  ));
+                                                      return Navigator.of(
+                                                              context)
+                                                          .pushReplacement(
+                                                              route);
+                                                    });
+                                                  }
+                                                });
+                                              }
+                                            : () {},
                                         child: Text(
                                           'CONFIRM & PAY',
                                           style: TextStyle(
-                                            color: Colors.white,
-                                            letterSpacing: 1.2,
-                                          ),
+                                              color: Colors.white,
+                                              letterSpacing: 1.2,
+                                              fontWeight: FontWeight.bold),
                                         ),
                                       ),
                                     ))
@@ -340,23 +384,22 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: <Widget>[
                         Expanded(
-                            child: OutlineButton(
-                          borderSide: BorderSide(
-                              color: Theme.of(context).colorScheme.primary,
-                              style: BorderStyle.solid,
-                              width: 2),
+                            child: FlatButton(
                           padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
-                          color: Theme.of(context).colorScheme.background,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(0),
+                          ),
+                          color: Theme.of(context).colorScheme.secondaryVariant,
                           onPressed: () async {
                             setState(() {
-                              hasReviewed = true;
-                              //isLoading = true;
+                              _hasReviewed = true;
+                              //_isLoading = true;
                             });
                           },
                           child: Text(
                             'REVIEW ORDER',
                             style: TextStyle(
-                              color: Theme.of(context).colorScheme.secondary,
+                              color: Theme.of(context).colorScheme.onBackground,
                               fontWeight: FontWeight.bold,
                               letterSpacing: 1.2,
                             ),
@@ -367,7 +410,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
             )
           : FlatButton(
               padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
-              color: Theme.of(context).colorScheme.primary,
+              color: Theme.of(context).primaryColorDark,
               onPressed: () {},
               child: CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
@@ -376,9 +419,12 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
       body: TabBarView(
         // Add tabs as widgets
         children: <Widget>[
-          _buildTab(_consult.screeningQuestions),
-          //_buildTab(_consult.historyQuestions),
-          _buildTab(_consult.uploadQuestions),
+          _buildQuestions(),
+          CarouselWithIndicator(
+            imgList: _db.newConsult.media,
+            from: 'consultReview',
+          ),
+          //_buildTab(_db.newConsult.historyQuestions),
         ],
         // set the _confirmTabCntrl
         controller: _confirmTabCntrl,
@@ -386,143 +432,33 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
     );
   }
 
-  Future _addConsult() async {
-    var ref = Firestore.instance.collection('consults').document();
-
-    var imagesList = await saveImages(_consult.media, ref.documentID);
-    Map<String, dynamic> data = <String, dynamic>{
-      "screening_questions": _consult.screeningQuestions,
-      "medical_history_questions": _consult.historyQuestions,
-      "type": _consult.consultType,
-      "chat": [],
-      "state": "new",
-      "date": DateTime.now(),
-      "prescription": "",
-      "provider": _consult.provider,
-      "providerTitles": _consult.providerTitles,
-      "patient": medicallUser.displayName,
-      "provider_id": _consult.providerId,
-      "patient_id": medicallUser.uid,
-      "media": _consult.media.length > 0 ? imagesList : "",
-    };
-    ref.setData(data).whenComplete(() {
-      print("Document Added");
-      // Future.delayed(const Duration(milliseconds: 5000), () {
-      //   return Navigator.pushReplacementNamed(context, '/history',
-      //       arguments: {'consult': _consult, 'user': medicallUser});
-      // });
-      Route route = MaterialPageRoute(
-          builder: (context) => RouteUserOrderScreen(
-                data: {'user': medicallUser, 'consult': _consult},
-              ));
-      return Navigator.pushReplacement(context, route);
-
-      //_addProviderConsult(ref.documentID, imagesList);
-    }).catchError((e) => print(e));
-  }
-
-  Future saveImages(assets, consultId) async {
-    var allMediaList = [];
-    var allFileNames = [];
-    for (var i = 0; i < assets.length; i++) {
-      if (!allFileNames.contains(assets[i].name)) {
-        allFileNames.add(assets[i].name);
-      } else {
-        allFileNames.add(assets[i].name.split('.')[0] +
-            '_' +
-            i.toString() +
-            '.' +
-            assets[i].name.split('.')[1]);
-      }
-    }
-    for (var i = 0; i < assets.length; i++) {
-      ByteData byteData = await assets[i].requestOriginal();
-      List<int> imageData = byteData.buffer.asUint8List();
-      StorageReference ref = FirebaseStorage.instance.ref().child("consults/" +
-          medicallUser.uid +
-          '/' +
-          consultId +
-          "/" +
-          allFileNames[i]);
-      StorageUploadTask uploadTask = ref.putData(imageData);
-
-      allMediaList
-          .add(await (await uploadTask.onComplete).ref.getDownloadURL());
-    }
-    return allMediaList;
-  }
-
-  _buildTab(questions) {
-    List<Asset> questionsList = [];
-    if (questions.length > 0) {
-      for (var i = 0; i < questions.length; i++) {
-        if (questions[i].containsKey('image') &&
-            questions[i]['visible'] &&
-            questions[i]['image'].length > 1) {
-          for (var x = 0; x < questions[i]['image'].length; x++) {
-            questionsList.add(questions[i]['image'][x]);
-          }
-        }
-        if (questions[i].containsKey('image') &&
-            questions[i]['visible'] &&
-            questions[i]['image'].length == 1) {
-          for (var x = 0; x < questions[i]['image'].length; x++) {
-            questionsList.add(questions[i]['image'][x]);
-          }
-        }
-      }
-      _consult.media = questionsList;
-      return Scaffold(
-        body: Container(
-          child: questions[0].containsKey('image')
-              ? GridView.count(
-                  crossAxisCount: 2,
-                  children: List.generate(questionsList.length, (index) {
-                    //List<Widget> returnList = [];
-                    //returnList.add();
-                    return AssetThumb(
-                      asset: questionsList[index],
-                      width: 300,
-                      height: 300,
-                    );
-                  }),
-                )
-              : ListView.builder(
-                  itemCount: questions.length,
-                  itemBuilder: (context, i) {
-                    return questions[i]['visible']
-                        ? ListTile(
-                            title: Text(
-                              questions[i]['question'],
-                              style: TextStyle(fontSize: 14.0),
-                            ),
-                            subtitle: Text(
-                              questions[i]['answer']
-                                  .toString()
-                                  .replaceAll(']', '')
-                                  .replaceAll('[', '')
-                                  .replaceAll('null', '')
-                                  .replaceFirst(', ', ''),
-                              style: TextStyle(
-                                  letterSpacing: 1.0,
-                                  height: 1.2,
-                                  fontWeight: FontWeight.bold,
-                                  color:
-                                      Theme.of(context).colorScheme.secondary),
-                            ),
-                          )
-                        : SizedBox();
-                  }),
-        ),
-      );
-    } else {
-      return Center(
-        child: Icon(
-          Icons.broken_image,
-          size: 140,
-          color: Theme.of(context).colorScheme.secondary.withAlpha(90),
-        ),
-      );
-    }
+  _buildQuestions() {
+    return Container(
+      child: ListView.builder(
+          itemCount: _db.newConsult.screeningQuestions.length,
+          itemBuilder: (context, i) {
+            return _db.newConsult.screeningQuestions[i]['visible']
+                ? ListTile(
+                    title: Text(
+                      _db.newConsult.screeningQuestions[i]['question'],
+                      style: TextStyle(fontSize: 14.0),
+                    ),
+                    subtitle: Text(
+                      _db.newConsult.screeningQuestions[i]['answer']
+                          .toString()
+                          .replaceAll(']', '')
+                          .replaceAll('[', '')
+                          .replaceAll('null', '')
+                          .replaceFirst(', ', ''),
+                      style: TextStyle(
+                          letterSpacing: 1.0,
+                          height: 1.2,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.secondary),
+                    ),
+                  )
+                : SizedBox();
+          }),
+    );
   }
 }

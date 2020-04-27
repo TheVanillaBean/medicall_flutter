@@ -1,5 +1,7 @@
+import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 String _returnString(user) {
   var fullName = user.displayName;
@@ -76,40 +78,74 @@ $dob
 Date of consent
 $formatted
 ____
-By checking the box “I Agree” below, I understand and consent to the above and the Terms of Service and Privacy Policy.
+By tapping “I Agree” below, I understand and consent to the above and the Terms of Service and Privacy Policy.
 
 Thanks again for using Medicall!''';
   return consent;
 }
 
-class ConsentScreen extends StatefulWidget {
-  final data;
-  ConsentScreen({Key key, @required this.data}) : super(key: key);
-
-  @override
-  _ConsentScreenState createState() => _ConsentScreenState();
-}
-
-class _ConsentScreenState extends State<ConsentScreen> {
+class ConsentScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final tempUserProvider = Provider.of<TempUserProvider>(context);
+    final medicallUser = tempUserProvider.medicallUser;
+    final _scrollController = ScrollController();
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: Color.fromRGBO(35, 179, 232, 1),
         title: Text('Telemedicine Consent'),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: Padding(
+          padding: const EdgeInsets.only(bottom: 150.0),
+          child: FloatingActionButton(
+              child: Icon(
+                Icons.arrow_drop_down,
+                size: 40,
+              ),
+              backgroundColor: Colors.blueGrey.withAlpha(100),
+              elevation: 0,
+              focusElevation: 0,
+              highlightElevation: 0,
+              hoverElevation: 0,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(5.0))),
+              onPressed: () {
+                _scrollController.animateTo(
+                    _scrollController.position.maxScrollExtent,
+                    duration: Duration(seconds: 3),
+                    curve: Curves.ease);
+              })),
       body: Container(
         child: SingleChildScrollView(
+          controller: _scrollController,
           padding: EdgeInsets.fromLTRB(15, 20, 15, 20),
           child: Column(
             children: <Widget>[
-              Text(_returnString(this.widget.data['user'])),
-              FlatButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/verification');
-                },
-                child: Text('Continue'),
+              Text(
+                _returnString(medicallUser),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: FlatButton(
+                      padding: EdgeInsets.all(20),
+                      onPressed: () {
+                        medicallUser.consent = true;
+                        Navigator.of(context).pushNamed('/phoneAuth');
+                      },
+                      color: Colors.green,
+                      child: Text(
+                        'I AGREE',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  )
+                ],
               )
             ],
           ),

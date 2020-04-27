@@ -1,16 +1,19 @@
 import 'dart:io';
-import 'package:Medicall/models/global_nav_key.dart';
+
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FirebaseNotifications {
   FirebaseMessaging _firebaseMessaging;
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   FirebaseUser firebaseUser;
+  MedicallUser medicallUser = MedicallUser();
 
-  setUpFirebase() {
+  setUpFirebase({@required MedicallUser medicallUser}) {
+    this.medicallUser = medicallUser;
     _firebaseMessaging = FirebaseMessaging();
     firebaseCloudMessagingListeners();
   }
@@ -39,11 +42,17 @@ class FirebaseNotifications {
     prefs.setString("requestedRoute", requestedRoute).then((bool success) {
       print('shared pref success');
     });
-    GlobalNavigatorKey.key.currentState.pushNamed('/' + item[0], arguments: {
-      'user': medicallUser,
-      'documentId': item[1],
-      'isRouted': true
-    });
+    Builder(
+      builder: (BuildContext context) {
+        Navigator.of(context).pushNamed('/' + item[0], arguments: {
+          'user': medicallUser,
+          'documentId': item[1],
+          'isRouted': true
+        });
+        return;
+      },
+    );
+
     return;
 
     // showToast('RESUME:' + item.toString(), duration: Duration(seconds: 3));
@@ -57,7 +66,6 @@ class FirebaseNotifications {
 
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
-
         //AppUtil().showAlert('\n \n    ' + msg + '\n \n');
         print('onMessage: $message');
         //_showItemDialog(message);

@@ -2,34 +2,77 @@ import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/History/index.dart';
 import 'package:Medicall/screens/Login/index.dart';
 import 'package:Medicall/screens/PhoneAuth/index.dart';
-import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/screens/StripeConnect/index.dart';
+import 'package:Medicall/secrets.dart';
+import 'package:Medicall/services/stripe_provider.dart';
+import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+/// Builds the signed-in or non signed-in UI, depending on the user snapshot.
+/// This widget should be below the [MaterialApp].
+/// An [AuthWidgetBuilder] ancestor is required for this widget to work.
+
 class LandingPage extends StatelessWidget {
+  const LandingPage({Key key, @required this.userSnapshot}) : super(key: key);
+  final AsyncSnapshot<MedicallUser> userSnapshot;
+
   @override
   Widget build(BuildContext context) {
-    final auth = Provider.of<AuthBase>(context);
-    return StreamBuilder<MedicallUser>(
-      stream: auth.onAuthStateChanged,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.active) {
-          MedicallUser user = snapshot.data;
-          if (user == null) {
-            return LoginPage.create(context);
-          } else if (user.phoneNumber == null) {
-            return AuthScreen.create(context);
+    print("Connection State: ${userSnapshot.connectionState} ");
+    if (userSnapshot.connectionState == ConnectionState.active) {
+      if (userSnapshot.hasData) {
+        try {
+          final userProvider =
+              Provider.of<UserProvider>(context, listen: false);
+          MyStripeProvider _stripeProvider =
+              Provider.of<MyStripeProvider>(context);
+
+          if (userProvider.medicallUser == null) {
+            print('In-Progress');
+          } else {
+            print("Active: ${userProvider.medicallUser.uid}");
+            //setting stripe key once user is logged in
+            _stripeProvider.setPublishableKey(stripeKey);
+            print("Active: stripe key set");
           }
-          return HistoryScreen();
-        } else {
+
+          if (userProvider.medicallUser.phoneNumber == null &&
+              userSnapshot.data.phoneNumber == null) {
+            return PhoneAuthScreen.create(context);
+          }
+
+          if (userProvider.medicallUser != null) {
+            if (userProvider.medicallUser.type == "provider" &&
+                !userProvider.medicallUser.stripeConnectAuthorized) {
+              return StripeConnect.create(context);
+            } else {
+              return HistoryScreen.create(context, true, '');
+            }
+          } else {
+            return Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          }
+        } catch (e) {
           return Scaffold(
             body: Center(
               child: CircularProgressIndicator(),
             ),
-            backgroundColor: Colors.lightBlueAccent,
           );
         }
-      },
+      } else {
+        return LoginPage.create(context);
+      }
+    }
+    print("Waiting: ${userSnapshot.connectionState}");
+
+    return Scaffold(
+      body: Center(
+        child: CircularProgressIndicator(),
+      ),
     );
   }
 }

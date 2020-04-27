@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-String privacy =''' 
+
+String privacy = ''' 
 Note from Medicall: We encourage you to review our Privacy Policy so you feel comfortable with how your information is collected and used in our Service.
 
 INTRODUCTION 
@@ -78,7 +79,6 @@ Cambridge, MA 02138
 
 Thanks again for using Medicall!''';
 
-
 class PrivacyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -86,9 +86,11 @@ class PrivacyScreen extends StatelessWidget {
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: Color.fromRGBO(35, 179, 232, 1),
-        title: Text('Privacy Policy'),
+        title: const Text(
+          'Privacy Policy',
+          style: TextStyle(color: Colors.white),
+        ),
       ),
-      
       body: Container(
         child: SingleChildScrollView(
           padding: EdgeInsets.fromLTRB(15, 20, 15, 20),
@@ -98,4 +100,3 @@ class PrivacyScreen extends StatelessWidget {
     );
   }
 }
-

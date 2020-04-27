@@ -1,3 +1,4 @@
+import 'package:Medicall/util/app_util.dart';
 import 'package:Medicall/util/introduction_screen/model/page_view_model.dart';
 import 'package:Medicall/util/introduction_screen/ui/intro_content.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +32,10 @@ class IntroPage extends StatelessWidget {
                 padding: const EdgeInsets.only(bottom: 70.0),
                 child: SingleChildScrollView(
                   physics: const BouncingScrollPhysics(),
-                  child: IntroContent(page: page),
+                  child: FadeInPlace(
+                    2.0,
+                    IntroContent(page: page),
+                  ),
                 ),
               ),
             ),

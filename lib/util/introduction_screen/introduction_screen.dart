@@ -31,6 +31,9 @@ class IntroductionScreen extends StatefulWidget {
   /// Next button
   final Widget next;
 
+  /// PageViewController
+  final PageController pageController;
+
   /// Is the Skip button should be display
   ///
   /// @Default `false`
@@ -96,6 +99,7 @@ class IntroductionScreen extends StatefulWidget {
     this.onChange,
     this.skip,
     this.next,
+    this.pageController,
     this.showSkipButton = false,
     this.showNextButton = true,
     this.isProgress = true,
@@ -124,7 +128,6 @@ class IntroductionScreen extends StatefulWidget {
 }
 
 class _IntroductionScreenState extends State<IntroductionScreen> {
-  PageController pageController;
   double _currentPage = 0.0;
   bool _isSkipPressed = false;
   bool _isScrolling = false;
@@ -134,7 +137,6 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
     super.initState();
     int initialPage = min(widget.initialPage, widget.pages.length - 1);
     _currentPage = initialPage.toDouble();
-    pageController = PageController(initialPage: initialPage);
   }
 
   void _onNext() {
@@ -151,7 +153,7 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
 
   Future<void> animateScroll(int page) async {
     setState(() => _isScrolling = true);
-    await pageController.animateToPage(
+    await widget.pageController.animateToPage(
       page,
       duration: Duration(milliseconds: widget.animationDuration),
       curve: widget.curve,
@@ -198,7 +200,7 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
           NotificationListener<ScrollNotification>(
             onNotification: _onScroll,
             child: PageView(
-              controller: pageController,
+              controller: widget.pageController,
               physics: widget.freeze
                   ? const NeverScrollableScrollPhysics()
                   : const BouncingScrollPhysics(),
@@ -211,34 +213,34 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
             left: 0.0,
             right: 0.0,
             child: SafeArea(
-              child: Row(
+              child: Stack(
+                alignment: Alignment.bottomCenter,
                 children: [
-                  Expanded(
-                    flex: widget.skipFlex,
-                    child: isSkipBtn
-                        ? skipBtn
-                        : Opacity(opacity: 0.0, child: skipBtn),
+                  Row(
+                    children: <Widget>[
+                      isSkipBtn
+                          ? skipBtn
+                          : Opacity(opacity: 0.0, child: skipBtn),
+                    ],
                   ),
-                  Expanded(
-                    flex: widget.dotsFlex,
-                    child: Center(
-                      child: widget.isProgress
-                          ? DotsIndicator(
-                              dotsCount: widget.pages.length,
-                              position: _currentPage,
-                              decorator: widget.dotsDecorator,
-                            )
-                          : const SizedBox(),
-                    ),
+                  Positioned(
+                    bottom: 17,
+                    child: widget.isProgress
+                        ? DotsIndicator(
+                            dotsCount: widget.pages.length,
+                            position: _currentPage,
+                            decorator: widget.dotsDecorator,
+                          )
+                        : const SizedBox(),
                   ),
-                  Expanded(
-                    flex: widget.nextFlex,
+                  Positioned(
+                    right: 0,
                     child: isLastPage
                         ? doneBtn
                         : widget.showNextButton
                             ? nextBtn
                             : Opacity(opacity: 0.0, child: nextBtn),
-                  ),
+                  )
                 ],
               ),
             ),

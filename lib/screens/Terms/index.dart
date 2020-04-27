@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 String terms = '''
 
 
@@ -146,9 +147,11 @@ class TermsScreen extends StatelessWidget {
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: Color.fromRGBO(35, 179, 232, 1),
-        title: Text('Terms of Use'),
+        title: const Text(
+          'Terms of Use',
+          style: TextStyle(color: Colors.white),
+        ),
       ),
-      
       body: Container(
         child: SingleChildScrollView(
           padding: EdgeInsets.fromLTRB(15, 20, 15, 20),
@@ -158,4 +161,3 @@ class TermsScreen extends StatelessWidget {
     );
   }
 }
-

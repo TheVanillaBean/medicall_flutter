@@ -1,13 +1,14 @@
 import 'dart:ui' as ui;
 
-import 'package:Medicall/common_widgets/platform_exception_alert_dialog.dart';
 import 'package:Medicall/common_widgets/sign_in_button.dart';
 import 'package:Medicall/common_widgets/social_sign_in_button.dart';
-import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/Login/sign_in_state_model.dart';
-import 'package:Medicall/screens/Registration/RegistrationType/index.dart';
+import 'package:Medicall/services/animation_provider.dart';
 import 'package:Medicall/services/auth.dart';
-import 'package:Medicall/util/firebase_notification_handler.dart';
+import 'package:Medicall/services/temp_user_provider.dart';
+import 'package:Medicall/util/app_util.dart';
+import 'package:Medicall/util/apple_sign_in_available.dart';
+import 'package:apple_sign_in/apple_sign_in_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,8 +19,16 @@ class LoginPage extends StatefulWidget {
 
   static Widget create(BuildContext context) {
     final AuthBase auth = Provider.of<AuthBase>(context);
+    final TempUserProvider tempUserProvider =
+        Provider.of<TempUserProvider>(context);
+    final MyAnimationProvider animationProvider =
+        Provider.of<MyAnimationProvider>(context);
     return ChangeNotifierProvider<SignInStateModel>(
-      create: (context) => SignInStateModel(auth: auth),
+      create: (context) => SignInStateModel(
+        auth: auth,
+        tempUserProvider: tempUserProvider,
+        animationProvider: animationProvider,
+      ),
       child: Consumer<SignInStateModel>(
         builder: (_, model, __) => LoginPage(
           model: model,
@@ -38,14 +47,7 @@ class _LoginScreenState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
   final FocusNode _emailFocusNode = FocusNode();
   final FocusNode _passwordFocusNode = FocusNode();
-
   SignInStateModel get model => widget.model;
-
-  @override
-  void initState() {
-    super.initState();
-    FirebaseNotifications().setUpFirebase();
-  }
 
   @override
   void dispose() {
@@ -59,32 +61,49 @@ class _LoginScreenState extends State<LoginPage> {
   Future<void> _submit() async {
     try {
       await model.submit();
-      //Navigator.of(context).pop();
     } on PlatformException catch (e) {
-      PlatformExceptionAlertDialog(
-        title: 'Sign in failed',
-        exception: e,
-      ).show(context);
+      AppUtil().showFlushBar(e, context);
     }
   }
 
   Future<void> _signInWithGoogle(BuildContext context) async {
     try {
-      await model.signInWithGoogle();
+      await model.signInWithGooglePressed(context);
+      if (model.googleAuthModel != null) {
+        model.tempUserProvider.updateWith(
+          email: model.googleAuthModel.email,
+          displayName: model.googleAuthModel.displayName,
+          googleAuthModel: model.googleAuthModel,
+        );
+        _navigateToRegistrationScreen(context);
+      }
     } on PlatformException catch (e) {
-      PlatformExceptionAlertDialog(
-        title: 'Sign in failed',
-        exception: e,
-      ).show(context);
+      AppUtil().showFlushBar(e, context);
     }
   }
 
-  void _createAccountWithEmail(BuildContext context) {
-    Navigator.of(context).push(CupertinoPageRoute(
-      builder: (context) => RegistrationTypeScreen(
-        data: {"user": medicallUser},
-      ),
-    ));
+  Future<void> _signInWithApple(BuildContext context) async {
+    try {
+      await model.signInWithApplePressed(context);
+      if (model.appleSignInModel != null) {
+        model.tempUserProvider.updateWith(
+          email: model.appleSignInModel.email,
+          displayName: model.appleSignInModel.displayName,
+          appleSignInModel: model.appleSignInModel,
+        );
+        _navigateToRegistrationScreen(context);
+      }
+    } catch (e) {
+      AppUtil().showFlushBar(e, context);
+    }
+  }
+
+  void _navigateToRegistrationScreen(BuildContext context) {
+    Navigator.of(context).pushNamed('/registrationType');
+  }
+
+  void _navigateToResetPasswordScreen(BuildContext context) {
+    Navigator.of(context).pushNamed('/reset_password');
   }
 
   void _emailEditingComplete() {
@@ -97,31 +116,35 @@ class _LoginScreenState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: null,
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.dark,
+        sized: false,
         child: SingleChildScrollView(
           child: ConstrainedBox(
             constraints: BoxConstraints.tightFor(
-              height: MediaQueryData.fromWindow(ui.window).size.height,
+              height: MediaQueryData.fromWindow(ui.window).size.height * 1.1,
             ),
-            child: Container(
-              decoration: _buildContainerDecoration(),
-              child: SafeArea(
-                child: GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: () {
-                    FocusScope.of(context).requestFocus(new FocusNode());
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(60, 15, 60, 15),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: _buildChildren(context),
+            child: Stack(
+              children: <Widget>[
+                Positioned.fill(
+                  child: Container(
+                    color: Colors.blueAccent.withAlpha(40),
+                  ),
+                ),
+                Container(
+                  child: SafeArea(
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () {
+                        FocusScope.of(context).requestFocus(new FocusNode());
+                      },
+                      child: Stack(
+                        children: _buildChildren(context),
+                      ),
                     ),
                   ),
                 ),
-              ),
+              ],
             ),
           ),
         ),
@@ -130,52 +153,83 @@ class _LoginScreenState extends State<LoginPage> {
   }
 
   List<Widget> _buildChildren(BuildContext context) {
+    final appleSignInAvailable =
+        Provider.of<AppleSignInAvailable>(context, listen: false);
+    final height = MediaQuery.of(context).size.height;
     return [
-      _buildHeader(context),
-      _buildEmailAuthForm(context),
-      SizedBox(height: 16.0),
-      SignInButton(
-        color: Theme.of(context).colorScheme.primary,
-        textColor: Colors.white,
-        text: "Sign in",
-        onPressed: model.canSubmit ? _submit : null,
-      ),
-      SizedBox(height: 12),
-      Text(
-        "or",
-        style: TextStyle(
-          fontSize: 14.0,
-          color: Colors.black87,
-        ),
-        textAlign: TextAlign.center,
-      ),
-      SizedBox(height: 12),
-      SignInButton(
-        color: Theme.of(context).colorScheme.primaryVariant.withBlue(3000),
-        textColor: Colors.white,
-        text: "Create New Account",
-        onPressed: () => _createAccountWithEmail(context),
-      ),
-      SizedBox(height: 8),
-      SocialSignInButton(
-        imgPath: "assets/images/google-logo.png",
-        text: "Sign in with Google",
-        color: Colors.white,
-        textColor: Colors.black87,
-        onPressed: model.isLoading ? null : () => _signInWithGoogle(context),
+      FadeIn(
+        2,
+        Padding(
+            padding: const EdgeInsets.fromLTRB(60, 15, 60, 15),
+            child: Column(
+              children: <Widget>[
+                _buildHeader(context),
+                SizedBox(height: height * 0.05),
+                _buildEmailAuthForm(context),
+                SizedBox(height: 16.0),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: SignInButton(
+                        color: Theme.of(context).colorScheme.primary,
+                        textColor: Colors.white,
+                        text: "Sign in",
+                        onPressed: model.canSubmit ? _submit : null,
+                      ),
+                    )
+                  ],
+                ),
+                SizedBox(height: 32),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: SignInButton(
+                        color:
+                            Theme.of(context).colorScheme.primary.withBlue(150),
+                        textColor: Colors.white,
+                        text: "Create New Account",
+                        onPressed: () {
+                          _navigateToRegistrationScreen(context);
+                        },
+                      ),
+                    )
+                  ],
+                ),
+                if (appleSignInAvailable.isAvailable) SizedBox(height: 12),
+                if (appleSignInAvailable.isAvailable)
+                  AppleSignInButton(
+                    style: ButtonStyle.black, // style as needed
+                    type: ButtonType.signIn, // style as needed
+                    onPressed: model.isLoading
+                        ? null
+                        : () => _signInWithApple(context),
+                  ),
+                SizedBox(height: 12),
+                SocialSignInButton(
+                  imgPath: "assets/images/google-logo.png",
+                  text: "Sign in with Google",
+                  color: Colors.white,
+                  textColor: Colors.black87,
+                  onPressed:
+                      model.isLoading ? null : () => _signInWithGoogle(context),
+                ),
+                SizedBox(height: 12),
+                InkWell(
+                  child: Text(
+                    'Reset Password',
+                    style: TextStyle(color: Colors.black87),
+                  ),
+                  onTap: () => _navigateToResetPasswordScreen(context),
+                ),
+              ],
+            )),
       ),
     ];
   }
 
   Widget _buildHeader(BuildContext context) {
-    if (model.isLoading) {
-      return Padding(
-        padding: const EdgeInsets.only(bottom: 16.0),
-        child: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -187,11 +241,11 @@ class _LoginScreenState extends State<LoginPage> {
                   height: 1.08,
                   letterSpacing: 2.5,
                   fontWeight: FontWeight.w700,
-                  color: Theme.of(context).colorScheme.secondary)),
+                  color: Theme.of(context).colorScheme.primary)),
         ),
         SizedBox(
-          width: 110,
-          height: 110,
+          width: width * 0.25,
+          height: height * 0.15,
           child: Image.asset(
             'assets/icon/logo_fore.png',
           ),
@@ -204,7 +258,7 @@ class _LoginScreenState extends State<LoginPage> {
                   height: 1.08,
                   letterSpacing: 2.5,
                   fontWeight: FontWeight.w700,
-                  color: Theme.of(context).colorScheme.primary)),
+                  color: Theme.of(context).colorScheme.secondary)),
         )
       ],
     );
@@ -212,16 +266,15 @@ class _LoginScreenState extends State<LoginPage> {
 
   Container _buildEmailAuthForm(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(0, 40, 0, 40),
       child: Column(
         children: <Widget>[
-          _buildEmailTextField(),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.02,
+          Container(
+            height: 90,
+            child: _buildEmailTextField(),
           ),
-          _buildPasswordTextField(),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.02,
+          Container(
+            height: 90,
+            child: _buildPasswordTextField(),
           ),
         ],
       ),
@@ -241,6 +294,8 @@ class _LoginScreenState extends State<LoginPage> {
         color: Color.fromRGBO(80, 80, 80, 1),
       ),
       decoration: InputDecoration(
+        filled: true,
+        fillColor: Colors.white.withAlpha(100),
         labelStyle: TextStyle(
           color: Theme.of(context).colorScheme.onSurface,
         ),
@@ -272,6 +327,8 @@ class _LoginScreenState extends State<LoginPage> {
         hintStyle: TextStyle(
           color: Color.fromRGBO(100, 100, 100, 1),
         ),
+        filled: true,
+        fillColor: Colors.white.withAlpha(100),
         prefixIcon: Icon(
           Icons.email,
           color: Theme.of(context).colorScheme.onSurface.withAlpha(150),
@@ -280,20 +337,6 @@ class _LoginScreenState extends State<LoginPage> {
         hintText: 'john@doe.com',
         errorText: model.emailErrorText,
         enabled: model.isLoading == false,
-      ),
-    );
-  }
-
-  BoxDecoration _buildContainerDecoration() {
-    return BoxDecoration(
-      gradient: LinearGradient(
-        colors: <Color>[
-          const Color.fromRGBO(220, 255, 255, 0.9),
-          const Color.fromRGBO(88, 178, 214, 0.8),
-        ],
-        stops: [0.1, 1],
-        begin: const FractionalOffset(0.0, 0.0),
-        end: const FractionalOffset(0.0, 1.0),
       ),
     );
   }
