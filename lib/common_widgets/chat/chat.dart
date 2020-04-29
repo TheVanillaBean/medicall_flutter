@@ -5,11 +5,11 @@ import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dash_chat/dash_chat.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
-import 'package:dash_chat/dash_chat.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -216,7 +216,7 @@ class _ChatState extends State<Chat> {
                         isUser: msg.user.uid == _medicallUser.uid,
                         message: msg,
                         timeFormat: DateFormat('dd MMM h:mm a'),
-                        messageImageBuilder: (img) {
+                        messageImageBuilder: (img, [msg]) {
                           return GestureDetector(
                             onTap: () {
                               Navigator.push(context,
@@ -230,7 +230,7 @@ class _ChatState extends State<Chat> {
                             ),
                           );
                         },
-                        messageTimeBuilder: (val) {
+                        messageTimeBuilder: (val, [msg]) {
                           return Container(
                             padding: EdgeInsets.fromLTRB(0, 8, 0, 0),
                             child: Text(
