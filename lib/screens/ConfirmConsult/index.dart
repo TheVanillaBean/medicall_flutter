@@ -299,8 +299,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                                                           .then((onValue) {
                                                         _extImageProvider
                                                             .clearImageMemory();
-                                                        _db.newConsult =
-                                                            ConsultData();
+                                                        
                                                         Route route =
                                                             MaterialPageRoute(
                                                                 builder:

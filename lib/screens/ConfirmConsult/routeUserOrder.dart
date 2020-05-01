@@ -179,6 +179,7 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                 FlatButton(
                   color: Theme.of(context).colorScheme.secondaryVariant,
                   onPressed: () {
+                    _db.newConsult = ConsultData();
                     Navigator.of(context).pushReplacementNamed('/history');
                     _db.newConsult = ConsultData();
                   },
