@@ -15,6 +15,7 @@ import 'package:path/path.dart' as path;
 
 abstract class Database {
   Future getConsultDetail(DetailedHistoryState detailedHistoryState);
+  Stream<QuerySnapshot> getConsultPrescriptions(consultId);
   Future<void> getPatientDetail(MedicallUser medicallUser);
   Future<void> setPrescriptionPayment(state, shipTo, shippingAddress);
   Future<void> updatePrescription(consultFormKey);
@@ -23,6 +24,8 @@ abstract class Database {
   getSymptoms(MedicallUser medicallUser);
   getPatientMedicalHistory(MedicallUser medicallUser);
   getConsultQuestions(MedicallUser medicallUser);
+  updatePatientUnreadChat(bool reset);
+  updateProviderUnreadChat(bool reset);
   Stream<QuerySnapshot> getAllProviders();
   Future<DocumentSnapshot> getMedicalHistoryQuestions();
   Future getDiagnosisQuestions(String type);
@@ -105,6 +108,15 @@ class FirestoreDatabase implements Database {
         return consultSnapshot;
       }).catchError((e) => print(e));
     }
+  }
+
+  @override
+  Stream<QuerySnapshot> getConsultPrescriptions(consultId) {
+    return Firestore.instance
+        .collection('consults')
+        .document(consultId)
+        .collection('prescriptions')
+        .snapshots();
   }
 
   Future<DocumentSnapshot> getMedicalHistoryQuestions() {
@@ -338,6 +350,52 @@ class FirestoreDatabase implements Database {
     });
   }
 
+  updatePatientUnreadChat(bool reset) async {
+    consultRef = Firestore.instance
+        .collection('consults')
+        .document(consultSnapshot.documentID);
+    await consultRef.get().then((datasnapshot) async {
+      if (datasnapshot.data != null) {
+        consultSnapshot = datasnapshot;
+      }
+      int unread = consultSnapshot.data.containsKey('patient_unread_chat')
+          ? consultSnapshot.data['patient_unread_chat']
+          : 1;
+      unread++;
+      if (reset) {
+        unread = 0;
+      }
+      consultRef.updateData({'patient_unread_chat': unread}).whenComplete(() {
+        print("patient unread updated " + unread.toString());
+      }).catchError((e) => print(e));
+      return consultSnapshot;
+    }).catchError((e) => print(e));
+  }
+
+  updateProviderUnreadChat(bool reset) async {
+    consultRef = Firestore.instance
+        .collection('consults')
+        .document(consultSnapshot.documentID);
+    await consultRef.get().then((datasnapshot) async {
+      if (datasnapshot.data != null) {
+        consultSnapshot = datasnapshot;
+      }
+      int unread = consultSnapshot.data.containsKey('provider_unread_chat')
+          ? consultSnapshot.data['provider_unread_chat']
+          : 1;
+      print(unread);
+      unread++;
+      print(unread);
+      if (reset) {
+        unread = 0;
+      }
+      consultRef.updateData({'provider_unread_chat': unread}).whenComplete(() {
+        print("provider unread updated " + unread.toString());
+      }).catchError((e) => print(e));
+      return consultSnapshot;
+    }).catchError((e) => print(e));
+  }
+
   Stream getAllUsers() {
     return Firestore.instance.collection('users').snapshots();
   }
@@ -387,8 +445,8 @@ class FirestoreDatabase implements Database {
 
   updateConsultStatus(Choice choice, String uid) {
     consultRef = Firestore.instance
-          .collection('consults')
-          .document(consultSnapshot.documentID);
+        .collection('consults')
+        .document(consultSnapshot.documentID);
     if (consultSnapshot.documentID == consultSnapshot.documentID &&
         consultSnapshot.data['provider_id'] == uid) {
       if (choice.title == 'Done') {
@@ -430,7 +488,7 @@ class FirestoreDatabase implements Database {
       await documentReference.then((datasnapshot) {
         if (datasnapshot.documents.length > 0) {
           hasPayment = true;
-        }else{
+        } else {
           hasPayment = false;
         }
       }).catchError((e) => print(e));

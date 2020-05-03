@@ -15,7 +15,8 @@ class DetailsLandingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    MedicallUser medicallUser = Provider.of<UserProvider>(context, listen: false).medicallUser;
+    MedicallUser medicallUser =
+        Provider.of<UserProvider>(context, listen: false).medicallUser;
     Database db = Provider.of<Database>(context, listen: false);
     Map consultSnapshot = db.consultSnapshot.data;
     return SingleChildScrollView(
@@ -216,6 +217,41 @@ class DetailsLandingScreen extends StatelessWidget {
                           textAlign: TextAlign.center,
                         ),
                       ),
+                      Positioned(
+                        right: 20,
+                        child: StreamBuilder(
+                          stream: db.getConsultPrescriptions(
+                              db.consultSnapshot.documentID),
+                          builder:
+                              (BuildContext context, AsyncSnapshot snapshot) {
+                            if (snapshot.hasError) {
+                              return Text('Error: ${snapshot.error}');
+                            }
+                            switch (snapshot.connectionState) {
+                              case ConnectionState.waiting:
+                                return Center(
+                                  widthFactor: 0.5,
+                                  child: Container(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      backgroundColor: Colors.white,
+                                    ),
+                                  ),
+                                );
+                              default:
+                                return CircleAvatar(
+                                  backgroundColor: Colors.white,
+                                  maxRadius: 15.0,
+                                  child: Text(
+                                    snapshot.data.documents.length.toString(),
+                                    style: TextStyle(color: Colors.blueGrey),
+                                  ),
+                                );
+                            }
+                          },
+                        ),
+                      ),
                     ],
                   )),
             ),
@@ -339,6 +375,40 @@ class DetailsLandingScreen extends StatelessWidget {
                           textAlign: TextAlign.center,
                         ),
                       ),
+                      medicallUser.type == 'provider' &&
+                              consultSnapshot
+                                  .containsKey('provider_unread_chat') &&
+                              consultSnapshot['provider_unread_chat'] > 0
+                          ? Positioned(
+                              right: 20,
+                              child: CircleAvatar(
+                                backgroundColor: Colors.white,
+                                maxRadius: 15.0,
+                                child: Text(
+                                  consultSnapshot['provider_unread_chat']
+                                      .toString(),
+                                  style: TextStyle(color: Colors.blueGrey),
+                                ),
+                              ),
+                            )
+                          : Container(),
+                      medicallUser.type == 'patient' &&
+                              consultSnapshot
+                                  .containsKey('patient_unread_chat') &&
+                              consultSnapshot['patient_unread_chat'] > 0
+                          ? Positioned(
+                              right: 20,
+                              child: CircleAvatar(
+                                backgroundColor: Colors.white,
+                                maxRadius: 15.0,
+                                child: Text(
+                                  consultSnapshot['patient_unread_chat']
+                                      .toString(),
+                                  style: TextStyle(color: Colors.blueGrey),
+                                ),
+                              ),
+                            )
+                          : Container(),
                     ],
                   )),
             ),

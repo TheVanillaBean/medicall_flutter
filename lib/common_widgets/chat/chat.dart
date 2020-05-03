@@ -27,6 +27,7 @@ class _ChatState extends State<Chat> {
   ExtImageProvider _extImageProvider;
 
   final GlobalKey<DashChatState> _chatViewKey = GlobalKey<DashChatState>();
+  final TextEditingController _textController = TextEditingController();
 
   ChatUser user = ChatUser();
 
@@ -62,8 +63,15 @@ class _ChatState extends State<Chat> {
   }
 
   void onSend(ChatMessage message) {
-    print(message.toJson());
+    //print(message.toJson());
     _db.createNewConsultChatMsg(message);
+    if (_medicallUser.type == 'provider') {
+      _db.updatePatientUnreadChat(false);
+    }
+    if (_medicallUser.type == 'patient') {
+      _db.updateProviderUnreadChat(false);
+    }
+    _textController.clear();
     /* setState(() {
       messages = [...messages, message];
       print(messages.length);
@@ -83,6 +91,12 @@ class _ChatState extends State<Chat> {
     _medicallUser = Provider.of<UserProvider>(context).medicallUser;
     _db = Provider.of<Database>(context);
     _extImageProvider = Provider.of<ExtImageProvider>(context);
+    if (_medicallUser.type == 'provider') {
+      _db.updateProviderUnreadChat(true);
+    }
+    if (_medicallUser.type == 'patient') {
+      _db.updatePatientUnreadChat(true);
+    }
     user = ChatUser(
         name: _medicallUser.displayName,
         uid: _medicallUser.uid,
@@ -146,12 +160,14 @@ class _ChatState extends State<Chat> {
                       duration: Duration(milliseconds: 1000),
                       curve: Curves.easeOut);
                 }
+
                 return Container(
                   alignment: Alignment.center,
                   color: Colors.grey.withAlpha(50),
                   child: DashChat(
                     key: _chatViewKey,
                     inverted: false,
+                    textController: _textController,
                     onSend: onSend,
                     user: user,
                     height: ScreenUtil.screenHeightDp -
