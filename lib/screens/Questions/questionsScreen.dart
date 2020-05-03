@@ -219,7 +219,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
       contentPadding: EdgeInsets.zero,
       imagePadding: EdgeInsets.zero,
     );
-
+    //User has medical history set combined list to symptom and upload questions
     if (medicallUser.hasMedicalHistory &&
         !_newMedicalHistory.getnewMedicalHistory()) {
       _combinedList = [
@@ -227,12 +227,13 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
         ..._db.newConsult.uploadQuestions
       ];
     } else {
+      //User has no medical history set title, display medical history questions
       _currentQuestions = "Medical History";
       _combinedList = [
         ..._db.newConsult.historyQuestions,
       ];
     }
-
+    //create form keys for each question
     for (var i = 0; i < _combinedList.length; i++) {
       _globalKeyList['questionKey' + i.toString()] =
           GlobalKey<FormBuilderState>();
@@ -240,6 +241,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
 
     List<PageViewModel> pageViewList = [];
     if (_combinedList != null) {
+      //if questions are for completing diagnosis questions
       if (widget.data == 'diagnosis') {
         _currentQuestions = "Complete Consult";
         for (var i = 0; i < _combinedList.length; i++) {
@@ -261,6 +263,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
           }
         }
       } else {
+        //case for symptom/medical history questions
         for (var i = 0; i < _combinedList.length; i++) {
           if (_combinedList[i]['visible']) {
             pageViewList.add(PageViewModel(
