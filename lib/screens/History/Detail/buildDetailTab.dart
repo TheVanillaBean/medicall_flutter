@@ -960,12 +960,13 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                         future:
                                             db.getPatientDetail(medicallUser),
                                         builder: (BuildContext context,
-                                            AsyncSnapshot<void> snapshot) {
+                                            AsyncSnapshot snapshot) {
                                           if (snapshot.connectionState ==
                                               ConnectionState.done) {
                                             return PrescriptionPayment(
                                               pageScrollCtrl:
                                                   this._scrollController,
+                                              scriptData: snapshot.data,
                                             );
                                           } else {
                                             return Container();

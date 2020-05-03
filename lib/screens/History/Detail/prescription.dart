@@ -427,6 +427,7 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
                               if (snapshot.connectionState ==
                                   ConnectionState.done) {
                                 return PrescriptionPayment(
+                                  scriptData: this.widget.snapshot.data,
                                   pageScrollCtrl: this._scrollController,
                                 );
                               } else {

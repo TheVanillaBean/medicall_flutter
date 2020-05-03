@@ -12,7 +12,9 @@ import 'package:provider/provider.dart';
 
 class PrescriptionPayment extends StatefulWidget {
   final ScrollController pageScrollCtrl;
-  PrescriptionPayment({Key key, @required this.pageScrollCtrl})
+  final Map<String, dynamic> scriptData;
+  PrescriptionPayment(
+      {Key key, @required this.pageScrollCtrl, @required this.scriptData})
       : super(key: key);
 
   @override
@@ -47,9 +49,9 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
     Database db = Provider.of<Database>(context);
     MedicallUser medicallUser = Provider.of<UserProvider>(context).medicallUser;
     MyStripeProvider _stripeProvider = Provider.of<MyStripeProvider>(context);
-    DateTime datePaid = db.consultSnapshot.data['pay_date'] != null
+    DateTime datePaid = widget.scriptData['pay_date'] != null
         ? DateTime.fromMillisecondsSinceEpoch(
-            db.consultSnapshot.data['pay_date'].millisecondsSinceEpoch)
+            widget.scriptData['pay_date'].millisecondsSinceEpoch)
         : null;
 
     onChangedCheckBox = (val) async {
@@ -94,9 +96,9 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
     } else {
       typeAheadController.text = '';
     }
-    return db.consultSnapshot.data.containsKey('medication_name') &&
-            db.consultSnapshot.data['medication_name'].length > 0 &&
-            db.consultSnapshot.data['pay_date'] == null &&
+    return widget.scriptData.containsKey('medication_name') &&
+            widget.scriptData['medication_name'].length > 0 &&
+            widget.scriptData['pay_date'] == null &&
             medicallUser.type == 'patient'
         ? FormBuilder(
             key: prescriptionPaymentKey,
@@ -271,7 +273,7 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
                             height: 60,
                           ),
                           shippingAddress.length > 0 &&
-                                  db.consultSnapshot.data['pay_date'] == null
+                                  widget.scriptData['pay_date'] == null
                               ? FlatButton(
                                   padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
                                   color:
@@ -282,7 +284,7 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
                                       await _stripeProvider.chargePayment(
                                           db.consultSnapshot
                                               .data['consult_price'],
-                                          db.consultSnapshot.data['type'] +
+                                          widget.scriptData['type'] +
                                               ' consult with ' +
                                               db.consultSnapshot
                                                   .data['provider']);
@@ -371,19 +373,19 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
                   borderRadius: BorderRadius.all(Radius.circular(5)),
                 ),
                 child: Text(
-                  db.consultSnapshot.data['shipping_option'] == 'delivery'
+                  widget.scriptData['shipping_option'] == 'delivery'
                       ? 'Payment made:' +
                           ' ' +
                           DateFormat('MM-dd-yyyy hh:mm a').format(datePaid) +
                           '\nShipping option: Home delivery' +
                           '\nShipping Address: ' +
-                          db.consultSnapshot.data['shipping_address']
+                          widget.scriptData['shipping_address']
                       : 'Payment made:' +
                           ' ' +
                           DateFormat('MM-dd-yyyy hh:mm a').format(datePaid) +
                           '\nShipping option: Local Pharmacy' +
                           '\nShipping Address: ' +
-                          db.consultSnapshot.data['shipping_address'],
+                          widget.scriptData['shipping_address'],
                   style: TextStyle(color: Colors.green, fontSize: 16),
                 ),
               )
