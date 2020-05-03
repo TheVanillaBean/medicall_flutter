@@ -283,9 +283,8 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
                                     if (db.hasPayment) {
                                       isLoading = true;
                                       await _stripeProvider.chargePayment(
-                                          db.consultSnapshot
-                                              .data['consult_price'],
-                                          widget.scriptData['type'] +
+                                          widget.scriptData['price'],
+                                          db.consultSnapshot.data['type'] +
                                               ' consult with ' +
                                               db.consultSnapshot
                                                   .data['provider']);
