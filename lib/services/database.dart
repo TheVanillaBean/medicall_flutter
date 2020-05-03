@@ -420,7 +420,7 @@ class FirestoreDatabase implements Database {
     }).catchError((e) => print(e));
   }
 
-  Future<void> _getUserPaymentCard(MedicallUser medicallUser) async {
+  Future _getUserPaymentCard(MedicallUser medicallUser) async {
     if (medicallUser.uid.length > 0) {
       final Future<QuerySnapshot> documentReference = Firestore.instance
           .collection('cards')
@@ -430,6 +430,8 @@ class FirestoreDatabase implements Database {
       await documentReference.then((datasnapshot) {
         if (datasnapshot.documents.length > 0) {
           hasPayment = true;
+        }else{
+          hasPayment = false;
         }
       }).catchError((e) => print(e));
     }

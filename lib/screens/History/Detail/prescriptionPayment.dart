@@ -153,7 +153,7 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
                               softWrap: true,
                             ),
                             Text(
-                              '\$60',
+                              '\$' + widget.scriptData['price'].toString(),
                               style: TextStyle(fontSize: 21),
                             ),
                           ],
@@ -279,6 +279,7 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
                                   color:
                                       Theme.of(context).colorScheme.secondary,
                                   onPressed: () async {
+                                    //if user has payment method
                                     if (db.hasPayment) {
                                       isLoading = true;
                                       await _stripeProvider.chargePayment(
@@ -342,7 +343,7 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
                                       : Text(
                                           db.hasPayment
                                               ? 'Pay for Presciption'
-                                              : 'Add Card',
+                                              : 'Add Card and Pay',
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                             fontSize: 18,
