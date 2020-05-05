@@ -64,6 +64,8 @@ dependencies:
   uuid: ^2.0.4
   fluri: ^1.2.8
 
+dependency_overrides:
+  intl: ^0.16.0
 
 dev_dependencies:
   flutter_test:
