@@ -27,8 +27,22 @@ class DashboardScreen extends StatelessWidget {
 
   const DashboardScreen({@required this.model});
 
+  void _navigateToVisitScreen(BuildContext context) {
+    Navigator.of(context).pushNamed('/start_visit_screen');
+  }
+
+  void _navigateToPrescriptionsScreen(BuildContext context) {
+    Navigator.of(context).pushNamed('/prescriptions');
+  }
+
+  void _navigateToHistory(BuildContext context) {
+    Navigator.of(context).pushNamed('/history');
+  }
+
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
     return Scaffold(
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.dark,
@@ -36,9 +50,9 @@ class DashboardScreen extends StatelessWidget {
         child: Container(
           child: SafeArea(
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: EdgeInsets.all(width * .1),
               child: Column(
-                children: _buildChildren(),
+                children: _buildChildren(context: context, height: height),
               ),
             ),
           ),
@@ -47,15 +61,25 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  List<Widget> _buildChildren() {
+  List<Widget> _buildChildren({BuildContext context, double height}) {
     return [
-      _buildHeader(this.model.userProvider.medicallUser.displayName),
+      _buildHeader(),
+      SizedBox(
+        height: height * 0.15,
+      ),
       Text(
         "Status of active visit:",
         style: TextStyle(
           fontWeight: FontWeight.w300,
           fontSize: 18,
         ),
+      ),
+      SizedBox(
+        height: 8,
+      ),
+      _buildActiveVisitStatusWidget(),
+      SizedBox(
+        height: height * 0.05,
       ),
       CustomFlatButton(
         text: "Start a visit",
@@ -68,13 +92,14 @@ class DashboardScreen extends StatelessWidget {
       CustomFlatButton(
         text: "Previous Visits",
         icon: Icons.home,
+        onPressed: () => _navigateToHistory(context),
       )
     ];
   }
 
-  Widget _buildHeader(String name) {
+  Widget _buildHeader() {
     return Text(
-      "Hello $name!",
+      "Hello ${this.model.userProvider.medicallUser.displayName}!",
       style: TextStyle(
         fontWeight: FontWeight.w300,
         fontSize: 18,
@@ -82,5 +107,22 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildActiveVisitStatusWidget(BuildContext context) {}
+  Widget _buildActiveVisitStatusWidget() {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.blueAccent),
+      ),
+      child: Row(
+        children: <Widget>[
+          Text(
+            "Hello ${this.model.userProvider.medicallUser.displayName}!",
+            style: TextStyle(
+              fontWeight: FontWeight.w300,
+              fontSize: 18,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
