@@ -1,5 +1,5 @@
 import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:Medicall/screens/History/index.dart';
+import 'package:Medicall/screens/Dashboard/dashboard.dart';
 import 'package:Medicall/screens/Login/index.dart';
 import 'package:Medicall/screens/PhoneAuth/index.dart';
 import 'package:Medicall/screens/StripeConnect/index.dart';
@@ -47,7 +47,7 @@ class LandingPage extends StatelessWidget {
                 !userProvider.medicallUser.stripeConnectAuthorized) {
               return StripeConnect.create(context);
             } else {
-              return HistoryScreen.create(context, true, '');
+              return DashboardScreen.create(context);
             }
           } else {
             return Scaffold(
