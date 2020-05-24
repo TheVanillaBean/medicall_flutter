@@ -4,6 +4,7 @@ import 'package:Medicall/services/stripe_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:stripe_payment/stripe_payment.dart';
 
 class PaymentDetail extends StatefulWidget {
   PaymentDetail({Key key}) : super(key: key);
@@ -45,20 +46,21 @@ class _PaymentDetailState extends State<PaymentDetail> {
           actions: <Widget>[
             IconButton(
               icon: Icon(Icons.add),
-              onPressed: () {
-                _stripeProvider.addCard(context);
+              onPressed: () async {
+                PaymentIntent setupIntent = await _stripeProvider.addSource();
+                await _stripeProvider.addCard(setupIntent: setupIntent);
               },
             )
           ],
         ),
 
         //Content of tabs
-        body: StreamBuilder(
-            stream: _db.getUserCardSources(uid: medicallUser.uid),
+        body: FutureBuilder(
+            future: _db.getUserCardSources(medicallUser.uid),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 List<Widget> cardList = [];
-                for (var i = 0; i < snapshot.data.documents.length; i++) {
+                for (var i = 0; i < snapshot.data.length; i++) {
                   cardList.add(
                     Container(
                         decoration: BoxDecoration(
@@ -88,10 +90,7 @@ class _PaymentDetailState extends State<PaymentDetail> {
                               icon: Icon(
                                 Icons.cancel,
                               ),
-                              onPressed: () {
-                                _stripeProvider.removeCard(
-                                    snapshot.data.documents[i].documentID);
-                              },
+                              onPressed: null,
                             ),
                             title: Row(
                               children: <Widget>[

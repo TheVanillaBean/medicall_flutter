@@ -9,6 +9,7 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:stripe_payment/stripe_payment.dart';
 
 class PrescriptionPayment extends StatefulWidget {
   final ScrollController pageScrollCtrl;
@@ -280,62 +281,8 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
                                       Theme.of(context).colorScheme.secondary,
                                   onPressed: () async {
                                     //if user has payment method
-                                    if (db.hasPayment) {
-                                      isLoading = true;
-                                      await _stripeProvider.chargePayment(
-                                          widget.scriptData['price'],
-                                          db.consultSnapshot.data['type'] +
-                                              ' consult with ' +
-                                              db.consultSnapshot
-                                                  .data['provider']);
-                                      await db.setPrescriptionPayment(
-                                          'prescription paid',
-                                          shipTo,
-                                          shippingAddress);
-                                      Navigator.of(context).pop(context);
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          // return object of type Dialog
-                                          return AlertDialog(
-                                            title: Text("Payment Accepted"),
-                                            content: Container(
-                                              height: 70,
-                                              child: Column(
-                                                children: <Widget>[
-                                                  Row(
-                                                    children: <Widget>[
-                                                      Text(
-                                                          "Thank you for your order.")
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            actions: <Widget>[
-                                              // usually buttons at the bottom of the dialog
-                                              FlatButton(
-                                                color: Theme.of(context)
-                                                    .primaryColor,
-                                                child: Text("Continue"),
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                },
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      );
-                                      isLoading = false;
-                                    } else {
-                                      isLoading = true;
-                                      await _stripeProvider
-                                          .addSource()
-                                          .then((String token) async {
-                                        _stripeProvider.addCard(token);
-                                        isLoading = false;
-                                      });
-                                    }
+                                    await payPrescriptionPressed(db,
+                                        _stripeProvider, medicallUser, context);
                                   },
                                   child: isLoading
                                       ? CircularProgressIndicator()
@@ -390,5 +337,59 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
                 ),
               )
             : Container();
+  }
+
+  Future payPrescriptionPressed(Database db, MyStripeProvider _stripeProvider,
+      MedicallUser medicallUser, BuildContext context) async {
+    //if user has payment method
+    if (db.hasPayment) {
+      isLoading = true;
+      List<PaymentMethod> sources =
+          await db.getUserCardSources(medicallUser.uid);
+      _stripeProvider.chargePayment(
+        price: int.parse(widget.scriptData['price']),
+        paymentMethodId: sources.first.id,
+      );
+      await db.setPrescriptionPayment(
+        'prescription paid',
+        shipTo,
+        shippingAddress,
+      );
+      Navigator.of(context).pop(context);
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          // return object of type Dialog
+          return AlertDialog(
+            title: Text("Payment Accepted"),
+            content: Container(
+              height: 70,
+              child: Column(
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[Text("Thank you for your order.")],
+                  ),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              // usually buttons at the bottom of the dialog
+              FlatButton(
+                color: Theme.of(context).primaryColor,
+                child: Text("Continue"),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        },
+      );
+      isLoading = false;
+    } else {
+      isLoading = true;
+      PaymentIntent setupIntent = await _stripeProvider.addSource();
+      await _stripeProvider.addCard(setupIntent: setupIntent);
+    }
   }
 }

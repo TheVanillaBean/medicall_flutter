@@ -8,10 +8,12 @@ import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/models/reg_user_model.dart';
 import 'package:Medicall/screens/History/Detail/history_detail_state.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:dash_chat/dash_chat.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart' as path;
+import 'package:stripe_payment/stripe_payment.dart';
 
 abstract class Database {
   Future getConsultDetail(DetailedHistoryState detailedHistoryState);
@@ -40,7 +42,7 @@ abstract class Database {
       {@required MedicallUser medicallUser});
   updateConsultStatus(Choice choice, String uid);
   sendChatMsg(content, {@required String uid});
-  Stream<QuerySnapshot> getUserCardSources({@required String uid});
+  Future<List<PaymentMethod>> getUserCardSources(String uid);
   String consultChatImageUrl;
   DocumentSnapshot consultSnapshot;
   DocumentReference consultRef;
@@ -224,12 +226,22 @@ class FirestoreDatabase implements Database {
     createNewConsultChatMsg(message);
   }
 
-  Stream<QuerySnapshot> getUserCardSources({@required String uid}) {
-    return Firestore.instance
-        .collection('cards')
-        .document(uid)
-        .collection('sources')
-        .snapshots();
+  Future<List<PaymentMethod>> getUserCardSources(String uid) async {
+    final HttpsCallable callable = CloudFunctions.instance
+        .getHttpsCallable(functionName: 'listPaymentMethods')
+          ..timeout = const Duration(seconds: 30);
+
+    final HttpsCallableResult result = await callable.call();
+
+    List<PaymentMethod> paymentList = List<PaymentMethod>();
+
+    if (result.data['data'].length > 0) {
+      PaymentMethod method = PaymentMethod.fromJson(result.data['data'].first);
+      method.customerId = uid;
+      paymentList.add(method);
+    }
+
+    return paymentList;
   }
 
   Future<void> setPrescriptionPayment(state, shipTo, shippingAddress) {
@@ -479,20 +491,8 @@ class FirestoreDatabase implements Database {
   }
 
   Future _getUserPaymentCard(MedicallUser medicallUser) async {
-    if (medicallUser.uid.length > 0) {
-      final Future<QuerySnapshot> documentReference = Firestore.instance
-          .collection('cards')
-          .document(medicallUser.uid)
-          .collection('sources')
-          .getDocuments();
-      await documentReference.then((datasnapshot) {
-        if (datasnapshot.documents.length > 0) {
-          hasPayment = true;
-        } else {
-          hasPayment = false;
-        }
-      }).catchError((e) => print(e));
-    }
+    List<PaymentMethod> sources = await getUserCardSources(medicallUser.uid);
+    hasPayment = sources.length > 0;
   }
 
   Stream getUserHistoryStream(medicallUser) {
