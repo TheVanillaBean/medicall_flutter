@@ -1,4 +1,4 @@
-import 'package:Medicall/common_widgets/custom_raised_button.dart';
+import 'package:Medicall/common_widgets/flat_button.dart';
 import 'package:Medicall/screens/Dashboard/dashboard_state_model.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/user_provider.dart';
@@ -35,16 +35,10 @@ class DashboardScreen extends StatelessWidget {
         sized: false,
         child: Container(
           child: SafeArea(
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () {
-                FocusScope.of(context).requestFocus(new FocusNode());
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: _buildChildren(context),
-                ),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: _buildChildren(),
               ),
             ),
           ),
@@ -53,10 +47,28 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  List<Widget> _buildChildren(BuildContext context) {
+  List<Widget> _buildChildren() {
     return [
       _buildHeader(this.model.userProvider.medicallUser.displayName),
-      CustomRaisedButton()
+      Text(
+        "Status of active visit:",
+        style: TextStyle(
+          fontWeight: FontWeight.w300,
+          fontSize: 18,
+        ),
+      ),
+      CustomFlatButton(
+        text: "Start a visit",
+        icon: Icons.home,
+      ),
+      CustomFlatButton(
+        text: "Prescriptions",
+        icon: Icons.home,
+      ),
+      CustomFlatButton(
+        text: "Previous Visits",
+        icon: Icons.home,
+      )
     ];
   }
 
@@ -71,6 +83,4 @@ class DashboardScreen extends StatelessWidget {
   }
 
   Widget _buildActiveVisitStatusWidget(BuildContext context) {}
-
-  Widget _buildNavigationButton(BuildContext context) {}
 }
