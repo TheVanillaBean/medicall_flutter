@@ -48,9 +48,8 @@ class AppUtil {
         flushbarStyle: FlushbarStyle.FLOATING,
         borderRadius: 8,
         dismissDirection: FlushbarDismissDirection.HORIZONTAL,
-        overlayColor: Colors.black.withAlpha(100),
+        backgroundColor: Colors.black.withAlpha(100),
         margin: EdgeInsets.all(5),
-        overlayBlur: 2.0,
         icon: Icon(
           Icons.info_outline,
           size: 28.0,

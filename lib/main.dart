@@ -10,6 +10,8 @@ import 'package:Medicall/screens/History/index.dart';
 import 'package:Medicall/screens/LandingPage/auth_widget_builder.dart';
 import 'package:Medicall/screens/LandingPage/index.dart';
 import 'package:Medicall/screens/Login/index.dart';
+import 'package:Medicall/screens/GetStarted/index.dart';
+import 'package:Medicall/screens/GetStarted/zipCodeVerify.dart';
 import 'package:Medicall/screens/Malpractice/malpractice.dart';
 import 'package:Medicall/screens/PasswordReset/index.dart';
 import 'package:Medicall/screens/PhoneAuth/index.dart';
@@ -18,10 +20,12 @@ import 'package:Medicall/screens/Registration/index.dart';
 import 'package:Medicall/screens/Registration/photoIdScreen.dart';
 import 'package:Medicall/screens/Registration/registrationType.dart';
 import 'package:Medicall/screens/SelectProvider/index.dart';
+import 'package:Medicall/screens/SelectProvider/providerDetail.dart';
 import 'package:Medicall/screens/Symptoms/medical_history_state.dart';
 import 'package:Medicall/screens/Terms/index.dart';
 import 'package:Medicall/services/animation_provider.dart';
 import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/flare_provider.dart';
 import 'package:Medicall/services/stripe_provider.dart';
@@ -56,8 +60,7 @@ void main() async {
   await FlutterCrashlytics().initialize();
 
   final appleSignInAvailable = await AppleSignInAvailable.check();
-
-  runZoned<Future<Null>>(() async {
+  runZoned(() {
     runApp(Provider<AppleSignInAvailable>.value(
       value: appleSignInAvailable,
       child: MedicallApp(),
@@ -89,6 +92,9 @@ class MedicallApp extends StatelessWidget {
         ),
         Provider<MyStripeProvider>(
           create: (_) => MyStripeProvider(),
+        ),
+        Provider<Database>(
+          create: (_) => FirestoreDatabase(),
         ),
         Provider<MyAnimationProvider>(
           create: (_) => MyAnimationProvider(),
@@ -130,6 +136,16 @@ class MedicallApp extends StatelessWidget {
               case '/registrationType':
                 return MyCustomRoute(
                   builder: (_) => RegistrationTypeScreen(),
+                  settings: settings,
+                );
+              case '/getStarted':
+                return MyCustomRoute(
+                  builder: (_) => GetStartedScreen(),
+                  settings: settings,
+                );
+              case '/zipCodeVerify':
+                return MyCustomRoute(
+                  builder: (_) => ZipCodeVerifyScreen(),
                   settings: settings,
                 );
               case '/registration':
@@ -180,6 +196,11 @@ class MedicallApp extends StatelessWidget {
               case '/selectProvider':
                 return MyCustomRoute(
                   builder: (_) => SelectProviderScreen(),
+                  settings: settings,
+                );
+              case '/providerDetail':
+                return MyCustomRoute(
+                  builder: (_) => ProviderDetailScreen(),
                   settings: settings,
                 );
               case '/consultReview':

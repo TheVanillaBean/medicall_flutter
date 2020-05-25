@@ -4,6 +4,7 @@ import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/History/doctorSearch.dart';
 import 'package:Medicall/screens/Questions/questionsScreen.dart';
 import 'package:Medicall/screens/Symptoms/medical_history_state.dart';
+import 'package:Medicall/screens/Symptoms/symptomDetail.dart';
 import 'package:Medicall/services/animation_provider.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
@@ -16,7 +17,7 @@ class SymptomsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Database db = Provider.of<Database>(context);
-    MedicallUser medicallUser = Provider.of<UserProvider>(context).medicallUser;
+    MedicallUser medicallUser = MedicallUser();
     void _showDialog() {
       showDialog(
         context: context,
@@ -50,15 +51,15 @@ class SymptomsScreen extends StatelessWidget {
           builder: (BuildContext context) {
             return IconButton(
               onPressed: () {
-                Scaffold.of(context).openDrawer();
+                Navigator.pop(context);
               },
-              icon: Icon(Icons.home),
+              icon: Icon(Icons.arrow_back),
             );
           },
         ),
         centerTitle: true,
         title: Text(
-          'How can doctors help?',
+          'How can we help you today?',
         ),
       ),
       drawer: DrawerMenu(),
@@ -86,6 +87,22 @@ class SymptomsScreen extends StatelessWidget {
               }
               return Column(
                 children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.fromLTRB(25, 10, 25, 10),
+                    child: Column(
+                      children: <Widget>[
+                        Text(
+                          'Visit Fee \$49',
+                          style: TextStyle(color: Colors.black54, fontSize: 16),
+                        ),
+                        SizedBox(height: 5),
+                        Text(
+                          ' This is the price for the doctor\'s services. Prescriptions or in person follow-up care not included.',
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  ),
                   Expanded(
                     flex: 9,
                     child: ListView.builder(
@@ -94,30 +111,6 @@ class SymptomsScreen extends StatelessWidget {
                       itemCount: data.length,
                     ),
                   ),
-                  Expanded(
-                    flex: 2,
-                    child: Container(
-                      padding: EdgeInsets.all(5),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                              'If you already know who your doctor is, tap below'),
-                          FlatButton(
-                            color: Theme.of(context).colorScheme.secondary,
-                            colorBrightness: Brightness.dark,
-                            onPressed: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (context) => DoctorSearch()),
-                              );
-                            },
-                            child: Text('Find my doctor'),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
                 ],
               );
             } else {
@@ -157,35 +150,15 @@ class EntryItem extends StatelessWidget {
     MyAnimationProvider _animationProvider =
         Provider.of<MyAnimationProvider>(context);
     Database db = Provider.of<Database>(context);
-    MedicallUser medicallUser = Provider.of<UserProvider>(context).medicallUser;
+    //MedicallUser medicallUser = Provider.of<UserProvider>(context).medicallUser;
     MedicalHistoryState _newMedicalHistory =
         Provider.of<MedicalHistoryState>(context);
     //_newMedicalHistory.setnewMedicalHistory(false);
     return Stack(
       children: <Widget>[
         root.price != '' && root.title == 'Hairloss'
-            ? Positioned.fill(
-                child: _animationProvider.returnAnimation(
-                    tween: _animationProvider.returnMultiTrackTween([
-                      Colors.blueAccent.withAlpha(20),
-                      Colors.cyanAccent.withAlpha(50),
-                      Colors.cyanAccent.withAlpha(50),
-                      Colors.blueAccent.withAlpha(20)
-                    ]),
-                    margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                    radius: BorderRadius.all(Radius.circular(10))))
-            : root.price != ''
-                ? Positioned.fill(
-                    child: _animationProvider.returnAnimation(
-                        tween: _animationProvider.returnMultiTrackTween([
-                          Colors.greenAccent.withAlpha(50),
-                          Colors.blueAccent.withAlpha(20),
-                          Colors.blueAccent.withAlpha(20),
-                          Colors.greenAccent.withAlpha(50)
-                        ]),
-                        margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                        radius: BorderRadius.all(Radius.circular(10))))
-                : Container(),
+            ? Positioned.fill(child: Container())
+            : root.price != '' ? Container() : Container(),
         Container(
             margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
             padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
@@ -194,9 +167,15 @@ class EntryItem extends StatelessWidget {
                     border: Border.all(color: Colors.transparent),
                   )
                 : BoxDecoration(
-                    border: Border.all(
-                      color: Colors.blueAccent.withAlpha(150),
-                    ),
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey,
+                        offset: Offset(1.0, 1.0),
+                        blurRadius: 3.0,
+                        spreadRadius: 0.0,
+                      ),
+                    ],
                     borderRadius: BorderRadius.all(Radius.circular(10)),
                   ),
             child: ClipRRect(
@@ -210,19 +189,37 @@ class EntryItem extends StatelessWidget {
                       dividerColor: Colors.transparent,
                       accentColor: Colors.black,
                       highlightColor: Colors.transparent),
-                  child: ExpansionTile(
-                    backgroundColor: root.children.isEmpty
-                        ? Colors.transparent
-                        : Colors.blue.withAlpha(15),
-                    trailing: Padding(
-                      padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                      child: Text(
-                        root.price,
-                        style: TextStyle(fontSize: 24),
-                      ),
-                    ),
+                  child: ListTile(
                     key: PageStorageKey<Entry>(root),
-                    children: root.children.map<Widget>(_buildTiles).toList(),
+                    onTap: () async {
+                      if (db.newConsult == null ||
+                          db.newConsult.provider == null) {
+                        db.newConsult = ConsultData();
+                      }
+                      db.newConsult.desc = this.entry.children[0].subtitle;
+                      db.newConsult.price = this.entry.price;
+                      db.newConsult.consultType =
+                          "${root.title[0].toUpperCase()}${root.title.substring(1)}" ==
+                                  'Spot'
+                              ? 'Lesion'
+                              : "${root.title[0].toUpperCase()}${root.title.substring(1)}";
+                      await db.getConsultQuestions();
+                      var medicalHistoryQuestions =
+                          await db.getMedicalHistoryQuestions();
+                      db.newConsult.historyQuestions = medicalHistoryQuestions
+                          .data["medical_history_questions"];
+
+                      db.newConsult.screeningQuestions =
+                          db.consultQuestions.data["screening_questions"];
+
+                      db.newConsult.uploadQuestions =
+                          db.consultQuestions.data["upload_questions"];
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (_) => SymptomDetailScreen()),
+                      );
+                    },
+                    //children: root.children.map<Widget>(_buildTiles).toList(),
                     title: Container(
                       padding: root.children.isEmpty
                           ? EdgeInsets.fromLTRB(0, 0, 0, 0)
@@ -248,139 +245,6 @@ class EntryItem extends StatelessWidget {
                                     fontSize: 12,
                                   ),
                                 ),
-                          root.children.isEmpty
-                              ? Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: <Widget>[
-                                    medicallUser.hasMedicalHistory
-                                        ? Container(
-                                            margin: EdgeInsets.fromLTRB(
-                                                0, 0, 35, 0),
-                                            decoration: BoxDecoration(
-                                              border: Border(
-                                                  top: BorderSide(
-                                                      color: Colors.grey
-                                                          .withAlpha(100))),
-                                            ),
-                                            padding: EdgeInsets.fromLTRB(
-                                                0, 10, 0, 0),
-                                            child: Column(
-                                              children: <Widget>[
-                                                Text(
-                                                  'Change in medical history?',
-                                                  style:
-                                                      TextStyle(fontSize: 12),
-                                                ),
-                                                Row(
-                                                  children: <Widget>[
-                                                    Text(
-                                                      'No',
-                                                      style: TextStyle(
-                                                          fontSize: 14),
-                                                    ),
-                                                    Switch(
-                                                      value: _newMedicalHistory
-                                                          .getnewMedicalHistory(),
-                                                      onChanged: (value) {
-                                                        _newMedicalHistory =
-                                                            _newMedicalHistory
-                                                                .setnewMedicalHistory(
-                                                                    value);
-                                                      },
-                                                      activeTrackColor:
-                                                          Colors.white,
-                                                      activeColor:
-                                                          Theme.of(context)
-                                                              .colorScheme
-                                                              .secondary,
-                                                    ),
-                                                    Text(
-                                                      'Yes',
-                                                      style: TextStyle(
-                                                          fontSize: 14),
-                                                    ),
-                                                  ],
-                                                )
-                                              ],
-                                            ))
-                                        : Container(
-                                            // width:
-                                            //     ScreenUtil.screenWidthDp / 1.8,
-                                            // padding:
-                                            //     EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                            // child: Text(
-                                            //   'You currently have no medical history on file, we will redirect you to your medical history before taking you to the ' +
-                                            //       root.title +
-                                            //       ' questions',
-                                            //   style: TextStyle(
-                                            //       fontSize: 10,
-                                            //       color: Colors.black45),
-                                            // ),
-                                            ),
-                                    RaisedButton(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondaryVariant,
-                                      onPressed: () async {
-                                        if (db.newConsult == null ||
-                                            db.newConsult.provider == null) {
-                                          db.newConsult = ConsultData();
-                                        }
-
-                                        db.newConsult.price = this.entry.price;
-                                        db.newConsult.consultType =
-                                            "${root.title[0].toUpperCase()}${root.title.substring(1)}" ==
-                                                    'Spot'
-                                                ? 'Lesion'
-                                                : "${root.title[0].toUpperCase()}${root.title.substring(1)}";
-                                        await db
-                                            .getConsultQuestions(medicallUser);
-                                        if (!medicallUser.hasMedicalHistory ||
-                                            _newMedicalHistory
-                                                .getnewMedicalHistory()) {
-                                          var medicalHistoryQuestions = await db
-                                              .getMedicalHistoryQuestions();
-                                          db.newConsult.historyQuestions =
-                                              medicalHistoryQuestions.data[
-                                                  "medical_history_questions"];
-                                        }
-
-                                        db.newConsult.screeningQuestions = db
-                                            .consultQuestions
-                                            .data["screening_questions"];
-
-                                        db.newConsult.uploadQuestions = db
-                                            .consultQuestions
-                                            .data["upload_questions"];
-                                        if (!medicallUser.hasMedicalHistory) {
-                                          _showDialog();
-                                        } else {
-                                          if (_newMedicalHistory
-                                              .getnewMedicalHistory()) {
-                                            _newMedicalHistory
-                                                .setnewMedicalHistory(true);
-                                            Navigator.of(context)
-                                                .pushNamed('/questionsScreen');
-                                          } else {
-                                            _newMedicalHistory
-                                                .setnewMedicalHistory(false);
-                                            Navigator.of(context)
-                                                .pushNamed('/questionsScreen');
-                                          }
-                                          //_showMedDialog();
-                                        }
-                                      },
-                                      child: Text(
-                                        'Start',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                            letterSpacing: 0.5),
-                                      ),
-                                    ),
-                                  ],
-                                )
-                              : SizedBox(),
                         ],
                       ),
                     ),

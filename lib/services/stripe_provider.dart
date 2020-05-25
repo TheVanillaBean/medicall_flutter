@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:stripe_payment/stripe_payment.dart';
 
 abstract class StripeProvider {
   void setPublishableKey(stripeKey);
@@ -12,11 +11,11 @@ abstract class StripeProvider {
 
 class MyStripeProvider implements StripeProvider {
   void setPublishableKey(stripeKey) {
-    return StripeSource.setPublishableKey(stripeKey);
+    return stripeKey;
   }
 
   Future<String> addSource() async {
-    return StripeSource.addSource();
+    return Future.value('');
   }
 
   Future<bool> addCard(token) async {

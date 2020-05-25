@@ -8,6 +8,7 @@ import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
 
@@ -61,7 +62,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
       disabledColor: Theme.of(context).buttonColor,
       textColor: Colors.white,
       child: Text(
-        'Continue',
+        'Send Code',
         style: TextStyle(fontSize: 18),
       ),
       onPressed:
@@ -81,7 +82,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
       textAlign: TextAlign.center,
       style: Theme.of(context)
           .textTheme
-          .subhead
+          .subtitle1
           .copyWith(fontSize: 18.0, color: Colors.black),
       decoration: InputDecoration(
         border: OutlineInputBorder(
@@ -110,9 +111,8 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
   }
 
   Widget _buildPhoneAuthBody() {
-    final heightMargin = MediaQuery.of(context).size.height * 0.08;
+    final heightMargin = 10.0;
     return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
         Container(
           margin: EdgeInsets.fromLTRB(0, heightMargin, 0, 16),
@@ -151,7 +151,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
       onChanged: model.updateSMSCode,
       maxLength: 6,
       onSubmitted: (_) => model.updateRefreshing(true, mounted),
-      style: Theme.of(context).textTheme.subhead.copyWith(
+      style: Theme.of(context).textTheme.subtitle1.copyWith(
             fontSize: 32.0,
             color: enabled ? Colors.black : Theme.of(context).buttonColor,
           ),
@@ -202,7 +202,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
   }
 
   Widget _buildSmsAuthBody() {
-    final heightMargin = MediaQuery.of(context).size.height * 0.08;
+    final heightMargin = 15.0;
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
@@ -285,25 +285,17 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
     model.setTempUserProvider(tempUserProvider);
     model.setVerificationStatus(this);
 
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text('Phone Number Verification'),
-      ),
-      body: SafeArea(
-        child: ReactiveRefreshIndicator(
-          onRefresh: _onRefresh,
-          color: Theme.of(context).colorScheme.primary,
-          backgroundColor: Theme.of(context).colorScheme.onPrimary,
-          isRefreshing: model.isRefreshing,
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () {
-              FocusScope.of(context).requestFocus(new FocusNode());
-            },
-            child: _buildBody(),
-          ),
-        ),
+    return ReactiveRefreshIndicator(
+      onRefresh: _onRefresh,
+      color: Theme.of(context).colorScheme.primary,
+      backgroundColor: Theme.of(context).colorScheme.onPrimary,
+      isRefreshing: model.isRefreshing,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          FocusScope.of(context).requestFocus(new FocusNode());
+        },
+        child: _buildBody(),
       ),
     );
   }

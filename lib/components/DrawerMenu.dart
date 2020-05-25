@@ -1,12 +1,8 @@
-import 'dart:convert';
-
-import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class DrawerMenu extends StatelessWidget {
   const DrawerMenu({Key key}) : super(key: key);
@@ -86,12 +82,6 @@ class DrawerMenu extends StatelessWidget {
                             ],
                           ),
                           onTap: () async {
-                            SharedPreferences _thisConsult =
-                                await SharedPreferences.getInstance();
-                            String currentConsultString =
-                                jsonEncode(ConsultData());
-                            await _thisConsult.setString(
-                                "consult", currentConsultString);
                             Navigator.of(context).pop();
                             Navigator.of(context).pushNamed('/symptoms',
                                 arguments: {'user': medicallUser});

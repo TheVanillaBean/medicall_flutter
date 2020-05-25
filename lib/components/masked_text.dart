@@ -59,7 +59,7 @@ class MaskedTextFieldState extends State<MaskedTextField> {
             RegExp(r"^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$"))
       ],
       textAlign: widget.textAlign ?? TextAlign.start,
-      style: widget.style ?? Theme.of(context).textTheme.subhead,
+      style: widget.style ?? Theme.of(context).textTheme.subtitle1,
       onSubmitted: (String text) => widget?.onSubmitted(unmaskedText),
       onChanged: (String text) {
         widget.onChanged(unmaskedText);

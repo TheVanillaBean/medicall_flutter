@@ -63,7 +63,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: const Text('Select Provider'),
+          title: Text('Doctors in your area'),
           // actions: <Widget>[
           //   isLoading
           //       ? IconButton(
@@ -78,70 +78,47 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
           //         ),
           // ],
         ),
-        bottomNavigationBar: FlatButton(
-          padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
-          color: Theme.of(context).colorScheme.secondary,
-          onPressed: () async {
-            if (selectedProvider.length > 0) {
-              //await setConsult();
-              Navigator.of(context).pushNamed('/consultReview');
-            } else {
-              _showMessageDialog();
-            }
-          },
-          child: Text(
-            'CONTINUE',
-            style: TextStyle(
-                color: Theme.of(context).colorScheme.onSecondary,
-                letterSpacing: 2,
-                fontWeight: FontWeight.bold),
-          ),
-        ),
-        body: Column(
-          children: <Widget>[
-            // Expanded(
-            //     flex: 1,
-            //     child: GoogleMap(
-            //         onMapCreated: _onMapCreated,
-            //         myLocationEnabled: false,
-            //         markers: Set<Marker>.of(markers.values),
-            //         initialCameraPosition: CameraPosition(
-            //           target: bounds,
-            //         ))),
-            Expanded(
-                flex: 1,
-                child: SingleChildScrollView(
-                  child: StreamBuilder(
-                      stream: db.getAllProviders(),
-                      builder: (context, snapshot) {
-                        if (!snapshot.hasData) {
-                          return new Text("Loading");
-                        }
-                        var userDocuments = snapshot.data.documents;
-                        List<Widget> historyList = [];
-                        for (var i = 0; i < userDocuments.length; i++) {
-                          if (medicallUser.displayName !=
-                              userDocuments[i].data['name']) {
-                            providers.add(userDocuments[i].data['name']);
-                            historyList.add(Container(
-                              child: ListTile(
-                                contentPadding:
-                                    EdgeInsets.fromLTRB(10, 10, 10, 10),
-                                dense: true,
-                                title: Text(
-                                  StringUtils.getFormattedProviderName(
-                                    firstName:
-                                        userDocuments[i].data['first_name'],
-                                    lastName:
-                                        userDocuments[i].data['last_name'],
-                                    titles: userDocuments[i].data['titles'],
-                                  ),
-                                ),
-                                subtitle: Text(userDocuments[i]
-                                    .data['address']
-                                    .toString()),
-                                trailing: FlatButton(
-                                  onPressed: () {
+        body: Container(
+          color: Colors.white,
+          child: Column(
+            children: <Widget>[
+              // Expanded(
+              //     flex: 1,
+              //     child: GoogleMap(
+              //         onMapCreated: _onMapCreated,
+              //         myLocationEnabled: false,
+              //         markers: Set<Marker>.of(markers.values),
+              //         initialCameraPosition: CameraPosition(
+              //           target: bounds,
+              //         ))),
+              Container(
+                padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
+                child: Text(
+                  'Great news! We are in your area. Check out the dermatologist who can help you today.',
+                  style: TextStyle(color: Colors.grey),
+                ),
+              ),
+              Expanded(
+                  flex: 1,
+                  child: SingleChildScrollView(
+                    child: StreamBuilder(
+                        stream: db.getAllProviders(),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) {
+                            return new Text("Loading");
+                          }
+                          var userDocuments = snapshot.data.documents;
+                          List<Widget> historyList = [];
+                          for (var i = 0; i < userDocuments.length; i++) {
+                            if (medicallUser.displayName !=
+                                userDocuments[i].data['name']) {
+                              providers.add(userDocuments[i].data['name']);
+                              historyList.add(Container(
+                                child: ListTile(
+                                  contentPadding:
+                                      EdgeInsets.fromLTRB(10, 10, 10, 10),
+                                  dense: true,
+                                  onTap: () {
                                     setState(() {
                                       db.newConsult.provider =
                                           userDocuments[i].data['name'];
@@ -153,79 +130,79 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
                                           userDocuments[i].documentID;
                                       db.newConsult.providerProfilePic =
                                           userDocuments[i].data['profile_pic'];
+                                      db.newConsult.providerAddress =
+                                          userDocuments[i].data['address'];
                                       _selectProvider(
                                           userDocuments[i].data['name'],
                                           userDocuments[i].data['titles']);
                                     });
+                                    if (selectedProvider.length > 0) {
+                                      //await setConsult();
+                                      Navigator.of(context)
+                                          .pushNamed('/providerDetail');
+                                    } else {
+                                      _showMessageDialog();
+                                    }
                                   },
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Text(
-                                        'Select',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: 10,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                        ),
-                                      ),
-                                      Icon(
-                                          selectedProvider.toLowerCase() ==
-                                                  userDocuments[i]
-                                                      .data['name']
-                                                      .toString()
-                                                      .toLowerCase()
-                                              ? Icons.radio_button_checked
-                                              : Icons.radio_button_unchecked,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                          size: 20.0)
-                                    ],
+                                  title: Text(
+                                    StringUtils.getFormattedProviderName(
+                                      firstName:
+                                          userDocuments[i].data['first_name'],
+                                      lastName:
+                                          userDocuments[i].data['last_name'],
+                                      titles: userDocuments[i].data['titles'],
+                                    ),
                                   ),
+                                  subtitle: Text(userDocuments[i]
+                                      .data['address']
+                                      .toString()),
+                                  trailing: Container(
+                                    width: 50,
+                                    child: Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: Colors.grey,
+                                      size: 15.0,
+                                    ),
+                                  ),
+                                  leading: userDocuments[i]
+                                          .data
+                                          .containsKey('profile_pic')
+                                      ? CircleAvatar(
+                                          radius: 20,
+                                          backgroundColor:
+                                              Colors.grey.withAlpha(100),
+                                          child: userDocuments[i]
+                                                      .data['profile_pic'] !=
+                                                  null
+                                              ? ClipOval(
+                                                  child: _extImageProvider
+                                                      .returnNetworkImage(
+                                                    userDocuments[i]
+                                                        .data['profile_pic'],
+                                                    width: 100,
+                                                    height: 100,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                )
+                                              : Icon(
+                                                  Icons.account_circle,
+                                                  size: 40,
+                                                  color: Colors.grey,
+                                                ))
+                                      : Icon(
+                                          Icons.account_circle,
+                                          size: 40,
+                                          color: Colors.grey,
+                                        ),
                                 ),
-                                leading: userDocuments[i]
-                                        .data
-                                        .containsKey('profile_pic')
-                                    ? CircleAvatar(
-                                        radius: 20,
-                                        backgroundColor:
-                                            Colors.grey.withAlpha(100),
-                                        child: userDocuments[i]
-                                                    .data['profile_pic'] !=
-                                                null
-                                            ? ClipOval(
-                                                child: _extImageProvider
-                                                    .returnNetworkImage(
-                                                  userDocuments[i]
-                                                      .data['profile_pic'],
-                                                  width: 100,
-                                                  height: 100,
-                                                  fit: BoxFit.cover,
-                                                ),
-                                              )
-                                            : Icon(
-                                                Icons.account_circle,
-                                                size: 40,
-                                                color: Colors.grey,
-                                              ))
-                                    : Icon(
-                                        Icons.account_circle,
-                                        size: 40,
-                                        color: Colors.grey,
-                                      ),
-                              ),
-                            ));
+                              ));
+                            }
                           }
-                        }
-                        return Column(children: historyList);
-                      }),
-                ))
-          ],
+                          return Column(children: historyList);
+                        }),
+                  ))
+            ],
+          ),
         ));
   }
 

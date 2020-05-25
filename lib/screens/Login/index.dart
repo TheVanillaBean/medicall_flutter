@@ -18,11 +18,11 @@ class LoginPage extends StatefulWidget {
   final SignInStateModel model;
 
   static Widget create(BuildContext context) {
-    final AuthBase auth = Provider.of<AuthBase>(context);
+    final AuthBase auth = Provider.of<AuthBase>(context, listen: false);
     final TempUserProvider tempUserProvider =
-        Provider.of<TempUserProvider>(context);
+        Provider.of<TempUserProvider>(context, listen: false);
     final MyAnimationProvider animationProvider =
-        Provider.of<MyAnimationProvider>(context);
+        Provider.of<MyAnimationProvider>(context, listen: false);
     return ChangeNotifierProvider<SignInStateModel>(
       create: (context) => SignInStateModel(
         auth: auth,
@@ -165,6 +165,27 @@ class _LoginScreenState extends State<LoginPage> {
               children: <Widget>[
                 _buildHeader(context),
                 SizedBox(height: height * 0.05),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: FlatButton(
+                        color: Colors.transparent,
+                        textColor: Colors.blue,
+                        padding: EdgeInsets.all(20),
+                        child: Text(
+                          "First time here?",
+                          style: TextStyle(
+                              fontSize: 18,
+                              color: Theme.of(context).colorScheme.primary),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pushNamed('/getStarted');
+                        },
+                      ),
+                    )
+                  ],
+                ),
+                SizedBox(height: 20),
                 _buildEmailAuthForm(context),
                 SizedBox(height: 16.0),
                 Row(
@@ -180,21 +201,15 @@ class _LoginScreenState extends State<LoginPage> {
                   ],
                 ),
                 SizedBox(height: 32),
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: SignInButton(
-                        color:
-                            Theme.of(context).colorScheme.primary.withBlue(150),
-                        textColor: Colors.white,
-                        text: "Create New Account",
-                        onPressed: () {
-                          _navigateToRegistrationScreen(context);
-                        },
-                      ),
-                    )
-                  ],
+                SocialSignInButton(
+                  imgPath: "assets/images/google-logo.png",
+                  text: "Sign in with Google",
+                  color: Colors.white,
+                  textColor: Colors.black87,
+                  onPressed:
+                      model.isLoading ? null : () => _signInWithGoogle(context),
                 ),
+                SizedBox(height: 12),
                 if (appleSignInAvailable.isAvailable) SizedBox(height: 12),
                 if (appleSignInAvailable.isAvailable)
                   AppleSignInButton(
@@ -204,15 +219,6 @@ class _LoginScreenState extends State<LoginPage> {
                         ? null
                         : () => _signInWithApple(context),
                   ),
-                SizedBox(height: 12),
-                SocialSignInButton(
-                  imgPath: "assets/images/google-logo.png",
-                  text: "Sign in with Google",
-                  color: Colors.white,
-                  textColor: Colors.black87,
-                  onPressed:
-                      model.isLoading ? null : () => _signInWithGoogle(context),
-                ),
                 SizedBox(height: 12),
                 InkWell(
                   child: Text(
