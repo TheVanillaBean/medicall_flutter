@@ -1,6 +1,7 @@
 import 'package:Medicall/screens/PhoneAuth/index.dart';
 import 'package:Medicall/screens/PhoneAuth/phone_auth_state_model.dart';
 import 'package:Medicall/secrets.dart' as secrets;
+import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +23,7 @@ class RegistrationScreen extends StatefulWidget {
 class _RegistrationScreenState extends State<RegistrationScreen> {
   final GlobalKey<FormBuilderState> _userRegKey = GlobalKey<FormBuilderState>();
   final TextEditingController _typeAheadController = TextEditingController();
-
+  final phoneAuth = PhoneAuthStateModel(auth: Auth());
   var data;
   bool autoValidate = true;
   bool readOnly = false;
@@ -135,7 +136,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           if (!this._addressList.contains(this._typeAheadController.text)) {
             this._typeAheadController.clear();
           }
-          var tssss = PhoneAuthStateModel;
           bool successfullySaveForm =
               _userRegKey.currentState.saveAndValidate();
           if (successfullySaveForm &&
@@ -597,7 +597,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     FormBuilderValidators.required(),
                   ],
                 ),
-                Container(child: PhoneAuthScreen.create(context)),
+                Container(
+                    child: PhoneAuthScreen(
+                  model: phoneAuth,
+                )),
               ],
             ),
           ),
