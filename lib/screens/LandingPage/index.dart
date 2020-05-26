@@ -39,7 +39,7 @@ class LandingPage extends StatelessWidget {
 
           if (userProvider.medicallUser.phoneNumber == null &&
               userSnapshot.data.phoneNumber == null) {
-            return PhoneAuthScreen.create(context);
+            return PhoneAuthScreen.create(context, null);
           }
 
           if (userProvider.medicallUser != null) {

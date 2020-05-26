@@ -17,10 +17,11 @@ class PhoneAuthScreen extends StatefulWidget {
 
   const PhoneAuthScreen({@required this.model});
 
-  static Widget create(BuildContext context) {
-    final AuthBase auth = Provider.of<AuthBase>(context, listen: false);
+  static Widget create(
+      BuildContext context, GlobalKey<FormBuilderState> regKey) {
+    final AuthBase auth = Provider.of<AuthBase>(context);
     return ChangeNotifierProvider<PhoneAuthStateModel>(
-      create: (context) => PhoneAuthStateModel(auth: auth),
+      create: (context) => PhoneAuthStateModel(auth: auth, userRegKey: regKey),
       child: Consumer<PhoneAuthStateModel>(
         builder: (_, model, __) => PhoneAuthScreen(
           model: model,
@@ -62,11 +63,39 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
       disabledColor: Theme.of(context).buttonColor,
       textColor: Colors.white,
       child: Text(
-        'Send Code',
+        'Continue',
         style: TextStyle(fontSize: 18),
       ),
-      onPressed:
-          (condition) ? () => model.updateRefreshing(true, mounted) : null,
+      onPressed: (condition)
+          ? () {
+              bool successfullySaveForm =
+                  widget.model.userRegKey.currentState.saveAndValidate();
+              if (successfullySaveForm &&
+                      widget.model.userRegKey.currentState
+                          .value['Terms and conditions']
+                  //     &&
+                  // widget.model.userRegKey.currentState
+                  //     .value['accept_privacy_switch']
+                  ) {
+                updateUserWithFormData(tempUserProvider);
+                model.updateRefreshing(true, mounted);
+                //Navigator.of(context).pushNamed("/photoID");
+              } else {
+                if (!widget.model.userRegKey.currentState
+                    .value['Terms and conditions']) {
+                  AppUtil().showFlushBar(
+                      'Please accept the "Terms & Conditions" to continue.',
+                      context);
+                }
+                // if (!widget.model.userRegKey.currentState
+                //     .value['accept_privacy_switch']) {
+                //   AppUtil().showFlushBar(
+                //       'Please accept the "Privacy Policy" to continue.',
+                //       context);
+                // }
+              }
+            }
+          : null,
     );
   }
 
@@ -77,7 +106,9 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
       autocorrect: false,
       keyboardType: TextInputType.phone,
       maxLength: 13,
-      onSubmitted: (_) => model.updateRefreshing(true, mounted),
+      onSubmitted: (_) {
+        model.updateRefreshing(true, mounted);
+      },
       onChanged: model.updatePhoneNumber,
       textAlign: TextAlign.center,
       style: Theme.of(context)
@@ -112,31 +143,34 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
 
   Widget _buildPhoneAuthBody() {
     final heightMargin = 10.0;
-    return Column(
-      children: <Widget>[
-        Container(
-          margin: EdgeInsets.fromLTRB(0, heightMargin, 0, 16),
-          padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-          child: Text(
-            "We'll send an SMS message to verify your identity, please enter your phone number below!",
-            style: decorationStyle,
-            textAlign: TextAlign.center,
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.fromLTRB(20, 0, 20, heightMargin),
-          child: _buildPhoneNumberInput(),
-        ),
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: _buildInputButton(
-                  model.status == AuthStatus.STATE_INITIALIZED &&
-                      model.canSubmitPhoneNumber),
+    return Container(
+      height: 500,
+      child: Column(
+        children: <Widget>[
+          Container(
+            margin: EdgeInsets.fromLTRB(0, heightMargin, 0, 16),
+            padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+            child: Text(
+              "We'll send an SMS message to verify your identity, please enter your phone number below!",
+              style: decorationStyle,
+              textAlign: TextAlign.center,
             ),
-          ],
-        )
-      ],
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(20, 0, 20, heightMargin),
+            child: _buildPhoneNumberInput(),
+          ),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: _buildInputButton(
+                    model.status == AuthStatus.STATE_INITIALIZED &&
+                        model.canSubmitPhoneNumber),
+              ),
+            ],
+          )
+        ],
+      ),
     );
   }
 
@@ -150,7 +184,9 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
       controller: smsCodeController,
       onChanged: model.updateSMSCode,
       maxLength: 6,
-      onSubmitted: (_) => model.updateRefreshing(true, mounted),
+      onSubmitted: (_) {
+        model.updateRefreshing(true, mounted);
+      },
       style: Theme.of(context).textTheme.subtitle1.copyWith(
             fontSize: 32.0,
             color: enabled ? Colors.black : Theme.of(context).buttonColor,
@@ -172,6 +208,23 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
         enabled: enabled,
       ),
     );
+  }
+
+  void updateUserWithFormData(TempUserProvider tempUserProvider) {
+    tempUserProvider.updateWith(
+      password: this.password,
+      email: this.email,
+      terms: this.terms,
+      policy: this.policy,
+      consent: this.consent,
+    );
+    // if (tempUserProvider.medicallUser.type == 'provider') {
+    //   tempUserProvider.updateWith(
+    //       titles: this.titles,
+    //       npi: this.npi,
+    //       medLicense: this.medLicense,
+    //       medLicenseState: this.medLicenseState);
+    // }
   }
 
   Widget _buildResendSmsWidget() {
@@ -281,7 +334,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
 
   @override
   Widget build(BuildContext context) {
-    tempUserProvider = Provider.of<TempUserProvider>(context, listen: false);
+    tempUserProvider = Provider.of<TempUserProvider>(context);
     model.setTempUserProvider(tempUserProvider);
     model.setVerificationStatus(this);
 
@@ -307,5 +360,29 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
   @override
   void updateStatus(String msg) {
     _showFlushBarMessage(msg);
+  }
+
+  String get password {
+    return widget.model.userRegKey.currentState.value['Password']
+        .toString()
+        .trim();
+  }
+
+  String get email {
+    return widget.model.userRegKey.currentState.value['Email']
+        .toString()
+        .trim();
+  }
+
+  bool get terms {
+    return widget.model.userRegKey.currentState.value['Terms and conditions'];
+  }
+
+  bool get policy {
+    return widget.model.userRegKey.currentState.value['accept_privacy_switch'];
+  }
+
+  bool get consent {
+    return widget.model.userRegKey.currentState.value['accept_consent'];
   }
 }

@@ -129,41 +129,41 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 'Protect your visit Information',
               ),
       ),
-      bottomNavigationBar: FlatButton(
-        color: Theme.of(context).colorScheme.primary,
-        padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
-        onPressed: () {
-          if (!this._addressList.contains(this._typeAheadController.text)) {
-            this._typeAheadController.clear();
-          }
-          bool successfullySaveForm =
-              _userRegKey.currentState.saveAndValidate();
-          if (successfullySaveForm &&
-              _userRegKey.currentState.value['Terms and conditions'] &&
-              _userRegKey.currentState.value['accept_privacy_switch']) {
-            updateUserWithFormData(tempUserProvider);
-            Navigator.of(context).pushNamed("/photoID");
-          } else {
-            if (!_userRegKey.currentState.value['Terms and conditions']) {
-              AppUtil().showFlushBar(
-                  'Please accept the "Terms & Conditions" to continue.',
-                  context);
-            }
-            if (!_userRegKey.currentState.value['accept_privacy_switch']) {
-              AppUtil().showFlushBar(
-                  'Please accept the "Privacy Policy" to continue.', context);
-            }
-          }
-        }, // Switch tabs
+      // bottomNavigationBar: FlatButton(
+      //   color: Theme.of(context).colorScheme.primary,
+      //   padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
+      //   onPressed: () {
+      //     if (!this._addressList.contains(this._typeAheadController.text)) {
+      //       this._typeAheadController.clear();
+      //     }
+      //     bool successfullySaveForm =
+      //         _userRegKey.currentState.saveAndValidate();
+      //     if (successfullySaveForm &&
+      //         _userRegKey.currentState.value['Terms and conditions'] &&
+      //         _userRegKey.currentState.value['accept_privacy_switch']) {
+      //       updateUserWithFormData(tempUserProvider);
+      //       Navigator.of(context).pushNamed("/photoID");
+      //     } else {
+      //       if (!_userRegKey.currentState.value['Terms and conditions']) {
+      //         AppUtil().showFlushBar(
+      //             'Please accept the "Terms & Conditions" to continue.',
+      //             context);
+      //       }
+      //       if (!_userRegKey.currentState.value['accept_privacy_switch']) {
+      //         AppUtil().showFlushBar(
+      //             'Please accept the "Privacy Policy" to continue.', context);
+      //       }
+      //     }
+      //   }, // Switch tabs
 
-        child: Text(
-          'CONTINUE',
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onPrimary,
-            letterSpacing: 2,
-          ),
-        ),
-      ),
+      //   child: Text(
+      //     'CONTINUE',
+      //     style: TextStyle(
+      //       color: Theme.of(context).colorScheme.onPrimary,
+      //       letterSpacing: 2,
+      //     ),
+      //   ),
+      // ),
       body: Container(
         child: SingleChildScrollView(
           padding: EdgeInsets.fromLTRB(15, 20, 15, 20),
@@ -598,36 +598,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   ],
                 ),
                 Container(
-                    child: PhoneAuthScreen(
-                  model: phoneAuth,
-                )),
+                  child: PhoneAuthScreen.create(context, _userRegKey),
+                )
               ],
             ),
           ),
         ),
       ),
     );
-  }
-
-  void updateUserWithFormData(TempUserProvider tempUserProvider) {
-    tempUserProvider.updateWith(
-        firstName: this.firstName,
-        lastName: this.lastName,
-        displayName: this.displayName,
-        password: this.password,
-        gender: this.gender,
-        email: this.email,
-        terms: this.terms,
-        policy: this.policy,
-        consent: this.consent,
-        address: this.address);
-    if (tempUserProvider.medicallUser.type == 'provider') {
-      tempUserProvider.updateWith(
-          titles: this.titles,
-          npi: this.npi,
-          medLicense: this.medLicense,
-          medLicenseState: this.medLicenseState);
-    }
   }
 
   String get displayName {
@@ -642,29 +620,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     return _userRegKey.currentState.value['Last name'].toString().trim();
   }
 
-  String get password {
-    return _userRegKey.currentState.value['Password'].toString().trim();
-  }
 
   String get gender {
     return _userRegKey.currentState.value['Gender'];
   }
 
-  String get email {
-    return _userRegKey.currentState.value['Email'].toString().trim();
-  }
-
-  bool get terms {
-    return _userRegKey.currentState.value['Terms and conditions'];
-  }
-
-  bool get policy {
-    return _userRegKey.currentState.value['accept_privacy_switch'];
-  }
-
-  bool get consent {
-    return _userRegKey.currentState.value['accept_consent'];
-  }
+ 
 
   String get titles {
     return _userRegKey.currentState.value['Medical Titles'].toString().trim();

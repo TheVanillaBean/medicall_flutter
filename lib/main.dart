@@ -130,7 +130,7 @@ class MedicallApp extends StatelessWidget {
                 );
               case '/phoneAuth':
                 return MyCustomRoute(
-                  builder: (_) => PhoneAuthScreen.create(context),
+                  builder: (_) => PhoneAuthScreen.create(context, null),
                   settings: settings,
                 );
               case '/registrationType':
