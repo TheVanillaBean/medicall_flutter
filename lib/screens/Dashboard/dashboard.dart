@@ -28,7 +28,7 @@ class DashboardScreen extends StatelessWidget {
   const DashboardScreen({@required this.model});
 
   void _navigateToVisitScreen(BuildContext context) {
-    Navigator.of(context).pushNamed('/start_visit_screen');
+    Navigator.of(context).pushNamed('/symptoms');
   }
 
   void _navigateToPrescriptionsScreen(BuildContext context) {
@@ -68,7 +68,7 @@ class DashboardScreen extends StatelessWidget {
         height: height * 0.15,
       ),
       Text(
-        "Status of active visit:",
+        "No current consults...",
         style: TextStyle(
           fontWeight: FontWeight.w300,
           fontSize: 18,
@@ -77,17 +77,18 @@ class DashboardScreen extends StatelessWidget {
       SizedBox(
         height: 8,
       ),
-      _buildActiveVisitStatusWidget(),
       SizedBox(
         height: height * 0.05,
       ),
       CustomFlatButton(
         text: "Start a visit",
         icon: Icons.home,
+        onPressed: () => _navigateToVisitScreen(context),
       ),
       CustomFlatButton(
         text: "Prescriptions",
         icon: Icons.home,
+        onPressed: () => _navigateToPrescriptionsScreen(context),
       ),
       CustomFlatButton(
         text: "Previous Visits",
@@ -115,7 +116,7 @@ class DashboardScreen extends StatelessWidget {
       child: Row(
         children: <Widget>[
           Text(
-            "Hello ${this.model.userProvider.medicallUser.displayName}!",
+            "No current consults.",
             style: TextStyle(
               fontWeight: FontWeight.w300,
               fontSize: 18,
