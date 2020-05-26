@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
@@ -9,7 +7,6 @@ import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 String currTab = 'Search History';
 Orientation currentOrientation;
@@ -321,10 +318,7 @@ class CustomSearchDelegate extends SearchDelegate {
 
 setConsult(
     _consult, selectedProvider, providerTitles, providerProfilePic) async {
-  SharedPreferences _thisConsult = await SharedPreferences.getInstance();
   _consult.provider = selectedProvider;
   _consult.providerTitles = providerTitles;
   _consult.providerProfilePic = providerProfilePic;
-  String currentConsultString = jsonEncode(_consult);
-  await _thisConsult.setString("consult", currentConsultString);
 }

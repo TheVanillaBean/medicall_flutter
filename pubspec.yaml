@@ -11,16 +11,12 @@ dependencies:
   flutter:
     sdk: flutter
   #firebase
-  firebase_core: 0.4.4+3
-  firebase_auth:
-    git:
-      url: https://github.com/FirebaseExtended/flutterfire.git
-      ref: 4d7b2bdd7fbdee65551754968b140653ea16128f
-      path: packages/firebase_auth/firebase_auth
-  cloud_firestore: 0.13.4+2
-  firebase_messaging: 6.0.13
+  firebase_core: ^0.4.4+3
+  firebase_auth: ^0.16.0
+  cloud_firestore: ^0.13.5
+  firebase_messaging: ^6.0.15
   cloud_functions: ^0.4.2+3
-  firebase_storage: 3.1.1
+  firebase_storage: ^3.1.5
   firebase_analytics: ^5.0.11
   flutter_crashlytics: ^1.0.0
   #apple
@@ -38,9 +34,8 @@ dependencies:
   flutter_linkify: ^2.1.0
   location: ^2.3.5
   http: ^0.12.0
-  flutter_datetime_picker: ^1.3.5
+  flutter_datetime_picker: ^1.3.8
   json_serializable: ^2.2.1
-  shared_preferences: ^0.5.6+2
   flutter_auth_buttons: ^0.3.1
   flutter_form_builder: '3.6.0'
   flutter_typeahead: ^1.7.0
@@ -48,8 +43,8 @@ dependencies:
   dots_indicator: ^1.0.0
   extended_image: ^0.8.0
   #image_picker: ^0.6.3+1
-  multi_image_picker: ^4.6.1
-  image_picker: ^0.6.3+1
+  multi_image_picker: ^4.6.7
+  image_picker: ^0.6.6+1
   #notifications
   flushbar: ^1.10.4
   #flutter_alert: ^0.4.0

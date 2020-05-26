@@ -14,6 +14,7 @@ class SignInStateModel with EmailAndPasswordValidators, ChangeNotifier {
   bool autoValidate;
   bool isLoading;
   bool submitted;
+  bool hasUserLoggedIn = false;
   GoogleAuthModel googleAuthModel;
   AppleSignInModel appleSignInModel;
   final AuthBase auth;

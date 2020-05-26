@@ -4,11 +4,9 @@ import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class FirebaseNotifications {
   FirebaseMessaging _firebaseMessaging;
-  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   FirebaseUser firebaseUser;
   MedicallUser medicallUser = MedicallUser();
 
@@ -21,27 +19,22 @@ class FirebaseNotifications {
   _navigateToItemHistoryDetailOnLaunch(data) async {
     //var decodedUser = json.decode(data['data'].toString());
     var item = data['screen'].split('/');
-    final SharedPreferences prefs = await _prefs;
     final String requestedRoute = item.toString();
+    print('this is the requested route on launch:' + requestedRoute);
     //Navigator.pushReplacementNamed(scaffoldKey, '/login');
     //showToast('LAUNCH:' + item.toString(), duration: Duration(seconds: 3));
-    prefs.setString("requestedRoute", requestedRoute).then((bool success) {
-      print('shared pref success');
-    });
+    
     return;
   }
 
   _navigateToItemHistoryDetailOnResume(data) async {
     //var decodedUser = json.decode(data['data'].toString());
     var item = data['screen'].split('/');
-    final SharedPreferences prefs = await _prefs;
     final String requestedRoute = item.toString();
     //Navigator.pushReplacementNamed(scaffoldKey, '/login');
 
     //showToast('RESUME:' + item.toString(), duration: Duration(seconds: 3));
-    prefs.setString("requestedRoute", requestedRoute).then((bool success) {
-      print('shared pref success');
-    });
+    print('Navigate to this requested route:' + requestedRoute);
     Builder(
       builder: (BuildContext context) {
         Navigator.of(context).pushNamed('/' + item[0], arguments: {

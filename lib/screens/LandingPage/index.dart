@@ -1,6 +1,6 @@
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/Dashboard/dashboard.dart';
-import 'package:Medicall/screens/Login/index.dart';
+import 'package:Medicall/screens/GetStarted/index.dart';
 import 'package:Medicall/screens/PhoneAuth/index.dart';
 import 'package:Medicall/screens/StripeConnect/index.dart';
 import 'package:Medicall/secrets.dart';
@@ -64,7 +64,7 @@ class LandingPage extends StatelessWidget {
           );
         }
       } else {
-        return LoginPage.create(context);
+        return GetStartedScreen();
       }
     }
     print("Waiting: ${userSnapshot.connectionState}");

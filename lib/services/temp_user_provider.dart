@@ -181,7 +181,6 @@ class TempUserProvider {
       "profile_pic": medicallUser.profilePic,
       "gov_id": medicallUser.govId,
       "dev_tokens": medicallUser.devTokens,
-      "type": medicallUser.type,
     };
     if (medicallUser.type == 'provider') {
       data['titles'] = medicallUser.titles;

@@ -34,7 +34,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
   final GlobalKey<FormBuilderState> consultFormKey =
       GlobalKey<FormBuilderState>();
   final _scrollController = ScrollController();
-  var db;
+  Database db;
   MedicallUser medicallUser;
   @override
   void initState() {
@@ -79,7 +79,8 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                       ),
                     ),
                     onTap: () async {
-                      String url = consultSnapshot['education'][index];
+                      String url =
+                          consultSnapshot['education'][index].split('-')[0];
 
                       if (await canLaunch(url)) {
                         await launch(
@@ -966,7 +967,8 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                             return PrescriptionPayment(
                                               pageScrollCtrl:
                                                   this._scrollController,
-                                              scriptData: snapshot.data,
+                                              scriptData:
+                                                  this.db.consultSnapshot.data,
                                             );
                                           } else {
                                             return Container();

@@ -25,7 +25,7 @@ abstract class Database {
   getUserMedicalHistory(MedicallUser medicallUser);
   getSymptoms(MedicallUser medicallUser);
   getPatientMedicalHistory(MedicallUser medicallUser);
-  getConsultQuestions(MedicallUser medicallUser);
+  getConsultQuestions();
   updatePatientUnreadChat(bool reset);
   updateProviderUnreadChat(bool reset);
   Stream<QuerySnapshot> getAllProviders();
@@ -526,17 +526,15 @@ class FirestoreDatabase implements Database {
   }
 
   Future<dynamic> getSymptoms(MedicallUser medicallUser) async {
-    if (medicallUser.uid.length > 0) {
-      userMedicalRecord = await Firestore.instance
-          .collection('medical_history')
-          .document(medicallUser.uid)
-          .get();
-      return Firestore.instance
-          .collection('services')
-          .document('dermatology')
-          .collection('symptoms')
-          .getDocuments();
-    }
+    // userMedicalRecord = await Firestore.instance
+    //       .collection('medical_history')
+    //       .document(medicallUser.uid)
+    //       .get();
+    return Firestore.instance
+        .collection('services')
+        .document('dermatology')
+        .collection('symptoms')
+        .getDocuments();
   }
 
   Future<QuerySnapshot> getUserSources({@required String uid}) {
@@ -556,13 +554,11 @@ class FirestoreDatabase implements Database {
     }
   }
 
-  Future<void> getConsultQuestions(MedicallUser medicallUser) async {
-    if (medicallUser.uid.length > 0) {
-      consultQuestions = await Firestore.instance
-          .document('services/dermatology/symptoms/' +
-              newConsult.consultType.toLowerCase())
-          .get();
-    }
+  Future<void> getConsultQuestions() async {
+    consultQuestions = await Firestore.instance
+        .document('services/dermatology/symptoms/' +
+            newConsult.consultType.toLowerCase())
+        .get();
   }
 
   sendChatMsg(content, {@required String uid}) {
