@@ -58,7 +58,8 @@ class _PaymentDetailState extends State<PaymentDetail> {
         body: FutureBuilder(
             future: _db.getUserCardSources(medicallUser.uid),
             builder: (context, snapshot) {
-              if (snapshot.hasData) {
+              if (snapshot.hasData && snapshot.data.length > 0) {
+                List<PaymentMethod> paymentList = snapshot.data;
                 List<Widget> cardList = [];
                 for (var i = 0; i < snapshot.data.length; i++) {
                   cardList.add(
@@ -81,9 +82,7 @@ class _PaymentDetailState extends State<PaymentDetail> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
                                 Icon(Icons.payment),
-                                Text(snapshot
-                                    .data.documents[i].data['card']['brand']
-                                    .toString())
+                                Text(paymentList[i].card.brand)
                               ],
                             ),
                             trailing: IconButton(
@@ -163,9 +162,7 @@ class _PaymentDetailState extends State<PaymentDetail> {
                                 SizedBox(
                                   width: 10,
                                 ),
-                                Text(snapshot
-                                    .data.documents[i].data['card']['last4']
-                                    .toString())
+                                Text(paymentList[i].card.last4)
                               ],
                             ))),
                   );
