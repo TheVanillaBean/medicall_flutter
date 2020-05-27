@@ -6,6 +6,8 @@ import 'package:Medicall/screens/StripeConnect/index.dart';
 import 'package:Medicall/secrets.dart';
 import 'package:Medicall/services/stripe_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
+import 'package:Medicall/services/database.dart';
+import 'package:Medicall/screens/GetStarted/startVisit.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -25,6 +27,7 @@ class LandingPage extends StatelessWidget {
         try {
           final userProvider =
               Provider.of<UserProvider>(context, listen: false);
+          final db = Provider.of<Database>(context, listen: false);
           MyStripeProvider _stripeProvider =
               Provider.of<MyStripeProvider>(context);
 
@@ -47,6 +50,9 @@ class LandingPage extends StatelessWidget {
                 !userProvider.medicallUser.stripeConnectAuthorized) {
               return StripeConnect.create(context);
             } else {
+              if (db.newConsult != null) {
+                return StartVisitScreen();
+              }
               return DashboardScreen.create(context);
             }
           } else {

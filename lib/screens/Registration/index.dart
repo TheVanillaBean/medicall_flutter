@@ -21,9 +21,10 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
-  final GlobalKey<FormBuilderState> _userRegKey = GlobalKey<FormBuilderState>();
+  static final GlobalKey<FormBuilderState> _userRegKey =
+      GlobalKey<FormBuilderState>();
   final TextEditingController _typeAheadController = TextEditingController();
-  final phoneAuth = PhoneAuthStateModel(auth: Auth());
+  final phoneAuth = PhoneAuthStateModel(auth: Auth(), userRegKey: _userRegKey);
   var data;
   bool autoValidate = true;
   bool readOnly = false;
@@ -117,6 +118,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   Widget build(BuildContext context) {
     final tempUserProvider = Provider.of<TempUserProvider>(context);
     final medicallUser = tempUserProvider.medicallUser;
+    medicallUser.type = 'patient';
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -620,12 +622,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     return _userRegKey.currentState.value['Last name'].toString().trim();
   }
 
-
   String get gender {
     return _userRegKey.currentState.value['Gender'];
   }
-
- 
 
   String get titles {
     return _userRegKey.currentState.value['Medical Titles'].toString().trim();

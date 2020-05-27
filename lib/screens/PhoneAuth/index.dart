@@ -79,7 +79,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
                   ) {
                 updateUserWithFormData(tempUserProvider);
                 model.updateRefreshing(true, mounted);
-                Navigator.of(context).pushNamed("/startVisit");
+                //Navigator.of(context).pushNamed('/startVisit');
               } else {
                 if (!widget.model.userRegKey.currentState
                     .value['Terms and conditions']) {

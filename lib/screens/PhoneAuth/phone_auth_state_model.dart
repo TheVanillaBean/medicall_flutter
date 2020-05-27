@@ -97,8 +97,11 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
     return null;
   }
 
-  void updatePhoneNumber(String number) =>
+  void updatePhoneNumber(String number) {
+    if (number.length <= 13) {
       updateWith(phoneNumber: '+1$number'.trim());
+    }
+  }
 
   void updateSMSCode(String code) => updateWith(smsCode: code);
 
@@ -230,25 +233,25 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
         this.verificationStatus.updateStatus(
             'Saving User Details. This may take several seconds...');
 
-        bool successfullySavedImages =
-            await tempUserProvider.saveRegistrationImages();
+        // bool successfullySavedImages =
+        //     await tempUserProvider.saveRegistrationImages();
 
         this.auth.triggerAuthStream = true;
+        await this.tempUserProvider.addNewUserToFirestore();
+        await this.tempUserProvider.addProviderMalPractice();
+        currentFirebaseUser.sendEmailVerification();
+        this.auth.addUserToAuthStream(user: user);
+        // if (successfullySavedImages) {
 
-        if (successfullySavedImages) {
-          await this.tempUserProvider.addNewUserToFirestore();
-          await this.tempUserProvider.addProviderMalPractice();
-          currentFirebaseUser.sendEmailVerification();
-          this.auth.addUserToAuthStream(user: user);
-        } else {
-          this.auth.triggerAuthStream = true;
-          reinitState();
-          updateRefreshing(false, mounted);
-          throw PlatformException(
-            code: 'ERROR_PHONE_AUTH_FAILED',
-            message: 'Failed to create user account.',
-          );
-        }
+        // } else {
+        //   this.auth.triggerAuthStream = true;
+        //   reinitState();
+        //   updateRefreshing(false, mounted);
+        //   throw PlatformException(
+        //     code: 'ERROR_PHONE_AUTH_FAILED',
+        //     message: 'Failed to create user account.',
+        //   );
+        // }
       }
     } on CloudFunctionsException {
       this.auth.triggerAuthStream = true;
