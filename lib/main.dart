@@ -5,6 +5,7 @@ import 'package:Medicall/screens/Account/index.dart';
 import 'package:Medicall/screens/Account/paymentDetail.dart';
 import 'package:Medicall/screens/ConfirmConsult/index.dart';
 import 'package:Medicall/screens/Consent/index.dart';
+import 'package:Medicall/screens/GetStarted/startVisit.dart';
 import 'package:Medicall/screens/History/Detail/index.dart';
 import 'package:Medicall/screens/History/index.dart';
 import 'package:Medicall/screens/LandingPage/auth_widget_builder.dart';
@@ -141,6 +142,11 @@ class MedicallApp extends StatelessWidget {
               case '/getStarted':
                 return MyCustomRoute(
                   builder: (_) => GetStartedScreen(),
+                  settings: settings,
+                );
+              case '/startVisit':
+                return MyCustomRoute(
+                  builder: (_) => StartVisitScreen(),
                   settings: settings,
                 );
               case '/zipCodeVerify':
