@@ -147,13 +147,11 @@ class EntryItem extends StatelessWidget {
       );
 
   Widget _buildTiles(Entry root) {
-    MyAnimationProvider _animationProvider =
-        Provider.of<MyAnimationProvider>(context);
     Database db = Provider.of<Database>(context);
     //MedicallUser medicallUser = Provider.of<UserProvider>(context).medicallUser;
-    MedicalHistoryState _newMedicalHistory =
-        Provider.of<MedicalHistoryState>(context);
-    //_newMedicalHistory.setnewMedicalHistory(false);
+    //MedicalHistoryState _newMedicalHistory =
+    //Provider.of<MedicalHistoryState>(context, listen: false);
+    //_newMedicalHistory.setnewMedicalHistory(true);
     return Stack(
       children: <Widget>[
         root.price != '' && root.title == 'Hairloss'
