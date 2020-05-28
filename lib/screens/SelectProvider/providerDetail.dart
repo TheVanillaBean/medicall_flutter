@@ -1,4 +1,6 @@
+import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/database.dart';
+import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -8,7 +10,10 @@ class ProviderDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Database db = Provider.of<Database>(context);
+    UserProvider userProvider =
+        Provider.of<UserProvider>(context, listen: false);
+    Database db = Provider.of<Database>(context, listen: false);
+    Auth auth = Provider.of<AuthBase>(context, listen: false);
     ScreenUtil.init(context);
     return Scaffold(
         appBar: AppBar(
@@ -29,7 +34,8 @@ class ProviderDetailScreen extends StatelessWidget {
         ),
         body: SingleChildScrollView(
           child: Container(
-            height: ScreenUtil.screenHeightDp - (ScreenUtil.statusBarHeight + 50),
+            height:
+                ScreenUtil.screenHeightDp - (ScreenUtil.statusBarHeight + 50),
             child: Stack(
               alignment: Alignment.center,
               children: <Widget>[
@@ -80,9 +86,14 @@ class ProviderDetailScreen extends StatelessWidget {
                         // Navigator.of(context).pushNamed(
                         //   '/selectProvider',
                         // );
-                        Navigator.of(context).pushNamed(
-                          '/registration',
-                        );
+                        if (userProvider.medicallUser != null) {
+                          auth.addUserToAuthStream(
+                              user: userProvider.medicallUser);
+                        } else {
+                          Navigator.of(context).pushNamed(
+                            '/registration',
+                          );
+                        }
                       },
                       color: Colors.blue,
                       textColor: Colors.white,

@@ -1,13 +1,13 @@
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/Dashboard/dashboard.dart';
 import 'package:Medicall/screens/GetStarted/index.dart';
+import 'package:Medicall/screens/GetStarted/startVisit.dart';
 import 'package:Medicall/screens/PhoneAuth/index.dart';
 import 'package:Medicall/screens/StripeConnect/index.dart';
 import 'package:Medicall/secrets.dart';
+import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/stripe_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
-import 'package:Medicall/services/database.dart';
-import 'package:Medicall/screens/GetStarted/startVisit.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -51,9 +51,14 @@ class LandingPage extends StatelessWidget {
               return StripeConnect.create(context);
             } else {
               if (db.newConsult != null) {
-                return StartVisitScreen();
+                Navigator.push(context, MaterialPageRoute<void>(
+                  builder: (BuildContext context) {
+                    return StartVisitScreen();
+                  },
+                ));
+              } else {
+                return DashboardScreen.create(context);
               }
-              return DashboardScreen.create(context);
             }
           } else {
             return Scaffold(

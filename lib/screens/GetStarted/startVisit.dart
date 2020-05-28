@@ -1,24 +1,14 @@
-import 'package:Medicall/screens/Login/index.dart';
-import 'package:Medicall/screens/Questions/questionsScreen.dart';
 import 'package:Medicall/screens/Symptoms/medical_history_state.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:provider/provider.dart';
 
-class StartVisitScreen extends StatefulWidget {
-  StartVisitScreen({Key key}) : super(key: key);
-
-  @override
-  _StartVisitScreenState createState() => _StartVisitScreenState();
-}
-
-class _StartVisitScreenState extends State<StartVisitScreen> {
+class StartVisitScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    Database db = Provider.of<Database>(context);
+    Database db = Provider.of<Database>(context, listen: false);
     MedicalHistoryState _newMedicalHistory =
-        Provider.of<MedicalHistoryState>(context);
+        Provider.of<MedicalHistoryState>(context, listen: false);
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
