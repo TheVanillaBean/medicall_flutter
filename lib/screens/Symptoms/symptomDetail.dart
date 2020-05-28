@@ -1,4 +1,6 @@
+import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/services/database.dart';
+import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -8,6 +10,7 @@ class SymptomDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Database db = Provider.of<Database>(context);
+    MedicallUser medicallUser = Provider.of<UserProvider>(context).medicallUser;
     return Scaffold(
         appBar: AppBar(
           leading: Builder(
@@ -107,9 +110,15 @@ class SymptomDetailScreen extends StatelessWidget {
                     // Navigator.of(context).pushNamed(
                     //   '/selectProvider',
                     // );
-                    Navigator.of(context).pushNamed(
-                      '/zipCodeVerify',
-                    );
+                    if (medicallUser.uid.length > 0) {
+                      Navigator.of(context).pushNamed(
+                        '/selectProvider',
+                      );
+                    } else {
+                      Navigator.of(context).pushNamed(
+                        '/zipCodeVerify',
+                      );
+                    }
                   },
                   color: Colors.blue,
                   textColor: Colors.white,

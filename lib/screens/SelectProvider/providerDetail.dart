@@ -1,4 +1,5 @@
-import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/models/medicall_user_model.dart';
+//import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
@@ -10,10 +11,11 @@ class ProviderDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    UserProvider userProvider =
-        Provider.of<UserProvider>(context, listen: false);
+    // UserProvider userProvider =
+    //     Provider.of<UserProvider>(context, listen: false);
     Database db = Provider.of<Database>(context, listen: false);
-    Auth auth = Provider.of<AuthBase>(context, listen: false);
+    //Auth auth = Provider.of<AuthBase>(context, listen: false);
+    MedicallUser medicallUser = Provider.of<UserProvider>(context).medicallUser;
     ScreenUtil.init(context);
     return Scaffold(
         appBar: AppBar(
@@ -86,9 +88,10 @@ class ProviderDetailScreen extends StatelessWidget {
                         // Navigator.of(context).pushNamed(
                         //   '/selectProvider',
                         // );
-                        if (userProvider.medicallUser != null) {
-                          auth.addUserToAuthStream(
-                              user: userProvider.medicallUser);
+                        if (medicallUser.uid.length > 0) {
+                          Navigator.of(context).pushNamed(
+                            '/startVisit',
+                          );
                         } else {
                           Navigator.of(context).pushNamed(
                             '/registration',

@@ -5,6 +5,7 @@ import 'package:Medicall/screens/Account/index.dart';
 import 'package:Medicall/screens/Account/paymentDetail.dart';
 import 'package:Medicall/screens/ConfirmConsult/index.dart';
 import 'package:Medicall/screens/Consent/index.dart';
+import 'package:Medicall/screens/Dashboard/dashboard.dart';
 import 'package:Medicall/screens/GetStarted/startVisit.dart';
 import 'package:Medicall/screens/History/Detail/index.dart';
 import 'package:Medicall/screens/History/index.dart';
@@ -167,6 +168,11 @@ class MedicallApp extends StatelessWidget {
               case '/photoID':
                 return MyCustomRoute(
                   builder: (_) => PhotoIdScreen.create(context),
+                  settings: settings,
+                );
+              case '/dashboard':
+                return MyCustomRoute(
+                  builder: (_) => DashboardScreen.create(context),
                   settings: settings,
                 );
               case '/terms':

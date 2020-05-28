@@ -58,6 +58,31 @@ class DrawerMenu extends StatelessWidget {
               flex: 2,
               child: Column(
                 children: <Widget>[
+                  ListTile(
+                      contentPadding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                      title: Stack(
+                        alignment: Alignment.center,
+                        overflow: Overflow.visible,
+                        children: <Widget>[
+                          Positioned(
+                            left: 30,
+                            child: Icon(
+                              Icons.home,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                          Text(
+                            'Home',
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.primary),
+                          ),
+                        ],
+                      ),
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        Navigator.of(context)
+                            .pushReplacementNamed('/dashboard');
+                      }),
                   medicallUser.type == 'provider'
                       ? Container()
                       : ListTile(

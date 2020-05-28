@@ -1,28 +1,19 @@
 import 'package:Medicall/screens/Symptoms/medical_history_state.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:provider/provider.dart';
 
 class StartVisitScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final GlobalKey<FormBuilderState> formKey = GlobalKey<FormBuilderState>();
     Database db = Provider.of<Database>(context, listen: false);
     MedicalHistoryState _newMedicalHistory =
         Provider.of<MedicalHistoryState>(context, listen: false);
     return Scaffold(
         backgroundColor: Colors.white,
-        appBar: AppBar(
-          leading: Builder(
-            builder: (BuildContext context) {
-              return IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: Icon(Icons.arrow_back),
-              );
-            },
-          ),
-        ),
+        appBar: AppBar(),
         body: Container(
             padding: EdgeInsets.fromLTRB(40, 40, 40, 0),
             child: Stack(
@@ -31,12 +22,14 @@ class StartVisitScreen extends StatelessWidget {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    Text(
-                      'Start your ' +
-                          db.newConsult.consultType.toLowerCase() +
-                          ' visit',
-                      style: TextStyle(fontSize: 42),
-                    ),
+                    db.newConsult.consultType != null
+                        ? Text(
+                            'Start your ' +
+                                db.newConsult.consultType.toLowerCase() +
+                                ' visit',
+                            style: TextStyle(fontSize: 42),
+                          )
+                        : Text("Start your visit!"),
                     SizedBox(height: 20),
                     Text(
                       "We will ask a few questions about your health and then focus on the reason for your visit.",
@@ -49,6 +42,22 @@ class StartVisitScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 80),
                   ],
+                ),
+                Container(
+                  height: 80,
+                  child: FormBuilder(
+                      key: formKey,
+                      child: Column(
+                        children: <Widget>[
+                          FormBuilderRadio(attribute: 'medhistory', options: [
+                            FormBuilderFieldOption(
+                              value: true,
+                              label:
+                                  'Has your medical history changed recently?',
+                            )
+                          ])
+                        ],
+                      )),
                 ),
                 Positioned(
                   bottom: 20,

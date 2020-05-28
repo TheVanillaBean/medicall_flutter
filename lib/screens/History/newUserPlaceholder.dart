@@ -64,7 +64,7 @@ class NewUserPlaceHolder extends StatelessWidget {
                 : 25,
             right: (ScreenUtil.screenWidthDp - 85) / 2,
             child: Container(
-              color: Colors.grey[50],
+              color: Colors.white,
               height: 100,
               padding: EdgeInsets.all(5),
               child: Column(
@@ -96,7 +96,7 @@ class NewUserPlaceHolder extends StatelessWidget {
                 ? 30
                 : (ScreenUtil.screenWidthDp) * 0.1,
             child: Container(
-              color: Colors.grey[50],
+              color: Colors.white,
               height: 112,
               padding: EdgeInsets.all(5),
               child: Column(
@@ -125,7 +125,7 @@ class NewUserPlaceHolder extends StatelessWidget {
                 ? 30
                 : (ScreenUtil.screenWidthDp) * 0.1,
             child: Container(
-              color: Colors.grey[50],
+              color: Colors.white,
               height: 100,
               padding: EdgeInsets.all(5),
               child: Column(
@@ -152,7 +152,7 @@ class NewUserPlaceHolder extends StatelessWidget {
                 : (ScreenUtil.screenHeightDp) / 2.9,
             left: (ScreenUtil.screenWidthDp - 100) / 2,
             child: Container(
-              color: Colors.grey[50],
+              color: Colors.white,
               height: 100,
               padding: EdgeInsets.all(5),
               child: Column(

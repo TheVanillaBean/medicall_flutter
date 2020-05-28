@@ -46,6 +46,7 @@ class SymptomsScreen extends StatelessWidget {
     }
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         leading: Builder(
           builder: (BuildContext context) {

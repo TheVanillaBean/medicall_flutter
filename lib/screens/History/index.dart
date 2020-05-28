@@ -172,11 +172,12 @@ class HistoryScreen extends StatelessWidget {
                   );
                 },
               ),
-              title: Text('History'),
+              title: Text('Previous Visits'),
               actions: buildActions(context, model),
             )
           : null,
       body: _buildBody(),
+      backgroundColor: Colors.white,
     );
   }
 

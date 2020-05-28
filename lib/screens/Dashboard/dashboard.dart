@@ -1,4 +1,5 @@
 import 'package:Medicall/common_widgets/flat_button.dart';
+import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/screens/Dashboard/dashboard_state_model.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/user_provider.dart';
@@ -44,6 +45,27 @@ class DashboardScreen extends StatelessWidget {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
     return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+              icon: Icon(
+                Icons.home,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            );
+          },
+        ),
+        centerTitle: true,
+        title: Text(
+          'Hello!',
+        ),
+      ),
+      drawer: DrawerMenu(),
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.dark,
         sized: false,
@@ -63,7 +85,7 @@ class DashboardScreen extends StatelessWidget {
 
   List<Widget> _buildChildren({BuildContext context, double height}) {
     return [
-      _buildHeader(),
+      //_buildHeader(),
       SizedBox(
         height: height * 0.15,
       ),
@@ -82,17 +104,17 @@ class DashboardScreen extends StatelessWidget {
       ),
       CustomFlatButton(
         text: "Start a visit",
-        icon: Icons.home,
+        icon: Icons.assignment_ind,
         onPressed: () => _navigateToVisitScreen(context),
       ),
       CustomFlatButton(
         text: "Prescriptions",
-        icon: Icons.home,
+        icon: Icons.local_pharmacy,
         onPressed: () => _navigateToPrescriptionsScreen(context),
       ),
       CustomFlatButton(
         text: "Previous Visits",
-        icon: Icons.home,
+        icon: Icons.view_list,
         onPressed: () => _navigateToHistory(context),
       )
     ];
