@@ -163,7 +163,7 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                       Expanded(
                         flex: 1,
                         child: Text(
-                          'We will now take you to your history where you can view the status of your orders, interact with doctors, and order prescriptions. Please allow 24 hours for the doctor to respond.',
+                          'Your payment has been successful.',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 14,
@@ -180,12 +180,12 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                   color: Theme.of(context).colorScheme.secondaryVariant,
                   onPressed: () {
                     _db.newConsult = ConsultData();
-                    Navigator.of(context).pushReplacementNamed('/history');
+                    Navigator.of(context).pushReplacementNamed('/congrats');
                     _db.newConsult = ConsultData();
                   },
                   textColor: Theme.of(context).colorScheme.onSecondary,
                   child: Text(
-                    'Go to History',
+                    'Go to Dashboard',
                   ),
                 )
               ]),

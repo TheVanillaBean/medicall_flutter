@@ -130,7 +130,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
             );
           } else {
             Navigator.of(context).pushNamed(
-              '/consultReview',
+              '/ocr',
             );
           }
         }

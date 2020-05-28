@@ -372,7 +372,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
 
     List<dynamic> sources = await _db.getUserCardSources(_medicallUser.uid);
 
-    if (sources == null) {
+    if (sources.length == 0) {
       PaymentIntent setupIntent = await _stripeProvider.addSource();
       bool addCard = await _stripeProvider.addCard(setupIntent: setupIntent);
       if (addCard) {
