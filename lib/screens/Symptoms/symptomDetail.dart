@@ -10,7 +10,11 @@ class SymptomDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Database db = Provider.of<Database>(context);
-    MedicallUser medicallUser = Provider.of<UserProvider>(context).medicallUser;
+    MedicallUser medicallUser;
+    try {
+      medicallUser = Provider.of<UserProvider>(context).medicallUser;
+    } catch (e) {}
+
     return Scaffold(
         appBar: AppBar(
           leading: Builder(
@@ -110,7 +114,7 @@ class SymptomDetailScreen extends StatelessWidget {
                     // Navigator.of(context).pushNamed(
                     //   '/selectProvider',
                     // );
-                    if (medicallUser.uid.length > 0) {
+                    if (medicallUser != null && medicallUser.uid.length > 0) {
                       Navigator.of(context).pushNamed(
                         '/selectProvider',
                       );

@@ -15,7 +15,11 @@ class ProviderDetailScreen extends StatelessWidget {
     //     Provider.of<UserProvider>(context, listen: false);
     Database db = Provider.of<Database>(context, listen: false);
     //Auth auth = Provider.of<AuthBase>(context, listen: false);
-    MedicallUser medicallUser = Provider.of<UserProvider>(context).medicallUser;
+    MedicallUser medicallUser;
+    try {
+      medicallUser = Provider.of<UserProvider>(context).medicallUser;
+    } catch (e) {}
+
     ScreenUtil.init(context);
     return Scaffold(
         appBar: AppBar(
@@ -88,7 +92,8 @@ class ProviderDetailScreen extends StatelessWidget {
                         // Navigator.of(context).pushNamed(
                         //   '/selectProvider',
                         // );
-                        if (medicallUser.uid.length > 0) {
+                        if (medicallUser != null &&
+                            medicallUser.uid.length > 0) {
                           Navigator.of(context).pushNamed(
                             '/startVisit',
                           );
