@@ -147,6 +147,9 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
       height: 500,
       child: Column(
         children: <Widget>[
+          SizedBox(
+            height: 30,
+          ),
           Container(
             margin: EdgeInsets.fromLTRB(0, heightMargin, 0, 16),
             padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
@@ -159,6 +162,9 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
           Padding(
             padding: EdgeInsets.fromLTRB(20, 0, 20, heightMargin),
             child: _buildPhoneNumberInput(),
+          ),
+          SizedBox(
+            height: 30,
           ),
           Row(
             children: <Widget>[

@@ -123,13 +123,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         centerTitle: true,
-        title: medicallUser.type.length > 0
-            ? Text(
-                '${medicallUser.type != null ? medicallUser.type[0].toUpperCase() : ''}${medicallUser.type != null ? medicallUser.type.substring(1) : ''}' +
-                    ' Registration')
-            : Text(
-                'Protect your visit Information',
-              ),
+        title: Text(
+          'Protect your Information',
+        ),
       ),
       // bottomNavigationBar: FlatButton(
       //   color: Theme.of(context).colorScheme.primary,
@@ -265,7 +261,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       )
                     : Container(),
                 SizedBox(
-                  height: 10.0,
+                  height: 30.0,
                 ),
                 FormBuilderCheckbox(
                   attribute: 'Terms and conditions',
