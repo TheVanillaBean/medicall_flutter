@@ -101,9 +101,6 @@ class MedicallApp extends StatelessWidget {
         Provider<Database>(
           create: (_) => FirestoreDatabase(),
         ),
-        Provider<MyAnimationProvider>(
-          create: (_) => MyAnimationProvider(),
-        ),
         Provider<MyFlareProvider>(
           create: (_) => MyFlareProvider(),
         ),

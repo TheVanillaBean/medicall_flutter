@@ -3,7 +3,6 @@ import 'dart:ui' as ui;
 import 'package:Medicall/common_widgets/sign_in_button.dart';
 import 'package:Medicall/common_widgets/social_sign_in_button.dart';
 import 'package:Medicall/screens/Login/sign_in_state_model.dart';
-import 'package:Medicall/services/animation_provider.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
@@ -21,13 +20,10 @@ class LoginPage extends StatefulWidget {
     final AuthBase auth = Provider.of<AuthBase>(context, listen: false);
     final TempUserProvider tempUserProvider =
         Provider.of<TempUserProvider>(context, listen: false);
-    final MyAnimationProvider animationProvider =
-        Provider.of<MyAnimationProvider>(context, listen: false);
     return ChangeNotifierProvider<SignInStateModel>(
       create: (context) => SignInStateModel(
         auth: auth,
         tempUserProvider: tempUserProvider,
-        animationProvider: animationProvider,
       ),
       child: Consumer<SignInStateModel>(
         builder: (_, model, __) => LoginPage(
