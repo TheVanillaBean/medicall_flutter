@@ -28,11 +28,9 @@ import 'package:Medicall/screens/SelectProvider/index.dart';
 import 'package:Medicall/screens/SelectProvider/providerDetail.dart';
 import 'package:Medicall/screens/Symptoms/medical_history_state.dart';
 import 'package:Medicall/screens/Terms/index.dart';
-import 'package:Medicall/services/animation_provider.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
-import 'package:Medicall/services/flare_provider.dart';
 import 'package:Medicall/services/stripe_provider.dart';
 import 'package:Medicall/theme.dart';
 import 'package:Medicall/util/apple_sign_in_available.dart';
@@ -100,9 +98,6 @@ class MedicallApp extends StatelessWidget {
         ),
         Provider<Database>(
           create: (_) => FirestoreDatabase(),
-        ),
-        Provider<MyFlareProvider>(
-          create: (_) => MyFlareProvider(),
         ),
         ChangeNotifierProvider<CarouselState>(
           create: (_) => CarouselState(),
