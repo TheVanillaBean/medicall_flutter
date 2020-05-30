@@ -83,8 +83,6 @@ class MedicallApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.values[0]]);
-    //SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
     return MultiProvider(
       providers: [
         Provider<AuthBase>(

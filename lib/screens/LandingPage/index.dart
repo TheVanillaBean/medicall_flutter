@@ -21,7 +21,6 @@ class LandingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("Connection State: ${userSnapshot.connectionState} ");
     if (userSnapshot.connectionState == ConnectionState.active) {
       if (userSnapshot.hasData) {
         try {
@@ -31,13 +30,8 @@ class LandingPage extends StatelessWidget {
           MyStripeProvider _stripeProvider =
               Provider.of<MyStripeProvider>(context);
 
-          if (userProvider.medicallUser == null) {
-            print('In-Progress');
-          } else {
-            print("Active: ${userProvider.medicallUser.uid}");
-            //setting stripe key once user is logged in
+          if (userProvider.medicallUser != null) {
             _stripeProvider.setPublishableKey(stripeKey);
-            print("Active: stripe key set");
           }
 
           if (userProvider.medicallUser.phoneNumber == null &&
@@ -78,8 +72,6 @@ class LandingPage extends StatelessWidget {
         return GetStartedScreen();
       }
     }
-    print("Waiting: ${userSnapshot.connectionState}");
-
     return Scaffold(
       body: Center(
         child: CircularProgressIndicator(),
