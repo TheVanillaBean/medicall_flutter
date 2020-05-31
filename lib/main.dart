@@ -1,6 +1,3 @@
-import 'dart:async';
-
-import 'package:Medicall/common_widgets/carousel/carousel_state.dart';
 import 'package:Medicall/screens/Account/index.dart';
 import 'package:Medicall/screens/Account/paymentDetail.dart';
 import 'package:Medicall/screens/ConfirmConsult/index.dart';
@@ -26,19 +23,13 @@ import 'package:Medicall/screens/Registration/photoIdScreen.dart';
 import 'package:Medicall/screens/Registration/registrationType.dart';
 import 'package:Medicall/screens/SelectProvider/index.dart';
 import 'package:Medicall/screens/SelectProvider/providerDetail.dart';
-import 'package:Medicall/screens/Symptoms/medical_history_state.dart';
 import 'package:Medicall/screens/Terms/index.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
-import 'package:Medicall/services/stripe_provider.dart';
 import 'package:Medicall/theme.dart';
 import 'package:Medicall/util/apple_sign_in_available.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_crashlytics/flutter_crashlytics.dart';
 import 'package:provider/provider.dart';
 
 import 'screens/Questions/questionsScreen.dart';
@@ -46,62 +37,39 @@ import 'screens/Symptoms/index.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  bool isInDebugMode = false;
-  SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle(statusBarColor: Colors.transparent));
-  FlutterError.onError = (FlutterErrorDetails details) {
-    if (isInDebugMode) {
-      // In development mode simply print to console.
-      FlutterError.dumpErrorToConsole(details);
-    } else {
-      // In production mode report to the application zone to report to
-      // Crashlytics.
-      Zone.current.handleUncaughtError(details.exception, details.stack);
-    }
-  };
-
-  await FlutterCrashlytics().initialize();
-
   final appleSignInAvailable = await AppleSignInAvailable.check();
-  runZoned(() {
-    runApp(Provider<AppleSignInAvailable>.value(
-      value: appleSignInAvailable,
-      child: MedicallApp(),
-    ));
-  }, onError: (error, stackTrace) async {
-    // Whenever an error occurs, call the `reportCrash` function. This will send
-    // Dart errors to our dev console or Crashlytics depending on the environment.
-    await FlutterCrashlytics()
-        .reportCrash(error, stackTrace, forceCrash: false);
-  });
+  runApp(MedicallApp(
+    appleSignInAvailable: appleSignInAvailable,
+    authServiceBuilder: (_) => Auth(),
+    databaseBuilder: (_, uid) => FirestoreDatabase(),
+  ));
 }
 
 class MedicallApp extends StatelessWidget {
-  static FirebaseAnalytics analytics = FirebaseAnalytics();
-  static FirebaseAnalyticsObserver observer =
-      FirebaseAnalyticsObserver(analytics: analytics);
+  final AppleSignInAvailable appleSignInAvailable;
+  final AuthBase Function(BuildContext context) authServiceBuilder;
+  final FirestoreDatabase Function(BuildContext context, String uid)
+      databaseBuilder;
+
+  const MedicallApp(
+      {Key key,
+      this.appleSignInAvailable,
+      this.authServiceBuilder,
+      this.databaseBuilder})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        Provider<AppleSignInAvailable>.value(
+          value: appleSignInAvailable,
+        ),
         Provider<AuthBase>(
-          create: (_) => Auth(),
+          create: authServiceBuilder,
         ),
         Provider<ExtImageProvider>(
           create: (_) => ExtendedImageProvider(),
-        ),
-        Provider<MyStripeProvider>(
-          create: (_) => MyStripeProvider(),
-        ),
-        Provider<Database>(
-          create: (_) => FirestoreDatabase(),
-        ),
-        ChangeNotifierProvider<CarouselState>(
-          create: (_) => CarouselState(),
-        ),
-        ChangeNotifierProvider<MedicalHistoryState>(
-          create: (_) => MedicalHistoryState(),
         ),
       ],
       child: _buildApp(),
