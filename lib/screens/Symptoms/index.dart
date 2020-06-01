@@ -1,6 +1,7 @@
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Questions/questionsScreen.dart';
 import 'package:Medicall/screens/Symptoms/symptomDetail.dart';
 import 'package:Medicall/services/database.dart';
@@ -8,7 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class SymptomsScreen extends StatelessWidget {
-  const SymptomsScreen({Key key}) : super(key: key);
+  static Future<void> show({BuildContext context}) async {
+    await Navigator.of(context).pushNamed(Routes.symptoms);
+  }
 
   @override
   Widget build(BuildContext context) {

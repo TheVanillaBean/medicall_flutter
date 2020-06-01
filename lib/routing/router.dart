@@ -3,12 +3,9 @@ import 'package:Medicall/screens/Account/paymentDetail.dart';
 import 'package:Medicall/screens/ConfirmConsult/index.dart';
 import 'package:Medicall/screens/Consent/index.dart';
 import 'package:Medicall/screens/Dashboard/dashboard.dart';
-import 'package:Medicall/screens/GetStarted/index.dart';
-import 'package:Medicall/screens/GetStarted/startVisit.dart';
-import 'package:Medicall/screens/GetStarted/zipCodeVerify.dart';
 import 'package:Medicall/screens/History/Detail/index.dart';
 import 'package:Medicall/screens/History/index.dart';
-import 'package:Medicall/screens/Login/index.dart';
+import 'package:Medicall/screens/Login/login.dart';
 import 'package:Medicall/screens/Malpractice/malpractice.dart';
 import 'package:Medicall/screens/OCR/Congrats.dart';
 import 'package:Medicall/screens/OCR/OCRScreen.dart';
@@ -23,13 +20,16 @@ import 'package:Medicall/screens/SelectProvider/index.dart';
 import 'package:Medicall/screens/SelectProvider/providerDetail.dart';
 import 'package:Medicall/screens/Symptoms/index.dart';
 import 'package:Medicall/screens/Terms/index.dart';
+import 'package:Medicall/screens/Welcome//index.dart';
+import 'package:Medicall/screens/Welcome/startVisit.dart';
+import 'package:Medicall/screens/Welcome/zipCodeVerify.dart';
 import 'package:flutter/material.dart';
 
 class Routes {
   static const login = '/login';
   static const phoneAuth = '/phone-auth';
   static const registrationType = '/registration-type';
-  static const getStarted = '/get-started';
+  static const welcome = '/welcome';
   static const startVisit = '/start-visit';
   static const zipCodeVerify = '/zip-code-verify';
   static const registration = '/registration';
@@ -58,9 +58,9 @@ class Router {
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     final args = settings.arguments;
     switch (settings.name) {
-      case '/login':
+      case Routes.login:
         return MaterialPageRoute<dynamic>(
-          builder: (context) => LoginPage.create(context),
+          builder: (context) => LoginScreen.create(context),
           settings: settings,
           fullscreenDialog: true,
         );
@@ -76,9 +76,9 @@ class Router {
           settings: settings,
           fullscreenDialog: true,
         );
-      case '/getStarted':
+      case Routes.welcome:
         return MaterialPageRoute<dynamic>(
-          builder: (context) => GetStartedScreen(),
+          builder: (context) => WelcomeScreen(),
           settings: settings,
           fullscreenDialog: true,
         );
@@ -160,7 +160,7 @@ class Router {
           settings: settings,
           fullscreenDialog: true,
         );
-      case '/symptoms':
+      case Routes.symptoms:
         return MaterialPageRoute<dynamic>(
           builder: (context) => SymptomsScreen(),
           settings: settings,

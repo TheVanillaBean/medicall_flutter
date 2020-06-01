@@ -56,7 +56,7 @@ class Auth implements AuthBase {
     authStreamController = StreamController();
     _firebaseAuth.onAuthStateChanged.listen((user) {
       if (triggerAuthStream) {
-        unawaited(_getMedicallUserFromFirestore(uid: user.uid));
+        unawaited(_getMedicallUserFromFirestore(user: user));
       }
     });
   }
@@ -65,11 +65,16 @@ class Auth implements AuthBase {
     authStreamController.sink.add(user);
   }
 
-  Future<void> _getMedicallUserFromFirestore({@required String uid}) async {
+  Future<void> _getMedicallUserFromFirestore(
+      {@required FirebaseUser user}) async {
+    if (user == null) {
+      addUserToAuthStream(user: null);
+      return;
+    }
     final DocumentReference documentReference =
-        Firestore.instance.collection('users').document(uid);
+        Firestore.instance.collection('users').document(user.uid);
     final snapshot = await documentReference.get();
-    MedicallUser medicallUser = MedicallUser.from(uid, snapshot);
+    MedicallUser medicallUser = MedicallUser.from(user.uid, snapshot);
     addUserToAuthStream(user: medicallUser);
   }
 

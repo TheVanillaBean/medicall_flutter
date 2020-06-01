@@ -2,7 +2,9 @@ import 'dart:ui' as ui;
 
 import 'package:Medicall/common_widgets/sign_in_button.dart';
 import 'package:Medicall/common_widgets/social_sign_in_button.dart';
+import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Login/sign_in_state_model.dart';
+import 'package:Medicall/screens/Welcome/index.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
@@ -13,7 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-class LoginPage extends StatefulWidget {
+class LoginScreen extends StatefulWidget {
   final SignInStateModel model;
 
   static Widget create(BuildContext context) {
@@ -26,19 +28,23 @@ class LoginPage extends StatefulWidget {
         tempUserProvider: tempUserProvider,
       ),
       child: Consumer<SignInStateModel>(
-        builder: (_, model, __) => LoginPage(
+        builder: (_, model, __) => LoginScreen(
           model: model,
         ),
       ),
     );
   }
 
-  LoginPage({@required this.model});
+  static Future<void> show({BuildContext context}) async {
+    await Navigator.of(context).pushNamed(Routes.login);
+  }
+
+  LoginScreen({@required this.model});
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginPage> {
+class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final FocusNode _emailFocusNode = FocusNode();
@@ -175,7 +181,7 @@ class _LoginScreenState extends State<LoginPage> {
                               color: Theme.of(context).colorScheme.primary),
                         ),
                         onPressed: () {
-                          Navigator.of(context).pushNamed('/getStarted');
+                          WelcomeScreen.show(context: context);
                         },
                       ),
                     )

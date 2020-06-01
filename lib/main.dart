@@ -1,12 +1,16 @@
-import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/Dashboard/dashboard.dart';
 import 'package:Medicall/screens/LandingPage/auth_widget_builder.dart';
 import 'package:Medicall/screens/LandingPage/index.dart';
+import 'package:Medicall/screens/StripeConnect/index.dart';
+import 'package:Medicall/screens/Welcome/index.dart';
+import 'package:Medicall/screens/Welcome/startVisit.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/stripe_provider.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
+import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/theme.dart';
 import 'package:Medicall/util/apple_sign_in_available.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +23,7 @@ void main() async {
     appleSignInAvailable: appleSignInAvailable,
     authServiceBuilder: (_) => Auth(),
     databaseBuilder: (_, uid) => FirestoreDatabase(),
+    tempUserProvider: (_) => TempUserProvider(),
   ));
 }
 
@@ -59,7 +64,9 @@ class MedicallApp extends StatelessWidget {
       ],
       child: AuthWidgetBuilder(
         userProvidersBuilder: (_, user) => [
-          Provider<MedicallUser>.value(value: user),
+          Provider<UserProvider>(
+            create: (_) => UserProvider(medicallUser: user),
+          ),
           Provider<FirestoreDatabase>(
             create: (_) => FirestoreDatabase(),
           ),
@@ -69,7 +76,13 @@ class MedicallApp extends StatelessWidget {
             title: 'Medicall',
             debugShowCheckedModeBanner: false,
             theme: myTheme,
-            home: LandingPage(userSnapshot: userSnapshot),
+            home: LandingPage(
+              userSnapshot: userSnapshot,
+              nonSignedInBuilder: (context) => WelcomeScreen(),
+              signedInBuilder: (context) => DashboardScreen.create(context),
+              stripeConnectBuilder: (context) => StripeConnect.create(context),
+              startVisitBuilder: (context) => StartVisitScreen(),
+            ),
             onGenerateRoute: Router.onGenerateRoute,
           );
         },

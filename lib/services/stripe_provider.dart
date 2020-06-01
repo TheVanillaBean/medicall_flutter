@@ -1,16 +1,16 @@
+import 'package:Medicall/secrets.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:stripe_payment/stripe_payment.dart';
 
 abstract class StripeProviderBase {
-  void setPublishableKey(stripeKey);
   Future<PaymentIntent> addSource();
   Future<bool> addCard({PaymentIntent setupIntent});
   void chargePayment({int price, String paymentMethodId});
 }
 
 class StripeProvider implements StripeProviderBase {
-  void setPublishableKey(stripeKey) {
-    return StripePayment.setOptions(StripeOptions(publishableKey: stripeKey));
+  StripeProvider() {
+    StripePayment.setOptions(StripeOptions(publishableKey: stripeKey));
   }
 
   Future<PaymentIntent> addSource() async {
