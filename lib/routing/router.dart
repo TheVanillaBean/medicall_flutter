@@ -1,3 +1,28 @@
+import 'package:Medicall/screens/Account/index.dart';
+import 'package:Medicall/screens/Account/paymentDetail.dart';
+import 'package:Medicall/screens/ConfirmConsult/index.dart';
+import 'package:Medicall/screens/Consent/index.dart';
+import 'package:Medicall/screens/Dashboard/dashboard.dart';
+import 'package:Medicall/screens/GetStarted/index.dart';
+import 'package:Medicall/screens/GetStarted/startVisit.dart';
+import 'package:Medicall/screens/GetStarted/zipCodeVerify.dart';
+import 'package:Medicall/screens/History/Detail/index.dart';
+import 'package:Medicall/screens/History/index.dart';
+import 'package:Medicall/screens/Login/index.dart';
+import 'package:Medicall/screens/Malpractice/malpractice.dart';
+import 'package:Medicall/screens/OCR/Congrats.dart';
+import 'package:Medicall/screens/OCR/OCRScreen.dart';
+import 'package:Medicall/screens/OCR/PersonalInfoScreen.dart';
+import 'package:Medicall/screens/PasswordReset/index.dart';
+import 'package:Medicall/screens/PhoneAuth/index.dart';
+import 'package:Medicall/screens/Privacy/index.dart';
+import 'package:Medicall/screens/Questions/questionsScreen.dart';
+import 'package:Medicall/screens/Registration/photoIdScreen.dart';
+import 'package:Medicall/screens/Registration/registrationType.dart';
+import 'package:Medicall/screens/SelectProvider/index.dart';
+import 'package:Medicall/screens/SelectProvider/providerDetail.dart';
+import 'package:Medicall/screens/Symptoms/index.dart';
+import 'package:Medicall/screens/Terms/index.dart';
 import 'package:flutter/material.dart';
 
 class Routes {
@@ -30,152 +55,173 @@ class Routes {
 }
 
 class Router {
-//  static Route<dynamic> onGenerateRoute(RouteSettings settings) {
-//    final args = settings.arguments;
-//    switch (settings.name) {
-//      case '/login':
-//        return MyCustomRoute(
-//          builder: (_) => LoginPage.create(context),
-//          settings: settings,
-//        );
-//      case '/phoneAuth':
-//        return MyCustomRoute(
-//          builder: (_) => PhoneAuthScreen.create(context, null),
-//          settings: settings,
-//        );
-//      case '/registrationType':
-//        return MyCustomRoute(
-//          builder: (_) => RegistrationTypeScreen(),
-//          settings: settings,
-//        );
-//      case '/getStarted':
-//        return MyCustomRoute(
-//          builder: (_) => GetStartedScreen(),
-//          settings: settings,
-//        );
-//      case '/startVisit':
-//        return MyCustomRoute(
-//          builder: (_) => StartVisitScreen(),
-//          settings: settings,
-//        );
-//      case '/zipCodeVerify':
-//        return MyCustomRoute(
-//          builder: (_) => ZipCodeVerifyScreen(),
-//          settings: settings,
-//        );
-//      case '/registration':
-//        return MyCustomRoute(
-//          builder: (_) => RegistrationScreen(),
-//          settings: settings,
-//        );
-//      case '/reset_password':
-//        return MyCustomRoute(
-//          builder: (_) => PasswordResetScreen.create(context),
-//          settings: settings,
-//        );
-//      case '/photoID':
-//        return MyCustomRoute(
-//          builder: (_) => PhotoIdScreen.create(context),
-//          settings: settings,
-//        );
-//      case '/ocr':
-//        return MyCustomRoute(
-//          builder: (_) => OCRScreen(),
-//          settings: settings,
-//        );
-//      case '/personalInfo':
-//        return MyCustomRoute(
-//          builder: (_) => PersonalInfoScreen(),
-//          settings: settings,
-//        );
-//      case '/congrats':
-//        return MyCustomRoute(
-//          builder: (_) => CongratsScreen(),
-//          settings: settings,
-//        );
-//      case '/dashboard':
-//        return MyCustomRoute(
-//          builder: (_) => DashboardScreen.create(context),
-//          settings: settings,
-//        );
-//      case '/terms':
-//        return MyCustomRoute(
-//          builder: (_) => TermsScreen(),
-//          settings: settings,
-//        );
-//      case '/privacy':
-//        return MyCustomRoute(
-//          builder: (_) => PrivacyScreen(),
-//          settings: settings,
-//        );
-//      case '/consent':
-//        return MyCustomRoute(
-//          builder: (_) => ConsentScreen(),
-//          settings: settings,
-//        );
-//      case '/malpractice':
-//        return MyCustomRoute(
-//          builder: (_) => MalpracticeScreen.create(context),
-//          settings: settings,
-//        );
-//      case '/symptoms':
-//        return MyCustomRoute(
-//          builder: (_) => SymptomsScreen(),
-//          settings: settings,
-//        );
-//      case '/questionsScreen':
-//        return MyCustomRoute(
-//          builder: (_) => QuestionsScreen(),
-//          settings: settings,
-//        );
-//      case '/selectProvider':
-//        return MyCustomRoute(
-//          builder: (_) => SelectProviderScreen(),
-//          settings: settings,
-//        );
-//      case '/providerDetail':
-//        return MyCustomRoute(
-//          builder: (_) => ProviderDetailScreen(),
-//          settings: settings,
-//        );
-//      case '/consultReview':
-//        return MyCustomRoute(
-//          builder: (_) => ConfirmConsultScreen(),
-//          settings: settings,
-//        );
-//      case '/history':
-//        return MyCustomRoute(
-//          builder: (_) => HistoryScreen.create(context, true, ''),
-//          settings: settings,
-//        );
-//      case '/historyDetail':
-//        return MyCustomRoute(
-//          builder: (_) => HistoryDetailScreen.create(context),
-//          settings: settings,
-//        );
-//      case '/account':
-//        return MyCustomRoute(
-//          builder: (_) => AccountScreen(),
-//          settings: settings,
-//        );
-//      case '/paymentDetail':
-//        return MyCustomRoute(
-//          builder: (_) => PaymentDetail(),
-//          settings: settings,
-//        );
-//      default:
-//        return MaterialPageRoute(
-//          builder: (_) => Scaffold(
-//            body: Center(
-//              child: Text('No route defined for ${settings.name}'),
-//            ),
-//          ),
-//        );
-//    }
-//  }
-}
-
-class MyCustomRoute<T> extends MaterialPageRoute<T> {
-  MyCustomRoute({WidgetBuilder builder, RouteSettings settings})
-      : super(builder: builder, settings: settings);
+  static Route<dynamic> onGenerateRoute(RouteSettings settings) {
+    final args = settings.arguments;
+    switch (settings.name) {
+      case '/login':
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => LoginPage.create(context),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case '/phoneAuth':
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => PhoneAuthScreen.create(context, null),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case '/registrationType':
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => RegistrationTypeScreen(),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case '/getStarted':
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => GetStartedScreen(),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case '/startVisit':
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => StartVisitScreen(),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case '/zipCodeVerify':
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => ZipCodeVerifyScreen(),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case '/registration':
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => PasswordResetScreen.create(context),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case '/reset_password':
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => PhotoIdScreen.create(context),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case '/photoID':
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => OCRScreen(),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case '/ocr':
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => PersonalInfoScreen(),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case '/personalInfo':
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => DashboardScreen.create(context),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case '/congrats':
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => CongratsScreen(),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case '/dashboard':
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => DashboardScreen.create(context),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case '/terms':
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => TermsScreen(),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case '/privacy':
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => PrivacyScreen(),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case '/consent':
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => ConsentScreen(),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case '/malpractice':
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => MalpracticeScreen.create(context),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case '/symptoms':
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => SymptomsScreen(),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case '/questionsScreen':
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => QuestionsScreen(),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case '/selectProvider':
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => SelectProviderScreen(),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case '/providerDetail':
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => ProviderDetailScreen(),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case '/consultReview':
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => ConfirmConsultScreen(),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case '/history':
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => HistoryScreen.create(context, true, ''),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case '/historyDetail':
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => HistoryDetailScreen.create(context),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case '/account':
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => AccountScreen(),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case '/paymentDetail':
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => PaymentDetail(),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      default:
+        return MaterialPageRoute(
+          builder: (_) => Scaffold(
+            body: Center(
+              child: Text('No route defined for ${settings.name}'),
+            ),
+          ),
+        );
+    }
+  }
 }
