@@ -49,7 +49,7 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
   Widget build(BuildContext context) {
     Database db = Provider.of<Database>(context);
     MedicallUser medicallUser = Provider.of<UserProvider>(context).medicallUser;
-    MyStripeProvider _stripeProvider = Provider.of<MyStripeProvider>(context);
+    StripeProvider _stripeProvider = Provider.of<StripeProvider>(context);
     DateTime datePaid = widget.scriptData['pay_date'] != null
         ? DateTime.fromMillisecondsSinceEpoch(
             widget.scriptData['pay_date'].millisecondsSinceEpoch)
@@ -339,7 +339,7 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
             : Container();
   }
 
-  Future payPrescriptionPressed(Database db, MyStripeProvider _stripeProvider,
+  Future payPrescriptionPressed(Database db, StripeProvider _stripeProvider,
       MedicallUser medicallUser, BuildContext context) async {
     //if user has payment method
     if (db.hasPayment) {

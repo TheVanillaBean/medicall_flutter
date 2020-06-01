@@ -22,7 +22,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
   Database _db;
   MedicallUser _medicallUser;
   ExtImageProvider _extImageProvider;
-  MyStripeProvider _stripeProvider;
+  StripeProvider _stripeProvider;
   TabController _confirmTabCntrl;
   @override
   void initState() {
@@ -42,7 +42,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
     _db = Provider.of<Database>(context);
     _medicallUser = Provider.of<UserProvider>(context).medicallUser;
     _extImageProvider = Provider.of<ExtImageProvider>(context);
-    _stripeProvider = Provider.of<MyStripeProvider>(context);
+    _stripeProvider = Provider.of<StripeProvider>(context);
     _db.newConsult.media = [];
     var _mediaList = [];
     if (_db.newConsult.uploadQuestions.length > 0) {

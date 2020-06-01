@@ -27,8 +27,7 @@ class LandingPage extends StatelessWidget {
           final userProvider =
               Provider.of<UserProvider>(context, listen: false);
           final db = Provider.of<Database>(context, listen: false);
-          MyStripeProvider _stripeProvider =
-              Provider.of<MyStripeProvider>(context);
+          StripeProvider _stripeProvider = Provider.of<StripeProvider>(context);
 
           if (userProvider.medicallUser != null) {
             _stripeProvider.setPublishableKey(stripeKey);

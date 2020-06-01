@@ -1,9 +1,12 @@
+import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/LandingPage/auth_widget_builder.dart';
 import 'package:Medicall/screens/LandingPage/index.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
+import 'package:Medicall/services/stripe_provider.dart';
+import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/theme.dart';
 import 'package:Medicall/util/apple_sign_in_available.dart';
 import 'package:flutter/material.dart';
@@ -24,13 +27,15 @@ class MedicallApp extends StatelessWidget {
   final AuthBase Function(BuildContext context) authServiceBuilder;
   final FirestoreDatabase Function(BuildContext context, String uid)
       databaseBuilder;
+  final TempUserProvider Function(BuildContext context) tempUserProvider;
 
-  const MedicallApp(
-      {Key key,
-      this.appleSignInAvailable,
-      this.authServiceBuilder,
-      this.databaseBuilder})
-      : super(key: key);
+  const MedicallApp({
+    Key key,
+    this.appleSignInAvailable,
+    this.authServiceBuilder,
+    this.databaseBuilder,
+    this.tempUserProvider,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -42,11 +47,23 @@ class MedicallApp extends StatelessWidget {
         Provider<AuthBase>(
           create: authServiceBuilder,
         ),
+        Provider<TempUserProvider>(
+          create: tempUserProvider,
+        ),
+        Provider<StripeProviderBase>(
+          create: (_) => StripeProvider(),
+        ),
         Provider<ExtImageProvider>(
           create: (_) => ExtendedImageProvider(),
         ),
       ],
       child: AuthWidgetBuilder(
+        userProvidersBuilder: (_, user) => [
+          Provider<MedicallUser>.value(value: user),
+          Provider<FirestoreDatabase>(
+            create: (_) => FirestoreDatabase(),
+          ),
+        ],
         builder: (context, userSnapshot) {
           return MaterialApp(
             title: 'Medicall',

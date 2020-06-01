@@ -13,7 +13,7 @@ class PaymentDetail extends StatefulWidget {
 }
 
 class _PaymentDetailState extends State<PaymentDetail> {
-  MyStripeProvider _stripeProvider;
+  StripeProvider _stripeProvider;
   Database _db;
   MedicallUser medicallUser = MedicallUser();
   @override
@@ -29,7 +29,7 @@ class _PaymentDetailState extends State<PaymentDetail> {
   @override
   Widget build(BuildContext context) {
     _db = Provider.of<Database>(context);
-    _stripeProvider = Provider.of<MyStripeProvider>(context);
+    _stripeProvider = Provider.of<StripeProvider>(context);
     medicallUser = Provider.of<UserProvider>(context).medicallUser;
     return Scaffold(
         //App Bar

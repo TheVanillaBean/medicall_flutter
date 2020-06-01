@@ -4,11 +4,13 @@ import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/Login/apple_sign_in_model.dart';
 import 'package:Medicall/screens/Login/google_auth_model.dart';
 import 'package:apple_sign_in/apple_sign_in.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:pedantic/pedantic.dart';
 
 abstract class AuthBase {
   bool triggerAuthStream;
@@ -54,7 +56,7 @@ class Auth implements AuthBase {
     authStreamController = StreamController();
     _firebaseAuth.onAuthStateChanged.listen((user) {
       if (triggerAuthStream) {
-        authStreamController.sink.add(_userFromFirebase(user));
+        unawaited(_getMedicallUserFromFirestore(uid: user.uid));
       }
     });
   }
@@ -63,7 +65,15 @@ class Auth implements AuthBase {
     authStreamController.sink.add(user);
   }
 
-  MedicallUser _userFromFirebase(FirebaseUser user) {
+  Future<void> _getMedicallUserFromFirestore({@required String uid}) async {
+    final DocumentReference documentReference =
+        Firestore.instance.collection('users').document(uid);
+    final snapshot = await documentReference.get();
+    MedicallUser medicallUser = MedicallUser.from(uid, snapshot);
+    addUserToAuthStream(user: medicallUser);
+  }
+
+  MedicallUser _userFromFirebaseAuth(FirebaseUser user) {
     if (user == null) {
       return null;
     }
@@ -82,7 +92,7 @@ class Auth implements AuthBase {
   @override
   Future<MedicallUser> currentUser() async {
     final user = await _firebaseAuth.currentUser();
-    return _userFromFirebase(user);
+    return _userFromFirebaseAuth(user);
   }
 
   @override
@@ -97,7 +107,7 @@ class Auth implements AuthBase {
   Future<MedicallUser> signInAnonymously() async {
     final authResult = await _firebaseAuth.signInAnonymously();
     final user = authResult.user;
-    return _userFromFirebase(user);
+    return _userFromFirebaseAuth(user);
   }
 
   @override
@@ -106,7 +116,7 @@ class Auth implements AuthBase {
     final authResult = await _firebaseAuth.signInWithEmailAndPassword(
         email: email, password: password);
     final user = authResult.user;
-    return _userFromFirebase(user);
+    return _userFromFirebaseAuth(user);
   }
 
   @override
@@ -115,7 +125,7 @@ class Auth implements AuthBase {
     final authResult = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email, password: password);
     final user = authResult.user;
-    return _userFromFirebase(user);
+    return _userFromFirebaseAuth(user);
   }
 
   Future<List<String>> fetchProvidersForEmail({@required String email}) async {
@@ -221,7 +231,7 @@ class Auth implements AuthBase {
   Future<MedicallUser> signInWithGoogle(
       {@required AuthCredential credential}) async {
     final authResult = await _firebaseAuth.signInWithCredential(credential);
-    return _userFromFirebase(authResult.user);
+    return _userFromFirebaseAuth(authResult.user);
   }
 
   @override
@@ -229,7 +239,7 @@ class Auth implements AuthBase {
       {@required AuthCredential appleIdCredential}) async {
     final authResult =
         await _firebaseAuth.signInWithCredential(appleIdCredential);
-    return _userFromFirebase(authResult.user);
+    return _userFromFirebaseAuth(authResult.user);
   }
 
   @override
@@ -241,7 +251,7 @@ class Auth implements AuthBase {
         await currentUser.linkWithCredential(credential);
 
     final MedicallUser currentMedicallUser =
-        _userFromFirebase(linkCredentialAuthResult.user);
+        _userFromFirebaseAuth(linkCredentialAuthResult.user);
 
     if (currentMedicallUser != null) {
       return currentUser;
@@ -257,7 +267,7 @@ class Auth implements AuthBase {
   Future<MedicallUser> signInWithPhoneNumber(
       {AuthCredential credential}) async {
     final authResult = await _firebaseAuth.signInWithCredential(credential);
-    return _userFromFirebase(authResult.user);
+    return _userFromFirebaseAuth(authResult.user);
   }
 
   @override
