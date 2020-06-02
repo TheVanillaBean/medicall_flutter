@@ -3,14 +3,10 @@ import 'package:Medicall/screens/PhoneAuth/phone_auth_state_model.dart';
 import 'package:Medicall/secrets.dart' as secrets;
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
-import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:google_maps_webservice/places.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: secrets.kGoogleApiKey);
@@ -28,7 +24,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   var data;
   bool autoValidate = true;
   bool readOnly = false;
-  List<dynamic> _addressList = [];
   double formSpacing = 20;
   bool showSegmentedControl = true;
   List<String> states = [

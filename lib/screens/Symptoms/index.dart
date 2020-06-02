@@ -1,13 +1,8 @@
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:Medicall/screens/History/doctorSearch.dart';
-import 'package:Medicall/screens/Questions/questionsScreen.dart';
-import 'package:Medicall/screens/Symptoms/medical_history_state.dart';
 import 'package:Medicall/screens/Symptoms/symptomDetail.dart';
-import 'package:Medicall/services/animation_provider.dart';
 import 'package:Medicall/services/database.dart';
-import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -18,32 +13,32 @@ class SymptomsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     Database db = Provider.of<Database>(context);
     MedicallUser medicallUser = MedicallUser();
-    void _showDialog() {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          // return object of type Dialog
-          return AlertDialog(
-            title: Text("Your Medical History"),
-            content: Text(
-                "We noticed you have no medical history filled out, tap below to fillout the information needed and we will save it to your account for future use."),
-            actions: <Widget>[
-              // usually buttons at the bottom of the dialog
-              FlatButton(
-                color: Theme.of(context).primaryColor,
-                child: Text("My Medical History"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => QuestionsScreen()),
-                  );
-                },
-              ),
-            ],
-          );
-        },
-      );
-    }
+    // void _showDialog() {
+    //   showDialog(
+    //     context: context,
+    //     builder: (BuildContext context) {
+    //       // return object of type Dialog
+    //       return AlertDialog(
+    //         title: Text("Your Medical History"),
+    //         content: Text(
+    //             "We noticed you have no medical history filled out, tap below to fillout the information needed and we will save it to your account for future use."),
+    //         actions: <Widget>[
+    //           // usually buttons at the bottom of the dialog
+    //           FlatButton(
+    //             color: Theme.of(context).primaryColor,
+    //             child: Text("My Medical History"),
+    //             onPressed: () {
+    //               Navigator.of(context).pop();
+    //               Navigator.of(context).push(
+    //                 MaterialPageRoute(builder: (_) => QuestionsScreen()),
+    //               );
+    //             },
+    //           ),
+    //         ],
+    //       );
+    //     },
+    //   );
+    // }
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -108,7 +103,7 @@ class SymptomsScreen extends StatelessWidget {
                     flex: 9,
                     child: ListView.builder(
                       itemBuilder: (BuildContext context, int index) =>
-                          EntryItem(data[index], _showDialog, context),
+                          EntryItem(data[index], context),
                       itemCount: data.length,
                     ),
                   ),
@@ -135,9 +130,8 @@ class Entry {
 final List<Entry> data = <Entry>[];
 
 class EntryItem extends StatelessWidget {
-  const EntryItem(this.entry, this._showDialog, this.context);
+  const EntryItem(this.entry, this.context);
   final Entry entry;
-  final _showDialog;
   final context;
 
   onBottom(Widget child) => Positioned.fill(

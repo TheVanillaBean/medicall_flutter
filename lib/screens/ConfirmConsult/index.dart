@@ -392,7 +392,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
 
     String price = _db.newConsult.price.replaceAll("\$", "");
     _stripeProvider.chargePayment(
-      price: int.tryParse(_db.newConsult.price.replaceAll("\$", "")),
+      price: int.tryParse(price),
       paymentMethodId: paymentMethodId,
     );
     await _db.addConsult(
