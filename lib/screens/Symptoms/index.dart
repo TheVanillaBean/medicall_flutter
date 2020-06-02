@@ -1,3 +1,4 @@
+import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
@@ -5,6 +6,7 @@ import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Questions/questionsScreen.dart';
 import 'package:Medicall/screens/Symptoms/symptomDetail.dart';
 import 'package:Medicall/services/database.dart';
+import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -17,33 +19,8 @@ class SymptomsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     Database db = Provider.of<Database>(context);
     MedicallUser medicallUser = MedicallUser();
-    void _showDialog() {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          // return object of type Dialog
-          return AlertDialog(
-            title: Text("Your Medical History"),
-            content: Text(
-                "We noticed you have no medical history filled out, tap below to fillout the information needed and we will save it to your account for future use."),
-            actions: <Widget>[
-              // usually buttons at the bottom of the dialog
-              FlatButton(
-                color: Theme.of(context).primaryColor,
-                child: Text("My Medical History"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => QuestionsScreen()),
-                  );
-                },
-              ),
-            ],
-          );
-        },
-      );
-    }
-
+    TempUserProvider tempUserProvider =
+        Provider.of<TempUserProvider>(context, listen: false);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -118,6 +95,21 @@ class SymptomsScreen extends StatelessWidget {
             }
           }),
     );
+  }
+
+  Future<void> _showDialog(BuildContext context) {
+    return PlatformAlertDialog(
+      title: "Your Medical History",
+      content:
+          "We noticed you have no medical history filled out, tap below to fill out the information needed and we will save it to your account for future use.",
+      defaultActionText: "Okay, I will fill it out",
+      onPressed: () {
+        Navigator.of(context).pop();
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => QuestionsScreen()),
+        );
+      },
+    ).show(context);
   }
 }
 

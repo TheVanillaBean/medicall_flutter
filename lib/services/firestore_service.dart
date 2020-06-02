@@ -1,5 +1,7 @@
+library firestore_service;
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter/foundation.dart';
 
 class FirestoreService {
   FirestoreService._();
@@ -8,10 +10,11 @@ class FirestoreService {
   Future<void> setData({
     @required String path,
     @required Map<String, dynamic> data,
+    bool merge = false,
   }) async {
     final reference = Firestore.instance.document(path);
     print('$path: $data');
-    await reference.setData(data);
+    await reference.setData(data, merge: merge);
   }
 
   Future<void> deleteData({@required String path}) async {
@@ -22,9 +25,9 @@ class FirestoreService {
 
   Stream<List<T>> collectionStream<T>({
     @required String path,
-    @required T builder(Map<String, dynamic> data, String documentID),
-    Query queryBuilder(Query query),
-    int sort(T lhs, T rhs),
+    @required T Function(Map<String, dynamic> data, String documentID) builder,
+    Query Function(Query query) queryBuilder,
+    int Function(T lhs, T rhs) sort,
   }) {
     Query query = Firestore.instance.collection(path);
     if (queryBuilder != null) {
@@ -45,7 +48,7 @@ class FirestoreService {
 
   Stream<T> documentStream<T>({
     @required String path,
-    @required T builder(Map<String, dynamic> data, String documentID),
+    @required T Function(Map<String, dynamic> data, String documentID) builder,
   }) {
     final DocumentReference reference = Firestore.instance.document(path);
     final Stream<DocumentSnapshot> snapshots = reference.snapshots();
