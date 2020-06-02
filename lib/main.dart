@@ -6,15 +6,18 @@ import 'package:Medicall/screens/Account/paymentDetail.dart';
 import 'package:Medicall/screens/ConfirmConsult/index.dart';
 import 'package:Medicall/screens/Consent/index.dart';
 import 'package:Medicall/screens/Dashboard/dashboard.dart';
+import 'package:Medicall/screens/GetStarted/index.dart';
 import 'package:Medicall/screens/GetStarted/startVisit.dart';
+import 'package:Medicall/screens/GetStarted/zipCodeVerify.dart';
 import 'package:Medicall/screens/History/Detail/index.dart';
 import 'package:Medicall/screens/History/index.dart';
 import 'package:Medicall/screens/LandingPage/auth_widget_builder.dart';
 import 'package:Medicall/screens/LandingPage/index.dart';
 import 'package:Medicall/screens/Login/index.dart';
-import 'package:Medicall/screens/GetStarted/index.dart';
-import 'package:Medicall/screens/GetStarted/zipCodeVerify.dart';
 import 'package:Medicall/screens/Malpractice/malpractice.dart';
+import 'package:Medicall/screens/OCR/Congrats.dart';
+import 'package:Medicall/screens/OCR/OCRScreen.dart';
+import 'package:Medicall/screens/OCR/PersonalInfoScreen.dart';
 import 'package:Medicall/screens/PasswordReset/index.dart';
 import 'package:Medicall/screens/PhoneAuth/index.dart';
 import 'package:Medicall/screens/Privacy/index.dart';
@@ -168,6 +171,21 @@ class MedicallApp extends StatelessWidget {
               case '/photoID':
                 return MyCustomRoute(
                   builder: (_) => PhotoIdScreen.create(context),
+                  settings: settings,
+                );
+              case '/ocr':
+                return MyCustomRoute(
+                  builder: (_) => OCRScreen(),
+                  settings: settings,
+                );
+              case '/personalInfo':
+                return MyCustomRoute(
+                  builder: (_) => PersonalInfoScreen(),
+                  settings: settings,
+                );
+              case '/congrats':
+                return MyCustomRoute(
+                  builder: (_) => CongratsScreen(),
                   settings: settings,
                 );
               case '/dashboard':
