@@ -1,11 +1,12 @@
 import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/consult_data_model.dart';
-import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/models/symptoms.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Questions/questionsScreen.dart';
 import 'package:Medicall/screens/Symptoms/symptomDetail.dart';
 import 'package:Medicall/services/database.dart';
+import 'package:Medicall/services/non_auth_firestore_db.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -17,8 +18,7 @@ class SymptomsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Database db = Provider.of<Database>(context);
-    MedicallUser medicallUser = MedicallUser();
+    NonAuthDatabase db = Provider.of<NonAuthDatabase>(context, listen: false);
     TempUserProvider tempUserProvider =
         Provider.of<TempUserProvider>(context, listen: false);
     return Scaffold(
@@ -40,59 +40,52 @@ class SymptomsScreen extends StatelessWidget {
         ),
       ),
       drawer: DrawerMenu(),
-      body: FutureBuilder(
-          future: db.getSymptoms(medicallUser),
-          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              if (db.userMedicalRecord != null &&
-                  db.userMedicalRecord.data != null) {
-                medicallUser.hasMedicalHistory = true;
+      body: StreamBuilder<List<Symptom>>(
+          stream: db.symptomsStream(),
+          builder:
+              (BuildContext context, AsyncSnapshot<List<Symptom>> snapshot) {
+            final List<Entry> data = <Entry>[];
+            if (snapshot.data.documents.length > 0) {
+              for (var i = 0; i < snapshot.data.documents.length; i++) {
+                data.add(Entry(
+                    "${snapshot.data.documents[i].documentID[0].toUpperCase()}${snapshot.data.documents[i].documentID.substring(1)}",
+                    snapshot.data.documents[i].data['duration'],
+                    ('\$' +
+                        snapshot.data.documents[i].data['price'].toString()),
+                    <Entry>[
+                      Entry(snapshot.data.documents[i].documentID,
+                          snapshot.data.documents[i].data['description'], '')
+                    ]));
               }
-              final List<Entry> data = <Entry>[];
-              if (snapshot.data.documents.length > 0) {
-                for (var i = 0; i < snapshot.data.documents.length; i++) {
-                  data.add(Entry(
-                      "${snapshot.data.documents[i].documentID[0].toUpperCase()}${snapshot.data.documents[i].documentID.substring(1)}",
-                      snapshot.data.documents[i].data['duration'],
-                      ('\$' +
-                          snapshot.data.documents[i].data['price'].toString()),
-                      <Entry>[
-                        Entry(snapshot.data.documents[i].documentID,
-                            snapshot.data.documents[i].data['description'], '')
-                      ]));
-                }
-              }
-              return Column(
-                children: <Widget>[
-                  Container(
-                    padding: EdgeInsets.fromLTRB(25, 10, 25, 10),
-                    child: Column(
-                      children: <Widget>[
-                        Text(
-                          'Visit Fee \$49',
-                          style: TextStyle(color: Colors.black54, fontSize: 16),
-                        ),
-                        SizedBox(height: 5),
-                        Text(
-                          ' This is the price for the doctor\'s services. Prescriptions or in person follow-up care not included.',
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    flex: 9,
-                    child: ListView.builder(
-                      itemBuilder: (BuildContext context, int index) =>
-                          EntryItem(data[index], _showDialog, context),
-                      itemCount: data.length,
-                    ),
-                  ),
-                ],
-              );
-            } else {
-              return Container();
             }
+            return Column(
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.fromLTRB(25, 10, 25, 10),
+                  child: Column(
+                    children: <Widget>[
+                      Text(
+                        'Visit Fee \$49',
+                        style: TextStyle(color: Colors.black54, fontSize: 16),
+                      ),
+                      SizedBox(height: 5),
+                      Text(
+                        ' This is the price for the doctor\'s services. Prescriptions or in person follow-up care not included.',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  flex: 9,
+                  child: ListView.builder(
+                    itemBuilder: (BuildContext context, int index) =>
+                        EntryItem(data[index], _showDialog, context),
+                    itemCount: data.length,
+                  ),
+                ),
+              ],
+            );
           }),
     );
   }

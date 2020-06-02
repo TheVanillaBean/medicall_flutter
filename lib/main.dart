@@ -8,6 +8,7 @@ import 'package:Medicall/screens/Welcome/startVisit.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
+import 'package:Medicall/services/non_auth_firestore_db.dart';
 import 'package:Medicall/services/stripe_provider.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
@@ -22,7 +23,7 @@ void main() async {
   runApp(MedicallApp(
     appleSignInAvailable: appleSignInAvailable,
     authServiceBuilder: (_) => Auth(),
-    databaseBuilder: (_, uid) => FirestoreDatabase(),
+    databaseBuilder: (_) => NonAuthFirestoreDB(),
     tempUserProvider: (_) => TempUserProvider(),
   ));
 }
@@ -30,8 +31,7 @@ void main() async {
 class MedicallApp extends StatelessWidget {
   final AppleSignInAvailable appleSignInAvailable;
   final AuthBase Function(BuildContext context) authServiceBuilder;
-  final FirestoreDatabase Function(BuildContext context, String uid)
-      databaseBuilder;
+  final NonAuthDatabase Function(BuildContext context) databaseBuilder;
   final TempUserProvider Function(BuildContext context) tempUserProvider;
 
   const MedicallApp({
@@ -54,6 +54,9 @@ class MedicallApp extends StatelessWidget {
         ),
         Provider<TempUserProvider>(
           create: tempUserProvider,
+        ),
+        Provider<NonAuthDatabase>(
+          create: databaseBuilder,
         ),
         Provider<StripeProviderBase>(
           create: (_) => StripeProvider(),
