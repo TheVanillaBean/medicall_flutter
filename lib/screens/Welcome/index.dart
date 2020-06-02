@@ -1,6 +1,6 @@
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Login/login.dart';
-import 'package:Medicall/screens/Symptoms/index.dart';
+import 'package:Medicall/screens/Symptoms/symptoms.dart';
 import 'package:flutter/material.dart';
 
 class WelcomeScreen extends StatelessWidget {

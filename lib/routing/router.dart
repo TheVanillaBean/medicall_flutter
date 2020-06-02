@@ -1,3 +1,4 @@
+import 'package:Medicall/models/symptoms.dart';
 import 'package:Medicall/screens/Account/index.dart';
 import 'package:Medicall/screens/Account/paymentDetail.dart';
 import 'package:Medicall/screens/ConfirmConsult/index.dart';
@@ -18,7 +19,8 @@ import 'package:Medicall/screens/Registration/photoIdScreen.dart';
 import 'package:Medicall/screens/Registration/registrationType.dart';
 import 'package:Medicall/screens/SelectProvider/index.dart';
 import 'package:Medicall/screens/SelectProvider/providerDetail.dart';
-import 'package:Medicall/screens/Symptoms/index.dart';
+import 'package:Medicall/screens/Symptoms/symptom_detail.dart';
+import 'package:Medicall/screens/Symptoms/symptoms.dart';
 import 'package:Medicall/screens/Terms/index.dart';
 import 'package:Medicall/screens/Welcome//index.dart';
 import 'package:Medicall/screens/Welcome/startVisit.dart';
@@ -44,6 +46,7 @@ class Routes {
   static const consent = '/consent';
   static const malpractice = '/malpractice';
   static const symptoms = '/symptoms';
+  static const symptomDetail = '/symptoms-detail';
   static const questionsScreen = '/questions-screen';
   static const selectProvider = '/select-provider';
   static const providerDetail = '/provider-detail';
@@ -163,6 +166,14 @@ class Router {
       case Routes.symptoms:
         return MaterialPageRoute<dynamic>(
           builder: (context) => SymptomsScreen(),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case Routes.symptomDetail:
+        final Map<String, dynamic> mapArgs = args;
+        final Symptom symptom = mapArgs['symptom'];
+        return MaterialPageRoute<dynamic>(
+          builder: (_) => SymptomDetailScreen(symptom: symptom),
           settings: settings,
           fullscreenDialog: true,
         );

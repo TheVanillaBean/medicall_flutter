@@ -1,15 +1,31 @@
+import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:Medicall/services/database.dart';
+import 'package:Medicall/models/symptoms.dart';
+import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/Questions/questionsScreen.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class SymptomDetailScreen extends StatelessWidget {
-  const SymptomDetailScreen({Key key}) : super(key: key);
+  final Symptom symptom;
+
+  const SymptomDetailScreen({@required this.symptom});
+
+  static Future<void> show({
+    BuildContext context,
+    Symptom symptom,
+  }) async {
+    await Navigator.of(context).pushNamed(
+      Routes.symptomDetail,
+      arguments: {
+        'symptom': symptom,
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    Database db = Provider.of<Database>(context);
     MedicallUser medicallUser;
     try {
       medicallUser = Provider.of<UserProvider>(context).medicallUser;
@@ -29,7 +45,7 @@ class SymptomDetailScreen extends StatelessWidget {
           ),
           centerTitle: true,
           title: Text(
-            db.newConsult.consultType + ' Visit',
+            symptom.name + ' Visit',
           ),
         ),
         body: Container(
@@ -48,7 +64,7 @@ class SymptomDetailScreen extends StatelessWidget {
                   ),
                   Container(
                     child: Text(
-                      db.newConsult.price,
+                      symptom.price.toString(),
                       style: TextStyle(fontSize: 18),
                     ),
                   )
@@ -57,7 +73,7 @@ class SymptomDetailScreen extends StatelessWidget {
               SizedBox(height: 30),
               Container(
                 child: Text(
-                  db.newConsult.desc,
+                  symptom.description,
                   style: TextStyle(
                     height: 1.6,
                     fontSize: 14,
@@ -136,5 +152,20 @@ class SymptomDetailScreen extends StatelessWidget {
             ],
           ),
         ));
+  }
+
+  Future<void> _showDialog(BuildContext context) {
+    return PlatformAlertDialog(
+      title: "Your Medical History",
+      content:
+          "We noticed you have no medical history filled out, tap below to fill out the information needed and we will save it to your account for future use.",
+      defaultActionText: "Okay, I will fill it out",
+      onPressed: () {
+        Navigator.of(context).pop();
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => QuestionsScreen()),
+        );
+      },
+    ).show(context);
   }
 }
