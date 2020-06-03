@@ -1,6 +1,7 @@
 import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
 import 'package:Medicall/models/symptoms.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/SelectProvider/select_provider.dart';
 import 'package:Medicall/screens/Welcome/zip_code_view_model.dart';
 import 'package:Medicall/services/non_auth_firestore_db.dart';
 import 'package:flutter/material.dart';
@@ -53,7 +54,7 @@ class _ZipCodeVerifyScreenState extends State<ZipCodeVerifyScreen> {
   Future<void> _submit() async {
     bool providersInArea = await model.areProvidersInArea(zipCode);
     if (providersInArea) {
-      Navigator.pushNamed(context, '/selectProvider');
+      SelectProviderScreen.show(context: context, symptom: symptom);
     } else {
       _showDialog(context);
     }

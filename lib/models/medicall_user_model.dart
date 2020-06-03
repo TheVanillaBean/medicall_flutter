@@ -49,6 +49,32 @@ class MedicallUser {
     this.hasMedicalHistory = false,
   });
 
+  factory MedicallUser.fromMap(Map<String, dynamic> data, String uid) {
+    MedicallUser medicallUser = MedicallUser();
+    medicallUser.uid = uid ?? medicallUser.uid;
+    medicallUser.displayName = data['name'] ?? medicallUser.displayName;
+    medicallUser.firstName = data['first_name'] ?? medicallUser.firstName;
+    medicallUser.lastName = data['last_name'] ?? medicallUser.lastName;
+    medicallUser.address = data['address'] ?? medicallUser.address;
+    medicallUser.devTokens = data['dev_tokens'] ?? medicallUser.devTokens;
+    medicallUser.dob = data['dob'] ?? medicallUser.dob;
+    medicallUser.gender = data['gender'] ?? medicallUser.gender;
+    medicallUser.policy = data['policy'] ?? medicallUser.policy;
+    medicallUser.consent = data['consent'] ?? medicallUser.consent;
+    medicallUser.terms = data['terms'] ?? medicallUser.terms;
+    medicallUser.profilePic = data['profile_pic'] ?? medicallUser.profilePic;
+    medicallUser.govId = data['gov_id'] ?? medicallUser.govId;
+    medicallUser.titles = data['titles'] ?? medicallUser.titles;
+    medicallUser.stripeConnectAuthorized =
+        data['stripeConnectAuthorized'] ?? medicallUser.stripeConnectAuthorized;
+    medicallUser.type = data['type'] ?? medicallUser.type;
+    medicallUser.email = data['email'] ?? medicallUser.email;
+    medicallUser.phoneNumber = data['phone' ?? medicallUser.phoneNumber];
+    medicallUser.hasMedicalHistory = false;
+    return medicallUser;
+  }
+
+  //will eventually be phased out as a function in favor of above
   factory MedicallUser.from(String uid, DocumentSnapshot snapshot) {
     MedicallUser medicallUser = MedicallUser();
     medicallUser.uid = uid ?? medicallUser.uid;

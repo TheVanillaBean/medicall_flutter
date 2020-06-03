@@ -1,6 +1,7 @@
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/models/symptoms.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/SelectProvider/select_provider.dart';
 import 'package:Medicall/screens/Welcome/zip_code_verify.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/string_utils.dart';
@@ -103,9 +104,7 @@ class SymptomDetailScreen extends StatelessWidget {
         ),
         onPressed: () {
           if (medicallUser != null && medicallUser.uid.length > 0) {
-            Navigator.of(context).pushNamed(
-              '/selectProvider',
-            );
+            SelectProviderScreen.show(context: context, symptom: symptom);
           } else {
             ZipCodeVerifyScreen.show(context: context, symptom: symptom);
           }

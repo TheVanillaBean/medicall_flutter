@@ -17,8 +17,8 @@ import 'package:Medicall/screens/Privacy/index.dart';
 import 'package:Medicall/screens/Questions/questionsScreen.dart';
 import 'package:Medicall/screens/Registration/photoIdScreen.dart';
 import 'package:Medicall/screens/Registration/registrationType.dart';
-import 'package:Medicall/screens/SelectProvider/index.dart';
 import 'package:Medicall/screens/SelectProvider/providerDetail.dart';
+import 'package:Medicall/screens/SelectProvider/select_provider.dart';
 import 'package:Medicall/screens/Symptoms/symptom_detail.dart';
 import 'package:Medicall/screens/Symptoms/symptoms.dart';
 import 'package:Medicall/screens/Terms/index.dart';
@@ -185,9 +185,11 @@ class Router {
           settings: settings,
           fullscreenDialog: true,
         );
-      case '/selectProvider':
+      case Routes.selectProvider:
+        final Map<String, dynamic> mapArgs = args;
+        final Symptom symptom = mapArgs['symptom'];
         return MaterialPageRoute<dynamic>(
-          builder: (context) => SelectProviderScreen(),
+          builder: (context) => SelectProviderScreen(symptom: symptom),
           settings: settings,
           fullscreenDialog: true,
         );
