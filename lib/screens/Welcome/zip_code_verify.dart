@@ -77,9 +77,15 @@ class _ZipCodeVerifyScreenState extends State<ZipCodeVerifyScreen> {
       body: Container(
         color: Colors.white,
         padding: EdgeInsets.symmetric(vertical: 0, horizontal: 40),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: _buildChildren(),
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () {
+            FocusScope.of(context).requestFocus(new FocusNode());
+          },
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: _buildChildren(),
+          ),
         ),
       ),
     );
