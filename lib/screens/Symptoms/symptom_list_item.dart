@@ -1,4 +1,5 @@
 import 'package:Medicall/models/symptoms.dart';
+import 'package:Medicall/util/string_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -11,7 +12,7 @@ class SymptomListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(symptom.name),
+      title: Text(StringUtils.capitalize(symptom.name)),
       subtitle: Text(symptom.duration),
       trailing: Icon(Icons.chevron_right),
       onTap: onTap,

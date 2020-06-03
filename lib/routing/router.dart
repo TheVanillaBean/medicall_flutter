@@ -22,9 +22,9 @@ import 'package:Medicall/screens/SelectProvider/providerDetail.dart';
 import 'package:Medicall/screens/Symptoms/symptom_detail.dart';
 import 'package:Medicall/screens/Symptoms/symptoms.dart';
 import 'package:Medicall/screens/Terms/index.dart';
-import 'package:Medicall/screens/Welcome//index.dart';
+import 'package:Medicall/screens/Welcome//welcome.dart';
 import 'package:Medicall/screens/Welcome/startVisit.dart';
-import 'package:Medicall/screens/Welcome/zipCodeVerify.dart';
+import 'package:Medicall/screens/Welcome/zip_code_verify.dart';
 import 'package:flutter/material.dart';
 
 class Routes {
@@ -91,9 +91,11 @@ class Router {
           settings: settings,
           fullscreenDialog: true,
         );
-      case '/zipCodeVerify':
+      case Routes.zipCodeVerify:
+        final Map<String, dynamic> mapArgs = args;
+        final Symptom symptom = mapArgs['symptom'];
         return MaterialPageRoute<dynamic>(
-          builder: (context) => ZipCodeVerifyScreen(),
+          builder: (context) => ZipCodeVerifyScreen.create(context, symptom),
           settings: settings,
           fullscreenDialog: true,
         );

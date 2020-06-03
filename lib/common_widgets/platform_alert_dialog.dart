@@ -64,7 +64,7 @@ class PlatformAlertDialog extends PlatformWidget {
     actions.add(
       PlatformAlertDialogAction(
         child: Text(defaultActionText),
-        onPressed: () => onPressed,
+        onPressed: () => Navigator.of(context).pop(true),
       ),
     );
 
