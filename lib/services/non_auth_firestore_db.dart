@@ -8,6 +8,7 @@ abstract class NonAuthDatabase {
   Stream<List<Symptom>> symptomsStream();
   Future<List<String>> getAllProviderAddresses();
   Stream<List<MedicallUser>> getAllProviders();
+  Stream<MedicallUser> providerStream({String uid});
 }
 
 class NonAuthFirestoreDB implements NonAuthDatabase {
@@ -32,6 +33,12 @@ class NonAuthFirestoreDB implements NonAuthDatabase {
   Stream<List<MedicallUser>> getAllProviders() => _service.collectionStream(
         path: FirestorePath.users(),
         queryBuilder: (query) => query.where('type', isEqualTo: "provider"),
+        builder: (data, documentId) => MedicallUser.fromMap(data, documentId),
+      );
+
+  @override
+  Stream<MedicallUser> providerStream({String uid}) => _service.documentStream(
+        path: FirestorePath.user(uid),
         builder: (data, documentId) => MedicallUser.fromMap(data, documentId),
       );
 }

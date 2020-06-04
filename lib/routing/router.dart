@@ -1,3 +1,4 @@
+import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/models/symptoms.dart';
 import 'package:Medicall/screens/Account/index.dart';
 import 'package:Medicall/screens/Account/paymentDetail.dart';
@@ -15,9 +16,10 @@ import 'package:Medicall/screens/PasswordReset/index.dart';
 import 'package:Medicall/screens/PhoneAuth/index.dart';
 import 'package:Medicall/screens/Privacy/index.dart';
 import 'package:Medicall/screens/Questions/questionsScreen.dart';
+import 'package:Medicall/screens/Registration/index.dart';
 import 'package:Medicall/screens/Registration/photoIdScreen.dart';
 import 'package:Medicall/screens/Registration/registrationType.dart';
-import 'package:Medicall/screens/SelectProvider/providerDetail.dart';
+import 'package:Medicall/screens/SelectProvider/provider_detail.dart';
 import 'package:Medicall/screens/SelectProvider/select_provider.dart';
 import 'package:Medicall/screens/Symptoms/symptom_detail.dart';
 import 'package:Medicall/screens/Symptoms/symptoms.dart';
@@ -99,33 +101,33 @@ class Router {
           settings: settings,
           fullscreenDialog: true,
         );
-      case '/registration':
+      case Routes.registration:
         return MaterialPageRoute<dynamic>(
-          builder: (context) => PasswordResetScreen.create(context),
+          builder: (context) => RegistrationScreen(),
           settings: settings,
           fullscreenDialog: true,
         );
       case '/reset_password':
         return MaterialPageRoute<dynamic>(
-          builder: (context) => PhotoIdScreen.create(context),
+          builder: (context) => PasswordResetScreen.create(context),
           settings: settings,
           fullscreenDialog: true,
         );
       case '/photoID':
         return MaterialPageRoute<dynamic>(
-          builder: (context) => OCRScreen(),
+          builder: (context) => PhotoIdScreen(),
           settings: settings,
           fullscreenDialog: true,
         );
       case '/ocr':
         return MaterialPageRoute<dynamic>(
-          builder: (context) => PersonalInfoScreen(),
+          builder: (context) => OCRScreen(),
           settings: settings,
           fullscreenDialog: true,
         );
       case '/personalInfo':
         return MaterialPageRoute<dynamic>(
-          builder: (context) => DashboardScreen.create(context),
+          builder: (context) => PersonalInfoScreen(),
           settings: settings,
           fullscreenDialog: true,
         );
@@ -193,9 +195,15 @@ class Router {
           settings: settings,
           fullscreenDialog: true,
         );
-      case '/providerDetail':
+      case Routes.providerDetail:
+        final Map<String, dynamic> mapArgs = args;
+        final Symptom symptom = mapArgs['symptom'];
+        final MedicallUser provider = mapArgs['provider'];
         return MaterialPageRoute<dynamic>(
-          builder: (context) => ProviderDetailScreen(),
+          builder: (context) => ProviderDetailScreen(
+            symptom: symptom,
+            provider: provider,
+          ),
           settings: settings,
           fullscreenDialog: true,
         );

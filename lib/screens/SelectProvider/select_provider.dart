@@ -4,9 +4,9 @@ import 'package:Medicall/common_widgets/list_items_builder.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/models/symptoms.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/SelectProvider/provider_detail.dart';
 import 'package:Medicall/screens/SelectProvider/provider_list_item.dart';
 import 'package:Medicall/services/non_auth_firestore_db.dart';
-import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -55,7 +55,11 @@ class SelectProviderScreen extends StatelessWidget {
                     snapshot: snapshot,
                     itemBuilder: (context, provider) => ProviderListItem(
                       provider: provider,
-                      onTap: null,
+                      onTap: () => ProviderDetailScreen.show(
+                        context: context,
+                        provider: provider,
+                        symptom: symptom,
+                      ),
                     ),
                   ),
                 );
@@ -65,18 +69,5 @@ class SelectProviderScreen extends StatelessWidget {
         ),
       ),
     );
-  }
-
-//  Future _selectProvider(provider, titles) async {
-//    selectedProvider = provider;
-//    providerTitles = titles;
-//    db.newConsult.provider = selectedProvider;
-//    db.newConsult.providerTitles = providerTitles;
-//    //await setConsult();
-//  }
-
-  void _showMessageDialog(BuildContext context) {
-    AppUtil().showFlushBar(
-        'Please select one of the providers in order to continue', context);
   }
 }
