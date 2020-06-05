@@ -17,11 +17,11 @@ abstract class AuthBase {
   Stream<MedicallUser> get onAuthStateChanged;
   Future<MedicallUser> currentUser();
   Future<String> currentUserIdToken();
-  void addUserToAuthStream({@required MedicallUser user});
+  Future<void> addUserToAuthStream({@required FirebaseUser user});
   Future<MedicallUser> signInAnonymously();
   Future<MedicallUser> signInWithEmailAndPassword(
       {@required String email, @required String password});
-  Future<MedicallUser> createUserWithEmailAndPassword(
+  Future<FirebaseUser> createUserWithEmailAndPassword(
       {@required String email, @required String password});
   Future<List<String>> fetchProvidersForEmail({@required String email});
   Future<AuthCredential> fetchEmailAndPasswordCredential(
@@ -31,8 +31,8 @@ abstract class AuthBase {
       {List<Scope> scopes = const []});
   Future<AuthCredential> fetchPhoneAuthCredential(
       {@required String verificationId, @required String smsCode});
-  Future<MedicallUser> signInWithGoogle({@required AuthCredential credential});
-  Future<MedicallUser> signInWithApple(
+  Future<FirebaseUser> signInWithGoogle({@required AuthCredential credential});
+  Future<FirebaseUser> signInWithApple(
       {@required AuthCredential appleIdCredential});
   Future<MedicallUser> signInWithPhoneNumber(
       {@required AuthCredential credential});
@@ -56,26 +56,27 @@ class Auth implements AuthBase {
     authStreamController = StreamController();
     _firebaseAuth.onAuthStateChanged.listen((user) {
       if (triggerAuthStream) {
-        unawaited(_getMedicallUserFromFirestore(user: user));
+        unawaited(addUserToAuthStream(user: user));
       }
+      triggerAuthStream = true;
     });
   }
 
-  void addUserToAuthStream({@required MedicallUser user}) {
-    authStreamController.sink.add(user);
-  }
-
-  Future<void> _getMedicallUserFromFirestore(
-      {@required FirebaseUser user}) async {
+  Future<void> addUserToAuthStream({@required FirebaseUser user}) async {
     if (user == null) {
-      addUserToAuthStream(user: null);
+      authStreamController.sink.add(null);
       return;
     }
+    MedicallUser medicallUser = await _getMedicallUserFromFirestore(user: user);
+    authStreamController.sink.add(medicallUser);
+  }
+
+  Future<MedicallUser> _getMedicallUserFromFirestore(
+      {@required FirebaseUser user}) async {
     final DocumentReference documentReference =
         Firestore.instance.collection('users').document(user.uid);
     final snapshot = await documentReference.get();
-    MedicallUser medicallUser = MedicallUser.from(user.uid, snapshot);
-    addUserToAuthStream(user: medicallUser);
+    return MedicallUser.from(user.uid, snapshot);
   }
 
   MedicallUser _userFromFirebaseAuth(FirebaseUser user) {
@@ -125,12 +126,13 @@ class Auth implements AuthBase {
   }
 
   @override
-  Future<MedicallUser> createUserWithEmailAndPassword(
+  Future<FirebaseUser> createUserWithEmailAndPassword(
       {@required String email, @required String password}) async {
     final authResult = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email, password: password);
     final user = authResult.user;
-    return _userFromFirebaseAuth(user);
+    unawaited(user.sendEmailVerification());
+    return user;
   }
 
   Future<List<String>> fetchProvidersForEmail({@required String email}) async {
@@ -233,18 +235,18 @@ class Auth implements AuthBase {
   }
 
   @override
-  Future<MedicallUser> signInWithGoogle(
+  Future<FirebaseUser> signInWithGoogle(
       {@required AuthCredential credential}) async {
     final authResult = await _firebaseAuth.signInWithCredential(credential);
-    return _userFromFirebaseAuth(authResult.user);
+    return authResult.user;
   }
 
   @override
-  Future<MedicallUser> signInWithApple(
+  Future<FirebaseUser> signInWithApple(
       {@required AuthCredential appleIdCredential}) async {
     final authResult =
         await _firebaseAuth.signInWithCredential(appleIdCredential);
-    return _userFromFirebaseAuth(authResult.user);
+    return authResult.user;
   }
 
   @override

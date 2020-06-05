@@ -74,6 +74,33 @@ class MedicallUser {
     return medicallUser;
   }
 
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'uid': uid,
+      'first_name': firstName,
+      'last_name': lastName,
+      'email': email,
+      'address': address,
+      'dev_tokens': devTokens,
+      "type": type,
+      'dob': dob,
+      'gender': gender,
+      'policy': policy,
+      'consent': consent,
+      'terms': terms,
+      'profile_pic': profilePic,
+      'gov_id': govId,
+      'stripeConnectAuthorized': stripeConnectAuthorized,
+      'phone_umber': phoneNumber,
+      'hasMedicalHistory': hasMedicalHistory,
+//      'titles': titles,
+//      'npi':  npi,
+//      'med_license': medLicense,
+//      'state_issued': medLicenseState,
+      "date": DateTime.now(),
+    };
+  }
+
   //will eventually be phased out as a function in favor of above
   factory MedicallUser.from(String uid, DocumentSnapshot snapshot) {
     MedicallUser medicallUser = MedicallUser();

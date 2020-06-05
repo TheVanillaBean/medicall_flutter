@@ -237,10 +237,10 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
         //     await tempUserProvider.saveRegistrationImages();
 
         this.auth.triggerAuthStream = true;
-        await this.tempUserProvider.addNewUserToFirestore();
+//        await this.tempUserProvider.addNewUserToFirestore();
         await this.tempUserProvider.addProviderMalPractice();
         currentFirebaseUser.sendEmailVerification();
-        this.auth.addUserToAuthStream(user: user);
+//        this.auth.addUserToAuthStream(user: user);
         // if (successfullySavedImages) {
 
         // } else {

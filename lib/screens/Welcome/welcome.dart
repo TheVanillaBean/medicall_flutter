@@ -12,16 +12,8 @@ class WelcomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              onPressed: () {
-                LoginScreen.show(context: context);
-              },
-              icon: Icon(Icons.arrow_back),
-            );
-          },
-        ),
+        centerTitle: true,
+        title: Text(""),
       ),
       body: SingleChildScrollView(
         child: Container(

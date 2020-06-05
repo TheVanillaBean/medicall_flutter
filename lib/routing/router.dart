@@ -16,8 +16,8 @@ import 'package:Medicall/screens/PasswordReset/index.dart';
 import 'package:Medicall/screens/PhoneAuth/index.dart';
 import 'package:Medicall/screens/Privacy/index.dart';
 import 'package:Medicall/screens/Questions/questionsScreen.dart';
-import 'package:Medicall/screens/Registration/index.dart';
 import 'package:Medicall/screens/Registration/photoIdScreen.dart';
+import 'package:Medicall/screens/Registration/registration.dart';
 import 'package:Medicall/screens/Registration/registrationType.dart';
 import 'package:Medicall/screens/SelectProvider/provider_detail.dart';
 import 'package:Medicall/screens/SelectProvider/select_provider.dart';
@@ -103,7 +103,7 @@ class Router {
         );
       case Routes.registration:
         return MaterialPageRoute<dynamic>(
-          builder: (context) => RegistrationScreen(),
+          builder: (context) => RegistrationScreen.create(context),
           settings: settings,
           fullscreenDialog: true,
         );

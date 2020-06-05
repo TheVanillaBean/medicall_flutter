@@ -5,7 +5,6 @@ import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/Login/apple_sign_in_model.dart';
 import 'package:Medicall/screens/Login/google_auth_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:uuid/uuid.dart';
@@ -151,45 +150,6 @@ class TempUserProvider {
       ref.setData(data).whenComplete(() {
         print("Questions Added");
       }).catchError((e) => print(e));
-    }
-  }
-
-  Future<void> addNewUserToFirestore() async {
-    final DocumentReference documentReference =
-        Firestore.instance.document("users/" + medicallUser.uid);
-    FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-    await _firebaseMessaging.getToken().then((String token) {
-      assert(token != null);
-      medicallUser.devTokens = [token];
-    });
-    Map<String, dynamic> data = <String, dynamic>{
-      "date": DateTime.now(),
-      "name": medicallUser.displayName,
-      "first_name": medicallUser.firstName,
-      "last_name": medicallUser.lastName,
-      "email": medicallUser.email,
-      "gender": medicallUser.gender,
-      "type": medicallUser.type,
-      "address": medicallUser.address,
-      "terms": medicallUser.terms,
-      "policy": medicallUser.policy,
-      "consent": medicallUser.consent,
-      "dob": medicallUser.dob,
-      "phone": medicallUser.phoneNumber,
-      "profile_pic": medicallUser.profilePic,
-      "gov_id": medicallUser.govId,
-      "dev_tokens": medicallUser.devTokens,
-    };
-    if (medicallUser.type == 'provider') {
-      data['titles'] = medicallUser.titles;
-      data['npi'] = medicallUser.npi;
-      data['med_license'] = medicallUser.medLicense;
-      data['state_issued'] = medicallUser.medLicenseState;
-    }
-    try {
-      await documentReference.setData(data);
-    } catch (e) {
-      rethrow;
     }
   }
 }
