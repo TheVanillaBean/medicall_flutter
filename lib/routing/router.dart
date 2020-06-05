@@ -143,13 +143,13 @@ class Router {
           settings: settings,
           fullscreenDialog: true,
         );
-      case '/terms':
+      case Routes.terms:
         return MaterialPageRoute<dynamic>(
           builder: (context) => TermsScreen(),
           settings: settings,
           fullscreenDialog: true,
         );
-      case '/privacy':
+      case Routes.privacy:
         return MaterialPageRoute<dynamic>(
           builder: (context) => PrivacyScreen(),
           settings: settings,

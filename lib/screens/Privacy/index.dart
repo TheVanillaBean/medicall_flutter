@@ -1,3 +1,4 @@
+import 'package:Medicall/routing/router.dart';
 import 'package:flutter/material.dart';
 
 String privacy = ''' 
@@ -80,6 +81,10 @@ Cambridge, MA 02138
 Thanks again for using Medicall!''';
 
 class PrivacyScreen extends StatelessWidget {
+  static Future<void> show({BuildContext context}) async {
+    await Navigator.of(context).pushNamed(Routes.privacy);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
