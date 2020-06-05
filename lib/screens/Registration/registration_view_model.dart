@@ -53,7 +53,7 @@ class RegistrationViewModel with EmailAndPasswordValidators, ChangeNotifier {
   }
 
   String get confirmPasswordErrorText {
-    bool showErrorText = submitted && confirmPassword == password;
+    bool showErrorText = submitted && confirmPassword != password;
     return showErrorText ? invalidConfirmPasswordErrorText : null;
   }
 
@@ -69,8 +69,20 @@ class RegistrationViewModel with EmailAndPasswordValidators, ChangeNotifier {
   void updateCheckValue(bool checkValue) => updateWith(checkValue: checkValue);
 
   Future<void> submit() async {
-    updateWith(submitted: true, isLoading: true);
+    updateWith(submitted: true);
+    if (!checkValue) {
+      this.verificationStatus.updateStatus(
+          "You have to agree to the Terms and Conditions, as well as the Privacy policy before signing in");
+      return;
+    }
+
+    if (password != confirmPassword) {
+      this.verificationStatus.updateStatus("Passwords do not match.");
+      return;
+    }
+
     try {
+      updateWith(isLoading: true);
       bool emailAlreadyUsed = await auth.emailAlreadyUsed(email: this.email);
       if (!emailAlreadyUsed) {
         this.auth.triggerAuthStream = false;

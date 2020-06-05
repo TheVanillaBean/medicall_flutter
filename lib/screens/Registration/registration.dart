@@ -70,11 +70,6 @@ class _RegistrationScreenState extends State<RegistrationScreen>
   }
 
   Future<void> _submit() async {
-    if (!model.checkValue) {
-      _showFlushBarMessage(
-          "You have to agree to the Terms and Conditions, as well as the Privacy policy before signing in");
-      return;
-    }
     try {
       await model.submit();
     } on PlatformException catch (e) {
@@ -187,7 +182,11 @@ class _RegistrationScreenState extends State<RegistrationScreen>
               color: Theme.of(context).colorScheme.primary,
               textColor: Colors.white,
               text: "Sign in",
-              onPressed: model.canSubmit ? _submit : null,
+              onPressed: model.canSubmit &&
+                      model.googleAuthModel == null &&
+                      model.appleSignInModel == null
+                  ? _submit
+                  : null,
             ),
           )
         ],
