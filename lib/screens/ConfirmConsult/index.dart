@@ -90,20 +90,25 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
           ],
         ),
         bottom: TabBar(
-          indicatorColor: Theme.of(context).colorScheme.secondary,
           tabs: <Tab>[
             Tab(
               // set icon to the tab
-              text: 'Symptom',
-              icon: Icon(Icons.local_pharmacy),
+              icon: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[Icon(Icons.local_pharmacy), Text('Symptom')],
+              ),
             ),
             // Tab(
             //   text: 'History',
             //   icon: Icon(Icons.assignment_ind),
             // ),
             Tab(
-              text: 'Pictures',
-              icon: Icon(Icons.perm_media),
+              icon: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[Icon(Icons.perm_media), Text('Photos')],
+              ),
             ),
           ],
           // setup the _confirmTabCntrl
@@ -198,7 +203,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                           ],
                         ),
                         Container(
-                          padding: EdgeInsets.fromLTRB(30, 150, 45, 10),
+                          padding: EdgeInsets.fromLTRB(30, 180, 45, 10),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
@@ -290,7 +295,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(0),
                           ),
-                          color: Theme.of(context).colorScheme.secondaryVariant,
+                          color: Theme.of(context).colorScheme.primary,
                           onPressed: () async {
                             setState(() {
                               _hasReviewed = true;
@@ -342,7 +347,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                 ? ListTile(
                     title: Text(
                       _db.newConsult.screeningQuestions[i]['question'],
-                      style: TextStyle(fontSize: 14.0),
+                      style: TextStyle(fontSize: 14.0, color: Colors.black38),
                     ),
                     subtitle: Text(
                       _db.newConsult.screeningQuestions[i]['answer']
@@ -355,7 +360,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
                           letterSpacing: 1.0,
                           height: 1.2,
                           fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.secondary),
+                          color: Colors.black54),
                     ),
                   )
                 : SizedBox();

@@ -224,16 +224,9 @@ class ExtendedImageProvider implements ExtImageProvider {
         enableCamera: true,
         cupertinoOptions: CupertinoOptions(takePhotoIcon: 'chat'),
         materialOptions: MaterialOptions(
-            actionBarColor:
-                '#${Theme.of(context).colorScheme.onPrimary.value.toRadixString(16).toUpperCase().substring(2)}',
-            statusBarColor:
-                '#${Theme.of(context).colorScheme.onPrimary.value.toRadixString(16).toUpperCase().substring(2)}',
-            lightStatusBar: true,
             autoCloseOnSelectionLimit: true,
             startInAllView: true,
             useDetailsView: false,
-            actionBarTitleColor:
-                '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
             actionBarTitle: 'Select Images',
             allViewTitle: 'All Photos'));
   }

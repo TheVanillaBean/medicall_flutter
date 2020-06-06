@@ -4,7 +4,7 @@ final ThemeData myTheme = ThemeData(
   primarySwatch: Colors.blue,
   primaryColor: Colors.white,
   primaryColorBrightness: Brightness.dark,
-  brightness: Brightness.light,
+  brightness: Brightness.dark,
   primaryColorLight: Color(0xffbbdefb),
   primaryColorDark: Color(0xff107FA2),
   accentColor: Color(0xff2196f3),
@@ -12,7 +12,6 @@ final ThemeData myTheme = ThemeData(
   canvasColor: Color(0xfffafafa),
   scaffoldBackgroundColor: Colors.white,
   bottomAppBarColor: Color(0xFF2F97C1),
-  
   appBarTheme: AppBarTheme(
       elevation: 0,
       brightness: Brightness.light,
@@ -20,6 +19,7 @@ final ThemeData myTheme = ThemeData(
       iconTheme: IconThemeData(
         color: Colors.blue,
       ),
+      actionsIconTheme: IconThemeData(color: Colors.blue),
       textTheme: TextTheme(
           button: TextStyle(
             color: Colors.blue,
@@ -481,8 +481,8 @@ final ThemeData myTheme = ThemeData(
   ),
   tabBarTheme: TabBarTheme(
     indicatorSize: TabBarIndicatorSize.label,
-    labelColor: Color(0xfff16477),
-    unselectedLabelColor: Color(0xfff16477).withAlpha(100),
+    labelColor: Colors.blue,
+    unselectedLabelColor: Colors.blue.withAlpha(100),
   ),
   chipTheme: ChipThemeData(
     backgroundColor: Color(0x1f000000),
