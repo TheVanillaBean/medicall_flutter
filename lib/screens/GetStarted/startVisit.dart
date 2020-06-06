@@ -85,7 +85,6 @@ class StartVisitScreen extends StatelessWidget {
                         _newMedicalHistory.setnewMedicalHistory(false);
                         Navigator.of(context).pushNamed('/questionsScreen');
                       }
-                      Navigator.pushNamed(context, '/questionsScreen');
                     },
                     padding: EdgeInsets.fromLTRB(35, 15, 35, 15),
                     shape: RoundedRectangleBorder(
