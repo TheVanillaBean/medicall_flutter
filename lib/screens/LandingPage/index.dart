@@ -1,7 +1,6 @@
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/Dashboard/dashboard.dart';
 import 'package:Medicall/screens/GetStarted/index.dart';
-import 'package:Medicall/screens/GetStarted/startVisit.dart';
 import 'package:Medicall/screens/PhoneAuth/index.dart';
 import 'package:Medicall/screens/StripeConnect/index.dart';
 import 'package:Medicall/secrets.dart';
@@ -51,11 +50,7 @@ class LandingPage extends StatelessWidget {
               return StripeConnect.create(context);
             } else {
               if (db.newConsult != null) {
-                Navigator.push(context, MaterialPageRoute<void>(
-                  builder: (BuildContext context) {
-                    return StartVisitScreen();
-                  },
-                ));
+                return DashboardScreen.create(context);
               } else {
                 return DashboardScreen.create(context);
               }

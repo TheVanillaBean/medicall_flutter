@@ -33,7 +33,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
   @override
   void initState() {
     super.initState();
-    getAddresses();
+    //
   }
 
   Future getAddresses() async {
@@ -48,6 +48,7 @@ class _SelectProviderScreenState extends State<SelectProviderScreen> {
 
   @override
   Widget build(BuildContext context) {
+    getAddresses();
     // Widget expandedChild;
     // if (isLoading) {
     //   expandedChild = Center(child: CircularProgressIndicator(value: null));

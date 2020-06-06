@@ -133,6 +133,7 @@ class ExtendedImageProvider implements ExtImageProvider {
       height: height,
       width: width,
       fit: fit,
+      enableSlideOutPage: true,
       cache: cache,
       mode: mode,
       initGestureConfigHandler: initGestureConfigHandler,
@@ -224,12 +225,15 @@ class ExtendedImageProvider implements ExtImageProvider {
         cupertinoOptions: CupertinoOptions(takePhotoIcon: 'chat'),
         materialOptions: MaterialOptions(
             actionBarColor:
-                '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
+                '#${Theme.of(context).colorScheme.onPrimary.value.toRadixString(16).toUpperCase().substring(2)}',
             statusBarColor:
-                '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
-            lightStatusBar: false,
+                '#${Theme.of(context).colorScheme.onPrimary.value.toRadixString(16).toUpperCase().substring(2)}',
+            lightStatusBar: true,
             autoCloseOnSelectionLimit: true,
             startInAllView: true,
+            useDetailsView: false,
+            actionBarTitleColor:
+                '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
             actionBarTitle: 'Select Images',
             allViewTitle: 'All Photos'));
   }

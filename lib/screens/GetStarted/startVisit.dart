@@ -1,5 +1,7 @@
+import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/Symptoms/medical_history_state.dart';
 import 'package:Medicall/services/database.dart';
+import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:provider/provider.dart';
@@ -9,10 +11,11 @@ class StartVisitScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final GlobalKey<FormBuilderState> formKey = GlobalKey<FormBuilderState>();
     Database db = Provider.of<Database>(context, listen: false);
+    MedicallUser medicallUser = Provider.of<UserProvider>(context).medicallUser;
+    db.getUserMedicalHistory(medicallUser);
     MedicalHistoryState _newMedicalHistory =
         Provider.of<MedicalHistoryState>(context, listen: false);
     return Scaffold(
-        backgroundColor: Colors.white,
         appBar: AppBar(),
         body: Container(
             padding: EdgeInsets.fromLTRB(40, 40, 40, 0),
@@ -72,7 +75,10 @@ class StartVisitScreen extends StatelessWidget {
 
                       db.newConsult.uploadQuestions =
                           db.consultQuestions.data["upload_questions"];
-                      if (_newMedicalHistory.getnewMedicalHistory()) {
+                      if (_newMedicalHistory.getnewMedicalHistory() ||
+                          formKey.currentState.fields['medHistory'] != null &&
+                              !formKey.currentState.fields['medHistory']
+                                  .currentState.value) {
                         _newMedicalHistory.setnewMedicalHistory(true);
                         Navigator.of(context).pushNamed('/questionsScreen');
                       } else {
@@ -87,7 +93,7 @@ class StartVisitScreen extends StatelessWidget {
                     child: Column(
                       children: <Widget>[
                         Text(
-                          'Start Visit',
+                          'Continue',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 14,

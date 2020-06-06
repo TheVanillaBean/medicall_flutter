@@ -177,7 +177,6 @@ class HistoryScreen extends StatelessWidget {
             )
           : null,
       body: _buildBody(),
-      backgroundColor: Colors.white,
     );
   }
 

@@ -475,10 +475,6 @@ class _BuildQuestionsState extends State<BuildQuestions> {
               _extImageProvider.pickImagesCupertinoOptions(
                   takePhotoIcon: 'chat'),
               _extImageProvider.pickImagesMaterialOptions(
-                  actionBarColor:
-                      '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
-                  statusBarColor:
-                      '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
                   lightStatusBar: false,
                   autoCloseOnSelectionLimit: true,
                   startInAllView: true,

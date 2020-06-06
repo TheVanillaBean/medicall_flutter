@@ -85,10 +85,8 @@ class PrivacyScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: Color.fromRGBO(35, 179, 232, 1),
         title: const Text(
           'Privacy Policy',
-          style: TextStyle(color: Colors.white),
         ),
       ),
       body: Container(
