@@ -40,6 +40,8 @@ dependencies:
   flutter_form_builder: '3.6.0'
   flutter_typeahead: ^1.7.0
   #camera/images
+  camera: ^0.5.8+2
+  video_player: ^0.10.11+1
   dots_indicator: ^1.0.0
   extended_image: ^0.8.0
   #image_picker: ^0.6.3+1
