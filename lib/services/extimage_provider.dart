@@ -221,14 +221,9 @@ class ExtendedImageProvider implements ExtImageProvider {
     return MultiImagePicker.pickImages(
         selectedAssets: _images,
         maxImages: _maxImages,
-        enableCamera: true,
-        cupertinoOptions: CupertinoOptions(takePhotoIcon: 'chat'),
-        materialOptions: MaterialOptions(
-            autoCloseOnSelectionLimit: true,
-            startInAllView: true,
-            useDetailsView: false,
-            actionBarTitle: 'Select Images',
-            allViewTitle: 'All Photos'));
+        enableCamera: _enableCamera,
+        cupertinoOptions: _cupertinoOptions,
+        materialOptions: _materialOptions);
   }
 
   ExtendedImage returnMemoryImage(Uint8List _src,

@@ -1,14 +1,17 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:Medicall/services/extimage_provider.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 
 class CameraScreen extends StatefulWidget {
-  CameraScreen({Key key}) : super(key: key);
+  final data;
+  CameraScreen({Key key, this.data}) : super(key: key);
 
   @override
   _CameraScreenState createState() => _CameraScreenState();
@@ -40,6 +43,7 @@ class _CameraScreenState extends State<CameraScreen>
   VideoPlayerController videoController;
   VoidCallback videoPlayerListener;
   bool enableAudio = true;
+  ExtImageProvider _extImageProvider;
 
   @override
   void initState() {
@@ -73,6 +77,7 @@ class _CameraScreenState extends State<CameraScreen>
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context);
+    _extImageProvider = Provider.of<ExtImageProvider>(context);
     return FutureBuilder(
         future: availableCameras(), // a Future<String> or null
         builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -165,6 +170,19 @@ class _CameraScreenState extends State<CameraScreen>
                   ],
                 ),
               )),
+          Positioned(
+            right: 20,
+            bottom: 20,
+            child: SizedBox(
+                width: 40.0,
+                child: IconButton(
+                  icon: Icon(
+                    Icons.photo_size_select_actual,
+                    color: Colors.white,
+                  ),
+                  onPressed: loadAssets,
+                )),
+          ),
           Visibility(
               visible: imagePath == null,
               child: Positioned(bottom: 20, child: _captureControlRowWidget())),
@@ -176,32 +194,49 @@ class _CameraScreenState extends State<CameraScreen>
           Visibility(
               visible: imagePath == null,
               child: Positioned(
-                  bottom: 20, right: 0, child: _cameraTogglesRowWidget())),
+                  bottom: 20, left: 0, child: _cameraTogglesRowWidget())),
           _thumbnailWidget(),
         ],
       );
     }
   }
 
-  /// Toggle recording audio
-  Widget _toggleAudioWidget() {
-    return Padding(
-      padding: EdgeInsets.only(left: 25),
-      child: Row(
-        children: <Widget>[
-          Text('Enable Audio:'),
-          Switch(
-            value: enableAudio,
-            onChanged: (bool value) {
-              enableAudio = value;
-              if (controller != null) {
-                onNewCameraSelected(controller.description);
-              }
-            },
-          ),
-        ],
-      ),
-    );
+  Future<void> loadAssets() async {
+    String error = '';
+    try {
+      await _extImageProvider
+          .pickImages(
+              _extImageProvider.currentAssetList,
+              widget.data['data']['max_images'],
+              false,
+              _extImageProvider.pickImagesCupertinoOptions(
+                  takePhotoIcon: 'chat'),
+              _extImageProvider.pickImagesMaterialOptions(
+                  lightStatusBar: false,
+                  autoCloseOnSelectionLimit: true,
+                  startInAllView: false,
+                  actionBarTitle: 'Select Images',
+                  allViewTitle: 'All Photos'),
+              context)
+          .then((onValue) {
+        _extImageProvider.currentAssetList = onValue;
+        for (var i = 0; i < onValue.length; i++) {
+          _extImageProvider.assetList.add(onValue[i]);
+        }
+        widget.data['data']['image'] = onValue;
+        setState(() {});
+      });
+    } on Exception catch (e) {
+      if (e.toString() != 'The user has cancelled the selection') {
+        error = e.toString();
+      }
+    }
+
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) return;
+    print(error);
   }
 
   /// Display the thumbnail of the captured image or video.

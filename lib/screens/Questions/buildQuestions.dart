@@ -69,7 +69,15 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                     splashColor: Colors.transparent,
                     focusColor: Colors.transparent,
                     highlightColor: Colors.transparent,
-                    onPressed: loadAssets,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => CameraScreen(
+                                  data: widget.data,
+                                )),
+                      );
+                    },
                     child: FutureBuilder(
                         future: _extImageProvider
                             .convertImages(context), // a Future<String> or null
@@ -433,14 +441,6 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                     from: 'buildQuestions'),
               ),
             ),
-            // controller != null
-            //     ? Container(
-            //         height: 400,
-            //         child: AspectRatio(
-            //             aspectRatio: 0.75,
-            //             child: CameraPreview(controller)),
-            //       )
-            //     : Container(),
             Positioned(
               bottom: -35,
               child: RawMaterialButton(
@@ -488,44 +488,6 @@ class _BuildQuestionsState extends State<BuildQuestions> {
     );
   }
 
-  Future<void> loadAssets() async {
-    String error = '';
-    try {
-      await _extImageProvider
-          .pickImages(
-              _extImageProvider.currentAssetList,
-              widget.data['data']['max_images'],
-              true,
-              _extImageProvider.pickImagesCupertinoOptions(
-                  takePhotoIcon: 'chat'),
-              _extImageProvider.pickImagesMaterialOptions(
-                  lightStatusBar: false,
-                  autoCloseOnSelectionLimit: true,
-                  startInAllView: true,
-                  actionBarTitle: 'Select Images',
-                  allViewTitle: 'All Photos'),
-              context)
-          .then((onValue) {
-        _extImageProvider.currentAssetList = onValue;
-        for (var i = 0; i < onValue.length; i++) {
-          _extImageProvider.assetList.add(onValue[i]);
-        }
-        widget.data['data']['image'] = onValue;
-        setState(() {});
-      });
-    } on Exception catch (e) {
-      if (e.toString() != 'The user has cancelled the selection') {
-        error = e.toString();
-      }
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-    print(error);
-  }
-
   returnCarousel(question) {
     return question['image'].length > 0
         ? buildGridView()
@@ -561,7 +523,9 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => CameraScreen()),
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                CameraScreen(data: widget.data)),
                       );
                     },
                     elevation: 2.0,
