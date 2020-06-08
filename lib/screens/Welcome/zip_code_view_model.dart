@@ -1,4 +1,4 @@
-import 'package:Medicall/models/symptoms.dart';
+import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/services/non_auth_firestore_db.dart';
 import 'package:flutter/cupertino.dart';
 

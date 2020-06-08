@@ -1,5 +1,5 @@
 import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:Medicall/models/symptoms.dart';
+import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/screens/Account/index.dart';
 import 'package:Medicall/screens/Account/paymentDetail.dart';
 import 'package:Medicall/screens/ConfirmConsult/index.dart';
@@ -155,7 +155,7 @@ class Router {
           settings: settings,
           fullscreenDialog: true,
         );
-      case '/consent':
+      case Routes.consent:
         return MaterialPageRoute<dynamic>(
           builder: (context) => ConsentScreen(),
           settings: settings,

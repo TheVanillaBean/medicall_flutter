@@ -1,6 +1,6 @@
 import 'package:Medicall/common_widgets/list_items_builder.dart';
 import 'package:Medicall/components/DrawerMenu.dart';
-import 'package:Medicall/models/symptoms.dart';
+import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Symptoms/symptom_detail.dart';
 import 'package:Medicall/screens/Symptoms/symptom_list_item.dart';

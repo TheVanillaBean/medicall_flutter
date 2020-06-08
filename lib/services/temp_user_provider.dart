@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:Medicall/models/consult_data_model.dart';
+import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/screens/Login/apple_sign_in_model.dart';
 import 'package:Medicall/screens/Login/google_auth_model.dart';
@@ -16,7 +16,7 @@ class TempUserProvider {
   String _password;
   GoogleAuthModel _googleAuthModel;
   AppleSignInModel _appleSignInModel;
-  ConsultData _newConsult;
+  Consult consult;
 
   MedicallUser get medicallUser => _medicallUser;
 
@@ -27,8 +27,6 @@ class TempUserProvider {
   GoogleAuthModel get googleAuthModel => _googleAuthModel;
 
   AppleSignInModel get appleSignInModel => _appleSignInModel;
-
-  ConsultData get newConsult => _newConsult;
 
   TempUserProvider() {
     _medicallUser = MedicallUser();
@@ -65,7 +63,7 @@ class TempUserProvider {
     String password,
     GoogleAuthModel googleAuthModel,
     AppleSignInModel appleSignInModel,
-    ConsultData newConsult,
+    Consult newConsult,
   }) {
     this._medicallUser.uid = uid ?? this._medicallUser.uid;
     this._medicallUser.devTokens = devTokens ?? this._medicallUser.devTokens;
@@ -92,7 +90,7 @@ class TempUserProvider {
     this._password = password ?? this._password;
     this._googleAuthModel = googleAuthModel ?? this._googleAuthModel;
     this._appleSignInModel = appleSignInModel ?? this._appleSignInModel;
-    this._newConsult = newConsult;
+    this.consult = newConsult ?? this.consult;
   }
 
   //The purpose of this function is too ensure the image that gets uploaded

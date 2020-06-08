@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:Medicall/common_widgets/list_items_builder.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:Medicall/models/symptoms.dart';
+import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/SelectProvider/provider_detail.dart';
 import 'package:Medicall/screens/SelectProvider/provider_list_item.dart';

@@ -1,4 +1,4 @@
-import 'package:Medicall/models/symptoms.dart';
+import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/util/string_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

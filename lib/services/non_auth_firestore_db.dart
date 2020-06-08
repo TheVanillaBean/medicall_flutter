@@ -1,5 +1,5 @@
 import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:Medicall/models/symptoms.dart';
+import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/services/firestore_service.dart';
 
 import 'firestore_path.dart';

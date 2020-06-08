@@ -1,5 +1,5 @@
 import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:Medicall/models/symptoms.dart';
+import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/SelectProvider/select_provider.dart';
 import 'package:Medicall/screens/Welcome/zip_code_verify.dart';

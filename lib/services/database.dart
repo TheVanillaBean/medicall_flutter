@@ -5,7 +5,6 @@ import 'dart:io';
 import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/consult_status_modal.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:Medicall/models/reg_user_model.dart';
 import 'package:Medicall/screens/History/Detail/history_detail_state.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
@@ -54,7 +53,6 @@ abstract class Database {
   List<DocumentSnapshot> userHistory;
   ConsultData newConsult;
   var consultQuestions;
-  TempRegUser tempRegUser;
 }
 
 class FirestoreDatabase implements Database {
@@ -79,8 +77,6 @@ class FirestoreDatabase implements Database {
   ConsultData newConsult;
   @override
   var consultQuestions;
-  @override
-  TempRegUser tempRegUser;
   @override
   String consultChatImageUrl;
 

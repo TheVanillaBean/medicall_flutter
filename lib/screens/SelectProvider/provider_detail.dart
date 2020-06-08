@@ -1,8 +1,9 @@
+import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:Medicall/models/symptoms.dart';
+import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/Registration/registration.dart';
 import 'package:Medicall/services/extimage_provider.dart';
-import 'package:Medicall/services/non_auth_firestore_db.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
@@ -31,8 +32,6 @@ class ProviderDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final NonAuthDatabase db =
-        Provider.of<NonAuthDatabase>(context, listen: false);
     final TempUserProvider tempUserProvider =
         Provider.of<TempUserProvider>(context, listen: false);
     final ExtImageProvider extImageProvider =
@@ -68,6 +67,7 @@ class ProviderDetailScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: _buildChildren(
+              tempUserProvider,
               extImageProvider,
               medicallUser,
               context,
@@ -79,6 +79,7 @@ class ProviderDetailScreen extends StatelessWidget {
   }
 
   List<Widget> _buildChildren(
+    TempUserProvider tempUserProvider,
     ExtendedImageProvider extImageProvider,
     MedicallUser medicallUser,
     BuildContext context,
@@ -145,9 +146,13 @@ class ProviderDetailScreen extends StatelessWidget {
                 '/startVisit',
               );
             } else {
-              Navigator.of(context).pushNamed(
-                '/registration',
+              Consult consult = Consult(
+                providerId: provider.uid,
+                symptom: symptom.name,
+                date: DateTime.now(),
               );
+              tempUserProvider.consult = consult;
+              RegistrationScreen.show(context: context);
             }
           },
         ),

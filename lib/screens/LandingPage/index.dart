@@ -34,7 +34,7 @@ class LandingPage extends StatelessWidget {
             !medicallUser.stripeConnectAuthorized) {
           return stripeConnectBuilder(context);
         } else {
-          if (tempUserProvider.newConsult != null) {
+          if (tempUserProvider.consult != null) {
             return startVisitBuilder(context);
           } else {
             return signedInBuilder(context);
