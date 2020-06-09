@@ -69,12 +69,6 @@ class StartVisitScreen extends StatelessWidget {
                     textColor: Colors.white,
                     onPressed: () async {
                       await db.getConsultQuestions();
-
-                      db.newConsult.screeningQuestions =
-                          db.consultQuestions.data["screening_questions"];
-
-                      db.newConsult.uploadQuestions =
-                          db.consultQuestions.data["upload_questions"];
                       if (_newMedicalHistory.getnewMedicalHistory() ||
                           formKey.currentState.fields['medHistory'] != null &&
                               !formKey.currentState.fields['medHistory']

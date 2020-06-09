@@ -78,14 +78,14 @@ class _CameraScreenState extends State<CameraScreen>
   Widget build(BuildContext context) {
     ScreenUtil.init(context);
     _extImageProvider = Provider.of<ExtImageProvider>(context);
-    return FutureBuilder(
-        future: availableCameras(), // a Future<String> or null
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            if (controller == null) {
+    if (controller == null && cameras == null) {
+      return FutureBuilder(
+          future: availableCameras(), // a Future<String> or null
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
               cameras = snapshot.data;
-              controller =
-                  CameraController(cameras[0], ResolutionPreset.medium);
+              controller = CameraController(cameras[0], ResolutionPreset.medium,
+                  enableAudio: true);
               return FutureBuilder(
                   future: controller.initialize(),
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -96,22 +96,49 @@ class _CameraScreenState extends State<CameraScreen>
                         body: _cameraPreviewWidget(),
                       );
                     } else {
-                      return Container(
-                          width: 50,
-                          height: 50,
-                          child: CircularProgressIndicator());
+                      return Center(
+                        child: Container(
+                            width: 50,
+                            height: 50,
+                            child: CircularProgressIndicator()),
+                      );
                     }
                   });
             }
-            return Scaffold(
-              backgroundColor: Colors.black,
-              key: _scaffoldKey,
-              body: _cameraPreviewWidget(),
-            );
-          }
-          return Container(
-              width: 50, height: 50, child: CircularProgressIndicator());
-        });
+            return Container();
+          });
+    } else {
+      if (cameras != null && controller == null) {
+        controller = CameraController(cameras[0], ResolutionPreset.medium,
+            enableAudio: true);
+      }
+      if (controller.value.isInitialized) {
+        return Scaffold(
+          backgroundColor: Colors.black,
+          key: _scaffoldKey,
+          body: _cameraPreviewWidget(),
+        );
+      } else {
+        return FutureBuilder(
+            future: controller.initialize(),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                return Scaffold(
+                  backgroundColor: Colors.black,
+                  key: _scaffoldKey,
+                  body: _cameraPreviewWidget(),
+                );
+              } else {
+                return Center(
+                  child: Container(
+                      width: 50,
+                      height: 50,
+                      child: CircularProgressIndicator()),
+                );
+              }
+            });
+      }
+    }
   }
 
   /// Display the preview from the camera (or a message if the preview is not available).
@@ -129,8 +156,64 @@ class _CameraScreenState extends State<CameraScreen>
       return Stack(
         alignment: Alignment.center,
         children: <Widget>[
+          Positioned(
+            top: 20 * ScreenUtil.pixelRatio,
+            right: 20,
+            child: Container(
+              alignment: Alignment.centerRight,
+              child: IconButton(
+                icon: Icon(Icons.videocam),
+                color: Colors.white,
+                onPressed: controller != null &&
+                        controller.value.isInitialized &&
+                        !controller.value.isRecordingVideo
+                    ? onVideoRecordButtonPressed
+                    : null,
+              ),
+            ),
+          ),
           Visibility(
-              visible: imagePath != null,
+              visible: controller.value.isRecordingVideo,
+              child: Positioned(
+                top: 20 * ScreenUtil.pixelRatio,
+                child: Row(
+                  children: <Widget>[
+                    IconButton(
+                      icon: controller != null &&
+                              controller.value.isRecordingPaused
+                          ? Icon(Icons.play_arrow)
+                          : Icon(Icons.pause),
+                      color: Colors.white,
+                      onPressed: () {
+                        if (controller != null &&
+                            controller.value.isInitialized &&
+                            controller.value.isRecordingVideo) {
+                          if (controller != null &&
+                              controller.value.isRecordingPaused) {
+                            onResumeButtonPressed();
+                          } else {
+                            onPauseButtonPressed();
+                          }
+                        } else {
+                          return null;
+                        }
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.stop),
+                      color: Colors.red,
+                      onPressed: controller != null &&
+                              controller.value.isInitialized &&
+                              controller.value.isRecordingVideo
+                          ? onStopButtonPressed
+                          : null,
+                    )
+                  ],
+                ),
+              )),
+          Visibility(
+              visible: imagePath != null ||
+                  videoPath != null && !controller.value.isRecordingVideo,
               child: Positioned(
                 bottom: 20,
                 child: Row(
@@ -149,6 +232,10 @@ class _CameraScreenState extends State<CameraScreen>
                         ),
                         onPressed: () {
                           imagePath = null;
+                          videoPath = null;
+                          if (controller.value.isRecordingVideo) {
+                            controller.stopVideoRecording();
+                          }
                           setState(() {});
                         }),
                     SizedBox(width: 40),
@@ -170,32 +257,39 @@ class _CameraScreenState extends State<CameraScreen>
                   ],
                 ),
               )),
-          Positioned(
-            right: 20,
-            bottom: 20,
-            child: SizedBox(
-                width: 40.0,
-                child: IconButton(
-                  icon: Icon(
-                    Icons.photo_size_select_actual,
-                    color: Colors.white,
-                  ),
-                  onPressed: loadAssets,
-                )),
-          ),
           Visibility(
-              visible: imagePath == null,
+              visible: imagePath == null && videoPath == null,
+              child: Positioned(
+                right: 20,
+                bottom: 20,
+                child: SizedBox(
+                    width: 40.0,
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.photo_size_select_actual,
+                        color: Colors.white,
+                      ),
+                      onPressed: loadAssets,
+                    )),
+              )),
+          Visibility(
+              visible: imagePath == null && videoPath == null,
               child: Positioned(bottom: 20, child: _captureControlRowWidget())),
           // Positioned(bottom: 0, right: 0, child: _toggleAudioWidget()),
-          AspectRatio(
-            aspectRatio: controller.value.aspectRatio,
-            child: CameraPreview(controller),
+          Center(
+            child: AspectRatio(
+              aspectRatio: controller.value.aspectRatio,
+              child: CameraPreview(controller),
+            ),
           ),
           Visibility(
-              visible: imagePath == null,
+              visible: imagePath == null && videoPath == null,
               child: Positioned(
                   bottom: 20, left: 0, child: _cameraTogglesRowWidget())),
-          _thumbnailWidget(),
+          Visibility(
+              visible: imagePath != null ||
+                  videoPath != null && !controller.value.isRecordingVideo,
+              child: _thumbnailWidget()),
         ],
       );
     }
@@ -293,48 +387,6 @@ class _CameraScreenState extends State<CameraScreen>
                 : null,
           ),
         ),
-        // Container(
-        //   width: 100,
-        //   alignment: Alignment.centerRight,
-        //   child: IconButton(
-        //     icon: Icon(Icons.videocam),
-        //     color: Colors.white,
-        //     onPressed: controller != null &&
-        //             controller.value.isInitialized &&
-        //             !controller.value.isRecordingVideo
-        //         ? onVideoRecordButtonPressed
-        //         : null,
-        //   ),
-        // ),
-        // Visibility(
-        //     visible: controller.value.isRecordingVideo,
-        //     child: Row(
-        //       children: <Widget>[
-        //         IconButton(
-        //           icon: controller != null && controller.value.isRecordingPaused
-        //               ? Icon(Icons.play_arrow)
-        //               : Icon(Icons.pause),
-        //           color: Colors.white,
-        //           onPressed: controller != null &&
-        //                   controller.value.isInitialized &&
-        //                   controller.value.isRecordingVideo
-        //               ? (controller != null &&
-        //                       controller.value.isRecordingPaused
-        //                   ? onResumeButtonPressed
-        //                   : onPauseButtonPressed)
-        //               : null,
-        //         ),
-        //         IconButton(
-        //           icon: Icon(Icons.stop),
-        //           color: Colors.red,
-        //           onPressed: controller != null &&
-        //                   controller.value.isInitialized &&
-        //                   controller.value.isRecordingVideo
-        //               ? onStopButtonPressed
-        //               : null,
-        //         )
-        //       ],
-        //     )),
       ],
     );
   }
@@ -377,7 +429,10 @@ class _CameraScreenState extends State<CameraScreen>
   String timestamp() => DateTime.now().millisecondsSinceEpoch.toString();
 
   void showInSnackBar(String message) {
-    _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text(message)));
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text(message),
+      backgroundColor: Colors.white,
+    ));
   }
 
   void onNewCameraSelected(CameraDescription cameraDescription) async {
@@ -387,7 +442,7 @@ class _CameraScreenState extends State<CameraScreen>
     controller = CameraController(
       cameraDescription,
       ResolutionPreset.medium,
-      enableAudio: enableAudio,
+      enableAudio: true,
     );
 
     // If the controller is updated then update the UI.
