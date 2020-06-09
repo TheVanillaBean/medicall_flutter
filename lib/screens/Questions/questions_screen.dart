@@ -3,6 +3,7 @@ import 'package:Medicall/models/screening_question_model.dart';
 import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Dashboard/dashboard.dart';
+import 'package:Medicall/screens/Questions/option_list_item.dart';
 import 'package:Medicall/screens/Questions/progress_bar.dart';
 import 'package:Medicall/screens/Questions/questions_view_model.dart';
 import 'package:Medicall/services/auth.dart';
@@ -92,7 +93,7 @@ class QuestionsScreen extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(symptom.name, style: Theme.of(context).textTheme.headline1),
+          Text(symptom.name, style: Theme.of(context).textTheme.headline5),
           Divider(),
           Expanded(child: Text(symptom.description)),
           ButtonBar(
@@ -136,55 +137,39 @@ class QuestionsScreen extends StatelessWidget {
   }
 
   Widget questionPage(BuildContext context, Question question) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.vertical,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.all(16),
+              alignment: Alignment.topCenter,
+              child: Text(question.question),
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.all(20),
+            child: _buildOptions(question, context),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOptions(Question question, BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        Expanded(
-          child: Container(
-            padding: EdgeInsets.all(16),
-            alignment: Alignment.center,
-            child: Text(question.question),
-          ),
-        ),
-        Container(
-          padding: EdgeInsets.all(20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: question.options.map((opt) {
-              return Container(
-                height: 90,
-                margin: EdgeInsets.only(bottom: 10),
-                color: Colors.black26,
-                child: InkWell(
-                  onTap: () {
-                    model.selected = opt;
-                    model.nextPage();
-                  },
-                  child: Container(
-                    padding: EdgeInsets.all(16),
-                    child: Row(
-                      children: [
-                        Icon(
-                            model.selected == opt ? Icons.create : Icons.cached,
-                            size: 30),
-                        Expanded(
-                          child: Container(
-                            margin: EdgeInsets.only(left: 16),
-                            child: Text(
-                              opt.value,
-                              style: Theme.of(context).textTheme.bodyText1,
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-        )
-      ],
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: question.options.map((opt) {
+        return OptionListItem.create(
+          context: context,
+          type: question.type,
+          option: opt,
+          onTap: () {},
+          onInput: () {},
+        );
+      }).toList(),
     );
   }
 }

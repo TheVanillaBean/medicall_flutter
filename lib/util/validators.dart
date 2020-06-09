@@ -26,6 +26,11 @@ class EmailAndPasswordValidators {
   final String invalidConfirmPasswordErrorText = 'Passwords do not match';
 }
 
+class OptionInputValidator {
+  final StringValidator inputValidator = NonEmptyStringValidator();
+  final String invalidInputErrorText = 'Your response can\'t be empty';
+}
+
 class PhoneNumberStringValidator implements StringValidator {
   @override
   bool isValid(String value) {
