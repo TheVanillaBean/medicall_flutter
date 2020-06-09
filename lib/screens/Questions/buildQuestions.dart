@@ -70,13 +70,11 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                     focusColor: Colors.transparent,
                     highlightColor: Colors.transparent,
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => CameraScreen(
-                                  data: widget.data,
-                                )),
-                      );
+                      Navigator.of(context).push(PageRouteBuilder(
+                          opaque: false,
+                          pageBuilder: (BuildContext context, _, __) {
+                            return CameraScreen(data: widget.data);
+                          }));
                     },
                     child: FutureBuilder(
                         future: _extImageProvider
@@ -423,7 +421,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
     if (widget.data['data']['image'].length > 0) {
       return Container(
         height: 440,
-        margin: EdgeInsets.only(top: 10),
+        margin: EdgeInsets.fromLTRB(0, 10, 0, 35),
         alignment: Alignment.center,
         child: Stack(
           overflow: Overflow.visible,
@@ -446,7 +444,11 @@ class _BuildQuestionsState extends State<BuildQuestions> {
               child: RawMaterialButton(
                 splashColor: Colors.transparent,
                 onPressed: () {
-                  return Hero(tag: {}, child: Text('data'));
+                  Navigator.of(context).push(PageRouteBuilder(
+                      opaque: false,
+                      pageBuilder: (BuildContext context, _, __) {
+                        return CameraScreen(data: widget.data);
+                      }));
                 },
                 elevation: 2.0,
                 fillColor: Colors.white,
@@ -521,12 +523,11 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                   child: RawMaterialButton(
                     splashColor: Colors.transparent,
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                CameraScreen(data: widget.data)),
-                      );
+                      Navigator.of(context).push(PageRouteBuilder(
+                          opaque: false,
+                          pageBuilder: (BuildContext context, _, __) {
+                            return CameraScreen(data: widget.data);
+                          }));
                     },
                     elevation: 2.0,
                     fillColor: Colors.white,

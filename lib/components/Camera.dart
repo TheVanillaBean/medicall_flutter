@@ -48,12 +48,12 @@ class _CameraScreenState extends State<CameraScreen>
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
+    //WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
+    //WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
@@ -91,7 +91,7 @@ class _CameraScreenState extends State<CameraScreen>
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     if (snapshot.connectionState == ConnectionState.done) {
                       return Scaffold(
-                        backgroundColor: Colors.black,
+                        backgroundColor: Colors.black87,
                         key: _scaffoldKey,
                         body: _cameraPreviewWidget(),
                       );
@@ -114,7 +114,7 @@ class _CameraScreenState extends State<CameraScreen>
       }
       if (controller.value.isInitialized) {
         return Scaffold(
-          backgroundColor: Colors.black,
+          backgroundColor: Colors.black87,
           key: _scaffoldKey,
           body: _cameraPreviewWidget(),
         );
@@ -124,7 +124,7 @@ class _CameraScreenState extends State<CameraScreen>
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
                 return Scaffold(
-                  backgroundColor: Colors.black,
+                  backgroundColor: Colors.black87,
                   key: _scaffoldKey,
                   body: _cameraPreviewWidget(),
                 );
@@ -269,7 +269,10 @@ class _CameraScreenState extends State<CameraScreen>
                         Icons.photo_size_select_actual,
                         color: Colors.white,
                       ),
-                      onPressed: loadAssets,
+                      onPressed: () {
+                        //controller.dispose();
+                        loadAssets();
+                      },
                     )),
               )),
           Visibility(
@@ -318,7 +321,8 @@ class _CameraScreenState extends State<CameraScreen>
           _extImageProvider.assetList.add(onValue[i]);
         }
         widget.data['data']['image'] = onValue;
-        setState(() {});
+        Navigator.pop(context);
+        //setState(() {});
       });
     } on Exception catch (e) {
       if (e.toString() != 'The user has cancelled the selection') {
