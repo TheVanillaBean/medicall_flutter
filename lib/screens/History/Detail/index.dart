@@ -206,7 +206,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                               widget.model.db.consultSnapshot.data['type']);
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                                builder: (_) => QuestionsScreen(
+                                builder: (_) => QuestionsScreenOld(
                                       data: 'diagnosis',
                                     )),
                           );
@@ -250,64 +250,79 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                                         : "Please confirm that you want to reopen this consult."),
                                     actions: <Widget>[
                                       // usually buttons at the bottom of the dialog
-                                      widget
-                                                .model
-                                                .db
-                                                .consultSnapshot
-                                                .data['state'] !=
-                                            'done' ? FlatButton(
-                                        color: Theme.of(context).primaryColor,
-                                        child: Text("Close Consult"),
-                                        onPressed: () async {
-                                          widget.model.setConsultStatus(
-                                              widget.model.db.consultSnapshot,
-                                              Choice(
-                                                  title: 'Done',
-                                                  icon: Icon(Icons.check_box,
-                                                      color: Colors.green)),
-                                              widget.model.medicallUser.uid,
-                                              widget.model.db
-                                                  .updateConsultStatus);
-                                          if (widget.model.db.consultSnapshot
-                                                  .data['state'] ==
-                                              'done') {
-                                            widget.model
-                                                .updateWith(isDone: true);
-                                          } else {
-                                            widget.model
-                                                .updateWith(isDone: false);
-                                          }
-                                          widget.model.setChoices();
-                                          Navigator.pop(context);
-                                          Navigator.pop(context);
-                                        },
-                                      ) : FlatButton(
-                                        color: Theme.of(context).primaryColor,
-                                        child: Text("Reopen Consult"),
-                                        onPressed: () async {
-                                          widget.model.setConsultStatus(
-                                              widget.model.db.consultSnapshot,
-                                              Choice(
-                                                  title: 'Active',
-                                                  icon: Icon(Icons.check_box,
-                                                      color: Colors.green)),
-                                              widget.model.medicallUser.uid,
-                                              widget.model.db
-                                                  .updateConsultStatus);
-                                          if (widget.model.db.consultSnapshot
-                                                  .data['state'] ==
-                                              'done') {
-                                            widget.model
-                                                .updateWith(isDone: true);
-                                          } else {
-                                            widget.model
-                                                .updateWith(isDone: false);
-                                          }
-                                          widget.model.setChoices();
-                                          Navigator.pop(context);
-                                          Navigator.pop(context);
-                                        },
-                                      ),
+                                      widget.model.db.consultSnapshot
+                                                  .data['state'] !=
+                                              'done'
+                                          ? FlatButton(
+                                              color: Theme.of(context)
+                                                  .primaryColor,
+                                              child: Text("Close Consult"),
+                                              onPressed: () async {
+                                                widget.model.setConsultStatus(
+                                                    widget.model.db
+                                                        .consultSnapshot,
+                                                    Choice(
+                                                        title: 'Done',
+                                                        icon: Icon(
+                                                            Icons.check_box,
+                                                            color:
+                                                                Colors.green)),
+                                                    widget
+                                                        .model.medicallUser.uid,
+                                                    widget.model.db
+                                                        .updateConsultStatus);
+                                                if (widget
+                                                        .model
+                                                        .db
+                                                        .consultSnapshot
+                                                        .data['state'] ==
+                                                    'done') {
+                                                  widget.model
+                                                      .updateWith(isDone: true);
+                                                } else {
+                                                  widget.model.updateWith(
+                                                      isDone: false);
+                                                }
+                                                widget.model.setChoices();
+                                                Navigator.pop(context);
+                                                Navigator.pop(context);
+                                              },
+                                            )
+                                          : FlatButton(
+                                              color: Theme.of(context)
+                                                  .primaryColor,
+                                              child: Text("Reopen Consult"),
+                                              onPressed: () async {
+                                                widget.model.setConsultStatus(
+                                                    widget.model.db
+                                                        .consultSnapshot,
+                                                    Choice(
+                                                        title: 'Active',
+                                                        icon: Icon(
+                                                            Icons.check_box,
+                                                            color:
+                                                                Colors.green)),
+                                                    widget
+                                                        .model.medicallUser.uid,
+                                                    widget.model.db
+                                                        .updateConsultStatus);
+                                                if (widget
+                                                        .model
+                                                        .db
+                                                        .consultSnapshot
+                                                        .data['state'] ==
+                                                    'done') {
+                                                  widget.model
+                                                      .updateWith(isDone: true);
+                                                } else {
+                                                  widget.model.updateWith(
+                                                      isDone: false);
+                                                }
+                                                widget.model.setChoices();
+                                                Navigator.pop(context);
+                                                Navigator.pop(context);
+                                              },
+                                            ),
                                     ],
                                   );
                                 },

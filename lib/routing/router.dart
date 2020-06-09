@@ -1,3 +1,4 @@
+import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/screens/Account/index.dart';
@@ -16,6 +17,7 @@ import 'package:Medicall/screens/PasswordReset/index.dart';
 import 'package:Medicall/screens/PhoneAuth/index.dart';
 import 'package:Medicall/screens/Privacy/index.dart';
 import 'package:Medicall/screens/Questions/questionsScreen.dart';
+import 'package:Medicall/screens/Questions/questions_screen.dart';
 import 'package:Medicall/screens/Registration/photoIdScreen.dart';
 import 'package:Medicall/screens/Registration/registration.dart';
 import 'package:Medicall/screens/Registration/registrationType.dart';
@@ -49,7 +51,7 @@ class Routes {
   static const malpractice = '/malpractice';
   static const symptoms = '/symptoms';
   static const symptomDetail = '/symptoms-detail';
-  static const questionsScreen = '/questions-screen';
+  static const questions = '/questions';
   static const selectProvider = '/select-provider';
   static const providerDetail = '/provider-detail';
   static const consultReview = '/consult-review';
@@ -87,9 +89,15 @@ class Router {
           settings: settings,
           fullscreenDialog: true,
         );
-      case '/startVisit':
+      case Routes.startVisit:
+        final Map<String, dynamic> mapArgs = args;
+        final Symptom symptom = mapArgs['symptom'];
+        final Consult consult = mapArgs['consult'];
         return MaterialPageRoute<dynamic>(
-          builder: (context) => StartVisitScreen(),
+          builder: (context) => StartVisitScreen(
+            symptom: symptom,
+            consult: consult,
+          ),
           settings: settings,
           fullscreenDialog: true,
         );
@@ -181,9 +189,22 @@ class Router {
           settings: settings,
           fullscreenDialog: true,
         );
+      case Routes.questions:
+        final Map<String, dynamic> mapArgs = args;
+        final Symptom symptom = mapArgs['symptom'];
+        final Consult consult = mapArgs['consult'];
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => QuestionsScreen.create(
+            context,
+            symptom,
+            consult,
+          ),
+          settings: settings,
+          fullscreenDialog: true,
+        );
       case '/questionsScreen':
         return MaterialPageRoute<dynamic>(
-          builder: (context) => QuestionsScreen(),
+          builder: (context) => QuestionsScreenOld(),
           settings: settings,
           fullscreenDialog: true,
         );

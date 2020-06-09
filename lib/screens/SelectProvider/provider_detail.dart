@@ -3,6 +3,7 @@ import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Registration/registration.dart';
+import 'package:Medicall/screens/Welcome/startVisit.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
@@ -141,17 +142,20 @@ class ProviderDetailScreen extends StatelessWidget {
             style: TextStyle(fontSize: 14),
           ),
           onPressed: () {
-            if (medicallUser != null && medicallUser.uid.length > 0) {
-              Navigator.of(context).pushNamed(
-                '/startVisit',
+            Consult consult = Consult(
+              providerId: provider.uid,
+              symptom: symptom.name,
+              date: DateTime.now(),
+            );
+            if (medicallUser != null) {
+              StartVisitScreen.show(
+                context: context,
+                symptom: symptom,
+                consult: consult,
               );
             } else {
-              Consult consult = Consult(
-                providerId: provider.uid,
-                symptom: symptom.name,
-                date: DateTime.now(),
-              );
               tempUserProvider.consult = consult;
+              tempUserProvider.symptom = this.symptom;
               RegistrationScreen.show(context: context);
             }
           },

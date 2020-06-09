@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/screens/Login/apple_sign_in_model.dart';
 import 'package:Medicall/screens/Login/google_auth_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -17,6 +18,7 @@ class TempUserProvider {
   GoogleAuthModel _googleAuthModel;
   AppleSignInModel _appleSignInModel;
   Consult consult;
+  Symptom symptom;
 
   MedicallUser get medicallUser => _medicallUser;
 

@@ -75,6 +75,8 @@ class MedicallApp extends StatelessWidget {
           ),
         ],
         builder: (context, userSnapshot) {
+          TempUserProvider tempUserProvider =
+              Provider.of<TempUserProvider>(context);
           return MaterialApp(
             title: 'Medicall',
             debugShowCheckedModeBanner: false,
@@ -84,7 +86,10 @@ class MedicallApp extends StatelessWidget {
               nonSignedInBuilder: (context) => WelcomeScreen(),
               signedInBuilder: (context) => DashboardScreen.create(context),
               stripeConnectBuilder: (context) => StripeConnect.create(context),
-              startVisitBuilder: (context) => StartVisitScreen(),
+              startVisitBuilder: (context) => StartVisitScreen(
+                consult: tempUserProvider.consult,
+                symptom: tempUserProvider.symptom,
+              ),
             ),
             onGenerateRoute: Router.onGenerateRoute,
           );
