@@ -2,6 +2,7 @@ import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/screening_question_model.dart';
 import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/Dashboard/dashboard.dart';
 import 'package:Medicall/screens/Questions/progress_bar.dart';
 import 'package:Medicall/screens/Questions/questions_view_model.dart';
 import 'package:Medicall/services/auth.dart';
@@ -71,42 +72,35 @@ class QuestionsScreen extends StatelessWidget {
             (idx / (this.symptom.screeningQuestions.length + 1)),
         itemBuilder: (BuildContext context, int idx) {
           if (idx == 0) {
-            return StartPage(symptom: this.symptom);
+            return startPage(context);
           } else if (idx == this.symptom.screeningQuestions.length + 1) {
-            return CongratsPage(symptom: this.symptom);
+            return reviewPage(context);
           } else {
-            return QuestionPage(
-                question: this.symptom.screeningQuestions[idx - 1]);
+            return questionPage(
+              context,
+              this.symptom.screeningQuestions[idx - 1],
+            );
           }
         },
       ),
     );
   }
-}
 
-class StartPage extends StatelessWidget {
-  final Symptom symptom;
-  final PageController controller;
-  StartPage({this.symptom, this.controller});
-
-  @override
-  Widget build(BuildContext context) {
-    var state = Provider.of<QuestionsViewModel>(context, listen: false);
-
+  Widget startPage(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(20),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(symptom.name, style: Theme.of(context).textTheme.headline),
+          Text(symptom.name, style: Theme.of(context).textTheme.headline1),
           Divider(),
           Expanded(child: Text(symptom.description)),
           ButtonBar(
             alignment: MainAxisAlignment.center,
             children: <Widget>[
               FlatButton.icon(
-                onPressed: state.nextPage,
-                label: Text('Start Questionaire!'),
+                onPressed: model.nextPage,
+                label: Text('Start Questionnaire!'),
                 icon: Icon(Icons.poll),
                 color: Colors.green,
               )
@@ -116,56 +110,32 @@ class StartPage extends StatelessWidget {
       ),
     );
   }
-}
 
-class CongratsPage extends StatelessWidget {
-  final Symptom symptom;
-  CongratsPage({this.symptom});
-
-  @override
-  Widget build(BuildContext context) {
+  Widget reviewPage(BuildContext context) {
     return Padding(
       padding: EdgeInsets.all(8),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'Congrats! You completed the ${symptom.name} quiz',
+            'Congratulations! You have completed this consult. Your provider will respond back within 24 hours.',
             textAlign: TextAlign.center,
           ),
-          Divider(),
-          Image.asset('assets/congrats.gif'),
           Divider(),
           FlatButton.icon(
             color: Colors.green,
             icon: Icon(Icons.check),
-            label: Text(' Mark Complete!'),
+            label: Text('Continue to your dashboard'),
             onPressed: () {
-              Navigator.pushNamedAndRemoveUntil(
-                context,
-                '/topics',
-                (route) => false,
-              );
+              DashboardScreen.show(context: context, pushReplaceNamed: true);
             },
           )
         ],
       ),
     );
   }
-}
 
-class QuestionPage extends StatelessWidget {
-  final Question question;
-  QuestionPage({this.question});
-
-  @override
-  Widget build(BuildContext context) {
-    var state = Provider.of<QuestionsViewModel>(context, listen: false);
-
-    if (question.type == "FR") {
-      state.nextPage();
-    }
-
+  Widget questionPage(BuildContext context, Question question) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
@@ -187,15 +157,15 @@ class QuestionPage extends StatelessWidget {
                 color: Colors.black26,
                 child: InkWell(
                   onTap: () {
-                    state.selected = opt;
-                    state.nextPage();
+                    model.selected = opt;
+                    model.nextPage();
                   },
                   child: Container(
                     padding: EdgeInsets.all(16),
                     child: Row(
                       children: [
                         Icon(
-                            state.selected == opt ? Icons.create : Icons.cached,
+                            model.selected == opt ? Icons.create : Icons.cached,
                             size: 30),
                         Expanded(
                           child: Container(

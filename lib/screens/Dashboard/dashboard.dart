@@ -1,5 +1,6 @@
 import 'package:Medicall/common_widgets/flat_button.dart';
 import 'package:Medicall/components/DrawerMenu.dart';
+import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Dashboard/dashboard_state_model.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/user_provider.dart';
@@ -24,6 +25,21 @@ class DashboardScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  static Future<void> show({
+    BuildContext context,
+    bool pushReplaceNamed,
+  }) async {
+    if (pushReplaceNamed) {
+      await Navigator.of(context).pushReplacementNamed(
+        Routes.dashboard,
+      );
+    } else {
+      await Navigator.of(context).pushNamed(
+        Routes.dashboard,
+      );
+    }
   }
 
   const DashboardScreen({@required this.model});

@@ -145,7 +145,7 @@ class Router {
           settings: settings,
           fullscreenDialog: true,
         );
-      case '/dashboard':
+      case Routes.dashboard:
         return MaterialPageRoute<dynamic>(
           builder: (context) => DashboardScreen.create(context),
           settings: settings,
