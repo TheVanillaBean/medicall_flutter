@@ -1,16 +1,20 @@
+import 'package:Medicall/models/screening_question_model.dart';
 import 'package:meta/meta.dart';
 
 class Symptom {
+  final String name;
+  final String description;
+  final String duration;
+  final int price;
+  final List<Question> screeningQuestions;
+
   Symptom({
     @required this.name,
     @required this.description,
     @required this.duration,
     @required this.price,
+    @required this.screeningQuestions,
   });
-  final String name;
-  final String description;
-  final String duration;
-  final int price;
 
   factory Symptom.fromMap(Map<String, dynamic> data, String documentId) {
     if (data == null) {
@@ -19,11 +23,17 @@ class Symptom {
     final String description = data['description'];
     final String duration = data['duration'];
     final int price = data['price'];
+
+    final questions = (data['screening_question'] as List ?? [])
+        .map((v) => Question.fromMap(v))
+        .toList();
+
     return Symptom(
       name: documentId,
       description: description,
       duration: duration,
       price: price,
+      screeningQuestions: questions,
     );
   }
 
