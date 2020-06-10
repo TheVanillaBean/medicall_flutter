@@ -27,4 +27,18 @@ class Option {
       subQuestions: subQuestions,
     );
   }
+
+  Map<String, dynamic> toMap() {
+    if (this.hasSubQuestions) {
+      return <String, dynamic>{
+        'value': this.value,
+        'has_sub_questions': true,
+        'sub_questions': this.subQuestions,
+      };
+    } else {
+      return <String, dynamic>{
+        'value': this.value,
+      };
+    }
+  }
 }

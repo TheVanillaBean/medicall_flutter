@@ -1,3 +1,4 @@
+import 'package:Medicall/models/screening_question_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:meta/meta.dart';
 
@@ -8,6 +9,7 @@ class Consult {
   final String price;
   final DateTime date;
   final String state;
+  final List<Question> questions;
 
   Consult({
     @required this.providerId,
@@ -16,6 +18,7 @@ class Consult {
     this.price = "49",
     this.date,
     this.state,
+    this.questions = const <Question>[],
   });
 
   factory Consult.fromMap(Map<String, dynamic> data, String documentId) {
@@ -31,6 +34,8 @@ class Consult {
     final String price = data['price'];
     final DateTime date = DateTime.parse(dateTimeStamp.toDate().toString());
     final String state = data['state'];
+    final List<Question> questions =
+        data["screening_questions"] ?? <Question>[];
 
     return Consult(
       providerId: providerId,
@@ -39,6 +44,7 @@ class Consult {
       price: price,
       date: date,
       state: state,
+      questions: questions,
     );
   }
 
@@ -50,6 +56,7 @@ class Consult {
       'price': price,
       'date': date,
       'state': state,
+      "screening_questions": questions,
     };
   }
 
