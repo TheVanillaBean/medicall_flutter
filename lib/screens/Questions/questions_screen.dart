@@ -1,10 +1,9 @@
 import 'package:Medicall/models/consult_model.dart';
-import 'package:Medicall/models/screening_question_model.dart';
 import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Dashboard/dashboard.dart';
-import 'package:Medicall/screens/Questions/option_list_item.dart';
 import 'package:Medicall/screens/Questions/progress_bar.dart';
+import 'package:Medicall/screens/Questions/question_page.dart';
 import 'package:Medicall/screens/Questions/questions_view_model.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +23,8 @@ class QuestionsScreen extends StatelessWidget {
     return ChangeNotifierProvider<QuestionsViewModel>(
       create: (context) => QuestionsViewModel(
         auth: auth,
+        symptom: symptom,
+        consult: consult,
       ),
       child: Consumer<QuestionsViewModel>(
         builder: (_, model, __) => QuestionsScreen(
@@ -61,14 +62,15 @@ class QuestionsScreen extends StatelessWidget {
       appBar: AppBar(
         title: AnimatedProgressbar(value: model.progress),
         leading: IconButton(
-          icon: Icon(Icons.timer),
+          icon: Icon(Icons.close),
           onPressed: () => Navigator.pop(context),
         ),
       ),
       body: PageView.builder(
-        physics: NeverScrollableScrollPhysics(),
+        physics: AlwaysScrollableScrollPhysics(),
         scrollDirection: Axis.horizontal,
         controller: model.controller,
+        itemCount: this.symptom.screeningQuestions.length + 2,
         onPageChanged: (int idx) => model.progress =
             (idx / (this.symptom.screeningQuestions.length + 1)),
         itemBuilder: (BuildContext context, int idx) {
@@ -77,7 +79,7 @@ class QuestionsScreen extends StatelessWidget {
           } else if (idx == this.symptom.screeningQuestions.length + 1) {
             return reviewPage(context);
           } else {
-            return questionPage(
+            return QuestionPage.create(
               context,
               this.symptom.screeningQuestions[idx - 1],
             );
@@ -133,43 +135,6 @@ class QuestionsScreen extends StatelessWidget {
           )
         ],
       ),
-    );
-  }
-
-  Widget questionPage(BuildContext context, Question question) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Expanded(
-            child: Container(
-              padding: EdgeInsets.all(16),
-              alignment: Alignment.topCenter,
-              child: Text(question.question),
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.all(20),
-            child: _buildOptions(question, context),
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget _buildOptions(Question question, BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: question.options.map((opt) {
-        return OptionListItem.create(
-          context: context,
-          type: question.type,
-          option: opt,
-          onTap: () {},
-          onInput: () {},
-        );
-      }).toList(),
     );
   }
 }

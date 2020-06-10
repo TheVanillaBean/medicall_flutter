@@ -60,7 +60,6 @@ dependencies:
   fluri: ^1.2.8
   super_rich_text: ^0.2.1
 
-
 dependency_overrides:
   intl: ^0.16.0
 
