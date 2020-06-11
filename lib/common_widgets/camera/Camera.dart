@@ -36,12 +36,12 @@ class _CameraScreenState extends State<CameraScreen> {
   @override
   void initState() {
     super.initState();
-    //WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void dispose() {
-    //WidgetsBinding.instance.removeObserver(this);
+    widget.model.controller.dispose();
+    widget.model.videoController.dispose();
     super.dispose();
   }
 
