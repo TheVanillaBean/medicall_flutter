@@ -67,11 +67,15 @@ class _CameraScreenState extends State<CameraScreen> {
                         body: _cameraPreviewWidget(),
                       );
                     } else {
-                      return Center(
-                        child: Container(
-                            width: 50,
-                            height: 50,
-                            child: CircularProgressIndicator()),
+                      return Column(
+                        children: <Widget>[
+                          Expanded(
+                            child: Container(
+                                width: 50,
+                                height: 50,
+                                child: CircularProgressIndicator()),
+                          )
+                        ],
                       );
                     }
                   });
@@ -101,11 +105,15 @@ class _CameraScreenState extends State<CameraScreen> {
                   body: _cameraPreviewWidget(),
                 );
               } else {
-                return Center(
-                  child: Container(
-                      width: 50,
-                      height: 50,
-                      child: CircularProgressIndicator()),
+                return Column(
+                  children: <Widget>[
+                    Expanded(
+                      child: Container(
+                          width: 50,
+                          height: 50,
+                          child: CircularProgressIndicator()),
+                    )
+                  ],
                 );
               }
             });

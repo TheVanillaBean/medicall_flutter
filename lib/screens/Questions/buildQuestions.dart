@@ -71,7 +71,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                     highlightColor: Colors.transparent,
                     onPressed: () {
                       Navigator.of(context).push(PageRouteBuilder(
-                          opaque: false,
+                          opaque: true,
                           pageBuilder: (BuildContext context, _, __) {
                             return CameraScreen.create(context, widget.data);
                           }));
@@ -445,7 +445,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                 splashColor: Colors.transparent,
                 onPressed: () {
                   Navigator.of(context).push(PageRouteBuilder(
-                      opaque: false,
+                      opaque: true,
                       pageBuilder: (BuildContext context, _, __) {
                         return CameraScreen.create(context, widget.data);
                       }));
@@ -524,7 +524,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                     splashColor: Colors.transparent,
                     onPressed: () {
                       Navigator.of(context).push(PageRouteBuilder(
-                          opaque: false,
+                          opaque: true,
                           pageBuilder: (BuildContext context, _, __) {
                             return CameraScreen.create(context, widget.data);
                           }));

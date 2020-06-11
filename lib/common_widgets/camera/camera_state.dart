@@ -18,6 +18,19 @@ class CameraState with ChangeNotifier {
   ExtImageProvider extImageProvider;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
+  void updateWith({
+    CameraController controller,
+    String imagePath,
+    String videoPath,
+    VideoPlayerController videoController,
+  }) {
+    this.controller = controller ?? this.controller;
+    this.imagePath = imagePath ?? this.imagePath;
+    this.videoPath = videoPath ?? this.videoPath;
+    this.videoController = videoController ?? this.videoController;
+    notifyListeners();
+  }
+
   /// Returns a suitable camera icon for [direction].
   IconData getCameraLensIcon(CameraLensDirection direction) {
     switch (direction) {
@@ -49,18 +62,19 @@ class CameraState with ChangeNotifier {
     if (controller != null) {
       await controller.dispose();
     }
-    controller = CameraController(
+    updateWith(
+        controller: CameraController(
       cameraDescription,
       ResolutionPreset.medium,
       enableAudio: true,
-    );
+    ));
 
     // If the controller is updated then update the UI.
-    controller.addListener(() {
-      if (controller.value.hasError) {
-        showInSnackBar('Camera error ${controller.value.errorDescription}');
-      }
-    });
+    // controller.addListener(() {
+    //   if (controller.value.hasError) {
+    //     showInSnackBar('Camera error ${controller.value.errorDescription}');
+    //   }
+    // });
 
     try {
       await controller.initialize();
@@ -71,9 +85,8 @@ class CameraState with ChangeNotifier {
 
   void onTakePictureButtonPressed() {
     takePicture().then((String filePath) {
-      imagePath = filePath;
       videoController?.dispose();
-      videoController = null;
+      updateWith(imagePath: filePath, videoController: null);
       if (filePath != null) showInSnackBar('Picture saved to $filePath');
     });
   }
@@ -119,7 +132,7 @@ class CameraState with ChangeNotifier {
     }
 
     try {
-      videoPath = filePath;
+      updateWith(videoPath: filePath);
       await controller.startVideoRecording(filePath);
     } on CameraException catch (e) {
       _showCameraException(e);
@@ -182,8 +195,7 @@ class CameraState with ChangeNotifier {
     await vcontroller.setLooping(true);
     await vcontroller.initialize();
     await videoController?.dispose();
-    imagePath = null;
-    videoController = vcontroller;
+    updateWith(imagePath: null, videoController: vcontroller);
     await vcontroller.play();
   }
 
