@@ -1,5 +1,5 @@
+import 'package:Medicall/common_widgets/camera/Camera.dart';
 import 'package:Medicall/common_widgets/carousel/carousel_with_indicator.dart';
-import 'package:Medicall/components/Camera.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:flutter/material.dart';
@@ -73,7 +73,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                       Navigator.of(context).push(PageRouteBuilder(
                           opaque: false,
                           pageBuilder: (BuildContext context, _, __) {
-                            return CameraScreen(data: widget.data);
+                            return CameraScreen.create(context, widget.data);
                           }));
                     },
                     child: FutureBuilder(
@@ -447,7 +447,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                   Navigator.of(context).push(PageRouteBuilder(
                       opaque: false,
                       pageBuilder: (BuildContext context, _, __) {
-                        return CameraScreen(data: widget.data);
+                        return CameraScreen.create(context, widget.data);
                       }));
                 },
                 elevation: 2.0,
@@ -526,7 +526,7 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                       Navigator.of(context).push(PageRouteBuilder(
                           opaque: false,
                           pageBuilder: (BuildContext context, _, __) {
-                            return CameraScreen(data: widget.data);
+                            return CameraScreen.create(context, widget.data);
                           }));
                     },
                     elevation: 2.0,
