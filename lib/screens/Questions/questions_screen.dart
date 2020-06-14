@@ -67,49 +67,21 @@ class QuestionsScreen extends StatelessWidget {
         ),
       ),
       body: PageView.builder(
-        physics: AlwaysScrollableScrollPhysics(),
+        physics: NeverScrollableScrollPhysics(),
         scrollDirection: Axis.horizontal,
         controller: model.controller,
-        itemCount: this.symptom.screeningQuestions.length + 2,
-        onPageChanged: (int idx) => model.progress =
-            (idx / (this.symptom.screeningQuestions.length + 1)),
+        itemCount: this.consult.questions.length + 1,
+        onPageChanged: this.model.pageChanged,
         itemBuilder: (BuildContext context, int idx) {
-          if (idx == 0) {
-            return startPage(context);
-          } else if (idx == this.symptom.screeningQuestions.length + 1) {
+          if (idx == this.consult.questions.length) {
             return reviewPage(context);
           } else {
             return QuestionPage.create(
               context,
-              this.symptom.screeningQuestions[idx - 1],
+              this.consult.questions[idx],
             );
           }
         },
-      ),
-    );
-  }
-
-  Widget startPage(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(20),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(symptom.name, style: Theme.of(context).textTheme.headline5),
-          Divider(),
-          Expanded(child: Text(symptom.description)),
-          ButtonBar(
-            alignment: MainAxisAlignment.center,
-            children: <Widget>[
-              FlatButton.icon(
-                onPressed: model.nextPage,
-                label: Text('Start Questionnaire!'),
-                icon: Icon(Icons.poll),
-                color: Colors.green,
-              )
-            ],
-          )
-        ],
       ),
     );
   }

@@ -146,6 +146,7 @@ class ProviderDetailScreen extends StatelessWidget {
               providerId: provider.uid,
               symptom: symptom.name,
               date: DateTime.now(),
+              questions: symptom.screeningQuestions,
             );
             if (medicallUser != null) {
               StartVisitScreen.show(

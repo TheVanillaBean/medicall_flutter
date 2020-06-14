@@ -13,84 +13,55 @@ class QuestionsViewModel with OptionInputValidator, ChangeNotifier {
   final Consult consult;
   final PageController controller = PageController();
 
-  double _progress = 0;
-  Option _selected;
-
-  //Question State Fields
-  String input;
-  bool autoValidate;
-  bool isLoading;
-  bool submitted;
-
-  List<String> optionsCheckedList;
-
-  List<String> getOptionsList(Question question) {
-    List<String> options = [];
-    for (Option opt in question.options) {
-      options.add(opt.value);
-    }
-    return options;
-  }
+  double progress;
+  Option selected;
 
   QuestionsViewModel({
     @required this.auth,
     @required this.symptom,
     @required this.consult,
-    this.input = '',
-    this.autoValidate = false,
-    this.isLoading = false,
-    this.submitted = false,
+    this.progress = 0.0,
   });
 
-  get progress => _progress;
-  get selected => _selected;
+  void nextPage(Question question) async {
+    int questionIndex =
+        consult.questions.indexWhere((q) => q.question == question.question);
+    consult.questions[questionIndex] = question;
 
-  set progress(double newValue) {
-    _progress = newValue;
-    notifyListeners();
-  }
-
-  set selected(Option newValue) {
-    _selected = newValue;
-    notifyListeners();
-  }
-
-  void nextPage() async {
     await controller.nextPage(
       duration: Duration(milliseconds: 500),
       curve: Curves.easeOut,
     );
   }
 
-  bool get canSubmit {
-    return inputValidator.isValid(input) && !isLoading;
+  void previousPage() async {
+    await controller.previousPage(
+      duration: Duration(milliseconds: 500),
+      curve: Curves.easeOut,
+    );
   }
 
-  String get inputErrorText {
-    bool showErrorText = submitted && !inputValidator.isValid(input);
-    return showErrorText ? inputErrorText : null;
+  bool get canAccessPrevious {
+    return progress > 0;
   }
 
-  void updateInput(String input) => updateWith(input: input);
-
-  Future<void> submit() async {
-    updateWith(submitted: true, isLoading: true);
-    try {} catch (e) {
-      updateWith(isLoading: false);
-      rethrow;
-    }
+  bool canAccessNext(
+    List<String> selectedOptionsList,
+    bool canSubmitInputField,
+  ) {
+    return selectedOptionsList.length > 0 || canSubmitInputField;
   }
+
+  void pageChanged(int idx) =>
+      updateWith(progress: (idx / (consult.questions.length)));
 
   void updateWith({
-    String input,
-    bool autoValidate,
-    bool isLoading,
+    double progress,
+    Option selected,
     bool submitted,
   }) {
-    this.input = input ?? this.input;
-    this.autoValidate = autoValidate ?? this.autoValidate;
-    this.isLoading = isLoading ?? this.isLoading;
-    this.submitted = submitted ?? this.submitted;
+    this.progress = progress ?? this.progress;
+    this.selected = selected ?? this.selected;
     notifyListeners();
   }
 }

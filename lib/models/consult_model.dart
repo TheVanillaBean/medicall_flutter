@@ -34,8 +34,9 @@ class Consult {
     final String price = data['price'];
     final DateTime date = DateTime.parse(dateTimeStamp.toDate().toString());
     final String state = data['state'];
-    final List<Question> questions =
-        data["screening_questions"] ?? <Question>[];
+    final List<Question> questions = (data['screening_questions'] as List ?? [])
+        .map((v) => Question.fromMap(v))
+        .toList();
 
     return Consult(
       providerId: providerId,
@@ -56,7 +57,7 @@ class Consult {
       'price': price,
       'date': date,
       'state': state,
-      "screening_questions": questions,
+      "screening_questions": questions.map((q) => q.toMap()),
     };
   }
 

@@ -1,17 +1,16 @@
 import 'package:Medicall/common_widgets/custom_raised_button.dart';
 import 'package:Medicall/models/screening_question_model.dart';
 import 'package:Medicall/screens/Questions/grouped_checkbox.dart';
+import 'package:Medicall/screens/Questions/question_page_view_model.dart';
 import 'package:Medicall/screens/Questions/questions_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class QuestionPage extends StatefulWidget {
-  final QuestionsViewModel model;
-  final Question question;
+  final QuestionPageViewModel questionsPageViewModel;
 
   const QuestionPage({
-    @required this.question,
-    @required this.model,
+    @required this.questionsPageViewModel,
   });
 
   static Widget create(
@@ -20,9 +19,16 @@ class QuestionPage extends StatefulWidget {
   ) {
     final QuestionsViewModel questionsViewModel =
         Provider.of<QuestionsViewModel>(context, listen: false);
-    return QuestionPage(
-      model: questionsViewModel,
-      question: question,
+    return ChangeNotifierProvider<QuestionPageViewModel>(
+      create: (context) => QuestionPageViewModel(
+        question: question,
+        questionsViewModel: questionsViewModel,
+      ),
+      child: Consumer<QuestionPageViewModel>(
+        builder: (_, model, __) => QuestionPage(
+          questionsPageViewModel: model,
+        ),
+      ),
     );
   }
 
@@ -31,11 +37,16 @@ class QuestionPage extends StatefulWidget {
 }
 
 class _QuestionPageState extends State<QuestionPage> {
-  final TextEditingController _inputController = TextEditingController();
-  final FocusNode _inputFocusNode = FocusNode();
+  Question get question => widget.questionsPageViewModel.question;
+  QuestionPageViewModel get questionPageViewModel =>
+      widget.questionsPageViewModel;
 
-  Question get question => widget.question;
-  QuestionsViewModel get model => widget.model;
+  @override
+  void dispose() {
+    questionPageViewModel.inputController.dispose();
+    questionPageViewModel.inputFocusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +63,7 @@ class _QuestionPageState extends State<QuestionPage> {
             child: Container(
               padding: EdgeInsets.fromLTRB(16, 40, 16, 0),
               alignment: Alignment.topCenter,
-              child: Text(widget.question.question),
+              child: Text(question.question),
             ),
           ),
           Expanded(
@@ -82,33 +93,18 @@ class _QuestionPageState extends State<QuestionPage> {
         Expanded(
           flex: 9,
           child: GroupedCheckbox(
-            itemList: model.getOptionsList(question),
-            checkedItemList: model.optionsCheckedList,
+            itemList: questionPageViewModel.optionsList,
+            checkedItemList: questionPageViewModel.selectedOptionsList,
             orientation: CheckboxOrientation.VERTICAL,
             checkColor: Colors.white,
             activeColor: Colors.blueAccent,
-            onChanged: (itemList) {
-              setState(() {
-                print('SELECTED ITEM LIST $itemList');
-              });
-            },
+            onChanged: questionPageViewModel.checkedItemsChanged,
           ),
         ),
         SizedBox(
           height: 24,
         ),
-        Expanded(
-          flex: 1,
-          child: CustomRaisedButton(
-            color: Colors.blue,
-            borderRadius: 24,
-            child: Text(
-              "Continue",
-              style: TextStyle(color: Colors.white),
-            ),
-            onPressed: () => model.nextPage(),
-          ),
-        ),
+        _buildNavigationButtons(),
       ],
     );
   }
@@ -122,26 +118,19 @@ class _QuestionPageState extends State<QuestionPage> {
         SizedBox(
           height: 24,
         ),
-        CustomRaisedButton(
-          color: Colors.blue,
-          borderRadius: 24,
-          child: Text(
-            "Continue",
-            style: TextStyle(color: Colors.white),
-          ),
-          onPressed: () => model.nextPage(),
-        ),
+        _buildNavigationButtons(),
       ],
     );
   }
 
   Widget _buildFRTextField() {
     return TextField(
-      controller: _inputController,
-      focusNode: _inputFocusNode,
+      controller: questionPageViewModel.inputController,
+      focusNode: questionPageViewModel.inputFocusNode,
       autocorrect: false,
       keyboardType: TextInputType.multiline,
       maxLines: 8,
+      onChanged: questionPageViewModel.updateInput,
       style: TextStyle(color: Color.fromRGBO(80, 80, 80, 1)),
       decoration: InputDecoration(
         labelStyle: TextStyle(
@@ -152,11 +141,52 @@ class _QuestionPageState extends State<QuestionPage> {
         ),
         filled: true,
         fillColor: Colors.grey.withAlpha(50),
-        labelText: 'Enter response',
+        labelText: "Enter response",
         alignLabelWithHint: true,
-        errorText: model.inputErrorText,
-        enabled: model.isLoading == false,
+        errorText: questionPageViewModel.inputErrorText,
+        enabled: questionPageViewModel.submitted == false,
       ),
+    );
+  }
+
+  Widget _buildNavigationButtons() {
+    return Row(
+      children: <Widget>[
+        Expanded(
+          flex: 1,
+          child: CustomRaisedButton(
+            color: Colors.blue,
+            borderRadius: 24,
+            child: Text(
+              "Previous",
+              style: TextStyle(color: Colors.white),
+            ),
+            onPressed:
+                questionPageViewModel.questionsViewModel.canAccessPrevious
+                    ? () => questionPageViewModel.previousPage()
+                    : null,
+          ),
+        ),
+        SizedBox(
+          width: 8,
+        ),
+        Expanded(
+          flex: 1,
+          child: CustomRaisedButton(
+            color: Colors.blue,
+            borderRadius: 24,
+            child: Text(
+              "Next",
+              style: TextStyle(color: Colors.white),
+            ),
+            onPressed: questionPageViewModel.questionsViewModel.canAccessNext(
+                    questionPageViewModel.selectedOptionsList,
+                    questionPageViewModel.canSubmitInputField)
+                ? () => questionPageViewModel.nextPage(question)
+                : null,
+          ),
+        ),
+      ],
     );
   }
 }

@@ -33,7 +33,7 @@ class Option {
       return <String, dynamic>{
         'value': this.value,
         'has_sub_questions': true,
-        'sub_questions': this.subQuestions,
+        'sub_questions': this.subQuestions.map((q) => q.toMap()),
       };
     } else {
       return <String, dynamic>{

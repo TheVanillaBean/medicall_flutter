@@ -4,11 +4,13 @@ class Question {
   String question;
   String type;
   List<Option> options;
+  Answer answer;
 
   Question({
     this.options,
     this.question,
     this.type,
+    this.answer,
   });
 
   factory Question.fromMap(Map<String, dynamic> data) {
@@ -21,10 +23,16 @@ class Question {
     final options =
         (data['options'] as List ?? []).map((v) => Option.fromMap(v)).toList();
 
+    Answer answer;
+    if (data['answer'] != null) {
+      answer = Answer.fromMap(data);
+    }
+
     return Question(
       question: question,
       type: type,
       options: options,
+      answer: answer,
     );
   }
 
@@ -32,7 +40,8 @@ class Question {
     return <String, dynamic>{
       'question': question,
       'type': type,
-      'options': options,
+      'options': options.map((opt) => opt.toMap()),
+      'answer': answer != null ? answer.toMap() : null,
     };
   }
 }
