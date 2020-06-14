@@ -1,25 +1,21 @@
 import 'package:Medicall/models/consult_model.dart';
-import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Questions/questions_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 
 class StartVisitScreen extends StatelessWidget {
-  final Symptom symptom;
   final Consult consult;
 
-  const StartVisitScreen({@required this.symptom, @required this.consult});
+  const StartVisitScreen({@required this.consult});
 
   static Future<void> show({
     BuildContext context,
-    Symptom symptom,
     Consult consult,
   }) async {
     await Navigator.of(context).pushNamed(
       Routes.startVisit,
       arguments: {
-        'symptom': symptom,
         'consult': consult,
       },
     );
@@ -77,7 +73,6 @@ class StartVisitScreen extends StatelessWidget {
                   QuestionsScreen.show(
                     context: context,
                     consult: consult,
-                    symptom: symptom,
                   );
                 },
                 padding: EdgeInsets.fromLTRB(35, 15, 35, 15),

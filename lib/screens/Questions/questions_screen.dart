@@ -1,5 +1,4 @@
 import 'package:Medicall/models/consult_model.dart';
-import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Dashboard/dashboard.dart';
 import 'package:Medicall/screens/Questions/progress_bar.dart';
@@ -11,24 +10,20 @@ import 'package:provider/provider.dart';
 
 class QuestionsScreen extends StatelessWidget {
   final QuestionsViewModel model;
-  final Symptom symptom;
   final Consult consult;
 
   static Widget create(
     BuildContext context,
-    Symptom symptom,
     Consult consult,
   ) {
     final AuthBase auth = Provider.of<AuthBase>(context, listen: false);
     return ChangeNotifierProvider<QuestionsViewModel>(
       create: (context) => QuestionsViewModel(
         auth: auth,
-        symptom: symptom,
         consult: consult,
       ),
       child: Consumer<QuestionsViewModel>(
         builder: (_, model, __) => QuestionsScreen(
-          symptom: symptom,
           consult: consult,
           model: model,
         ),
@@ -38,13 +33,11 @@ class QuestionsScreen extends StatelessWidget {
 
   static Future<void> show({
     @required BuildContext context,
-    @required Symptom symptom,
     @required Consult consult,
   }) async {
     await Navigator.of(context).pushNamed(
       Routes.questions,
       arguments: {
-        'symptom': symptom,
         'consult': consult,
       },
     );
@@ -52,7 +45,6 @@ class QuestionsScreen extends StatelessWidget {
 
   QuestionsScreen({
     @required this.model,
-    @required this.symptom,
     @required this.consult,
   });
 
@@ -93,14 +85,14 @@ class QuestionsScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'Congratulations! You have completed this consult. Your provider will respond back within 24 hours.',
+            'Congratulations! ',
             textAlign: TextAlign.center,
           ),
           Divider(),
           FlatButton.icon(
-            color: Colors.green,
+            color: Colors.blueAccent,
             icon: Icon(Icons.check),
-            label: Text('Continue to your dashboard'),
+            label: Text('Complete consultation'),
             onPressed: () {
               DashboardScreen.show(context: context, pushReplaceNamed: true);
             },

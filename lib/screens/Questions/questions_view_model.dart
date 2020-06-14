@@ -1,7 +1,6 @@
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/option_model.dart';
 import 'package:Medicall/models/screening_question_model.dart';
-import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/util/validators.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,7 +8,6 @@ import 'package:flutter/foundation.dart';
 
 class QuestionsViewModel with OptionInputValidator, ChangeNotifier {
   final AuthBase auth;
-  final Symptom symptom;
   final Consult consult;
   final PageController controller = PageController();
 
@@ -18,7 +16,6 @@ class QuestionsViewModel with OptionInputValidator, ChangeNotifier {
 
   QuestionsViewModel({
     @required this.auth,
-    @required this.symptom,
     @required this.consult,
     this.progress = 0.0,
   });

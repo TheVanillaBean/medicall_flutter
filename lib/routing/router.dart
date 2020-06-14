@@ -27,7 +27,7 @@ import 'package:Medicall/screens/Symptoms/symptom_detail.dart';
 import 'package:Medicall/screens/Symptoms/symptoms.dart';
 import 'package:Medicall/screens/Terms/index.dart';
 import 'package:Medicall/screens/Welcome//welcome.dart';
-import 'package:Medicall/screens/Welcome/startVisit.dart';
+import 'package:Medicall/screens/Welcome/start_visit.dart';
 import 'package:Medicall/screens/Welcome/zip_code_verify.dart';
 import 'package:flutter/material.dart';
 
@@ -91,11 +91,9 @@ class Router {
         );
       case Routes.startVisit:
         final Map<String, dynamic> mapArgs = args;
-        final Symptom symptom = mapArgs['symptom'];
         final Consult consult = mapArgs['consult'];
         return MaterialPageRoute<dynamic>(
           builder: (context) => StartVisitScreen(
-            symptom: symptom,
             consult: consult,
           ),
           settings: settings,
@@ -191,12 +189,10 @@ class Router {
         );
       case Routes.questions:
         final Map<String, dynamic> mapArgs = args;
-        final Symptom symptom = mapArgs['symptom'];
         final Consult consult = mapArgs['consult'];
         return MaterialPageRoute<dynamic>(
           builder: (context) => QuestionsScreen.create(
             context,
-            symptom,
             consult,
           ),
           settings: settings,

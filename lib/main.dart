@@ -3,7 +3,7 @@ import 'package:Medicall/screens/Dashboard/dashboard.dart';
 import 'package:Medicall/screens/LandingPage/auth_widget_builder.dart';
 import 'package:Medicall/screens/LandingPage/index.dart';
 import 'package:Medicall/screens/StripeConnect/index.dart';
-import 'package:Medicall/screens/Welcome/startVisit.dart';
+import 'package:Medicall/screens/Welcome/start_visit.dart';
 import 'package:Medicall/screens/Welcome/welcome.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/database.dart';
@@ -88,7 +88,6 @@ class MedicallApp extends StatelessWidget {
               stripeConnectBuilder: (context) => StripeConnect.create(context),
               startVisitBuilder: (context) => StartVisitScreen(
                 consult: tempUserProvider.consult,
-                symptom: tempUserProvider.symptom,
               ),
             ),
             onGenerateRoute: Router.onGenerateRoute,
