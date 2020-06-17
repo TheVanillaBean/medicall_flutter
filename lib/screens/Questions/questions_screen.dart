@@ -1,3 +1,4 @@
+import 'package:Medicall/common_widgets/custom_raised_button.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Dashboard/dashboard.dart';
@@ -6,25 +7,25 @@ import 'package:Medicall/screens/Questions/question_page.dart';
 import 'package:Medicall/screens/Questions/questions_view_model.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:flutter/material.dart';
+import 'package:property_change_notifier/property_change_notifier.dart';
 import 'package:provider/provider.dart';
 
 class QuestionsScreen extends StatelessWidget {
   final QuestionsViewModel model;
-  final Consult consult;
 
   static Widget create(
     BuildContext context,
     Consult consult,
   ) {
     final AuthBase auth = Provider.of<AuthBase>(context, listen: false);
-    return ChangeNotifierProvider<QuestionsViewModel>(
-      create: (context) => QuestionsViewModel(
+    return PropertyChangeProvider(
+      value: QuestionsViewModel(
         auth: auth,
         consult: consult,
       ),
-      child: Consumer<QuestionsViewModel>(
+      child: PropertyChangeConsumer<QuestionsViewModel>(
+        properties: [QuestionVMProperties.questionScreen],
         builder: (_, model, __) => QuestionsScreen(
-          consult: consult,
           model: model,
         ),
       ),
@@ -45,7 +46,6 @@ class QuestionsScreen extends StatelessWidget {
 
   QuestionsScreen({
     @required this.model,
-    @required this.consult,
   });
 
   @override
@@ -58,22 +58,33 @@ class QuestionsScreen extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: PageView.builder(
-        physics: NeverScrollableScrollPhysics(),
-        scrollDirection: Axis.horizontal,
-        controller: model.controller,
-        itemCount: this.consult.questions.length + 1,
-        onPageChanged: this.model.pageChanged,
-        itemBuilder: (BuildContext context, int idx) {
-          if (idx == this.consult.questions.length) {
-            return reviewPage(context);
-          } else {
-            return QuestionPage.create(
-              context,
-              this.consult.questions[idx],
-            );
-          }
-        },
+      body: Column(
+        children: <Widget>[
+          Expanded(
+            flex: 8,
+            child: PageView.builder(
+              physics: NeverScrollableScrollPhysics(),
+              scrollDirection: Axis.horizontal,
+              controller: this.model.controller,
+              onPageChanged: this.model.pageChanged,
+              itemBuilder: (BuildContext context, int idx) {
+                if (idx == this.model.consult.questions.length) {
+                  return reviewPage(context);
+                } else {
+                  model.getOptionsList(this.model.consult.questions[idx]);
+                  model.getInput(this.model.consult.questions[idx]);
+                  return QuestionPage(
+                    question: this.model.consult.questions[idx],
+                  );
+                }
+              },
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: NavigationButtons(),
+          ),
+        ],
       ),
     );
   }
@@ -99,6 +110,53 @@ class QuestionsScreen extends StatelessWidget {
           )
         ],
       ),
+    );
+  }
+}
+
+class NavigationButtons extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final QuestionsViewModel model =
+        PropertyChangeProvider.of<QuestionsViewModel>(
+      context,
+      properties: [QuestionVMProperties.questionPage],
+    ).value;
+    return _buildNavigationButtons(model);
+  }
+
+  Widget _buildNavigationButtons(QuestionsViewModel model) {
+    return Row(
+      children: <Widget>[
+        Expanded(
+          flex: 1,
+          child: CustomRaisedButton(
+            color: Colors.blue,
+            borderRadius: 24,
+            child: Text(
+              "Previous",
+              style: TextStyle(color: Colors.white),
+            ),
+            onPressed:
+                model.canAccessPrevious ? () => model.previousPage() : null,
+          ),
+        ),
+        SizedBox(
+          width: 8,
+        ),
+        Expanded(
+          flex: 1,
+          child: CustomRaisedButton(
+            color: Colors.blue,
+            borderRadius: 24,
+            child: Text(
+              "Next",
+              style: TextStyle(color: Colors.white),
+            ),
+            onPressed: model.canAccessNext ? () => model.nextPage() : null,
+          ),
+        ),
+      ],
     );
   }
 }

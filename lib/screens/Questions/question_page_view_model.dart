@@ -55,7 +55,7 @@ class QuestionPageViewModel with OptionInputValidator, ChangeNotifier {
     question.answer = answer;
     selectedOptionsList.clear();
     input = "";
-    questionsViewModel.nextPage(question);
+    questionsViewModel.nextPage();
   }
 
   bool get canSubmitInputField {
