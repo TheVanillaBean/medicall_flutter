@@ -5,8 +5,9 @@ import 'package:Medicall/util/validators.dart';
 import 'package:flutter/cupertino.dart';
 
 class QuestionPageViewModel with OptionInputValidator, ChangeNotifier {
+  final QuestionsViewModel questionsViewModel;
+
   Question question;
-  QuestionsViewModel questionsViewModel;
   String input;
   bool submitted;
   List<String> optionsList = [];
@@ -16,10 +17,10 @@ class QuestionPageViewModel with OptionInputValidator, ChangeNotifier {
   final FocusNode inputFocusNode = FocusNode();
 
   QuestionPageViewModel({
+    @required this.questionsViewModel,
     this.input = '',
     this.submitted = false,
     this.question,
-    this.questionsViewModel,
   }) {
     getOptionsList(question);
     getInput();
@@ -40,24 +41,6 @@ class QuestionPageViewModel with OptionInputValidator, ChangeNotifier {
     }
   }
 
-  void previousPage() async {
-    questionsViewModel.previousPage();
-  }
-
-  void nextPage(Question question) async {
-    Answer answer;
-    if (question.type == "MC") {
-      answer = Answer(answer: List.of(selectedOptionsList));
-    } else {
-      answer = Answer(answer: [input]);
-    }
-
-    question.answer = answer;
-    selectedOptionsList.clear();
-    input = "";
-    questionsViewModel.nextPage(question);
-  }
-
   bool get canSubmitInputField {
     return inputValidator.isValid(input);
   }
@@ -72,8 +55,7 @@ class QuestionPageViewModel with OptionInputValidator, ChangeNotifier {
       input = question.answer.answer.first;
       inputController.text = input;
       inputController.selection = TextSelection.fromPosition(
-        TextPosition(offset: inputController.text.length),
-      );
+          TextPosition(offset: inputController.text.length));
     }
   }
 
@@ -89,6 +71,7 @@ class QuestionPageViewModel with OptionInputValidator, ChangeNotifier {
     this.input = input ?? this.input;
     this.selectedOptionsList = selectedOptionsList ?? this.selectedOptionsList;
     this.submitted = submitted ?? this.submitted;
+    questionsViewModel.updateWith(progress: 1);
     notifyListeners();
   }
 }

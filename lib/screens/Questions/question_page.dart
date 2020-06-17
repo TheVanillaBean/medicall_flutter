@@ -7,10 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class QuestionPage extends StatefulWidget {
-  final QuestionPageViewModel questionsPageViewModel;
+  final QuestionPageViewModel model;
 
   const QuestionPage({
-    @required this.questionsPageViewModel,
+    @required this.model,
   });
 
   static Widget create(
@@ -21,12 +21,12 @@ class QuestionPage extends StatefulWidget {
         Provider.of<QuestionsViewModel>(context, listen: false);
     return ChangeNotifierProvider<QuestionPageViewModel>(
       create: (context) => QuestionPageViewModel(
-        question: question,
         questionsViewModel: questionsViewModel,
+        question: question,
       ),
       child: Consumer<QuestionPageViewModel>(
         builder: (_, model, __) => QuestionPage(
-          questionsPageViewModel: model,
+          model: model,
         ),
       ),
     );
@@ -37,19 +37,19 @@ class QuestionPage extends StatefulWidget {
 }
 
 class _QuestionPageState extends State<QuestionPage> {
-  Question get question => widget.questionsPageViewModel.question;
-  QuestionPageViewModel get questionPageViewModel =>
-      widget.questionsPageViewModel;
+  Question get question => widget.model.question;
+  QuestionPageViewModel get model => widget.model;
 
   @override
   void dispose() {
-    questionPageViewModel.inputController.dispose();
-    questionPageViewModel.inputFocusNode.dispose();
+    model.inputController.dispose();
+    model.inputFocusNode.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    model.questionsViewModel.questionPageViewModel = model;
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {
@@ -93,18 +93,21 @@ class _QuestionPageState extends State<QuestionPage> {
         Expanded(
           flex: 9,
           child: GroupedCheckbox(
-            itemList: questionPageViewModel.optionsList,
-            checkedItemList: questionPageViewModel.selectedOptionsList,
+            itemList: model.optionsList,
+            checkedItemList: model.selectedOptionsList,
             orientation: CheckboxOrientation.VERTICAL,
             checkColor: Colors.white,
             activeColor: Colors.blueAccent,
-            onChanged: questionPageViewModel.checkedItemsChanged,
+            onChanged: model.checkedItemsChanged,
           ),
         ),
         SizedBox(
           height: 24,
         ),
-        _buildNavigationButtons(),
+        Expanded(
+          flex: 1,
+          child: _buildNavigationButtons(),
+        ),
       ],
     );
   }
@@ -118,19 +121,22 @@ class _QuestionPageState extends State<QuestionPage> {
         SizedBox(
           height: 24,
         ),
-        _buildNavigationButtons(),
+        Expanded(
+          flex: 1,
+          child: _buildNavigationButtons(),
+        ),
       ],
     );
   }
 
   Widget _buildFRTextField() {
     return TextField(
-      controller: questionPageViewModel.inputController,
-      focusNode: questionPageViewModel.inputFocusNode,
+      controller: model.inputController,
+      focusNode: model.inputFocusNode,
       autocorrect: false,
       keyboardType: TextInputType.multiline,
       maxLines: 8,
-      onChanged: questionPageViewModel.updateInput,
+      onChanged: model.updateInput,
       style: TextStyle(color: Color.fromRGBO(80, 80, 80, 1)),
       decoration: InputDecoration(
         labelStyle: TextStyle(
@@ -143,8 +149,8 @@ class _QuestionPageState extends State<QuestionPage> {
         fillColor: Colors.grey.withAlpha(50),
         labelText: "Enter response",
         alignLabelWithHint: true,
-        errorText: questionPageViewModel.inputErrorText,
-        enabled: questionPageViewModel.submitted == false,
+        errorText: model.inputErrorText,
+        enabled: model.submitted == false,
       ),
     );
   }
@@ -161,10 +167,9 @@ class _QuestionPageState extends State<QuestionPage> {
               "Previous",
               style: TextStyle(color: Colors.white),
             ),
-            onPressed:
-                questionPageViewModel.questionsViewModel.canAccessPrevious
-                    ? () => questionPageViewModel.previousPage()
-                    : null,
+            onPressed: model.questionsViewModel.canAccessPrevious
+                ? () => model.questionsViewModel.previousPage()
+                : null,
           ),
         ),
         SizedBox(
@@ -179,10 +184,8 @@ class _QuestionPageState extends State<QuestionPage> {
               "Next",
               style: TextStyle(color: Colors.white),
             ),
-            onPressed: questionPageViewModel.questionsViewModel.canAccessNext(
-                    questionPageViewModel.selectedOptionsList,
-                    questionPageViewModel.canSubmitInputField)
-                ? () => questionPageViewModel.nextPage(question)
+            onPressed: model.questionsViewModel.canAccessNext
+                ? () => model.questionsViewModel.nextPage()
                 : null,
           ),
         ),

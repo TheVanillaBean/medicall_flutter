@@ -1,6 +1,6 @@
 import 'package:Medicall/models/consult_model.dart';
-import 'package:Medicall/models/option_model.dart';
 import 'package:Medicall/models/screening_question_model.dart';
+import 'package:Medicall/screens/Questions/question_page_view_model.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/util/validators.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,8 +11,9 @@ class QuestionsViewModel with OptionInputValidator, ChangeNotifier {
   final Consult consult;
   final PageController controller = PageController();
 
+  QuestionPageViewModel questionPageViewModel;
+
   double progress;
-  Option selected;
 
   QuestionsViewModel({
     @required this.auth,
@@ -20,7 +21,24 @@ class QuestionsViewModel with OptionInputValidator, ChangeNotifier {
     this.progress = 0.0,
   });
 
-  void nextPage(Question question) async {
+  Future<void> createConsult() {
+    print(consult);
+  }
+
+  void nextPage() async {
+    Question question = questionPageViewModel.question;
+    Answer answer;
+    if (question.type == "MC") {
+      answer =
+          Answer(answer: List.of(questionPageViewModel.selectedOptionsList));
+    } else {
+      answer = Answer(answer: [questionPageViewModel.input]);
+    }
+
+    question.answer = answer;
+    questionPageViewModel.selectedOptionsList.clear();
+    questionPageViewModel.input = "";
+
     int questionIndex =
         consult.questions.indexWhere((q) => q.question == question.question);
     consult.questions[questionIndex] = question;
@@ -42,11 +60,9 @@ class QuestionsViewModel with OptionInputValidator, ChangeNotifier {
     return progress > 0;
   }
 
-  bool canAccessNext(
-    List<String> selectedOptionsList,
-    bool canSubmitInputField,
-  ) {
-    return selectedOptionsList.length > 0 || canSubmitInputField;
+  bool get canAccessNext {
+    return questionPageViewModel.selectedOptionsList.length > 0 ||
+        questionPageViewModel.canSubmitInputField;
   }
 
   void pageChanged(int idx) =>
@@ -54,11 +70,9 @@ class QuestionsViewModel with OptionInputValidator, ChangeNotifier {
 
   void updateWith({
     double progress,
-    Option selected,
     bool submitted,
   }) {
     this.progress = progress ?? this.progress;
-    this.selected = selected ?? this.selected;
     notifyListeners();
   }
 }
