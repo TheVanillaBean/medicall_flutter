@@ -5,27 +5,15 @@ import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class AccountScreen extends StatefulWidget {
-  AccountScreen({Key key}) : super(key: key);
-
-  @override
-  _AccountScreenState createState() => _AccountScreenState();
-}
-
-class _AccountScreenState extends State<AccountScreen> {
-  UserProvider _userProvider;
-  ExtImageProvider _extImageProvider;
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
+class AccountScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    UserProvider _userProvider;
+    ExtImageProvider _extImageProvider;
     _userProvider = Provider.of<UserProvider>(context);
     _extImageProvider = Provider.of<ExtImageProvider>(context);
     final MedicallUser medicallUser = _userProvider.medicallUser;
+
     return Scaffold(
       //App Bar
       appBar: AppBar(
@@ -50,85 +38,109 @@ class _AccountScreenState extends State<AccountScreen> {
       ),
       drawer: DrawerMenu(),
       //Content of tabs
-      body: Column(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Column(
-              children: <Widget>[
-                Container(
-                  child: ClipRRect(
-                    borderRadius: new BorderRadius.circular(100.0),
-                    child:
-                        medicallUser != null && medicallUser.profilePic != null
-                            ? _extImageProvider.returnNetworkImage(
-                                _userProvider.medicallUser.profilePic,
-                                fit: BoxFit.cover,
-                                height: 100.0,
-                                width: 100.0,
-                                cache: true)
-                            : Icon(
-                                Icons.account_circle,
-                                size: 100,
-                              ),
-                  ),
+      body: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            SizedBox(height: 30),
+            CircleAvatar(
+              backgroundColor: Colors.grey[100],
+              radius: 80.0,
+              child: ClipOval(
+                child: _buildAvatar(
+                  medicallUser,
+                  _extImageProvider,
+                  _userProvider,
                 ),
-                SizedBox(
-                  height: 10,
-                ),
-                Text(medicallUser.displayName),
-                Text(_userProvider.medicallUser.type),
-              ],
+              ),
             ),
-          ),
-          Column(
-            children: <Widget>[
-              Container(
-                child: ListTile(
-                  enabled: false,
-                  title: Text(medicallUser.email),
-                  leading: Icon(Icons.email),
-                  onTap: () {},
-                  contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                ),
+            SizedBox(height: 10),
+            Text(
+              medicallUser.displayName,
+              style: TextStyle(
+                fontFamily: 'SourceSansPro',
+                fontSize: 30.0,
+                color: Colors.grey,
+                fontWeight: FontWeight.bold,
               ),
-              Container(
-                child: ListTile(
-                  enabled: false,
-                  title: Text(medicallUser.phoneNumber != null
-                      ? medicallUser.phoneNumber
-                      : ''),
-                  leading: Icon(Icons.phone),
-                  onTap: () {},
-                  contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                ),
+            ),
+            SizedBox(height: 10),
+            Text(
+              _userProvider.medicallUser.type.toUpperCase(),
+              style: TextStyle(
+                fontFamily: 'SourceSansPro',
+                fontSize: 16.0,
+                letterSpacing: 2.5,
+                color: Colors.grey,
+                fontWeight: FontWeight.bold,
               ),
-              Container(
-                decoration: BoxDecoration(
-                  border: Border(
-                    top: BorderSide(
-                      color:
-                          Theme.of(context).colorScheme.secondary.withAlpha(70),
-                    ),
-                    bottom: BorderSide(
-                      color:
-                          Theme.of(context).colorScheme.secondary.withAlpha(70),
-                    ),
-                  ),
-                ),
-                child: ListTile(
-                  title: Text('Payment Cards'),
-                  leading: Icon(Icons.payment),
-                  onTap: () {
-                    Navigator.of(context).pushNamed('/paymentDetail');
-                  },
-                  contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                ),
+            ),
+            SizedBox(
+              height: 20,
+              width: 150,
+              child: Divider(
+                color: Colors.grey[300],
               ),
-            ],
-          ),
-        ],
+            ),
+            Card(
+              margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 25),
+              child: ListTile(
+                enabled: false,
+                title: Text(
+                  medicallUser.email,
+                  style: TextStyle(color: Colors.grey),
+                ),
+                leading: Icon(Icons.email, color: Colors.grey),
+                onTap: () {},
+              ),
+            ),
+            Card(
+              margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 25),
+              child: ListTile(
+                enabled: false,
+                title: Text(medicallUser.phoneNumber != null
+                    ? medicallUser.phoneNumber
+                    : '(xxx)xxx-xxxx'),
+                leading: Icon(
+                  Icons.phone,
+                  color: Colors.grey,
+                ),
+                onTap: () {},
+              ),
+            ),
+            Card(
+              margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 25),
+              child: ListTile(
+                title: Text(
+                  'Payment Cards',
+                  style: TextStyle(color: Colors.grey),
+                ),
+                leading: Icon(
+                  Icons.payment,
+                  color: Colors.grey,
+                ),
+                onTap: () {
+                  Navigator.of(context).pushNamed('/paymentDetail');
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  Widget _buildAvatar(MedicallUser medicallUser,
+      ExtImageProvider _extImageProvider, UserProvider _userProvider) {
+    return medicallUser != null && medicallUser.profilePic.length > 0
+        ? _extImageProvider.returnNetworkImage(
+            _userProvider.medicallUser.profilePic,
+            fit: BoxFit.cover,
+            cache: true)
+        : Icon(
+            Icons.account_circle,
+            size: 160,
+            color: Colors.grey[300],
+          );
   }
 }
