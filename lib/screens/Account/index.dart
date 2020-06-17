@@ -24,7 +24,10 @@ class AccountScreen extends StatelessWidget {
               onPressed: () {
                 Scaffold.of(context).openDrawer();
               },
-              icon: Icon(Icons.home),
+              icon: Icon(
+                Icons.home,
+                color: Colors.grey,
+              ),
             );
           },
         ),
@@ -42,11 +45,12 @@ class AccountScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            SizedBox(height: 30),
+            SizedBox(height: 20),
             CircleAvatar(
-              backgroundColor: Colors.grey[100],
+              backgroundColor: Colors.grey[50],
               radius: 80.0,
-              child: ClipOval(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(100.0),
                 child: _buildAvatar(
                   medicallUser,
                   _extImageProvider,
@@ -139,8 +143,8 @@ class AccountScreen extends StatelessWidget {
             cache: true)
         : Icon(
             Icons.account_circle,
-            size: 160,
             color: Colors.grey[300],
+            size: 150,
           );
   }
 }
