@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
 
 class QuestionPage extends StatelessWidget {
-  final Question question;
+  final List<Question> questions;
 
-  const QuestionPage({@required this.question});
+  const QuestionPage({@required this.questions});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +17,6 @@ class QuestionPage extends StatelessWidget {
       properties: [QuestionVMProperties.questionPage],
     ).value;
     var height = MediaQuery.of(context).size.height;
-    model.updateQuestionFields(question);
     return SingleChildScrollView(
       child: Container(
         height: height * 1,
@@ -30,31 +29,40 @@ class QuestionPage extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Flexible(
-                fit: FlexFit.loose,
-                flex: 2,
-                child: Container(
-                  padding: EdgeInsets.fromLTRB(16, 40, 16, 0),
-                  alignment: Alignment.topCenter,
-                  child: Text(this.question.question),
-                ),
-              ),
-              Flexible(
-                fit: FlexFit.loose,
-                flex: 8,
-                child: Container(
-                  padding: EdgeInsets.all(20),
-                  child: QuestionForm.create(
-                    context,
-                    question,
-                    model,
-                  ),
-                ),
-              ),
+              for (var question in this.questions)
+                ..._buildQuestion(context, model, question),
             ],
           ),
         ),
       ),
     );
+  }
+
+  List<Widget> _buildQuestion(
+      BuildContext context, QuestionsViewModel model, Question question) {
+    model.updateQuestionFields(question);
+    return [
+      Flexible(
+        fit: FlexFit.loose,
+        flex: 2,
+        child: Container(
+          padding: EdgeInsets.fromLTRB(16, 40, 16, 0),
+          alignment: Alignment.topCenter,
+          child: Text(question.question),
+        ),
+      ),
+      Flexible(
+        fit: FlexFit.loose,
+        flex: 8,
+        child: Container(
+          padding: EdgeInsets.all(20),
+          child: QuestionForm.create(
+            context,
+            question,
+            model,
+          ),
+        ),
+      ),
+    ];
   }
 }
