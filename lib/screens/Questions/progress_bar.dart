@@ -1,14 +1,20 @@
+import 'package:Medicall/screens/Questions/questions_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:property_change_notifier/property_change_notifier.dart';
 
 class AnimatedProgressbar extends StatelessWidget {
-  final double value;
   final double height;
 
-  AnimatedProgressbar({Key key, @required this.value, this.height = 12})
-      : super(key: key);
+  AnimatedProgressbar({Key key, this.height = 12}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final QuestionsViewModel model =
+        PropertyChangeProvider.of<QuestionsViewModel>(
+      context,
+      properties: [QuestionVMProperties.questionProgressBar],
+    ).value;
+    double value = model.progress;
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints box) {
         return Container(

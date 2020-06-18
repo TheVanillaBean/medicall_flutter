@@ -9,6 +9,7 @@ import 'package:property_change_notifier/property_change_notifier.dart';
 
 // Properties
 abstract class QuestionVMProperties {
+  static String get questionFormWidget => 'form_widget';
   static String get questionProgressBar => 'progress_bar';
   static String get questionNavButtons => 'nav_buttons';
   static String get questionPage => 'page';
@@ -22,12 +23,16 @@ class QuestionsViewModel extends PropertyChangeNotifier
   final PageController controller = PageController();
   double progress;
 
-  //Question Page
+  //Question Page Form Fields (QuestionForm.dart)
   String input;
   List<String> optionsList = [];
   List<String> selectedOptionsList = [];
   final TextEditingController inputController = TextEditingController();
   final FocusNode inputFocusNode = FocusNode();
+
+  //Nav buttons
+  bool canAccessPrevious = false;
+  bool canAccessNext = false;
 
   QuestionsViewModel({
     @required this.auth,
@@ -37,6 +42,7 @@ class QuestionsViewModel extends PropertyChangeNotifier
   });
 
   void nextPage() async {
+    disableNavButtons();
     Question question = this.consult.questions[this
         .controller
         .page
@@ -46,12 +52,11 @@ class QuestionsViewModel extends PropertyChangeNotifier
     if (question.type == "MC") {
       answer = Answer(answer: List.of(selectedOptionsList));
     } else {
+      inputFocusNode.unfocus();
       answer = Answer(answer: [input]);
     }
 
     question.answer = answer;
-    selectedOptionsList.clear();
-    input = "";
 
     int questionIndex =
         consult.questions.indexWhere((q) => q.question == question.question);
@@ -61,44 +66,38 @@ class QuestionsViewModel extends PropertyChangeNotifier
       duration: Duration(milliseconds: 500),
       curve: Curves.easeOut,
     );
+
+    updateNavButtonState();
   }
 
   void previousPage() async {
+    disableNavButtons();
     await controller.previousPage(
       duration: Duration(milliseconds: 500),
       curve: Curves.easeOut,
     );
+    updateNavButtonState();
   }
 
-  bool get canAccessPrevious {
-    return progress > 0;
-  }
-
-  bool get canAccessNext {
-    return selectedOptionsList.length > 0 || canSubmitInputField;
-  }
-
-  bool get canSubmitInputField {
-    return inputValidator.isValid(input);
-  }
-
-  void getOptionsList(Question question) {
+  void updateQuestionFields(Question question) {
     optionsList.clear();
-    for (Option opt in question.options) {
-      optionsList.add(opt.value);
-    }
-
-    if (question.type == "MC" && question.answer != null) {
-      List<String> selectedList = [];
-      for (var answer in question.answer.answer) {
-        selectedList.add(answer);
-      }
-      selectedOptionsList = selectedList;
-    }
-  }
-
-  void getInput(Question question) {
+    selectedOptionsList.clear();
     input = "";
+
+    if (question.type == "MC") {
+      for (Option opt in question.options) {
+        optionsList.add(opt.value);
+      }
+
+      if (question.answer != null) {
+        List<String> selectedList = [];
+        for (var answer in question.answer.answer) {
+          selectedList.add(answer);
+        }
+        selectedOptionsList = selectedList;
+      }
+    }
+
     if (question.type == "FR" && question.answer != null) {
       input = question.answer.answer.first;
       inputController.text = input;
@@ -108,15 +107,20 @@ class QuestionsViewModel extends PropertyChangeNotifier
     }
   }
 
+  void checkForCondition(Question question) {
+    if (question.type == "MC") {
+      for (Option opt in question.options) {
+        if (selectedOptionsList.contains(opt.value) && opt.hasSubQuestions) {}
+      }
+    }
+  }
+
   void updateInput(String input) => updateQuestionPageWith(input: input);
   void checkedItemsChanged(List<String> items) =>
       updateQuestionPageWith(selectedOptionsList: items);
   void pageChanged(int idx) {
     progress = (idx / (consult.questions.length));
-    Question question = this.consult.questions[this.controller.page.toInt()];
-    getInput(question);
-    getOptionsList(question);
-    notifyListeners(QuestionVMProperties.questionPage);
+    notifyListeners(QuestionVMProperties.questionProgressBar);
   }
 
   void updateQuestionPageWith({
@@ -127,6 +131,20 @@ class QuestionsViewModel extends PropertyChangeNotifier
     this.optionsList = optionsList ?? this.optionsList;
     this.input = input ?? this.input;
     this.selectedOptionsList = selectedOptionsList ?? this.selectedOptionsList;
-    notifyListeners(QuestionVMProperties.questionPage);
+    updateNavButtonState();
+    notifyListeners(QuestionVMProperties.questionFormWidget);
+  }
+
+  void updateNavButtonState() {
+    this.canAccessPrevious = progress > 0;
+    this.canAccessNext = this.selectedOptionsList.length > 0 ||
+        inputValidator.isValid(this.input);
+    notifyListeners(QuestionVMProperties.questionNavButtons);
+  }
+
+  void disableNavButtons() {
+    this.canAccessPrevious = false;
+    this.canAccessNext = false;
+    notifyListeners(QuestionVMProperties.questionNavButtons);
   }
 }

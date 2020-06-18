@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
 import 'package:provider/provider.dart';
 
-class QuestionsScreen extends StatelessWidget {
+class QuestionsScreen extends StatefulWidget {
   final QuestionsViewModel model;
 
   static Widget create(
@@ -49,10 +49,22 @@ class QuestionsScreen extends StatelessWidget {
   });
 
   @override
+  _QuestionsScreenState createState() => _QuestionsScreenState();
+}
+
+class _QuestionsScreenState extends State<QuestionsScreen> {
+  @override
+  void dispose() {
+    widget.model.inputController.dispose();
+    widget.model.inputFocusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: AnimatedProgressbar(value: model.progress),
+        title: AnimatedProgressbar(),
         leading: IconButton(
           icon: Icon(Icons.close),
           onPressed: () => Navigator.pop(context),
@@ -65,16 +77,14 @@ class QuestionsScreen extends StatelessWidget {
             child: PageView.builder(
               physics: NeverScrollableScrollPhysics(),
               scrollDirection: Axis.horizontal,
-              controller: this.model.controller,
-              onPageChanged: this.model.pageChanged,
+              controller: this.widget.model.controller,
+              onPageChanged: this.widget.model.pageChanged,
               itemBuilder: (BuildContext context, int idx) {
-                if (idx == this.model.consult.questions.length) {
-                  return reviewPage(context);
+                if (idx == this.widget.model.consult.questions.length) {
+                  return _reviewPage(context);
                 } else {
-                  model.getOptionsList(this.model.consult.questions[idx]);
-                  model.getInput(this.model.consult.questions[idx]);
                   return QuestionPage(
-                    question: this.model.consult.questions[idx],
+                    question: this.widget.model.consult.questions[idx],
                   );
                 }
               },
@@ -89,7 +99,7 @@ class QuestionsScreen extends StatelessWidget {
     );
   }
 
-  Widget reviewPage(BuildContext context) {
+  Widget _reviewPage(BuildContext context) {
     return Padding(
       padding: EdgeInsets.all(8),
       child: Column(
@@ -112,6 +122,41 @@ class QuestionsScreen extends StatelessWidget {
       ),
     );
   }
+
+  Widget _buildNavigationButtons(QuestionsViewModel model) {
+    return Row(
+      children: <Widget>[
+        Expanded(
+          flex: 1,
+          child: CustomRaisedButton(
+            color: Colors.blue,
+            borderRadius: 24,
+            child: Text(
+              "Previous",
+              style: TextStyle(color: Colors.white),
+            ),
+            onPressed:
+                model.canAccessPrevious ? () => model.previousPage() : null,
+          ),
+        ),
+        SizedBox(
+          width: 8,
+        ),
+        Expanded(
+          flex: 1,
+          child: CustomRaisedButton(
+            color: Colors.blue,
+            borderRadius: 24,
+            child: Text(
+              "Next",
+              style: TextStyle(color: Colors.white),
+            ),
+            onPressed: model.canAccessNext ? () => model.nextPage() : null,
+          ),
+        ),
+      ],
+    );
+  }
 }
 
 class NavigationButtons extends StatelessWidget {
@@ -120,7 +165,7 @@ class NavigationButtons extends StatelessWidget {
     final QuestionsViewModel model =
         PropertyChangeProvider.of<QuestionsViewModel>(
       context,
-      properties: [QuestionVMProperties.questionPage],
+      properties: [QuestionVMProperties.questionNavButtons],
     ).value;
     return _buildNavigationButtons(model);
   }
