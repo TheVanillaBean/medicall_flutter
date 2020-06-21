@@ -84,10 +84,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
                   return _reviewPage(context);
                 } else {
                   return QuestionPage(
-                    questions: [
-                      this.widget.model.consult.questions[idx],
-                      this.widget.model.consult.questions[idx + 1]
-                    ],
+                    question: this.widget.model.consult.questions[idx],
                   );
                 }
               },

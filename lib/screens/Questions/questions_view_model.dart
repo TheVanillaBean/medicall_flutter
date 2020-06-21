@@ -62,6 +62,31 @@ class QuestionsViewModel extends PropertyChangeNotifier
         consult.questions.indexWhere((q) => q.question == question.question);
     consult.questions[questionIndex] = question;
 
+    for (var opt in question.options) {
+      if (opt.hasSubQuestions) {
+        if (selectedOptionsList.contains(opt.value)) {
+          this
+              .consult
+              .questions
+              .insert(questionIndex + 1, opt.subQuestions.first);
+          notifyListeners(QuestionVMProperties.questionScreen);
+        } else {
+          if (this
+                  .consult
+                  .questions
+                  .where((q) => q == opt.subQuestions.first)
+                  .length >
+              0) {
+            this
+                .consult
+                .questions
+                .removeWhere((q) => q == opt.subQuestions.first);
+            notifyListeners(QuestionVMProperties.questionScreen);
+          }
+        }
+      }
+    }
+
     await controller.nextPage(
       duration: Duration(milliseconds: 500),
       curve: Curves.easeOut,
