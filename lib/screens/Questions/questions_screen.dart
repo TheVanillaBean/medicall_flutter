@@ -167,7 +167,7 @@ class NavigationButtons extends StatelessWidget {
       context,
       properties: [QuestionVMProperties.questionNavButtons],
     ).value;
-    return _buildNavigationButtons(model);
+    return model.progress < 1.0 ? _buildNavigationButtons(model) : Container();
   }
 
   Widget _buildNavigationButtons(QuestionsViewModel model) {

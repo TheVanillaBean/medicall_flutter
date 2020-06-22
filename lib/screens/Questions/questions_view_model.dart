@@ -23,7 +23,7 @@ class QuestionsViewModel extends PropertyChangeNotifier
   final PageController controller = PageController();
   double progress;
 
-  //Question Page Form Fields (QuestionForm.dart)
+  //Question Page Form Fields (question_form.dart)
   String input;
   List<String> optionsList = [];
   List<String> selectedOptionsList = [];
@@ -62,26 +62,28 @@ class QuestionsViewModel extends PropertyChangeNotifier
         consult.questions.indexWhere((q) => q.question == question.question);
     consult.questions[questionIndex] = question;
 
-    for (var opt in question.options) {
-      if (opt.hasSubQuestions) {
-        if (selectedOptionsList.contains(opt.value)) {
-          this
-              .consult
-              .questions
-              .insert(questionIndex + 1, opt.subQuestions.first);
-          notifyListeners(QuestionVMProperties.questionScreen);
-        } else {
-          if (this
-                  .consult
-                  .questions
-                  .where((q) => q == opt.subQuestions.first)
-                  .length >
-              0) {
+    if (question.type == "MC") {
+      for (Option opt in question.options) {
+        if (opt.hasSubQuestions) {
+          if (selectedOptionsList.contains(opt.value)) {
             this
                 .consult
                 .questions
-                .removeWhere((q) => q == opt.subQuestions.first);
+                .insert(questionIndex + 1, opt.subQuestions.first);
             notifyListeners(QuestionVMProperties.questionScreen);
+          } else {
+            if (this
+                    .consult
+                    .questions
+                    .where((q) => q == opt.subQuestions.first)
+                    .length >
+                0) {
+              this
+                  .consult
+                  .questions
+                  .removeWhere((q) => q == opt.subQuestions.first);
+              notifyListeners(QuestionVMProperties.questionScreen);
+            }
           }
         }
       }
@@ -123,20 +125,14 @@ class QuestionsViewModel extends PropertyChangeNotifier
       }
     }
 
-    if (question.type == "FR" && question.answer != null) {
-      input = question.answer.answer.first;
+    if (question.type == "FR") {
+      if (question.answer != null) {
+        input = question.answer.answer.first;
+      }
       inputController.text = input;
       inputController.selection = TextSelection.fromPosition(
         TextPosition(offset: inputController.text.length),
       );
-    }
-  }
-
-  void checkForCondition(Question question) {
-    if (question.type == "MC") {
-      for (Option opt in question.options) {
-        if (selectedOptionsList.contains(opt.value) && opt.hasSubQuestions) {}
-      }
     }
   }
 
