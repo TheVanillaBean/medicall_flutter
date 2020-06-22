@@ -103,7 +103,8 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
     return Padding(
       padding: EdgeInsets.all(8),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
             'Congratulations! ',
@@ -117,44 +118,18 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
             onPressed: () {
               DashboardScreen.show(context: context, pushReplaceNamed: true);
             },
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNavigationButtons(QuestionsViewModel model) {
-    return Row(
-      children: <Widget>[
-        Expanded(
-          flex: 1,
-          child: CustomRaisedButton(
+          ),
+          CustomRaisedButton(
             color: Colors.blue,
             borderRadius: 24,
             child: Text(
               "Previous",
               style: TextStyle(color: Colors.white),
             ),
-            onPressed:
-                model.canAccessPrevious ? () => model.previousPage() : null,
+            onPressed: () => widget.model.previousPage(),
           ),
-        ),
-        SizedBox(
-          width: 8,
-        ),
-        Expanded(
-          flex: 1,
-          child: CustomRaisedButton(
-            color: Colors.blue,
-            borderRadius: 24,
-            child: Text(
-              "Next",
-              style: TextStyle(color: Colors.white),
-            ),
-            onPressed: model.canAccessNext ? () => model.nextPage() : null,
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
