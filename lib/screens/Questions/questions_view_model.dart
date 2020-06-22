@@ -66,11 +66,13 @@ class QuestionsViewModel extends PropertyChangeNotifier
       for (Option opt in question.options) {
         if (opt.hasSubQuestions) {
           if (selectedOptionsList.contains(opt.value)) {
-            this
-                .consult
-                .questions
-                .insert(questionIndex + 1, opt.subQuestions.first);
-            notifyListeners(QuestionVMProperties.questionScreen);
+            if (!this.consult.questions.contains(opt.subQuestions.first)) {
+              this
+                  .consult
+                  .questions
+                  .insert(questionIndex + 1, opt.subQuestions.first);
+              notifyListeners(QuestionVMProperties.questionScreen);
+            }
           } else {
             if (this
                     .consult
