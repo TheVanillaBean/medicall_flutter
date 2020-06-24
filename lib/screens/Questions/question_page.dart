@@ -16,44 +16,38 @@ class QuestionPage extends StatelessWidget {
       context,
       properties: [QuestionVMProperties.questionPage],
     ).value;
-    var height = MediaQuery.of(context).size.height;
     model.updateQuestionFields(question);
-    return SingleChildScrollView(
-      child: Container(
-        height: height * 1.5,
-        child: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: () {
-            FocusScope.of(context).requestFocus(new FocusNode());
-          },
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Flexible(
-                fit: FlexFit.loose,
-                flex: 2,
-                child: Container(
-                  padding: EdgeInsets.fromLTRB(16, 40, 16, 0),
-                  alignment: Alignment.topCenter,
-                  child: Text(question.question),
-                ),
-              ),
-              Flexible(
-                fit: FlexFit.loose,
-                flex: 8,
-                child: Container(
-                  padding: EdgeInsets.all(20),
-                  child: QuestionForm.create(
-                    context,
-                    question,
-                    model,
-                  ),
-                ),
-              ),
-            ],
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        FocusScope.of(context).requestFocus(new FocusNode());
+      },
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Flexible(
+            fit: FlexFit.loose,
+            flex: 2,
+            child: Container(
+              padding: EdgeInsets.fromLTRB(16, 40, 16, 0),
+              alignment: Alignment.topCenter,
+              child: Text(question.question),
+            ),
           ),
-        ),
+          Flexible(
+            fit: FlexFit.loose,
+            flex: 8,
+            child: Container(
+              padding: EdgeInsets.all(20),
+              child: QuestionForm.create(
+                context,
+                question,
+                model,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -9,7 +9,7 @@ class Consult {
   final String price;
   final DateTime date;
   final String state;
-  final List<Question> questions;
+  List<Question> questions;
 
   Consult({
     @required this.providerId,

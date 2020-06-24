@@ -1,11 +1,13 @@
 import 'package:Medicall/common_widgets/custom_raised_button.dart';
 import 'package:Medicall/models/consult_model.dart';
+import 'package:Medicall/models/screening_questions_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Dashboard/dashboard.dart';
 import 'package:Medicall/screens/Questions/progress_bar.dart';
 import 'package:Medicall/screens/Questions/question_page.dart';
 import 'package:Medicall/screens/Questions/questions_view_model.dart';
 import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/non_auth_firestore_db.dart';
 import 'package:flutter/material.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
 import 'package:provider/provider.dart';
@@ -53,6 +55,8 @@ class QuestionsScreen extends StatefulWidget {
 }
 
 class _QuestionsScreenState extends State<QuestionsScreen> {
+  QuestionsViewModel get model => widget.model;
+
   @override
   void dispose() {
     widget.model.inputController.dispose();
@@ -62,6 +66,8 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    NonAuthDatabase db = Provider.of<NonAuthDatabase>(context, listen: false);
+
     return Scaffold(
       appBar: AppBar(
         title: AnimatedProgressbar(),
@@ -70,36 +76,67 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            flex: 8,
-            child: PageView.builder(
-              physics: NeverScrollableScrollPhysics(),
-              scrollDirection: Axis.horizontal,
-              controller: this.widget.model.controller,
-              onPageChanged: this.widget.model.pageChanged,
-              itemBuilder: (BuildContext context, int idx) {
-                if (idx == this.widget.model.consult.questions.length) {
-                  return _reviewPage(context);
-                } else {
-                  return QuestionPage(
-                    question: this.widget.model.consult.questions[idx],
-                  );
-                }
-              },
-            ),
+      body: FutureBuilder<List<ScreeningQuestions>>(
+          future:
+              db.getScreeningQuestions(symptomName: this.model.consult.symptom),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              this.model.consult.questions =
+                  snapshot.data.first.screeningQuestions;
+              return QuestionsPageView();
+            }
+            return const Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          }),
+    );
+  }
+}
+
+class QuestionsPageView extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final QuestionsViewModel model =
+        PropertyChangeProvider.of<QuestionsViewModel>(
+      context,
+      properties: [QuestionVMProperties.questionPageView],
+    ).value;
+
+    PropertyChangeProvider.of<QuestionsViewModel>(
+      context,
+      properties: [QuestionVMProperties.questionPageView],
+    );
+    return Column(
+      children: <Widget>[
+        Expanded(
+          flex: 8,
+          child: PageView.builder(
+            physics: NeverScrollableScrollPhysics(),
+            scrollDirection: Axis.horizontal,
+            controller: model.controller,
+            onPageChanged: model.pageChanged,
+            itemBuilder: (BuildContext context, int idx) {
+              if (idx == model.consult.questions.length) {
+                return _reviewPage(context, model);
+              } else {
+                return QuestionPage(
+                  question: model.consult.questions[idx],
+                );
+              }
+            },
           ),
-          Expanded(
-            flex: 2,
-            child: NavigationButtons(),
-          ),
-        ],
-      ),
+        ),
+        Expanded(
+          flex: 2,
+          child: NavigationButtons(),
+        ),
+      ],
     );
   }
 
-  Widget _reviewPage(BuildContext context) {
+  Widget _reviewPage(BuildContext context, QuestionsViewModel model) {
     return Padding(
       padding: EdgeInsets.all(8),
       child: Column(
@@ -126,7 +163,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
               "Previous",
               style: TextStyle(color: Colors.white),
             ),
-            onPressed: () => widget.model.previousPage(),
+            onPressed: () => model.previousPage(),
           ),
         ],
       ),

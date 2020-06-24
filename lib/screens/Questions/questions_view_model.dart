@@ -13,6 +13,7 @@ abstract class QuestionVMProperties {
   static String get questionProgressBar => 'progress_bar';
   static String get questionNavButtons => 'nav_buttons';
   static String get questionPage => 'page';
+  static String get questionPageView => 'question_page_view';
   static String get questionScreen => 'root_screen'; //i.e root
 }
 
@@ -71,7 +72,7 @@ class QuestionsViewModel extends PropertyChangeNotifier
                   .consult
                   .questions
                   .insert(questionIndex + 1, opt.subQuestions.first);
-              notifyListeners(QuestionVMProperties.questionScreen);
+              notifyListeners(QuestionVMProperties.questionPageView);
             }
           } else {
             if (this
@@ -84,7 +85,7 @@ class QuestionsViewModel extends PropertyChangeNotifier
                   .consult
                   .questions
                   .removeWhere((q) => q == opt.subQuestions.first);
-              notifyListeners(QuestionVMProperties.questionScreen);
+              notifyListeners(QuestionVMProperties.questionPageView);
             }
           }
         }
