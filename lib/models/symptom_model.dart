@@ -37,6 +37,15 @@ class Symptom {
     );
   }
 
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'description': description,
+      'duration': duration,
+      'price': price,
+      'screening_question': screeningQuestions.map((q) => q.toMap()).toList(),
+    };
+  }
+
   @override
   String toString() =>
       'name: $name, description: $description, duration: $duration, price: $price';

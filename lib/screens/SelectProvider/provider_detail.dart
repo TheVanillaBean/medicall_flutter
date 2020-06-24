@@ -37,6 +37,7 @@ class ProviderDetailScreen extends StatelessWidget {
         Provider.of<TempUserProvider>(context, listen: false);
     final ExtImageProvider extImageProvider =
         Provider.of<ExtImageProvider>(context);
+
     MedicallUser medicallUser;
     try {
       medicallUser = Provider.of<UserProvider>(context).medicallUser;

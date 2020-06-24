@@ -4,6 +4,7 @@ class FirestorePath {
   static String user(String uid) => 'users/$uid/';
   static String medicalHistory(String uid) => 'medical_history/$uid';
   static String symptoms() => 'services/dermatology/symptoms_list';
+  static String symptomsAdd(name) => 'services/dermatology/symptoms_list/$name';
   static String consultQuestions(String type) =>
       'services/dermatology/symptoms/$type';
 }

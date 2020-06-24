@@ -20,7 +20,7 @@ class QuestionPage extends StatelessWidget {
     model.updateQuestionFields(question);
     return SingleChildScrollView(
       child: Container(
-        height: height * 1,
+        height: height * 1.5,
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: () {

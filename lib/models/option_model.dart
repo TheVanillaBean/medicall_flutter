@@ -30,15 +30,17 @@ class Option {
 
   Map<String, dynamic> toMap() {
     if (this.hasSubQuestions) {
-      return <String, dynamic>{
+      var g = <String, dynamic>{
         'value': this.value,
         'has_sub_questions': true,
-        'sub_questions': this.subQuestions.map((q) => q.toMap()),
+        'sub_questions': this.subQuestions.map((q) => q.toMap()).toList(),
       };
+      return g;
     } else {
-      return <String, dynamic>{
+      var g = <String, dynamic>{
         'value': this.value,
       };
+      return g;
     }
   }
 }

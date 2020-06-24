@@ -40,7 +40,7 @@ class Question {
     return <String, dynamic>{
       'question': question,
       'type': type,
-      'options': options.map((opt) => opt.toMap()),
+      'options': options.map((opt) => opt.toMap()).toList(),
       'answer': answer != null ? answer.toMap() : null,
     };
   }
