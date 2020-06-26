@@ -208,6 +208,11 @@ class MakePayment extends StatelessWidget {
           ),
         ),
       ),
+      SizedBox(height: 24),
+      if (model.isLoading)
+        Center(
+          child: CircularProgressIndicator(),
+        ),
     ];
   }
 }

@@ -14,7 +14,7 @@ import 'package:Medicall/screens/Malpractice/malpractice.dart';
 import 'package:Medicall/screens/OCR/Congrats.dart';
 import 'package:Medicall/screens/OCR/OCRScreen.dart';
 import 'package:Medicall/screens/PasswordReset/index.dart';
-import 'package:Medicall/screens/PersonalInfo/PersonalInfo.dart';
+import 'package:Medicall/screens/PersonalInfo/personal_info.dart';
 import 'package:Medicall/screens/PhoneAuth/index.dart';
 import 'package:Medicall/screens/Privacy/index.dart';
 import 'package:Medicall/screens/Questions/questionsScreen.dart';

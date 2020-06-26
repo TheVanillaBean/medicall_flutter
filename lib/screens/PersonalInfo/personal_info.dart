@@ -4,7 +4,8 @@ import 'package:Medicall/common_widgets/sign_in_button.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/MakePayment/make_payment.dart';
-import 'package:Medicall/screens/PersonalInfo/PersonalInfoViewModel.dart';
+import 'package:Medicall/screens/PersonalInfo/personal_info_view_model.dart';
+import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
@@ -24,10 +25,13 @@ class PersonalInfoScreen extends StatefulWidget {
     final UserProvider userProvider = Provider.of<UserProvider>(context);
     final ExtendedImageProvider extendedImageProvider =
         Provider.of<ExtImageProvider>(context);
+    final FirestoreDatabase firestoreDatabase =
+        Provider.of<FirestoreDatabase>(context);
     return ChangeNotifierProvider<PersonalInfoViewModel>(
       create: (context) => PersonalInfoViewModel(
         consult: consult,
         userProvider: userProvider,
+        firestoreDatabase: firestoreDatabase,
       ),
       child: Consumer<PersonalInfoViewModel>(
         builder: (_, model, __) => PersonalInfoScreen(
@@ -164,7 +168,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
           RaisedButton(
             color: Theme.of(context).colorScheme.secondary,
             child: Text(
-              model.birthday,
+              "Birthday: ${model.birthday}",
               style: TextStyle(color: Colors.white),
             ),
             shape: RoundedRectangleBorder(
@@ -327,10 +331,16 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   Future<Null> _selectDate(BuildContext context) async {
     FocusScope.of(context).requestFocus(new FocusNode());
     final DateTime currentDate = DateTime.now();
+    final initialDate = model.birthDate.year <= DateTime.now().year - 18
+        ? model.birthDate
+        : DateTime(
+            currentDate.year - 18,
+            currentDate.month,
+            currentDate.day,
+          );
     final DateTime picked = await showDatePicker(
       context: context,
-      initialDate:
-          DateTime(currentDate.year - 18, currentDate.month, currentDate.day),
+      initialDate: initialDate,
       firstDate: DateTime(1920),
       lastDate:
           DateTime(currentDate.year - 18, currentDate.month, currentDate.day),

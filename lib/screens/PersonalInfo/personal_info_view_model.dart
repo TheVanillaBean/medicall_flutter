@@ -1,5 +1,6 @@
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/validators.dart';
 import 'package:dash_chat/dash_chat.dart';
@@ -19,10 +20,12 @@ class PersonalInfoViewModel with PersonalInfoValidator, ChangeNotifier {
 
   final Consult consult;
   final UserProvider userProvider;
+  final FirestoreDatabase firestoreDatabase;
 
   PersonalInfoViewModel({
     @required this.consult,
     @required this.userProvider,
+    @required this.firestoreDatabase,
     this.firstName = '',
     this.lastName = '',
     this.billingAddress = '',
@@ -45,8 +48,8 @@ class PersonalInfoViewModel with PersonalInfoValidator, ChangeNotifier {
   String get birthday {
     final f = new DateFormat('yyyy-MM-dd');
     return this.birthDate.year <= DateTime.now().year - 18
-        ? "Birthday: ${f.format(this.birthDate)}"
-        : "Select Birthday";
+        ? "${f.format(this.birthDate)}"
+        : "Please Select";
   }
 
   String get firstNameErrorText {
@@ -83,6 +86,8 @@ class PersonalInfoViewModel with PersonalInfoValidator, ChangeNotifier {
     medicallUser.address = this.billingAddress;
     medicallUser.dob = this.birthday;
     userProvider.medicallUser = medicallUser;
+    await firestoreDatabase.setUser(userProvider.medicallUser);
+    updateWith(submitted: false, isLoading: false);
   }
 
   void updateWith({
