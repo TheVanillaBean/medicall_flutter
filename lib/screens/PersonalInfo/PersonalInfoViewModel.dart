@@ -1,4 +1,5 @@
 import 'package:Medicall/models/consult_model.dart';
+import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/validators.dart';
 import 'package:dash_chat/dash_chat.dart';
@@ -36,6 +37,8 @@ class PersonalInfoViewModel with PersonalInfoValidator, ChangeNotifier {
         inputValidator.isValid(lastName) &&
         inputValidator.isValid(billingAddress) &&
         inputValidator.isValid(zipCode) &&
+        this.birthDate.year <= DateTime.now().year - 18 &&
+        this.profileImage.length > 0 &&
         !isLoading;
   }
 
@@ -74,10 +77,12 @@ class PersonalInfoViewModel with PersonalInfoValidator, ChangeNotifier {
 
   Future<void> submit() async {
     updateWith(submitted: true, isLoading: true);
-    try {} catch (e) {
-      updateWith(isLoading: false);
-      rethrow;
-    }
+    MedicallUser medicallUser = userProvider.medicallUser;
+    medicallUser.firstName = this.firstName;
+    medicallUser.lastName = this.lastName;
+    medicallUser.address = this.billingAddress;
+    medicallUser.dob = this.birthday;
+    userProvider.medicallUser = medicallUser;
   }
 
   void updateWith({
