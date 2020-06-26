@@ -3,6 +3,7 @@ import 'dart:ui' as ui;
 import 'package:Medicall/common_widgets/sign_in_button.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/MakePayment/make_payment.dart';
 import 'package:Medicall/screens/PersonalInfo/PersonalInfoViewModel.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
@@ -85,6 +86,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   Future<void> _submit() async {
     try {
       await model.submit();
+      MakePayment.show(context: context, consult: model.consult);
     } on PlatformException catch (e) {
       AppUtil().showFlushBar(e, context);
     }
@@ -94,7 +96,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Personal Info Screen"),
+        title: Text("Personal Info"),
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
@@ -322,6 +324,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   }
 
   Future<Null> _selectDate(BuildContext context) async {
+    FocusScope.of(context).requestFocus(new FocusNode());
     final DateTime currentDate = DateTime.now();
     final DateTime picked = await showDatePicker(
       context: context,
