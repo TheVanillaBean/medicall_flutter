@@ -31,6 +31,11 @@ class OptionInputValidator {
   final String invalidInputErrorText = 'Your response can\'t be empty';
 }
 
+class PersonalInfoValidator {
+  final StringValidator inputValidator = NonEmptyStringValidator();
+  final String invalidPersonalInfoErrorText = 'Your response can\'t be empty';
+}
+
 class PhoneNumberStringValidator implements StringValidator {
   @override
   bool isValid(String value) {

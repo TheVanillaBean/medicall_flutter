@@ -12,8 +12,8 @@ import 'package:Medicall/screens/Login/login.dart';
 import 'package:Medicall/screens/Malpractice/malpractice.dart';
 import 'package:Medicall/screens/OCR/Congrats.dart';
 import 'package:Medicall/screens/OCR/OCRScreen.dart';
-import 'package:Medicall/screens/OCR/PersonalInfoScreen.dart';
 import 'package:Medicall/screens/PasswordReset/index.dart';
+import 'package:Medicall/screens/PersonalInfo/PersonalInfo.dart';
 import 'package:Medicall/screens/PhoneAuth/index.dart';
 import 'package:Medicall/screens/Privacy/index.dart';
 import 'package:Medicall/screens/Questions/questionsScreen.dart';
@@ -131,9 +131,11 @@ class Router {
           settings: settings,
           fullscreenDialog: true,
         );
-      case '/personalInfo':
+      case Routes.personalInfo:
+        final Map<String, dynamic> mapArgs = args;
+        final Consult consult = mapArgs['consult'];
         return MaterialPageRoute<dynamic>(
-          builder: (context) => PersonalInfoScreen(),
+          builder: (context) => PersonalInfoScreen.create(context, consult),
           settings: settings,
           fullscreenDialog: true,
         );

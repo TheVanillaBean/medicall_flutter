@@ -2,7 +2,7 @@ import 'package:Medicall/common_widgets/custom_raised_button.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/screening_questions_model.dart';
 import 'package:Medicall/routing/router.dart';
-import 'package:Medicall/screens/Dashboard/dashboard.dart';
+import 'package:Medicall/screens/PersonalInfo/PersonalInfo.dart';
 import 'package:Medicall/screens/Questions/progress_bar.dart';
 import 'package:Medicall/screens/Questions/question_page.dart';
 import 'package:Medicall/screens/Questions/questions_view_model.dart';
@@ -153,7 +153,7 @@ class QuestionsPageView extends StatelessWidget {
             icon: Icon(Icons.check),
             label: Text('Complete consultation'),
             onPressed: () {
-              DashboardScreen.show(context: context, pushReplaceNamed: true);
+              PersonalInfoScreen.show(context: context, consult: model.consult);
             },
           ),
           CustomRaisedButton(
