@@ -4,6 +4,7 @@ import 'package:Medicall/common_widgets/sign_in_button.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Dashboard/dashboard.dart';
+import 'package:Medicall/screens/MakePayment/make_payment_view_model.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/stripe_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
@@ -13,9 +14,22 @@ import 'package:provider/provider.dart';
 import 'package:stripe_payment/stripe_payment.dart';
 
 class MakePayment extends StatelessWidget {
+  final MakePaymentViewModel model;
   final Consult consult;
 
-  const MakePayment({@required this.consult});
+  const MakePayment({@required this.consult, @required this.model});
+
+  static Widget create(BuildContext context, Consult consult) {
+    return ChangeNotifierProvider<MakePaymentViewModel>(
+      create: (context) => MakePaymentViewModel(),
+      child: Consumer<MakePaymentViewModel>(
+        builder: (_, model, __) => MakePayment(
+          model: model,
+          consult: consult,
+        ),
+      ),
+    );
+  }
 
   static Future<void> show({
     BuildContext context,
@@ -35,6 +49,7 @@ class MakePayment extends StatelessWidget {
     FirestoreDatabase db,
     StripeProvider stripeProvider,
   }) async {
+    model.updateWith(isLoading: true);
     List<dynamic> sources =
         await db.getUserCardSources(userProvider.medicallUser.uid);
 
@@ -74,6 +89,7 @@ class MakePayment extends StatelessWidget {
         context,
       );
     }
+    model.updateWith(isLoading: false);
   }
 
   @override
@@ -170,12 +186,14 @@ class MakePayment extends StatelessWidget {
               color: Colors.green,
               textColor: Colors.white,
               text: "Pay",
-              onPressed: () => _payPressed(
-                context: context,
-                userProvider: userProvider,
-                db: db,
-                stripeProvider: stripeProvider,
-              ),
+              onPressed: model.isLoading
+                  ? null
+                  : () => _payPressed(
+                        context: context,
+                        userProvider: userProvider,
+                        db: db,
+                        stripeProvider: stripeProvider,
+                      ),
             ),
           )
         ],

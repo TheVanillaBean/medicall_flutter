@@ -238,9 +238,7 @@ class Router {
         final Map<String, dynamic> mapArgs = args;
         final Consult consult = mapArgs['consult'];
         return MaterialPageRoute<dynamic>(
-          builder: (context) => MakePayment(
-            consult: consult,
-          ),
+          builder: (context) => MakePayment.create(context, consult),
           settings: settings,
           fullscreenDialog: true,
         );
