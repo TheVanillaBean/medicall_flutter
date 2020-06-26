@@ -86,6 +86,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   Future<void> _submit() async {
     try {
       await model.submit();
+      extendedImageProvider.clearImageMemory();
       MakePayment.show(context: context, consult: model.consult);
     } on PlatformException catch (e) {
       AppUtil().showFlushBar(e, context);

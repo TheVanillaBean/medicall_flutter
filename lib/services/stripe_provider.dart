@@ -5,7 +5,8 @@ import 'package:stripe_payment/stripe_payment.dart';
 abstract class StripeProviderBase {
   Future<PaymentIntent> addSource();
   Future<bool> addCard({PaymentIntent setupIntent});
-  void chargePayment({int price, String paymentMethodId});
+  Future<PaymentIntentResult> chargePayment(
+      {int price, String paymentMethodId});
 }
 
 class StripeProvider implements StripeProviderBase {
@@ -13,6 +14,7 @@ class StripeProvider implements StripeProviderBase {
     StripePayment.setOptions(StripeOptions(publishableKey: stripeKey));
   }
 
+  @override
   Future<PaymentIntent> addSource() async {
     final HttpsCallable callable = CloudFunctions.instance
         .getHttpsCallable(functionName: 'createSetupIntent')
@@ -32,13 +34,16 @@ class StripeProvider implements StripeProviderBase {
     return setupIntent;
   }
 
+  @override
   Future<bool> addCard({PaymentIntent setupIntent}) async {
     SetupIntentResult result =
         await StripePayment.confirmSetupIntent(setupIntent);
     return result.status == "succeeded";
   }
 
-  void chargePayment({int price, String paymentMethodId}) async {
+  @override
+  Future<PaymentIntentResult> chargePayment(
+      {int price, String paymentMethodId}) async {
     final HttpsCallable callable = CloudFunctions.instance
         .getHttpsCallable(functionName: 'createPaymentIntentAndCharge')
           ..timeout = const Duration(seconds: 30);
@@ -50,6 +55,9 @@ class StripeProvider implements StripeProviderBase {
       },
     );
 
-    return result.data;
+    final PaymentIntentResult paymentIntentResult =
+        PaymentIntentResult.fromJson(result.data);
+
+    return paymentIntentResult;
   }
 }

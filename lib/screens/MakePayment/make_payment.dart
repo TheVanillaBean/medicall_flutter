@@ -3,7 +3,14 @@ import 'dart:ui' as ui;
 import 'package:Medicall/common_widgets/sign_in_button.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/Dashboard/dashboard.dart';
+import 'package:Medicall/services/database.dart';
+import 'package:Medicall/services/stripe_provider.dart';
+import 'package:Medicall/services/user_provider.dart';
+import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:stripe_payment/stripe_payment.dart';
 
 class MakePayment extends StatelessWidget {
   final Consult consult;
@@ -22,49 +29,58 @@ class MakePayment extends StatelessWidget {
     );
   }
 
-  Future<void> _payPressed() async {
-//    List<dynamic> sources = await _db.getUserCardSources(_medicallUser.uid);
-//
-//  if (sources.length == 0) {
-//    PaymentIntent setupIntent = await _stripeProvider.addSource();
-//    bool addCard = await _stripeProvider.addCard(setupIntent: setupIntent);
-//    if (addCard) {
-//      return await chargeUsersCard(
-//          paymentMethodId: setupIntent.paymentMethodId, context: context);
-//    }
-//  }
-//
-//  return await chargeUsersCard(
-//      paymentMethodId: sources.first.id, context: context);
+  Future<void> _payPressed({
+    BuildContext context,
+    UserProvider userProvider,
+    FirestoreDatabase db,
+    StripeProvider stripeProvider,
+  }) async {
+    List<dynamic> sources =
+        await db.getUserCardSources(userProvider.medicallUser.uid);
+
+    if (sources.length == 0) {
+      PaymentIntent setupIntent = await stripeProvider.addSource();
+      bool addCard = await stripeProvider.addCard(setupIntent: setupIntent);
+      if (addCard) {
+        return await chargeUsersCard(
+          paymentMethodId: setupIntent.paymentMethodId,
+          context: context,
+        );
+      }
+    }
+
+    return await chargeUsersCard(
+        stripeProvider: stripeProvider,
+        paymentMethodId: sources.first.id,
+        context: context);
   }
 
-//  chargeUsersCard({String paymentMethodId, BuildContext context}) async {
-//    setState(() {
-//      _isLoading = true;
-//    });
-//
-//    String price = _db.newConsult.price.replaceAll("\$", "");
-//    _stripeProvider.chargePayment(
-//      price: int.tryParse(_db.newConsult.price.replaceAll("\$", "")),
-//      paymentMethodId: paymentMethodId,
-//    );
-//    await _db.addConsult(
-//      context,
-//      _db.newConsult,
-//      _extImageProvider,
-//      medicallUser: _medicallUser,
-//    );
-//    _extImageProvider.clearImageMemory();
-//
-//    Route route = MaterialPageRoute(
-//        builder: (context) => RouteUserOrderScreen(
-//          data: {'user': _medicallUser, 'consult': _db.newConsult},
-//        ));
-//    return Navigator.of(context).pushReplacement(route);
-//  }
+  Future<void> chargeUsersCard({
+    BuildContext context,
+    StripeProvider stripeProvider,
+    String paymentMethodId,
+  }) async {
+    PaymentIntentResult paymentIntentResult =
+        await stripeProvider.chargePayment(
+      price: 49,
+      paymentMethodId: paymentMethodId,
+    );
+
+    if (paymentIntentResult.status != "succeeded") {
+      return DashboardScreen.show(context: context, pushReplaceNamed: true);
+    } else {
+      AppUtil().showFlushBar(
+        "Payment failed. Please contact customer support.",
+        context,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    UserProvider _userProvider = Provider.of<UserProvider>(context);
+    FirestoreDatabase _db = Provider.of<FirestoreDatabase>(context);
+    StripeProvider _stripeProvider = Provider.of<StripeProviderBase>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text("Make Payment"),
@@ -96,7 +112,12 @@ class MakePayment extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: _buildChildren(context),
+                  children: _buildChildren(
+                    context: context,
+                    userProvider: _userProvider,
+                    db: _db,
+                    stripeProvider: _stripeProvider,
+                  ),
                 ),
               ),
             ),
@@ -106,7 +127,11 @@ class MakePayment extends StatelessWidget {
     );
   }
 
-  List<Widget> _buildChildren(BuildContext context) {
+  List<Widget> _buildChildren(
+      {BuildContext context,
+      UserProvider userProvider,
+      FirestoreDatabase db,
+      StripeProvider stripeProvider}) {
     return <Widget>[
       Text(
         'Checkout',
@@ -145,7 +170,12 @@ class MakePayment extends StatelessWidget {
               color: Colors.green,
               textColor: Colors.white,
               text: "Pay",
-              onPressed: _payPressed,
+              onPressed: () => _payPressed(
+                context: context,
+                userProvider: userProvider,
+                db: db,
+                stripeProvider: stripeProvider,
+              ),
             ),
           )
         ],
