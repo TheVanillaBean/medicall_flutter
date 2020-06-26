@@ -66,7 +66,7 @@ class MakePayment extends StatelessWidget {
       paymentMethodId: paymentMethodId,
     );
 
-    if (paymentIntentResult.status != "succeeded") {
+    if (paymentIntentResult.status == "succeeded") {
       return DashboardScreen.show(context: context, pushReplaceNamed: true);
     } else {
       AppUtil().showFlushBar(
