@@ -370,7 +370,8 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
     });
     //await _addProviderConsult();
 
-    List<dynamic> sources = await _db.getUserCardSources(_medicallUser.uid);
+    List<dynamic> sources =
+        (await _db.getUserCardSources(_medicallUser.uid)).data;
 
     if (sources.length == 0) {
       PaymentIntent setupIntent = await _stripeProvider.addSource();

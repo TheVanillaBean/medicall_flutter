@@ -14,14 +14,14 @@ class ListItemsBuilder<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (snapshot.hasData) {
+    if (snapshot != null && snapshot.hasData) {
       final List<T> items = snapshot.data;
       if (items.isNotEmpty) {
-        return _buildList(items);
+        return _buildList(items, context);
       } else {
         return const EmptyContent();
       }
-    } else if (snapshot.hasError) {
+    } else if (snapshot != null && snapshot.hasError) {
       return const EmptyContent(
         title: 'Something went wrong',
         message: 'Can\'t load items right now',
@@ -30,7 +30,7 @@ class ListItemsBuilder<T> extends StatelessWidget {
     return const Center(child: CircularProgressIndicator());
   }
 
-  Widget _buildList(List<T> items) {
+  Widget _buildList(List<T> items, context) {
     return ListView.separated(
       itemCount: items.length + 2,
       separatorBuilder: (context, index) => const Divider(height: 0.5),
