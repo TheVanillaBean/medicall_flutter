@@ -8,6 +8,7 @@ import 'package:dots_indicator/dots_indicator.dart';
 import 'package:Medicall/util/introduction_screen/model/page_view_model.dart';
 import 'package:Medicall/util/introduction_screen/ui/intro_button.dart';
 import 'package:Medicall/util/introduction_screen/ui/intro_page.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class IntroductionScreen extends StatefulWidget {
   /// All pages of the onboarding
@@ -207,37 +208,67 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
           ),
         ),
         Positioned(
-          bottom: 5.0,
+          bottom: 0.0,
           left: 0.0,
           right: 0.0,
           child: SafeArea(
-            child: Stack(
-              alignment: Alignment.bottomCenter,
-              children: [
-                Row(
-                  children: <Widget>[
-                    isSkipBtn ? skipBtn : Opacity(opacity: 0.0, child: skipBtn),
+            child: Container(
+              padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment(0.0, -1.0),
+                  end: Alignment(0.0, 0.6),
+                  colors: <Color>[
+                    Theme.of(context).canvasColor.withAlpha(0),
+                    Theme.of(context).canvasColor.withAlpha(230),
+                    Theme.of(context).canvasColor
                   ],
                 ),
-                Positioned(
-                  bottom: 17,
-                  child: widget.isProgress
-                      ? DotsIndicator(
-                          dotsCount: widget.pages.length,
-                          position: _currentPage,
-                          decorator: widget.dotsDecorator,
-                        )
-                      : const SizedBox(),
-                ),
-                Positioned(
-                  right: 0,
-                  child: isLastPage
-                      ? doneBtn
-                      : widget.showNextButton
-                          ? nextBtn
-                          : Opacity(opacity: 0.0, child: nextBtn),
-                )
-              ],
+              ),
+              child: Stack(
+                alignment: Alignment.bottomCenter,
+                children: [
+                  Row(
+                    children: <Widget>[
+                      isSkipBtn
+                          ? skipBtn
+                          : Opacity(opacity: 0.0, child: skipBtn),
+                    ],
+                  ),
+                  Positioned(
+                    bottom: 17,
+                    child: widget.isProgress
+                        ? ClipRRect(
+                            clipBehavior: Clip.antiAlias,
+                            borderRadius: BorderRadius.horizontal(
+                                left: Radius.circular(20),
+                                right: Radius.circular(20)),
+                            child: Container(
+                              alignment: Alignment.center,
+                              width: ScreenUtil.screenWidthDp - 120,
+                              height: 12,
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: DotsIndicator(
+                                  dotsCount: widget.pages.length,
+                                  position: _currentPage,
+                                  decorator: widget.dotsDecorator,
+                                ),
+                              ),
+                            ),
+                          )
+                        : const SizedBox(),
+                  ),
+                  Positioned(
+                    right: 0,
+                    child: isLastPage
+                        ? doneBtn
+                        : widget.showNextButton
+                            ? nextBtn
+                            : Opacity(opacity: 0.0, child: nextBtn),
+                  )
+                ],
+              ),
             ),
           ),
         ),

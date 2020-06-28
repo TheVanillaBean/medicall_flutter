@@ -12,13 +12,15 @@ import 'package:video_player/video_player.dart';
 class CameraScreen extends StatefulWidget {
   final CameraState model;
 
-  static Widget create(BuildContext context, data) {
+  static Widget create(BuildContext context, data, Map options) {
     final ExtImageProvider extImageProvider =
         Provider.of<ExtImageProvider>(context);
 
     return ChangeNotifierProvider<CameraState>(
-      create: (context) =>
-          CameraState(extImageProvider: extImageProvider, imageData: data),
+      create: (context) => CameraState(
+          options: options,
+          extImageProvider: extImageProvider,
+          imageData: data),
       child: Consumer<CameraState>(
         builder: (_, model, __) => CameraScreen(
           model: model,
@@ -33,6 +35,7 @@ class CameraScreen extends StatefulWidget {
 }
 
 class _CameraScreenState extends State<CameraScreen> {
+  CameraState model;
   @override
   void initState() {
     super.initState();
@@ -40,32 +43,36 @@ class _CameraScreenState extends State<CameraScreen> {
 
   @override
   void dispose() {
-    widget.model.controller.dispose();
-    widget.model.videoController.dispose();
+    model.controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    model = widget.model;
     ScreenUtil.init(context);
-    if (widget.model.controller == null && widget.model.cameras == null) {
+    if (model.controller == null && model.cameras == null) {
       return FutureBuilder(
           future: availableCameras(), // a Future<String> or null
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
-              widget.model.cameras = snapshot.data;
-              widget.model.controller = CameraController(
-                  widget.model.cameras[0], ResolutionPreset.medium,
+              model.cameras = snapshot.data;
+              model.controller = CameraController(
+                  model.cameras[0], ResolutionPreset.medium,
                   enableAudio: true);
               return FutureBuilder(
-                  future: widget.model.controller.initialize(),
+                  future: model.controller.initialize(),
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     if (snapshot.connectionState == ConnectionState.done) {
-                      return Scaffold(
-                        backgroundColor: Colors.black,
-                        key: widget.model.scaffoldKey,
-                        body: _cameraPreviewWidget(),
-                      );
+                      if (model.options['fullscreen']) {
+                        return Scaffold(
+                          backgroundColor: Colors.black,
+                          key: model.scaffoldKey,
+                          body: _cameraPreviewWidget(),
+                        );
+                      } else {
+                        return _cameraPreviewWidget();
+                      }
                     } else {
                       return Column(
                         children: <Widget>[
@@ -83,25 +90,25 @@ class _CameraScreenState extends State<CameraScreen> {
             return Container();
           });
     } else {
-      if (widget.model.cameras != null && widget.model.controller == null) {
-        widget.model.controller = CameraController(
-            widget.model.cameras[0], ResolutionPreset.medium,
+      if (model.cameras != null && model.controller == null) {
+        model.controller = CameraController(
+            model.cameras[0], ResolutionPreset.medium,
             enableAudio: true);
       }
-      if (widget.model.controller.value.isInitialized) {
+      if (model.controller.value.isInitialized) {
         return Scaffold(
           backgroundColor: Colors.black,
-          key: widget.model.scaffoldKey,
+          key: model.scaffoldKey,
           body: _cameraPreviewWidget(),
         );
       } else {
         return FutureBuilder(
-            future: widget.model.controller.initialize(),
+            future: model.controller.initialize(),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
                 return Scaffold(
                   backgroundColor: Colors.black,
-                  key: widget.model.scaffoldKey,
+                  key: model.scaffoldKey,
                   body: _cameraPreviewWidget(),
                 );
               } else {
@@ -123,8 +130,7 @@ class _CameraScreenState extends State<CameraScreen> {
 
   /// Display the preview from the camera (or a message if the preview is not available).
   Widget _cameraPreviewWidget() {
-    if (widget.model.controller == null ||
-        !widget.model.controller.value.isInitialized) {
+    if (model.controller == null || !model.controller.value.isInitialized) {
       return Text(
         'Tap a camera',
         style: TextStyle(
@@ -134,167 +140,176 @@ class _CameraScreenState extends State<CameraScreen> {
         ),
       );
     } else {
-      return Stack(
-        alignment: Alignment.center,
-        children: <Widget>[
-          Positioned(
-            top: 20 * ScreenUtil.pixelRatio,
-            right: 20,
-            child: Container(
-              alignment: Alignment.centerRight,
-              child: IconButton(
-                icon: Icon(Icons.videocam),
-                color: Colors.white,
-                onPressed: widget.model.controller != null &&
-                        widget.model.controller.value.isInitialized &&
-                        !widget.model.controller.value.isRecordingVideo
-                    ? widget.model.onVideoRecordButtonPressed
-                    : null,
+      if (model.options['fullscreen']) {
+        return Stack(
+          alignment: Alignment.center,
+          children: <Widget>[
+            Positioned(
+              top: 20 * ScreenUtil.pixelRatio,
+              right: 20,
+              child: Container(
+                alignment: Alignment.centerRight,
+                child: IconButton(
+                  icon: Icon(Icons.videocam),
+                  color: Colors.white,
+                  onPressed: model.controller != null &&
+                          model.controller.value.isInitialized &&
+                          !model.controller.value.isRecordingVideo
+                      ? model.onVideoRecordButtonPressed
+                      : null,
+                ),
               ),
             ),
-          ),
-          Visibility(
-              visible: widget.model.controller.value.isRecordingVideo,
-              child: Positioned(
-                top: 20 * ScreenUtil.pixelRatio,
-                child: Row(
-                  children: <Widget>[
-                    IconButton(
-                      icon: widget.model.controller != null &&
-                              widget.model.controller.value.isRecordingPaused
-                          ? Icon(Icons.play_arrow)
-                          : Icon(Icons.pause),
-                      color: Colors.white,
-                      onPressed: () {
-                        if (widget.model.controller != null &&
-                            widget.model.controller.value.isInitialized &&
-                            widget.model.controller.value.isRecordingVideo) {
-                          if (widget.model.controller != null &&
-                              widget.model.controller.value.isRecordingPaused) {
-                            widget.model.onResumeButtonPressed();
-                          } else {
-                            widget.model.onPauseButtonPressed();
-                          }
-                        } else {
-                          return null;
-                        }
-                      },
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.stop),
-                      color: Colors.red,
-                      onPressed: widget.model.controller != null &&
-                              widget.model.controller.value.isInitialized &&
-                              widget.model.controller.value.isRecordingVideo
-                          ? widget.model.onStopButtonPressed
-                          : null,
-                    )
-                  ],
-                ),
-              )),
-          Visibility(
-              visible: widget.model.imagePath != null ||
-                  widget.model.videoPath != null &&
-                      !widget.model.controller.value.isRecordingVideo,
-              child: Positioned(
-                bottom: 20,
-                child: Row(
-                  children: <Widget>[
-                    MaterialButton(
-                        shape: CircleBorder(
-                            side: BorderSide(
-                                width: 2,
-                                color: Colors.red,
-                                style: BorderStyle.solid)),
-                        padding: EdgeInsets.all(10),
-                        child: Icon(
-                          Icons.close,
-                          color: Colors.red,
-                          size: 40,
-                        ),
-                        onPressed: () {
-                          widget.model.imagePath = null;
-                          widget.model.videoPath = null;
-                          if (widget.model.controller.value.isRecordingVideo) {
-                            widget.model.controller.stopVideoRecording();
-                          }
-                          setState(() {});
-                        }),
-                    SizedBox(width: 40),
-                    MaterialButton(
-                        shape: CircleBorder(
-                            side: BorderSide(
-                                width: 2,
-                                color: Colors.green,
-                                style: BorderStyle.solid)),
-                        padding: EdgeInsets.all(10),
-                        child: Icon(
-                          Icons.check,
-                          color: Colors.green,
-                          size: 40,
-                        ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        })
-                  ],
-                ),
-              )),
-          Visibility(
-              visible: widget.model.imagePath == null &&
-                  widget.model.videoPath == null,
-              child: Positioned(
-                right: 20,
-                bottom: 20,
-                child: SizedBox(
-                    width: 40.0,
-                    child: IconButton(
-                      icon: Icon(
-                        Icons.photo_size_select_actual,
+            Visibility(
+                visible: model.controller.value.isRecordingVideo,
+                child: Positioned(
+                  top: 20 * ScreenUtil.pixelRatio,
+                  child: Row(
+                    children: <Widget>[
+                      IconButton(
+                        icon: model.controller != null &&
+                                model.controller.value.isRecordingPaused
+                            ? Icon(Icons.play_arrow)
+                            : Icon(Icons.pause),
                         color: Colors.white,
+                        onPressed: () {
+                          if (model.controller != null &&
+                              model.controller.value.isInitialized &&
+                              model.controller.value.isRecordingVideo) {
+                            if (model.controller != null &&
+                                model.controller.value.isRecordingPaused) {
+                              model.onResumeButtonPressed();
+                            } else {
+                              model.onPauseButtonPressed();
+                            }
+                          } else {
+                            return null;
+                          }
+                        },
                       ),
-                      onPressed: () {
-                        //controller.dispose();
-                        loadAssets();
-                      },
-                    )),
-              )),
-          Visibility(
-              visible: widget.model.imagePath == null &&
-                  widget.model.videoPath == null,
-              child: Positioned(bottom: 20, child: _captureControlRowWidget())),
-          // Positioned(bottom: 0, right: 0, child: _toggleAudioWidget()),
-          Center(
+                      IconButton(
+                        icon: Icon(Icons.stop),
+                        color: Colors.red,
+                        onPressed: model.controller != null &&
+                                model.controller.value.isInitialized &&
+                                model.controller.value.isRecordingVideo
+                            ? model.onStopButtonPressed
+                            : null,
+                      )
+                    ],
+                  ),
+                )),
+            Visibility(
+                visible: model.imagePath != null ||
+                    model.videoPath != null &&
+                        !model.controller.value.isRecordingVideo,
+                child: Positioned(
+                  bottom: 20,
+                  child: Row(
+                    children: <Widget>[
+                      MaterialButton(
+                          shape: CircleBorder(
+                              side: BorderSide(
+                                  width: 2,
+                                  color: Colors.red,
+                                  style: BorderStyle.solid)),
+                          padding: EdgeInsets.all(10),
+                          child: Icon(
+                            Icons.close,
+                            color: Colors.red,
+                            size: 40,
+                          ),
+                          onPressed: () {
+                            model.imagePath = null;
+                            model.videoPath = null;
+                            if (model.controller.value.isRecordingVideo) {
+                              model.controller.stopVideoRecording();
+                            }
+                            setState(() {});
+                          }),
+                      SizedBox(width: 40),
+                      MaterialButton(
+                          shape: CircleBorder(
+                              side: BorderSide(
+                                  width: 2,
+                                  color: Colors.green,
+                                  style: BorderStyle.solid)),
+                          padding: EdgeInsets.all(10),
+                          child: Icon(
+                            Icons.check,
+                            color: Colors.green,
+                            size: 40,
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          })
+                    ],
+                  ),
+                )),
+            Visibility(
+                visible: model.imagePath == null && model.videoPath == null,
+                child: Positioned(
+                  right: 20,
+                  bottom: 20,
+                  child: SizedBox(
+                      width: 40.0,
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.photo_size_select_actual,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {
+                          //controller.dispose();
+                          loadAssets();
+                        },
+                      )),
+                )),
+            Visibility(
+                visible: model.imagePath == null && model.videoPath == null,
+                child:
+                    Positioned(bottom: 20, child: _captureControlRowWidget())),
+            // Positioned(bottom: 0, right: 0, child: _toggleAudioWidget()),
+            Center(
+              child: AspectRatio(
+                aspectRatio: model.controller.value.aspectRatio,
+                child: CameraPreview(model.controller),
+              ),
+            ),
+            Visibility(
+                visible: model.imagePath == null && model.videoPath == null,
+                child: Positioned(
+                    bottom: 20, left: 0, child: _cameraTogglesRowWidget())),
+            Visibility(
+                visible: model.imagePath != null ||
+                    model.videoPath != null &&
+                        !model.controller.value.isRecordingVideo,
+                child: _thumbnailWidget()),
+          ],
+        );
+      } else {
+        return Container(
+          child: Center(
             child: AspectRatio(
-              aspectRatio: widget.model.controller.value.aspectRatio,
-              child: CameraPreview(widget.model.controller),
+              aspectRatio: model.controller.value.aspectRatio,
+              child: CameraPreview(model.controller),
             ),
           ),
-          Visibility(
-              visible: widget.model.imagePath == null &&
-                  widget.model.videoPath == null,
-              child: Positioned(
-                  bottom: 20, left: 0, child: _cameraTogglesRowWidget())),
-          Visibility(
-              visible: widget.model.imagePath != null ||
-                  widget.model.videoPath != null &&
-                      !widget.model.controller.value.isRecordingVideo,
-              child: _thumbnailWidget()),
-        ],
-      );
+        );
+      }
     }
   }
 
   Future<void> loadAssets() async {
     String error = '';
     try {
-      await widget.model.extImageProvider
+      await model.extImageProvider
           .pickImages(
-              widget.model.extImageProvider.currentAssetList,
-              widget.model.imageData['max_images'],
+              model.extImageProvider.currentAssetList,
+              model.imageData['max_images'],
               false,
-              widget.model.extImageProvider
+              model.extImageProvider
                   .pickImagesCupertinoOptions(takePhotoIcon: 'chat'),
-              widget.model.extImageProvider.pickImagesMaterialOptions(
+              model.extImageProvider.pickImagesMaterialOptions(
                   lightStatusBar: false,
                   autoCloseOnSelectionLimit: true,
                   startInAllView: false,
@@ -302,11 +317,11 @@ class _CameraScreenState extends State<CameraScreen> {
                   allViewTitle: 'All Photos'),
               context)
           .then((onValue) {
-        widget.model.extImageProvider.currentAssetList = onValue;
+        model.extImageProvider.currentAssetList = onValue;
         for (var i = 0; i < onValue.length; i++) {
-          widget.model.extImageProvider.assetList.add(onValue[i]);
+          model.extImageProvider.assetList.add(onValue[i]);
         }
-        widget.model.imageData['image'] = onValue;
+        model.imageData['image'] = onValue;
         Navigator.pop(context);
         //setState(() {});
       });
@@ -330,12 +345,11 @@ class _CameraScreenState extends State<CameraScreen> {
       children: <Widget>[
         Stack(
           children: <Widget>[
-            widget.model.videoController == null &&
-                    widget.model.imagePath == null
+            model.videoController == null && model.imagePath == null
                 ? Container()
-                : (widget.model.videoController == null)
+                : (model.videoController == null)
                     ? Image.file(
-                        File(widget.model.imagePath),
+                        File(model.imagePath),
                         fit: BoxFit.fitWidth,
                         width: ScreenUtil.screenWidthDp,
                         filterQuality: FilterQuality.high,
@@ -345,12 +359,10 @@ class _CameraScreenState extends State<CameraScreen> {
                         child: Center(
                           child: AspectRatio(
                               aspectRatio:
-                                  widget.model.videoController.value.size !=
-                                          null
-                                      ? widget.model.videoController.value
-                                          .aspectRatio
+                                  model.videoController.value.size != null
+                                      ? model.videoController.value.aspectRatio
                                       : 1.0,
-                              child: VideoPlayer(widget.model.videoController)),
+                              child: VideoPlayer(model.videoController)),
                         ),
                         decoration: BoxDecoration(
                             border: Border.all(color: Colors.pink)),
@@ -374,10 +386,10 @@ class _CameraScreenState extends State<CameraScreen> {
               size: 50,
             ),
             color: Colors.white,
-            onPressed: widget.model.controller != null &&
-                    widget.model.controller.value.isInitialized &&
-                    !widget.model.controller.value.isRecordingVideo
-                ? widget.model.onTakePictureButtonPressed
+            onPressed: model.controller != null &&
+                    model.controller.value.isInitialized &&
+                    !model.controller.value.isRecordingVideo
+                ? model.onTakePictureButtonPressed
                 : null,
           ),
         ),
@@ -389,27 +401,26 @@ class _CameraScreenState extends State<CameraScreen> {
   Widget _cameraTogglesRowWidget() {
     final List<Widget> toggles = <Widget>[];
 
-    if (widget.model.cameras.isEmpty) {
+    if (model.cameras.isEmpty) {
       return Text('No camera found');
     } else {
-      for (CameraDescription cameraDescription in widget.model.cameras) {
+      for (CameraDescription cameraDescription in model.cameras) {
         toggles.add(
           Visibility(
-            visible: widget.model.controller.description != cameraDescription,
+            visible: model.controller.description != cameraDescription,
             child: SizedBox(
               width: 90.0,
               child: IconButton(
                   icon: Icon(
-                    widget.model
-                        .getCameraLensIcon(cameraDescription.lensDirection),
+                    model.getCameraLensIcon(cameraDescription.lensDirection),
                     color: Colors.white,
                   ),
                   onPressed: () {
-                    if (widget.model.controller != null &&
-                        widget.model.controller.value.isRecordingVideo) {
+                    if (model.controller != null &&
+                        model.controller.value.isRecordingVideo) {
                       return null;
                     } else {
-                      widget.model.onNewCameraSelected(cameraDescription);
+                      model.onNewCameraSelected(cameraDescription);
                     }
                   }),
             ),

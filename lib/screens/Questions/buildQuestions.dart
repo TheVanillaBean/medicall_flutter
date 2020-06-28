@@ -70,10 +70,12 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                     focusColor: Colors.transparent,
                     highlightColor: Colors.transparent,
                     onPressed: () {
+                      //push to full screen camera
                       Navigator.of(context).push(PageRouteBuilder(
-                          opaque: true,
+                          opaque: false,
                           pageBuilder: (BuildContext context, _, __) {
-                            return CameraScreen.create(context, widget.data);
+                            return CameraScreen.create(
+                                context, question, {'fullscreen': true});
                           }));
                     },
                     child: FutureBuilder(
@@ -447,7 +449,8 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                   Navigator.of(context).push(PageRouteBuilder(
                       opaque: true,
                       pageBuilder: (BuildContext context, _, __) {
-                        return CameraScreen.create(context, widget.data);
+                        return CameraScreen.create(
+                            context, widget.data['data'], {'fullscreen': true});
                       }));
                 },
                 elevation: 2.0,
@@ -524,10 +527,10 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                     splashColor: Colors.transparent,
                     onPressed: () {
                       Navigator.of(context).push(PageRouteBuilder(
-                          opaque: true,
                           pageBuilder: (BuildContext context, _, __) {
-                            return CameraScreen.create(context, widget.data);
-                          }));
+                        return CameraScreen.create(
+                            context, question, {'fullscreen': true});
+                      }));
                     },
                     elevation: 2.0,
                     fillColor: Colors.white,

@@ -7,7 +7,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
 
 class CameraState with ChangeNotifier {
-  CameraState({@required this.extImageProvider, this.imageData});
+  CameraState({this.options, @required this.extImageProvider, this.imageData});
+  Map options;
   CameraController controller;
   String imagePath;
   String videoPath;

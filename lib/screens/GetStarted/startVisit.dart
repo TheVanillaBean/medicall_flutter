@@ -52,13 +52,15 @@ class StartVisitScreen extends StatelessWidget {
                       key: formKey,
                       child: Column(
                         children: <Widget>[
-                          FormBuilderRadio(attribute: 'medhistory', options: [
-                            FormBuilderFieldOption(
-                              value: true,
-                              label:
-                                  'Has your medical history changed recently?',
-                            )
-                          ])
+                          FormBuilderCheckboxList(
+                              attribute: 'medHistory',
+                              options: [
+                                FormBuilderFieldOption(
+                                  value: true,
+                                  label:
+                                      'Has your medical history changed recently?',
+                                )
+                              ])
                         ],
                       )),
                 ),
@@ -71,8 +73,9 @@ class StartVisitScreen extends StatelessWidget {
                       await db.getConsultQuestions();
                       if (_newMedicalHistory.getnewMedicalHistory() ||
                           formKey.currentState.fields['medHistory'] != null &&
-                              !formKey.currentState.fields['medHistory']
-                                  .currentState.value) {
+                              formKey.currentState.fields['medHistory']
+                                      .currentState.value.length >
+                                  0) {
                         _newMedicalHistory.setnewMedicalHistory(true);
                         Navigator.of(context).pushNamed('/questionsScreen');
                       } else {
