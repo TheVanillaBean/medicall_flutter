@@ -24,21 +24,13 @@ class PaymentDetail extends StatelessWidget {
                 Theme.of(context).platform == TargetPlatform.iOS ? 17.0 : 20.0,
           ),
         ),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () => addCard(stripeProvider: _stripeProvider),
-          )
-        ],
       ),
       body: Column(
         children: <Widget>[
           Container(
             margin: EdgeInsets.only(
-              left: 24.0,
               top: 84.0,
-              right: 24.0,
-              bottom: 32.0,
+              bottom: 28.0,
             ),
             child: Text(
               'Your payment cards on file:',
@@ -53,22 +45,40 @@ class PaymentDetail extends StatelessWidget {
             future: _db.getUserCardSources(medicallUser.uid),
             builder: (BuildContext context,
                 AsyncSnapshot<AsyncSnapshot<List<PaymentMethod>>> snapshot) {
-              return Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 36),
-                  child: ListItemsBuilder<PaymentMethod>(
-                    snapshot: snapshot.data,
-                    itemBuilder: (context, paymentMethod) => PaymentListItem(
-                      key: UniqueKey(),
-                      paymentMethod: paymentMethod,
-                      onDismissed: () => {
-                        print("Card deleted"),
-                      },
-                    ),
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 36),
+                child: ListItemsBuilder<PaymentMethod>(
+                  displayEmptyContent: false,
+                  snapshot: snapshot.data,
+                  itemBuilder: (context, paymentMethod) => PaymentListItem(
+                    key: UniqueKey(),
+                    paymentMethod: paymentMethod,
+                    onDismissed: () => {
+                      print("Card deleted"),
+                    },
                   ),
                 ),
               );
             },
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              IconButton(
+                icon: Icon(
+                  Icons.add,
+                  color: Colors.black,
+                ),
+                onPressed: () => addCard(stripeProvider: _stripeProvider),
+              ),
+              Text(
+                'Add Card',
+                style: TextStyle(
+                  fontSize: 12.0,
+                  color: Colors.black,
+                ),
+              ),
+            ],
           ),
         ],
       ),

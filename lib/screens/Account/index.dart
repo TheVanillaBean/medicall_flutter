@@ -46,15 +46,23 @@ class AccountScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             SizedBox(height: 20),
-            CircleAvatar(
-              backgroundColor: Colors.grey[50],
-              radius: 80.0,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(100.0),
-                child: _buildAvatar(
-                  medicallUser,
-                  _extImageProvider,
-                  _userProvider,
+            Flexible(
+              child: Container(
+                width: 200.0,
+                height: 200.0,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.black12,
+                    width: 1.0,
+                  ),
+                ),
+                child: ClipOval(
+                  child: _buildAvatar(
+                    medicallUser,
+                    _extImageProvider,
+                    _userProvider,
+                  ),
                 ),
               ),
             ),
@@ -87,7 +95,7 @@ class AccountScreen extends StatelessWidget {
               ),
             ),
             Card(
-              margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 25),
+              margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 25),
               child: ListTile(
                 enabled: false,
                 title: Text(
@@ -99,7 +107,7 @@ class AccountScreen extends StatelessWidget {
               ),
             ),
             Card(
-              margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 25),
+              margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 25),
               child: ListTile(
                 enabled: false,
                 title: Text(medicallUser.phoneNumber != null
@@ -113,7 +121,7 @@ class AccountScreen extends StatelessWidget {
               ),
             ),
             Card(
-              margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 25),
+              margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 25),
               child: ListTile(
                 title: Text(
                   'Payment Cards',
@@ -143,8 +151,8 @@ class AccountScreen extends StatelessWidget {
             cache: true)
         : Icon(
             Icons.account_circle,
-            color: Colors.grey[300],
-            size: 150,
+            color: Colors.grey[200],
+            size: 200,
           );
   }
 }

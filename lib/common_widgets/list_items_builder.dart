@@ -8,10 +8,11 @@ class ListItemsBuilder<T> extends StatelessWidget {
     Key key,
     @required this.snapshot,
     @required this.itemBuilder,
+    @required this.displayEmptyContent,
   }) : super(key: key);
   final AsyncSnapshot<List<T>> snapshot;
   final ItemWidgetBuilder<T> itemBuilder;
-
+  final bool displayEmptyContent;
   @override
   Widget build(BuildContext context) {
     if (snapshot != null && snapshot.hasData) {
@@ -19,7 +20,7 @@ class ListItemsBuilder<T> extends StatelessWidget {
       if (items.isNotEmpty) {
         return _buildList(items, context);
       } else {
-        return const EmptyContent();
+        return displayEmptyContent ? const EmptyContent() : Container();
       }
     } else if (snapshot != null && snapshot.hasError) {
       return const EmptyContent(
@@ -32,6 +33,7 @@ class ListItemsBuilder<T> extends StatelessWidget {
 
   Widget _buildList(List<T> items, context) {
     return ListView.separated(
+      shrinkWrap: true,
       itemCount: items.length + 2,
       separatorBuilder: (context, index) => const Divider(height: 0.5),
       itemBuilder: (context, index) {
