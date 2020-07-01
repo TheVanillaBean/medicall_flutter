@@ -243,9 +243,11 @@ class FirestoreDatabase implements Database {
     List<PaymentMethod> paymentList = List<PaymentMethod>();
 
     if (result.data['data'].length > 0) {
-      PaymentMethod method = PaymentMethod.fromJson(result.data['data'].first);
-      method.customerId = uid;
-      paymentList.add(method);
+      for (var card in result.data['data']) {
+        PaymentMethod method = PaymentMethod.fromJson(card);
+        method.customerId = uid;
+        paymentList.add(method);
+      }
     }
 
     return AsyncSnapshot.withData(ConnectionState.done, paymentList);

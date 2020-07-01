@@ -50,10 +50,10 @@ class MakePayment extends StatelessWidget {
     StripeProvider stripeProvider,
   }) async {
     model.updateWith(isLoading: true);
-    List<dynamic> sources =
+    AsyncSnapshot<List<dynamic>> sources =
         await db.getUserCardSources(userProvider.medicallUser.uid);
 
-    if (sources.length == 0) {
+    if (sources.data.length == 0) {
       PaymentIntent setupIntent = await stripeProvider.addSource();
       bool addCard = await stripeProvider.addCard(setupIntent: setupIntent);
       if (addCard) {
@@ -66,7 +66,7 @@ class MakePayment extends StatelessWidget {
 
     return await chargeUsersCard(
         stripeProvider: stripeProvider,
-        paymentMethodId: sources.first.id,
+        paymentMethodId: sources.data.first.id,
         context: context);
   }
 
