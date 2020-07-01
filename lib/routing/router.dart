@@ -2,7 +2,7 @@ import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/screens/Account/index.dart';
-import 'package:Medicall/screens/Account/paymentDetail.dart';
+import 'package:Medicall/screens/Account/payment_detail.dart';
 import 'package:Medicall/screens/ConfirmConsult/index.dart';
 import 'package:Medicall/screens/Consent/index.dart';
 import 'package:Medicall/screens/Dashboard/dashboard.dart';
