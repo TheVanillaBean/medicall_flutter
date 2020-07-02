@@ -9,12 +9,13 @@ class PlatformAlertDialog extends PlatformWidget {
   final String content;
   final String defaultActionText;
   final String cancelActionText;
-
+  final Function onPressed;
   PlatformAlertDialog({
     @required this.title,
     @required this.content,
     @required this.defaultActionText,
     this.cancelActionText,
+    this.onPressed,
   })  : assert(title != null),
         assert(content != null),
         assert(defaultActionText != null);

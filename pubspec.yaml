@@ -60,6 +60,9 @@ dependencies:
   mask_text_input_formatter: ^1.0.6
   uuid: ^2.0.4
   fluri: ^1.2.8
+  super_rich_text: ^0.2.1
+  property_change_notifier: ^0.2.0
+
 
 dependency_overrides:
   intl: ^0.16.0
@@ -103,6 +106,7 @@ flutter:
   assets:
     - assets/images/
     - assets/icon/
+    - assets/icon/cards/
     - splash.flr
     - logout.flr
     - headerlogo.flr

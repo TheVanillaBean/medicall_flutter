@@ -49,14 +49,66 @@ class MedicallUser {
     this.hasMedicalHistory = false,
   });
 
+  factory MedicallUser.fromMap(Map<String, dynamic> data, String uid) {
+    MedicallUser medicallUser = MedicallUser();
+    medicallUser.uid = uid ?? medicallUser.uid;
+    medicallUser.firstName = data['first_name'] ?? medicallUser.firstName;
+    medicallUser.lastName = data['last_name'] ?? medicallUser.lastName;
+    medicallUser.address = data['address'] ?? medicallUser.address;
+    medicallUser.devTokens = data['dev_tokens'] ?? medicallUser.devTokens;
+    medicallUser.dob = data['dob'] ?? medicallUser.dob;
+    medicallUser.gender = data['gender'] ?? medicallUser.gender;
+    medicallUser.policy = data['policy'] ?? medicallUser.policy;
+    medicallUser.consent = data['consent'] ?? medicallUser.consent;
+    medicallUser.terms = data['terms'] ?? medicallUser.terms;
+    medicallUser.profilePic = data['profile_pic'] ?? medicallUser.profilePic;
+    medicallUser.govId = data['gov_id'] ?? medicallUser.govId;
+    medicallUser.titles = data['titles'] ?? medicallUser.titles;
+    medicallUser.stripeConnectAuthorized =
+        data['stripeConnectAuthorized'] ?? medicallUser.stripeConnectAuthorized;
+    medicallUser.type = data['type'] ?? medicallUser.type;
+    medicallUser.email = data['email'] ?? medicallUser.email;
+    medicallUser.phoneNumber = data['phone' ?? medicallUser.phoneNumber];
+    medicallUser.hasMedicalHistory = false;
+    return medicallUser;
+  }
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'uid': uid,
+      'first_name': firstName,
+      'last_name': lastName,
+      'email': email,
+      'address': address,
+      'dev_tokens': devTokens,
+      "type": type,
+      'dob': dob,
+      'gender': gender,
+      'policy': policy,
+      'consent': consent,
+      'terms': terms,
+      'profile_pic': profilePic,
+      'gov_id': govId,
+      'stripeConnectAuthorized': stripeConnectAuthorized,
+      'phone_umber': phoneNumber,
+      'hasMedicalHistory': hasMedicalHistory,
+//      'titles': titles,
+//      'npi':  npi,
+//      'med_license': medLicense,
+//      'state_issued': medLicenseState,
+      "date": DateTime.now(),
+    };
+  }
+
+  //will eventually be phased out as a function in favor of above
   factory MedicallUser.from(String uid, DocumentSnapshot snapshot) {
     MedicallUser medicallUser = MedicallUser();
     medicallUser.uid = uid ?? medicallUser.uid;
-    medicallUser.displayName =
-        snapshot.data['name'] ?? medicallUser.displayName;
     medicallUser.firstName =
         snapshot.data['first_name'] ?? medicallUser.firstName;
     medicallUser.lastName = snapshot.data['last_name'] ?? medicallUser.lastName;
+    medicallUser.displayName =
+        '${medicallUser.firstName} ${medicallUser.lastName}' ?? "";
     medicallUser.address = snapshot.data['address'] ?? medicallUser.address;
     medicallUser.devTokens =
         snapshot.data['dev_tokens'] ?? medicallUser.devTokens;

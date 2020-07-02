@@ -1,18 +1,20 @@
+import 'package:Medicall/secrets.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:stripe_payment/stripe_payment.dart';
 
-abstract class StripeProvider {
-  void setPublishableKey(stripeKey);
+abstract class StripeProviderBase {
   Future<PaymentIntent> addSource();
   Future<bool> addCard({PaymentIntent setupIntent});
-  void chargePayment({int price, String paymentMethodId});
+  Future<PaymentIntentResult> chargePayment(
+      {int price, String paymentMethodId});
 }
 
-class MyStripeProvider implements StripeProvider {
-  void setPublishableKey(stripeKey) {
-    return StripePayment.setOptions(StripeOptions(publishableKey: stripeKey));
+class StripeProvider implements StripeProviderBase {
+  StripeProvider() {
+    StripePayment.setOptions(StripeOptions(publishableKey: stripeKey));
   }
 
+  @override
   Future<PaymentIntent> addSource() async {
     final HttpsCallable callable = CloudFunctions.instance
         .getHttpsCallable(functionName: 'createSetupIntent')
@@ -23,22 +25,28 @@ class MyStripeProvider implements StripeProvider {
     PaymentIntent setupIntent =
         PaymentIntent(clientSecret: result.data["client_secret"]);
 
-    PaymentMethod paymentMethod =
-        await StripePayment.paymentRequestWithCardForm(
-            CardFormPaymentRequest());
-
-    setupIntent.paymentMethodId = paymentMethod.id;
+    try {
+      PaymentMethod paymentMethod =
+          await StripePayment.paymentRequestWithCardForm(
+              CardFormPaymentRequest());
+      setupIntent.paymentMethodId = paymentMethod.id;
+    } catch (e) {
+      return null;
+    }
 
     return setupIntent;
   }
 
+  @override
   Future<bool> addCard({PaymentIntent setupIntent}) async {
     SetupIntentResult result =
         await StripePayment.confirmSetupIntent(setupIntent);
     return result.status == "succeeded";
   }
 
-  void chargePayment({int price, String paymentMethodId}) async {
+  @override
+  Future<PaymentIntentResult> chargePayment(
+      {int price, String paymentMethodId}) async {
     final HttpsCallable callable = CloudFunctions.instance
         .getHttpsCallable(functionName: 'createPaymentIntentAndCharge')
           ..timeout = const Duration(seconds: 30);
@@ -50,6 +58,9 @@ class MyStripeProvider implements StripeProvider {
       },
     );
 
-    return result.data;
+    final PaymentIntentResult paymentIntentResult =
+        PaymentIntentResult.fromJson(result.data);
+
+    return paymentIntentResult;
   }
 }

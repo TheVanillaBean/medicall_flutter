@@ -1,3 +1,4 @@
+import 'package:Medicall/routing/router.dart';
 import 'package:flutter/material.dart';
 
 String terms = '''
@@ -141,6 +142,10 @@ January 1, 2019
 ''';
 
 class TermsScreen extends StatelessWidget {
+  static Future<void> show({BuildContext context}) async {
+    await Navigator.of(context).pushNamed(Routes.terms);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

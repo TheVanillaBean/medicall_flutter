@@ -23,6 +23,17 @@ class EmailAndPasswordValidators {
   final StringValidator passwordValidator = NonEmptyStringValidator();
   final String invalidEmailErrorText = 'Incorrect email format';
   final String invalidPasswordErrorText = 'Password can\'t be empty';
+  final String invalidConfirmPasswordErrorText = 'Passwords do not match';
+}
+
+class OptionInputValidator {
+  final StringValidator inputValidator = NonEmptyStringValidator();
+  final String invalidInputErrorText = 'Your response can\'t be empty';
+}
+
+class PersonalInfoValidator {
+  final StringValidator inputValidator = NonEmptyStringValidator();
+  final String invalidPersonalInfoErrorText = 'Your response can\'t be empty';
 }
 
 class PhoneNumberStringValidator implements StringValidator {

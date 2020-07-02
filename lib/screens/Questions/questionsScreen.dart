@@ -16,18 +16,18 @@ import 'package:provider/provider.dart';
 
 import 'buildQuestions.dart';
 
-class QuestionsScreen extends StatefulWidget {
+class QuestionsScreenOld extends StatefulWidget {
   final data;
-  QuestionsScreen({
+  QuestionsScreenOld({
     Key key,
     this.data,
   }) : super(key: key);
 
   @override
-  _QuestionsScreenState createState() => _QuestionsScreenState();
+  _QuestionsScreenOldState createState() => _QuestionsScreenOldState();
 }
 
-class _QuestionsScreenState extends State<QuestionsScreen> {
+class _QuestionsScreenOldState extends State<QuestionsScreenOld> {
   Map _globalKeyList = {};
   int _currentPage = 0;
   PageController _pageController = PageController(initialPage: 0);

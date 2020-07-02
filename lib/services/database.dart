@@ -5,8 +5,8 @@ import 'dart:io';
 import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/consult_status_modal.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
-import 'package:Medicall/models/reg_user_model.dart';
 import 'package:Medicall/screens/History/Detail/history_detail_state.dart';
+import 'package:Medicall/services/firestore_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:dash_chat/dash_chat.dart';
@@ -15,7 +15,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart' as path;
 import 'package:stripe_payment/stripe_payment.dart';
 
+import 'firestore_path.dart';
+
 abstract class Database {
+  Future<void> setUser(MedicallUser user);
   Future getConsultDetail(DetailedHistoryState detailedHistoryState);
   Stream<QuerySnapshot> getConsultPrescriptions(consultId);
   Future<void> getPatientDetail(MedicallUser medicallUser);
@@ -54,10 +57,11 @@ abstract class Database {
   List<DocumentSnapshot> userHistory;
   ConsultData newConsult;
   var consultQuestions;
-  TempRegUser tempRegUser;
 }
 
 class FirestoreDatabase implements Database {
+  final _service = FirestoreService.instance;
+
   String uid;
   @override
   DocumentSnapshot consultSnapshot;
@@ -80,11 +84,13 @@ class FirestoreDatabase implements Database {
   @override
   var consultQuestions;
   @override
-  TempRegUser tempRegUser;
-  @override
   String consultChatImageUrl;
 
-  FirestoreDatabase();
+  Future<void> setUser(MedicallUser user) => _service.setData(
+        path: FirestorePath.user(user.uid),
+        data: user.toMap(),
+        merge: true,
+      );
 
   @override
   Future getConsultDetail(DetailedHistoryState detailedHistoryState) async {
@@ -236,12 +242,14 @@ class FirestoreDatabase implements Database {
     List<PaymentMethod> paymentList = List<PaymentMethod>();
 
     if (result.data['data'].length > 0) {
-      PaymentMethod method = PaymentMethod.fromJson(result.data['data'].first);
-      method.customerId = uid;
-      paymentList.add(method);
+      for (var card in result.data['data']) {
+        PaymentMethod method = PaymentMethod.fromJson(card);
+        method.customerId = uid;
+        paymentList.add(method);
+      }
     }
 
-    return paymentList;
+    return Future<List<PaymentMethod>>.value(paymentList);
   }
 
   Future<void> setPrescriptionPayment(state, shipTo, shippingAddress) {
@@ -491,7 +499,7 @@ class FirestoreDatabase implements Database {
   }
 
   Future _getUserPaymentCard(MedicallUser medicallUser) async {
-    List<PaymentMethod> sources = await getUserCardSources(medicallUser.uid);
+    List<PaymentMethod> sources = (await getUserCardSources(medicallUser.uid));
     hasPayment = sources.length > 0;
   }
 
