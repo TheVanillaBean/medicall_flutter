@@ -133,6 +133,7 @@ class ExtendedImageProvider implements ExtImageProvider {
       height: height,
       width: width,
       fit: fit,
+      enableSlideOutPage: true,
       cache: cache,
       mode: mode,
       initGestureConfigHandler: initGestureConfigHandler,
@@ -220,18 +221,9 @@ class ExtendedImageProvider implements ExtImageProvider {
     return MultiImagePicker.pickImages(
         selectedAssets: _images,
         maxImages: _maxImages,
-        enableCamera: true,
-        cupertinoOptions: CupertinoOptions(takePhotoIcon: 'chat'),
-        materialOptions: MaterialOptions(
-            actionBarColor:
-                '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
-            statusBarColor:
-                '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
-            lightStatusBar: false,
-            autoCloseOnSelectionLimit: true,
-            startInAllView: true,
-            actionBarTitle: 'Select Images',
-            allViewTitle: 'All Photos'));
+        enableCamera: _enableCamera,
+        cupertinoOptions: _cupertinoOptions,
+        materialOptions: _materialOptions);
   }
 
   ExtendedImage returnMemoryImage(Uint8List _src,

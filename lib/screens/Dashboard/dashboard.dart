@@ -61,7 +61,6 @@ class DashboardScreen extends StatelessWidget {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         leading: Builder(
           builder: (BuildContext context) {
@@ -71,7 +70,6 @@ class DashboardScreen extends StatelessWidget {
               },
               icon: Icon(
                 Icons.home,
-                color: Theme.of(context).colorScheme.primary,
               ),
             );
           },
@@ -136,32 +134,32 @@ class DashboardScreen extends StatelessWidget {
     ];
   }
 
-  Widget _buildHeader() {
-    return Text(
-      "Hello ${this.model.userProvider.medicallUser.displayName}!",
-      style: TextStyle(
-        fontWeight: FontWeight.w300,
-        fontSize: 18,
-      ),
-    );
-  }
+  // Widget _buildHeader() {
+  //   return Text(
+  //     "Hello ${this.model.userProvider.medicallUser.displayName}!",
+  //     style: TextStyle(
+  //       fontWeight: FontWeight.w300,
+  //       fontSize: 18,
+  //     ),
+  //   );
+  // }
 
-  Widget _buildActiveVisitStatusWidget() {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.blueAccent),
-      ),
-      child: Row(
-        children: <Widget>[
-          Text(
-            "No current consults.",
-            style: TextStyle(
-              fontWeight: FontWeight.w300,
-              fontSize: 18,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildActiveVisitStatusWidget() {
+  //   return Container(
+  //     decoration: BoxDecoration(
+  //       border: Border.all(color: Colors.blueAccent),
+  //     ),
+  //     child: Row(
+  //       children: <Widget>[
+  //         Text(
+  //           "No current consults.",
+  //           style: TextStyle(
+  //             fontWeight: FontWeight.w300,
+  //             fontSize: 18,
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 }

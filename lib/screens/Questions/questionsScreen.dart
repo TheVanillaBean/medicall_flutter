@@ -219,6 +219,9 @@ class _QuestionsScreenOldState extends State<QuestionsScreenOld> {
       contentPadding: EdgeInsets.zero,
       imagePadding: EdgeInsets.zero,
     );
+    if (_db.userMedicalRecord != null) {
+      medicallUser.hasMedicalHistory = true;
+    }
     //User has medical history set combined list to symptom and upload questions
     if (medicallUser.hasMedicalHistory &&
         !_newMedicalHistory.getnewMedicalHistory()) {

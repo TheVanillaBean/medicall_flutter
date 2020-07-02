@@ -1,17 +1,14 @@
 import 'package:Medicall/common_widgets/custom_raised_button.dart';
-import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class CongratsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
-    UserProvider userProvider = Provider.of<UserProvider>(context);
+    //UserProvider userProvider = Provider.of<UserProvider>(context);
 
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         centerTitle: true,
         title: Text(

@@ -1,3 +1,4 @@
+import 'package:Medicall/common_widgets/camera/Camera.dart';
 import 'package:Medicall/common_widgets/carousel/carousel_with_indicator.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
@@ -65,7 +66,18 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                   ),
                   FlatButton(
                     padding: EdgeInsets.all(0),
-                    onPressed: loadAssets,
+                    splashColor: Colors.transparent,
+                    focusColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    onPressed: () {
+                      //push to full screen camera
+                      Navigator.of(context).push(PageRouteBuilder(
+                          opaque: false,
+                          pageBuilder: (BuildContext context, _, __) {
+                            return CameraScreen.create(
+                                context, question, {'fullscreen': true});
+                          }));
+                    },
                     child: FutureBuilder(
                         future: _extImageProvider
                             .convertImages(context), // a Future<String> or null
@@ -410,29 +422,46 @@ class _BuildQuestionsState extends State<BuildQuestions> {
     List<Widget> _returnListWidget = [];
     if (widget.data['data']['image'].length > 0) {
       return Container(
-        height: MediaQuery.of(context).size.height * 0.62,
+        height: 440,
+        margin: EdgeInsets.fromLTRB(0, 10, 0, 35),
+        alignment: Alignment.center,
         child: Stack(
+          overflow: Overflow.visible,
           alignment: Alignment.bottomCenter,
           children: <Widget>[
             Container(
-              width: MediaQuery.of(context).size.width,
-              child: CarouselWithIndicator(
-                  imgList: widget.data['data']['image'],
-                  from: 'buildQuestions'),
-            ),
-            Container(
-              transform: Matrix4.translationValues(0.0, 37.0, 0.0),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20.0),
+                  border: Border.all(color: Colors.grey.shade100)),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(60.0),
-                child: Container(
-                  padding: EdgeInsets.all(15),
-                  color: Theme.of(context).colorScheme.primary,
-                  child: Icon(
-                    Icons.camera_alt,
-                    color: Colors.white,
-                    size: 40,
-                  ),
+                clipBehavior: Clip.hardEdge,
+                borderRadius: BorderRadius.circular(20.0),
+                child: CarouselWithIndicator(
+                    imgList: widget.data['data']['image'],
+                    from: 'buildQuestions'),
+              ),
+            ),
+            Positioned(
+              bottom: -35,
+              child: RawMaterialButton(
+                splashColor: Colors.transparent,
+                onPressed: () {
+                  Navigator.of(context).push(PageRouteBuilder(
+                      opaque: true,
+                      pageBuilder: (BuildContext context, _, __) {
+                        return CameraScreen.create(
+                            context, widget.data['data'], {'fullscreen': true});
+                      }));
+                },
+                elevation: 2.0,
+                fillColor: Colors.white,
+                child: Icon(
+                  Icons.camera_alt,
+                  size: 40.0,
+                  color: Theme.of(context).colorScheme.secondary,
                 ),
+                padding: EdgeInsets.fromLTRB(15, 15, 15, 15),
+                shape: CircleBorder(),
               ),
             ),
           ],
@@ -464,48 +493,6 @@ class _BuildQuestionsState extends State<BuildQuestions> {
     );
   }
 
-  Future<void> loadAssets() async {
-    String error = '';
-    try {
-      await _extImageProvider
-          .pickImages(
-              _extImageProvider.currentAssetList,
-              widget.data['data']['max_images'],
-              true,
-              _extImageProvider.pickImagesCupertinoOptions(
-                  takePhotoIcon: 'chat'),
-              _extImageProvider.pickImagesMaterialOptions(
-                  actionBarColor:
-                      '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
-                  statusBarColor:
-                      '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
-                  lightStatusBar: false,
-                  autoCloseOnSelectionLimit: true,
-                  startInAllView: true,
-                  actionBarTitle: 'Select Images',
-                  allViewTitle: 'All Photos'),
-              context)
-          .then((onValue) {
-        _extImageProvider.currentAssetList = onValue;
-        for (var i = 0; i < onValue.length; i++) {
-          _extImageProvider.assetList.add(onValue[i]);
-        }
-        widget.data['data']['image'] = onValue;
-        setState(() {});
-      });
-    } on Exception catch (e) {
-      if (e.toString() != 'The user has cancelled the selection') {
-        error = e.toString();
-      }
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-    print(error);
-  }
-
   returnCarousel(question) {
     return question['image'].length > 0
         ? buildGridView()
@@ -515,29 +502,45 @@ class _BuildQuestionsState extends State<BuildQuestions> {
   returnPlaceHolder(question) {
     return question['media'].length > 0
         ? Container(
+            margin: EdgeInsets.only(top: 10),
             alignment: Alignment.center,
-            child: Stack(
-              alignment: Alignment.bottomCenter,
+            child: Column(
               children: <Widget>[
-                _extImageProvider.returnNetworkImage(
-                  question['media'],
-                  height: 440,
-                  cache: true,
-                  fit: BoxFit.fill,
+                Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20.0),
+                      border: Border.all(color: Colors.black26)),
+                  child: ClipRRect(
+                    clipBehavior: Clip.hardEdge,
+                    borderRadius: BorderRadius.circular(20.0),
+                    child: _extImageProvider.returnNetworkImage(
+                      question['media'],
+                      height: 440,
+                      cache: true,
+                      fit: BoxFit.fill,
+                    ),
+                  ),
                 ),
                 Container(
-                  transform: Matrix4.translationValues(0.0, 37.0, 0.0),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(60.0),
-                    child: Container(
-                      padding: EdgeInsets.all(15),
-                      color: Theme.of(context).colorScheme.primary,
-                      child: Icon(
-                        Icons.camera_alt,
-                        color: Colors.white,
-                        size: 40,
-                      ),
+                  transform: Matrix4.translationValues(0.0, -40.0, 0.0),
+                  child: RawMaterialButton(
+                    splashColor: Colors.transparent,
+                    onPressed: () {
+                      Navigator.of(context).push(PageRouteBuilder(
+                          pageBuilder: (BuildContext context, _, __) {
+                        return CameraScreen.create(
+                            context, question, {'fullscreen': true});
+                      }));
+                    },
+                    elevation: 2.0,
+                    fillColor: Colors.white,
+                    child: Icon(
+                      Icons.camera_alt,
+                      size: 40.0,
+                      color: Theme.of(context).colorScheme.secondary,
                     ),
+                    padding: EdgeInsets.fromLTRB(15, 15, 15, 15),
+                    shape: CircleBorder(),
                   ),
                 ),
               ],
