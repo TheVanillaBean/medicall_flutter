@@ -1,7 +1,7 @@
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/models/symptom_model.dart';
-import 'package:Medicall/screens/Account/index.dart';
+import 'package:Medicall/screens/Account/account.dart';
 import 'package:Medicall/screens/Account/payment_detail.dart';
 import 'package:Medicall/screens/ConfirmConsult/index.dart';
 import 'package:Medicall/screens/Consent/index.dart';
@@ -262,7 +262,7 @@ class Router {
         );
       case '/paymentDetail':
         return MaterialPageRoute<dynamic>(
-          builder: (context) => PaymentDetail(),
+          builder: (context) => PaymentDetail.create(context),
           settings: settings,
           fullscreenDialog: true,
         );

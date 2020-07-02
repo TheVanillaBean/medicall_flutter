@@ -52,7 +52,6 @@ class MedicallUser {
   factory MedicallUser.fromMap(Map<String, dynamic> data, String uid) {
     MedicallUser medicallUser = MedicallUser();
     medicallUser.uid = uid ?? medicallUser.uid;
-    medicallUser.displayName = data['name'] ?? medicallUser.displayName;
     medicallUser.firstName = data['first_name'] ?? medicallUser.firstName;
     medicallUser.lastName = data['last_name'] ?? medicallUser.lastName;
     medicallUser.address = data['address'] ?? medicallUser.address;
@@ -105,11 +104,11 @@ class MedicallUser {
   factory MedicallUser.from(String uid, DocumentSnapshot snapshot) {
     MedicallUser medicallUser = MedicallUser();
     medicallUser.uid = uid ?? medicallUser.uid;
-    medicallUser.displayName =
-        snapshot.data['name'] ?? medicallUser.displayName;
     medicallUser.firstName =
         snapshot.data['first_name'] ?? medicallUser.firstName;
     medicallUser.lastName = snapshot.data['last_name'] ?? medicallUser.lastName;
+    medicallUser.displayName =
+        '${medicallUser.firstName} ${medicallUser.lastName}' ?? "";
     medicallUser.address = snapshot.data['address'] ?? medicallUser.address;
     medicallUser.devTokens =
         snapshot.data['dev_tokens'] ?? medicallUser.devTokens;

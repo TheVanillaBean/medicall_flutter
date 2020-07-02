@@ -8,11 +8,14 @@ class ListItemsBuilder<T> extends StatelessWidget {
     Key key,
     @required this.snapshot,
     @required this.itemBuilder,
-    @required this.displayEmptyContent,
+    this.displayEmptyContentView = true,
+    this.scrollable = true,
   }) : super(key: key);
   final AsyncSnapshot<List<T>> snapshot;
   final ItemWidgetBuilder<T> itemBuilder;
-  final bool displayEmptyContent;
+  final bool displayEmptyContentView;
+  final bool scrollable;
+
   @override
   Widget build(BuildContext context) {
     if (snapshot != null && snapshot.hasData) {
@@ -20,7 +23,7 @@ class ListItemsBuilder<T> extends StatelessWidget {
       if (items.isNotEmpty) {
         return _buildList(items, context);
       } else {
-        return displayEmptyContent ? const EmptyContent() : Container();
+        return displayEmptyContentView ? const EmptyContent() : Container();
       }
     } else if (snapshot != null && snapshot.hasError) {
       return const EmptyContent(
@@ -33,7 +36,9 @@ class ListItemsBuilder<T> extends StatelessWidget {
 
   Widget _buildList(List<T> items, context) {
     return ListView.separated(
-      physics: NeverScrollableScrollPhysics(),
+      physics: scrollable
+          ? AlwaysScrollableScrollPhysics()
+          : NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemCount: items.length + 2,
       separatorBuilder: (context, index) => const Divider(height: 0.5),

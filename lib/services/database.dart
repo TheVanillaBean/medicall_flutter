@@ -45,7 +45,7 @@ abstract class Database {
       {@required MedicallUser medicallUser});
   updateConsultStatus(Choice choice, String uid);
   sendChatMsg(content, {@required String uid});
-  Future<AsyncSnapshot<List<PaymentMethod>>> getUserCardSources(String uid);
+  Future<List<PaymentMethod>> getUserCardSources(String uid);
   String consultChatImageUrl;
   DocumentSnapshot consultSnapshot;
   DocumentReference consultRef;
@@ -232,8 +232,7 @@ class FirestoreDatabase implements Database {
     createNewConsultChatMsg(message);
   }
 
-  Future<AsyncSnapshot<List<PaymentMethod>>> getUserCardSources(
-      String uid) async {
+  Future<List<PaymentMethod>> getUserCardSources(String uid) async {
     final HttpsCallable callable = CloudFunctions.instance
         .getHttpsCallable(functionName: 'listPaymentMethods')
           ..timeout = const Duration(seconds: 30);
@@ -250,7 +249,7 @@ class FirestoreDatabase implements Database {
       }
     }
 
-    return AsyncSnapshot.withData(ConnectionState.done, paymentList);
+    return Future<List<PaymentMethod>>.value(paymentList);
   }
 
   Future<void> setPrescriptionPayment(state, shipTo, shippingAddress) {
@@ -500,8 +499,7 @@ class FirestoreDatabase implements Database {
   }
 
   Future _getUserPaymentCard(MedicallUser medicallUser) async {
-    List<PaymentMethod> sources =
-        (await getUserCardSources(medicallUser.uid)).data;
+    List<PaymentMethod> sources = (await getUserCardSources(medicallUser.uid));
     hasPayment = sources.length > 0;
   }
 

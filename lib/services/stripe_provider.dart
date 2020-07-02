@@ -25,11 +25,14 @@ class StripeProvider implements StripeProviderBase {
     PaymentIntent setupIntent =
         PaymentIntent(clientSecret: result.data["client_secret"]);
 
-    PaymentMethod paymentMethod =
-        await StripePayment.paymentRequestWithCardForm(
-            CardFormPaymentRequest());
-
-    setupIntent.paymentMethodId = paymentMethod.id;
+    try {
+      PaymentMethod paymentMethod =
+          await StripePayment.paymentRequestWithCardForm(
+              CardFormPaymentRequest());
+      setupIntent.paymentMethodId = paymentMethod.id;
+    } catch (e) {
+      return null;
+    }
 
     return setupIntent;
   }
