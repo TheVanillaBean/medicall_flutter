@@ -8,4 +8,8 @@ class FirestorePath {
       'services/dermatology/symptoms_list/$symptom/screening-questions/';
   static String consultQuestions(String type) =>
       'services/dermatology/symptoms/$type';
+
+  //Firebase Storage
+  static String userProfileImage({String uid, String assetName}) =>
+      'profile/$uid/$assetName.JPG';
 }

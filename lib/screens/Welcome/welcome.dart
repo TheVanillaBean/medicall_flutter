@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 class WelcomeScreen extends StatelessWidget {
   static Future<void> show({BuildContext context}) async {
-    await Navigator.of(context).pushNamed(Routes.welcome);
+    await Navigator.of(context).pushReplacementNamed(Routes.welcome);
   }
 
   @override
