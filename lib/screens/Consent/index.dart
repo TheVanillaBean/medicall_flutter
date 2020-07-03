@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 String _returnString(user) {
-  var fullName = user.displayName;
+  var fullName = user.fullName;
   var loc = user.address;
   var dob = user.dob;
   var now = DateTime.now();
