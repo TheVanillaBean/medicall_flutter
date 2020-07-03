@@ -11,7 +11,7 @@ class AccountScreen extends StatelessWidget {
     UserProvider _userProvider = Provider.of<UserProvider>(context);
     ExtImageProvider _extImageProvider = Provider.of<ExtImageProvider>(context);
 
-    final MedicallUser medicallUser = _userProvider.medicallUser;
+    final User medicallUser = _userProvider.user;
 
     return Scaffold(
       appBar: AppBar(
@@ -51,7 +51,7 @@ class AccountScreen extends StatelessWidget {
   }
 
   Column _buildChildren({
-    MedicallUser medicallUser,
+    User medicallUser,
     ExtImageProvider extImageProvider,
     UserProvider userProvider,
     BuildContext context,
@@ -73,7 +73,7 @@ class AccountScreen extends StatelessWidget {
         ),
         SizedBox(height: 10),
         Text(
-          userProvider.medicallUser.type.toUpperCase(),
+          userProvider.user.type.toUpperCase(),
           style: TextStyle(
             fontFamily: 'SourceSansPro',
             fontSize: 16.0,
@@ -115,7 +115,7 @@ class AccountScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPhoneCard(MedicallUser medicallUser) {
+  Widget _buildPhoneCard(User medicallUser) {
     return Card(
       margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 25),
       child: ListTile(
@@ -132,7 +132,7 @@ class AccountScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildEmailCard(MedicallUser medicallUser) {
+  Widget _buildEmailCard(User medicallUser) {
     return Card(
       margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 25),
       child: ListTile(
@@ -147,7 +147,7 @@ class AccountScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAvatarWidget(MedicallUser medicallUser,
+  Widget _buildAvatarWidget(User medicallUser,
       ExtImageProvider extImageProvider, UserProvider userProvider) {
     return Flexible(
       child: Container(
@@ -171,13 +171,11 @@ class AccountScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAvatar(MedicallUser medicallUser,
-      ExtImageProvider _extImageProvider, UserProvider _userProvider) {
+  Widget _buildAvatar(User medicallUser, ExtImageProvider _extImageProvider,
+      UserProvider _userProvider) {
     return medicallUser != null && medicallUser.profilePic.length > 0
-        ? _extImageProvider.returnNetworkImage(
-            _userProvider.medicallUser.profilePic,
-            fit: BoxFit.cover,
-            cache: true)
+        ? _extImageProvider.returnNetworkImage(_userProvider.user.profilePic,
+            fit: BoxFit.cover, cache: true)
         : Icon(
             Icons.account_circle,
             color: Colors.grey[200],

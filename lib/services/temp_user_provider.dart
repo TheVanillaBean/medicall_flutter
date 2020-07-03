@@ -11,7 +11,7 @@ import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:uuid/uuid.dart';
 
 class TempUserProvider {
-  MedicallUser _medicallUser;
+  User _medicallUser;
   List<dynamic> malpracticeQuestions;
   List<Asset> _images;
   String _password;
@@ -20,7 +20,7 @@ class TempUserProvider {
   Consult consult;
   Symptom symptom;
 
-  MedicallUser get medicallUser => _medicallUser;
+  User get medicallUser => _medicallUser;
 
   List<Asset> get images => _images;
 
@@ -31,7 +31,7 @@ class TempUserProvider {
   AppleSignInModel get appleSignInModel => _appleSignInModel;
 
   TempUserProvider() {
-    _medicallUser = MedicallUser();
+    _medicallUser = User();
   }
 
   getMalpracticeQuestions() {

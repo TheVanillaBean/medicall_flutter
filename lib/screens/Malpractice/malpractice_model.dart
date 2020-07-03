@@ -3,7 +3,7 @@ import 'package:Medicall/services/temp_user_provider.dart';
 
 class MalpracticeScreenModel {
   TempUserProvider tempUserProvider;
-  MedicallUser medicallUser;
+  User medicallUser;
 
   void setTempUserProvider(TempUserProvider tempUserProvider) {
     this.tempUserProvider = tempUserProvider;

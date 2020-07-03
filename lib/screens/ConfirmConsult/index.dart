@@ -20,7 +20,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
   bool _isLoading = false;
   bool _hasReviewed = false;
   Database _db;
-  MedicallUser _medicallUser;
+  User _medicallUser;
   ExtImageProvider _extImageProvider;
   StripeProvider _stripeProvider;
   TabController _confirmTabCntrl;
@@ -40,7 +40,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
   @override
   Widget build(BuildContext context) {
     _db = Provider.of<Database>(context);
-    _medicallUser = Provider.of<UserProvider>(context).medicallUser;
+    _medicallUser = Provider.of<UserProvider>(context).user;
     _extImageProvider = Provider.of<ExtImageProvider>(context);
     _stripeProvider = Provider.of<StripeProvider>(context);
     _db.newConsult.media = [];

@@ -13,14 +13,14 @@ import 'package:provider/provider.dart';
 
 class ProviderDetailScreen extends StatelessWidget {
   final Symptom symptom;
-  final MedicallUser provider;
+  final User provider;
 
   const ProviderDetailScreen({@required this.symptom, @required this.provider});
 
   static Future<void> show({
     BuildContext context,
     Symptom symptom,
-    MedicallUser provider,
+    User provider,
   }) async {
     await Navigator.of(context).pushNamed(
       Routes.providerDetail,
@@ -38,9 +38,9 @@ class ProviderDetailScreen extends StatelessWidget {
     final ExtImageProvider extImageProvider =
         Provider.of<ExtImageProvider>(context);
 
-    MedicallUser medicallUser;
+    User medicallUser;
     try {
-      medicallUser = Provider.of<UserProvider>(context).medicallUser;
+      medicallUser = Provider.of<UserProvider>(context).user;
     } catch (e) {}
 
     ScreenUtil.init(context);
@@ -83,7 +83,7 @@ class ProviderDetailScreen extends StatelessWidget {
   List<Widget> _buildChildren(
     TempUserProvider tempUserProvider,
     ExtendedImageProvider extImageProvider,
-    MedicallUser medicallUser,
+    User medicallUser,
     BuildContext context,
   ) {
     return <Widget>[

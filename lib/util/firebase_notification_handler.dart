@@ -8,9 +8,9 @@ import 'package:flutter/material.dart';
 class FirebaseNotifications {
   FirebaseMessaging _firebaseMessaging;
   FirebaseUser firebaseUser;
-  MedicallUser medicallUser = MedicallUser();
+  User medicallUser = User();
 
-  setUpFirebase({@required MedicallUser medicallUser}) {
+  setUpFirebase({@required User medicallUser}) {
     this.medicallUser = medicallUser;
     _firebaseMessaging = FirebaseMessaging();
     firebaseCloudMessagingListeners();
@@ -23,7 +23,7 @@ class FirebaseNotifications {
     print('this is the requested route on launch:' + requestedRoute);
     //Navigator.pushReplacementNamed(scaffoldKey, '/login');
     //showToast('LAUNCH:' + item.toString(), duration: Duration(seconds: 3));
-    
+
     return;
   }
 
@@ -90,7 +90,7 @@ class FirebaseNotifications {
     _firebaseMessaging.getToken().then((String token) {
       assert(token != null);
       //print(token);
-      medicallUser = MedicallUser();
+      medicallUser = User();
       medicallUser.devTokens = [token];
     });
   }

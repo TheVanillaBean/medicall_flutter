@@ -48,10 +48,10 @@ class SelectProviderScreen extends StatelessWidget {
             ),
             StreamBuilder(
               stream: db.getAllProviders(),
-              builder: (BuildContext context,
-                  AsyncSnapshot<List<MedicallUser>> snapshot) {
+              builder:
+                  (BuildContext context, AsyncSnapshot<List<User>> snapshot) {
                 return Expanded(
-                  child: ListItemsBuilder<MedicallUser>(
+                  child: ListItemsBuilder<User>(
                     snapshot: snapshot,
                     itemBuilder: (context, provider) => ProviderListItem(
                       provider: provider,

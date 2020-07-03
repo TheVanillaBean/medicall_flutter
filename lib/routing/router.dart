@@ -219,7 +219,7 @@ class Router {
       case Routes.providerDetail:
         final Map<String, dynamic> mapArgs = args;
         final Symptom symptom = mapArgs['symptom'];
-        final MedicallUser provider = mapArgs['provider'];
+        final User provider = mapArgs['provider'];
         return MaterialPageRoute<dynamic>(
           builder: (context) => ProviderDetailScreen(
             symptom: symptom,

@@ -1,6 +1,6 @@
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/option_model.dart';
-import 'package:Medicall/models/screening_question_model.dart';
+import 'package:Medicall/models/question_model.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/util/validators.dart';
 import 'package:flutter/cupertino.dart';

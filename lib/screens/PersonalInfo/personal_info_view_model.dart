@@ -83,7 +83,7 @@ class PersonalInfoViewModel with PersonalInfoValidator, ChangeNotifier {
 
   Future<void> submit() async {
     updateWith(submitted: true, isLoading: true);
-    MedicallUser medicallUser = userProvider.medicallUser;
+    User medicallUser = userProvider.user;
     medicallUser.firstName = this.firstName;
     medicallUser.lastName = this.lastName;
     medicallUser.address = this.billingAddress;
@@ -97,8 +97,8 @@ class PersonalInfoViewModel with PersonalInfoValidator, ChangeNotifier {
       throw "Could not save your profile picture!";
     }
 
-    userProvider.medicallUser = medicallUser;
-    await firestoreDatabase.setUser(userProvider.medicallUser);
+    userProvider.user = medicallUser;
+    await firestoreDatabase.setUser(userProvider.user);
     updateWith(submitted: false, isLoading: false);
   }
 

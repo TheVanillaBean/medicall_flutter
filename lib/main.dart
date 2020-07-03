@@ -69,7 +69,7 @@ class MedicallApp extends StatelessWidget {
       child: AuthWidgetBuilder(
         userProvidersBuilder: (_, user) => [
           Provider<UserProvider>(
-            create: (_) => UserProvider(medicallUser: user),
+            create: (_) => UserProvider(user: user),
           ),
           Provider<FirestoreDatabase>(
             create: (_) => FirestoreDatabase(),

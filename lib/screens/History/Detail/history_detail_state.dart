@@ -4,7 +4,7 @@ import 'package:Medicall/services/database.dart';
 import 'package:flutter/material.dart';
 
 class DetailedHistoryState with ChangeNotifier {
-  MedicallUser medicallUser;
+  User medicallUser;
   Database db;
   DetailedHistoryState({@required this.medicallUser, @required this.db});
   String documentId;

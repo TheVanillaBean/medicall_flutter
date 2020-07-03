@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 /// An [AuthWidgetBuilder] ancestor is required for this widget to work.
 
 class LandingPage extends StatelessWidget {
-  final AsyncSnapshot<MedicallUser> userSnapshot;
+  final AsyncSnapshot<User> userSnapshot;
   final WidgetBuilder nonSignedInBuilder;
   final WidgetBuilder signedInBuilder;
   final WidgetBuilder stripeConnectBuilder;
@@ -29,7 +29,7 @@ class LandingPage extends StatelessWidget {
         Provider.of<TempUserProvider>(context, listen: false);
     if (userSnapshot.connectionState == ConnectionState.active) {
       if (userSnapshot.hasData) {
-        MedicallUser medicallUser = userSnapshot.data;
+        User medicallUser = userSnapshot.data;
         if (medicallUser.type == "provider" &&
             !medicallUser.stripeConnectAuthorized) {
           return stripeConnectBuilder(context);

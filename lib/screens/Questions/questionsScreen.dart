@@ -35,7 +35,7 @@ class _QuestionsScreenOldState extends State<QuestionsScreenOld> {
   Database _db;
   ExtImageProvider _extImageProvider;
   List<dynamic> _combinedList = [];
-  MedicallUser medicallUser = MedicallUser();
+  User medicallUser = User();
 
   @override
   void initState() {
@@ -205,7 +205,7 @@ class _QuestionsScreenOldState extends State<QuestionsScreenOld> {
 
   @override
   Widget build(BuildContext context) {
-    medicallUser = Provider.of<UserProvider>(context).medicallUser;
+    medicallUser = Provider.of<UserProvider>(context).user;
     _db = Provider.of<Database>(context);
     MedicalHistoryState _newMedicalHistory =
         Provider.of<MedicalHistoryState>(context, listen: false);

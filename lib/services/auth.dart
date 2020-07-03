@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/screens/Login/apple_sign_in_model.dart';
 import 'package:Medicall/screens/Login/google_auth_model.dart';
 import 'package:apple_sign_in/apple_sign_in.dart';
@@ -14,12 +14,12 @@ import 'package:pedantic/pedantic.dart';
 
 abstract class AuthBase {
   bool triggerAuthStream;
-  Stream<MedicallUser> get onAuthStateChanged;
-  Future<MedicallUser> currentUser();
+  Stream<User> get onAuthStateChanged;
+  Future<User> currentUser();
   Future<String> currentUserIdToken();
   Future<void> addUserToAuthStream({@required FirebaseUser user});
-  Future<MedicallUser> signInAnonymously();
-  Future<MedicallUser> signInWithEmailAndPassword(
+  Future<User> signInAnonymously();
+  Future<User> signInWithEmailAndPassword(
       {@required String email, @required String password});
   Future<FirebaseUser> createUserWithEmailAndPassword(
       {@required String email, @required String password});
@@ -34,8 +34,7 @@ abstract class AuthBase {
   Future<FirebaseUser> signInWithGoogle({@required AuthCredential credential});
   Future<FirebaseUser> signInWithApple(
       {@required AuthCredential appleIdCredential});
-  Future<MedicallUser> signInWithPhoneNumber(
-      {@required AuthCredential credential});
+  Future<User> signInWithPhoneNumber({@required AuthCredential credential});
   Future<FirebaseUser> linkCredentialWithCurrentUser(
       {@required AuthCredential credential});
   Future<bool> emailAlreadyUsed({@required String email});
@@ -48,7 +47,7 @@ class Auth implements AuthBase {
   final _firebaseAuth = FirebaseAuth.instance;
 
   // ignore: close_sinks
-  StreamController<MedicallUser> authStreamController;
+  StreamController<User> authStreamController;
 
   bool triggerAuthStream = true;
 
@@ -67,38 +66,30 @@ class Auth implements AuthBase {
       authStreamController.sink.add(null);
       return;
     }
-    MedicallUser medicallUser = await _getMedicallUserFromFirestore(user: user);
+    User medicallUser = await _getMedicallUserFromFirestore(user: user);
     authStreamController.sink.add(medicallUser);
   }
 
-  Future<MedicallUser> _getMedicallUserFromFirestore(
+  Future<User> _getMedicallUserFromFirestore(
       {@required FirebaseUser user}) async {
     final DocumentReference documentReference =
         Firestore.instance.collection('users').document(user.uid);
     final snapshot = await documentReference.get();
-    return MedicallUser.from(user.uid, snapshot);
-  }
-
-  MedicallUser _userFromFirebaseAuth(FirebaseUser user) {
-    if (user == null) {
-      return null;
-    }
-    return MedicallUser(
-      uid: user.uid,
-      phoneNumber: user.phoneNumber,
-      email: user.email,
-    );
+    final userType = snapshot.data["type"] ?? "";
+    return userType == "Patient"
+        ? User.fromMap(userType: "Patient", uid: user.uid, snapshot: snapshot)
+        : User.fromMap(userType: "Provider", uid: user.uid, snapshot: snapshot);
   }
 
   @override
-  Stream<MedicallUser> get onAuthStateChanged {
+  Stream<User> get onAuthStateChanged {
     return authStreamController.stream;
   }
 
   @override
-  Future<MedicallUser> currentUser() async {
+  Future<User> currentUser() async {
     final user = await _firebaseAuth.currentUser();
-    return _userFromFirebaseAuth(user);
+    return _getMedicallUserFromFirestore(user: user);
   }
 
   @override
@@ -110,19 +101,19 @@ class Auth implements AuthBase {
   }
 
   @override
-  Future<MedicallUser> signInAnonymously() async {
+  Future<User> signInAnonymously() async {
     final authResult = await _firebaseAuth.signInAnonymously();
     final user = authResult.user;
-    return _userFromFirebaseAuth(user);
+    return _getMedicallUserFromFirestore(user: user);
   }
 
   @override
-  Future<MedicallUser> signInWithEmailAndPassword(
+  Future<User> signInWithEmailAndPassword(
       {@required String email, @required String password}) async {
     final authResult = await _firebaseAuth.signInWithEmailAndPassword(
         email: email, password: password);
     final user = authResult.user;
-    return _userFromFirebaseAuth(user);
+    return _getMedicallUserFromFirestore(user: user);
   }
 
   @override
@@ -257,8 +248,8 @@ class Auth implements AuthBase {
     final AuthResult linkCredentialAuthResult =
         await currentUser.linkWithCredential(credential);
 
-    final MedicallUser currentMedicallUser =
-        _userFromFirebaseAuth(linkCredentialAuthResult.user);
+    final User currentMedicallUser = await _getMedicallUserFromFirestore(
+        user: linkCredentialAuthResult.user);
 
     if (currentMedicallUser != null) {
       return currentUser;
@@ -271,10 +262,9 @@ class Auth implements AuthBase {
   }
 
   @override
-  Future<MedicallUser> signInWithPhoneNumber(
-      {AuthCredential credential}) async {
+  Future<User> signInWithPhoneNumber({AuthCredential credential}) async {
     final authResult = await _firebaseAuth.signInWithCredential(credential);
-    return _userFromFirebaseAuth(authResult.user);
+    return _getMedicallUserFromFirestore(user: authResult.user);
   }
 
   @override

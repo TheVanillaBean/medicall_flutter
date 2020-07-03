@@ -42,7 +42,7 @@ class StripeConnect extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = model.userProvider.medicallUser;
+    final user = model.userProvider.user;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,

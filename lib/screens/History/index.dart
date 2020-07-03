@@ -23,8 +23,7 @@ class HistoryScreen extends StatelessWidget {
       : super(key: key);
 
   static Widget create(BuildContext context, bool showAppBar, String query) {
-    MedicallUser _medicallUser =
-        Provider.of<UserProvider>(context).medicallUser;
+    User _medicallUser = Provider.of<UserProvider>(context).user;
     FirebaseNotifications().setUpFirebase(medicallUser: _medicallUser);
     Database _db = Provider.of<Database>(context);
     ExtImageProvider _extendedImageProvider =

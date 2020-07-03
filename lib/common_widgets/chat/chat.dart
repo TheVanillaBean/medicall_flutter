@@ -22,7 +22,7 @@ class Chat extends StatefulWidget {
 }
 
 class _ChatState extends State<Chat> {
-  MedicallUser _medicallUser;
+  User _medicallUser;
   Database _db;
   ExtImageProvider _extImageProvider;
 
@@ -88,7 +88,7 @@ class _ChatState extends State<Chat> {
 
   @override
   Widget build(BuildContext context) {
-    _medicallUser = Provider.of<UserProvider>(context).medicallUser;
+    _medicallUser = Provider.of<UserProvider>(context).user;
     _db = Provider.of<Database>(context);
     _extImageProvider = Provider.of<ExtImageProvider>(context);
     if (_medicallUser.type == 'provider') {

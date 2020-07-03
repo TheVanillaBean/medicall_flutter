@@ -19,7 +19,7 @@ class Provider extends User {
   });
 
   Map<String, dynamic> toMap() {
-    Map<String, dynamic> userMap = super.toMap();
+    Map<String, dynamic> userMap = super.baseToMap();
     userMap.addAll({
       "type": type,
       'stripeConnectAuthorized': stripeConnectAuthorized,
@@ -31,8 +31,8 @@ class Provider extends User {
     return userMap;
   }
 
-  factory Provider.fromMap(String uid, DocumentSnapshot snapshot) {
-    Provider provider = User.fromMap(uid, snapshot);
+  static Provider fromMap(String uid, DocumentSnapshot snapshot) {
+    Provider provider = Provider();
     provider.titles = snapshot.data['titles'] ?? provider.titles;
     provider.stripeConnectAuthorized =
         snapshot.data['stripeConnectAuthorized'] ??

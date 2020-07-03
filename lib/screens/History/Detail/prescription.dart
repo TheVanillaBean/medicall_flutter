@@ -19,14 +19,14 @@ class PrescriptionScreen extends StatefulWidget {
 class _PrescriptionScreenState extends State<PrescriptionScreen> {
   final _scrollController = ScrollController();
   Database db;
-  MedicallUser medicallUser;
+  User medicallUser;
   final GlobalKey<FormBuilderState> consultFormKey =
       GlobalKey<FormBuilderState>();
   String buttonTxt = "Send Prescription";
   @override
   Widget build(BuildContext context) {
     db = Provider.of<Database>(context);
-    medicallUser = Provider.of<UserProvider>(context).medicallUser;
+    medicallUser = Provider.of<UserProvider>(context).user;
     var units = ['Capsule', 'Ointment', 'Cream', 'Solution', 'Foam'];
 
     return Scaffold(

@@ -27,9 +27,9 @@ class SymptomDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    MedicallUser medicallUser;
+    User medicallUser;
     try {
-      medicallUser = Provider.of<UserProvider>(context).medicallUser;
+      medicallUser = Provider.of<UserProvider>(context).user;
     } catch (e) {}
 
     return Scaffold(
@@ -59,7 +59,7 @@ class SymptomDetailScreen extends StatelessWidget {
     );
   }
 
-  List<Widget> _buildChildren(BuildContext context, MedicallUser medicallUser) {
+  List<Widget> _buildChildren(BuildContext context, User medicallUser) {
     return <Widget>[
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

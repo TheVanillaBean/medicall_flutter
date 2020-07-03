@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 class ProviderListItem extends StatelessWidget {
   const ProviderListItem({Key key, @required this.provider, this.onTap})
       : super(key: key);
-  final MedicallUser provider;
+  final User provider;
   final VoidCallback onTap;
 
   @override

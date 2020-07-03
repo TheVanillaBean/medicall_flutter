@@ -1,4 +1,4 @@
-import 'package:Medicall/models/screening_question_model.dart';
+import 'package:Medicall/models/question_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:meta/meta.dart';
 

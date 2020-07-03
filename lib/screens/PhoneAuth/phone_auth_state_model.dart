@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/util/validators.dart';
@@ -166,7 +166,7 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
 
   Future<void> signInWithPhoneAuthCredential(bool mounted) async {
     try {
-      MedicallUser user;
+      User user;
       this.auth.triggerAuthStream = false;
 
       this.phoneAuthCredential = this.phoneAuthCredential ??

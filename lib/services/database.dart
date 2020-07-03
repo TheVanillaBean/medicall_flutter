@@ -18,16 +18,16 @@ import 'package:stripe_payment/stripe_payment.dart';
 import 'firestore_path.dart';
 
 abstract class Database {
-  Future<void> setUser(MedicallUser user);
+  Future<void> setUser(User user);
   Future getConsultDetail(DetailedHistoryState detailedHistoryState);
   Stream<QuerySnapshot> getConsultPrescriptions(consultId);
-  Future<void> getPatientDetail(MedicallUser medicallUser);
+  Future<void> getPatientDetail(User medicallUser);
   Future<void> setPrescriptionPayment(state, shipTo, shippingAddress);
   Future<void> updatePrescription(consultFormKey);
-  addUserMedicalHistory(MedicallUser medicallUser);
-  getUserMedicalHistory(MedicallUser medicallUser);
-  getSymptoms(MedicallUser medicallUser);
-  getPatientMedicalHistory(MedicallUser medicallUser);
+  addUserMedicalHistory(User medicallUser);
+  getUserMedicalHistory(User medicallUser);
+  getSymptoms(User medicallUser);
+  getPatientMedicalHistory(User medicallUser);
   getConsultQuestions();
   updatePatientUnreadChat(bool reset);
   updateProviderUnreadChat(bool reset);
@@ -37,12 +37,12 @@ abstract class Database {
   Future<void> setDiagnosisQuestions(questions);
   Stream getAllUsers();
   Stream getConsultChat();
-  saveConsultChatImage(MedicallUser _medicallUser, File chatMedia);
+  saveConsultChatImage(User _medicallUser, File chatMedia);
   createNewConsultChatMsg(ChatMessage message);
-  Stream getUserHistoryStream(MedicallUser medicallUser);
+  Stream getUserHistoryStream(User medicallUser);
   Future<QuerySnapshot> getUserSources({@required String uid});
   Future<void> addConsult(context, newConsult, extImageProvider,
-      {@required MedicallUser medicallUser});
+      {@required User medicallUser});
   updateConsultStatus(Choice choice, String uid);
   sendChatMsg(content, {@required String uid});
   Future<List<PaymentMethod>> getUserCardSources(String uid);
@@ -51,7 +51,7 @@ abstract class Database {
   DocumentReference consultRef;
   Map<String, dynamic> consultStateData;
   bool isDone;
-  MedicallUser patientDetail;
+  User patientDetail;
   bool hasPayment;
   var userMedicalRecord;
   List<DocumentSnapshot> userHistory;
@@ -72,7 +72,7 @@ class FirestoreDatabase implements Database {
   @override
   bool isDone;
   @override
-  MedicallUser patientDetail;
+  User patientDetail;
   @override
   bool hasPayment;
   @override
@@ -86,7 +86,7 @@ class FirestoreDatabase implements Database {
   @override
   String consultChatImageUrl;
 
-  Future<void> setUser(MedicallUser user) => _service.setData(
+  Future<void> setUser(User user) => _service.setData(
         path: FirestorePath.user(user.uid),
         data: user.toMap(),
         merge: true,
@@ -203,7 +203,7 @@ class FirestoreDatabase implements Database {
     });
   }
 
-  saveConsultChatImage(MedicallUser _medicallUser, File chatMedia) async {
+  saveConsultChatImage(User _medicallUser, File chatMedia) async {
     final StorageReference storageRef = FirebaseStorage.instance.ref().child(
         "consults/" +
             _medicallUser.uid +
@@ -297,7 +297,7 @@ class FirestoreDatabase implements Database {
   }
 
   Future<void> addConsult(context, newConsult, extImageProvider,
-      {@required MedicallUser medicallUser}) async {
+      {@required User medicallUser}) async {
     var ref = Firestore.instance.collection('consults').document();
 
     var imagesList = await saveImages(
@@ -481,13 +481,13 @@ class FirestoreDatabase implements Database {
   }
 
   @override
-  Future<void> getPatientDetail(MedicallUser medicallUser) async {
+  Future<void> getPatientDetail(User medicallUser) async {
     final DocumentReference documentReference = Firestore.instance
         .collection('users')
         .document(consultSnapshot.data['patient_id']);
     await documentReference.get().then((datasnapshot) async {
       if (datasnapshot.data != null) {
-        patientDetail = MedicallUser(
+        patientDetail = User(
             address: datasnapshot.data['address'],
             displayName: datasnapshot.data['name'],
             dob: datasnapshot.data['dob'],
@@ -498,7 +498,7 @@ class FirestoreDatabase implements Database {
     }).catchError((e) => print(e));
   }
 
-  Future _getUserPaymentCard(MedicallUser medicallUser) async {
+  Future _getUserPaymentCard(User medicallUser) async {
     List<PaymentMethod> sources = (await getUserCardSources(medicallUser.uid));
     hasPayment = sources.length > 0;
   }
@@ -510,7 +510,7 @@ class FirestoreDatabase implements Database {
         .snapshots();
   }
 
-  Future<void> addUserMedicalHistory(MedicallUser medicallUser) async {
+  Future<void> addUserMedicalHistory(User medicallUser) async {
     if (medicallUser.uid.length > 0) {
       final DocumentReference ref = Firestore.instance
           .collection('medical_history')
@@ -524,7 +524,7 @@ class FirestoreDatabase implements Database {
     }
   }
 
-  Future<void> getUserMedicalHistory(MedicallUser medicallUser) async {
+  Future<void> getUserMedicalHistory(User medicallUser) async {
     if (medicallUser.uid.length > 0) {
       userMedicalRecord = await Firestore.instance
           .collection('medical_history')
@@ -533,7 +533,7 @@ class FirestoreDatabase implements Database {
     }
   }
 
-  Future<dynamic> getSymptoms(MedicallUser medicallUser) async {
+  Future<dynamic> getSymptoms(User medicallUser) async {
     // userMedicalRecord = await Firestore.instance
     //       .collection('medical_history')
     //       .document(medicallUser.uid)
@@ -553,7 +553,7 @@ class FirestoreDatabase implements Database {
         .getDocuments();
   }
 
-  Future<void> getPatientMedicalHistory(MedicallUser medicallUser) async {
+  Future<void> getPatientMedicalHistory(User medicallUser) async {
     if (medicallUser.uid.length > 0) {
       userMedicalRecord = await Firestore.instance
           .collection('medical_history')

@@ -6,18 +6,18 @@ import 'package:Medicall/services/firestore_service.dart';
 import 'firestore_path.dart';
 
 abstract class NonAuthDatabase {
-  Future<void> setUser(MedicallUser user);
+  Future<void> setUser(User user);
   Stream<List<Symptom>> symptomsStream();
   Future<List<ScreeningQuestions>> getScreeningQuestions({String symptomName});
   Future<List<String>> getAllProviderAddresses();
-  Stream<List<MedicallUser>> getAllProviders();
-  Stream<MedicallUser> providerStream({String uid});
+  Stream<List<User>> getAllProviders();
+  Stream<User> providerStream({String uid});
 }
 
 class NonAuthFirestoreDB implements NonAuthDatabase {
   final _service = FirestoreService.instance;
 
-  Future<void> setUser(MedicallUser user) => _service.setData(
+  Future<void> setUser(User user) => _service.setData(
         path: FirestorePath.user(user.uid),
         data: user.toMap(),
       );
@@ -49,15 +49,15 @@ class NonAuthFirestoreDB implements NonAuthDatabase {
       .first;
 
   @override
-  Stream<List<MedicallUser>> getAllProviders() => _service.collectionStream(
+  Stream<List<User>> getAllProviders() => _service.collectionStream(
         path: FirestorePath.users(),
         queryBuilder: (query) => query.where('type', isEqualTo: "provider"),
-        builder: (data, documentId) => MedicallUser.fromMap(data, documentId),
+        builder: (data, documentId) => User.fromMap(data, documentId),
       );
 
   @override
-  Stream<MedicallUser> providerStream({String uid}) => _service.documentStream(
+  Stream<User> providerStream({String uid}) => _service.documentStream(
         path: FirestorePath.user(uid),
-        builder: (data, documentId) => MedicallUser.fromMap(data, documentId),
+        builder: (data, documentId) => User.fromMap(data, documentId),
       );
 }

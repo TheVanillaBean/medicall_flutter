@@ -51,7 +51,7 @@ class MakePayment extends StatelessWidget {
   }) async {
     model.updateWith(isLoading: true);
     List<PaymentMethod> sources =
-        await db.getUserCardSources(userProvider.medicallUser.uid);
+        await db.getUserCardSources(userProvider.user.uid);
 
     if (sources.length == 0) {
       PaymentIntent setupIntent = await stripeProvider.addSource();

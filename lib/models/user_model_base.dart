@@ -1,6 +1,9 @@
+import 'package:Medicall/models/patient_user_model.dart';
+import 'package:Medicall/models/provider_user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class User {
+//This class acts as a baseclass for both types of users: patient and provider
+abstract class User {
   String uid;
   List<dynamic> devTokens;
   String fullName;
@@ -25,7 +28,9 @@ class User {
     this.profilePic = '',
   });
 
-  Map<String, dynamic> toMap() {
+  void toMap();
+
+  Map<String, dynamic> baseToMap() {
     return <String, dynamic>{
       'uid': uid,
       'first_name': firstName,
@@ -39,8 +44,14 @@ class User {
     };
   }
 
-  factory User.fromMap(String uid, DocumentSnapshot snapshot) {
-    User user = User();
+  factory User.fromMap(
+      {String userType, String uid, DocumentSnapshot snapshot}) {
+    User user;
+    if (userType == 'Patient') {
+      user = Patient.fromMap(uid, snapshot);
+    } else {
+      user = Provider.fromMap(uid, snapshot);
+    }
     user.uid = uid ?? user.uid;
     user.firstName = snapshot.data['first_name'] ?? user.firstName;
     user.lastName = snapshot.data['last_name'] ?? user.lastName;

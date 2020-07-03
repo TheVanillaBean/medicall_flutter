@@ -16,7 +16,7 @@ class DoctorSearch extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var userProvider = Provider.of<UserProvider>(context, listen: false);
-    MedicallUser medicallUser = userProvider.medicallUser;
+    User medicallUser = userProvider.user;
     var _db = Provider.of<Database>(context, listen: false);
     currentOrientation = MediaQuery.of(context).orientation;
     currTab = "Search Doctors";
@@ -142,7 +142,7 @@ class CustomSearchDelegate extends SearchDelegate {
   String providerProfilePic = '';
   ConsultData _consult = ConsultData();
 
-  MedicallUser medicallUser = MedicallUser();
+  User medicallUser = User();
 
   CustomSearchDelegate({this.medicallUser});
 
