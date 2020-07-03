@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:Medicall/common_widgets/list_items_builder.dart';
-import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/models/provider_user_model.dart';
 import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/SelectProvider/provider_detail.dart';
@@ -48,10 +48,10 @@ class SelectProviderScreen extends StatelessWidget {
             ),
             StreamBuilder(
               stream: db.getAllProviders(),
-              builder:
-                  (BuildContext context, AsyncSnapshot<List<User>> snapshot) {
+              builder: (BuildContext context,
+                  AsyncSnapshot<List<ProviderUser>> snapshot) {
                 return Expanded(
-                  child: ListItemsBuilder<User>(
+                  child: ListItemsBuilder<ProviderUser>(
                     snapshot: snapshot,
                     itemBuilder: (context, provider) => ProviderListItem(
                       provider: provider,

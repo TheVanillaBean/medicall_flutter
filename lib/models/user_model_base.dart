@@ -13,6 +13,7 @@ abstract class User {
   String phoneNumber;
   String email;
   String profilePic;
+  String address;
 
   User({
     this.uid = '',
@@ -25,6 +26,7 @@ abstract class User {
     this.phoneNumber = '',
     this.email = '',
     this.profilePic = '',
+    this.address = '',
   });
 
   Map<String, dynamic> toMap();
@@ -40,16 +42,20 @@ abstract class User {
       'gender': gender,
       'profile_pic': profilePic,
       'phone_number': phoneNumber,
+      'address': address,
     };
   }
 
-  factory User.fromMap(
-      {String userType, String uid, Map<String, dynamic> data}) {
+  factory User.fromMap({
+    String userType,
+    String uid,
+    Map<String, dynamic> data,
+  }) {
     User user;
     if (userType == 'Patient') {
-      user = Patient.fromMap(uid, data);
+      user = PatientUser.fromMap(uid, data);
     } else {
-      user = Provider.fromMap(uid, data);
+      user = ProviderUser.fromMap(uid, data);
     }
     user.uid = uid ?? user.uid;
     user.firstName = data['first_name'] ?? user.firstName;
@@ -61,6 +67,7 @@ abstract class User {
     user.profilePic = data['profile_pic'] ?? user.profilePic;
     user.email = data['email'] ?? user.email;
     user.phoneNumber = data['phone_number'] ?? user.phoneNumber;
+    user.address = data['address'] ?? user.address;
     return user;
   }
 }

@@ -77,8 +77,16 @@ class Auth implements AuthBase {
     final snapshot = await documentReference.get();
     final userType = snapshot.data["type"] ?? "";
     return userType == "Patient"
-        ? User.fromMap(userType: "Patient", uid: user.uid, snapshot: snapshot)
-        : User.fromMap(userType: "Provider", uid: user.uid, snapshot: snapshot);
+        ? User.fromMap(
+            userType: "Patient",
+            uid: user.uid,
+            data: snapshot.data,
+          )
+        : User.fromMap(
+            userType: "Provider",
+            uid: user.uid,
+            data: snapshot.data,
+          );
   }
 
   @override

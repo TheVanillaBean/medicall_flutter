@@ -4,7 +4,8 @@ import 'dart:io';
 
 import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/consult_status_modal.dart';
-import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/models/patient_user_model.dart';
+import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/screens/History/Detail/history_detail_state.dart';
 import 'package:Medicall/services/firestore_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -226,7 +227,7 @@ class FirestoreDatabase implements Database {
         user: ChatUser(
             avatar: _medicallUser.profilePic,
             uid: _medicallUser.uid,
-            name: _medicallUser.displayName),
+            name: _medicallUser.fullName),
         image: consultChatImageUrl);
 
     createNewConsultChatMsg(message);
@@ -311,7 +312,7 @@ class FirestoreDatabase implements Database {
       "doctor_notes": "",
       "provider": newConsult.provider,
       "providerTitles": newConsult.providerTitles,
-      "patient": medicallUser.displayName,
+      "patient": medicallUser.fullName,
       "provider_profile": newConsult.providerProfilePic,
       "patient_profile": medicallUser.profilePic,
       "consult_price": newConsult.price,
@@ -325,7 +326,7 @@ class FirestoreDatabase implements Database {
       Map<String, dynamic> chatData = <String, dynamic>{
         "provider": newConsult.provider,
         "providerTitles": newConsult.providerTitles,
-        "patient": medicallUser.displayName,
+        "patient": medicallUser.fullName,
         "provider_profile": newConsult.providerProfilePic,
         "patient_profile": medicallUser.profilePic,
         "provider_id": newConsult.providerId,
@@ -339,7 +340,7 @@ class FirestoreDatabase implements Database {
       var chatContent = ChatMessage(
               text: "Hello, please take a look at my concerns, thank you.",
               user: ChatUser(
-                  name: medicallUser.displayName,
+                  name: medicallUser.fullName,
                   uid: medicallUser.uid,
                   avatar: medicallUser.profilePic))
           .toJson();
@@ -487,12 +488,12 @@ class FirestoreDatabase implements Database {
         .document(consultSnapshot.data['patient_id']);
     await documentReference.get().then((datasnapshot) async {
       if (datasnapshot.data != null) {
-        patientDetail = User(
-            address: datasnapshot.data['address'],
-            displayName: datasnapshot.data['name'],
-            dob: datasnapshot.data['dob'],
-            gender: datasnapshot.data['gender'],
-            phoneNumber: datasnapshot.data['phone']);
+        patientDetail = PatientUser();
+        patientDetail.address = datasnapshot.data['address'];
+        patientDetail.fullName = datasnapshot.data['name'];
+        patientDetail.dob = datasnapshot.data['dob'];
+        patientDetail.gender = datasnapshot.data['gender'];
+        patientDetail.phoneNumber = datasnapshot.data['phone'];
         _getUserPaymentCard(medicallUser);
       }
     }).catchError((e) => print(e));
