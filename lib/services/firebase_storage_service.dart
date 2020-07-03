@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:firebase_user_avatar_flutter/services/firestore_path.dart';
 import 'package:flutter/foundation.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:uuid/uuid.dart';
@@ -12,7 +11,6 @@ class FirebaseStorageService {
   FirebaseStorageService({@required this.uid}) : assert(uid != null);
   final String uid;
 
-  /// Upload an avatar from file
   Future<String> uploadProfileImage({
     @required Asset asset,
   }) async {

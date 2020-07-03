@@ -8,6 +8,7 @@ import 'package:Medicall/screens/Welcome/welcome.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
+import 'package:Medicall/services/firebase_storage_service.dart';
 import 'package:Medicall/services/non_auth_firestore_db.dart';
 import 'package:Medicall/services/stripe_provider.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
@@ -72,6 +73,9 @@ class MedicallApp extends StatelessWidget {
           ),
           Provider<FirestoreDatabase>(
             create: (_) => FirestoreDatabase(),
+          ),
+          Provider<FirebaseStorageService>(
+            create: (_) => FirebaseStorageService(uid: user.uid),
           ),
         ],
         builder: (context, userSnapshot) {

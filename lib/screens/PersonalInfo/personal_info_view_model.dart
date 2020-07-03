@@ -1,6 +1,7 @@
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/services/database.dart';
+import 'package:Medicall/services/firebase_storage_service.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/validators.dart';
 import 'package:dash_chat/dash_chat.dart';
@@ -21,11 +22,13 @@ class PersonalInfoViewModel with PersonalInfoValidator, ChangeNotifier {
   final Consult consult;
   final UserProvider userProvider;
   final FirestoreDatabase firestoreDatabase;
+  final FirebaseStorageService firebaseStorageService;
 
   PersonalInfoViewModel({
     @required this.consult,
     @required this.userProvider,
     @required this.firestoreDatabase,
+    @required this.firebaseStorageService,
     this.firstName = '',
     this.lastName = '',
     this.billingAddress = '',
@@ -46,7 +49,7 @@ class PersonalInfoViewModel with PersonalInfoValidator, ChangeNotifier {
   }
 
   String get birthday {
-    final f = new DateFormat('yyyy-MM-dd');
+    final f = new DateFormat('MMMM-dd-yyyy');
     return this.birthDate.year <= DateTime.now().year - 18
         ? "${f.format(this.birthDate)}"
         : "Please Select";
@@ -85,6 +88,15 @@ class PersonalInfoViewModel with PersonalInfoValidator, ChangeNotifier {
     medicallUser.lastName = this.lastName;
     medicallUser.address = this.billingAddress;
     medicallUser.dob = this.birthday;
+
+    try {
+      medicallUser.profilePic = await firebaseStorageService.uploadProfileImage(
+          asset: this.profileImage.first);
+    } catch (e) {
+      updateWith(submitted: false, isLoading: false);
+      throw "Could not save your profile picture!";
+    }
+
     userProvider.medicallUser = medicallUser;
     await firestoreDatabase.setUser(userProvider.medicallUser);
     updateWith(submitted: false, isLoading: false);
