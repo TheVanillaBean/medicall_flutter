@@ -1,6 +1,6 @@
-import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/models/screening_questions_model.dart';
 import 'package:Medicall/models/symptom_model.dart';
+import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/services/firestore_service.dart';
 
 import 'firestore_path.dart';
@@ -52,12 +52,14 @@ class NonAuthFirestoreDB implements NonAuthDatabase {
   Stream<List<User>> getAllProviders() => _service.collectionStream(
         path: FirestorePath.users(),
         queryBuilder: (query) => query.where('type', isEqualTo: "provider"),
-        builder: (data, documentId) => User.fromMap(data, documentId),
+        builder: (data, documentId) =>
+            User.fromMap(userType: "Provider", data: data, uid: documentId),
       );
 
   @override
   Stream<User> providerStream({String uid}) => _service.documentStream(
         path: FirestorePath.user(uid),
-        builder: (data, documentId) => User.fromMap(data, documentId),
+        builder: (data, documentId) =>
+            User.fromMap(userType: "Provider", data: data, uid: documentId),
       );
 }

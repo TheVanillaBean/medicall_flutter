@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/models/user_model_base.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 class FirebaseNotifications {
   FirebaseMessaging _firebaseMessaging;
   FirebaseUser firebaseUser;
-  User medicallUser = User();
+  User medicallUser;
 
   setUpFirebase({@required User medicallUser}) {
     this.medicallUser = medicallUser;
@@ -84,13 +84,9 @@ class FirebaseNotifications {
     _firebaseMessaging.requestNotificationPermissions(
         const IosNotificationSettings(sound: true, badge: true, alert: true));
     _firebaseMessaging.onIosSettingsRegistered
-        .listen((IosNotificationSettings settings) {
-      //print('Settings registered: $settings');
-    });
+        .listen((IosNotificationSettings settings) {});
     _firebaseMessaging.getToken().then((String token) {
       assert(token != null);
-      //print(token);
-      medicallUser = User();
       medicallUser.devTokens = [token];
     });
   }

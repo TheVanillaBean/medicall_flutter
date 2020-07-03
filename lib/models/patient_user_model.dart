@@ -1,5 +1,4 @@
 import 'package:Medicall/models/user_model_base.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Patient extends User {
   String type;
@@ -26,13 +25,13 @@ class Patient extends User {
     return userMap;
   }
 
-  static Patient fromMap(String uid, DocumentSnapshot snapshot) {
+  static Patient fromMap(String uid, Map<String, dynamic> data) {
     Patient patientUser = Patient();
-    patientUser.address = snapshot.data['address'] ?? patientUser.address;
-    patientUser.govId = snapshot.data['gov_id'] ?? patientUser.govId;
-    patientUser.type = snapshot.data['type'] ?? patientUser.type;
+    patientUser.address = data['address'] ?? patientUser.address;
+    patientUser.govId = data['gov_id'] ?? patientUser.govId;
+    patientUser.type = data['type'] ?? patientUser.type;
     patientUser.hasMedicalHistory =
-        snapshot.data['hasMedicalHistory'] ?? patientUser.hasMedicalHistory;
+        data['hasMedicalHistory'] ?? patientUser.hasMedicalHistory;
     return patientUser;
   }
 }

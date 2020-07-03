@@ -1,6 +1,5 @@
 import 'package:Medicall/models/patient_user_model.dart';
 import 'package:Medicall/models/provider_user_model.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 //This class acts as a baseclass for both types of users: patient and provider
 abstract class User {
@@ -28,7 +27,7 @@ abstract class User {
     this.profilePic = '',
   });
 
-  void toMap();
+  Map<String, dynamic> toMap();
 
   Map<String, dynamic> baseToMap() {
     return <String, dynamic>{
@@ -45,23 +44,23 @@ abstract class User {
   }
 
   factory User.fromMap(
-      {String userType, String uid, DocumentSnapshot snapshot}) {
+      {String userType, String uid, Map<String, dynamic> data}) {
     User user;
     if (userType == 'Patient') {
-      user = Patient.fromMap(uid, snapshot);
+      user = Patient.fromMap(uid, data);
     } else {
-      user = Provider.fromMap(uid, snapshot);
+      user = Provider.fromMap(uid, data);
     }
     user.uid = uid ?? user.uid;
-    user.firstName = snapshot.data['first_name'] ?? user.firstName;
-    user.lastName = snapshot.data['last_name'] ?? user.lastName;
+    user.firstName = data['first_name'] ?? user.firstName;
+    user.lastName = data['last_name'] ?? user.lastName;
     user.fullName = '${user.firstName} ${user.lastName}' ?? "";
-    user.devTokens = snapshot.data['dev_tokens'] ?? user.devTokens;
-    user.dob = snapshot.data['dob'] ?? user.dob;
-    user.gender = snapshot.data['gender'] ?? user.gender;
-    user.profilePic = snapshot.data['profile_pic'] ?? user.profilePic;
-    user.email = snapshot.data['email'] ?? user.email;
-    user.phoneNumber = snapshot.data['phone_number'] ?? user.phoneNumber;
+    user.devTokens = data['dev_tokens'] ?? user.devTokens;
+    user.dob = data['dob'] ?? user.dob;
+    user.gender = data['gender'] ?? user.gender;
+    user.profilePic = data['profile_pic'] ?? user.profilePic;
+    user.email = data['email'] ?? user.email;
+    user.phoneNumber = data['phone_number'] ?? user.phoneNumber;
     return user;
   }
 }

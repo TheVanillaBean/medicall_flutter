@@ -1,5 +1,4 @@
 import 'package:Medicall/models/user_model_base.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Provider extends User {
   String type;
@@ -18,6 +17,7 @@ class Provider extends User {
     this.stripeConnectAuthorized = false,
   });
 
+  @override
   Map<String, dynamic> toMap() {
     Map<String, dynamic> userMap = super.baseToMap();
     userMap.addAll({
@@ -31,13 +31,12 @@ class Provider extends User {
     return userMap;
   }
 
-  static Provider fromMap(String uid, DocumentSnapshot snapshot) {
+  static Provider fromMap(String uid, Map<String, dynamic> data) {
     Provider provider = Provider();
-    provider.titles = snapshot.data['titles'] ?? provider.titles;
+    provider.titles = data['titles'] ?? provider.titles;
     provider.stripeConnectAuthorized =
-        snapshot.data['stripeConnectAuthorized'] ??
-            provider.stripeConnectAuthorized;
-    provider.type = snapshot.data['type'] ?? provider.type;
+        data['stripeConnectAuthorized'] ?? provider.stripeConnectAuthorized;
+    provider.type = data['type'] ?? provider.type;
     return provider;
   }
 }
