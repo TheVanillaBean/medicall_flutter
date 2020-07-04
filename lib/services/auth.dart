@@ -72,6 +72,9 @@ class Auth implements AuthBase {
 
   Future<User> _getMedicallUserFromFirestore(
       {@required FirebaseUser user}) async {
+    if (user == null) {
+      return null;
+    }
     final DocumentReference documentReference =
         Firestore.instance.collection('users').document(user.uid);
     final snapshot = await documentReference.get();

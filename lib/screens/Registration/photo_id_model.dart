@@ -36,7 +36,7 @@ class PhotoIdScreenModel with ChangeNotifier {
     String error,
   }) {
 //    this.images = images ?? this.images; //Previous code
-    this.tempUserProvider.updateWith(images: images ?? this.images); //New code
+//    this.tempUserProvider.updateWith(images: images ?? this.images); //New code
     //So the provider is updated based of the fields in this function (images, govIdImage, etc.), but there is no reason to actually include the provider as an argument in this function.
     this.govIdImage = govIdImage ?? this.govIdImage;
     this.profileImage = profileImage ?? this.profileImage;

@@ -1,32 +1,42 @@
 import 'package:Medicall/models/consult_model.dart';
+import 'package:Medicall/models/patient_user_model.dart';
+import 'package:Medicall/models/provider_user_model.dart';
 import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/screens/Login/apple_sign_in_model.dart';
 import 'package:Medicall/screens/Login/google_auth_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 
 class TempUserProvider {
-  User _medicallUser;
-  List<dynamic> malpracticeQuestions;
-  List<Asset> _images;
-  String _password;
-  GoogleAuthModel _googleAuthModel;
-  AppleSignInModel _appleSignInModel;
+  USER_TYPE _userType;
+  User _user;
+  String password;
+  GoogleAuthModel googleAuthModel;
+  AppleSignInModel appleSignInModel;
+  List<Asset> images;
   Consult consult;
   Symptom symptom;
+  List<dynamic> malpracticeQuestions;
 
-  User get medicallUser => _medicallUser;
+  User get user => _userType == USER_TYPE.PATIENT
+      ? _user as PatientUser
+      : _user as ProviderUser;
+  USER_TYPE get userType => _userType;
 
-  List<Asset> get images => _images;
+  void setUser({@required USER_TYPE userType, User user}) {
+    this._userType = userType;
+    if (_userType == USER_TYPE.PATIENT) {
+      this._user = user == null ? PatientUser() : user as PatientUser;
+    } else {
+      this._user = user == null ? ProviderUser() : user as ProviderUser;
+    }
+  }
 
-  String get password => _password;
+  //Below functions will be phased out once database.dart is refactored
 
-  GoogleAuthModel get googleAuthModel => _googleAuthModel;
-
-  AppleSignInModel get appleSignInModel => _appleSignInModel;
-
-  getMalpracticeQuestions() {
+  void getMalpracticeQuestions() {
     final DocumentReference ref =
         Firestore.instance.document('services/malpractice_questions');
     ref.get().then((val) {
@@ -35,10 +45,9 @@ class TempUserProvider {
   }
 
   Future<void> addProviderMalPractice() async {
-    if (medicallUser.uid.length > 0) {
-      final DocumentReference ref = Firestore.instance
-          .collection('malpractice')
-          .document(medicallUser.uid);
+    if (user.uid.length > 0) {
+      final DocumentReference ref =
+          Firestore.instance.collection('malpractice').document(user.uid);
       Map<String, dynamic> data = <String, dynamic>{
         "malpractice_questions": this.malpracticeQuestions,
       };

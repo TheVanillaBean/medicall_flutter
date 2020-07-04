@@ -175,8 +175,8 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
 
       this.verificationStatus.updateStatus('Performing Security Check...');
 
-      bool emailAlreadyUsed = await auth.emailAlreadyUsed(
-          email: this.tempUserProvider.medicallUser.email);
+      bool emailAlreadyUsed =
+          await auth.emailAlreadyUsed(email: this.tempUserProvider.user.email);
 
       if (emailAlreadyUsed) {
         this.auth.triggerAuthStream = true;
@@ -217,7 +217,7 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
         } else {
           AuthCredential emailCredential =
               await auth.fetchEmailAndPasswordCredential(
-            email: this.tempUserProvider.medicallUser.email,
+            email: this.tempUserProvider.user.email,
             password: this.tempUserProvider.password,
           );
           currentFirebaseUser = await auth.linkCredentialWithCurrentUser(

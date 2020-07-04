@@ -88,7 +88,7 @@ class ConsentScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tempUserProvider = Provider.of<TempUserProvider>(context);
-    final medicallUser = tempUserProvider.medicallUser;
+    final medicallUser = tempUserProvider.user;
     final _scrollController = ScrollController();
 
     return Scaffold(

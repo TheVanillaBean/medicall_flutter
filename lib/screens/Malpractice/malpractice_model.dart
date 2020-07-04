@@ -7,7 +7,7 @@ class MalpracticeScreenModel {
 
   void setTempUserProvider(TempUserProvider tempUserProvider) {
     this.tempUserProvider = tempUserProvider;
-    this.medicallUser = this.tempUserProvider.medicallUser;
+    this.medicallUser = this.tempUserProvider.user;
   }
 
   MalpracticeScreenModel();

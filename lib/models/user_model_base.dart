@@ -1,6 +1,8 @@
 import 'package:Medicall/models/patient_user_model.dart';
 import 'package:Medicall/models/provider_user_model.dart';
 
+enum USER_TYPE { PROVIDER, PATIENT }
+
 //This class acts as a baseclass for both types of users: patient and provider
 abstract class User {
   String uid;

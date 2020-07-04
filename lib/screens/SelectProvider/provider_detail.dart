@@ -42,7 +42,9 @@ class ProviderDetailScreen extends StatelessWidget {
     PatientUser currentUser;
     try {
       currentUser = Provider.of<UserProvider>(context).user;
-    } catch (e) {}
+    } catch (e) {
+      // This is okay, as this just checks if the provider exists.
+    }
 
     ScreenUtil.init(context);
     return Scaffold(

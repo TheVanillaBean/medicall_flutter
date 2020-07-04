@@ -172,8 +172,8 @@ class RegistrationViewModel with EmailAndPasswordValidators, ChangeNotifier {
   Future<void> addNewUserToFirestore() async {
     FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
     String token = await _firebaseMessaging.getToken();
-    tempUserProvider.medicallUser.devTokens = [token];
-    unawaited(nonAuthDatabase.setUser(tempUserProvider.medicallUser));
+    tempUserProvider.user.devTokens = [token];
+    unawaited(nonAuthDatabase.setUser(tempUserProvider.user));
   }
 
   void updateWith({
