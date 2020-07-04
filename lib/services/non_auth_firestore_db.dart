@@ -53,14 +53,14 @@ class NonAuthFirestoreDB implements NonAuthDatabase {
   Stream<List<ProviderUser>> getAllProviders() => _service.collectionStream(
         path: FirestorePath.users(),
         queryBuilder: (query) => query.where('type', isEqualTo: "provider"),
-        builder: (data, documentId) =>
-            User.fromMap(userType: "Provider", data: data, uid: documentId),
+        builder: (data, documentId) => User.fromMap(
+            userType: USER_TYPE.PROVIDER, data: data, uid: documentId),
       );
 
   @override
   Stream<ProviderUser> providerStream({String uid}) => _service.documentStream(
         path: FirestorePath.user(uid),
-        builder: (data, documentId) =>
-            User.fromMap(userType: "Provider", data: data, uid: documentId),
+        builder: (data, documentId) => User.fromMap(
+            userType: USER_TYPE.PROVIDER, data: data, uid: documentId),
       );
 }

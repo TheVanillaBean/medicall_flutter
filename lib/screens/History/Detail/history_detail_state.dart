@@ -1,5 +1,5 @@
 import 'package:Medicall/models/consult_status_modal.dart';
-import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:flutter/material.dart';
 

@@ -1,4 +1,4 @@
-import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/secrets.dart' as secrets;
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/stripe_provider.dart';

@@ -1,5 +1,5 @@
 import 'package:Medicall/components/DrawerMenu.dart';
-import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/screens/History/doctorSearch.dart';
 import 'package:Medicall/screens/History/historyTiles.dart';
 import 'package:Medicall/screens/History/history_state.dart';

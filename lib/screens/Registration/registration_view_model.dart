@@ -90,10 +90,8 @@ class RegistrationViewModel with EmailAndPasswordValidators, ChangeNotifier {
             'Saving User Details. This may take several seconds...');
         FirebaseUser user = await auth.createUserWithEmailAndPassword(
             email: this.email, password: this.password);
-        tempUserProvider.updateWith(
-          uid: user.uid,
-          email: this.email,
-        );
+        tempUserProvider.user.uid = user.uid;
+        tempUserProvider.user.email = this.email;
         updateWith(submitted: false, isLoading: false);
         saveUserDetails(user);
       } else {
@@ -117,10 +115,8 @@ class RegistrationViewModel with EmailAndPasswordValidators, ChangeNotifier {
             'Saving User Details. This may take several seconds...');
         FirebaseUser user = await auth.signInWithApple(
             appleIdCredential: appleSignInModel.credential);
-        tempUserProvider.updateWith(
-          uid: user.uid,
-          email: appleSignInModel.email,
-        );
+        tempUserProvider.user.uid = user.uid;
+        tempUserProvider.user.email = appleSignInModel.email;
 
         updateWith(
             appleSignInModel: appleSignInModel,
@@ -148,10 +144,8 @@ class RegistrationViewModel with EmailAndPasswordValidators, ChangeNotifier {
         FirebaseUser user = await auth.signInWithGoogle(
           credential: googleAuthModel.credential,
         );
-        tempUserProvider.updateWith(
-          uid: user.uid,
-          email: googleAuthModel.email,
-        );
+        tempUserProvider.user.uid = user.uid;
+        tempUserProvider.user.email = googleAuthModel.email;
         updateWith(
             googleAuthModel: googleAuthModel,
             submitted: false,

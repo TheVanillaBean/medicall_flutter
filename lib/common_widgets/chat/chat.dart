@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
@@ -98,7 +98,7 @@ class _ChatState extends State<Chat> {
       _db.updatePatientUnreadChat(true);
     }
     user = ChatUser(
-        name: _medicallUser.displayName,
+        name: _medicallUser.fullName,
         uid: _medicallUser.uid,
         avatar: _medicallUser.profilePic);
 

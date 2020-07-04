@@ -1,5 +1,5 @@
 import 'package:Medicall/models/consult_data_model.dart';
-import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/models/patient_user_model.dart';
 import 'package:Medicall/screens/Symptoms/medical_history_state.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
@@ -35,7 +35,7 @@ class _QuestionsScreenOldState extends State<QuestionsScreenOld> {
   Database _db;
   ExtImageProvider _extImageProvider;
   List<dynamic> _combinedList = [];
-  User medicallUser = User();
+  PatientUser medicallUser = PatientUser();
 
   @override
   void initState() {

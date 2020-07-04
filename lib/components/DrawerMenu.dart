@@ -1,4 +1,4 @@
-import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
@@ -82,7 +82,7 @@ class DrawerMenu extends StatelessWidget {
                         Navigator.of(context)
                             .pushReplacementNamed('/dashboard');
                       }),
-                  medicallUser.type == 'provider'
+                  medicallUser.type == USER_TYPE.PROVIDER
                       ? Container()
                       : ListTile(
                           contentPadding: EdgeInsets.fromLTRB(0, 25, 0, 10),

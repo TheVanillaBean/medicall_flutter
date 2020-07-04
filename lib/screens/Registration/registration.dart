@@ -87,11 +87,9 @@ class _RegistrationScreenState extends State<RegistrationScreen>
     try {
       await model.signInWithGooglePressed(context);
       if (model.googleAuthModel != null) {
-        model.tempUserProvider.updateWith(
-          email: model.googleAuthModel.email,
-          displayName: model.googleAuthModel.displayName,
-          googleAuthModel: model.googleAuthModel,
-        );
+        model.tempUserProvider.user.email = model.googleAuthModel.email;
+        model.tempUserProvider.user.fullName = model.googleAuthModel.fullName;
+        model.tempUserProvider.googleAuthModel = model.googleAuthModel;
       }
     } on PlatformException catch (e) {
       AppUtil().showFlushBar(e, context);
@@ -108,11 +106,12 @@ class _RegistrationScreenState extends State<RegistrationScreen>
     try {
       await model.signInWithApplePressed(context);
       if (model.appleSignInModel != null) {
-        model.tempUserProvider.updateWith(
-          email: model.appleSignInModel.email,
-          displayName: model.appleSignInModel.displayName,
-          appleSignInModel: model.appleSignInModel,
-        );
+        if (model.googleAuthModel != null) {
+          model.tempUserProvider.user.email = model.appleSignInModel.email;
+          model.tempUserProvider.user.fullName =
+              model.appleSignInModel.fullName;
+          model.tempUserProvider.appleSignInModel = model.appleSignInModel;
+        }
       }
     } catch (e) {
       AppUtil().showFlushBar(e, context);

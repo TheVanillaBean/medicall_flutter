@@ -1,5 +1,5 @@
 import 'package:Medicall/models/consult_model.dart';
-import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/models/provider_user_model.dart';
 import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/screens/Account/account.dart';
 import 'package:Medicall/screens/Account/payment_detail.dart';
@@ -219,7 +219,7 @@ class Router {
       case Routes.providerDetail:
         final Map<String, dynamic> mapArgs = args;
         final Symptom symptom = mapArgs['symptom'];
-        final User provider = mapArgs['provider'];
+        final ProviderUser provider = mapArgs['provider'];
         return MaterialPageRoute<dynamic>(
           builder: (context) => ProviderDetailScreen(
             symptom: symptom,

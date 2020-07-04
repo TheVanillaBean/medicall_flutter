@@ -1,12 +1,13 @@
 import 'package:Medicall/models/patient_user_model.dart';
 import 'package:Medicall/models/provider_user_model.dart';
 
-enum USER_TYPE { PROVIDER, PATIENT }
+enum USER_TYPE { NOT_SET, PROVIDER, PATIENT }
 
 //This class acts as a baseclass for both types of users: patient and provider
 abstract class User {
   String uid;
-  List<dynamic> devTokens;
+  USER_TYPE type;
+  List<dynamic> devTokens; //used for push notifs
   String fullName;
   String firstName;
   String lastName;
@@ -19,6 +20,7 @@ abstract class User {
 
   User({
     this.uid = '',
+    this.type = USER_TYPE.NOT_SET,
     this.devTokens = const ['', ''],
     this.fullName = '',
     this.firstName = '',
@@ -36,6 +38,7 @@ abstract class User {
   Map<String, dynamic> baseToMap() {
     return <String, dynamic>{
       'uid': uid,
+      'type': type,
       'first_name': firstName,
       'last_name': lastName,
       'email': email,
@@ -49,15 +52,17 @@ abstract class User {
   }
 
   factory User.fromMap({
-    String userType,
+    USER_TYPE userType,
     String uid,
     Map<String, dynamic> data,
   }) {
     User user;
-    if (userType == 'Patient') {
+    if (userType == USER_TYPE.PATIENT) {
       user = PatientUser.fromMap(uid, data);
+      user.type = USER_TYPE.PATIENT;
     } else {
       user = ProviderUser.fromMap(uid, data);
+      user.type = USER_TYPE.PROVIDER;
     }
     user.uid = uid ?? user.uid;
     user.firstName = data['first_name'] ?? user.firstName;

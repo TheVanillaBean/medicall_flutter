@@ -1,6 +1,6 @@
 import 'package:Medicall/common_widgets/carousel/carousel_with_indicator.dart';
 import 'package:Medicall/common_widgets/chat/chat.dart';
-import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/screens/History/Detail/prescriptionPayment.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
@@ -400,17 +400,17 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                       children: <Widget>[
                                         Text(
                                           '\n' +
-                                              db.patientDetail.displayName
+                                              db.patientDetail.fullName
                                                   .split(' ')[0][0]
                                                   .toUpperCase() +
-                                              db.patientDetail.displayName
+                                              db.patientDetail.fullName
                                                   .split(' ')[0]
                                                   .substring(1) +
                                               ' ' +
-                                              db.patientDetail.displayName
+                                              db.patientDetail.fullName
                                                   .split(' ')[1][0]
                                                   .toUpperCase() +
-                                              db.patientDetail.displayName
+                                              db.patientDetail.fullName
                                                   .split(' ')[1]
                                                   .substring(1),
                                         ),

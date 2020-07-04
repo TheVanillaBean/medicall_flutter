@@ -81,12 +81,12 @@ class Auth implements AuthBase {
     final userType = snapshot.data["type"] ?? "";
     return userType == "Patient"
         ? User.fromMap(
-            userType: "Patient",
+            userType: USER_TYPE.PATIENT,
             uid: user.uid,
             data: snapshot.data,
           )
         : User.fromMap(
-            userType: "Provider",
+            userType: USER_TYPE.PROVIDER,
             uid: user.uid,
             data: snapshot.data,
           );
@@ -164,7 +164,7 @@ class Auth implements AuthBase {
         return GoogleAuthModel(
           email: googleAccount.email,
           credential: credential,
-          displayName: googleAccount.displayName,
+          fullName: googleAccount.displayName,
           providers: providers,
         );
       } else {
@@ -218,7 +218,7 @@ class Auth implements AuthBase {
         return AppleSignInModel(
           email: appleIdCredential.email,
           credential: credential,
-          displayName: appleIdCredential.fullName.givenName,
+          fullName: appleIdCredential.fullName.givenName,
           providers: providers,
         );
       case AuthorizationStatus.error:

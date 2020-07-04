@@ -1,5 +1,5 @@
 import 'package:Medicall/models/consult_model.dart';
-import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/models/patient_user_model.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/firebase_storage_service.dart';
 import 'package:Medicall/services/user_provider.dart';
@@ -83,7 +83,7 @@ class PersonalInfoViewModel with PersonalInfoValidator, ChangeNotifier {
 
   Future<void> submit() async {
     updateWith(submitted: true, isLoading: true);
-    User medicallUser = userProvider.user;
+    PatientUser medicallUser = userProvider.user;
     medicallUser.firstName = this.firstName;
     medicallUser.lastName = this.lastName;
     medicallUser.address = this.billingAddress;

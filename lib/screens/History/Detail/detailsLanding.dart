@@ -1,4 +1,4 @@
-import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/presentation/medicall_icons_icons.dart' as CustomIcons;
 import 'package:Medicall/screens/History/Detail/buildDetailTab.dart';
 import 'package:Medicall/screens/History/Detail/prescriptions.dart';
@@ -22,7 +22,7 @@ class DetailsLandingScreen extends StatelessWidget {
       child: Container(
         child: Column(
           children: <Widget>[
-            medicallUser.type == 'provider' &&
+            medicallUser.type == USER_TYPE.PROVIDER &&
                     consultSnapshot.containsKey('exam') &&
                     consultSnapshot['exam'].length > 0
                 ? Container(

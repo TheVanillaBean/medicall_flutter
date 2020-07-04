@@ -1,5 +1,6 @@
 import 'package:Medicall/components/DrawerMenu.dart';
-import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/models/patient_user_model.dart';
+import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +12,7 @@ class AccountScreen extends StatelessWidget {
     UserProvider _userProvider = Provider.of<UserProvider>(context);
     ExtImageProvider _extImageProvider = Provider.of<ExtImageProvider>(context);
 
-    final User medicallUser = _userProvider.user;
+    final PatientUser medicallUser = _userProvider.user;
 
     return Scaffold(
       appBar: AppBar(
@@ -63,7 +64,7 @@ class AccountScreen extends StatelessWidget {
         _buildAvatarWidget(medicallUser, extImageProvider, userProvider),
         SizedBox(height: 10),
         Text(
-          medicallUser.displayName,
+          medicallUser.fullName,
           style: TextStyle(
             fontFamily: 'SourceSansPro',
             fontSize: 30.0,
@@ -73,7 +74,7 @@ class AccountScreen extends StatelessWidget {
         ),
         SizedBox(height: 10),
         Text(
-          userProvider.user.type.toUpperCase(),
+          userProvider.user.type.toString().toUpperCase(),
           style: TextStyle(
             fontFamily: 'SourceSansPro',
             fontSize: 16.0,

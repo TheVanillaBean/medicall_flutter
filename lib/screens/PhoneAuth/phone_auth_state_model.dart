@@ -224,11 +224,11 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
               credential: emailCredential);
         }
 
-        this.tempUserProvider.updateWith(
-              uid: user.uid,
-              devTokens: user.devTokens,
-              phoneNumber: user.phoneNumber,
-            );
+//        this.tempUserProvider.updateWith(
+//              uid: user.uid,
+//              devTokens: user.devTokens,
+//              phoneNumber: user.phoneNumber,
+//            );
 
         this.verificationStatus.updateStatus(
             'Saving User Details. This may take several seconds...');

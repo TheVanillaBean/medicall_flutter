@@ -1,4 +1,3 @@
-import 'package:Medicall/screens/Account/payment_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:stripe_payment/stripe_payment.dart';

@@ -1,5 +1,5 @@
 import 'package:Medicall/common_widgets/list_items_builder.dart';
-import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/screens/Account/payment_list_item.dart';
 import 'package:Medicall/screens/Account/payment_list_view_model.dart';
 import 'package:Medicall/services/database.dart';
