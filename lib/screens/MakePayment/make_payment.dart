@@ -11,7 +11,6 @@ import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:stripe_payment/stripe_payment.dart';
 
 class MakePayment extends StatelessWidget {
   final MakePaymentViewModel model;
@@ -20,8 +19,15 @@ class MakePayment extends StatelessWidget {
   const MakePayment({@required this.consult, @required this.model});
 
   static Widget create(BuildContext context, Consult consult) {
+    UserProvider _userProvider = Provider.of<UserProvider>(context);
+    FirestoreDatabase _db = Provider.of<FirestoreDatabase>(context);
+    StripeProvider _stripeProvider = Provider.of<StripeProviderBase>(context);
     return ChangeNotifierProvider<MakePaymentViewModel>(
-      create: (context) => MakePaymentViewModel(),
+      create: (context) => MakePaymentViewModel(
+        userProvider: _userProvider,
+        db: _db,
+        stripeProvider: _stripeProvider,
+      ),
       child: Consumer<MakePaymentViewModel>(
         builder: (_, model, __) => MakePayment(
           model: model,
@@ -43,45 +49,9 @@ class MakePayment extends StatelessWidget {
     );
   }
 
-  Future<void> _payPressed({
-    BuildContext context,
-    UserProvider userProvider,
-    FirestoreDatabase db,
-    StripeProvider stripeProvider,
-  }) async {
-    model.updateWith(isLoading: true);
-    List<PaymentMethod> sources =
-        await db.getUserCardSources(userProvider.user.uid);
-
-    if (sources.length == 0) {
-      PaymentIntent setupIntent = await stripeProvider.addSource();
-      bool addCard = await stripeProvider.addCard(setupIntent: setupIntent);
-      if (addCard) {
-        return await chargeUsersCard(
-          paymentMethodId: setupIntent.paymentMethodId,
-          context: context,
-        );
-      }
-    }
-
-    return await chargeUsersCard(
-        stripeProvider: stripeProvider,
-        paymentMethodId: sources.first.id,
-        context: context);
-  }
-
-  Future<void> chargeUsersCard({
-    BuildContext context,
-    StripeProvider stripeProvider,
-    String paymentMethodId,
-  }) async {
-    PaymentIntentResult paymentIntentResult =
-        await stripeProvider.chargePayment(
-      price: 49,
-      paymentMethodId: paymentMethodId,
-    );
-
-    if (paymentIntentResult.status == "succeeded") {
+  Future<void> _payPressed(BuildContext context) async {
+    bool successfullyChargedCard = await model.chargeUsersCard();
+    if (successfullyChargedCard) {
       return DashboardScreen.show(context: context, pushReplaceNamed: true);
     } else {
       AppUtil().showFlushBar(
@@ -89,14 +59,10 @@ class MakePayment extends StatelessWidget {
         context,
       );
     }
-    model.updateWith(isLoading: false);
   }
 
   @override
   Widget build(BuildContext context) {
-    UserProvider _userProvider = Provider.of<UserProvider>(context);
-    FirestoreDatabase _db = Provider.of<FirestoreDatabase>(context);
-    StripeProvider _stripeProvider = Provider.of<StripeProviderBase>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text("Make Payment"),
@@ -130,9 +96,6 @@ class MakePayment extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: _buildChildren(
                     context: context,
-                    userProvider: _userProvider,
-                    db: _db,
-                    stripeProvider: _stripeProvider,
                   ),
                 ),
               ),
@@ -143,11 +106,9 @@ class MakePayment extends StatelessWidget {
     );
   }
 
-  List<Widget> _buildChildren(
-      {BuildContext context,
-      UserProvider userProvider,
-      FirestoreDatabase db,
-      StripeProvider stripeProvider}) {
+  List<Widget> _buildChildren({
+    BuildContext context,
+  }) {
     return <Widget>[
       Text(
         'Checkout',
@@ -186,14 +147,7 @@ class MakePayment extends StatelessWidget {
               color: Colors.green,
               textColor: Colors.white,
               text: "Pay",
-              onPressed: model.isLoading
-                  ? null
-                  : () => _payPressed(
-                        context: context,
-                        userProvider: userProvider,
-                        db: db,
-                        stripeProvider: stripeProvider,
-                      ),
+              onPressed: model.isLoading ? null : () => _payPressed(context),
             ),
           )
         ],

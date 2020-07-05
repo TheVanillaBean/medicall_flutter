@@ -3,6 +3,7 @@ import 'package:Medicall/models/patient_user_model.dart';
 import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -74,7 +75,7 @@ class AccountScreen extends StatelessWidget {
         ),
         SizedBox(height: 10),
         Text(
-          userProvider.user.type.toString().toUpperCase(),
+          EnumToString.parse(userProvider.user.type).toUpperCase(),
           style: TextStyle(
             fontFamily: 'SourceSansPro',
             fontSize: 16.0,
@@ -121,7 +122,8 @@ class AccountScreen extends StatelessWidget {
       margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 25),
       child: ListTile(
         enabled: false,
-        title: Text(medicallUser.phoneNumber != null
+        title: Text(medicallUser.phoneNumber != null &&
+                medicallUser.phoneNumber.length > 0
             ? medicallUser.phoneNumber
             : '(xxx)xxx-xxxx'),
         leading: Icon(
