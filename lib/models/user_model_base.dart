@@ -1,5 +1,6 @@
 import 'package:Medicall/models/patient_user_model.dart';
 import 'package:Medicall/models/provider_user_model.dart';
+import 'package:enum_to_string/enum_to_string.dart';
 
 enum USER_TYPE { NOT_SET, PROVIDER, PATIENT }
 
@@ -38,7 +39,7 @@ abstract class User {
   Map<String, dynamic> baseToMap() {
     return <String, dynamic>{
       'uid': uid,
-      'type': type,
+      'type': EnumToString.parse(type),
       'first_name': firstName,
       'last_name': lastName,
       'email': email,

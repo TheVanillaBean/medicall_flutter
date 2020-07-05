@@ -6,6 +6,7 @@ import 'package:Medicall/screens/Login/google_auth_model.dart';
 import 'package:apple_sign_in/apple_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -79,7 +80,8 @@ class Auth implements AuthBase {
         Firestore.instance.collection('users').document(user.uid);
     final snapshot = await documentReference.get();
     final userType = snapshot.data["type"] ?? "";
-    return userType == "Patient"
+    return EnumToString.fromString(USER_TYPE.values, userType) ==
+            USER_TYPE.PATIENT
         ? User.fromMap(
             userType: USER_TYPE.PATIENT,
             uid: user.uid,

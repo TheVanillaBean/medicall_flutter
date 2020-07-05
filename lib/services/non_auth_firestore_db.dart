@@ -1,3 +1,4 @@
+import 'package:Medicall/models/patient_user_model.dart';
 import 'package:Medicall/models/provider_user_model.dart';
 import 'package:Medicall/models/screening_questions_model.dart';
 import 'package:Medicall/models/symptom_model.dart';
@@ -20,7 +21,9 @@ class NonAuthFirestoreDB implements NonAuthDatabase {
 
   Future<void> setUser(User user) => _service.setData(
         path: FirestorePath.user(user.uid),
-        data: user.toMap(),
+        data: user.type == USER_TYPE.PATIENT
+            ? (user as PatientUser).toMap()
+            : (user as ProviderUser).toMap(),
       );
 
   @override

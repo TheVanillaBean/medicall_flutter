@@ -1,3 +1,4 @@
+import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/screens/Login/apple_sign_in_model.dart';
 import 'package:Medicall/screens/Login/google_auth_model.dart';
 import 'package:Medicall/services/auth.dart';
@@ -8,7 +9,7 @@ import 'package:apple_sign_in/scope.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:pedantic/pedantic.dart';
+import 'package:flutter/services.dart';
 
 class RegistrationViewModel with EmailAndPasswordValidators, ChangeNotifier {
   final NonAuthDatabase nonAuthDatabase;
@@ -90,12 +91,14 @@ class RegistrationViewModel with EmailAndPasswordValidators, ChangeNotifier {
             'Saving User Details. This may take several seconds...');
         FirebaseUser user = await auth.createUserWithEmailAndPassword(
             email: this.email, password: this.password);
+        tempUserProvider.setUser(userType: USER_TYPE.PATIENT);
         tempUserProvider.user.uid = user.uid;
         tempUserProvider.user.email = this.email;
         updateWith(submitted: false, isLoading: false);
         saveUserDetails(user);
       } else {
-        throw 'This email address is taken.';
+        throw PlatformException(
+            code: 'AUTH_ERROR', message: 'This email address is taken.');
       }
     } catch (e) {
       updateWith(isLoading: false);
@@ -115,6 +118,7 @@ class RegistrationViewModel with EmailAndPasswordValidators, ChangeNotifier {
             'Saving User Details. This may take several seconds...');
         FirebaseUser user = await auth.signInWithApple(
             appleIdCredential: appleSignInModel.credential);
+        tempUserProvider.setUser(userType: USER_TYPE.PATIENT);
         tempUserProvider.user.uid = user.uid;
         tempUserProvider.user.email = appleSignInModel.email;
 
@@ -144,6 +148,7 @@ class RegistrationViewModel with EmailAndPasswordValidators, ChangeNotifier {
         FirebaseUser user = await auth.signInWithGoogle(
           credential: googleAuthModel.credential,
         );
+        tempUserProvider.setUser(userType: USER_TYPE.PATIENT);
         tempUserProvider.user.uid = user.uid;
         tempUserProvider.user.email = googleAuthModel.email;
         updateWith(
@@ -158,8 +163,8 @@ class RegistrationViewModel with EmailAndPasswordValidators, ChangeNotifier {
     }
   }
 
-  void saveUserDetails(FirebaseUser user) {
-    unawaited(this.addNewUserToFirestore());
+  void saveUserDetails(FirebaseUser user) async {
+    await this.addNewUserToFirestore();
     this.auth.addUserToAuthStream(user: user);
   }
 
@@ -167,7 +172,7 @@ class RegistrationViewModel with EmailAndPasswordValidators, ChangeNotifier {
     FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
     String token = await _firebaseMessaging.getToken();
     tempUserProvider.user.devTokens = [token];
-    unawaited(nonAuthDatabase.setUser(tempUserProvider.user));
+    await nonAuthDatabase.setUser(tempUserProvider.user);
   }
 
   void updateWith({

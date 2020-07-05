@@ -32,6 +32,7 @@ class TempUserProvider {
     } else {
       this._user = user == null ? ProviderUser() : user as ProviderUser;
     }
+    this._user.type = userType;
   }
 
   //Below functions will be phased out once database.dart is refactored
