@@ -5,17 +5,17 @@ class MedicallUser {
   List<dynamic> devTokens;
   String type;
   String displayName;
-  String firstName;
-  String lastName;
-  String dob;
+  String firstName; //
+  String lastName; //
+  String dob; //
   String gender;
   String phoneNumber;
-  String email;
-  String address;
-  String titles;
-  String medLicense;
-  String medLicenseState;
-  String npi;
+  String email; //
+  String address; //
+  String titles; //
+  String medLicense; //
+  String medLicenseState; //
+  String npi; //
   bool stripeConnectAuthorized;
   String profilePic;
   String govId;

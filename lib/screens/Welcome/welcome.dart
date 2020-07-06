@@ -1,5 +1,6 @@
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Login/login.dart';
+import 'package:Medicall/screens/Registration/Provider/provider_registration.dart';
 import 'package:Medicall/screens/Symptoms/symptoms.dart';
 import 'package:flutter/material.dart';
 
@@ -41,7 +42,7 @@ class WelcomeScreen extends StatelessWidget {
         style: TextStyle(fontSize: 18),
       ),
       buildStepsList(),
-      SizedBox(height: 80),
+      SizedBox(height: 30),
       buildGetStartedBtn(context),
       SizedBox(height: 10),
       Row(
@@ -57,7 +58,24 @@ class WelcomeScreen extends StatelessWidget {
                 style: TextStyle(decoration: TextDecoration.underline),
               )),
         ],
-      )
+      ),
+      SizedBox(height: 10),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          GestureDetector(
+              onTap: () {
+                ProviderRegistrationScreen.show(context: context);
+                //Navigator.of(context).pushNamed('/provider-registration');
+              },
+              child: Text(
+                'Register',
+                style: TextStyle(decoration: TextDecoration.underline),
+              )),
+          Text(' as a provider'),
+          SizedBox(height: 10),
+        ],
+      ),
     ];
   }
 

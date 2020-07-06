@@ -19,6 +19,7 @@ import 'package:Medicall/screens/PhoneAuth/index.dart';
 import 'package:Medicall/screens/Privacy/index.dart';
 import 'package:Medicall/screens/Questions/questionsScreen.dart';
 import 'package:Medicall/screens/Questions/questions_screen.dart';
+import 'package:Medicall/screens/Registration/Provider/provider_registration.dart';
 import 'package:Medicall/screens/Registration/photoIdScreen.dart';
 import 'package:Medicall/screens/Registration/registration.dart';
 import 'package:Medicall/screens/Registration/registrationType.dart';
@@ -40,6 +41,7 @@ class Routes {
   static const startVisit = '/start-visit';
   static const zipCodeVerify = '/zip-code-verify';
   static const registration = '/registration';
+  static const providerRegistration = '/provider-registration';
   static const reset_password = '/reset-password';
   static const photoID = '/photo-ID';
   static const ocr = '/ocr';
@@ -112,6 +114,12 @@ class Router {
       case Routes.registration:
         return MaterialPageRoute<dynamic>(
           builder: (context) => RegistrationScreen.create(context),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case Routes.providerRegistration:
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => ProviderRegistrationScreen.create(context),
           settings: settings,
           fullscreenDialog: true,
         );
