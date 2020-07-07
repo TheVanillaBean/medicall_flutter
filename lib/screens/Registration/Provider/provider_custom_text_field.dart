@@ -6,6 +6,7 @@ class ProviderCustomTextField extends StatelessWidget {
     this.icon,
     this.labelText,
     this.hint,
+    this.keyboardType,
     this.obscure = false,
     this.validator,
     this.controller,
@@ -14,6 +15,7 @@ class ProviderCustomTextField extends StatelessWidget {
   final Icon icon;
   final String labelText;
   final String hint;
+  final TextInputType keyboardType;
   final bool obscure;
   final FormFieldValidator<String> validator;
   final TextEditingController controller;
@@ -26,8 +28,8 @@ class ProviderCustomTextField extends StatelessWidget {
         right: 30,
       ),
       child: TextFormField(
+        controller: controller,
         autofocus: true,
-        //obscureText: false,
         style: TextStyle(fontSize: 18, color: Colors.black87),
         decoration: InputDecoration(
           icon: IconTheme(
@@ -48,6 +50,12 @@ class ProviderCustomTextField extends StatelessWidget {
               width: 0.5,
             ),
           ),
+          errorBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.red,
+              width: 0.5,
+            ),
+          ),
           focusedErrorBorder: UnderlineInputBorder(
             borderSide: BorderSide(
               color: Colors.red,
@@ -55,6 +63,13 @@ class ProviderCustomTextField extends StatelessWidget {
             ),
           ),
         ),
+        keyboardType: keyboardType,
+        validator: (input) {
+          if (input.isEmpty) {
+            return '$labelText is required';
+          }
+          return null;
+        },
       ),
     );
   }

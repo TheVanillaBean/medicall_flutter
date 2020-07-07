@@ -1,6 +1,4 @@
-import 'package:Medicall/common_widgets/custom_raised_button.dart';
 import 'package:Medicall/screens/Registration/Provider/provider_custom_text_field.dart';
-import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:flutter/material.dart';
 
 class ProviderRegistrationForm extends StatefulWidget {
@@ -27,11 +25,9 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm> {
 
   @override
   Widget build(BuildContext context) {
-    Color primaryColor = Theme.of(context).primaryColor;
     return Form(
       key: _formKey,
       child: Column(
-        //crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           SizedBox(height: 20),
           ProviderCustomTextField(
@@ -102,7 +98,12 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm> {
           Container(
             width: 250,
             child: RaisedButton(
-              onPressed: () {},
+              onPressed: () {
+                if (_formKey.currentState.validate()) {
+                  Scaffold.of(context)
+                      .showSnackBar(SnackBar(content: Text('Processing Data')));
+                }
+              },
               shape: StadiumBorder(),
               color: Colors.green,
               textColor: Colors.white,
