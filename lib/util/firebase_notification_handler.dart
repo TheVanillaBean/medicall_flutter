@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/models/user_model_base.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -8,9 +8,9 @@ import 'package:flutter/material.dart';
 class FirebaseNotifications {
   FirebaseMessaging _firebaseMessaging;
   FirebaseUser firebaseUser;
-  MedicallUser medicallUser = MedicallUser();
+  User medicallUser;
 
-  setUpFirebase({@required MedicallUser medicallUser}) {
+  setUpFirebase({@required User medicallUser}) {
     this.medicallUser = medicallUser;
     _firebaseMessaging = FirebaseMessaging();
     firebaseCloudMessagingListeners();
@@ -23,7 +23,7 @@ class FirebaseNotifications {
     print('this is the requested route on launch:' + requestedRoute);
     //Navigator.pushReplacementNamed(scaffoldKey, '/login');
     //showToast('LAUNCH:' + item.toString(), duration: Duration(seconds: 3));
-    
+
     return;
   }
 
@@ -84,13 +84,9 @@ class FirebaseNotifications {
     _firebaseMessaging.requestNotificationPermissions(
         const IosNotificationSettings(sound: true, badge: true, alert: true));
     _firebaseMessaging.onIosSettingsRegistered
-        .listen((IosNotificationSettings settings) {
-      //print('Settings registered: $settings');
-    });
+        .listen((IosNotificationSettings settings) {});
     _firebaseMessaging.getToken().then((String token) {
       assert(token != null);
-      //print(token);
-      medicallUser = MedicallUser();
       medicallUser.devTokens = [token];
     });
   }

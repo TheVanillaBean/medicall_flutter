@@ -1,3 +1,4 @@
+import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -64,7 +65,7 @@ class RegistrationTypeScreen extends StatelessWidget {
                   ],
                 ),
                 onPressed: () {
-                  tempUserProvider.updateWith(userType: 'patient');
+                  tempUserProvider.setUser(userType: USER_TYPE.PATIENT);
                   Navigator.of(context).pushNamed('/registration');
                 },
               ),
@@ -108,7 +109,7 @@ class RegistrationTypeScreen extends StatelessWidget {
                 ),
                 onPressed: () {
                   tempUserProvider.getMalpracticeQuestions();
-                  tempUserProvider.updateWith(userType: 'provider');
+                  tempUserProvider.setUser(userType: USER_TYPE.PROVIDER);
                   Navigator.of(context).pushNamed('/registration');
                 },
               ),

@@ -217,13 +217,13 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen>
   }
 
   void updateUserWithFormData(TempUserProvider tempUserProvider) {
-    tempUserProvider.updateWith(
-      password: this.password,
-      email: this.email,
-      terms: this.terms,
-      policy: this.policy,
-      consent: this.consent,
-    );
+//    tempUserProvider.updateWith(
+//      password: this.password,
+//      email: this.email,
+//      terms: this.terms,
+//      policy: this.policy,
+//      consent: this.consent,
+//    );
     // if (tempUserProvider.medicallUser.type == 'provider') {
     //   tempUserProvider.updateWith(
     //       titles: this.titles,

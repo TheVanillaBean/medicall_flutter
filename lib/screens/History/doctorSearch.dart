@@ -1,6 +1,7 @@
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/consult_data_model.dart';
-import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/models/patient_user_model.dart';
+import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/screens/History/index.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
@@ -16,7 +17,7 @@ class DoctorSearch extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var userProvider = Provider.of<UserProvider>(context, listen: false);
-    MedicallUser medicallUser = userProvider.medicallUser;
+    User medicallUser = userProvider.user;
     var _db = Provider.of<Database>(context, listen: false);
     currentOrientation = MediaQuery.of(context).orientation;
     currTab = "Search Doctors";
@@ -62,8 +63,7 @@ class DoctorSearch extends StatelessWidget {
                 var userDocuments = snapshot.data.documents;
                 List<Widget> historyList = [];
                 for (var i = 0; i < userDocuments.length; i++) {
-                  if (medicallUser.displayName !=
-                      userDocuments[i].data['name']) {
+                  if (medicallUser.fullName != userDocuments[i].data['name']) {
                     historyList.add(ListTile(
                       dense: true,
                       contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
@@ -142,7 +142,7 @@ class CustomSearchDelegate extends SearchDelegate {
   String providerProfilePic = '';
   ConsultData _consult = ConsultData();
 
-  MedicallUser medicallUser = MedicallUser();
+  User medicallUser = PatientUser();
 
   CustomSearchDelegate({this.medicallUser});
 
@@ -218,7 +218,7 @@ class CustomSearchDelegate extends SearchDelegate {
                   List<Widget> historyList = [];
                   for (var i = 0; i < userDocuments.length; i++) {
                     if (userDocuments[i].data['type'] == 'provider' &&
-                        medicallUser.displayName !=
+                        medicallUser.fullName !=
                             userDocuments[i].data['name'] &&
                         userDocuments[i].data['name'].toLowerCase().contains(
                               query.toLowerCase(),

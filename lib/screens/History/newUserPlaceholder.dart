@@ -1,11 +1,11 @@
-import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/presentation/medicall_icons_icons.dart' as CustomIcons;
 import 'package:Medicall/util/app_util.dart' as AppUtils;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class NewUserPlaceHolder extends StatelessWidget {
-  final MedicallUser medicallUser;
+  final User medicallUser;
   const NewUserPlaceHolder({Key key, @required this.medicallUser})
       : super(key: key);
 
@@ -13,7 +13,7 @@ class NewUserPlaceHolder extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
         child: Column(children: <Widget>[
-      medicallUser.type == 'provider'
+      medicallUser.type == USER_TYPE.PROVIDER
           ? Container(
               width: ScreenUtil.screenWidthDp - 20,
               margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
@@ -163,7 +163,7 @@ class NewUserPlaceHolder extends StatelessWidget {
                     color: Colors.blueAccent.withAlpha(200),
                   ),
                   Text(
-                    medicallUser.type == 'patient'
+                    medicallUser.type == USER_TYPE.PATIENT
                         ? 'Doctor reviews &\n provides diagnosis'
                         : 'Review &\n provide diagnosis',
                     textAlign: TextAlign.center,

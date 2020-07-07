@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
@@ -22,7 +22,7 @@ class Chat extends StatefulWidget {
 }
 
 class _ChatState extends State<Chat> {
-  MedicallUser _medicallUser;
+  User _medicallUser;
   Database _db;
   ExtImageProvider _extImageProvider;
 
@@ -88,7 +88,7 @@ class _ChatState extends State<Chat> {
 
   @override
   Widget build(BuildContext context) {
-    _medicallUser = Provider.of<UserProvider>(context).medicallUser;
+    _medicallUser = Provider.of<UserProvider>(context).user;
     _db = Provider.of<Database>(context);
     _extImageProvider = Provider.of<ExtImageProvider>(context);
     if (_medicallUser.type == 'provider') {
@@ -98,7 +98,7 @@ class _ChatState extends State<Chat> {
       _db.updatePatientUnreadChat(true);
     }
     user = ChatUser(
-        name: _medicallUser.displayName,
+        name: _medicallUser.fullName,
         uid: _medicallUser.uid,
         avatar: _medicallUser.profilePic);
 

@@ -1,4 +1,4 @@
-import 'package:Medicall/models/screening_question_model.dart';
+import 'package:Medicall/models/question_model.dart';
 
 class Option {
   String value;

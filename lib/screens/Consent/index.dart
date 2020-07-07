@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 String _returnString(user) {
-  var fullName = user.displayName;
+  var fullName = user.fullName;
   var loc = user.address;
   var dob = user.dob;
   var now = DateTime.now();
@@ -88,7 +88,7 @@ class ConsentScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tempUserProvider = Provider.of<TempUserProvider>(context);
-    final medicallUser = tempUserProvider.medicallUser;
+    final medicallUser = tempUserProvider.user;
     final _scrollController = ScrollController();
 
     return Scaffold(
@@ -135,7 +135,6 @@ class ConsentScreen extends StatelessWidget {
                     child: FlatButton(
                       padding: EdgeInsets.all(20),
                       onPressed: () {
-                        medicallUser.consent = true;
                         Navigator.of(context).pushNamed('/phoneAuth');
                       },
                       color: Colors.green,

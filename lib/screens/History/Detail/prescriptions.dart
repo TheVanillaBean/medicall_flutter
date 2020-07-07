@@ -1,4 +1,5 @@
-import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/models/user_model_base.dart';
+import 'package:Medicall/presentation/medicall_icons_icons.dart' as CustomIcons;
 import 'package:Medicall/screens/History/Detail/buildDetailTab.dart';
 import 'package:Medicall/screens/History/Detail/prescription.dart';
 import 'package:Medicall/services/database.dart';
@@ -6,7 +7,6 @@ import 'package:Medicall/services/user_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dash_chat/dash_chat.dart';
 import 'package:flutter/material.dart';
-import 'package:Medicall/presentation/medicall_icons_icons.dart' as CustomIcons;
 import 'package:provider/provider.dart';
 
 class PrescriptionsScreen extends StatelessWidget {
@@ -16,8 +16,7 @@ class PrescriptionsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Database _db = Provider.of<Database>(context);
-    final MedicallUser medicallUser =
-        Provider.of<UserProvider>(context).medicallUser;
+    final User medicallUser = Provider.of<UserProvider>(context).user;
     return Scaffold(
         appBar: AppBar(
           title: Text('Prescriptions'),
@@ -103,9 +102,12 @@ class PrescriptionsScreen extends StatelessWidget {
                                           snapshot.data.documents[index]
                                               .data['price']
                                               .toString(),
-                                      style: TextStyle(color: Colors.blue, fontSize: 14),
+                                      style: TextStyle(
+                                          color: Colors.blue, fontSize: 14),
                                     ),
-                                    SizedBox(height: 5,),
+                                    SizedBox(
+                                      height: 5,
+                                    ),
                                     Text(DateFormat('dd MMM h:mm a')
                                         .format(DateTime
                                             .fromMillisecondsSinceEpoch(snapshot

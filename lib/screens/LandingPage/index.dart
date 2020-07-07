@@ -1,4 +1,5 @@
-import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/models/provider_user_model.dart';
+import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -8,7 +9,7 @@ import 'package:provider/provider.dart';
 /// An [AuthWidgetBuilder] ancestor is required for this widget to work.
 
 class LandingPage extends StatelessWidget {
-  final AsyncSnapshot<MedicallUser> userSnapshot;
+  final AsyncSnapshot<User> userSnapshot;
   final WidgetBuilder nonSignedInBuilder;
   final WidgetBuilder signedInBuilder;
   final WidgetBuilder stripeConnectBuilder;
@@ -29,9 +30,9 @@ class LandingPage extends StatelessWidget {
         Provider.of<TempUserProvider>(context, listen: false);
     if (userSnapshot.connectionState == ConnectionState.active) {
       if (userSnapshot.hasData) {
-        MedicallUser medicallUser = userSnapshot.data;
-        if (medicallUser.type == "provider" &&
-            !medicallUser.stripeConnectAuthorized) {
+        User medicallUser = userSnapshot.data;
+        if (medicallUser.type == USER_TYPE.PROVIDER &&
+            !(medicallUser as ProviderUser).stripeConnectAuthorized) {
           return stripeConnectBuilder(context);
         } else {
           if (tempUserProvider.consult != null) {

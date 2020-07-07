@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/util/validators.dart';
@@ -166,7 +166,7 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
 
   Future<void> signInWithPhoneAuthCredential(bool mounted) async {
     try {
-      MedicallUser user;
+      User user;
       this.auth.triggerAuthStream = false;
 
       this.phoneAuthCredential = this.phoneAuthCredential ??
@@ -175,8 +175,8 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
 
       this.verificationStatus.updateStatus('Performing Security Check...');
 
-      bool emailAlreadyUsed = await auth.emailAlreadyUsed(
-          email: this.tempUserProvider.medicallUser.email);
+      bool emailAlreadyUsed =
+          await auth.emailAlreadyUsed(email: this.tempUserProvider.user.email);
 
       if (emailAlreadyUsed) {
         this.auth.triggerAuthStream = true;
@@ -217,18 +217,18 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
         } else {
           AuthCredential emailCredential =
               await auth.fetchEmailAndPasswordCredential(
-            email: this.tempUserProvider.medicallUser.email,
+            email: this.tempUserProvider.user.email,
             password: this.tempUserProvider.password,
           );
           currentFirebaseUser = await auth.linkCredentialWithCurrentUser(
               credential: emailCredential);
         }
 
-        this.tempUserProvider.updateWith(
-              uid: user.uid,
-              devTokens: user.devTokens,
-              phoneNumber: user.phoneNumber,
-            );
+//        this.tempUserProvider.updateWith(
+//              uid: user.uid,
+//              devTokens: user.devTokens,
+//              phoneNumber: user.phoneNumber,
+//            );
 
         this.verificationStatus.updateStatus(
             'Saving User Details. This may take several seconds...');

@@ -1,13 +1,13 @@
-import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/models/provider_user_model.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 
 class MalpracticeScreenModel {
   TempUserProvider tempUserProvider;
-  MedicallUser medicallUser;
+  ProviderUser medicallUser;
 
   void setTempUserProvider(TempUserProvider tempUserProvider) {
     this.tempUserProvider = tempUserProvider;
-    this.medicallUser = this.tempUserProvider.medicallUser;
+    this.medicallUser = this.tempUserProvider.user;
   }
 
   MalpracticeScreenModel();

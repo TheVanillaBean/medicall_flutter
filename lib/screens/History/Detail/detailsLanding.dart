@@ -1,10 +1,10 @@
-import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/models/user_model_base.dart';
+import 'package:Medicall/presentation/medicall_icons_icons.dart' as CustomIcons;
 import 'package:Medicall/screens/History/Detail/buildDetailTab.dart';
 import 'package:Medicall/screens/History/Detail/prescriptions.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:Medicall/presentation/medicall_icons_icons.dart' as CustomIcons;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
@@ -15,15 +15,14 @@ class DetailsLandingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    MedicallUser medicallUser =
-        Provider.of<UserProvider>(context, listen: false).medicallUser;
+    User medicallUser = Provider.of<UserProvider>(context, listen: false).user;
     Database db = Provider.of<Database>(context, listen: false);
     Map consultSnapshot = db.consultSnapshot.data;
     return SingleChildScrollView(
       child: Container(
         child: Column(
           children: <Widget>[
-            medicallUser.type == 'provider' &&
+            medicallUser.type == USER_TYPE.PROVIDER &&
                     consultSnapshot.containsKey('exam') &&
                     consultSnapshot['exam'].length > 0
                 ? Container(

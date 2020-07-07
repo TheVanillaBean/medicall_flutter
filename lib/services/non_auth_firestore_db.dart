@@ -1,25 +1,29 @@
-import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/models/patient_user_model.dart';
+import 'package:Medicall/models/provider_user_model.dart';
 import 'package:Medicall/models/screening_questions_model.dart';
 import 'package:Medicall/models/symptom_model.dart';
+import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/services/firestore_service.dart';
 
 import 'firestore_path.dart';
 
 abstract class NonAuthDatabase {
-  Future<void> setUser(MedicallUser user);
+  Future<void> setUser(User user);
   Stream<List<Symptom>> symptomsStream();
   Future<List<ScreeningQuestions>> getScreeningQuestions({String symptomName});
   Future<List<String>> getAllProviderAddresses();
-  Stream<List<MedicallUser>> getAllProviders();
-  Stream<MedicallUser> providerStream({String uid});
+  Stream<List<ProviderUser>> getAllProviders();
+  Stream<User> providerStream({String uid});
 }
 
 class NonAuthFirestoreDB implements NonAuthDatabase {
   final _service = FirestoreService.instance;
 
-  Future<void> setUser(MedicallUser user) => _service.setData(
+  Future<void> setUser(User user) => _service.setData(
         path: FirestorePath.user(user.uid),
-        data: user.toMap(),
+        data: user.type == USER_TYPE.PATIENT
+            ? (user as PatientUser).toMap()
+            : (user as ProviderUser).toMap(),
       );
 
   @override
@@ -49,15 +53,17 @@ class NonAuthFirestoreDB implements NonAuthDatabase {
       .first;
 
   @override
-  Stream<List<MedicallUser>> getAllProviders() => _service.collectionStream(
+  Stream<List<ProviderUser>> getAllProviders() => _service.collectionStream(
         path: FirestorePath.users(),
         queryBuilder: (query) => query.where('type', isEqualTo: "provider"),
-        builder: (data, documentId) => MedicallUser.fromMap(data, documentId),
+        builder: (data, documentId) => User.fromMap(
+            userType: USER_TYPE.PROVIDER, data: data, uid: documentId),
       );
 
   @override
-  Stream<MedicallUser> providerStream({String uid}) => _service.documentStream(
+  Stream<ProviderUser> providerStream({String uid}) => _service.documentStream(
         path: FirestorePath.user(uid),
-        builder: (data, documentId) => MedicallUser.fromMap(data, documentId),
+        builder: (data, documentId) => User.fromMap(
+            userType: USER_TYPE.PROVIDER, data: data, uid: documentId),
       );
 }

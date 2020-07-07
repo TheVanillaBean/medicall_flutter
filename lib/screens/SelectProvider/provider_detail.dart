@@ -1,5 +1,6 @@
 import 'package:Medicall/models/consult_model.dart';
-import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/models/patient_user_model.dart';
+import 'package:Medicall/models/provider_user_model.dart';
 import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Registration/registration.dart';
@@ -13,14 +14,14 @@ import 'package:provider/provider.dart';
 
 class ProviderDetailScreen extends StatelessWidget {
   final Symptom symptom;
-  final MedicallUser provider;
+  final ProviderUser provider;
 
   const ProviderDetailScreen({@required this.symptom, @required this.provider});
 
   static Future<void> show({
     BuildContext context,
     Symptom symptom,
-    MedicallUser provider,
+    ProviderUser provider,
   }) async {
     await Navigator.of(context).pushNamed(
       Routes.providerDetail,
@@ -38,10 +39,12 @@ class ProviderDetailScreen extends StatelessWidget {
     final ExtImageProvider extImageProvider =
         Provider.of<ExtImageProvider>(context);
 
-    MedicallUser medicallUser;
+    PatientUser currentUser;
     try {
-      medicallUser = Provider.of<UserProvider>(context).medicallUser;
-    } catch (e) {}
+      currentUser = Provider.of<UserProvider>(context).user;
+    } catch (e) {
+      // This is okay, as this just checks if the provider exists.
+    }
 
     ScreenUtil.init(context);
     return Scaffold(
@@ -58,7 +61,7 @@ class ProviderDetailScreen extends StatelessWidget {
         ),
         centerTitle: true,
         title: Text(
-          provider.displayName + ' ' + provider.titles,
+          provider.fullName + ' ' + provider.titles,
         ),
       ),
       body: SingleChildScrollView(
@@ -71,7 +74,7 @@ class ProviderDetailScreen extends StatelessWidget {
             children: _buildChildren(
               tempUserProvider,
               extImageProvider,
-              medicallUser,
+              currentUser,
               context,
             ),
           ),
@@ -83,7 +86,7 @@ class ProviderDetailScreen extends StatelessWidget {
   List<Widget> _buildChildren(
     TempUserProvider tempUserProvider,
     ExtendedImageProvider extImageProvider,
-    MedicallUser medicallUser,
+    PatientUser currentUser,
     BuildContext context,
   ) {
     return <Widget>[
@@ -147,8 +150,9 @@ class ProviderDetailScreen extends StatelessWidget {
               providerId: provider.uid,
               symptom: symptom.name,
               date: DateTime.now(),
+              price: 49,
             );
-            if (medicallUser != null) {
+            if (currentUser != null) {
               StartVisitScreen.show(
                 context: context,
                 consult: consult,

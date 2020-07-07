@@ -7,6 +7,7 @@ import 'package:Medicall/screens/Questions/progress_bar.dart';
 import 'package:Medicall/screens/Questions/question_page.dart';
 import 'package:Medicall/screens/Questions/questions_view_model.dart';
 import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/non_auth_firestore_db.dart';
 import 'package:flutter/material.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
@@ -20,10 +21,13 @@ class QuestionsScreen extends StatefulWidget {
     Consult consult,
   ) {
     final AuthBase auth = Provider.of<AuthBase>(context, listen: false);
+    final FirestoreDatabase database =
+        Provider.of<FirestoreDatabase>(context, listen: false);
     return PropertyChangeProvider(
       value: QuestionsViewModel(
         auth: auth,
         consult: consult,
+        database: database,
       ),
       child: PropertyChangeConsumer<QuestionsViewModel>(
         properties: [QuestionVMProperties.questionScreen],
@@ -96,6 +100,12 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
 }
 
 class QuestionsPageView extends StatelessWidget {
+  Future<void> completeConsultBtnPressed(
+      BuildContext context, QuestionsViewModel model) async {
+    await model.saveConsultation();
+    PersonalInfoScreen.show(context: context, consult: model.consult);
+  }
+
   @override
   Widget build(BuildContext context) {
     final QuestionsViewModel model =
@@ -152,9 +162,9 @@ class QuestionsPageView extends StatelessWidget {
             color: Colors.blueAccent,
             icon: Icon(Icons.check),
             label: Text('Complete consultation'),
-            onPressed: () {
-              PersonalInfoScreen.show(context: context, consult: model.consult);
-            },
+            onPressed: !model.submitted
+                ? () => completeConsultBtnPressed(context, model)
+                : null,
           ),
           CustomRaisedButton(
             color: Colors.blue,

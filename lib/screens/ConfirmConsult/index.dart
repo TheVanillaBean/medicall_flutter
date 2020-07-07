@@ -1,5 +1,5 @@
 import 'package:Medicall/common_widgets/carousel/carousel_with_indicator.dart';
-import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/screens/ConfirmConsult/routeUserOrder.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
@@ -20,7 +20,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
   bool _isLoading = false;
   bool _hasReviewed = false;
   Database _db;
-  MedicallUser _medicallUser;
+  User _medicallUser;
   ExtImageProvider _extImageProvider;
   StripeProvider _stripeProvider;
   TabController _confirmTabCntrl;
@@ -40,7 +40,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
   @override
   Widget build(BuildContext context) {
     _db = Provider.of<Database>(context);
-    _medicallUser = Provider.of<UserProvider>(context).medicallUser;
+    _medicallUser = Provider.of<UserProvider>(context).user;
     _extImageProvider = Provider.of<ExtImageProvider>(context);
     _stripeProvider = Provider.of<StripeProvider>(context);
     _db.newConsult.media = [];

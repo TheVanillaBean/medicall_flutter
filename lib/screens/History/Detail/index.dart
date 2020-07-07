@@ -1,5 +1,5 @@
 import 'package:Medicall/models/consult_status_modal.dart';
-import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/screens/History/Detail/detailsLanding.dart';
 import 'package:Medicall/screens/History/Detail/history_detail_state.dart';
 import 'package:Medicall/screens/Questions/questionsScreen.dart';
@@ -13,8 +13,7 @@ class HistoryDetailScreen extends StatefulWidget {
 
   static Widget create(BuildContext context) {
     final Database _db = Provider.of<Database>(context);
-    final MedicallUser _medicallUser =
-        Provider.of<UserProvider>(context).medicallUser;
+    final User _medicallUser = Provider.of<UserProvider>(context).user;
 
     return ChangeNotifierProvider<DetailedHistoryState>(
       create: (context) => DetailedHistoryState(

@@ -1,11 +1,11 @@
-import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class HistoryState with ChangeNotifier {
-  MedicallUser medicallUser;
+  User medicallUser;
   AsyncSnapshot historySnapshot;
   ExtendedImageProvider extendedImageProvider;
   Database db;
@@ -19,10 +19,10 @@ class HistoryState with ChangeNotifier {
     userHistory = snapshot;
     notifyListeners();
   }
+
   int sortBy = 1;
 
-  getUserHistorySnapshot(
-      MedicallUser medicallUser, String searchQuery, int sortBy) {
+  getUserHistorySnapshot(User medicallUser, String searchQuery, int sortBy) {
     if (medicallUser.uid.length > 0) {
       if (sortBy == 1) {
         return Firestore.instance

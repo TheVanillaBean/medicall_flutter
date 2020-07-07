@@ -7,6 +7,7 @@ import 'package:Medicall/screens/MakePayment/make_payment.dart';
 import 'package:Medicall/screens/PersonalInfo/personal_info_view_model.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
+import 'package:Medicall/services/firebase_storage_service.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
@@ -27,11 +28,14 @@ class PersonalInfoScreen extends StatefulWidget {
         Provider.of<ExtImageProvider>(context);
     final FirestoreDatabase firestoreDatabase =
         Provider.of<FirestoreDatabase>(context);
+    final FirebaseStorageService firestoreStorage =
+        Provider.of<FirebaseStorageService>(context);
     return ChangeNotifierProvider<PersonalInfoViewModel>(
       create: (context) => PersonalInfoViewModel(
         consult: consult,
         userProvider: userProvider,
         firestoreDatabase: firestoreDatabase,
+        firebaseStorageService: firestoreStorage,
       ),
       child: Consumer<PersonalInfoViewModel>(
         builder: (_, model, __) => PersonalInfoScreen(
@@ -193,6 +197,8 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
           )
         ],
       ),
+      SizedBox(height: 12),
+      if (model.isLoading) const CircularProgressIndicator(),
     ];
   }
 

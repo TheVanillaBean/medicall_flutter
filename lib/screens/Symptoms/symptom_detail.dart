@@ -1,5 +1,5 @@
-import 'package:Medicall/models/medicall_user_model.dart';
 import 'package:Medicall/models/symptom_model.dart';
+import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/SelectProvider/select_provider.dart';
 import 'package:Medicall/screens/Welcome/zip_code_verify.dart';
@@ -27,9 +27,9 @@ class SymptomDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    MedicallUser medicallUser;
+    User medicallUser;
     try {
-      medicallUser = Provider.of<UserProvider>(context).medicallUser;
+      medicallUser = Provider.of<UserProvider>(context).user;
     } catch (e) {}
 
     return Scaffold(
@@ -59,7 +59,7 @@ class SymptomDetailScreen extends StatelessWidget {
     );
   }
 
-  List<Widget> _buildChildren(BuildContext context, MedicallUser medicallUser) {
+  List<Widget> _buildChildren(BuildContext context, User medicallUser) {
     return <Widget>[
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

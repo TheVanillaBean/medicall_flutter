@@ -1,19 +1,18 @@
-import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/models/user_model_base.dart';
 import 'package:flutter/material.dart';
 
 class UserProvider {
-  MedicallUser _medicallUser;
+  User _user;
 
-  MedicallUser get medicallUser {
-    return _medicallUser;
+  User get user {
+    return _user;
   }
 
-  set medicallUser(user) {
-    _medicallUser = user;
+  set user(user) {
+    _user = user;
   }
 
-  UserProvider({@required MedicallUser medicallUser})
-      : assert(medicallUser != null) {
-    this.medicallUser = medicallUser;
+  UserProvider({@required User user}) : assert(user != null) {
+    this.user = user;
   }
 }

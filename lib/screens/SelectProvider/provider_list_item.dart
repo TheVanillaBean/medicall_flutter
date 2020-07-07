@@ -1,4 +1,4 @@
-import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/models/provider_user_model.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/util/string_utils.dart';
 import 'package:flutter/foundation.dart';
@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 class ProviderListItem extends StatelessWidget {
   const ProviderListItem({Key key, @required this.provider, this.onTap})
       : super(key: key);
-  final MedicallUser provider;
+  final ProviderUser provider;
   final VoidCallback onTap;
 
   @override

@@ -1,15 +1,15 @@
 import 'package:Medicall/common_widgets/carousel/carousel_with_indicator.dart';
 import 'package:Medicall/common_widgets/chat/chat.dart';
-import 'package:Medicall/models/medicall_user_model.dart';
+import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/screens/History/Detail/prescriptionPayment.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:Medicall/util/build_medical_note.dart';
+import 'package:Medicall/util/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:provider/provider.dart';
-import 'package:Medicall/util/string_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class BuildDetailTab extends StatefulWidget {
@@ -35,7 +35,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
       GlobalKey<FormBuilderState>();
   final _scrollController = ScrollController();
   Database db;
-  MedicallUser medicallUser;
+  User medicallUser;
   @override
   void initState() {
     super.initState();
@@ -44,7 +44,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
   @override
   Widget build(BuildContext context) {
     db = Provider.of<Database>(context);
-    medicallUser = Provider.of<UserProvider>(context).medicallUser;
+    medicallUser = Provider.of<UserProvider>(context).user;
     if (currentDetailsIndex == 0) {
       db.getPatientMedicalHistory(medicallUser);
     }
@@ -400,17 +400,17 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                       children: <Widget>[
                                         Text(
                                           '\n' +
-                                              db.patientDetail.displayName
+                                              db.patientDetail.fullName
                                                   .split(' ')[0][0]
                                                   .toUpperCase() +
-                                              db.patientDetail.displayName
+                                              db.patientDetail.fullName
                                                   .split(' ')[0]
                                                   .substring(1) +
                                               ' ' +
-                                              db.patientDetail.displayName
+                                              db.patientDetail.fullName
                                                   .split(' ')[1][0]
                                                   .toUpperCase() +
-                                              db.patientDetail.displayName
+                                              db.patientDetail.fullName
                                                   .split(' ')[1]
                                                   .substring(1),
                                         ),
