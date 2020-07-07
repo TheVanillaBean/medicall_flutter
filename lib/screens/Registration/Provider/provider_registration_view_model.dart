@@ -1,14 +1,14 @@
+import 'package:Medicall/models/provider_user_model.dart';
+import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/screens/Login/apple_sign_in_model.dart';
 import 'package:Medicall/screens/Login/google_auth_model.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/non_auth_firestore_db.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/util/validators.dart';
-import 'package:apple_sign_in/scope.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:pedantic/pedantic.dart';
 
 class ProviderRegistrationViewModel
     with EmailAndPasswordValidators, ChangeNotifier {
@@ -19,6 +19,14 @@ class ProviderRegistrationViewModel
   String email;
   String password;
   String confirmPassword;
+  String firstName;
+  String lastName;
+  String dob;
+  String address;
+  String titles;
+  String medLicense;
+  String medLicenseState;
+
   bool checkValue;
   bool isLoading;
   bool submitted;
@@ -68,33 +76,49 @@ class ProviderRegistrationViewModel
   void updateConfirmPassword(String password) =>
       updateWith(confirmPassword: password);
   void updateCheckValue(bool checkValue) => updateWith(checkValue: checkValue);
+  void updateFirstName(String fName) => updateWith(firstName: fName);
+  void updateLastName(String lName) => updateWith(lastName: lName);
+  void updateDOB(String dob) => updateWith(dob: dob);
+  void updateAddress(String address) => updateWith(address: address);
+  void updateTitles(String titles) => updateWith(titles: titles);
+  void updateMedLicense(String medLicense) =>
+      updateWith(medLicense: medLicense);
+  void updateMedLicenseState(String state) =>
+      updateWith(medLicenseState: state);
 
   Future<void> submit() async {
     updateWith(submitted: true);
-    if (!checkValue) {
-      this.verificationStatus.updateStatus(
-          "You have to agree to the Terms and Conditions, as well as the Privacy policy before signing in");
-      return;
-    }
+//    if (!checkValue) {
+//      this.verificationStatus.updateStatus(
+//          "You have to agree to the Terms and Conditions, as well as the Privacy policy before signing in");
+//      return;
+//    }
 
-    if (password != confirmPassword) {
-      this.verificationStatus.updateStatus("Passwords do not match.");
-      return;
-    }
+//    if (password != confirmPassword) {
+//      this.verificationStatus.updateStatus("Passwords do not match.");
+//      return;
+//    }
 
     try {
       updateWith(isLoading: true);
       bool emailAlreadyUsed = await auth.emailAlreadyUsed(email: this.email);
       if (!emailAlreadyUsed) {
         this.auth.triggerAuthStream = false;
-        this.verificationStatus.updateStatus(
-            'Saving User Details. This may take several seconds...');
+//        this.verificationStatus.updateStatus(
+//            'Saving User Details. This may take several seconds...');
         FirebaseUser user = await auth.createUserWithEmailAndPassword(
             email: this.email, password: this.password);
-        tempUserProvider.updateWith(
-          uid: user.uid,
-          email: this.email,
-        );
+        tempUserProvider.setUser(userType: USER_TYPE.PROVIDER);
+        tempUserProvider.user.uid = user.uid;
+        tempUserProvider.user.email = this.email;
+        tempUserProvider.user.firstName = this.firstName;
+        tempUserProvider.user.lastName = this.lastName;
+        tempUserProvider.user.dob = this.dob;
+        tempUserProvider.user.address = this.address;
+        (tempUserProvider.user as ProviderUser).titles = this.titles;
+        (tempUserProvider.user as ProviderUser).medLicense = this.medLicense;
+        (tempUserProvider.user as ProviderUser).medLicenseState =
+            this.medLicenseState;
         updateWith(submitted: false, isLoading: false);
         saveUserDetails(user);
       } else {
@@ -106,81 +130,29 @@ class ProviderRegistrationViewModel
     }
   }
 
-  Future<void> signInWithApplePressed(BuildContext context) async {
-    updateWith(submitted: true, isLoading: true);
-    try {
-      AppleSignInModel appleSignInModel = await auth
-          .fetchAppleSignInCredential(scopes: [Scope.email, Scope.fullName]);
-
-      if (appleSignInModel.credential != null) {
-        this.auth.triggerAuthStream = false;
-        this.verificationStatus.updateStatus(
-            'Saving User Details. This may take several seconds...');
-        FirebaseUser user = await auth.signInWithApple(
-            appleIdCredential: appleSignInModel.credential);
-        tempUserProvider.updateWith(
-          uid: user.uid,
-          email: appleSignInModel.email,
-        );
-
-        updateWith(
-            appleSignInModel: appleSignInModel,
-            submitted: false,
-            isLoading: false);
-
-        saveUserDetails(user);
-      }
-    } catch (e) {
-      updateWith(submitted: false, isLoading: false);
-      rethrow;
-    }
-  }
-
-  Future<void> signInWithGooglePressed(context) async {
-    updateWith(submitted: true, isLoading: true);
-    try {
-      GoogleAuthModel googleAuthModel =
-          await auth.fetchGoogleSignInCredential();
-
-      if (googleAuthModel.credential != null) {
-        this.auth.triggerAuthStream = false;
-        this.verificationStatus.updateStatus(
-            'Saving User Details. This may take several seconds...');
-        FirebaseUser user = await auth.signInWithGoogle(
-          credential: googleAuthModel.credential,
-        );
-        tempUserProvider.updateWith(
-          uid: user.uid,
-          email: googleAuthModel.email,
-        );
-        updateWith(
-            googleAuthModel: googleAuthModel,
-            submitted: false,
-            isLoading: false);
-        saveUserDetails(user);
-      }
-    } catch (e) {
-      updateWith(submitted: false, isLoading: false);
-      rethrow;
-    }
-  }
-
-  void saveUserDetails(FirebaseUser user) {
-    unawaited(this.addNewUserToFirestore());
+  void saveUserDetails(FirebaseUser user) async {
+    await this.addNewUserToFirestore();
     this.auth.addUserToAuthStream(user: user);
   }
 
   Future<void> addNewUserToFirestore() async {
     FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
     String token = await _firebaseMessaging.getToken();
-    tempUserProvider.medicallUser.devTokens = [token];
-    unawaited(nonAuthDatabase.setUser(tempUserProvider.medicallUser));
+    tempUserProvider.user.devTokens = [token];
+    await nonAuthDatabase.setUser(tempUserProvider.user);
   }
 
   void updateWith({
     String email,
     String password,
     String confirmPassword,
+    String firstName,
+    String lastName,
+    String dob,
+    String address,
+    String titles,
+    String medLicense,
+    String medLicenseState,
     bool checkValue,
     bool isLoading,
     bool submitted,
@@ -190,6 +162,13 @@ class ProviderRegistrationViewModel
     this.email = email ?? this.email;
     this.password = password ?? this.password;
     this.confirmPassword = confirmPassword ?? this.confirmPassword;
+    this.firstName = firstName ?? this.firstName;
+    this.lastName = lastName ?? this.lastName;
+    this.dob = dob ?? this.dob;
+    this.address = address ?? this.address;
+    this.titles = titles ?? this.titles;
+    this.medLicense = medLicense ?? this.medLicense;
+    this.medLicenseState = medLicenseState ?? this.medLicenseState;
     this.checkValue = checkValue ?? this.checkValue;
     this.isLoading = isLoading ?? this.isLoading;
     this.submitted = submitted ?? this.submitted;

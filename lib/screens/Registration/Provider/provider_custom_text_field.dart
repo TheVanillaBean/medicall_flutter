@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class ProviderCustomTextField extends StatelessWidget {
   const ProviderCustomTextField({
-    this.onSaved,
+    this.onChanged,
     this.icon,
     this.labelText,
     this.hint,
@@ -11,7 +11,7 @@ class ProviderCustomTextField extends StatelessWidget {
     this.validator,
     this.controller,
   });
-  final FormFieldSetter<String> onSaved;
+  final ValueChanged<String> onChanged;
   final Icon icon;
   final String labelText;
   final String hint;
@@ -29,6 +29,7 @@ class ProviderCustomTextField extends StatelessWidget {
       ),
       child: TextFormField(
         controller: controller,
+        onChanged: onChanged,
         autofocus: true,
         style: TextStyle(fontSize: 18, color: Colors.black87),
         decoration: InputDecoration(
