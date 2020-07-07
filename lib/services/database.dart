@@ -1,10 +1,11 @@
-//import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'dart:io';
 
 import 'package:Medicall/models/consult_data_model.dart';
+import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/consult_status_modal.dart';
 import 'package:Medicall/models/patient_user_model.dart';
+import 'package:Medicall/models/provider_user_model.dart';
+import 'package:Medicall/models/screening_questions_model.dart';
 import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/screens/History/Detail/history_detail_state.dart';
 import 'package:Medicall/services/firestore_service.dart';
@@ -87,10 +88,30 @@ class FirestoreDatabase implements Database {
   @override
   String consultChatImageUrl;
 
+  @override
   Future<void> setUser(User user) => _service.setData(
         path: FirestorePath.user(user.uid),
-        data: user.toMap(),
+        data: user.type == USER_TYPE.PATIENT
+            ? (user as PatientUser).toMap()
+            : (user as ProviderUser).toMap(),
         merge: true,
+      );
+
+  Future<String> saveConsult({String consultId, Consult consult}) async {
+    String consultId =
+        Firestore.instance.collection("consults").document().documentID;
+    await _service.setData(
+      path: FirestorePath.consult(consultId),
+      data: consult.toMap(),
+    );
+    return consultId;
+  }
+
+  Future<void> saveQuestionnaire(
+          {String consultId, ScreeningQuestions screeningQuestions}) =>
+      _service.setData(
+        path: FirestorePath.questionnaire(consultId),
+        data: screeningQuestions.toMap(),
       );
 
   @override

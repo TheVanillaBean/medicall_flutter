@@ -150,6 +150,7 @@ class ProviderDetailScreen extends StatelessWidget {
               providerId: provider.uid,
               symptom: symptom.name,
               date: DateTime.now(),
+              price: 49,
             );
             if (currentUser != null) {
               StartVisitScreen.show(

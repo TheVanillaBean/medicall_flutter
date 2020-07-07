@@ -1,7 +1,9 @@
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/option_model.dart';
 import 'package:Medicall/models/question_model.dart';
+import 'package:Medicall/models/screening_questions_model.dart';
 import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/database.dart';
 import 'package:Medicall/util/validators.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -20,6 +22,7 @@ abstract class QuestionVMProperties {
 class QuestionsViewModel extends PropertyChangeNotifier
     with OptionInputValidator {
   final AuthBase auth;
+  final FirestoreDatabase database;
   final Consult consult;
   final PageController controller = PageController();
   double progress;
@@ -35,12 +38,28 @@ class QuestionsViewModel extends PropertyChangeNotifier
   bool canAccessPrevious = false;
   bool canAccessNext = false;
 
+  bool submitted = false;
+
   QuestionsViewModel({
     @required this.auth,
     @required this.consult,
+    @required this.database,
     this.progress = 0.0,
     this.input = '',
   });
+
+  Future<void> saveConsultation() async {
+    disableNavButtons();
+    this.submitted = true;
+    notifyListeners(QuestionVMProperties.questionPage);
+    consult.patientId = (await this.auth.currentUser()).uid;
+    consult.state = "New";
+    ScreeningQuestions questions =
+        ScreeningQuestions(screeningQuestions: consult.questions);
+    String consultId = await database.saveConsult(consult: consult);
+    await database.saveQuestionnaire(
+        consultId: consultId, screeningQuestions: questions);
+  }
 
   void nextPage() async {
     disableNavButtons();
