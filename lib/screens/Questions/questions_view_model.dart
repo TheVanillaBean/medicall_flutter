@@ -7,6 +7,7 @@ import 'package:Medicall/services/database.dart';
 import 'package:Medicall/util/validators.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
 
 // Properties
@@ -47,6 +48,8 @@ class QuestionsViewModel extends PropertyChangeNotifier
     this.progress = 0.0,
     this.input = '',
   });
+
+  Future<Asset> getPlaceholderAsset(String placeholderURL) {}
 
   Future<void> saveConsultation() async {
     disableNavButtons();

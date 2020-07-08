@@ -1,4 +1,5 @@
 import 'package:Medicall/models/option_model.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 
 class Question {
   String question;
@@ -6,11 +7,18 @@ class Question {
   List<Option> options;
   Answer answer;
 
+  int maxImages;
+  String placeholderImage;
+  bool required;
+
   Question({
     this.options,
     this.question,
     this.type,
     this.answer,
+    this.maxImages,
+    this.placeholderImage,
+    this.required,
   });
 
   factory Question.fromMap(Map<String, dynamic> data) {
@@ -28,11 +36,18 @@ class Question {
       answer = Answer.fromMap(data);
     }
 
+    final required = data["required"] ?? '';
+    final String placeholderImage = data['placeholder_image'] ?? '';
+    final int maxImages = data['max_images'] ?? 0;
+
     return Question(
       question: question,
       type: type,
       options: options,
       answer: answer,
+      required: required,
+      placeholderImage: placeholderImage,
+      maxImages: maxImages,
     );
   }
 
@@ -40,6 +55,9 @@ class Question {
     return <String, dynamic>{
       'question': question,
       'type': type,
+      'required': required,
+      'placeholder_image': placeholderImage,
+      'max_images': maxImages,
       'options': options.map((opt) => opt.toMap()).toList(),
       'answer': answer != null ? answer.toMap() : null,
     };
@@ -48,6 +66,7 @@ class Question {
 
 class Answer {
   List<String> answer;
+  List<Asset> images; //if it is a photo question. Not serialized.
 
   Answer({this.answer});
 
