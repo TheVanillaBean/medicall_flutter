@@ -7,16 +7,20 @@ class ProviderCustomTextField extends StatelessWidget {
     this.labelText,
     this.hint,
     this.keyboardType,
-    this.obscure = false,
     this.validator,
     this.controller,
+    this.enabled,
+    this.errorText,
+    this.obscureText,
   });
   final ValueChanged<String> onChanged;
   final Icon icon;
   final String labelText;
   final String hint;
   final TextInputType keyboardType;
-  final bool obscure;
+  final bool enabled;
+  final String errorText;
+  final bool obscureText;
   final FormFieldValidator<String> validator;
   final TextEditingController controller;
 
@@ -28,6 +32,8 @@ class ProviderCustomTextField extends StatelessWidget {
         right: 30,
       ),
       child: TextFormField(
+        autocorrect: false,
+        obscureText: obscureText ?? false,
         controller: controller,
         onChanged: onChanged,
         autofocus: true,
@@ -36,6 +42,7 @@ class ProviderCustomTextField extends StatelessWidget {
           icon: IconTheme(
               data: IconThemeData(color: Colors.black54), child: icon),
           labelText: labelText,
+          errorText: errorText,
           labelStyle: TextStyle(fontSize: 16, color: Colors.black54),
           hintText: hint,
           hintStyle: TextStyle(fontSize: 16, color: Colors.black26),

@@ -1,9 +1,12 @@
 import 'package:Medicall/screens/Registration/Provider/provider_custom_text_field.dart';
 import 'package:Medicall/screens/Registration/Provider/provider_registration_view_model.dart';
+import 'package:Medicall/screens/Registration/Provider/state_abbr_formfield.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:super_rich_text/super_rich_text.dart';
+import 'custom_date_picker_formfield.dart';
 
 class ProviderRegistrationForm extends StatefulWidget {
   @override
@@ -45,10 +48,11 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
             hint: 'Doe',
             onChanged: model.updateLastName,
           ),
-          ProviderCustomTextField(
+          CustomDatePickerFormfield(
             icon: Icon(Icons.calendar_today),
-            labelText: 'Date of Birth',
+            labelText: 'Date of Birth: mm/dd/yyyy',
             hint: 'mm/dd/yyyy',
+            keyboardType: TextInputType.datetime,
             onChanged: model.updateDOB,
           ),
           ProviderCustomTextField(
@@ -56,11 +60,24 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
             labelText: 'Email',
             hint: 'janedoe@email.com',
             onChanged: model.updateEmail,
+            errorText: model.emailErrorText,
+            enabled: model.isLoading == false,
           ),
           ProviderCustomTextField(
             icon: Icon(Icons.security),
             labelText: 'Password',
+            obscureText: true,
             onChanged: model.updatePassword,
+            errorText: model.passwordErrorText,
+            enabled: model.isLoading == false,
+          ),
+          ProviderCustomTextField(
+            icon: Icon(Icons.security),
+            labelText: 'Confirm Password',
+            obscureText: true,
+            onChanged: model.updateConfirmPassword,
+            errorText: model.confirmPasswordErrorText,
+            enabled: model.isLoading == false,
           ),
           ProviderCustomTextField(
             icon: Icon(Icons.home),
@@ -80,30 +97,74 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
             hint: '12345',
             onChanged: model.updateMedLicense,
           ),
-          ProviderCustomTextField(
+          StateAbbrFormField(
             icon: Icon(Icons.place),
             labelText: 'Medical License State',
-            hint: 'MA',
             onChanged: model.updateMedLicenseState,
+          ),
+          SizedBox(height: 20),
+          Container(
+            child: ExcludeSemantics(
+              child: _buildTermsCheckbox(model),
+            ),
           ),
           SizedBox(height: 20),
           Container(
             width: 250,
             child: RaisedButton(
-              onPressed: () {
-                if (_formKey.currentState.validate()) {
-                  _submit(model);
-                }
-              },
+              onPressed: model.canSubmit
+                  ? () {
+                      if (_formKey.currentState.validate()) {
+                        _submit(model);
+                      }
+                    }
+                  : null,
               shape: StadiumBorder(),
               color: Colors.green,
               textColor: Colors.white,
               child: Text('Register'),
             ),
           ),
-          SizedBox(height: 100),
+          SizedBox(height: 24),
+          if (model.isLoading)
+            Container(
+                margin: EdgeInsets.symmetric(vertical: 24),
+                child: CircularProgressIndicator()),
         ],
       ),
+    );
+  }
+
+  Widget _buildTermsCheckbox(ProviderRegistrationViewModel model) {
+    return CheckboxListTile(
+      title: Title(
+        color: Colors.blue,
+        child: SuperRichText(
+          text:
+              'I agree to Medicall’s <terms>Terms & Conditions<terms>. I have reviewed the <privacy>Privacy Policy<privacy> and understand the benefits and risks of remote treatment.',
+          style: TextStyle(color: Colors.black87, fontSize: 14),
+          othersMarkers: [
+            MarkerText.withSameFunction(
+              marker: '<terms>',
+              function: () => Navigator.of(context).pushNamed('/terms'),
+              onError: (msg) => print('$msg'),
+              style: TextStyle(
+                  color: Colors.blue, decoration: TextDecoration.underline),
+            ),
+            MarkerText.withSameFunction(
+              marker: '<privacy>',
+              function: () => Navigator.of(context).pushNamed('/privacy'),
+              onError: (msg) => print('$msg'),
+              style: TextStyle(
+                  color: Colors.blue, decoration: TextDecoration.underline),
+            ),
+          ],
+        ),
+      ),
+      value: model.checkValue,
+      onChanged: model.updateCheckValue,
+      controlAffinity: ListTileControlAffinity.leading,
+      activeColor: Colors.blue,
     );
   }
 

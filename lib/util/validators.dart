@@ -18,6 +18,78 @@ class EmailValidator implements StringValidator {
   }
 }
 
+class StateValidator implements StringValidator {
+  List<String> states = [
+    "AK",
+    "AL",
+    "AR",
+    "AS",
+    "AZ",
+    "CA",
+    "CO",
+    "CT",
+    "DC",
+    "DE",
+    "FL",
+    "GA",
+    "GU",
+    "HI",
+    "IA",
+    "ID",
+    "IL",
+    "IN",
+    "KS",
+    "KY",
+    "LA",
+    "MA",
+    "MD",
+    "ME",
+    "MI",
+    "MN",
+    "MO",
+    "MP",
+    "MS",
+    "MT",
+    "NC",
+    "ND",
+    "NE",
+    "NH",
+    "NJ",
+    "NM",
+    "NV",
+    "NY",
+    "OH",
+    "OK",
+    "OR",
+    "PA",
+    "PR",
+    "RI",
+    "SC",
+    "SD",
+    "TN",
+    "TX",
+    "UM",
+    "UT",
+    "VA",
+    "VI",
+    "VT",
+    "WA",
+    "WI",
+    "WV",
+    "WY"
+  ];
+  @override
+  bool isValid(String value) {
+    return states.contains(value);
+  }
+}
+
+class ProviderRegistrationValidators {
+  final StringValidator stateValidator = StateValidator();
+  final String medStateErrorText =
+      'Please enter a valid two letter state abbreviation code';
+}
+
 class EmailAndPasswordValidators {
   final StringValidator emailValidator = EmailValidator();
   final StringValidator passwordValidator = NonEmptyStringValidator();

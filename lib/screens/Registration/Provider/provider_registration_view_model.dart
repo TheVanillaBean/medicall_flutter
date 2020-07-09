@@ -6,12 +6,16 @@ import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/non_auth_firestore_db.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/util/validators.dart';
+import 'package:dash_chat/dash_chat.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 
 class ProviderRegistrationViewModel
-    with EmailAndPasswordValidators, ChangeNotifier {
+    with
+        EmailAndPasswordValidators,
+        ProviderRegistrationValidators,
+        ChangeNotifier {
   final NonAuthDatabase nonAuthDatabase;
   final AuthBase auth;
   final TempUserProvider tempUserProvider;
@@ -26,6 +30,7 @@ class ProviderRegistrationViewModel
   String titles;
   String medLicense;
   String medLicenseState;
+  DateTime birthDate = DateTime.now();
 
   bool checkValue;
   bool isLoading;
@@ -41,6 +46,13 @@ class ProviderRegistrationViewModel
     this.email = '',
     this.password = '',
     this.confirmPassword = '',
+    this.firstName = '',
+    this.lastName = '',
+    this.dob = '',
+    this.address = '',
+    this.titles = '',
+    this.medLicense = '',
+    this.medLicenseState = '',
     this.checkValue = false,
     this.isLoading = false,
     this.submitted = false,
@@ -53,6 +65,8 @@ class ProviderRegistrationViewModel
   bool get canSubmit {
     return emailValidator.isValid(email) &&
         passwordValidator.isValid(password) &&
+        password == confirmPassword &&
+        stateValidator.isValid(medLicenseState) &&
         !isLoading;
   }
 
@@ -68,7 +82,19 @@ class ProviderRegistrationViewModel
 
   String get emailErrorText {
     bool showErrorText = submitted && !emailValidator.isValid(email);
-    return showErrorText ? invalidEmailErrorText : "";
+    return showErrorText ? invalidEmailErrorText : null;
+  }
+
+  String get medStateErrorText {
+    bool showErrorText = submitted && !stateValidator.isValid(medLicenseState);
+    return showErrorText ? medStateErrorText : null;
+  }
+
+  String get birthday {
+    final f = new DateFormat('MMMM-dd-yyyy');
+    return this.birthDate.year <= DateTime.now().year - 18
+        ? "${f.format(this.birthDate)}"
+        : "Date of Birth";
   }
 
   void updateEmail(String email) => updateWith(email: email);
