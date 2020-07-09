@@ -1,6 +1,6 @@
 import 'package:Medicall/screens/Registration/Provider/provider_custom_text_field.dart';
 import 'package:Medicall/screens/Registration/Provider/provider_registration_view_model.dart';
-import 'package:Medicall/screens/Registration/Provider/state_abbr_formfield.dart';
+import 'package:Medicall/screens/Registration/Provider/custom_dropdown_formfield.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -85,11 +85,13 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
             hint: '123 Main St, Anytown, MA 12345',
             onChanged: model.updateAddress,
           ),
-          ProviderCustomTextField(
+          CustomDropdownFormField(
             icon: Icon(Icons.school),
-            labelText: 'Titles',
+            labelText: 'Title',
             hint: 'M.D., D.O., PharmD',
             onChanged: model.updateTitles,
+            items: ["M.D.", "D.O.", "PharmD"],
+            selectedItem: model.titles,
           ),
           ProviderCustomTextField(
             icon: Icon(Icons.local_hospital),
@@ -97,10 +99,12 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
             hint: '12345',
             onChanged: model.updateMedLicense,
           ),
-          StateAbbrFormField(
+          CustomDropdownFormField(
             icon: Icon(Icons.place),
             labelText: 'Medical License State',
             onChanged: model.updateMedLicenseState,
+            items: model.states,
+            selectedItem: model.medLicenseState,
           ),
           SizedBox(height: 20),
           Container(
