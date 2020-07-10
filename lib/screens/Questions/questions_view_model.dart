@@ -4,6 +4,7 @@ import 'package:Medicall/models/question_model.dart';
 import 'package:Medicall/models/screening_questions_model.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/database.dart';
+import 'package:Medicall/services/firebase_storage_service.dart';
 import 'package:Medicall/util/validators.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -24,6 +25,7 @@ class QuestionsViewModel extends PropertyChangeNotifier
     with OptionInputValidator {
   final AuthBase auth;
   final FirestoreDatabase database;
+  final FirebaseStorageService storageService;
   final Consult consult;
   final PageController controller = PageController();
   double progress;
@@ -46,6 +48,7 @@ class QuestionsViewModel extends PropertyChangeNotifier
     @required this.auth,
     @required this.consult,
     @required this.database,
+    @required this.storageService,
     this.progress = 0.0,
     this.input = '',
   });
@@ -59,8 +62,23 @@ class QuestionsViewModel extends PropertyChangeNotifier
     ScreeningQuestions questions =
         ScreeningQuestions(screeningQuestions: consult.questions);
     String consultId = await database.saveConsult(consult: consult);
+    await saveConsultPhotos(consultId, questions);
     await database.saveQuestionnaire(
         consultId: consultId, screeningQuestions: questions);
+  }
+
+  Future<void> saveConsultPhotos(
+      String consultId, ScreeningQuestions questions) async {
+    for (Question question in questions.screeningQuestions) {
+      if (question.type == "photo") {
+        question.answer.answer = [];
+        for (Asset imageAsset in question.answer.images) {
+          String downloadURL = await storageService.uploadConsultPhoto(
+              consultId: consultId, asset: imageAsset);
+          question.answer.answer.add(downloadURL);
+        }
+      }
+    }
   }
 
   void nextPage() async {
