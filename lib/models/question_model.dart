@@ -36,7 +36,7 @@ class Question {
       answer = Answer.fromMap(data);
     }
 
-    final required = data["required"] ?? '';
+    final required = data["required"] ?? true;
     final String placeholderImage = data['placeholder_image'] ?? '';
     final int maxImages = data['max_images'] ?? 0;
 
@@ -68,7 +68,7 @@ class Answer {
   List<String> answer;
   List<Asset> images; //if it is a photo question. Not serialized.
 
-  Answer({this.answer});
+  Answer({this.answer, this.images = const []});
 
   factory Answer.fromMap(Map<String, dynamic> data) {
     if (data == null) {

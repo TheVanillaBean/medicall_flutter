@@ -32,6 +32,7 @@ class QuestionsViewModel extends PropertyChangeNotifier
   String input;
   List<String> optionsList = [];
   List<String> selectedOptionsList = [];
+  List<Asset> questionPhotos = [];
   final TextEditingController inputController = TextEditingController();
   final FocusNode inputFocusNode = FocusNode();
 
@@ -48,8 +49,6 @@ class QuestionsViewModel extends PropertyChangeNotifier
     this.progress = 0.0,
     this.input = '',
   });
-
-  Future<Asset> getPlaceholderAsset(String placeholderURL) {}
 
   Future<void> saveConsultation() async {
     disableNavButtons();
@@ -74,9 +73,11 @@ class QuestionsViewModel extends PropertyChangeNotifier
     Answer answer;
     if (question.type == "MC") {
       answer = Answer(answer: List.of(selectedOptionsList));
-    } else {
+    } else if (question.type == "FR") {
       inputFocusNode.unfocus();
       answer = Answer(answer: [input]);
+    } else {
+      answer = Answer(images: List.of(this.questionPhotos));
     }
 
     question.answer = answer;
@@ -159,6 +160,14 @@ class QuestionsViewModel extends PropertyChangeNotifier
         TextPosition(offset: inputController.text.length),
       );
     }
+
+    if (question.type == "photo") {
+      if (question.answer != null && question.answer.images.length > 0) {
+        this.questionPhotos = question.answer.images;
+      } else {
+        this.questionPhotos.clear();
+      }
+    }
   }
 
   void updateInput(String input) => updateQuestionPageWith(input: input);
@@ -173,10 +182,12 @@ class QuestionsViewModel extends PropertyChangeNotifier
     List<String> optionsList,
     List<String> selectedOptionsList,
     String input,
+    List<Asset> questionPhotos,
   }) {
     this.optionsList = optionsList ?? this.optionsList;
     this.input = input ?? this.input;
     this.selectedOptionsList = selectedOptionsList ?? this.selectedOptionsList;
+    this.questionPhotos = questionPhotos ?? this.questionPhotos;
     updateNavButtonState();
     notifyListeners(QuestionVMProperties.questionFormWidget);
   }
@@ -184,7 +195,8 @@ class QuestionsViewModel extends PropertyChangeNotifier
   void updateNavButtonState() {
     this.canAccessPrevious = progress > 0;
     this.canAccessNext = this.selectedOptionsList.length > 0 ||
-        inputValidator.isValid(this.input);
+        inputValidator.isValid(this.input) ||
+        this.questionPhotos.length > 0;
     notifyListeners(QuestionVMProperties.questionNavButtons);
   }
 

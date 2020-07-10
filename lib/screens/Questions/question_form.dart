@@ -1,8 +1,10 @@
 import 'package:Medicall/models/question_model.dart';
 import 'package:Medicall/screens/Questions/questions_view_model.dart';
 import 'package:Medicall/services/extimage_provider.dart';
+import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
 import 'package:provider/provider.dart';
@@ -51,7 +53,7 @@ class _QuestionFormState extends State<QuestionForm> {
 
     try {
       resultList = await this.extendedImageProvider.pickImages(
-            question.placeholderImage,
+            model.questionPhotos,
             question.maxImages,
             true,
             this
@@ -66,7 +68,7 @@ class _QuestionFormState extends State<QuestionForm> {
                 lightStatusBar: false,
                 autoCloseOnSelectionLimit: true,
                 startInAllView: true,
-                actionBarTitle: 'Select Profile Picture',
+                actionBarTitle: 'Select photo(s) for consult',
                 allViewTitle: 'All Photos'),
             context,
           );
@@ -77,19 +79,27 @@ class _QuestionFormState extends State<QuestionForm> {
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
     if (!mounted) return;
-    widget.model.updateWith(profileImage: resultList);
+    model.updateQuestionPageWith(questionPhotos: resultList);
   }
 
   @override
   Widget build(BuildContext context) {
     if (this.question.type == "FR") {
-      return _buildFreeResponseOption(context, model);
+      return _buildFreeResponseOption(context);
+    } else if (this.question.type == "MC") {
+      return _buildMultipleChoiceOption(context);
+    } else {
+      double height = MediaQuery.of(context).size.height;
+      if (model.questionPhotos.length == 0)
+        return _buildPhotoOption(height: height);
+      if (model.questionPhotos.length > 0)
+        return _buildPhotoOptionWithExistingImage(
+            asset: model.questionPhotos.first, height: height);
+      return Container();
     }
-    return _buildMultipleChoiceOption(context, model);
   }
 
-  Widget _buildMultipleChoiceOption(
-      BuildContext context, QuestionsViewModel model) {
+  Widget _buildMultipleChoiceOption(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -109,14 +119,28 @@ class _QuestionFormState extends State<QuestionForm> {
     );
   }
 
-  Widget _buildFreeResponseOption(
-      BuildContext context, QuestionsViewModel model) {
+  Widget _buildFreeResponseOption(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         _buildFRTextField(model),
       ],
+    );
+  }
+
+  Widget _buildPhotoOption({double height}) {
+    return Container(
+      height: height * 0.5,
+      width: MediaQuery.of(context).size.width,
+      child: IconButton(
+        onPressed: _loadProfileImage,
+        icon: Icon(
+          Icons.image,
+          color: Colors.blue.withAlpha(140),
+          size: height * 0.5,
+        ),
+      ),
     );
   }
 
@@ -144,18 +168,16 @@ class _QuestionFormState extends State<QuestionForm> {
     );
   }
 
-  Widget _buildPhotoOption(QuestionsViewModel model) {
-    double height = MediaQuery.of(context).size.height;
-    return Container(
-      height: height * 0.15,
-      width: MediaQuery.of(context).size.width,
-      child: IconButton(
-        onPressed: _loadProfileImage,
-        icon: Icon(
-          Icons.account_circle,
-          color: Colors.blue.withAlpha(140),
-          size: height * 0.15,
-        ),
+  Widget _buildPhotoOptionWithExistingImage({Asset asset, double height}) {
+    return GestureDetector(
+      onTap: _loadProfileImage,
+      child: ClipRRect(
+        child: this.extendedImageProvider.returnAssetThumb(
+              asset: asset,
+              quality: 25,
+              height: (height * 0.5).toInt(),
+              width: (height * 0.5).toInt(),
+            ),
       ),
     );
   }
