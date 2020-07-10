@@ -6,12 +6,13 @@ import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/non_auth_firestore_db.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/util/validators.dart';
+import 'package:dash_chat/dash_chat.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 
 class ProviderRegistrationViewModel
-    with EmailAndPasswordValidators, ChangeNotifier {
+    with EmailAndPasswordValidators, ProviderStateValidators, ChangeNotifier {
   final NonAuthDatabase nonAuthDatabase;
   final AuthBase auth;
   final TempUserProvider tempUserProvider;
@@ -21,7 +22,7 @@ class ProviderRegistrationViewModel
   String confirmPassword;
   String firstName;
   String lastName;
-  String dob;
+  DateTime dob;
   String address;
   String titles;
   String medLicense;
@@ -34,6 +35,85 @@ class ProviderRegistrationViewModel
   AppleSignInModel appleSignInModel;
   VerificationStatus verificationStatus;
 
+  bool isAdult(String birthDateString) {
+    String datePattern = "MM/dd/yyyy";
+
+    // Current time - at this moment
+    DateTime today = DateTime.now();
+
+    // Parsed date to check
+    DateTime birthDate = DateFormat(datePattern).parse(birthDateString);
+
+    // Date to check but moved 18 years ahead
+    DateTime adultDate = DateTime(
+      birthDate.year + 18,
+      birthDate.month,
+      birthDate.day,
+    );
+
+    return adultDate.isBefore(today);
+  }
+
+  final List<String> states = const <String>[
+    "AK",
+    "AL",
+    "AR",
+    "AS",
+    "AZ",
+    "CA",
+    "CO",
+    "CT",
+    "DC",
+    "DE",
+    "FL",
+    "GA",
+    "GU",
+    "HI",
+    "IA",
+    "ID",
+    "IL",
+    "IN",
+    "KS",
+    "KY",
+    "LA",
+    "MA",
+    "MD",
+    "ME",
+    "MI",
+    "MN",
+    "MO",
+    "MP",
+    "MS",
+    "MT",
+    "NC",
+    "ND",
+    "NE",
+    "NH",
+    "NJ",
+    "NM",
+    "NV",
+    "NY",
+    "OH",
+    "OK",
+    "OR",
+    "PA",
+    "PR",
+    "RI",
+    "SC",
+    "SD",
+    "TN",
+    "TX",
+    "UM",
+    "UT",
+    "VA",
+    "VI",
+    "VT",
+    "WA",
+    "WI",
+    "WV",
+    "WY"
+  ];
+
   ProviderRegistrationViewModel({
     @required this.nonAuthDatabase,
     @required this.auth,
@@ -41,6 +121,13 @@ class ProviderRegistrationViewModel
     this.email = '',
     this.password = '',
     this.confirmPassword = '',
+    this.firstName = '',
+    this.lastName = '',
+    this.dob,
+    this.address = '',
+    this.titles = '',
+    this.medLicense = '',
+    this.medLicenseState = '',
     this.checkValue = false,
     this.isLoading = false,
     this.submitted = false,
@@ -53,6 +140,8 @@ class ProviderRegistrationViewModel
   bool get canSubmit {
     return emailValidator.isValid(email) &&
         passwordValidator.isValid(password) &&
+        password == confirmPassword &&
+        stateValidator.isValid(medLicenseState) &&
         !isLoading;
   }
 
@@ -68,7 +157,19 @@ class ProviderRegistrationViewModel
 
   String get emailErrorText {
     bool showErrorText = submitted && !emailValidator.isValid(email);
-    return showErrorText ? invalidEmailErrorText : "";
+    return showErrorText ? invalidEmailErrorText : null;
+  }
+
+  String get medStateErrorText {
+    bool showErrorText = submitted && !stateValidator.isValid(medLicenseState);
+    return showErrorText ? medStateErrorText : null;
+  }
+
+  String get birthday {
+    final f = new DateFormat('MMMM-dd-yyyy');
+    return this.dob.year <= DateTime.now().year - 18
+        ? "${f.format(this.dob)}"
+        : "Please Select";
   }
 
   void updateEmail(String email) => updateWith(email: email);
@@ -78,13 +179,27 @@ class ProviderRegistrationViewModel
   void updateCheckValue(bool checkValue) => updateWith(checkValue: checkValue);
   void updateFirstName(String fName) => updateWith(firstName: fName);
   void updateLastName(String lName) => updateWith(lastName: lName);
-  void updateDOB(String dob) => updateWith(dob: dob);
+  void updateDOB(DateTime dob) => updateWith(dob: dob);
   void updateAddress(String address) => updateWith(address: address);
   void updateTitles(String titles) => updateWith(titles: titles);
   void updateMedLicense(String medLicense) =>
       updateWith(medLicense: medLicense);
   void updateMedLicenseState(String state) =>
       updateWith(medLicenseState: state);
+
+  DateTime get initialDatePickerDate {
+    final DateTime currentDate = DateTime.now();
+
+    this.dob = this.dob == null ? currentDate : this.dob;
+
+    return this.dob.year <= DateTime.now().year - 18
+        ? this.dob
+        : DateTime(
+            currentDate.year - 18,
+            currentDate.month,
+            currentDate.day,
+          );
+  }
 
   Future<void> submit() async {
     updateWith(submitted: true);
@@ -113,7 +228,7 @@ class ProviderRegistrationViewModel
         tempUserProvider.user.email = this.email;
         tempUserProvider.user.firstName = this.firstName;
         tempUserProvider.user.lastName = this.lastName;
-        tempUserProvider.user.dob = this.dob;
+        tempUserProvider.user.dob = this.birthday;
         tempUserProvider.user.address = this.address;
         (tempUserProvider.user as ProviderUser).titles = this.titles;
         (tempUserProvider.user as ProviderUser).medLicense = this.medLicense;
@@ -148,7 +263,7 @@ class ProviderRegistrationViewModel
     String confirmPassword,
     String firstName,
     String lastName,
-    String dob,
+    DateTime dob,
     String address,
     String titles,
     String medLicense,

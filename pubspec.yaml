@@ -63,6 +63,7 @@ dependencies:
   super_rich_text: ^0.2.1
   property_change_notifier: ^0.2.0
   enum_to_string: ^1.0.9
+  datetime_picker_formfield: ^1.0.0
 
 
 dependency_overrides:

@@ -1,8 +1,9 @@
+import 'package:dash_chat/dash_chat.dart';
 import 'package:flutter/material.dart';
+import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 
-class ProviderCustomTextField extends StatelessWidget {
-  const ProviderCustomTextField({
-    this.onChanged,
+class CustomDatePickerFormField extends StatelessWidget {
+  const CustomDatePickerFormField({
     this.icon,
     this.labelText,
     this.hint,
@@ -12,8 +13,9 @@ class ProviderCustomTextField extends StatelessWidget {
     this.enabled,
     this.errorText,
     this.obscureText,
+    this.initialDate,
+    this.onChanged,
   });
-  final ValueChanged<String> onChanged;
   final Icon icon;
   final String labelText;
   final String hint;
@@ -23,6 +25,8 @@ class ProviderCustomTextField extends StatelessWidget {
   final bool obscureText;
   final FormFieldValidator<String> validator;
   final TextEditingController controller;
+  final DateTime initialDate;
+  final ValueChanged<DateTime> onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -31,13 +35,8 @@ class ProviderCustomTextField extends StatelessWidget {
         left: 30,
         right: 30,
       ),
-      child: TextFormField(
-        autocorrect: false,
-        obscureText: obscureText ?? false,
-        controller: controller,
-        onChanged: onChanged,
-        autofocus: true,
-        style: TextStyle(fontSize: 18, color: Colors.black87),
+      child: DateTimeField(
+        format: DateFormat('MM/dd/yyyy'),
         decoration: InputDecoration(
           icon: IconTheme(
               data: IconThemeData(color: Colors.black54), child: icon),
@@ -71,12 +70,17 @@ class ProviderCustomTextField extends StatelessWidget {
             ),
           ),
         ),
-        keyboardType: keyboardType,
-        validator: (input) {
-          if (input.isEmpty) {
-            return '$labelText is required';
-          }
-          return null;
+        onChanged: onChanged,
+        onShowPicker: (context, currentValue) async {
+          FocusScope.of(context).requestFocus(new FocusNode());
+          final DateTime currentDate = DateTime.now();
+          return await showDatePicker(
+            context: context,
+            firstDate: DateTime(1920),
+            initialDate: initialDate,
+            lastDate: DateTime(
+                currentDate.year - 18, currentDate.month, currentDate.day),
+          );
         },
       ),
     );
