@@ -16,4 +16,6 @@ class FirestorePath {
   //Firebase Storage
   static String userProfileImage({String uid, String assetName}) =>
       'profile/$uid/$assetName.JPG';
+  static String consultPhotoQuestion({String consultID, String assetName}) =>
+      'consults/$consultID/$assetName.JPG';
 }
