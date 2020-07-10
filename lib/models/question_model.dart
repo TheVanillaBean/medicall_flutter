@@ -1,9 +1,20 @@
 import 'package:Medicall/models/option_model.dart';
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
+
+enum Q_TYPE { MC, FR, PHOTO }
+
+extension EnumParser on String {
+  Q_TYPE toQType() {
+    return Q_TYPE.values.firstWhere(
+        (e) => e.toString().toLowerCase() == 'Q_TYPE.$this'.toLowerCase(),
+        orElse: () => null); //return null if not found
+  }
+}
 
 class Question {
   String question;
-  String type;
+  Q_TYPE type;
   List<Option> options;
   Answer answer;
 
@@ -26,7 +37,7 @@ class Question {
       return null;
     }
     final question = data['question'] ?? '';
-    final type = data['type'] ?? '';
+    final Q_TYPE type = (data['type'] as String).toQType() ?? null;
 
     final options =
         (data['options'] as List ?? []).map((v) => Option.fromMap(v)).toList();
@@ -52,15 +63,24 @@ class Question {
   }
 
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
+    Map<String, dynamic> toStringMap = <String, dynamic>{
       'question': question,
-      'type': type,
-      'required': required,
-      'placeholder_image': placeholderImage,
-      'max_images': maxImages,
-      'options': options.map((opt) => opt.toMap()).toList(),
+      'type': EnumToString.parse(type),
       'answer': answer != null ? answer.toMap() : null,
     };
+    if (type == Q_TYPE.MC) {
+      toStringMap.addAll(<String, dynamic>{
+        'options': options.map((opt) => opt.toMap()).toList(),
+      });
+    }
+    if (type == Q_TYPE.PHOTO) {
+      toStringMap.addAll(<String, dynamic>{
+        'required': required,
+        'placeholder_image': placeholderImage,
+        'max_images': maxImages,
+      });
+    }
+    return toStringMap;
   }
 }
 

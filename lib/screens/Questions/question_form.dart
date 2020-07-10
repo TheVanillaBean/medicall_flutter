@@ -84,9 +84,9 @@ class _QuestionFormState extends State<QuestionForm> {
 
   @override
   Widget build(BuildContext context) {
-    if (this.question.type == "FR") {
+    if (this.question.type == Q_TYPE.FR) {
       return _buildFreeResponseOption(context);
-    } else if (this.question.type == "MC") {
+    } else if (this.question.type == Q_TYPE.MC) {
       return _buildMultipleChoiceOption(context);
     } else {
       double height = MediaQuery.of(context).size.height;

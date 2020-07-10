@@ -31,7 +31,7 @@ class QuestionPageViewModel with OptionInputValidator, ChangeNotifier {
       optionsList.add(opt.value);
     }
 
-    if (question.type == "MC" && question.answer != null) {
+    if (question.type == Q_TYPE.MC && question.answer != null) {
       List<String> selectedList = [];
       for (var answer in question.answer.answer) {
         selectedList.add(answer);
@@ -46,7 +46,7 @@ class QuestionPageViewModel with OptionInputValidator, ChangeNotifier {
 
   void nextPage(Question question) async {
     Answer answer;
-    if (question.type == "MC") {
+    if (question.type == Q_TYPE.MC) {
       answer = Answer(answer: List.of(selectedOptionsList));
     } else {
       answer = Answer(answer: [input]);
@@ -68,7 +68,7 @@ class QuestionPageViewModel with OptionInputValidator, ChangeNotifier {
   }
 
   void getInput() {
-    if (question.type == "FR" && question.answer != null) {
+    if (question.type == Q_TYPE.FR && question.answer != null) {
       input = question.answer.answer.first;
       inputController.text = input;
       inputController.selection = TextSelection.fromPosition(

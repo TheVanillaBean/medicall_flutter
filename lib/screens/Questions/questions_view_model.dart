@@ -70,7 +70,7 @@ class QuestionsViewModel extends PropertyChangeNotifier
   Future<void> saveConsultPhotos(
       String consultId, ScreeningQuestions questions) async {
     for (Question question in questions.screeningQuestions) {
-      if (question.type == "photo") {
+      if (question.type == Q_TYPE.PHOTO) {
         question.answer.answer = [];
         for (Asset imageAsset in question.answer.images) {
           String downloadURL = await storageService.uploadConsultPhoto(
@@ -89,9 +89,9 @@ class QuestionsViewModel extends PropertyChangeNotifier
         .toInt()]; //get current question based on current page
 
     Answer answer;
-    if (question.type == "MC") {
+    if (question.type == Q_TYPE.MC) {
       answer = Answer(answer: List.of(selectedOptionsList));
-    } else if (question.type == "FR") {
+    } else if (question.type == Q_TYPE.FR) {
       inputFocusNode.unfocus();
       answer = Answer(answer: [input]);
     } else {
@@ -104,7 +104,7 @@ class QuestionsViewModel extends PropertyChangeNotifier
         consult.questions.indexWhere((q) => q.question == question.question);
     consult.questions[questionIndex] = question;
 
-    if (question.type == "MC") {
+    if (question.type == Q_TYPE.MC) {
       for (Option opt in question.options) {
         if (opt.hasSubQuestions) {
           if (selectedOptionsList.contains(opt.value)) {
@@ -155,7 +155,7 @@ class QuestionsViewModel extends PropertyChangeNotifier
     selectedOptionsList.clear();
     input = "";
 
-    if (question.type == "MC") {
+    if (question.type == Q_TYPE.MC) {
       for (Option opt in question.options) {
         optionsList.add(opt.value);
       }
@@ -169,7 +169,7 @@ class QuestionsViewModel extends PropertyChangeNotifier
       }
     }
 
-    if (question.type == "FR") {
+    if (question.type == Q_TYPE.FR) {
       if (question.answer != null) {
         input = question.answer.answer.first;
       }
@@ -179,7 +179,7 @@ class QuestionsViewModel extends PropertyChangeNotifier
       );
     }
 
-    if (question.type == "photo") {
+    if (question.type == Q_TYPE.PHOTO) {
       if (question.answer != null && question.answer.images.length > 0) {
         this.questionPhotos = question.answer.images;
       } else {
