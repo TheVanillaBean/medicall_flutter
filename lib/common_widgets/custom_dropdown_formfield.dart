@@ -80,7 +80,7 @@ class CustomDropdownFormField extends StatelessWidget {
                       value: value,
                       child: Text(
                         value,
-                        style: TextStyle(fontSize: 16, color: Colors.black54),
+                        style: TextStyle(fontSize: 18, color: Colors.black87),
                       ),
                     );
                   },

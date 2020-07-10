@@ -1,12 +1,12 @@
 import 'package:Medicall/screens/Registration/Provider/provider_custom_text_field.dart';
 import 'package:Medicall/screens/Registration/Provider/provider_registration_view_model.dart';
-import 'package:Medicall/screens/Registration/Provider/custom_dropdown_formfield.dart';
+import 'package:Medicall/common_widgets/custom_dropdown_formfield.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:super_rich_text/super_rich_text.dart';
-import 'custom_date_picker_formfield.dart';
+import '../../../common_widgets/custom_date_picker_formfield.dart';
 
 class ProviderRegistrationForm extends StatefulWidget {
   @override
@@ -48,11 +48,12 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
             hint: 'Doe',
             onChanged: model.updateLastName,
           ),
-          CustomDatePickerFormfield(
+          CustomDatePickerFormField(
             icon: Icon(Icons.calendar_today),
             labelText: 'Date of Birth: mm/dd/yyyy',
             hint: 'mm/dd/yyyy',
             keyboardType: TextInputType.datetime,
+            initialDate: model.initialDatePickerDate,
             onChanged: model.updateDOB,
           ),
           ProviderCustomTextField(
@@ -90,7 +91,7 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
             labelText: 'Title',
             hint: 'M.D., D.O., PharmD',
             onChanged: model.updateTitles,
-            items: ["M.D.", "D.O.", "PharmD"],
+            items: ["M.D.", "D.O.", "P.A.", "PharmD"],
             selectedItem: model.titles,
           ),
           ProviderCustomTextField(

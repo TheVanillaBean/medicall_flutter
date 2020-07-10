@@ -2,9 +2,8 @@ import 'package:dash_chat/dash_chat.dart';
 import 'package:flutter/material.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 
-class CustomDatePickerFormfield extends StatelessWidget {
-  const CustomDatePickerFormfield({
-    this.onChanged,
+class CustomDatePickerFormField extends StatelessWidget {
+  const CustomDatePickerFormField({
     this.icon,
     this.labelText,
     this.hint,
@@ -14,8 +13,9 @@ class CustomDatePickerFormfield extends StatelessWidget {
     this.enabled,
     this.errorText,
     this.obscureText,
+    this.initialDate,
+    this.onChanged,
   });
-  final ValueChanged<String> onChanged;
   final Icon icon;
   final String labelText;
   final String hint;
@@ -25,6 +25,8 @@ class CustomDatePickerFormfield extends StatelessWidget {
   final bool obscureText;
   final FormFieldValidator<String> validator;
   final TextEditingController controller;
+  final DateTime initialDate;
+  final ValueChanged<DateTime> onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -68,12 +70,17 @@ class CustomDatePickerFormfield extends StatelessWidget {
             ),
           ),
         ),
-        onShowPicker: (context, currentValue) {
-          return showDatePicker(
-              context: context,
-              firstDate: DateTime(1900),
-              initialDate: currentValue ?? DateTime.now(),
-              lastDate: DateTime(2100));
+        onChanged: onChanged,
+        onShowPicker: (context, currentValue) async {
+          FocusScope.of(context).requestFocus(new FocusNode());
+          final DateTime currentDate = DateTime.now();
+          return await showDatePicker(
+            context: context,
+            firstDate: DateTime(1920),
+            initialDate: initialDate,
+            lastDate: DateTime(
+                currentDate.year - 18, currentDate.month, currentDate.day),
+          );
         },
       ),
     );

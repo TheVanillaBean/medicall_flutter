@@ -84,7 +84,12 @@ class StateValidator implements StringValidator {
   }
 }
 
-class ProviderRegistrationValidators {
+class ProviderDobValidators {
+  final StringValidator dobValidator = NonEmptyStringValidator();
+  final String dobErrorText = 'Please enter a valid birthday (must be 18)';
+}
+
+class ProviderStateValidators {
   final StringValidator stateValidator = StateValidator();
   final String medStateErrorText =
       'Please enter a valid two letter state abbreviation code';

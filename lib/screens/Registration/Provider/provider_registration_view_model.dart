@@ -12,10 +12,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 
 class ProviderRegistrationViewModel
-    with
-        EmailAndPasswordValidators,
-        ProviderRegistrationValidators,
-        ChangeNotifier {
+    with EmailAndPasswordValidators, ProviderStateValidators, ChangeNotifier {
   final NonAuthDatabase nonAuthDatabase;
   final AuthBase auth;
   final TempUserProvider tempUserProvider;
@@ -25,12 +22,11 @@ class ProviderRegistrationViewModel
   String confirmPassword;
   String firstName;
   String lastName;
-  String dob;
+  DateTime dob;
   String address;
   String titles;
   String medLicense;
   String medLicenseState;
-  DateTime birthDate = DateTime.now();
 
   bool checkValue;
   bool isLoading;
@@ -38,6 +34,25 @@ class ProviderRegistrationViewModel
   GoogleAuthModel googleAuthModel;
   AppleSignInModel appleSignInModel;
   VerificationStatus verificationStatus;
+
+  bool isAdult(String birthDateString) {
+    String datePattern = "MM/dd/yyyy";
+
+    // Current time - at this moment
+    DateTime today = DateTime.now();
+
+    // Parsed date to check
+    DateTime birthDate = DateFormat(datePattern).parse(birthDateString);
+
+    // Date to check but moved 18 years ahead
+    DateTime adultDate = DateTime(
+      birthDate.year + 18,
+      birthDate.month,
+      birthDate.day,
+    );
+
+    return adultDate.isBefore(today);
+  }
 
   final List<String> states = const <String>[
     "AK",
@@ -108,7 +123,7 @@ class ProviderRegistrationViewModel
     this.confirmPassword = '',
     this.firstName = '',
     this.lastName = '',
-    this.dob = '',
+    this.dob,
     this.address = '',
     this.titles = '',
     this.medLicense = '',
@@ -152,9 +167,9 @@ class ProviderRegistrationViewModel
 
   String get birthday {
     final f = new DateFormat('MMMM-dd-yyyy');
-    return this.birthDate.year <= DateTime.now().year - 18
-        ? "${f.format(this.birthDate)}"
-        : "Date of Birth";
+    return this.dob.year <= DateTime.now().year - 18
+        ? "${f.format(this.dob)}"
+        : "Please Select";
   }
 
   void updateEmail(String email) => updateWith(email: email);
@@ -164,13 +179,27 @@ class ProviderRegistrationViewModel
   void updateCheckValue(bool checkValue) => updateWith(checkValue: checkValue);
   void updateFirstName(String fName) => updateWith(firstName: fName);
   void updateLastName(String lName) => updateWith(lastName: lName);
-  void updateDOB(String dob) => updateWith(dob: dob);
+  void updateDOB(DateTime dob) => updateWith(dob: dob);
   void updateAddress(String address) => updateWith(address: address);
   void updateTitles(String titles) => updateWith(titles: titles);
   void updateMedLicense(String medLicense) =>
       updateWith(medLicense: medLicense);
   void updateMedLicenseState(String state) =>
       updateWith(medLicenseState: state);
+
+  DateTime get initialDatePickerDate {
+    final DateTime currentDate = DateTime.now();
+
+    this.dob = this.dob == null ? currentDate : this.dob;
+
+    return this.dob.year <= DateTime.now().year - 18
+        ? this.dob
+        : DateTime(
+            currentDate.year - 18,
+            currentDate.month,
+            currentDate.day,
+          );
+  }
 
   Future<void> submit() async {
     updateWith(submitted: true);
@@ -199,7 +228,7 @@ class ProviderRegistrationViewModel
         tempUserProvider.user.email = this.email;
         tempUserProvider.user.firstName = this.firstName;
         tempUserProvider.user.lastName = this.lastName;
-        tempUserProvider.user.dob = this.dob;
+        tempUserProvider.user.dob = this.birthday;
         tempUserProvider.user.address = this.address;
         (tempUserProvider.user as ProviderUser).titles = this.titles;
         (tempUserProvider.user as ProviderUser).medLicense = this.medLicense;
@@ -234,7 +263,7 @@ class ProviderRegistrationViewModel
     String confirmPassword,
     String firstName,
     String lastName,
-    String dob,
+    DateTime dob,
     String address,
     String titles,
     String medLicense,
