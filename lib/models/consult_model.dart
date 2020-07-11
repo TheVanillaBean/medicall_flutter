@@ -1,3 +1,5 @@
+import 'package:Medicall/models/patient_user_model.dart';
+import 'package:Medicall/models/provider_user_model.dart';
 import 'package:Medicall/models/question_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:meta/meta.dart';
@@ -10,6 +12,10 @@ class Consult {
   String patientId;
   String state;
   List<Question> questions;
+
+  //not serialized
+  PatientUser patientUser;
+  ProviderUser providerUser;
 
   Consult({
     @required this.providerId,

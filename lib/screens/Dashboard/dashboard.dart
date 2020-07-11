@@ -1,8 +1,12 @@
 import 'package:Medicall/common_widgets/flat_button.dart';
+import 'package:Medicall/common_widgets/list_items_builder.dart';
 import 'package:Medicall/components/DrawerMenu.dart';
+import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/Dashboard/dashboard_list_item.dart';
 import 'package:Medicall/screens/Dashboard/dashboard_state_model.dart';
-import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/screens/Symptoms/symptoms.dart';
+import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,11 +16,11 @@ class DashboardScreen extends StatelessWidget {
   final DashboardStateModel model;
 
   static Widget create(BuildContext context) {
-    final AuthBase auth = Provider.of<AuthBase>(context);
+    final FirestoreDatabase database = Provider.of<FirestoreDatabase>(context);
     final UserProvider provider = Provider.of<UserProvider>(context);
     return ChangeNotifierProvider<DashboardStateModel>(
       create: (context) => DashboardStateModel(
-        auth: auth,
+        database: database,
         userProvider: provider,
       ),
       child: Consumer<DashboardStateModel>(
@@ -45,7 +49,7 @@ class DashboardScreen extends StatelessWidget {
   const DashboardScreen({@required this.model});
 
   void _navigateToVisitScreen(BuildContext context) {
-    Navigator.of(context).pushNamed('/symptoms');
+    SymptomsScreen.show(context: context);
   }
 
   void _navigateToPrescriptionsScreen(BuildContext context) {
@@ -76,7 +80,7 @@ class DashboardScreen extends StatelessWidget {
         ),
         centerTitle: true,
         title: Text(
-          'Hello!',
+          'Hello ${model.userProvider.user.firstName}!',
         ),
       ),
       drawer: DrawerMenu(),
@@ -99,22 +103,9 @@ class DashboardScreen extends StatelessWidget {
 
   List<Widget> _buildChildren({BuildContext context, double height}) {
     return [
-      //_buildHeader(),
+      _buildHeader(),
       SizedBox(
         height: height * 0.15,
-      ),
-      Text(
-        "No current consults...",
-        style: TextStyle(
-          fontWeight: FontWeight.w300,
-          fontSize: 18,
-        ),
-      ),
-      SizedBox(
-        height: 8,
-      ),
-      SizedBox(
-        height: height * 0.05,
       ),
       CustomFlatButton(
         text: "Start a visit",
@@ -134,32 +125,22 @@ class DashboardScreen extends StatelessWidget {
     ];
   }
 
-  // Widget _buildHeader() {
-  //   return Text(
-  //     "Hello ${this.model.userProvider.medicallUser.displayName}!",
-  //     style: TextStyle(
-  //       fontWeight: FontWeight.w300,
-  //       fontSize: 18,
-  //     ),
-  //   );
-  // }
-
-  // Widget _buildActiveVisitStatusWidget() {
-  //   return Container(
-  //     decoration: BoxDecoration(
-  //       border: Border.all(color: Colors.blueAccent),
-  //     ),
-  //     child: Row(
-  //       children: <Widget>[
-  //         Text(
-  //           "No current consults.",
-  //           style: TextStyle(
-  //             fontWeight: FontWeight.w300,
-  //             fontSize: 18,
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
+  Widget _buildHeader({BuildContext context, double height}) {
+    return StreamBuilder<List<Consult>>(
+      stream: model.consultStream.stream,
+      builder:
+          (BuildContext context, AsyncSnapshot<List<Consult>> consultSnapshot) {
+        return Expanded(
+          flex: 9,
+          child: ListItemsBuilder<Consult>(
+            snapshot: consultSnapshot,
+            itemBuilder: (context, consult) => DashboardListItem(
+              consult: consult,
+              onTap: null,
+            ),
+          ),
+        );
+      },
+    );
+  }
 }

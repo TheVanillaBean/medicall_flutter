@@ -97,6 +97,12 @@ class FirestoreDatabase implements Database {
         merge: true,
       );
 
+  Stream<User> userStream(USER_TYPE userType, uid) => _service.documentStream(
+        path: FirestorePath.user(uid),
+        builder: (data, documentId) =>
+            User.fromMap(userType: userType, data: data, uid: documentId),
+      );
+
   Future<String> saveConsult({String consultId, Consult consult}) async {
     String consultId =
         Firestore.instance.collection("consults").document().documentID;
@@ -118,6 +124,16 @@ class FirestoreDatabase implements Database {
       _service.collectionStream(
         path: FirestorePath.consults(),
         queryBuilder: (query) => query.where('provider_id', isEqualTo: uid),
+        builder: (data, documentId) => Consult.fromMap(data, documentId),
+      );
+
+  Stream<List<Consult>> getActiveConsultsForPatient(String uid) =>
+      _service.collectionStream(
+        path: FirestorePath.consults(),
+        queryBuilder: (query) => query
+            .where('patient_id', isEqualTo: uid)
+            .where("state", whereIn: ["New", "Active"]),
+        sort: (lhs, rhs) => rhs.date.compareTo(lhs.date),
         builder: (data, documentId) => Consult.fromMap(data, documentId),
       );
 
