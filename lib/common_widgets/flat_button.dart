@@ -7,11 +7,12 @@ class CustomFlatButton extends FlatButton {
     IconData icon,
     Color color,
     Color textColor,
+    double fontSize = 18,
     VoidCallback onPressed,
   })  : assert(text != null),
         super(
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(16.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
@@ -20,7 +21,7 @@ class CustomFlatButton extends FlatButton {
                   text,
                   style: TextStyle(
                     color: textColor,
-                    fontSize: 15.0,
+                    fontSize: fontSize,
                   ),
                 ),
               ],

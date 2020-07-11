@@ -108,20 +108,23 @@ class DashboardScreen extends StatelessWidget {
         height: height * 0.1,
       ),
       CustomFlatButton(
-        text: "Start a visit",
+        text: "Start a Visit",
         icon: Icons.assignment_ind,
         onPressed: () => _navigateToVisitScreen(context),
       ),
+      Divider(height: 1),
       CustomFlatButton(
-        text: "Prescriptions",
+        text: "View Prescriptions",
         icon: Icons.local_pharmacy,
         onPressed: () => _navigateToPrescriptionsScreen(context),
       ),
+      Divider(height: 1),
       CustomFlatButton(
-        text: "Previous Visits",
+        text: "View Previous Visits",
         icon: Icons.view_list,
         onPressed: () => _navigateToHistory(context),
-      )
+      ),
+      Divider(height: 1),
     ];
   }
 
