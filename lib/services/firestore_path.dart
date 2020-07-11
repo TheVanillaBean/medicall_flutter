@@ -7,6 +7,7 @@ class FirestorePath {
       'services/dermatology/symptoms_list/$symptom/screening-questions/';
   static String consultQuestions(String type) =>
       'services/dermatology/symptoms/$type';
+  static String consults() => 'consults/';
   static String consult(String consultID) => 'consults/$consultID';
   static String questionnaire(String consultID) =>
       'consults/$consultID/questionnaire/questions/';
@@ -16,4 +17,6 @@ class FirestorePath {
   //Firebase Storage
   static String userProfileImage({String uid, String assetName}) =>
       'profile/$uid/$assetName.JPG';
+  static String consultPhotoQuestion({String consultID, String assetName}) =>
+      'consults/$consultID/$assetName.JPG';
 }

@@ -24,6 +24,21 @@ class FirebaseStorageService {
     );
   }
 
+  Future<String> uploadConsultPhoto({
+    @required String consultId,
+    @required Asset asset,
+  }) async {
+    ByteData byteData = await getAccurateByteData(asset);
+    Uint8List imageData = byteData.buffer.asUint8List();
+    String assetName = getImageName(asset.name);
+    return await upload(
+      data: imageData,
+      path: FirestorePath.consultPhotoQuestion(
+          consultID: consultId, assetName: assetName),
+      contentType: 'image/jpg',
+    );
+  }
+
   /// Generic file upload for any [path] and [contentType]
   Future<String> upload({
     @required Uint8List data,

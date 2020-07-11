@@ -1,16 +1,35 @@
 import 'package:Medicall/models/option_model.dart';
+import 'package:enum_to_string/enum_to_string.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
+
+enum Q_TYPE { MC, FR, PHOTO }
+
+extension EnumParser on String {
+  Q_TYPE toQType() {
+    return Q_TYPE.values.firstWhere(
+        (e) => e.toString().toLowerCase() == 'Q_TYPE.$this'.toLowerCase(),
+        orElse: () => null); //return null if not found
+  }
+}
 
 class Question {
   String question;
-  String type;
+  Q_TYPE type;
   List<Option> options;
   Answer answer;
+
+  int maxImages;
+  String placeholderImage;
+  bool required;
 
   Question({
     this.options,
     this.question,
     this.type,
     this.answer,
+    this.maxImages,
+    this.placeholderImage,
+    this.required,
   });
 
   factory Question.fromMap(Map<String, dynamic> data) {
@@ -18,7 +37,7 @@ class Question {
       return null;
     }
     final question = data['question'] ?? '';
-    final type = data['type'] ?? '';
+    final Q_TYPE type = (data['type'] as String).toQType() ?? null;
 
     final options =
         (data['options'] as List ?? []).map((v) => Option.fromMap(v)).toList();
@@ -28,28 +47,48 @@ class Question {
       answer = Answer.fromMap(data);
     }
 
+    final required = data["required"] ?? true;
+    final String placeholderImage = data['placeholder_image'] ?? '';
+    final int maxImages = data['max_images'] ?? 0;
+
     return Question(
       question: question,
       type: type,
       options: options,
       answer: answer,
+      required: required,
+      placeholderImage: placeholderImage,
+      maxImages: maxImages,
     );
   }
 
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
+    Map<String, dynamic> toStringMap = <String, dynamic>{
       'question': question,
-      'type': type,
-      'options': options.map((opt) => opt.toMap()).toList(),
+      'type': EnumToString.parse(type),
       'answer': answer != null ? answer.toMap() : null,
     };
+    if (type == Q_TYPE.MC) {
+      toStringMap.addAll(<String, dynamic>{
+        'options': options.map((opt) => opt.toMap()).toList(),
+      });
+    }
+    if (type == Q_TYPE.PHOTO) {
+      toStringMap.addAll(<String, dynamic>{
+        'required': required,
+        'placeholder_image': placeholderImage,
+        'max_images': maxImages,
+      });
+    }
+    return toStringMap;
   }
 }
 
 class Answer {
   List<String> answer;
+  List<Asset> images; //if it is a photo question. Not serialized.
 
-  Answer({this.answer});
+  Answer({this.answer, this.images = const []});
 
   factory Answer.fromMap(Map<String, dynamic> data) {
     if (data == null) {

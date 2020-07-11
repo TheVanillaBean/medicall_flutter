@@ -4,9 +4,11 @@ import 'package:Medicall/models/question_model.dart';
 import 'package:Medicall/models/screening_questions_model.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/database.dart';
+import 'package:Medicall/services/firebase_storage_service.dart';
 import 'package:Medicall/util/validators.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
 
 // Properties
@@ -23,6 +25,7 @@ class QuestionsViewModel extends PropertyChangeNotifier
     with OptionInputValidator {
   final AuthBase auth;
   final FirestoreDatabase database;
+  final FirebaseStorageService storageService;
   final Consult consult;
   final PageController controller = PageController();
   double progress;
@@ -31,6 +34,7 @@ class QuestionsViewModel extends PropertyChangeNotifier
   String input;
   List<String> optionsList = [];
   List<String> selectedOptionsList = [];
+  List<Asset> questionPhotos = [];
   final TextEditingController inputController = TextEditingController();
   final FocusNode inputFocusNode = FocusNode();
 
@@ -44,6 +48,7 @@ class QuestionsViewModel extends PropertyChangeNotifier
     @required this.auth,
     @required this.consult,
     @required this.database,
+    @required this.storageService,
     this.progress = 0.0,
     this.input = '',
   });
@@ -57,8 +62,23 @@ class QuestionsViewModel extends PropertyChangeNotifier
     ScreeningQuestions questions =
         ScreeningQuestions(screeningQuestions: consult.questions);
     String consultId = await database.saveConsult(consult: consult);
+    await saveConsultPhotos(consultId, questions);
     await database.saveQuestionnaire(
         consultId: consultId, screeningQuestions: questions);
+  }
+
+  Future<void> saveConsultPhotos(
+      String consultId, ScreeningQuestions questions) async {
+    for (Question question in questions.screeningQuestions) {
+      if (question.type == Q_TYPE.PHOTO) {
+        question.answer.answer = [];
+        for (Asset imageAsset in question.answer.images) {
+          String downloadURL = await storageService.uploadConsultPhoto(
+              consultId: consultId, asset: imageAsset);
+          question.answer.answer.add(downloadURL);
+        }
+      }
+    }
   }
 
   void nextPage() async {
@@ -69,11 +89,13 @@ class QuestionsViewModel extends PropertyChangeNotifier
         .toInt()]; //get current question based on current page
 
     Answer answer;
-    if (question.type == "MC") {
+    if (question.type == Q_TYPE.MC) {
       answer = Answer(answer: List.of(selectedOptionsList));
-    } else {
+    } else if (question.type == Q_TYPE.FR) {
       inputFocusNode.unfocus();
       answer = Answer(answer: [input]);
+    } else {
+      answer = Answer(images: List.of(this.questionPhotos));
     }
 
     question.answer = answer;
@@ -82,7 +104,7 @@ class QuestionsViewModel extends PropertyChangeNotifier
         consult.questions.indexWhere((q) => q.question == question.question);
     consult.questions[questionIndex] = question;
 
-    if (question.type == "MC") {
+    if (question.type == Q_TYPE.MC) {
       for (Option opt in question.options) {
         if (opt.hasSubQuestions) {
           if (selectedOptionsList.contains(opt.value)) {
@@ -133,7 +155,7 @@ class QuestionsViewModel extends PropertyChangeNotifier
     selectedOptionsList.clear();
     input = "";
 
-    if (question.type == "MC") {
+    if (question.type == Q_TYPE.MC) {
       for (Option opt in question.options) {
         optionsList.add(opt.value);
       }
@@ -147,7 +169,7 @@ class QuestionsViewModel extends PropertyChangeNotifier
       }
     }
 
-    if (question.type == "FR") {
+    if (question.type == Q_TYPE.FR) {
       if (question.answer != null) {
         input = question.answer.answer.first;
       }
@@ -155,6 +177,14 @@ class QuestionsViewModel extends PropertyChangeNotifier
       inputController.selection = TextSelection.fromPosition(
         TextPosition(offset: inputController.text.length),
       );
+    }
+
+    if (question.type == Q_TYPE.PHOTO) {
+      if (question.answer != null && question.answer.images.length > 0) {
+        this.questionPhotos = question.answer.images;
+      } else {
+        this.questionPhotos.clear();
+      }
     }
   }
 
@@ -170,10 +200,12 @@ class QuestionsViewModel extends PropertyChangeNotifier
     List<String> optionsList,
     List<String> selectedOptionsList,
     String input,
+    List<Asset> questionPhotos,
   }) {
     this.optionsList = optionsList ?? this.optionsList;
     this.input = input ?? this.input;
     this.selectedOptionsList = selectedOptionsList ?? this.selectedOptionsList;
+    this.questionPhotos = questionPhotos ?? this.questionPhotos;
     updateNavButtonState();
     notifyListeners(QuestionVMProperties.questionFormWidget);
   }
@@ -181,7 +213,8 @@ class QuestionsViewModel extends PropertyChangeNotifier
   void updateNavButtonState() {
     this.canAccessPrevious = progress > 0;
     this.canAccessNext = this.selectedOptionsList.length > 0 ||
-        inputValidator.isValid(this.input);
+        inputValidator.isValid(this.input) ||
+        this.questionPhotos.length > 0;
     notifyListeners(QuestionVMProperties.questionNavButtons);
   }
 
