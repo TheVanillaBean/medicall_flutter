@@ -14,12 +14,14 @@ class PaymentDetail extends StatelessWidget {
   final FirestoreDatabase firestoreDatabase;
   final User medicallUser;
   final StripeProvider stripeProvider;
+  final VoidCallback onTap;
 
   const PaymentDetail({
     @required this.model,
     @required this.firestoreDatabase,
     @required this.medicallUser,
     @required this.stripeProvider,
+    @required this.onTap,
   });
 
   static Widget create(BuildContext context) {

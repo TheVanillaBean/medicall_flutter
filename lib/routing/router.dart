@@ -19,10 +19,12 @@ import 'package:Medicall/screens/PhoneAuth/index.dart';
 import 'package:Medicall/screens/Privacy/index.dart';
 import 'package:Medicall/screens/Questions/questionsScreen.dart';
 import 'package:Medicall/screens/Questions/questions_screen.dart';
+import 'package:Medicall/screens/Registration/Provider/consult_detail_screen.dart';
 import 'package:Medicall/screens/Registration/Provider/provider_registration.dart';
 import 'package:Medicall/screens/Registration/photoIdScreen.dart';
 import 'package:Medicall/screens/Registration/registration.dart';
 import 'package:Medicall/screens/Registration/registrationType.dart';
+import 'package:Medicall/screens/Registration/Provider/provider_dashboard.dart';
 import 'package:Medicall/screens/SelectProvider/provider_detail.dart';
 import 'package:Medicall/screens/SelectProvider/select_provider.dart';
 import 'package:Medicall/screens/Symptoms/symptom_detail.dart';
@@ -63,6 +65,8 @@ class Routes {
   static const historyDetail = '/history-detail';
   static const account = '/account';
   static const paymentDetail = '/payment-detail';
+  static const providerDashboard = '/provider-dashboard';
+  static const consultDetail = '/consult-detail';
 }
 
 class Router {
@@ -236,6 +240,27 @@ class Router {
           settings: settings,
           fullscreenDialog: true,
         );
+      case Routes.providerDashboard:
+        final Map<String, dynamic> mapArgs = args;
+        final Consult consult = mapArgs['consult'];
+        final ProviderUser provider = mapArgs['provider'];
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => ProviderDashboardScreen(),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+
+      case Routes.consultDetail:
+        final Map<String, dynamic> mapArgs = args;
+        final Consult consult = mapArgs['consult'];
+        return MaterialPageRoute<dynamic>(
+          builder: (_) => ConsultDetailScreen(
+            consult: consult,
+          ),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+
       case '/consultReview':
         return MaterialPageRoute<dynamic>(
           builder: (context) => ConfirmConsultScreen(),
