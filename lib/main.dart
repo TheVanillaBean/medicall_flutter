@@ -2,6 +2,7 @@ import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Dashboard/dashboard.dart';
 import 'package:Medicall/screens/LandingPage/auth_widget_builder.dart';
 import 'package:Medicall/screens/LandingPage/index.dart';
+import 'package:Medicall/screens/Registration/Provider/provider_dashboard.dart';
 import 'package:Medicall/screens/StripeConnect/index.dart';
 import 'package:Medicall/screens/Welcome/start_visit.dart';
 import 'package:Medicall/screens/Welcome/welcome.dart';
@@ -88,7 +89,7 @@ class MedicallApp extends StatelessWidget {
             home: LandingPage(
               userSnapshot: userSnapshot,
               nonSignedInBuilder: (context) => WelcomeScreen(),
-              signedInBuilder: (context) => DashboardScreen.create(context),
+              signedInBuilder: (context) => ProviderDashboardScreen(),
               stripeConnectBuilder: (context) => StripeConnect.create(context),
               startVisitBuilder: (context) => StartVisitScreen(
                 consult: tempUserProvider.consult,
