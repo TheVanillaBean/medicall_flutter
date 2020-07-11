@@ -114,6 +114,13 @@ class FirestoreDatabase implements Database {
         data: screeningQuestions.toMap(),
       );
 
+  Stream<List<Consult>> getConsultsForProvider(String uid) =>
+      _service.collectionStream(
+        path: FirestorePath.consults(),
+        queryBuilder: (query) => query.where('provider_id', isEqualTo: uid),
+        builder: (data, documentId) => Consult.fromMap(data, documentId),
+      );
+
   @override
   Future getConsultDetail(DetailedHistoryState detailedHistoryState) async {
     if (consultSnapshot == null &&
