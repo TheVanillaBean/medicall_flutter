@@ -105,7 +105,7 @@ class DashboardScreen extends StatelessWidget {
     return [
       _buildHeader(),
       SizedBox(
-        height: height * 0.15,
+        height: height * 0.1,
       ),
       CustomFlatButton(
         text: "Start a visit",
@@ -131,13 +131,21 @@ class DashboardScreen extends StatelessWidget {
       builder:
           (BuildContext context, AsyncSnapshot<List<Consult>> consultSnapshot) {
         return Expanded(
-          flex: 9,
-          child: ListItemsBuilder<Consult>(
-            snapshot: consultSnapshot,
-            itemBuilder: (context, consult) => DashboardListItem(
-              consult: consult,
-              onTap: null,
-            ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text("Status of active visits:"),
+              SizedBox(height: 12),
+              Expanded(
+                child: ListItemsBuilder<Consult>(
+                  snapshot: consultSnapshot,
+                  itemBuilder: (context, consult) => DashboardListItem(
+                    consult: consult,
+                    onTap: null,
+                  ),
+                ),
+              ),
+            ],
           ),
         );
       },

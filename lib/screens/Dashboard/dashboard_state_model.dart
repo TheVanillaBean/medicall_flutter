@@ -21,31 +21,24 @@ class DashboardStateModel with ChangeNotifier {
     database
         .getActiveConsultsForPatient(userProvider.user.uid)
         .listen((List<Consult> consults) {
-      int consultIterator = 0;
-      int userIterator = 0;
-      while (consultIterator < consults.length) {
-        database
-            .userStream(USER_TYPE.PROVIDER, consults[userIterator].providerId)
-            .listen((User user) {
-          if (userIterator == consultIterator) {
-            //data has already been previously loaded, but data for a user has changed on firestore
-            consults = consults.map((consult) {
-              if (consult.providerId == user.uid) {
-                consult.providerUser = user as ProviderUser;
-              }
-            }).toList();
-            consultStream.add(consults);
-          } else {
-            //first time loading data
-            consults[userIterator].providerUser = user as ProviderUser;
-            userIterator++;
-            if (userIterator == consultIterator) {
-              consultStream.add(consults);
+      List<String> uniqueProviderIds = [];
+
+      consults.forEach((consult) {
+        if (!uniqueProviderIds.contains(consult.providerId)) {
+          uniqueProviderIds.add(consult.providerId);
+        }
+      });
+
+      uniqueProviderIds.forEach((providerId) {
+        database.userStream(USER_TYPE.PROVIDER, providerId).listen((User user) {
+          for (Consult consult in consults) {
+            if (consult.providerId == user.uid) {
+              consult.providerUser = user as ProviderUser;
             }
           }
+          consultStream.add(consults);
         });
-        consultIterator++;
-      }
+      });
     });
   }
 }
