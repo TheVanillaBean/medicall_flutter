@@ -1,13 +1,12 @@
 import 'package:Medicall/common_widgets/list_items_builder.dart';
-import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/consult_model.dart';
-import 'package:Medicall/models/provider_user_model.dart';
+import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard_list_item.dart';
+import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'consult_detail_screen.dart';
-import 'consult_list_Item.dart';
-import 'package:Medicall/services/database.dart';
+
+import '../../Registration/Provider/consult_detail_screen.dart';
 
 class ProviderDashboardScreen extends StatelessWidget {
   @override
@@ -29,10 +28,9 @@ class ProviderDashboardScreen extends StatelessWidget {
         ),
         centerTitle: true,
         title: Text(
-          'Consults',
+          'Visits',
         ),
       ),
-      drawer: DrawerMenu(),
       body: StreamBuilder<List<Consult>>(
           stream: db.getConsultsForProvider(userProvider.user.uid),
           builder:
@@ -43,7 +41,8 @@ class ProviderDashboardScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(8.0),
                   child: ListItemsBuilder<Consult>(
                     snapshot: snapshot,
-                    itemBuilder: (context, consult) => ConsultListItem(
+                    itemBuilder: (context, consult) =>
+                        ProviderDashboardDashboardListItem(
                       consult: consult,
                       onTap: () => ConsultDetailScreen.show(
                         context: context,

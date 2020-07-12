@@ -5,6 +5,7 @@ import 'package:Medicall/screens/Account/account.dart';
 import 'package:Medicall/screens/Account/payment_detail.dart';
 import 'package:Medicall/screens/ConfirmConsult/index.dart';
 import 'package:Medicall/screens/Consent/index.dart';
+import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard.dart';
 import 'package:Medicall/screens/Dashboard/dashboard.dart';
 import 'package:Medicall/screens/History/Detail/index.dart';
 import 'package:Medicall/screens/History/index.dart';
@@ -24,7 +25,6 @@ import 'package:Medicall/screens/Registration/Provider/provider_registration.dar
 import 'package:Medicall/screens/Registration/photoIdScreen.dart';
 import 'package:Medicall/screens/Registration/registration.dart';
 import 'package:Medicall/screens/Registration/registrationType.dart';
-import 'package:Medicall/screens/Registration/Provider/provider_dashboard.dart';
 import 'package:Medicall/screens/SelectProvider/provider_detail.dart';
 import 'package:Medicall/screens/SelectProvider/select_provider.dart';
 import 'package:Medicall/screens/Symptoms/symptom_detail.dart';

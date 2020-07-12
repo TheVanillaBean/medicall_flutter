@@ -1,8 +1,7 @@
 import 'package:Medicall/routing/router.dart';
-import 'package:Medicall/screens/Dashboard/dashboard.dart';
+import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard.dart';
 import 'package:Medicall/screens/LandingPage/auth_widget_builder.dart';
 import 'package:Medicall/screens/LandingPage/index.dart';
-import 'package:Medicall/screens/Registration/Provider/provider_dashboard.dart';
 import 'package:Medicall/screens/StripeConnect/index.dart';
 import 'package:Medicall/screens/Welcome/start_visit.dart';
 import 'package:Medicall/screens/Welcome/welcome.dart';
