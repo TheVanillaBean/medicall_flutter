@@ -36,7 +36,7 @@ class ProviderDashboardViewModel with ChangeNotifier {
               consult.patientUser = user as PatientUser;
             }
           }
-          consultStream.add(consults);
+          consultStream.add(consults.length > 0 ? consults : null);
         });
       });
     });

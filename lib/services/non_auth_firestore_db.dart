@@ -4,6 +4,7 @@ import 'package:Medicall/models/screening_questions_model.dart';
 import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/services/firestore_service.dart';
+import 'package:enum_to_string/enum_to_string.dart';
 
 import 'firestore_path.dart';
 
@@ -47,7 +48,10 @@ class NonAuthFirestoreDB implements NonAuthDatabase {
   Future<List<String>> getAllProviderAddresses() => _service
       .collectionStream(
         path: FirestorePath.users(),
-        queryBuilder: (query) => query.where('type', isEqualTo: "provider"),
+        queryBuilder: (query) => query.where(
+          'type',
+          isEqualTo: EnumToString.parse(USER_TYPE.PROVIDER),
+        ),
         builder: (data, documentId) => data["address"].toString(),
       )
       .first;
@@ -55,7 +59,10 @@ class NonAuthFirestoreDB implements NonAuthDatabase {
   @override
   Stream<List<ProviderUser>> getAllProviders() => _service.collectionStream(
         path: FirestorePath.users(),
-        queryBuilder: (query) => query.where('type', isEqualTo: "provider"),
+        queryBuilder: (query) => query.where(
+          'type',
+          isEqualTo: EnumToString.parse(USER_TYPE.PROVIDER),
+        ),
         builder: (data, documentId) => User.fromMap(
             userType: USER_TYPE.PROVIDER, data: data, uid: documentId),
       );

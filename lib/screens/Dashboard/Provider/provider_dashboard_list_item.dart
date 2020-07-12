@@ -30,7 +30,7 @@ class ProviderDashboardListItem extends StatelessWidget {
                   color: Colors.grey,
                 ),
           title: Text(
-            'Dr. ${consult.patientUser.fullName}',
+            '${consult.patientUser.fullName}',
           ),
           subtitle: Text("${consult.symptom} visit"),
           trailing: Text(
