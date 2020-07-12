@@ -2,6 +2,7 @@ import 'package:Medicall/models/patient_user_model.dart';
 import 'package:Medicall/models/provider_user_model.dart';
 import 'package:Medicall/models/question_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
 
 class Consult {
@@ -16,6 +17,11 @@ class Consult {
   //not serialized
   PatientUser patientUser;
   ProviderUser providerUser;
+
+  String get parsedDate {
+    final f = DateFormat('E d MMM, h:mma');
+    return f.format(this.date);
+  }
 
   Consult({
     @required this.providerId,

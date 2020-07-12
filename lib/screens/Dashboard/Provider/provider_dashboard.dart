@@ -8,8 +8,6 @@ import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../Registration/Provider/consult_detail_screen.dart';
-
 class ProviderDashboardScreen extends StatelessWidget {
   final ProviderDashboardViewModel model;
 
@@ -51,16 +49,6 @@ class ProviderDashboardScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: Icon(Icons.arrow_back),
-            );
-          },
-        ),
         centerTitle: true,
         title: Text(
           'Visits',
@@ -77,9 +65,7 @@ class ProviderDashboardScreen extends StatelessWidget {
                   snapshot: snapshot,
                   itemBuilder: (context, consult) => ProviderDashboardListItem(
                     consult: consult,
-                    onTap: () => ConsultDetailScreen.show(
-                      context: context,
-                    ),
+                    onTap: null,
                   ),
                 ),
               ),

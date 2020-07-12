@@ -29,10 +29,20 @@ class ProviderDashboardListItem extends StatelessWidget {
                   size: 40,
                   color: Colors.grey,
                 ),
-          title: Text(
-            '${consult.patientUser.fullName}',
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                '${consult.patientUser.fullName}',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 4),
+              Text("Reason: ${consult.symptom}"),
+              SizedBox(height: 4),
+              SizedBox(height: 16),
+            ],
           ),
-          subtitle: Text("${consult.symptom} visit"),
+          subtitle: Text(consult.parsedDate),
           trailing: Text(
             "In Review",
             style: TextStyle(color: Colors.blue),
