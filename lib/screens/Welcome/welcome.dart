@@ -118,29 +118,45 @@ class WelcomeScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
-              padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-              child: Text(
-                'Choose your visit and doctor',
-                style: TextStyle(fontSize: 16),
-              )),
+            child: Text(
+              'Choose your visit and doctor',
+              style: TextStyle(fontSize: 16),
+            ),
+          ),
           Container(
-              padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-              child: Text(
-                'Answer a few questions',
-                style: TextStyle(fontSize: 16),
-              )),
+            width: 1,
+            height: 24,
+            color: Colors.grey,
+          ),
           Container(
-              padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-              child: Text(
-                'Payment',
-                style: TextStyle(fontSize: 16),
-              )),
+            child: Text(
+              'Answer a few questions',
+              style: TextStyle(fontSize: 16),
+            ),
+          ),
           Container(
-              padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-              child: Text(
-                'Personalized treatment plan',
-                style: TextStyle(fontSize: 16),
-              )),
+            width: 1,
+            height: 24,
+            color: Colors.grey,
+          ),
+          Container(
+            child: Text(
+              'Make Payment',
+              style: TextStyle(fontSize: 16),
+            ),
+          ),
+          Container(
+            width: 1,
+            height: 24,
+            color: Colors.grey,
+          ),
+          Container(
+            padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+            child: Text(
+              'Personalized treatment plan',
+              style: TextStyle(fontSize: 16),
+            ),
+          ),
           Container(
               padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
               child: Text(
