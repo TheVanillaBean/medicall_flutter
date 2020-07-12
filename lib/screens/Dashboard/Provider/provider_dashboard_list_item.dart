@@ -4,9 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class ProviderDashboardDashboardListItem extends StatelessWidget {
-  const ProviderDashboardDashboardListItem(
-      {Key key, @required this.consult, this.onTap})
+class ProviderDashboardListItem extends StatelessWidget {
+  const ProviderDashboardListItem({Key key, @required this.consult, this.onTap})
       : super(key: key);
   final Consult consult;
   final VoidCallback onTap;

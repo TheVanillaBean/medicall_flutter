@@ -1,5 +1,6 @@
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard.dart';
+import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/LandingPage/auth_widget_builder.dart';
 import 'package:Medicall/screens/LandingPage/index.dart';
 import 'package:Medicall/screens/StripeConnect/index.dart';
@@ -17,6 +18,8 @@ import 'package:Medicall/theme.dart';
 import 'package:Medicall/util/apple_sign_in_available.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'models/user_model_base.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -88,7 +91,10 @@ class MedicallApp extends StatelessWidget {
             home: LandingPage(
               userSnapshot: userSnapshot,
               nonSignedInBuilder: (context) => WelcomeScreen(),
-              signedInBuilder: (context) => ProviderDashboardScreen(),
+              signedInBuilder: (context) =>
+                  userSnapshot.data.type == USER_TYPE.PROVIDER
+                      ? ProviderDashboardScreen.create(context)
+                      : PatientDashboardScreen.create(context),
               stripeConnectBuilder: (context) => StripeConnect.create(context),
               startVisitBuilder: (context) => StartVisitScreen(
                 consult: tempUserProvider.consult,

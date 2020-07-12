@@ -6,7 +6,7 @@ import 'package:Medicall/screens/Account/payment_detail.dart';
 import 'package:Medicall/screens/ConfirmConsult/index.dart';
 import 'package:Medicall/screens/Consent/index.dart';
 import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard.dart';
-import 'package:Medicall/screens/Dashboard/dashboard.dart';
+import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/History/Detail/index.dart';
 import 'package:Medicall/screens/History/index.dart';
 import 'package:Medicall/screens/Login/login.dart';
@@ -161,7 +161,7 @@ class Router {
         );
       case Routes.dashboard:
         return MaterialPageRoute<dynamic>(
-          builder: (context) => DashboardScreen.create(context),
+          builder: (context) => PatientDashboardScreen.create(context),
           settings: settings,
           fullscreenDialog: true,
         );

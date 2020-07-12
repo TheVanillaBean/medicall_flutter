@@ -3,7 +3,7 @@ import 'dart:ui' as ui;
 import 'package:Medicall/common_widgets/sign_in_button.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
-import 'package:Medicall/screens/Dashboard/dashboard.dart';
+import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/MakePayment/make_payment_view_model.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/stripe_provider.dart';
@@ -52,7 +52,8 @@ class MakePayment extends StatelessWidget {
   Future<void> _payPressed(BuildContext context) async {
     bool successfullyChargedCard = await model.chargeUsersCard();
     if (successfullyChargedCard) {
-      return DashboardScreen.show(context: context, pushReplaceNamed: true);
+      return PatientDashboardScreen.show(
+          context: context, pushReplaceNamed: true);
     } else {
       AppUtil().showFlushBar(
         "Payment failed. Please contact customer support.",

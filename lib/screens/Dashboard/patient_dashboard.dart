@@ -3,8 +3,8 @@ import 'package:Medicall/common_widgets/list_items_builder.dart';
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
-import 'package:Medicall/screens/Dashboard/dashboard_list_item.dart';
-import 'package:Medicall/screens/Dashboard/dashboard_state_model.dart';
+import 'package:Medicall/screens/Dashboard/patient_dashboard_list_item.dart';
+import 'package:Medicall/screens/Dashboard/patient_dashboard_view_model.dart';
 import 'package:Medicall/screens/Symptoms/symptoms.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
@@ -12,19 +12,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-class DashboardScreen extends StatelessWidget {
-  final DashboardStateModel model;
+class PatientDashboardScreen extends StatelessWidget {
+  final PatientDashboardViewModel model;
 
   static Widget create(BuildContext context) {
     final FirestoreDatabase database = Provider.of<FirestoreDatabase>(context);
     final UserProvider provider = Provider.of<UserProvider>(context);
-    return ChangeNotifierProvider<DashboardStateModel>(
-      create: (context) => DashboardStateModel(
+    return ChangeNotifierProvider<PatientDashboardViewModel>(
+      create: (context) => PatientDashboardViewModel(
         database: database,
         userProvider: provider,
       ),
-      child: Consumer<DashboardStateModel>(
-        builder: (_, model, __) => DashboardScreen(
+      child: Consumer<PatientDashboardViewModel>(
+        builder: (_, model, __) => PatientDashboardScreen(
           model: model,
         ),
       ),
@@ -46,7 +46,7 @@ class DashboardScreen extends StatelessWidget {
     }
   }
 
-  const DashboardScreen({@required this.model});
+  const PatientDashboardScreen({@required this.model});
 
   void _navigateToVisitScreen(BuildContext context) {
     SymptomsScreen.show(context: context);
@@ -142,7 +142,7 @@ class DashboardScreen extends StatelessWidget {
               Expanded(
                 child: ListItemsBuilder<Consult>(
                   snapshot: consultSnapshot,
-                  itemBuilder: (context, consult) => DashboardListItem(
+                  itemBuilder: (context, consult) => PatientDashboardListItem(
                     consult: consult,
                     onTap: null,
                   ),

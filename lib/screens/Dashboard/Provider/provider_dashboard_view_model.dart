@@ -7,14 +7,14 @@ import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/cupertino.dart';
 
-class ProviderDashboardStateModel with ChangeNotifier {
+class ProviderDashboardViewModel with ChangeNotifier {
   final FirestoreDatabase database;
   final UserProvider userProvider;
 
   // ignore: close_sinks
   StreamController<List<Consult>> consultStream = StreamController();
 
-  ProviderDashboardStateModel({
+  ProviderDashboardViewModel({
     @required this.database,
     @required this.userProvider,
   }) {
