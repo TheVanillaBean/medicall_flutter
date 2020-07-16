@@ -137,6 +137,14 @@ class FirestoreDatabase implements Database {
         builder: (data, documentId) => Consult.fromMap(data, documentId),
       );
 
+  Stream<List<Consult>> getTotalConsultsForPatient(String uid) =>
+      _service.collectionStream(
+        path: FirestorePath.consults(),
+        queryBuilder: (query) => query.where('patient_id', isEqualTo: uid),
+        sort: (lhs, rhs) => rhs.date.compareTo(lhs.date),
+        builder: (data, documentId) => Consult.fromMap(data, documentId),
+      );
+
   @override
   Future getConsultDetail(DetailedHistoryState detailedHistoryState) async {
     if (consultSnapshot == null &&

@@ -56,8 +56,8 @@ class PatientDashboardScreen extends StatelessWidget {
     Navigator.of(context).pushNamed('/prescriptions');
   }
 
-  void _navigateToHistory(BuildContext context) {
-    Navigator.of(context).pushNamed('/history');
+  void _navigateToPreviousConsults(BuildContext context) {
+    Navigator.of(context).pushNamed('/previous-consults');
   }
 
   @override
@@ -122,7 +122,7 @@ class PatientDashboardScreen extends StatelessWidget {
       CustomFlatButton(
         text: "View Previous Visits",
         icon: Icons.view_list,
-        onPressed: () => _navigateToHistory(context),
+        onPressed: () => _navigateToPreviousConsults(context),
       ),
       Divider(height: 1),
     ];

@@ -22,13 +22,17 @@ class TempLinksPage extends StatelessWidget {
           child: Column(
             children: <Widget>[
               FlatButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ConfirmConsult()));
-                  },
-                  child: Text('Confirm Consult')),
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ConfirmConsult()));
+                },
+                child: Text(
+                  'Confirm Consult',
+                ),
+                textColor: Colors.blue,
+              ),
             ],
           ),
         ),
