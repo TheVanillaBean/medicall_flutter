@@ -1,4 +1,3 @@
-import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -58,87 +57,18 @@ class ConfirmConsult extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
-                      ListTile(
-                        contentPadding: EdgeInsets.only(left: 0.0, right: 0.0),
-                        //dense: true,
-                        title: Text(
-                          'Choose your visit and doctor',
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                            fontFamily: 'SourceSansPro',
-                            fontSize: 18.0,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        leading: Icon(
-                          Icons.check_circle,
-                          color: Colors.green,
-                          size: 40,
-                        ),
+                      ConfirmConsultListItem(
+                        title: "Choose your visit and doctor",
                       ),
-                      ListTile(
-                        contentPadding: EdgeInsets.only(left: 0.0, right: 0.0),
-                        //dense: true,
-                        title: Text(
-                          'Answer a few questions',
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                            fontFamily: 'SourceSansPro',
-                            fontSize: 18.0,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        leading: Icon(
-                          Icons.check_circle,
-                          color: Colors.green,
-                          size: 40,
-                        ),
+                      ConfirmConsultListItem(
+                        title: "Answer a few questions",
                       ),
-                      ListTile(
-                        contentPadding: EdgeInsets.only(left: 0.0, right: 0.0),
-                        //dense: true,
-                        title: Text(
-                          'Payment',
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                            fontFamily: 'SourceSansPro',
-                            fontSize: 18.0,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        leading: Icon(
-                          Icons.check_circle,
-                          color: Colors.green,
-                          size: 40,
-                        ),
+                      ConfirmConsultListItem(
+                        title: "Payment",
                       ),
-                      ListTile(
-                        contentPadding: EdgeInsets.only(left: 0.0, right: 0.0),
-                        //dense: true,
-                        title: Text(
-                          'Personalized treatment plan',
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                            fontFamily: 'SourceSansPro',
-                            fontSize: 18.0,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        subtitle: Text(
-                          '*Prescriptions delivered if needed',
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                            fontFamily: 'SourceSansPro',
-                            fontSize: 14.0,
-                            color: Colors.grey,
-                          ),
-                        ),
-                        leading: Icon(
-                          Icons.check_circle,
-                          color: Colors.green,
-                          size: 40,
-                        ),
-                      ),
+                      ConfirmConsultListItem(
+                          title: "Personalized treatment plan",
+                          subtitle: "*Prescriptions delivered if needed"),
                     ],
                   ),
                 ),
@@ -161,7 +91,7 @@ class ConfirmConsult extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontFamily: 'SourceSansPro',
-                      fontSize: 14.0,
+                      fontSize: 18.0,
                       color: Colors.grey,
                     ),
                   ),
@@ -184,5 +114,64 @@ class ConfirmConsult extends StatelessWidget {
             ),
           ),
         ));
+  }
+}
+
+class ConfirmConsultListItem extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  const ConfirmConsultListItem({
+    @required this.title,
+    this.subtitle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (subtitle != null)
+      return ListTile(
+        contentPadding: EdgeInsets.only(left: 0.0, right: 0.0),
+        dense: true,
+        title: Text(
+          title,
+          textAlign: TextAlign.left,
+          style: TextStyle(
+            fontFamily: 'SourceSansPro',
+            fontSize: 18.0,
+            color: Colors.grey,
+          ),
+        ),
+        subtitle: Text(
+          subtitle,
+          textAlign: TextAlign.left,
+          style: TextStyle(
+            fontFamily: 'SourceSansPro',
+            fontSize: 13.0,
+            color: Colors.grey,
+          ),
+        ),
+        leading: Icon(
+          Icons.check_circle,
+          color: Colors.green,
+          size: 38,
+        ),
+      );
+    return ListTile(
+      contentPadding: EdgeInsets.only(left: 0.0, right: 0.0),
+      dense: true,
+      title: Text(
+        title,
+        textAlign: TextAlign.left,
+        style: TextStyle(
+          fontFamily: 'SourceSansPro',
+          fontSize: 18.0,
+          color: Colors.grey,
+        ),
+      ),
+      leading: Icon(
+        Icons.check_circle,
+        color: Colors.green,
+        size: 38,
+      ),
+    );
   }
 }

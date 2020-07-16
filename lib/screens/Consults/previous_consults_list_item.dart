@@ -15,13 +15,9 @@ class PreviousConsultsListItem extends StatelessWidget {
         Provider.of<ExtImageProvider>(context);
     if (consult.providerUser != null) {
       return Container(
-        //decoration: BoxDecoration(
-        //border: Border.all(color: Colors.grey, width: 0.5),
-        //),
         child: ListTile(
           contentPadding: EdgeInsets.only(left: 0.0, right: 0.0),
           dense: true,
-          //contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
           leading: consult.providerUser.profilePic.length > 0
               ? displayProfilePicture(
                   extImageProvider, consult.providerUser.profilePic)

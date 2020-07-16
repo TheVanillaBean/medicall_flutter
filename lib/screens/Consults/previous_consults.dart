@@ -3,7 +3,6 @@ import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Consults/previous_consults_list_item.dart';
 import 'package:Medicall/screens/Consults/previous_consults_view_model.dart';
-import 'package:Medicall/screens/Dashboard/patient_dashboard_list_item.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
