@@ -33,7 +33,7 @@ class PatientDashboardScreen extends StatelessWidget {
 
   static Future<void> show({
     BuildContext context,
-    bool pushReplaceNamed,
+    bool pushReplaceNamed = true,
   }) async {
     if (pushReplaceNamed) {
       await Navigator.of(context).pushReplacementNamed(
