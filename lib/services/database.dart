@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:Medicall/models/consult-review/consult_review_options_model.dart';
 import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/consult_status_modal.dart';
@@ -136,6 +137,26 @@ class FirestoreDatabase implements Database {
         sort: (lhs, rhs) => rhs.date.compareTo(lhs.date),
         builder: (data, documentId) => Consult.fromMap(data, documentId),
       );
+
+  Future<ConsultReviewOptions> consultReviewOptions({String symptomName}) =>
+      _service
+          .documentStream(
+            path: FirestorePath.consultReviewOptions(symptomName),
+            builder: (data, documentId) =>
+                ConsultReviewOptions.fromMap(data, documentId),
+          )
+          .first;
+
+  Future<ConsultReviewOptions> consultReviewDiagnosisOptions(
+          {String symptomName, String diagnosis}) =>
+      _service
+          .documentStream(
+            path: FirestorePath.consultReviewOptionsDiagnosis(
+                symptomName, diagnosis),
+            builder: (data, documentId) =>
+                ConsultReviewOptions.fromMap(data, documentId),
+          )
+          .first;
 
   @override
   Future getConsultDetail(DetailedHistoryState detailedHistoryState) async {

@@ -65,7 +65,7 @@ class ProviderDashboardScreen extends StatelessWidget {
                   snapshot: snapshot,
                   itemBuilder: (context, consult) => ProviderDashboardListItem(
                     consult: consult,
-                    onTap: null,
+                    onTap: () => model.getConsultReviewOptions(),
                   ),
                 ),
               ),
