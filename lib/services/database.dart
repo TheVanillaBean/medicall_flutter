@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:Medicall/models/consult-review/consult_review_options_model.dart';
+import 'package:Medicall/models/consult-review/diagnosis_options_model.dart';
 import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/consult_status_modal.dart';
@@ -147,14 +148,14 @@ class FirestoreDatabase implements Database {
           )
           .first;
 
-  Future<ConsultReviewOptions> consultReviewDiagnosisOptions(
+  Future<DiagnosisOptions> consultReviewDiagnosisOptions(
           {String symptomName, String diagnosis}) =>
       _service
           .documentStream(
             path: FirestorePath.consultReviewOptionsDiagnosis(
                 symptomName, diagnosis),
             builder: (data, documentId) =>
-                ConsultReviewOptions.fromMap(data, documentId),
+                DiagnosisOptions.fromMap(data['review-options'], diagnosis),
           )
           .first;
 
