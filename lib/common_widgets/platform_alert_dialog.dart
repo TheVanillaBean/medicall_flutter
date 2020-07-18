@@ -34,10 +34,13 @@ class PlatformAlertDialog extends PlatformWidget {
 
   @override
   Widget buildCupertinoWidget(BuildContext context) {
-    return CupertinoAlertDialog(
-      title: Text(title),
-      content: Text(content),
-      actions: _buildActions(context),
+    return Theme(
+      data: ThemeData.light(),
+      child: CupertinoAlertDialog(
+        title: Text(title),
+        content: Text(content),
+        actions: _buildActions(context),
+      ),
     );
   }
 
