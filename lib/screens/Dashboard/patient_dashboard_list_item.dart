@@ -18,6 +18,7 @@ class PatientDashboardListItem extends StatelessWidget {
     if (consult.providerUser != null) {
       return Container(
         decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16.0),
           border: Border.all(color: Colors.grey, width: 0.5),
         ),
         child: ListTile(
