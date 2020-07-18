@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
 
 class Consult {
+  final String uid;
   final String providerId;
   final String symptom;
   final int price;
@@ -26,6 +27,7 @@ class Consult {
   Consult({
     @required this.providerId,
     @required this.symptom,
+    this.uid,
     this.patientId,
     this.price = 49,
     this.date,
@@ -51,6 +53,7 @@ class Consult {
 //        .toList();
 
     return Consult(
+      uid: documentId,
       providerId: providerId,
       patientId: patientId,
       symptom: symptom,

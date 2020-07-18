@@ -109,19 +109,19 @@ class PatientDashboardScreen extends StatelessWidget {
       ),
       CustomFlatButton(
         text: "Start a Visit",
-        icon: Icons.assignment_ind,
+        leadingIcon: Icons.assignment_ind,
         onPressed: () => _navigateToVisitScreen(context),
       ),
       Divider(height: 1),
       CustomFlatButton(
         text: "View Prescriptions",
-        icon: Icons.local_pharmacy,
+        leadingIcon: Icons.local_pharmacy,
         onPressed: () => _navigateToPrescriptionsScreen(context),
       ),
       Divider(height: 1),
       CustomFlatButton(
         text: "View Previous Visits",
-        icon: Icons.view_list,
+        leadingIcon: Icons.view_list,
         onPressed: () => _navigateToHistory(context),
       ),
       Divider(height: 1),

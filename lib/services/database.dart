@@ -159,6 +159,15 @@ class FirestoreDatabase implements Database {
           )
           .first;
 
+  Future<ScreeningQuestions> consultQuestionnaire({String consultId}) =>
+      _service
+          .documentStream(
+            path: FirestorePath.questionnaire(consultId),
+            builder: (data, documentId) =>
+                ScreeningQuestions.fromMap(data, documentId),
+          )
+          .first;
+
   @override
   Future getConsultDetail(DetailedHistoryState detailedHistoryState) async {
     if (consultSnapshot == null &&

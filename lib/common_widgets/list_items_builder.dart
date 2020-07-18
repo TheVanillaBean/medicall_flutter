@@ -3,15 +3,20 @@ import 'package:flutter/material.dart';
 
 typedef ItemWidgetBuilder<T> = Widget Function(BuildContext context, T item);
 
+//items can either come from a snapshot or an items list
+//if itemsList is true, then snapshot should be false
 class ListItemsBuilder<T> extends StatelessWidget {
   const ListItemsBuilder({
     Key key,
     @required this.snapshot,
+    this.itemsList,
     @required this.itemBuilder,
     this.displayEmptyContentView = true,
     this.scrollable = true,
-  }) : super(key: key);
+  }) : assert((snapshot == null && itemsList != null) ||
+            (snapshot != null && itemsList == null));
   final AsyncSnapshot<List<T>> snapshot;
+  final List<T> itemsList;
   final ItemWidgetBuilder<T> itemBuilder;
   final bool displayEmptyContentView;
   final bool scrollable;
@@ -22,6 +27,12 @@ class ListItemsBuilder<T> extends StatelessWidget {
       final List<T> items = snapshot.data;
       if (items.isNotEmpty) {
         return _buildList(items, context);
+      } else {
+        return displayEmptyContentView ? const EmptyContent() : Container();
+      }
+    } else if (this.itemsList != null) {
+      if (itemsList.isNotEmpty) {
+        return _buildList(itemsList, context);
       } else {
         return displayEmptyContentView ? const EmptyContent() : Container();
       }
