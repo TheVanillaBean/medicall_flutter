@@ -106,11 +106,12 @@ class FirestoreDatabase implements Database {
       );
 
   Future<String> saveConsult({String consultId, Consult consult}) async {
-    String consultId =
+    String cid = consultId ??
         Firestore.instance.collection("consults").document().documentID;
     await _service.setData(
-      path: FirestorePath.consult(consultId),
+      path: FirestorePath.consult(cid),
       data: consult.toMap(),
+      merge: true,
     );
     return consultId;
   }

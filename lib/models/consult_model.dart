@@ -2,8 +2,25 @@ import 'package:Medicall/models/patient_user_model.dart';
 import 'package:Medicall/models/provider_user_model.dart';
 import 'package:Medicall/models/question_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
+
+enum ConsultStatus {
+  PendingReview,
+  InReview,
+  Completed,
+  Signed,
+}
+
+extension EnumParser on String {
+  ConsultStatus toConsultStatus() {
+    return ConsultStatus.values.firstWhere(
+      (e) => e.toString().toLowerCase() == 'ConsultStatus.$this'.toLowerCase(),
+      orElse: () => null,
+    ); //return null if not found
+  }
+}
 
 class Consult {
   final String uid;
@@ -12,7 +29,7 @@ class Consult {
   final int price;
   final DateTime date;
   String patientId;
-  String state;
+  ConsultStatus state;
   List<Question> questions;
 
   //not serialized
@@ -47,7 +64,8 @@ class Consult {
     final String symptom = data['symptom'];
     final int price = data['price'];
     final DateTime date = DateTime.parse(dateTimeStamp.toDate().toString());
-    final String state = data['state'];
+    final ConsultStatus state =
+        (data['state'] as String).toConsultStatus() ?? null;
 //    final List<Question> questions = (data['screening_questions'] as List ?? [])
 //        .map((v) => Question.fromMap(v))
 //        .toList();
@@ -70,7 +88,7 @@ class Consult {
       'symptom': symptom,
       'price': price,
       'date': date,
-      'state': state,
+      'state': EnumToString.parse(state),
 //      "screening_questions": questions.map((q) => q.toMap()),
     };
   }

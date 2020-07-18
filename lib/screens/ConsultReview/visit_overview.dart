@@ -5,7 +5,9 @@ import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/ConsultReview/review_visit_information.dart';
 import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard_list_item.dart';
+import 'package:Medicall/services/database.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class VisitOverview extends StatelessWidget {
   final Consult consult;
@@ -71,7 +73,7 @@ class VisitOverview extends StatelessWidget {
       ),
       CustomFlatButton(
         text: "DIAGNOSIS & TREATMENT PLAN",
-        onPressed: () => {},
+        onPressed: navigateToVisitInformationScreen(context),
       ),
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -95,16 +97,11 @@ class VisitOverview extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.only(bottom: 32),
             child: SignInButton(
-              text: "Begin Diagnosis & Treatment Plan",
+              text: getContinueBtnText(),
               height: 8,
-              color: Colors.blue,
+              color: getContinueBtnColor(),
               textColor: Colors.white,
-              onPressed: consult.state == "New"
-                  ? () => _showDialog(context)
-                  : () => ReviewVisitInformation.show(
-                        context: context,
-                        consult: consult,
-                      ),
+              onPressed: navigateToVisitInformationScreen(context),
             ),
           ),
         ),
@@ -112,7 +109,37 @@ class VisitOverview extends StatelessWidget {
     ];
   }
 
+  Color getContinueBtnColor() {
+    if (consult.state == ConsultStatus.PendingReview) {
+      return Colors.blue;
+    } else if (consult.state == ConsultStatus.InReview) {
+      return Colors.orange;
+    } else {
+      return Colors.deepOrangeAccent;
+    }
+  }
+
+  String getContinueBtnText() {
+    if (consult.state == ConsultStatus.PendingReview) {
+      return "Begin Diagnosis & Treatment Plan";
+    } else if (consult.state == ConsultStatus.InReview) {
+      return "Continue Diagnosis & Treatment Plan";
+    } else {
+      return "Sign and Complete Visit";
+    }
+  }
+
+  Function navigateToVisitInformationScreen(BuildContext context) {
+    return consult.state == ConsultStatus.PendingReview
+        ? () => _showDialog(context)
+        : () => ReviewVisitInformation.show(
+              context: context,
+              consult: consult,
+            );
+  }
+
   Future<void> _showDialog(BuildContext context) async {
+    final db = Provider.of<FirestoreDatabase>(context, listen: false);
     final didPressYes = await PlatformAlertDialog(
       title: "Begin Visit Review",
       content:
@@ -122,6 +149,8 @@ class VisitOverview extends StatelessWidget {
     ).show(context);
 
     if (didPressYes == true) {
+      consult.state = ConsultStatus.InReview;
+      await db.saveConsult(consultId: consult.uid, consult: consult);
       ReviewVisitInformation.show(
         context: context,
         consult: consult,
