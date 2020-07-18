@@ -1,7 +1,9 @@
 import 'package:Medicall/common_widgets/flat_button.dart';
+import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
 import 'package:Medicall/common_widgets/sign_in_button.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/ConsultReview/review_visit_information.dart';
 import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard_list_item.dart';
 import 'package:flutter/material.dart';
 
@@ -41,12 +43,12 @@ class VisitOverview extends StatelessWidget {
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
-        children: _buildChildren(),
+        children: _buildChildren(context),
       ),
     );
   }
 
-  List<Widget> _buildChildren() {
+  List<Widget> _buildChildren(BuildContext context) {
     return <Widget>[
       Padding(
         padding: const EdgeInsets.all(16.0),
@@ -97,11 +99,33 @@ class VisitOverview extends StatelessWidget {
               height: 8,
               color: Colors.blue,
               textColor: Colors.white,
-              onPressed: () => {},
+              onPressed: consult.state == "New"
+                  ? () => _showDialog(context)
+                  : () => ReviewVisitInformation.show(
+                        context: context,
+                        consult: consult,
+                      ),
             ),
           ),
         ),
       )
     ];
+  }
+
+  Future<void> _showDialog(BuildContext context) async {
+    final didPressYes = await PlatformAlertDialog(
+      title: "Begin Visit Review",
+      content:
+          "Once you begin this visit review, the status of the visit will change to \"In-Review\", which the patient will see.",
+      defaultActionText: "Begin Review",
+      cancelActionText: "No, don't begin",
+    ).show(context);
+
+    if (didPressYes == true) {
+      ReviewVisitInformation.show(
+        context: context,
+        consult: consult,
+      );
+    }
   }
 }
