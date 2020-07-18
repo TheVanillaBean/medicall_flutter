@@ -5,8 +5,11 @@ class PatientTemplateNote {
   String conclusion;
   Map<String, String> body;
 
-  PatientTemplateNote(
-      {@required this.intro, @required this.conclusion, @required this.body});
+  PatientTemplateNote({
+    @required this.intro,
+    @required this.conclusion,
+    @required this.body,
+  });
 
   factory PatientTemplateNote.fromMap(Map<String, dynamic> data) {
     if (data == null) {

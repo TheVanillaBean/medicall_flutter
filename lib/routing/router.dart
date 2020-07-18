@@ -5,6 +5,7 @@ import 'package:Medicall/screens/Account/account.dart';
 import 'package:Medicall/screens/Account/payment_detail.dart';
 import 'package:Medicall/screens/ConfirmConsult/index.dart';
 import 'package:Medicall/screens/Consent/index.dart';
+import 'package:Medicall/screens/ConsultReview/visit_overview.dart';
 import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard.dart';
 import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/History/Detail/index.dart';
@@ -67,6 +68,7 @@ class Routes {
   static const paymentDetail = '/payment-detail';
   static const providerDashboard = '/provider-dashboard';
   static const consultDetail = '/consult-detail';
+  static const visitOverview = '/visit-overview';
 }
 
 class Router {
@@ -124,6 +126,14 @@ class Router {
       case Routes.providerRegistration:
         return MaterialPageRoute<dynamic>(
           builder: (context) => ProviderRegistrationScreen.create(context),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case Routes.visitOverview:
+        final Map<String, dynamic> mapArgs = args;
+        final Consult consult = mapArgs['consult'];
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => VisitOverview(consult: consult),
           settings: settings,
           fullscreenDialog: true,
         );

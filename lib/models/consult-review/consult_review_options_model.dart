@@ -4,8 +4,10 @@ class ConsultReviewOptions {
   Map<String, List<String>> ddxOptions;
   List<String> diagnosisList;
 
-  ConsultReviewOptions(
-      {@required this.ddxOptions, @required this.diagnosisList});
+  ConsultReviewOptions({
+    @required this.ddxOptions,
+    @required this.diagnosisList,
+  });
 
   factory ConsultReviewOptions.fromMap(
       Map<String, dynamic> data, String documentId) {

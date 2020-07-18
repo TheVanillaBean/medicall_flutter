@@ -1,6 +1,7 @@
 import 'package:Medicall/common_widgets/list_items_builder.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/ConsultReview/visit_overview.dart';
 import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard_list_item.dart';
 import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard_view_model.dart';
 import 'package:Medicall/services/database.dart';
@@ -65,7 +66,10 @@ class ProviderDashboardScreen extends StatelessWidget {
                   snapshot: snapshot,
                   itemBuilder: (context, consult) => ProviderDashboardListItem(
                     consult: consult,
-                    onTap: () => model.getConsultReviewOptions(),
+                    onTap: () => VisitOverview.show(
+                      context: context,
+                      consult: consult,
+                    ),
                   ),
                 ),
               ),
