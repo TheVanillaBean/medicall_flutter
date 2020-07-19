@@ -121,7 +121,7 @@ class PatientDashboardScreen extends StatelessWidget {
       Divider(height: 1),
       CustomFlatButton(
         text: "View Previous Visits",
-        icon: Icons.view_list,
+        leadingIcon: Icons.view_list,
         onPressed: () => _navigateToPreviousConsults(context),
       ),
       Divider(height: 1),
