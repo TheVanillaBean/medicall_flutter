@@ -5,6 +5,7 @@ import 'package:Medicall/screens/Account/account.dart';
 import 'package:Medicall/screens/Account/payment_detail.dart';
 import 'package:Medicall/screens/ConfirmConsult/index.dart';
 import 'package:Medicall/screens/Consent/index.dart';
+import 'package:Medicall/screens/Consults/previous_consults.dart';
 import 'package:Medicall/screens/ConsultReview/review_visit_information.dart';
 import 'package:Medicall/screens/ConsultReview/visit_overview.dart';
 import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard.dart';
@@ -69,6 +70,7 @@ class Routes {
   static const paymentDetail = '/payment-detail';
   static const providerDashboard = '/provider-dashboard';
   static const consultDetail = '/consult-detail';
+  static const previousConsults = '/previous-consults';
   static const visitOverview = '/visit-overview';
   static const visitInformation = '/visit-information';
 }
@@ -122,6 +124,12 @@ class Router {
       case Routes.registration:
         return MaterialPageRoute<dynamic>(
           builder: (context) => RegistrationScreen.create(context),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case Routes.previousConsults:
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => PreviousConsults.create(context),
           settings: settings,
           fullscreenDialog: true,
         );
@@ -301,6 +309,7 @@ class Router {
           settings: settings,
           fullscreenDialog: true,
         );
+
       case '/historyDetail':
         return MaterialPageRoute<dynamic>(
           builder: (context) => HistoryDetailScreen.create(context),

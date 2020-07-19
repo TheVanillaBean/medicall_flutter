@@ -188,7 +188,7 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
                   child: Text(
                     'Go to Dashboard',
                   ),
-                )
+                ),
               ]),
         ));
   }
