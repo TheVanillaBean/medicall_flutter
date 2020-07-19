@@ -1,6 +1,7 @@
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/patient_user_model.dart';
 import 'package:Medicall/models/user_model_base.dart';
+import 'package:Medicall/screens/Questions/tempLinksPage.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:enum_to_string/enum_to_string.dart';
@@ -94,6 +95,12 @@ class AccountScreen extends StatelessWidget {
         _buildEmailCard(medicallUser),
         _buildPhoneCard(medicallUser),
         _buildPaymentMethodsCard(context),
+        FlatButton(
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => TempLinksPage()));
+            },
+            child: Text('Links Page')),
       ],
     );
   }

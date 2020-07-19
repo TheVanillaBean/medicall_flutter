@@ -33,7 +33,7 @@ class PatientDashboardScreen extends StatelessWidget {
 
   static Future<void> show({
     BuildContext context,
-    bool pushReplaceNamed,
+    bool pushReplaceNamed = true,
   }) async {
     if (pushReplaceNamed) {
       await Navigator.of(context).pushReplacementNamed(
@@ -56,8 +56,8 @@ class PatientDashboardScreen extends StatelessWidget {
     Navigator.of(context).pushNamed('/prescriptions');
   }
 
-  void _navigateToHistory(BuildContext context) {
-    Navigator.of(context).pushNamed('/history');
+  void _navigateToPreviousConsults(BuildContext context) {
+    Navigator.of(context).pushNamed('/previous-consults');
   }
 
   @override
@@ -109,20 +109,20 @@ class PatientDashboardScreen extends StatelessWidget {
       ),
       CustomFlatButton(
         text: "Start a Visit",
-        icon: Icons.assignment_ind,
+        leadingIcon: Icons.assignment_ind,
         onPressed: () => _navigateToVisitScreen(context),
       ),
       Divider(height: 1),
       CustomFlatButton(
         text: "View Prescriptions",
-        icon: Icons.local_pharmacy,
+        leadingIcon: Icons.local_pharmacy,
         onPressed: () => _navigateToPrescriptionsScreen(context),
       ),
       Divider(height: 1),
       CustomFlatButton(
         text: "View Previous Visits",
         icon: Icons.view_list,
-        onPressed: () => _navigateToHistory(context),
+        onPressed: () => _navigateToPreviousConsults(context),
       ),
       Divider(height: 1),
     ];

@@ -1,5 +1,6 @@
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/services/extimage_provider.dart';
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -17,6 +18,7 @@ class ProviderDashboardListItem extends StatelessWidget {
     if (consult.patientUser != null) {
       return Container(
         decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16.0),
           border: Border.all(color: Colors.grey, width: 0.5),
         ),
         child: ListTile(
@@ -44,7 +46,7 @@ class ProviderDashboardListItem extends StatelessWidget {
           ),
           subtitle: Text(consult.parsedDate),
           trailing: Text(
-            "In Review",
+            EnumToString.parseCamelCase(consult.state) ?? "",
             style: TextStyle(color: Colors.blue),
           ),
           onTap: onTap,

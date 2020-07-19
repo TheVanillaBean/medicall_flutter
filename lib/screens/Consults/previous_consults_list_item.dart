@@ -1,12 +1,10 @@
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/services/extimage_provider.dart';
-import 'package:enum_to_string/enum_to_string.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class PatientDashboardListItem extends StatelessWidget {
-  const PatientDashboardListItem({Key key, @required this.consult, this.onTap})
+class PreviousConsultsListItem extends StatelessWidget {
+  const PreviousConsultsListItem({Key key, this.consult, this.onTap})
       : super(key: key);
   final Consult consult;
   final VoidCallback onTap;
@@ -17,12 +15,9 @@ class PatientDashboardListItem extends StatelessWidget {
         Provider.of<ExtImageProvider>(context);
     if (consult.providerUser != null) {
       return Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16.0),
-          border: Border.all(color: Colors.grey, width: 0.5),
-        ),
         child: ListTile(
-          contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+          contentPadding: EdgeInsets.only(left: 0.0, right: 0.0),
+          dense: true,
           leading: consult.providerUser.profilePic.length > 0
               ? displayProfilePicture(
                   extImageProvider, consult.providerUser.profilePic)
@@ -35,10 +30,7 @@ class PatientDashboardListItem extends StatelessWidget {
             'Dr. ${consult.providerUser.fullName}',
           ),
           subtitle: Text("${consult.symptom} visit"),
-          trailing: Text(
-            EnumToString.parseCamelCase(consult.state) ?? "",
-            style: TextStyle(color: Colors.blue),
-          ),
+          trailing: Icon(Icons.chevron_right, color: Colors.grey),
           onTap: onTap,
         ),
       );

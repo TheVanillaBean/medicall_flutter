@@ -44,7 +44,7 @@ class Question {
 
     Answer answer;
     if (data['answer'] != null) {
-      answer = Answer.fromMap(data);
+      answer = Answer.fromMap(data['answer']);
     }
 
     final required = data["required"] ?? true;
@@ -95,7 +95,8 @@ class Answer {
       return null;
     }
 
-    final answer = data['answer'] ?? [];
+    final answer =
+        (data['answer'] as List).map((q) => q.toString()).toList() ?? [];
     return Answer(answer: answer);
   }
 

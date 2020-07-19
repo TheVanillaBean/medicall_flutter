@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:Medicall/models/consult-review/consult_review_options_model.dart';
+import 'package:Medicall/models/consult-review/diagnosis_options_model.dart';
 import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/consult_status_modal.dart';
@@ -105,11 +106,12 @@ class FirestoreDatabase implements Database {
       );
 
   Future<String> saveConsult({String consultId, Consult consult}) async {
-    String consultId =
+    String cid = consultId ??
         Firestore.instance.collection("consults").document().documentID;
     await _service.setData(
-      path: FirestorePath.consult(consultId),
+      path: FirestorePath.consult(cid),
       data: consult.toMap(),
+      merge: true,
     );
     return consultId;
   }
@@ -147,16 +149,33 @@ class FirestoreDatabase implements Database {
           )
           .first;
 
-  Future<ConsultReviewOptions> consultReviewDiagnosisOptions(
+  Future<DiagnosisOptions> consultReviewDiagnosisOptions(
           {String symptomName, String diagnosis}) =>
       _service
           .documentStream(
             path: FirestorePath.consultReviewOptionsDiagnosis(
                 symptomName, diagnosis),
             builder: (data, documentId) =>
-                ConsultReviewOptions.fromMap(data, documentId),
+                DiagnosisOptions.fromMap(data['review-options'], diagnosis),
           )
           .first;
+
+  Future<ScreeningQuestions> consultQuestionnaire({String consultId}) =>
+      _service
+          .documentStream(
+            path: FirestorePath.questionnaire(consultId),
+            builder: (data, documentId) =>
+                ScreeningQuestions.fromMap(data, documentId),
+          )
+          .first;
+
+  Stream<List<Consult>> getTotalConsultsForPatient(String uid) =>
+      _service.collectionStream(
+        path: FirestorePath.consults(),
+        queryBuilder: (query) => query.where('patient_id', isEqualTo: uid),
+        sort: (lhs, rhs) => rhs.date.compareTo(lhs.date),
+        builder: (data, documentId) => Consult.fromMap(data, documentId),
+      );
 
   @override
   Future getConsultDetail(DetailedHistoryState detailedHistoryState) async {

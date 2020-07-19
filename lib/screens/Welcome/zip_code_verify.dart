@@ -153,14 +153,17 @@ class _ZipCodeVerifyScreenState extends State<ZipCodeVerifyScreen> {
   }
 
   Future<void> _showDialog(BuildContext context) async {
-    return await PlatformAlertDialog(
+    bool didPressNotify = await PlatformAlertDialog(
       title: "We are not in your area yet",
       content:
           "We will be in your area soon, sign up below to be the first to get notified when we do.",
       defaultActionText: "Notify me",
-      onPressed: () => Navigator.of(context).pop(),
       cancelActionText: "No, thank you",
     ).show(context);
+
+    if (didPressNotify) {
+      Navigator.of(context).pop();
+    }
   }
 
   String get zipCode {

@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 class CustomFlatButton extends FlatButton {
   CustomFlatButton({
     @required String text,
-    IconData icon,
+    IconData leadingIcon,
+    IconData trailingIcon,
     Color color,
     Color textColor,
     double fontSize = 18,
@@ -12,11 +13,11 @@ class CustomFlatButton extends FlatButton {
   })  : assert(text != null),
         super(
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.symmetric(vertical: 16),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                if (icon != null) Icon(icon),
+                if (leadingIcon != null) Icon(leadingIcon),
                 Text(
                   text,
                   style: TextStyle(
@@ -24,6 +25,7 @@ class CustomFlatButton extends FlatButton {
                     fontSize: fontSize,
                   ),
                 ),
+                if (trailingIcon != null) Icon(trailingIcon),
               ],
             ),
           ),

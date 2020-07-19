@@ -13,10 +13,8 @@ class FirestorePath {
       'consults/$consultID/questionnaire/questions/';
   static String prescriptions(String consultID) =>
       'consults/$consultID/prescriptions/prescriptions/';
-
   static String consultReviewOptions(String symptom) =>
       'parsed-symptoms-list/$symptom/review-options/options/';
-
   static String consultReviewOptionsDiagnosis(
           String symptom, String diagnosis) =>
       'parsed-symptoms-list/$symptom/review-options/diagnoses-list/$diagnosis/diagnosis';
