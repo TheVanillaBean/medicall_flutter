@@ -52,8 +52,8 @@ class PatientDashboardScreen extends StatelessWidget {
     SymptomsScreen.show(context: context);
   }
 
-  void _navigateToPrescriptionsScreen(BuildContext context) {
-    Navigator.of(context).pushNamed('/prescriptions');
+  void _navigateToPrescriptionDetails(BuildContext context) {
+    Navigator.of(context).pushNamed('/prescription-details');
   }
 
   void _navigateToPreviousConsults(BuildContext context) {
@@ -115,8 +115,8 @@ class PatientDashboardScreen extends StatelessWidget {
       Divider(height: 1),
       CustomFlatButton(
         text: "View Prescriptions",
-        leadingIcon: Icons.local_pharmacy,
-        onPressed: () => _navigateToPrescriptionsScreen(context),
+        icon: Icons.local_pharmacy,
+        onPressed: () => _navigateToPrescriptionDetails(context),
       ),
       Divider(height: 1),
       CustomFlatButton(

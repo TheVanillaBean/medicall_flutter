@@ -17,6 +17,19 @@ class PreviousConsults extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              icon: Icon(
+                Icons.arrow_back,
+                color: Colors.grey,
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            );
+          },
+        ),
         title: Text(
           'Previous Consults',
           style: TextStyle(
