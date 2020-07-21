@@ -68,6 +68,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
   void dispose() {
     widget.model.inputController.dispose();
     widget.model.inputFocusNode.dispose();
+    widget.model.controller.dispose();
     super.dispose();
   }
 
@@ -116,11 +117,6 @@ class QuestionsPageView extends StatelessWidget {
       context,
       properties: [QuestionVMProperties.questionPageView],
     ).value;
-
-    PropertyChangeProvider.of<QuestionsViewModel>(
-      context,
-      properties: [QuestionVMProperties.questionPageView],
-    );
     return Column(
       children: <Widget>[
         Expanded(
@@ -131,11 +127,13 @@ class QuestionsPageView extends StatelessWidget {
             controller: model.controller,
             onPageChanged: model.pageChanged,
             itemBuilder: (BuildContext context, int idx) {
-              if (idx == model.consult.questions.length) {
+              if (idx != model.pageIndex) {
+                return Container();
+              } else if (idx == model.consult.questions.length) {
                 return _reviewPage(context, model);
               } else {
                 return QuestionPage(
-                  question: model.consult.questions[idx],
+                  questionIndex: model.pageIndex,
                 );
               }
             },

@@ -120,12 +120,14 @@ class _QuestionFormState extends State<QuestionForm> {
   }
 
   Widget _buildFreeResponseOption(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        _buildFRTextField(model),
-      ],
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          _buildFRTextField(model),
+        ],
+      ),
     );
   }
 

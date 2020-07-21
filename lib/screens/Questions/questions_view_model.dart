@@ -27,8 +27,9 @@ class QuestionsViewModel extends PropertyChangeNotifier
   final FirestoreDatabase database;
   final FirebaseStorageService storageService;
   final Consult consult;
-  final PageController controller = PageController();
+  final PageController controller = PageController(initialPage: 0);
   double progress;
+  int pageIndex = 0;
 
   //Question Page Form Fields (question_form.dart)
   String input;
@@ -113,7 +114,6 @@ class QuestionsViewModel extends PropertyChangeNotifier
                   .consult
                   .questions
                   .insert(questionIndex + 1, opt.subQuestions.first);
-              notifyListeners(QuestionVMProperties.questionPageView);
             }
           } else {
             if (this
@@ -126,7 +126,6 @@ class QuestionsViewModel extends PropertyChangeNotifier
                   .consult
                   .questions
                   .removeWhere((q) => q == opt.subQuestions.first);
-              notifyListeners(QuestionVMProperties.questionPageView);
             }
           }
         }
@@ -192,6 +191,8 @@ class QuestionsViewModel extends PropertyChangeNotifier
   void checkedItemsChanged(List<String> items) =>
       updateQuestionPageWith(selectedOptionsList: items);
   void pageChanged(int idx) {
+    pageIndex = idx;
+    notifyListeners(QuestionVMProperties.questionPageView);
     progress = (idx / (consult.questions.length));
     notifyListeners(QuestionVMProperties.questionProgressBar);
   }

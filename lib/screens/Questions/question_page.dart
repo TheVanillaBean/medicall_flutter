@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
 
 class QuestionPage extends StatelessWidget {
-  final Question question;
+  final int questionIndex;
 
-  const QuestionPage({@required this.question});
+  const QuestionPage({@required this.questionIndex});
 
   @override
   Widget build(BuildContext context) {
@@ -16,6 +16,7 @@ class QuestionPage extends StatelessWidget {
       context,
       properties: [QuestionVMProperties.questionPage],
     ).value;
+    final Question question = model.consult.questions[questionIndex];
     model.updateQuestionFields(question);
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
