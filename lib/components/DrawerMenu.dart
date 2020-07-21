@@ -18,7 +18,6 @@ class DrawerMenu extends StatelessWidget {
             flex: 1,
             child: Container(
               height: 90,
-              color: Theme.of(context).colorScheme.primary.withAlpha(15),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[

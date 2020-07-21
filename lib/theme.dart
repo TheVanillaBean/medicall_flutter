@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+setStatusBarColor() {
+  SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(statusBarColor: Colors.white));
+}
 
 final ThemeData myTheme = ThemeData(
   primarySwatch: Colors.blue,
@@ -43,7 +49,7 @@ final ThemeData myTheme = ThemeData(
   selectedRowColor: Color(0xfff5f5f5),
   unselectedWidgetColor: Color(0x8a000000),
   disabledColor: Color(0x61000000),
-  buttonColor: Color(0xffe0e0e0),
+  buttonColor: Color(0xff5388b3),
   toggleableActiveColor: Color(0xff1e88e5),
   secondaryHeaderColor: Color(0xffe3f2fd),
   textSelectionColor: Color(0xffefefef),
@@ -91,7 +97,7 @@ final ThemeData myTheme = ThemeData(
     ),
   ),
   colorScheme: ColorScheme(
-    primary: Color(0xFF2F97C1),
+    primary: Color(0xff5388b3),
     primaryVariant: Color(0xff1976d2),
     secondary: Color(0xfff16477),
     secondaryVariant: Color(0xffA54969),
@@ -162,13 +168,13 @@ final ThemeData myTheme = ThemeData(
     ),
     caption: TextStyle(
       color: Color(0x8a000000),
-      fontSize: null,
+      fontSize: 12,
       fontWeight: FontWeight.w400,
       fontStyle: FontStyle.normal,
     ),
     button: TextStyle(
       color: Color(0xdd000000),
-      fontSize: null,
+      fontSize: 14,
       fontWeight: FontWeight.w400,
       fontStyle: FontStyle.normal,
     ),

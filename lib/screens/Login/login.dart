@@ -125,11 +125,6 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             child: Stack(
               children: <Widget>[
-                Positioned.fill(
-                  child: Container(
-                    color: Colors.blueAccent.withAlpha(40),
-                  ),
-                ),
                 Container(
                   child: SafeArea(
                     child: GestureDetector(
@@ -163,28 +158,7 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               children: <Widget>[
                 _buildHeader(context),
-                SizedBox(height: height * 0.05),
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: FlatButton(
-                        color: Colors.transparent,
-                        textColor: Colors.blue,
-                        padding: EdgeInsets.all(20),
-                        child: Text(
-                          "First time here?",
-                          style: TextStyle(
-                              fontSize: 18,
-                              color: Theme.of(context).colorScheme.primary),
-                        ),
-                        onPressed: () {
-                          WelcomeScreen.show(context: context);
-                        },
-                      ),
-                    )
-                  ],
-                ),
-                SizedBox(height: 20),
+                SizedBox(height: height * 0.09),
                 _buildEmailAuthForm(context),
                 SizedBox(height: 16.0),
                 Row(
@@ -199,7 +173,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     )
                   ],
                 ),
-                SizedBox(height: 32),
+                SizedBox(height: 24),
                 SocialSignInButton(
                   imgPath: "assets/images/google-logo.png",
                   text: "Sign in with Google",
@@ -218,13 +192,25 @@ class _LoginScreenState extends State<LoginScreen> {
                         ? null
                         : () => _signInWithApple(context),
                   ),
-                SizedBox(height: 12),
-                InkWell(
+                SizedBox(height: 24),
+                OutlineButton(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0)),
                   child: Text(
-                    'Reset Password',
-                    style: TextStyle(color: Colors.black87),
+                    "Reset Password",
+                    style: TextStyle(color: Colors.black54),
                   ),
-                  onTap: () => _navigateToResetPasswordScreen(context),
+                  onPressed: () => _navigateToResetPasswordScreen(context),
+                ),
+                SizedBox(height: 5),
+                OutlineButton(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0)),
+                  child: Text(
+                    "First time here?",
+                    style: TextStyle(color: Colors.black54),
+                  ),
+                  onPressed: () => WelcomeScreen.show(context: context),
                 ),
               ],
             )),
@@ -263,7 +249,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: 1.08,
                   letterSpacing: 2.5,
                   fontWeight: FontWeight.w700,
-                  color: Theme.of(context).colorScheme.secondary)),
+                  color: Theme.of(context).colorScheme.primary)),
         )
       ],
     );
