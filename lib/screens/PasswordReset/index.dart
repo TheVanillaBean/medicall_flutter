@@ -62,26 +62,14 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
         centerTitle: true,
         title: Text("Reset Password"),
       ),
-      body: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.dark,
-        sized: false,
-        child: SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: BoxConstraints.tightFor(
-              height: MediaQueryData.fromWindow(ui.window).size.height * 1.1,
-            ),
-            child: SafeArea(
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: () {
-                  FocusScope.of(context).requestFocus(new FocusNode());
-                },
-                child: Column(
-                  children: _buildChildren(context),
-                ),
-              ),
-            ),
-          ),
+      body: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          FocusScope.of(context).requestFocus(new FocusNode());
+        },
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: _buildChildren(context),
         ),
       ),
     );
@@ -89,30 +77,24 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
 
   List<Widget> _buildChildren(BuildContext context) {
     return [
-      FadeIn(
-        2,
-        Padding(
-            padding: const EdgeInsets.fromLTRB(60, 15, 60, 0),
-            child: Column(
-              children: <Widget>[
-                _buildEmailTextField(context),
-                SizedBox(height: 12),
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: SignInButton(
-                        color: Theme.of(context).colorScheme.primary,
-                        textColor: Colors.white,
-                        text: "Reset Password",
-                        onPressed:
-                            model.canSubmit ? () => _submit(context) : null,
-                      ),
-                    )
-                  ],
+      Text("Please enter your email to reset your password."),
+      Container(
+          margin: EdgeInsets.fromLTRB(60, 0, 60, 0),
+          child: _buildEmailTextField(context)),
+      Container(
+          margin: EdgeInsets.fromLTRB(60, 0, 60, 20),
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                child: SignInButton(
+                  color: Theme.of(context).colorScheme.primary,
+                  textColor: Colors.white,
+                  text: "Reset Password",
+                  onPressed: model.canSubmit ? () => _submit(context) : null,
                 ),
-              ],
-            )),
-      ),
+              )
+            ],
+          )),
     ];
   }
 
@@ -127,23 +109,17 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
       onChanged: model.updateEmail,
       style: TextStyle(color: Color.fromRGBO(80, 80, 80, 1)),
       decoration: InputDecoration(
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.blueGrey, width: 1.0),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.blueGrey, width: 1.0),
-        ),
-        labelStyle: TextStyle(
-          color: Theme.of(context).colorScheme.onSurface,
-        ),
         hintStyle: TextStyle(
           color: Color.fromRGBO(100, 100, 100, 1),
         ),
         filled: true,
-        fillColor: Colors.white.withAlpha(100),
+        fillColor: Colors.grey.withAlpha(20),
+        labelStyle: TextStyle(
+          color: Theme.of(context).colorScheme.onSurface.withAlpha(90),
+        ),
         prefixIcon: Icon(
           Icons.email,
-          color: Theme.of(context).colorScheme.onSurface.withAlpha(150),
+          color: Theme.of(context).colorScheme.onSurface.withAlpha(120),
         ),
         labelText: 'Email',
         hintText: 'john@doe.com',

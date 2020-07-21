@@ -119,27 +119,22 @@ class _LoginScreenState extends State<LoginScreen> {
         value: SystemUiOverlayStyle.dark,
         sized: false,
         child: SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: BoxConstraints.tightFor(
-              height: MediaQueryData.fromWindow(ui.window).size.height * 1.1,
-            ),
-            child: Stack(
-              children: <Widget>[
-                Container(
-                  child: SafeArea(
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () {
-                        FocusScope.of(context).requestFocus(new FocusNode());
-                      },
-                      child: Stack(
-                        children: _buildChildren(context),
-                      ),
+          child: Stack(
+            children: <Widget>[
+              Container(
+                child: SafeArea(
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () {
+                      FocusScope.of(context).requestFocus(new FocusNode());
+                    },
+                    child: Stack(
+                      children: _buildChildren(context),
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
@@ -281,18 +276,15 @@ class _LoginScreenState extends State<LoginScreen> {
       textInputAction: TextInputAction.done,
       onEditingComplete: _submit,
       onChanged: model.updatePassword,
-      style: TextStyle(
-        color: Color.fromRGBO(80, 80, 80, 1),
-      ),
       decoration: InputDecoration(
         filled: true,
-        fillColor: Colors.white.withAlpha(100),
+        fillColor: Colors.grey.withAlpha(20),
         labelStyle: TextStyle(
-          color: Theme.of(context).colorScheme.onSurface,
+          color: Theme.of(context).colorScheme.onSurface.withAlpha(90),
         ),
         prefixIcon: Icon(
           Icons.lock,
-          color: Theme.of(context).colorScheme.onSurface.withAlpha(150),
+          color: Theme.of(context).colorScheme.onSurface.withAlpha(120),
         ),
         labelText: 'Password',
         errorText: model.passwordErrorText,
@@ -313,16 +305,16 @@ class _LoginScreenState extends State<LoginScreen> {
       style: TextStyle(color: Color.fromRGBO(80, 80, 80, 1)),
       decoration: InputDecoration(
         labelStyle: TextStyle(
-          color: Theme.of(context).colorScheme.onSurface,
+          color: Theme.of(context).colorScheme.onSurface.withAlpha(90),
         ),
         hintStyle: TextStyle(
           color: Color.fromRGBO(100, 100, 100, 1),
         ),
         filled: true,
-        fillColor: Colors.white.withAlpha(100),
+        fillColor: Colors.grey.withAlpha(20),
         prefixIcon: Icon(
           Icons.email,
-          color: Theme.of(context).colorScheme.onSurface.withAlpha(150),
+          color: Theme.of(context).colorScheme.onSurface.withAlpha(120),
         ),
         labelText: 'Email',
         hintText: 'john@doe.com',

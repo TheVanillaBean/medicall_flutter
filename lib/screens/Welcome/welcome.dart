@@ -148,7 +148,7 @@ class WelcomeScreen extends StatelessWidget {
                   padding: EdgeInsets.all(10),
                   margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
                   decoration: BoxDecoration(
-                    color: Colors.blue,
+                    color: Colors.purple[200],
                     shape: BoxShape.circle,
                   ),
                   child: Text("1",
@@ -156,7 +156,8 @@ class WelcomeScreen extends StatelessWidget {
                 ),
                 Text(
                   'Choose your visit and doctor',
-                  style: TextStyle(fontSize: 18),
+                  style: TextStyle(
+                      fontSize: 18, color: Colors.black.withAlpha(140)),
                 )
               ],
             ),
@@ -176,7 +177,7 @@ class WelcomeScreen extends StatelessWidget {
                   padding: EdgeInsets.all(10),
                   margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
                   decoration: BoxDecoration(
-                    color: Colors.blue,
+                    color: Colors.purple[300],
                     shape: BoxShape.circle,
                   ),
                   child: Text("2",
@@ -184,7 +185,8 @@ class WelcomeScreen extends StatelessWidget {
                 ),
                 Text(
                   'Answer a few questions',
-                  style: TextStyle(fontSize: 18),
+                  style: TextStyle(
+                      fontSize: 18, color: Colors.black.withAlpha(140)),
                 )
               ],
             ),
@@ -204,7 +206,7 @@ class WelcomeScreen extends StatelessWidget {
                   padding: EdgeInsets.all(10),
                   margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
                   decoration: BoxDecoration(
-                    color: Colors.blue,
+                    color: Colors.deepPurple[400].withRed(160),
                     shape: BoxShape.circle,
                   ),
                   child: Text("3",
@@ -212,7 +214,8 @@ class WelcomeScreen extends StatelessWidget {
                 ),
                 Text(
                   'Make a payment',
-                  style: TextStyle(fontSize: 18),
+                  style: TextStyle(
+                      fontSize: 18, color: Colors.black.withAlpha(140)),
                 )
               ],
             ),
@@ -232,7 +235,7 @@ class WelcomeScreen extends StatelessWidget {
                   padding: EdgeInsets.all(10),
                   margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
                   decoration: BoxDecoration(
-                    color: Colors.blue,
+                    color: Colors.deepPurple[500],
                     shape: BoxShape.circle,
                   ),
                   child: Text("4",
@@ -240,7 +243,8 @@ class WelcomeScreen extends StatelessWidget {
                 ),
                 Text(
                   'Personalized treatment plan',
-                  style: TextStyle(fontSize: 18),
+                  style: TextStyle(
+                      fontSize: 18, color: Colors.black.withAlpha(140)),
                 ),
               ],
             ),
@@ -249,7 +253,8 @@ class WelcomeScreen extends StatelessWidget {
               margin: EdgeInsets.fromLTRB(35, 0, 0, 0),
               child: Text(
                 '*Prescriptions delivered if needed',
-                style: TextStyle(fontSize: 12),
+                style:
+                    TextStyle(fontSize: 12, color: Colors.black.withAlpha(140)),
               )),
         ],
       ),
