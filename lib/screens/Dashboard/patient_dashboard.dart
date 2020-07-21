@@ -115,7 +115,7 @@ class PatientDashboardScreen extends StatelessWidget {
       Divider(height: 1),
       CustomFlatButton(
         text: "View Prescriptions",
-        icon: Icons.local_pharmacy,
+        leadingIcon: Icons.local_pharmacy,
         onPressed: () => _navigateToPrescriptionDetails(context),
       ),
       Divider(height: 1),
