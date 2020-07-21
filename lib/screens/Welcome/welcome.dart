@@ -148,7 +148,7 @@ class WelcomeScreen extends StatelessWidget {
                   padding: EdgeInsets.all(10),
                   margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
                   decoration: BoxDecoration(
-                    color: Colors.purple[200],
+                    color: Colors.black26,
                     shape: BoxShape.circle,
                   ),
                   child: Text("1",
@@ -177,7 +177,7 @@ class WelcomeScreen extends StatelessWidget {
                   padding: EdgeInsets.all(10),
                   margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
                   decoration: BoxDecoration(
-                    color: Colors.purple[300],
+                    color: Colors.black38,
                     shape: BoxShape.circle,
                   ),
                   child: Text("2",
@@ -206,7 +206,7 @@ class WelcomeScreen extends StatelessWidget {
                   padding: EdgeInsets.all(10),
                   margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
                   decoration: BoxDecoration(
-                    color: Colors.deepPurple[400].withRed(160),
+                    color: Colors.black54,
                     shape: BoxShape.circle,
                   ),
                   child: Text("3",
@@ -235,7 +235,7 @@ class WelcomeScreen extends StatelessWidget {
                   padding: EdgeInsets.all(10),
                   margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
                   decoration: BoxDecoration(
-                    color: Colors.deepPurple[500],
+                    color: Colors.black87,
                     shape: BoxShape.circle,
                   ),
                   child: Text("4",

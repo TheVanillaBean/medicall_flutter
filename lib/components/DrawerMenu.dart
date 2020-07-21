@@ -46,7 +46,7 @@ class DrawerMenu extends StatelessWidget {
                             height: 1.08,
                             letterSpacing: 2.5,
                             fontWeight: FontWeight.w700,
-                            color: Theme.of(context).colorScheme.secondary)),
+                            color: Theme.of(context).colorScheme.primary)),
                   )
                 ],
               ),

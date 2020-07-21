@@ -15,7 +15,7 @@ final ThemeData myTheme = ThemeData(
   primaryColorDark: Color(0xff107FA2),
   accentColor: Color(0xff2196f3),
   accentColorBrightness: Brightness.dark,
-  canvasColor: Color(0xfffafafa),
+  canvasColor: Color(0xffffffff),
   scaffoldBackgroundColor: Colors.white,
   bottomAppBarColor: Color(0xFF2F97C1),
   appBarTheme: AppBarTheme(
