@@ -2,6 +2,7 @@ import 'package:Medicall/models/question_model.dart';
 import 'package:Medicall/screens/Questions/questions_view_model.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/util/app_util.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,7 +15,7 @@ import 'grouped_checkbox.dart';
 class QuestionForm extends StatefulWidget {
   final Question question;
   final QuestionsViewModel questionsViewModel;
-  final ExtendedImageProvider extendedImageProvider;
+  final ExtImageProvider extendedImageProvider;
 
   QuestionForm({
     @required this.question,
@@ -24,7 +25,7 @@ class QuestionForm extends StatefulWidget {
 
   static Widget create(BuildContext context, Question question,
       QuestionsViewModel questionsViewModel) {
-    final ExtendedImageProvider extendedImageProvider =
+    final ExtImageProvider extendedImageProvider =
         Provider.of<ExtImageProvider>(context);
     return PropertyChangeConsumer<QuestionsViewModel>(
       properties: [QuestionVMProperties.questionFormWidget],
@@ -45,8 +46,7 @@ class QuestionForm extends StatefulWidget {
 class _QuestionFormState extends State<QuestionForm> {
   Question get question => widget.question;
   QuestionsViewModel get model => widget.questionsViewModel;
-  ExtendedImageProvider get extendedImageProvider =>
-      widget.extendedImageProvider;
+  ExtImageProvider get extendedImageProvider => widget.extendedImageProvider;
 
   Future<void> _loadProfileImage() async {
     List<Asset> resultList = List<Asset>();
@@ -132,16 +132,22 @@ class _QuestionFormState extends State<QuestionForm> {
   }
 
   Widget _buildPhotoOption({double height}) {
-    return Container(
-      height: height * 0.5,
-      width: MediaQuery.of(context).size.width,
-      child: IconButton(
-        onPressed: _loadProfileImage,
-        icon: Icon(
-          Icons.image,
-          color: Colors.blue.withAlpha(140),
-          size: height * 0.5,
-        ),
+    return GestureDetector(
+      onTap: _loadProfileImage,
+      child: ClipRRect(
+        child: model.questionPlaceholderURL.length > 0
+            ? this.extendedImageProvider.returnNetworkImage(
+                  model.questionPlaceholderURL,
+                  mode: ExtendedImageMode.none,
+                  fit: BoxFit.fitWidth,
+                  height: (height * 0.5),
+                  width: (height * 0.5),
+                )
+            : Icon(
+                Icons.image,
+                color: Colors.blue.withAlpha(140),
+                size: height * 0.5,
+              ),
       ),
     );
   }

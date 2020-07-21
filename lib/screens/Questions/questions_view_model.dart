@@ -36,6 +36,7 @@ class QuestionsViewModel extends PropertyChangeNotifier
   List<String> optionsList = [];
   List<String> selectedOptionsList = [];
   List<Asset> questionPhotos = [];
+  String questionPlaceholderURL = "";
   final TextEditingController inputController = TextEditingController();
   final FocusNode inputFocusNode = FocusNode();
 
@@ -179,6 +180,7 @@ class QuestionsViewModel extends PropertyChangeNotifier
     }
 
     if (question.type == Q_TYPE.PHOTO) {
+      this.questionPlaceholderURL = question.placeholderImage;
       if (question.answer != null && question.answer.images.length > 0) {
         this.questionPhotos = question.answer.images;
       } else {
