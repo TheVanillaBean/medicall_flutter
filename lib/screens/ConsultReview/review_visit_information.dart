@@ -49,42 +49,45 @@ class ReviewVisitInformation extends StatelessWidget {
         future: db.consultQuestionnaire(consultId: consult.uid),
         builder:
             (BuildContext context, AsyncSnapshot<ScreeningQuestions> snapshot) {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  'SCREENING QUESTIONS',
-                  style: TextStyle(
-                    fontSize: 16,
+          return SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    'SCREENING QUESTIONS',
+                    style: TextStyle(
+                      fontSize: 16,
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(height: 8),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: ListItemsBuilder<Question>(
-                  snapshot: null,
-                  itemsList: snapshot.data != null
-                      ? snapshot.data.screeningQuestions
-                          .where((question) => question.type != Q_TYPE.PHOTO)
-                          .toList()
-                      : [],
-                  itemBuilder: (context, question) => ScreeningQuestionListItem(
-                    question: question,
-                    onTap: null,
+                SizedBox(height: 8),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: ListItemsBuilder<Question>(
+                    snapshot: null,
+                    itemsList: snapshot.data != null
+                        ? snapshot.data.screeningQuestions
+                            .where((question) => question.type != Q_TYPE.PHOTO)
+                            .toList()
+                        : [],
+                    itemBuilder: (context, question) =>
+                        ScreeningQuestionListItem(
+                      question: question,
+                      onTap: null,
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(height: 16),
-              CustomFlatButton(
-                text: "VIEW PHOTOS",
-                trailingIcon: Icons.chevron_right,
-                onPressed: () => {},
-              )
-            ],
+                SizedBox(height: 16),
+                CustomFlatButton(
+                  text: "VIEW PHOTOS",
+                  trailingIcon: Icons.chevron_right,
+                  onPressed: () => {},
+                )
+              ],
+            ),
           );
         },
       ),
