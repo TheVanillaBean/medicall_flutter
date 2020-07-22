@@ -110,24 +110,13 @@ class QuestionsViewModel extends PropertyChangeNotifier
       for (Option opt in question.options) {
         if (opt.hasSubQuestions) {
           if (selectedOptionsList.contains(opt.value)) {
-            if (!this.consult.questions.contains(opt.subQuestions.first)) {
-              this
-                  .consult
-                  .questions
-                  .insert(questionIndex + 1, opt.subQuestions.first);
-            }
+            opt.subQuestions.forEach((subQuestion) {
+              if (!this.consult.questions.contains(subQuestion)) {
+                this.consult.questions.insert(questionIndex + 1, subQuestion);
+              }
+            });
           } else {
-            if (this
-                    .consult
-                    .questions
-                    .where((q) => q == opt.subQuestions.first)
-                    .length >
-                0) {
-              this
-                  .consult
-                  .questions
-                  .removeWhere((q) => q == opt.subQuestions.first);
-            }
+            removeSubQuestionsIfAny(opt);
           }
         }
       }
@@ -139,6 +128,19 @@ class QuestionsViewModel extends PropertyChangeNotifier
     );
 
     updateNavButtonState();
+  }
+
+  void removeSubQuestionsIfAny(Option opt) {
+    if (opt.hasSubQuestions) {
+      opt.subQuestions.forEach((question) {
+        this.consult.questions.removeWhere((q) => q == question);
+        if (question.type == Q_TYPE.MC) {
+          question.options.forEach((option) {
+            removeSubQuestionsIfAny(option);
+          });
+        }
+      });
+    }
   }
 
   void previousPage() async {
