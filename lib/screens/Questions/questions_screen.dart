@@ -3,6 +3,7 @@ import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/screening_questions_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/PersonalInfo/personal_info.dart';
+import 'package:Medicall/screens/Questions/ReviewPage/review_page.dart';
 import 'package:Medicall/screens/Questions/progress_bar.dart';
 import 'package:Medicall/screens/Questions/question_page.dart';
 import 'package:Medicall/screens/Questions/questions_view_model.dart';
@@ -104,12 +105,6 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
 }
 
 class QuestionsPageView extends StatelessWidget {
-  Future<void> completeConsultBtnPressed(
-      BuildContext context, QuestionsViewModel model) async {
-    await model.saveConsultation();
-    PersonalInfoScreen.show(context: context, consult: model.consult);
-  }
-
   @override
   Widget build(BuildContext context) {
     final QuestionsViewModel model =
@@ -130,7 +125,7 @@ class QuestionsPageView extends StatelessWidget {
               if (idx != model.pageIndex) {
                 return Container();
               } else if (idx == model.consult.questions.length) {
-                return _reviewPage(context, model);
+                return ReviewPage();
               } else {
                 return QuestionPage(
                   questionIndex: model.pageIndex,
@@ -146,40 +141,6 @@ class QuestionsPageView extends StatelessWidget {
       ],
     );
   }
-
-  Widget _reviewPage(BuildContext context, QuestionsViewModel model) {
-    return Padding(
-      padding: EdgeInsets.all(8),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            'Congratulations! ',
-            textAlign: TextAlign.center,
-          ),
-          Divider(),
-          FlatButton.icon(
-            color: Colors.blueAccent,
-            icon: Icon(Icons.check),
-            label: Text('Complete consultation'),
-            onPressed: !model.submitted
-                ? () => completeConsultBtnPressed(context, model)
-                : null,
-          ),
-          CustomRaisedButton(
-            color: Colors.blue,
-            borderRadius: 24,
-            child: Text(
-              "Previous",
-              style: TextStyle(color: Colors.white),
-            ),
-            onPressed: () => model.previousPage(),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 class NavigationButtons extends StatelessWidget {
@@ -191,40 +152,44 @@ class NavigationButtons extends StatelessWidget {
       properties: [QuestionVMProperties.questionNavButtons],
     ).value;
     return model.progress < 1.0 ? _buildNavigationButtons(model) : Container();
+    return Container();
   }
 
   Widget _buildNavigationButtons(QuestionsViewModel model) {
-    return Row(
-      children: <Widget>[
-        Expanded(
-          flex: 1,
-          child: CustomRaisedButton(
-            color: Colors.blue,
-            borderRadius: 24,
-            child: Text(
-              "Previous",
-              style: TextStyle(color: Colors.white),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            flex: 1,
+            child: CustomRaisedButton(
+              color: Colors.blue,
+              borderRadius: 14,
+              child: Text(
+                "Previous",
+                style: TextStyle(color: Colors.white),
+              ),
+              onPressed:
+                  model.canAccessPrevious ? () => model.previousPage() : null,
             ),
-            onPressed:
-                model.canAccessPrevious ? () => model.previousPage() : null,
           ),
-        ),
-        SizedBox(
-          width: 8,
-        ),
-        Expanded(
-          flex: 1,
-          child: CustomRaisedButton(
-            color: Colors.blue,
-            borderRadius: 24,
-            child: Text(
-              "Next",
-              style: TextStyle(color: Colors.white),
+          SizedBox(
+            width: 8,
+          ),
+          Expanded(
+            flex: 1,
+            child: CustomRaisedButton(
+              color: Colors.blue,
+              borderRadius: 14,
+              child: Text(
+                "Next",
+                style: TextStyle(color: Colors.white),
+              ),
+              onPressed: model.canAccessNext ? () => model.nextPage() : null,
             ),
-            onPressed: model.canAccessNext ? () => model.nextPage() : null,
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

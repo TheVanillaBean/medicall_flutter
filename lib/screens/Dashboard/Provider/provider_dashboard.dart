@@ -4,6 +4,7 @@ import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/ConsultReview/visit_overview.dart';
 import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard_list_item.dart';
 import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard_view_model.dart';
+import 'package:Medicall/screens/Questions/ImmediateMedicalCare/immediate_medical_care.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
@@ -60,6 +61,7 @@ class ProviderDashboardScreen extends StatelessWidget {
         builder: (BuildContext context, AsyncSnapshot<List<Consult>> snapshot) {
           return Column(
             children: <Widget>[
+              SizedBox(),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ListItemsBuilder<Consult>(
@@ -72,6 +74,21 @@ class ProviderDashboardScreen extends StatelessWidget {
                     ),
                   ),
                 ),
+              ),
+              SizedBox(height: 20),
+              FlatButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ImmediateMedicalCare(
+                                consult: null,
+                              )));
+                },
+                child: Text(
+                  'Immediate Medical Care',
+                ),
+                textColor: Colors.blue,
               ),
             ],
           );

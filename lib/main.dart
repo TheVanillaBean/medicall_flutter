@@ -84,6 +84,7 @@ class MedicallApp extends StatelessWidget {
         builder: (context, userSnapshot) {
           TempUserProvider tempUserProvider =
               Provider.of<TempUserProvider>(context);
+          setStatusBarColor();
           return MaterialApp(
             title: 'Medicall',
             debugShowCheckedModeBanner: false,

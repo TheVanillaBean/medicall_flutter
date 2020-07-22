@@ -12,17 +12,11 @@ class WelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(""),
-      ),
       body: SingleChildScrollView(
-        child: Container(
-          color: Colors.white,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: buildChildren(context),
-          ),
+        padding: EdgeInsets.fromLTRB(0, 15, 0, 10),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: buildChildren(context),
         ),
       ),
     );
@@ -30,78 +24,107 @@ class WelcomeScreen extends StatelessWidget {
 
   List<Widget> buildChildren(BuildContext context) {
     return <Widget>[
-      SizedBox(
-        width: 120,
-        height: 120,
-        child: Image.asset(
-          'assets/icon/logo_fore.png',
+      Container(
+        height: 110,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Container(
+              transform: Matrix4.translationValues(18.0, 0.0, 0.0),
+              child: Text('MEDI',
+                  style: TextStyle(
+                      fontSize: 21.0,
+                      height: 1.08,
+                      letterSpacing: 2.5,
+                      fontWeight: FontWeight.w700,
+                      color: Theme.of(context).colorScheme.primary)),
+            ),
+            SizedBox(
+              width: 120,
+              height: 120,
+              child: Image.asset(
+                'assets/icon/logo_fore.png',
+              ),
+            ),
+            Container(
+              transform: Matrix4.translationValues(-26.0, 0.0, 0.0),
+              child: Text('CALL',
+                  style: TextStyle(
+                      fontSize: 21.0,
+                      height: 1.08,
+                      letterSpacing: 2.5,
+                      fontWeight: FontWeight.w700,
+                      color: Theme.of(context).colorScheme.primary)),
+            )
+          ],
         ),
       ),
       Text(
         'Leading Local Dermatologists. Anytime.',
-        style: TextStyle(fontSize: 18),
+        style: TextStyle(
+            fontSize: 18, color: Theme.of(context).colorScheme.primary),
       ),
       buildStepsList(),
-      SizedBox(height: 30),
+      SizedBox(height: 20),
       buildGetStartedBtn(context),
-      SizedBox(height: 10),
+      SizedBox(height: 20),
       Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          Text('Already have an account?'),
-          GestureDetector(
-              onTap: () {
-                LoginScreen.show(context: context);
-              },
+          OutlineButton(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0)),
+            child: Container(
+              alignment: Alignment.center,
+              width: 140,
               child: Text(
-                'Click here',
-                style: TextStyle(decoration: TextDecoration.underline),
-              )),
-        ],
-      ),
-      SizedBox(height: 10),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          GestureDetector(
-              onTap: () {
-                ProviderRegistrationScreen.show(context: context);
-                //Navigator.of(context).pushNamed('/provider-registration');
-              },
+                "I have an account",
+                style: TextStyle(color: Colors.black54),
+              ),
+            ),
+            onPressed: () => LoginScreen.show(context: context),
+          ),
+          OutlineButton(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0)),
+            child: Container(
+              alignment: Alignment.center,
+              width: 135,
               child: Text(
-                'Register',
-                style: TextStyle(decoration: TextDecoration.underline),
-              )),
-          Text(' as a provider'),
-          SizedBox(height: 10),
+                "Register as a provider",
+                style: TextStyle(color: Colors.black54),
+              ),
+            ),
+            onPressed: () => ProviderRegistrationScreen.show(context: context),
+          ),
         ],
-      ),
+      )
     ];
   }
 
   Widget buildGetStartedBtn(BuildContext context) {
     return FlatButton(
-      color: Colors.blue,
-      textColor: Colors.white,
+      color: Theme.of(context).buttonColor,
+      textColor: Theme.of(context).buttonTheme.colorScheme.onPrimary,
       onPressed: () {
         SymptomsScreen.show(context: context);
       },
       padding: EdgeInsets.fromLTRB(35, 15, 35, 15),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40.0)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
       child: Column(
         children: <Widget>[
           Text(
             'Let\'s get started!',
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 14,
+              fontSize: Theme.of(context).textTheme.button.fontSize,
             ),
           ),
           Text(
             '(it\'s free to explore)',
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 12,
+              fontSize: Theme.of(context).textTheme.caption.fontSize,
             ),
           ),
         ],
@@ -112,56 +135,126 @@ class WelcomeScreen extends StatelessWidget {
   Widget buildStepsList() {
     return Container(
       alignment: Alignment.centerLeft,
-      padding: EdgeInsets.fromLTRB(50, 80, 0, 10),
+      padding: EdgeInsets.fromLTRB(50, 50, 0, 10),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
+            margin: EdgeInsets.fromLTRB(0, 0, 0, 10),
+            child: Row(
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.all(10),
+                  margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
+                  decoration: BoxDecoration(
+                    color: Colors.black26,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Text("1",
+                      style: TextStyle(fontSize: 18, color: Colors.white)),
+                ),
+                Text(
+                  'Choose your visit and doctor',
+                  style: TextStyle(
+                      fontSize: 18, color: Colors.black.withAlpha(140)),
+                )
+              ],
+            ),
+          ),
+          RotationTransition(
+            turns: AlwaysStoppedAnimation(90 / 360),
             child: Text(
-              'Choose your visit and doctor',
-              style: TextStyle(fontSize: 16),
+              "--->",
+              style: TextStyle(fontSize: 21, color: Colors.black26),
             ),
           ),
           Container(
-            width: 1,
-            height: 24,
-            color: Colors.grey,
+            margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
+            child: Row(
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.all(10),
+                  margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
+                  decoration: BoxDecoration(
+                    color: Colors.black38,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Text("2",
+                      style: TextStyle(fontSize: 18, color: Colors.white)),
+                ),
+                Text(
+                  'Answer a few questions',
+                  style: TextStyle(
+                      fontSize: 18, color: Colors.black.withAlpha(140)),
+                )
+              ],
+            ),
           ),
-          Container(
+          RotationTransition(
+            turns: AlwaysStoppedAnimation(90 / 360),
             child: Text(
-              'Answer a few questions',
-              style: TextStyle(fontSize: 16),
+              "--->",
+              style: TextStyle(fontSize: 21, color: Colors.black26),
             ),
           ),
           Container(
-            width: 1,
-            height: 24,
-            color: Colors.grey,
-          ),
-          Container(
-            child: Text(
-              'Make Payment',
-              style: TextStyle(fontSize: 16),
+            margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
+            child: Row(
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.all(10),
+                  margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
+                  decoration: BoxDecoration(
+                    color: Colors.black54,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Text("3",
+                      style: TextStyle(fontSize: 18, color: Colors.white)),
+                ),
+                Text(
+                  'Make a payment',
+                  style: TextStyle(
+                      fontSize: 18, color: Colors.black.withAlpha(140)),
+                )
+              ],
             ),
           ),
-          Container(
-            width: 1,
-            height: 24,
-            color: Colors.grey,
+          RotationTransition(
+            turns: AlwaysStoppedAnimation(90 / 360),
+            child: Text(
+              "--->",
+              style: TextStyle(fontSize: 21, color: Colors.black26),
+            ),
           ),
           Container(
             padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-            child: Text(
-              'Personalized treatment plan',
-              style: TextStyle(fontSize: 16),
+            child: Row(
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.all(10),
+                  margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
+                  decoration: BoxDecoration(
+                    color: Colors.black87,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Text("4",
+                      style: TextStyle(fontSize: 18, color: Colors.white)),
+                ),
+                Text(
+                  'Personalized treatment plan',
+                  style: TextStyle(
+                      fontSize: 18, color: Colors.black.withAlpha(140)),
+                ),
+              ],
             ),
           ),
           Container(
-              padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+              margin: EdgeInsets.fromLTRB(35, 0, 0, 0),
               child: Text(
                 '*Prescriptions delivered if needed',
-                style: TextStyle(fontSize: 12),
+                style:
+                    TextStyle(fontSize: 12, color: Colors.black.withAlpha(140)),
               )),
         ],
       ),

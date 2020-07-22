@@ -1,3 +1,8 @@
+import 'package:Medicall/models/consult_model.dart';
+import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/Questions/ReviewPage/review_page.dart';
+import 'package:Medicall/screens/Questions/ImmediateMedicalCare/immediate_medical_care.dart';
+import 'package:Medicall/screens/Questions/questions_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'confirmConsult.dart';
