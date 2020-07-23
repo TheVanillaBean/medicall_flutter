@@ -117,7 +117,18 @@ class _QuestionFormState extends State<QuestionForm> {
       if (model.questionPhotos.length == 0)
         return _buildPhotoOption(height: height);
       if (model.questionPhotos.length > 0)
-        return _buildPhotoOptionWithExistingImage(height: height);
+        return Column(
+          children: <Widget>[
+            Expanded(child: _buildPhotoOptionWithExistingImage(height: height)),
+            if (model.questionPhotos.length > 1)
+              Container(
+                child: Text(
+                  "--- Swipeable ---",
+                  style: TextStyle(fontSize: 18),
+                ),
+              ),
+          ],
+        );
       return Container();
     }
   }

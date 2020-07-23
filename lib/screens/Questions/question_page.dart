@@ -33,7 +33,16 @@ class QuestionPage extends StatelessWidget {
             child: Container(
               padding: EdgeInsets.fromLTRB(16, 40, 16, 0),
               alignment: Alignment.topCenter,
-              child: Text(question.question),
+              child: Column(
+                children: <Widget>[
+                  Text(question.question),
+                  if (question.maxImages > 1)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Text("Select up to ${question.maxImages} images."),
+                    ),
+                ],
+              ),
             ),
           ),
           Flexible(

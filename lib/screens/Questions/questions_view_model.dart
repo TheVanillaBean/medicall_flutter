@@ -234,6 +234,9 @@ class QuestionsViewModel extends PropertyChangeNotifier
   }
 
   bool determineIfCanAccessNext() {
+    if (pageIndex == consult.questions.length) {
+      return true;
+    }
     if (this.consult.questions[pageIndex].required) {
       if (this.consult.questions[pageIndex].type == Q_TYPE.MC) {
         return this.selectedOptionsList.length > 0;
