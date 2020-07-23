@@ -46,6 +46,8 @@ class QuestionsViewModel extends PropertyChangeNotifier
 
   bool submitted = false;
 
+  QuestionnaireStatusUpdate questionnaireStatusUpdate;
+
   QuestionsViewModel({
     @required this.auth,
     @required this.consult,
@@ -54,6 +56,11 @@ class QuestionsViewModel extends PropertyChangeNotifier
     this.progress = 0.0,
     this.input = '',
   });
+
+  void setQuestionnaireStatusListener(
+      QuestionnaireStatusUpdate questionnaireStatusUpdate) {
+    this.questionnaireStatusUpdate = questionnaireStatusUpdate;
+  }
 
   Future<void> saveConsultation() async {
     disableNavButtons();
@@ -64,6 +71,8 @@ class QuestionsViewModel extends PropertyChangeNotifier
     ScreeningQuestions questions =
         ScreeningQuestions(screeningQuestions: consult.questions);
     String consultId = await database.saveConsult(consult: consult);
+    questionnaireStatusUpdate.updateStatus(
+        "Securely saving visit information. This may take several seconds...");
     await saveConsultPhotos(consultId, questions);
     await database.saveQuestionnaire(
         consultId: consultId, screeningQuestions: questions);
@@ -231,4 +240,8 @@ class QuestionsViewModel extends PropertyChangeNotifier
     this.canAccessNext = false;
     notifyListeners(QuestionVMProperties.questionNavButtons);
   }
+}
+
+mixin QuestionnaireStatusUpdate {
+  void updateStatus(String msg);
 }

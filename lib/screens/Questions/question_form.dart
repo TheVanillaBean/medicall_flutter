@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:Medicall/models/question_model.dart';
 import 'package:Medicall/screens/Questions/questions_view_model.dart';
 import 'package:Medicall/services/extimage_provider.dart';
+import 'package:Medicall/services/firebase_storage_service.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -52,6 +53,8 @@ class _QuestionFormState extends State<QuestionForm> {
   QuestionsViewModel get model => widget.questionsViewModel;
   ExtImageProvider get extendedImageProvider => widget.extendedImageProvider;
 
+  bool isLoading = false;
+
   Future<void> _loadProfileImage() async {
     List<Asset> resultList = List<Asset>();
 
@@ -83,17 +86,28 @@ class _QuestionFormState extends State<QuestionForm> {
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
     if (!mounted) return;
+    setState(() {
+      isLoading = true;
+    });
     List<Map<String, ByteData>> resultMap = [];
     for (Asset asset in resultList) {
-      ByteData byteData = await asset.getByteData();
+      ByteData byteData =
+          await FirebaseStorageService.getAccurateByteData(asset);
       resultMap.add({asset.name: byteData});
     }
-
+    setState(() {
+      isLoading = false;
+    });
     model.updateQuestionPageWith(questionPhotos: resultMap);
   }
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    }
     if (this.question.type == Q_TYPE.FR) {
       return _buildFreeResponseOption(context);
     } else if (this.question.type == Q_TYPE.MC) {
