@@ -110,9 +110,12 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
           builder: (BuildContext context) {
             return IconButton(
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.popUntil(
+                  context,
+                  ModalRoute.withName(Routes.symptoms),
+                );
               },
-              icon: Icon(Icons.arrow_back),
+              icon: Icon(Icons.close),
             );
           },
         ),

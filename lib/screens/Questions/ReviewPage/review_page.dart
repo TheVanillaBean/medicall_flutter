@@ -99,7 +99,7 @@ class ReviewPage extends StatelessWidget {
               Center(
                 child: CircularProgressIndicator(),
               ),
-            SizedBox(height: 20),
+            SizedBox(height: 40),
           ],
         ),
       ),
