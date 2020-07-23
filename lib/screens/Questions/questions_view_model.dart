@@ -229,10 +229,22 @@ class QuestionsViewModel extends PropertyChangeNotifier
 
   void updateNavButtonState() {
     this.canAccessPrevious = progress > 0;
-    this.canAccessNext = this.selectedOptionsList.length > 0 ||
-        inputValidator.isValid(this.input) ||
-        this.questionPhotos.length > 0;
+    this.canAccessNext = determineIfCanAccessNext();
     notifyListeners(QuestionVMProperties.questionNavButtons);
+  }
+
+  bool determineIfCanAccessNext() {
+    if (this.consult.questions[pageIndex].required) {
+      if (this.consult.questions[pageIndex].type == Q_TYPE.MC) {
+        return this.selectedOptionsList.length > 0;
+      } else if (this.consult.questions[pageIndex].type == Q_TYPE.FR) {
+        return inputValidator.isValid(this.input);
+      } else {
+        return this.questionPhotos.length > 0;
+      }
+    } else {
+      return true;
+    }
   }
 
   void disableNavButtons() {

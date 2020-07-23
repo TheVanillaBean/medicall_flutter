@@ -217,6 +217,7 @@ class _QuestionFormState extends State<QuestionForm> {
                 maxScale: PhotoViewComputedScale.covered * 4,
               );
             },
+            gaplessPlayback: true,
             itemCount: model.questionPhotos.length,
             loadingBuilder: (context, event) => Center(
               child: CircularProgressIndicator(),
