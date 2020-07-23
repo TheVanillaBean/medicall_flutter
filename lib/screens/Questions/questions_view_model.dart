@@ -65,7 +65,7 @@ class QuestionsViewModel extends PropertyChangeNotifier
   Future<void> saveConsultation() async {
     disableNavButtons();
     this.submitted = true;
-    notifyListeners(QuestionVMProperties.questionPage);
+    notifyListeners(QuestionVMProperties.questionPageView);
     consult.patientId = (await this.auth.currentUser()).uid;
     consult.state = ConsultStatus.PendingReview;
     ScreeningQuestions questions =

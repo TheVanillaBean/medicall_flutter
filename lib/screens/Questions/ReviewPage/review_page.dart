@@ -94,17 +94,9 @@ class ReviewPage extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 20),
-            if (model.submitted)
-              Center(
-                child: CircularProgressIndicator(),
-              ),
-            SizedBox(height: 40),
           ],
         ),
       ),
     );
   }
 }
-
-//Put loading in an expanded

@@ -122,9 +122,12 @@ class _QuestionFormState extends State<QuestionForm> {
             Expanded(child: _buildPhotoOptionWithExistingImage(height: height)),
             if (model.questionPhotos.length > 1)
               Container(
-                child: Text(
-                  "--- Swipeable ---",
-                  style: TextStyle(fontSize: 18),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Text(
+                    "--- Swipeable ---",
+                    style: TextStyle(fontSize: 18),
+                  ),
                 ),
               ),
           ],

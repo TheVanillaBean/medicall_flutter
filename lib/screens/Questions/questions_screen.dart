@@ -140,10 +140,21 @@ class QuestionsPageView extends StatelessWidget {
             },
           ),
         ),
-        Expanded(
-          flex: 2,
-          child: NavigationButtons(),
-        ),
+        if (model.submitted)
+          Expanded(
+            flex: 2,
+            child: Container(
+              height: 30,
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
+          ),
+        if (!model.submitted)
+          Expanded(
+            flex: 2,
+            child: NavigationButtons(),
+          ),
       ],
     );
   }
