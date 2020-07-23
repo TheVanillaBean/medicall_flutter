@@ -59,38 +59,46 @@ class ProviderDashboardScreen extends StatelessWidget {
       body: StreamBuilder<List<Consult>>(
         stream: model.consultStream.stream,
         builder: (BuildContext context, AsyncSnapshot<List<Consult>> snapshot) {
-          return Column(
-            children: <Widget>[
-              SizedBox(),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ListItemsBuilder<Consult>(
-                  snapshot: snapshot,
-                  itemBuilder: (context, consult) => ProviderDashboardListItem(
-                    consult: consult,
-                    onTap: () => VisitOverview.show(
-                      context: context,
+          return SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                SizedBox(),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ListItemsBuilder<Consult>(
+                    snapshot: snapshot,
+                    itemBuilder: (context, consult) =>
+                        ProviderDashboardListItem(
                       consult: consult,
+                      onTap: () => VisitOverview.show(
+                        context: context,
+                        consult: consult,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              SizedBox(height: 20),
-              FlatButton(
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ImmediateMedicalCare(
-                                consult: null,
-                              )));
-                },
-                child: Text(
-                  'Immediate Medical Care',
+                FlatButton(
+                  onPressed: () {
+                    Navigator.of(context)
+                        .pushNamed(Routes.immediateMedicalCare);
+                  },
+                  child: Text(
+                    'Immediate Medical Care',
+                  ),
+                  textColor: Colors.blue,
                 ),
-                textColor: Colors.blue,
-              ),
-            ],
+                FlatButton(
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(Routes.completeVisit);
+                  },
+                  child: Text(
+                    'Complete Visit',
+                  ),
+                  textColor: Colors.blue,
+                ),
+                SizedBox(height: 50),
+              ],
+            ),
           );
         },
       ),
