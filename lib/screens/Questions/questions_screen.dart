@@ -2,7 +2,6 @@ import 'package:Medicall/common_widgets/custom_raised_button.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/screening_questions_model.dart';
 import 'package:Medicall/routing/router.dart';
-import 'package:Medicall/screens/PersonalInfo/personal_info.dart';
 import 'package:Medicall/screens/Questions/ReviewPage/review_page.dart';
 import 'package:Medicall/screens/Questions/progress_bar.dart';
 import 'package:Medicall/screens/Questions/question_page.dart';
@@ -152,7 +151,6 @@ class NavigationButtons extends StatelessWidget {
       properties: [QuestionVMProperties.questionNavButtons],
     ).value;
     return model.progress < 1.0 ? _buildNavigationButtons(model) : Container();
-    return Container();
   }
 
   Widget _buildNavigationButtons(QuestionsViewModel model) {

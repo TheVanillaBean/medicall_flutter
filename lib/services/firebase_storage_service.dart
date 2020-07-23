@@ -26,11 +26,12 @@ class FirebaseStorageService {
 
   Future<String> uploadConsultPhoto({
     @required String consultId,
-    @required Asset asset,
+    @required String name,
+    @required ByteData byteData,
   }) async {
-    ByteData byteData = await getAccurateByteData(asset);
+//    ByteData byteData = await getAccurateByteData(asset);
     Uint8List imageData = byteData.buffer.asUint8List();
-    String assetName = getImageName(asset.name);
+    String assetName = getImageName(name);
     return await upload(
       data: imageData,
       path: FirestorePath.consultPhotoQuestion(
@@ -66,7 +67,7 @@ class FirebaseStorageService {
   //is no greater than 300k bytes. By setting quality to something standard,
   //the size is not guaranteed. An image uploaded by a phone with a low resolution
   //would produce an even lower size bytedata. This function ensures consistency.
-  Future<ByteData> getAccurateByteData(Asset asset) async {
+  static Future<ByteData> getAccurateByteData(Asset asset) async {
     ByteData byteData;
     int size = 0; // represents the size of the image in bytes
     int quality = 100;
@@ -80,7 +81,7 @@ class FirebaseStorageService {
     return byteData;
   }
 
-  String getImageName(String assetName) {
+  static String getImageName(String assetName) {
     Uuid uuid = Uuid();
     return assetName.split(".").first +
         uuid.v1(); //image name without extension

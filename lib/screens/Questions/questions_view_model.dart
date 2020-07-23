@@ -8,7 +8,7 @@ import 'package:Medicall/services/firebase_storage_service.dart';
 import 'package:Medicall/util/validators.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:flutter/services.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
 
 // Properties
@@ -35,7 +35,7 @@ class QuestionsViewModel extends PropertyChangeNotifier
   String input;
   List<String> optionsList = [];
   List<String> selectedOptionsList = [];
-  List<Asset> questionPhotos = [];
+  List<Map<String, ByteData>> questionPhotos = [];
   String questionPlaceholderURL = "";
   final TextEditingController inputController = TextEditingController();
   final FocusNode inputFocusNode = FocusNode();
@@ -74,9 +74,12 @@ class QuestionsViewModel extends PropertyChangeNotifier
     for (Question question in questions.screeningQuestions) {
       if (question.type == Q_TYPE.PHOTO) {
         question.answer.answer = [];
-        for (Asset imageAsset in question.answer.images) {
+        for (Map<String, ByteData> byteDataMap in question.answer.images) {
           String downloadURL = await storageService.uploadConsultPhoto(
-              consultId: consultId, asset: imageAsset);
+            consultId: consultId,
+            byteData: byteDataMap.values.first,
+            name: FirebaseStorageService.getImageName(byteDataMap.keys.first),
+          );
           question.answer.answer.add(downloadURL);
         }
       }
@@ -205,7 +208,7 @@ class QuestionsViewModel extends PropertyChangeNotifier
     List<String> optionsList,
     List<String> selectedOptionsList,
     String input,
-    List<Asset> questionPhotos,
+    List<Map<String, ByteData>> questionPhotos,
   }) {
     this.optionsList = optionsList ?? this.optionsList;
     this.input = input ?? this.input;
