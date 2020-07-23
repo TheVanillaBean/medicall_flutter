@@ -1,5 +1,3 @@
-import 'dart:ui' as ui;
-
 import 'package:Medicall/common_widgets/sign_in_button.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
@@ -121,22 +119,17 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
         ),
       ),
       body: SingleChildScrollView(
-        child: ConstrainedBox(
-          constraints: BoxConstraints.tightFor(
-            height: MediaQueryData.fromWindow(ui.window).size.height * 1.1,
-          ),
-          child: Container(
-            color: Colors.white,
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () {
-                FocusScope.of(context).requestFocus(new FocusNode());
-              },
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(8, 24, 8, 0),
-                child: Column(
-                  children: _buildChildren(),
-                ),
+        child: Container(
+          color: Colors.white,
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () {
+              FocusScope.of(context).requestFocus(new FocusNode());
+            },
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(8, 24, 8, 0),
+              child: Column(
+                children: _buildChildren(),
               ),
             ),
           ),
