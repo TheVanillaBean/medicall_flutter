@@ -1,10 +1,10 @@
+import 'package:Medicall/common_widgets/empty_content.dart';
 import 'package:Medicall/common_widgets/list_items_builder.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/ConsultReview/visit_overview.dart';
 import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard_list_item.dart';
 import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard_view_model.dart';
-import 'package:Medicall/screens/Questions/ImmediateMedicalCare/immediate_medical_care.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
@@ -67,6 +67,10 @@ class ProviderDashboardScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(8.0),
                   child: ListItemsBuilder<Consult>(
                     snapshot: snapshot,
+                    emptyContentWidget: EmptyContent(
+                      title: "",
+                      message: "You do not have any pending visits to review",
+                    ),
                     itemBuilder: (context, consult) =>
                         ProviderDashboardListItem(
                       consult: consult,

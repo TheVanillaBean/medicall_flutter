@@ -1,4 +1,5 @@
 import 'package:Medicall/common_widgets/form_submit_button.dart';
+import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard.dart';
 import 'package:Medicall/screens/StripeConnect/stripe_connect_state_model.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/user_provider.dart';
@@ -37,7 +38,7 @@ class StripeConnect extends StatelessWidget {
   }
 
   void _navigateToHistoryScreen(BuildContext context) {
-    Navigator.of(context).pushReplacementNamed('/history');
+    ProviderDashboardScreen.create(context);
   }
 
   @override

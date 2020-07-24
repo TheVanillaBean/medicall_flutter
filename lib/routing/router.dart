@@ -78,6 +78,7 @@ class Routes {
   static const prescriptionDetails = '/prescription-details';
   static const visitOverview = '/visit-overview';
   static const visitInformation = '/visit-information';
+  static const visitConsultPhotos = '/visit-consult-photos';
   static const immediateMedicalCare = '/immediate-medical-care';
   static const completeVisit = '/complete-visit';
 }
@@ -304,8 +305,6 @@ class Router {
         );
       case Routes.providerDashboard:
         final Map<String, dynamic> mapArgs = args;
-        final Consult consult = mapArgs['consult'];
-        final ProviderUser provider = mapArgs['provider'];
         return MaterialPageRoute<dynamic>(
           builder: (context) => ProviderDashboardScreen(),
           settings: settings,
