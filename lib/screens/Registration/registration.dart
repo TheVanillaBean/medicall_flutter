@@ -155,23 +155,6 @@ class _RegistrationScreenState extends State<RegistrationScreen>
         "Help us protect your personal information by choosing a secure log in. This is required to start your visit.",
       ),
       SizedBox(height: 24.0),
-      SocialSignInButton(
-        imgPath: "assets/images/google-logo.png",
-        text: "Sign in with Google",
-        color: Colors.white,
-        textColor: Colors.black87,
-        onPressed: model.isLoading ? null : () => _signInWithGoogle(context),
-      ),
-      if (appleSignInAvailable.isAvailable) SizedBox(height: 12),
-      if (appleSignInAvailable.isAvailable)
-        AppleSignInButton(
-          style: ButtonStyle.black, // style as needed
-          type: ButtonType.signIn, // style as needed
-          onPressed: model.isLoading ? null : () => _signInWithApple(context),
-        ),
-      SizedBox(height: 12.0),
-      Text("-or-"),
-      SizedBox(height: 24),
       _buildEmailAuthForm(context),
       SizedBox(height: 12.0),
       Row(
@@ -180,7 +163,7 @@ class _RegistrationScreenState extends State<RegistrationScreen>
             child: SignInButton(
               color: Theme.of(context).colorScheme.primary,
               textColor: Colors.white,
-              text: "Sign in",
+              text: "Sign Up",
               onPressed: model.canSubmit &&
                       model.googleAuthModel == null &&
                       model.appleSignInModel == null
@@ -190,6 +173,25 @@ class _RegistrationScreenState extends State<RegistrationScreen>
           )
         ],
       ),
+      SizedBox(height: 24),
+      Text("-or-"),
+      SizedBox(height: 24),
+      SocialSignInButton(
+        imgPath: "assets/images/google-logo.png",
+        text: "Sign in with Google",
+        color: Colors.white,
+        textColor: Colors.black87,
+        onPressed: model.isLoading ? null : () => _signInWithGoogle(context),
+      ),
+      SizedBox(height: 24),
+      if (appleSignInAvailable.isAvailable) SizedBox(height: 12),
+      if (appleSignInAvailable.isAvailable)
+        AppleSignInButton(
+          style: ButtonStyle.black, // style as needed
+          type: ButtonType.signIn, // style as needed
+          onPressed: model.isLoading ? null : () => _signInWithApple(context),
+        ),
+      SizedBox(height: 12.0),
     ];
   }
 

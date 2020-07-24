@@ -67,7 +67,7 @@ class QuestionsViewModel extends PropertyChangeNotifier
     this.submitted = true;
     notifyListeners(QuestionVMProperties.questionPageView);
     consult.patientId = (await this.auth.currentUser()).uid;
-    consult.state = ConsultStatus.PendingReview;
+    consult.state = ConsultStatus.PendingPayment;
     ScreeningQuestions questions =
         ScreeningQuestions(screeningQuestions: consult.questions);
     String consultId = await database.saveConsult(consult: consult);

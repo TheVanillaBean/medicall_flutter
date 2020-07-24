@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
 
 enum ConsultStatus {
+  PendingPayment,
   PendingReview,
   InReview,
   Completed,
