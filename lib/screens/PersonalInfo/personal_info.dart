@@ -200,7 +200,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
         ],
       ),
       SizedBox(height: 12),
-      if (model.isLoading) const CircularProgressIndicator(),
+      if (model.isLoading) Center(child: const CircularProgressIndicator()),
     ];
   }
 

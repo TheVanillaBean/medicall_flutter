@@ -13,6 +13,7 @@ class ListItemsBuilder<T> extends StatelessWidget {
     @required this.itemBuilder,
     this.displayEmptyContentView = true,
     this.scrollable = true,
+    this.emptyContentWidget,
   }) : assert((snapshot == null && itemsList != null) ||
             (snapshot != null && itemsList == null));
   final AsyncSnapshot<List<T>> snapshot;
@@ -20,6 +21,7 @@ class ListItemsBuilder<T> extends StatelessWidget {
   final ItemWidgetBuilder<T> itemBuilder;
   final bool displayEmptyContentView;
   final bool scrollable;
+  final Widget emptyContentWidget;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +30,11 @@ class ListItemsBuilder<T> extends StatelessWidget {
       if (items.isNotEmpty) {
         return _buildList(items, context);
       } else {
-        return displayEmptyContentView ? const EmptyContent() : Container();
+        return displayEmptyContentView
+            ? emptyContentWidget != null
+                ? emptyContentWidget
+                : const EmptyContent()
+            : Container();
       }
     } else if (this.itemsList != null) {
       if (itemsList.isNotEmpty) {
