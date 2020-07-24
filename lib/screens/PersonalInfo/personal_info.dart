@@ -103,7 +103,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Personal Info"),
+        title: Text("Profile"),
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
@@ -129,6 +129,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
             child: Padding(
               padding: const EdgeInsets.fromLTRB(8, 24, 8, 0),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: _buildChildren(),
               ),
             ),
@@ -140,14 +141,19 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
 
   List<Widget> _buildChildren() {
     return <Widget>[
-      Text(
-        'Does everything look correct?',
-        style: TextStyle(fontSize: 30),
-        textAlign: TextAlign.center,
+      Center(
+        child: _buildProfilePictureWidget(),
       ),
-      SizedBox(height: 24),
-      _buildProfilePictureWidget(),
-      SizedBox(height: 24),
+      SizedBox(height: 36),
+      Padding(
+        padding: const EdgeInsets.only(left: 8),
+        child: Text(
+          'Personal Information',
+          style: TextStyle(fontSize: 16),
+          textAlign: TextAlign.start,
+        ),
+      ),
+      SizedBox(height: 12),
       Row(
         children: <Widget>[
           Expanded(child: _buildFirstNameTextField()),
@@ -355,13 +361,30 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   Widget _buildProfileImgView({Asset asset, double height}) {
     return GestureDetector(
       onTap: _loadProfileImage,
-      child: ClipRRect(
-        borderRadius: new BorderRadius.circular(500.0),
-        child: this.extendedImageProvider.returnAssetThumb(
-              asset: asset,
-              height: (height * 0.2).toInt(),
-              width: (height * 0.2).toInt(),
+      child: Stack(
+        alignment: AlignmentDirectional.bottomStart,
+        overflow: Overflow.visible,
+        children: <Widget>[
+          ClipRRect(
+            borderRadius: BorderRadius.circular(300),
+            child: this.extendedImageProvider.returnAssetThumb(
+                  asset: asset,
+                  height: (height * 0.2).toInt(),
+                  width: (height * 0.2).toInt(),
+                ),
+          ),
+          Positioned(
+            bottom: -10,
+            child: CircleAvatar(
+              backgroundColor: Colors.red,
+              radius: 20.0,
+              child: new Icon(
+                Icons.camera_alt,
+                color: Colors.white,
+              ),
             ),
+          ),
+        ],
       ),
     );
   }
@@ -377,13 +400,30 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
         width: MediaQuery.of(context).size.width,
         child: IconButton(
           onPressed: _loadProfileImage,
-          icon: Icon(
-            Icons.account_circle,
-            color: Colors.blue.withAlpha(140),
-            size: height * 0.15,
+          icon: Stack(
+            alignment: AlignmentDirectional.bottomStart,
+            overflow: Overflow.visible,
+            children: <Widget>[
+              Icon(
+                Icons.account_circle,
+                color: Colors.blue.withAlpha(140),
+                size: height * 0.15,
+              ),
+              Positioned(
+                bottom: -10,
+                child: CircleAvatar(
+                  backgroundColor: Colors.red,
+                  radius: 20.0,
+                  child: new Icon(
+                    Icons.camera_alt,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
-      )
+      ),
     ];
   }
 
