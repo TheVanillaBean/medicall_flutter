@@ -30,17 +30,29 @@ class QuestionPage extends StatelessWidget {
           Flexible(
             fit: FlexFit.loose,
             flex: 2,
-            child: Container(
-              padding: EdgeInsets.fromLTRB(16, 40, 16, 0),
-              alignment: Alignment.topCenter,
-              child: Text(question.question),
+            child: SingleChildScrollView(
+              child: Container(
+                padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
+                alignment: Alignment.topCenter,
+                child: Column(
+                  children: <Widget>[
+                    Text(question.question),
+                    if (question.maxImages > 1)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child:
+                            Text("Select up to ${question.maxImages} images."),
+                      ),
+                  ],
+                ),
+              ),
             ),
           ),
           Flexible(
             fit: FlexFit.loose,
             flex: 8,
             child: Container(
-              padding: EdgeInsets.all(20),
+              padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
               child: QuestionForm.create(
                 context,
                 question,

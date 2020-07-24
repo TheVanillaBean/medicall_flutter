@@ -1,5 +1,3 @@
-import 'dart:ui' as ui;
-
 import 'package:Medicall/common_widgets/sign_in_button.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
@@ -105,35 +103,34 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Personal Info"),
+        title: Text("Profile"),
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.popUntil(
+                  context,
+                  ModalRoute.withName(Routes.symptoms),
+                );
               },
-              icon: Icon(Icons.arrow_back),
+              icon: Icon(Icons.close),
             );
           },
         ),
       ),
       body: SingleChildScrollView(
-        child: ConstrainedBox(
-          constraints: BoxConstraints.tightFor(
-            height: MediaQueryData.fromWindow(ui.window).size.height * 1.1,
-          ),
-          child: Container(
-            color: Colors.white,
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () {
-                FocusScope.of(context).requestFocus(new FocusNode());
-              },
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(8, 24, 8, 0),
-                child: Column(
-                  children: _buildChildren(),
-                ),
+        child: Container(
+          color: Colors.white,
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () {
+              FocusScope.of(context).requestFocus(new FocusNode());
+            },
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(8, 24, 8, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: _buildChildren(),
               ),
             ),
           ),
@@ -144,14 +141,19 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
 
   List<Widget> _buildChildren() {
     return <Widget>[
-      Text(
-        'Does everything look correct?',
-        style: TextStyle(fontSize: 30),
-        textAlign: TextAlign.center,
+      Center(
+        child: _buildProfilePictureWidget(),
       ),
-      SizedBox(height: 24),
-      _buildProfilePictureWidget(),
-      SizedBox(height: 24),
+      SizedBox(height: 36),
+      Padding(
+        padding: const EdgeInsets.only(left: 8),
+        child: Text(
+          'Personal Information',
+          style: TextStyle(fontSize: 16),
+          textAlign: TextAlign.start,
+        ),
+      ),
+      SizedBox(height: 12),
       Row(
         children: <Widget>[
           Expanded(child: _buildFirstNameTextField()),
@@ -198,7 +200,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
         ],
       ),
       SizedBox(height: 12),
-      if (model.isLoading) const CircularProgressIndicator(),
+      if (model.isLoading) Center(child: const CircularProgressIndicator()),
     ];
   }
 
@@ -359,13 +361,30 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   Widget _buildProfileImgView({Asset asset, double height}) {
     return GestureDetector(
       onTap: _loadProfileImage,
-      child: ClipRRect(
-        borderRadius: new BorderRadius.circular(500.0),
-        child: this.extendedImageProvider.returnAssetThumb(
-              asset: asset,
-              height: (height * 0.2).toInt(),
-              width: (height * 0.2).toInt(),
+      child: Stack(
+        alignment: AlignmentDirectional.bottomStart,
+        overflow: Overflow.visible,
+        children: <Widget>[
+          ClipRRect(
+            borderRadius: BorderRadius.circular(300),
+            child: this.extendedImageProvider.returnAssetThumb(
+                  asset: asset,
+                  height: (height * 0.2).toInt(),
+                  width: (height * 0.2).toInt(),
+                ),
+          ),
+          Positioned(
+            bottom: -10,
+            child: CircleAvatar(
+              backgroundColor: Colors.red,
+              radius: 20.0,
+              child: new Icon(
+                Icons.camera_alt,
+                color: Colors.white,
+              ),
             ),
+          ),
+        ],
       ),
     );
   }
@@ -381,13 +400,30 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
         width: MediaQuery.of(context).size.width,
         child: IconButton(
           onPressed: _loadProfileImage,
-          icon: Icon(
-            Icons.account_circle,
-            color: Colors.blue.withAlpha(140),
-            size: height * 0.15,
+          icon: Stack(
+            alignment: AlignmentDirectional.bottomStart,
+            overflow: Overflow.visible,
+            children: <Widget>[
+              Icon(
+                Icons.account_circle,
+                color: Colors.blue.withAlpha(140),
+                size: height * 0.15,
+              ),
+              Positioned(
+                bottom: -10,
+                child: CircleAvatar(
+                  backgroundColor: Colors.red,
+                  radius: 20.0,
+                  child: new Icon(
+                    Icons.camera_alt,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
-      )
+      ),
     ];
   }
 

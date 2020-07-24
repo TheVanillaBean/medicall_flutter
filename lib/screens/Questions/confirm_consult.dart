@@ -1,8 +1,17 @@
+import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ConfirmConsult extends StatelessWidget {
+  static Future<void> show({
+    BuildContext context,
+  }) async {
+    await Navigator.of(context).pushReplacementNamed(
+      Routes.confirmConsult,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,13 +33,6 @@ class ConfirmConsult extends StatelessWidget {
           ),
           title: Text(
             'Consult confirmed',
-            style: TextStyle(
-              fontFamily: 'Roboto Thin',
-              color: Colors.blue,
-              fontSize: Theme.of(context).platform == TargetPlatform.iOS
-                  ? 18.0
-                  : 20.0,
-            ),
           ),
         ),
         body: SingleChildScrollView(

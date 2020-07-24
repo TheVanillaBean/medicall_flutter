@@ -8,7 +8,7 @@ import 'package:Medicall/services/firebase_storage_service.dart';
 import 'package:Medicall/util/validators.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:flutter/services.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
 
 // Properties
@@ -35,7 +35,7 @@ class QuestionsViewModel extends PropertyChangeNotifier
   String input;
   List<String> optionsList = [];
   List<String> selectedOptionsList = [];
-  List<Asset> questionPhotos = [];
+  List<Map<String, ByteData>> questionPhotos = [];
   String questionPlaceholderURL = "";
   final TextEditingController inputController = TextEditingController();
   final FocusNode inputFocusNode = FocusNode();
@@ -46,6 +46,8 @@ class QuestionsViewModel extends PropertyChangeNotifier
 
   bool submitted = false;
 
+  QuestionnaireStatusUpdate questionnaireStatusUpdate;
+
   QuestionsViewModel({
     @required this.auth,
     @required this.consult,
@@ -55,15 +57,22 @@ class QuestionsViewModel extends PropertyChangeNotifier
     this.input = '',
   });
 
+  void setQuestionnaireStatusListener(
+      QuestionnaireStatusUpdate questionnaireStatusUpdate) {
+    this.questionnaireStatusUpdate = questionnaireStatusUpdate;
+  }
+
   Future<void> saveConsultation() async {
     disableNavButtons();
     this.submitted = true;
-    notifyListeners(QuestionVMProperties.questionPage);
+    notifyListeners(QuestionVMProperties.questionPageView);
     consult.patientId = (await this.auth.currentUser()).uid;
-    consult.state = ConsultStatus.PendingReview;
+    consult.state = ConsultStatus.PendingPayment;
     ScreeningQuestions questions =
         ScreeningQuestions(screeningQuestions: consult.questions);
     String consultId = await database.saveConsult(consult: consult);
+    questionnaireStatusUpdate.updateStatus(
+        "Securely saving visit information. This may take several seconds...");
     await saveConsultPhotos(consultId, questions);
     await database.saveQuestionnaire(
         consultId: consultId, screeningQuestions: questions);
@@ -74,9 +83,12 @@ class QuestionsViewModel extends PropertyChangeNotifier
     for (Question question in questions.screeningQuestions) {
       if (question.type == Q_TYPE.PHOTO) {
         question.answer.answer = [];
-        for (Asset imageAsset in question.answer.images) {
+        for (Map<String, ByteData> byteDataMap in question.answer.images) {
           String downloadURL = await storageService.uploadConsultPhoto(
-              consultId: consultId, asset: imageAsset);
+            consultId: consultId,
+            byteData: byteDataMap.values.first,
+            name: FirebaseStorageService.getImageName(byteDataMap.keys.first),
+          );
           question.answer.answer.add(downloadURL);
         }
       }
@@ -205,7 +217,7 @@ class QuestionsViewModel extends PropertyChangeNotifier
     List<String> optionsList,
     List<String> selectedOptionsList,
     String input,
-    List<Asset> questionPhotos,
+    List<Map<String, ByteData>> questionPhotos,
   }) {
     this.optionsList = optionsList ?? this.optionsList;
     this.input = input ?? this.input;
@@ -217,10 +229,25 @@ class QuestionsViewModel extends PropertyChangeNotifier
 
   void updateNavButtonState() {
     this.canAccessPrevious = progress > 0;
-    this.canAccessNext = this.selectedOptionsList.length > 0 ||
-        inputValidator.isValid(this.input) ||
-        this.questionPhotos.length > 0;
+    this.canAccessNext = determineIfCanAccessNext();
     notifyListeners(QuestionVMProperties.questionNavButtons);
+  }
+
+  bool determineIfCanAccessNext() {
+    if (pageIndex == consult.questions.length) {
+      return true;
+    }
+    if (this.consult.questions[pageIndex].required) {
+      if (this.consult.questions[pageIndex].type == Q_TYPE.MC) {
+        return this.selectedOptionsList.length > 0;
+      } else if (this.consult.questions[pageIndex].type == Q_TYPE.FR) {
+        return inputValidator.isValid(this.input);
+      } else {
+        return this.questionPhotos.length > 0;
+      }
+    } else {
+      return true;
+    }
   }
 
   void disableNavButtons() {
@@ -228,4 +255,8 @@ class QuestionsViewModel extends PropertyChangeNotifier
     this.canAccessNext = false;
     notifyListeners(QuestionVMProperties.questionNavButtons);
   }
+}
+
+mixin QuestionnaireStatusUpdate {
+  void updateStatus(String msg);
 }

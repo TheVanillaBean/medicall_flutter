@@ -67,7 +67,8 @@ class ReviewPage extends StatelessWidget {
                           fontSize: 14,
                         ),
                       ),
-                      onPressed: () => model.previousPage(),
+                      onPressed:
+                          !model.submitted ? () => model.previousPage() : null,
                     ),
                   ),
                 ),
@@ -93,7 +94,6 @@ class ReviewPage extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 20),
           ],
         ),
       ),

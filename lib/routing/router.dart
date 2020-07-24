@@ -5,9 +5,9 @@ import 'package:Medicall/screens/Account/account.dart';
 import 'package:Medicall/screens/Account/payment_detail.dart';
 import 'package:Medicall/screens/ConfirmConsult/index.dart';
 import 'package:Medicall/screens/Consent/index.dart';
-import 'package:Medicall/screens/Consults/previous_consults.dart';
 import 'package:Medicall/screens/ConsultReview/review_visit_information.dart';
 import 'package:Medicall/screens/ConsultReview/visit_overview.dart';
+import 'package:Medicall/screens/Consults/previous_consults.dart';
 import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard.dart';
 import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/History/Detail/index.dart';
@@ -23,6 +23,7 @@ import 'package:Medicall/screens/PhoneAuth/index.dart';
 import 'package:Medicall/screens/Prescriptions/prescription_details.dart';
 import 'package:Medicall/screens/Privacy/index.dart';
 import 'package:Medicall/screens/Questions/ImmediateMedicalCare/immediate_medical_care.dart';
+import 'package:Medicall/screens/Questions/confirm_consult.dart';
 import 'package:Medicall/screens/Questions/questionsScreen.dart';
 import 'package:Medicall/screens/Questions/questions_screen.dart';
 import 'package:Medicall/screens/Registration/Provider/consult_detail_screen.dart';
@@ -53,7 +54,7 @@ class Routes {
   static const photoID = '/photo-ID';
   static const ocr = '/ocr';
   static const personalInfo = '/personal-information';
-  static const congrats = '/congratulations';
+  static const confirmConsult = '/confirm-consult';
   static const dashboard = '/dashboard';
   static const terms = '/terms';
   static const privacy = '/privacy';
@@ -322,6 +323,12 @@ class Router {
         final Consult consult = mapArgs['consult'];
         return MaterialPageRoute<dynamic>(
           builder: (context) => MakePayment.create(context, consult),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case Routes.confirmConsult:
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => ConfirmConsult(),
           settings: settings,
           fullscreenDialog: true,
         );

@@ -1,6 +1,6 @@
 import 'package:Medicall/models/option_model.dart';
 import 'package:enum_to_string/enum_to_string.dart';
-import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:flutter/services.dart';
 
 enum Q_TYPE { MC, FR, PHOTO }
 
@@ -86,7 +86,8 @@ class Question {
 
 class Answer {
   List<String> answer;
-  List<Asset> images; //if it is a photo question. Not serialized.
+  List<Map<String, ByteData>>
+      images; //if it is a photo question. Not serialized.
 
   Answer({this.answer, this.images = const []});
 

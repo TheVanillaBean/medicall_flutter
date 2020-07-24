@@ -29,16 +29,22 @@ class PatientDashboardViewModel with ChangeNotifier {
         }
       });
 
-      uniqueProviderIds.forEach((providerId) {
-        database.userStream(USER_TYPE.PROVIDER, providerId).listen((User user) {
-          for (Consult consult in consults) {
-            if (consult.providerId == user.uid) {
-              consult.providerUser = user as ProviderUser;
+      if (uniqueProviderIds.length == 0) {
+        consultStream.add([]);
+      } else {
+        uniqueProviderIds.forEach((providerId) {
+          database
+              .userStream(USER_TYPE.PROVIDER, providerId)
+              .listen((User user) {
+            for (Consult consult in consults) {
+              if (consult.providerId == user.uid) {
+                consult.providerUser = user as ProviderUser;
+              }
             }
-          }
-          consultStream.add(consults.length > 0 ? consults : null);
+            consultStream.add(consults.length > 0 ? consults : []);
+          });
         });
-      });
+      }
     });
   }
 }

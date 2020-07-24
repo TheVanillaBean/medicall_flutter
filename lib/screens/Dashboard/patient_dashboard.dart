@@ -1,3 +1,4 @@
+import 'package:Medicall/common_widgets/empty_content.dart';
 import 'package:Medicall/common_widgets/flat_button.dart';
 import 'package:Medicall/common_widgets/list_items_builder.dart';
 import 'package:Medicall/components/DrawerMenu.dart';
@@ -142,6 +143,10 @@ class PatientDashboardScreen extends StatelessWidget {
               Expanded(
                 child: ListItemsBuilder<Consult>(
                   snapshot: consultSnapshot,
+                  emptyContentWidget: EmptyContent(
+                    title: "",
+                    message: "You do not have any active visits",
+                  ),
                   itemBuilder: (context, consult) => PatientDashboardListItem(
                     consult: consult,
                     onTap: null,
