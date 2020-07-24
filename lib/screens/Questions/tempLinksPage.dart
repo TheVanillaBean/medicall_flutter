@@ -33,6 +33,24 @@ class TempLinksPage extends StatelessWidget {
                 ),
                 textColor: Colors.blue,
               ),
+              FlatButton(
+                onPressed: () {
+                  Navigator.of(context).pushNamed(Routes.immediateMedicalCare);
+                },
+                child: Text(
+                  'Immediate Medical Care',
+                ),
+                textColor: Colors.blue,
+              ),
+              FlatButton(
+                onPressed: () {
+                  Navigator.of(context).pushNamed(Routes.completeVisit);
+                },
+                child: Text(
+                  'Complete Visit',
+                ),
+                textColor: Colors.blue,
+              ),
             ],
           ),
         ),

@@ -22,6 +22,7 @@ import 'package:Medicall/screens/PersonalInfo/personal_info.dart';
 import 'package:Medicall/screens/PhoneAuth/index.dart';
 import 'package:Medicall/screens/Prescriptions/prescription_details.dart';
 import 'package:Medicall/screens/Privacy/index.dart';
+import 'package:Medicall/screens/Questions/CompleteVisit/complete_visit.dart';
 import 'package:Medicall/screens/Questions/ImmediateMedicalCare/immediate_medical_care.dart';
 import 'package:Medicall/screens/Questions/confirm_consult.dart';
 import 'package:Medicall/screens/Questions/questionsScreen.dart';
@@ -78,6 +79,7 @@ class Routes {
   static const visitOverview = '/visit-overview';
   static const visitInformation = '/visit-information';
   static const immediateMedicalCare = '/immediate-medical-care';
+  static const completeVisit = '/complete-visit';
 }
 
 class Router {
@@ -163,9 +165,18 @@ class Router {
 
       case Routes.immediateMedicalCare:
         final Map<String, dynamic> mapArgs = args;
-        final Consult consult = mapArgs['consult'];
+//        final Consult consult = mapArgs['consult'];
         return MaterialPageRoute<dynamic>(
           builder: (context) => ImmediateMedicalCare.create(context),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+
+      case Routes.completeVisit:
+        final Map<String, dynamic> mapArgs = args;
+//        final Consult consult = mapArgs['consult'];
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => CompleteVisit.create(context),
           settings: settings,
           fullscreenDialog: true,
         );
