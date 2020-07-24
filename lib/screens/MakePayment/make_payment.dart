@@ -52,6 +52,11 @@ class MakePayment extends StatelessWidget {
   Future<void> _payPressed(BuildContext context) async {
     bool successfullyChargedCard = await model.chargeUsersCard();
     if (successfullyChargedCard) {
+      this.consult.state = ConsultStatus.PendingReview;
+      await this.model.db.saveConsult(
+            consult: this.consult,
+            consultId: this.consult.uid,
+          );
       return ConfirmConsult.show(context: context);
     } else {
       AppUtil().showFlushBar(

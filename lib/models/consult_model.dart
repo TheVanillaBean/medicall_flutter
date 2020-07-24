@@ -24,7 +24,7 @@ extension EnumParser on String {
 }
 
 class Consult {
-  final String uid;
+  String uid;
   final String providerId;
   final String symptom;
   final int price;

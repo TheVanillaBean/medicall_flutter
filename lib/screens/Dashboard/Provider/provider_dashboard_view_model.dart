@@ -19,7 +19,7 @@ class ProviderDashboardViewModel with ChangeNotifier {
     @required this.userProvider,
   }) {
     database
-        .getConsultsForProvider(userProvider.user.uid)
+        .getPendingConsultsForProvider(userProvider.user.uid)
         .listen((List<Consult> consults) {
       List<String> uniquePatientIds = [];
 

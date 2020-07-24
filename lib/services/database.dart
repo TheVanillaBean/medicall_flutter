@@ -14,6 +14,7 @@ import 'package:Medicall/services/firestore_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:dash_chat/dash_chat.dart';
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart' as path;
@@ -113,7 +114,7 @@ class FirestoreDatabase implements Database {
       data: consult.toMap(),
       merge: true,
     );
-    return consultId;
+    return cid;
   }
 
   Future<void> saveQuestionnaire(
@@ -121,6 +122,17 @@ class FirestoreDatabase implements Database {
       _service.setData(
         path: FirestorePath.questionnaire(consultId),
         data: screeningQuestions.toMap(),
+      );
+
+  Stream<List<Consult>> getPendingConsultsForProvider(String uid) =>
+      _service.collectionStream(
+        path: FirestorePath.consults(),
+        queryBuilder: (query) =>
+            query.where('provider_id', isEqualTo: uid).where("state", whereIn: [
+          EnumToString.parse(ConsultStatus.PendingReview),
+          EnumToString.parse(ConsultStatus.InReview),
+        ]),
+        builder: (data, documentId) => Consult.fromMap(data, documentId),
       );
 
   Stream<List<Consult>> getConsultsForProvider(String uid) =>
@@ -133,9 +145,12 @@ class FirestoreDatabase implements Database {
   Stream<List<Consult>> getActiveConsultsForPatient(String uid) =>
       _service.collectionStream(
         path: FirestorePath.consults(),
-        queryBuilder: (query) => query
-            .where('patient_id', isEqualTo: uid)
-            .where("state", whereIn: ["New", "Active"]),
+        queryBuilder: (query) =>
+            query.where('patient_id', isEqualTo: uid).where("state", whereIn: [
+          EnumToString.parse(ConsultStatus.PendingPayment),
+          EnumToString.parse(ConsultStatus.PendingReview),
+          EnumToString.parse(ConsultStatus.InReview),
+        ]),
         sort: (lhs, rhs) => rhs.date.compareTo(lhs.date),
         builder: (data, documentId) => Consult.fromMap(data, documentId),
       );
