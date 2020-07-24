@@ -1,9 +1,11 @@
+import 'package:Medicall/common_widgets/empty_content.dart';
 import 'package:Medicall/common_widgets/flat_button.dart';
 import 'package:Medicall/common_widgets/list_items_builder.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/question_model.dart';
 import 'package:Medicall/models/screening_questions_model.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/ConsultReview/consult_photos.dart';
 import 'package:Medicall/screens/ConsultReview/screening_question_list_item.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:flutter/cupertino.dart';
@@ -73,6 +75,10 @@ class ReviewVisitInformation extends StatelessWidget {
                             .where((question) => question.type != Q_TYPE.PHOTO)
                             .toList()
                         : [],
+                    emptyContentWidget: EmptyContent(
+                      title: "No Questions",
+                      message: "An error likely occurred.",
+                    ),
                     itemBuilder: (context, question) =>
                         ScreeningQuestionListItem(
                       question: question,
@@ -84,7 +90,12 @@ class ReviewVisitInformation extends StatelessWidget {
                 CustomFlatButton(
                   text: "VIEW PHOTOS",
                   trailingIcon: Icons.chevron_right,
-                  onPressed: () => {},
+                  onPressed: () => {
+                    ConsultPhotos.show(
+                      context: context,
+                      consult: consult,
+                    )
+                  },
                 )
               ],
             ),

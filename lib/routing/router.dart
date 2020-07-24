@@ -5,6 +5,7 @@ import 'package:Medicall/screens/Account/account.dart';
 import 'package:Medicall/screens/Account/payment_detail.dart';
 import 'package:Medicall/screens/ConfirmConsult/index.dart';
 import 'package:Medicall/screens/Consent/index.dart';
+import 'package:Medicall/screens/ConsultReview/consult_photos.dart';
 import 'package:Medicall/screens/ConsultReview/review_visit_information.dart';
 import 'package:Medicall/screens/ConsultReview/visit_overview.dart';
 import 'package:Medicall/screens/Consults/previous_consults.dart';
@@ -163,7 +164,14 @@ class Router {
           settings: settings,
           fullscreenDialog: true,
         );
-
+      case Routes.visitConsultPhotos:
+        final Map<String, dynamic> mapArgs = args;
+        final Consult consult = mapArgs['consult'];
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => ConsultPhotos(consult: consult),
+          settings: settings,
+          fullscreenDialog: true,
+        );
       case Routes.immediateMedicalCare:
         final Map<String, dynamic> mapArgs = args;
 //        final Consult consult = mapArgs['consult'];

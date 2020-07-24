@@ -65,7 +65,7 @@ class VisitOverview extends StatelessWidget {
       ),
       CustomFlatButton(
         text: "REVIEW VISIT INFORMATION",
-        onPressed: () => {},
+        onPressed: navigateToVisitInformationScreen(context),
       ),
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),

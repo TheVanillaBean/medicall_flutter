@@ -40,7 +40,11 @@ class ListItemsBuilder<T> extends StatelessWidget {
       if (itemsList.isNotEmpty) {
         return _buildList(itemsList, context);
       } else {
-        return displayEmptyContentView ? const EmptyContent() : Container();
+        return displayEmptyContentView
+            ? emptyContentWidget != null
+                ? emptyContentWidget
+                : const EmptyContent()
+            : Container();
       }
     } else if (snapshot != null && snapshot.hasError) {
       return const EmptyContent(
