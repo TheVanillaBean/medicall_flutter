@@ -43,72 +43,61 @@ class ConsultPhotos extends StatelessWidget {
         centerTitle: true,
         title: Text("Visit Photos"),
       ),
-      body: FutureBuilder<ScreeningQuestions>(
-        future: db.consultQuestionnaire(consultId: consult.uid),
-        builder:
-            (BuildContext context, AsyncSnapshot<ScreeningQuestions> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.all(10),
+          child: _buildPhotoGallery(db),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPhotoGallery(FirestoreDatabase db) {
+    return FutureBuilder<ScreeningQuestions>(
+      future: db.consultQuestionnaire(consultId: consult.uid),
+      builder:
+          (BuildContext context, AsyncSnapshot<ScreeningQuestions> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        } else {
+          if (snapshot.hasData) {
+            List<Question> photoQuestions = snapshot.data.screeningQuestions
+                .where((element) => element.type == Q_TYPE.PHOTO)
+                .toList();
+            List<String> photoURLS = [];
+            photoQuestions.forEach((question) {
+              question.answer.answer.forEach((url) {
+                photoURLS.add(url);
+              });
+            });
+            return PhotoViewGallery.builder(
+              scrollPhysics: const BouncingScrollPhysics(),
+              builder: (BuildContext context, int index) {
+                return PhotoViewGalleryPageOptions(
+                  imageProvider: NetworkImage(photoURLS[index]),
+                  initialScale: PhotoViewComputedScale.contained,
+                  tightMode: true,
+                  minScale: PhotoViewComputedScale.contained,
+                );
+              },
+              gaplessPlayback: true,
+              itemCount: photoURLS.length,
+              loadingBuilder: (context, event) => Center(
+                child: CircularProgressIndicator(),
+              ),
+              backgroundDecoration: BoxDecoration(
+                color: Theme.of(context).canvasColor,
+              ),
             );
           } else {
-            if (snapshot.hasData) {
-              List<Question> photoQuestions = snapshot.data.screeningQuestions
-                  .where((element) => element.type == Q_TYPE.PHOTO);
-              List<String> photoURLS = [];
-              photoQuestions.forEach((question) {
-                question.answer.answer.forEach((url) {
-                  photoURLS.add(url);
-                });
-              });
-              return SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        'PHOTOS',
-                        style: TextStyle(
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    Container(
-                      child: PhotoViewGallery.builder(
-                        scrollPhysics: const BouncingScrollPhysics(),
-                        builder: (BuildContext context, int index) {
-                          return PhotoViewGalleryPageOptions(
-                            imageProvider: NetworkImage(photoURLS[index]),
-                            initialScale: PhotoViewComputedScale.contained,
-                            tightMode: true,
-                            minScale: PhotoViewComputedScale.contained,
-                            maxScale: PhotoViewComputedScale.covered * 4,
-                          );
-                        },
-                        gaplessPlayback: true,
-                        itemCount: photoURLS.length,
-                        loadingBuilder: (context, event) => Center(
-                          child: CircularProgressIndicator(),
-                        ),
-                        backgroundDecoration: BoxDecoration(
-                          color: Theme.of(context).canvasColor,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            } else {
-              return Center(
-                child: Text("Photos could not be retrieved..."),
-              );
-            }
+            return Center(
+              child: Text("Photos could not be retrieved..."),
+            );
           }
-        },
-      ),
+        }
+      },
     );
   }
 }
