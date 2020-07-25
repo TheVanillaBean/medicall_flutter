@@ -1,3 +1,5 @@
+import 'package:Medicall/models/consult-review/consult_review_options_model.dart';
+import 'package:Medicall/models/consult-review/diagnosis_options_model.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/screens/ConsultReview/StepsViewModels/diagnosis_step_state.dart';
 import 'package:Medicall/screens/ConsultReview/StepsViewModels/educational_step_state.dart';
@@ -34,7 +36,9 @@ abstract class VisitReviewSteps {
 
 class VisitReviewViewModel extends PropertyChangeNotifier {
   final FirestoreDatabase firestoreDatabase;
+  final ConsultReviewOptions consultReviewOptions;
   final Consult consult;
+  DiagnosisOptions diagnosisOptions;
 
   int currentStep = VisitReviewSteps.DiagnosisStep;
 
@@ -50,6 +54,7 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
   VisitReviewViewModel({
     @required this.firestoreDatabase,
     @required this.consult,
+    @required this.consultReviewOptions,
   });
 
   String getCustomStepText(int index) {
@@ -87,5 +92,19 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
   void updateIndex(int index) {
     this.currentStep = index;
     notifyListeners(VisitReviewVMProperties.visitReview);
+  }
+
+  void updateDiagnosisStepWith({
+    int selectedItemIndex,
+    bool includeDDX,
+    String ddxOption,
+  }) {
+    this.diagnosisStepState.selectedItemIndex =
+        selectedItemIndex ?? this.diagnosisStepState.selectedItemIndex;
+    this.diagnosisStepState.includeDDX =
+        includeDDX ?? this.diagnosisStepState.includeDDX;
+    this.diagnosisStepState.ddxOption =
+        ddxOption ?? this.diagnosisStepState.ddxOption;
+    notifyListeners(VisitReviewVMProperties.diagnosisStep);
   }
 }

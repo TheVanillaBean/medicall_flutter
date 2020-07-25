@@ -1,3 +1,4 @@
+import 'package:Medicall/models/consult-review/consult_review_options_model.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/ConsultReview/StepsWidgets/diagnosis_step.dart';
@@ -20,13 +21,18 @@ class VisitReview extends StatelessWidget {
 
   const VisitReview({@required this.model});
 
-  static Widget create(BuildContext context, Consult consult) {
+  static Widget create(
+    BuildContext context,
+    Consult consult,
+    ConsultReviewOptions consultReviewOptions,
+  ) {
     final FirestoreDatabase firestoreDatabase =
         Provider.of<FirestoreDatabase>(context);
     return PropertyChangeProvider<VisitReviewViewModel>(
       value: VisitReviewViewModel(
         firestoreDatabase: firestoreDatabase,
         consult: consult,
+        consultReviewOptions: consultReviewOptions,
       ),
       child: PropertyChangeConsumer<VisitReviewViewModel>(
         properties: [VisitReviewVMProperties.visitReview],
@@ -40,11 +46,13 @@ class VisitReview extends StatelessWidget {
   static Future<void> show({
     BuildContext context,
     Consult consult,
+    ConsultReviewOptions consultReviewOptions,
   }) async {
     await Navigator.of(context).pushNamed(
       Routes.visitReview,
       arguments: {
         'consult': consult,
+        'consultReviewOptions': consultReviewOptions,
       },
     );
   }

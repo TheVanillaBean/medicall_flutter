@@ -1,3 +1,4 @@
+import 'package:Medicall/models/consult-review/consult_review_options_model.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/provider_user_model.dart';
 import 'package:Medicall/models/symptom_model.dart';
@@ -117,8 +118,14 @@ class Router {
       case Routes.visitReview:
         final Map<String, dynamic> mapArgs = args;
         final Consult consult = mapArgs['consult'];
+        final ConsultReviewOptions consultReviewOptions =
+            mapArgs['consultReviewOptions'];
         return MaterialPageRoute<dynamic>(
-          builder: (context) => VisitReview.create(context, consult),
+          builder: (context) => VisitReview.create(
+            context,
+            consult,
+            consultReviewOptions,
+          ),
           settings: settings,
           fullscreenDialog: true,
         );

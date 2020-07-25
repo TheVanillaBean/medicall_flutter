@@ -1,6 +1,7 @@
 import 'package:Medicall/common_widgets/flat_button.dart';
 import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
 import 'package:Medicall/common_widgets/sign_in_button.dart';
+import 'package:Medicall/models/consult-review/consult_review_options_model.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/ConsultReview/review_visit_information.dart';
@@ -29,6 +30,8 @@ class VisitOverview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    FirestoreDatabase firestoreDatabase =
+        Provider.of<FirestoreDatabase>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         leading: Builder(
@@ -46,12 +49,12 @@ class VisitOverview extends StatelessWidget {
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
-        children: _buildChildren(context),
+        children: _buildChildren(context, firestoreDatabase),
       ),
     );
   }
 
-  List<Widget> _buildChildren(BuildContext context) {
+  List<Widget> _buildChildren(BuildContext context, FirestoreDatabase db) {
     return <Widget>[
       Padding(
         padding: const EdgeInsets.all(16.0),
@@ -77,7 +80,9 @@ class VisitOverview extends StatelessWidget {
       ),
       CustomFlatButton(
         text: "DIAGNOSIS & TREATMENT PLAN",
-        onPressed: navigateToVisitReviewScreen(context),
+        onPressed: consult.state == ConsultStatus.PendingReview
+            ? () => _showDialog(context)
+            : () async => navigateToVisitReviewScreen(context, db),
       ),
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -105,7 +110,9 @@ class VisitOverview extends StatelessWidget {
               height: 8,
               color: getContinueBtnColor(),
               textColor: Colors.white,
-              onPressed: navigateToVisitReviewScreen(context),
+              onPressed: consult.state == ConsultStatus.PendingReview
+                  ? () => _showDialog(context)
+                  : () async => navigateToVisitReviewScreen(context, db),
             ),
           ),
         ),
@@ -133,13 +140,15 @@ class VisitOverview extends StatelessWidget {
     }
   }
 
-  Function navigateToVisitReviewScreen(BuildContext context) {
-    return consult.state == ConsultStatus.PendingReview
-        ? () => _showDialog(context)
-        : () => VisitReview.show(
-              context: context,
-              consult: consult,
-            );
+  Future<void> navigateToVisitReviewScreen(
+      BuildContext context, FirestoreDatabase db) async {
+    ConsultReviewOptions options =
+        await db.consultReviewOptions(symptomName: "Hairloss");
+    return VisitReview.show(
+      context: context,
+      consult: consult,
+      consultReviewOptions: options,
+    );
   }
 
   Future<void> _showDialog(BuildContext context) async {
@@ -155,10 +164,7 @@ class VisitOverview extends StatelessWidget {
     if (didPressYes == true) {
       consult.state = ConsultStatus.InReview;
       await db.saveConsult(consultId: consult.uid, consult: consult);
-      VisitReview.show(
-        context: context,
-        consult: consult,
-      );
+      await navigateToVisitReviewScreen(context, db);
     }
   }
 }
