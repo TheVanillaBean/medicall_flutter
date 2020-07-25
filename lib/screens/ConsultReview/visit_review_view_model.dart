@@ -1,4 +1,10 @@
 import 'package:Medicall/models/consult_model.dart';
+import 'package:Medicall/screens/ConsultReview/StepsViewModels/diagnosis_step_state.dart';
+import 'package:Medicall/screens/ConsultReview/StepsViewModels/educational_step_state.dart';
+import 'package:Medicall/screens/ConsultReview/StepsViewModels/exam_step_state.dart';
+import 'package:Medicall/screens/ConsultReview/StepsViewModels/follow_up_step_state.dart';
+import 'package:Medicall/screens/ConsultReview/StepsViewModels/patient_note_step_state.dart';
+import 'package:Medicall/screens/ConsultReview/StepsViewModels/treatment_note_step_state.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
@@ -31,6 +37,15 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
   final Consult consult;
 
   int currentStep = VisitReviewSteps.DiagnosisStep;
+
+  //used to de-clutter this view model, but they do not update listeners themselves
+  final DiagnosisStepState diagnosisStepState = DiagnosisStepState();
+  final EducationalStepState educationalStepState = EducationalStepState();
+  final ExamStepState examStepState = ExamStepState();
+  final FollowUpStepState followUpStepState = FollowUpStepState();
+  final PatientNoteStepState patientNoteStepState = PatientNoteStepState();
+  final TreatmentNoteStepState treatmentNoteStepState =
+      TreatmentNoteStepState();
 
   VisitReviewViewModel({
     @required this.firestoreDatabase,

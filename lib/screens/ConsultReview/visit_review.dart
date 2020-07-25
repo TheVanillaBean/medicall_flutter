@@ -65,7 +65,9 @@ class VisitReview extends StatelessWidget {
           },
         ),
         centerTitle: true,
-        title: Text("Visit Review"),
+        title: Text(
+          model.getCustomStepText(model.currentStep),
+        ),
       ),
       body: SwipeGestureRecognizer(
         onSwipeLeft: () => model.incrementIndex(),
