@@ -12,7 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
 import 'package:provider/provider.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
-import 'package:swipe_gesture_recognizer/swipe_gesture_recognizer.dart';
 
 import 'StepsWidgets/treatment_step.dart';
 
@@ -77,53 +76,48 @@ class VisitReview extends StatelessWidget {
           model.getCustomStepText(model.currentStep),
         ),
       ),
-      body: SwipeGestureRecognizer(
-        onSwipeLeft: () => model.incrementIndex(),
-        onSwipeRight: () => model.decrementIndex(),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Expanded(
-              flex: 8,
-              child: IndexedStack(
-                index: model.currentStep,
-                children: <Widget>[
-                  DiagnosisStep(),
-                  ExamStep(),
-                  TreatmentStep(),
-                  FollowUpStep(),
-                  EducationalContentStep(),
-                  PatientNoteStep(),
-                ],
-              ),
+      body: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Expanded(
+            flex: 8,
+            child: IndexedStack(
+              index: model.currentStep,
+              children: <Widget>[
+                DiagnosisStep(),
+                ExamStep(),
+                TreatmentStep(),
+                FollowUpStep(),
+                EducationalContentStep(),
+                PatientNoteStep(),
+              ],
             ),
-            Divider(
-              height: 2,
-            ),
-            Expanded(
-              flex: 1,
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: SizedBox(
-                  width: width * 1.5,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: StepProgressIndicator(
-                      direction: Axis.horizontal,
-                      totalSteps: VisitReviewSteps.TotalSteps,
-                      currentStep: model.currentStep,
-                      size: 48,
-                      roundedEdges: Radius.circular(25),
-                      customStep: (index, color, size) =>
-                          buildCustomStep(index),
-                      onTap: (index) => () => model.updateIndex(index),
-                    ),
+          ),
+          Divider(
+            height: 2,
+          ),
+          Expanded(
+            flex: 1,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: SizedBox(
+                width: width * 1.5,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: StepProgressIndicator(
+                    direction: Axis.horizontal,
+                    totalSteps: VisitReviewSteps.TotalSteps,
+                    currentStep: model.currentStep,
+                    size: 48,
+                    roundedEdges: Radius.circular(25),
+                    customStep: (index, color, size) => buildCustomStep(index),
+                    onTap: (index) => () => model.updateIndex(index),
                   ),
                 ),
               ),
-            )
-          ],
-        ),
+            ),
+          )
+        ],
       ),
     );
   }
