@@ -4,6 +4,7 @@ import 'package:Medicall/common_widgets/sign_in_button.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/ConsultReview/review_visit_information.dart';
+import 'package:Medicall/screens/ConsultReview/visit_review.dart';
 import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard_list_item.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:flutter/material.dart';
@@ -65,7 +66,10 @@ class VisitOverview extends StatelessWidget {
       ),
       CustomFlatButton(
         text: "REVIEW VISIT INFORMATION",
-        onPressed: navigateToVisitInformationScreen(context),
+        onPressed: () => ReviewVisitInformation.show(
+          context: context,
+          consult: consult,
+        ),
       ),
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -73,7 +77,7 @@ class VisitOverview extends StatelessWidget {
       ),
       CustomFlatButton(
         text: "DIAGNOSIS & TREATMENT PLAN",
-        onPressed: navigateToVisitInformationScreen(context),
+        onPressed: navigateToVisitReviewScreen(context),
       ),
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -101,7 +105,7 @@ class VisitOverview extends StatelessWidget {
               height: 8,
               color: getContinueBtnColor(),
               textColor: Colors.white,
-              onPressed: navigateToVisitInformationScreen(context),
+              onPressed: navigateToVisitReviewScreen(context),
             ),
           ),
         ),
@@ -129,10 +133,10 @@ class VisitOverview extends StatelessWidget {
     }
   }
 
-  Function navigateToVisitInformationScreen(BuildContext context) {
+  Function navigateToVisitReviewScreen(BuildContext context) {
     return consult.state == ConsultStatus.PendingReview
         ? () => _showDialog(context)
-        : () => ReviewVisitInformation.show(
+        : () => VisitReview.show(
               context: context,
               consult: consult,
             );
@@ -151,7 +155,7 @@ class VisitOverview extends StatelessWidget {
     if (didPressYes == true) {
       consult.state = ConsultStatus.InReview;
       await db.saveConsult(consultId: consult.uid, consult: consult);
-      ReviewVisitInformation.show(
+      VisitReview.show(
         context: context,
         consult: consult,
       );

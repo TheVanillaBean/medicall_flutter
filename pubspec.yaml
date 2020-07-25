@@ -65,6 +65,8 @@ dependencies:
   enum_to_string: ^1.0.9
   datetime_picker_formfield: ^1.0.0
   photo_view: ^0.9.2
+  step_progress_indicator: ^0.2.3+6
+  swipe_gesture_recognizer: ^0.0.2
 
 
 dependency_overrides:

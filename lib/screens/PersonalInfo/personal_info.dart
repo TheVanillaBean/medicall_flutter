@@ -103,7 +103,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Profile"),
+        title: Text("Tell us about yourself"),
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(

@@ -8,6 +8,7 @@ import 'package:Medicall/screens/Consent/index.dart';
 import 'package:Medicall/screens/ConsultReview/consult_photos.dart';
 import 'package:Medicall/screens/ConsultReview/review_visit_information.dart';
 import 'package:Medicall/screens/ConsultReview/visit_overview.dart';
+import 'package:Medicall/screens/ConsultReview/visit_review.dart';
 import 'package:Medicall/screens/Consults/previous_consults.dart';
 import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard.dart';
 import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
@@ -82,6 +83,7 @@ class Routes {
   static const visitConsultPhotos = '/visit-consult-photos';
   static const immediateMedicalCare = '/immediate-medical-care';
   static const completeVisit = '/complete-visit';
+  static const visitReview = '/visit-review';
 }
 
 class Router {
@@ -109,6 +111,14 @@ class Router {
       case Routes.welcome:
         return MaterialPageRoute<dynamic>(
           builder: (context) => WelcomeScreen(),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case Routes.visitReview:
+        final Map<String, dynamic> mapArgs = args;
+        final Consult consult = mapArgs['consult'];
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => VisitReview.create(context, consult),
           settings: settings,
           fullscreenDialog: true,
         );
