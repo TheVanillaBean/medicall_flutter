@@ -44,6 +44,8 @@ class VisitReview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
         leading: Builder(
@@ -63,6 +65,7 @@ class VisitReview extends StatelessWidget {
         onSwipeLeft: () => model.incrementIndex(),
         onSwipeRight: () => model.decrementIndex(),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Expanded(
               flex: 8,
@@ -111,17 +114,30 @@ class VisitReview extends StatelessWidget {
             Expanded(
               flex: 1,
               child: StepProgressIndicator(
+                direction: Axis.horizontal,
                 totalSteps: VisitReviewSteps.TotalSteps,
-                padding: 20.0,
                 currentStep: model.currentStep,
-                size: 20,
-                customColor: (index) => index == 0
-                    ? Colors.redAccent
-                    : index == 4 ? Colors.blueAccent : Colors.deepOrange,
+                size: 36,
+                customStep: (index, color, size) => buildCustomStep(index),
                 onTap: (index) => () => model.updateIndex(index),
               ),
             )
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildCustomStep(int stepIndex) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(50),
+      child: Container(
+        color: Colors.blue,
+        child: Center(
+          child: Text(
+            model.getCustomStepText(stepIndex),
+            style: TextStyle(fontSize: 12, color: Colors.white),
+          ),
         ),
       ),
     );

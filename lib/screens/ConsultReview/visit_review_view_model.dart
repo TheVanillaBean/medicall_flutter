@@ -37,6 +37,24 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
     @required this.consult,
   });
 
+  String getCustomStepText(int index) {
+    if (index == VisitReviewSteps.DiagnosisStep) {
+      return "Diagnosis";
+    } else if (index == VisitReviewSteps.ExamStep) {
+      return "Exam";
+    } else if (index == VisitReviewSteps.TreatmentStep) {
+      return "Treatment";
+    } else if (index == VisitReviewSteps.FollowUpStep) {
+      return "Follow Up";
+    } else if (index == VisitReviewSteps.EducationalContentStep) {
+      return "Edu";
+    } else if (index == VisitReviewSteps.PatientNote) {
+      return "Note";
+    } else {
+      return "Error";
+    }
+  }
+
   void incrementIndex() {
     this.currentStep = this.currentStep == VisitReviewSteps.TotalSteps - 1
         ? this.currentStep
