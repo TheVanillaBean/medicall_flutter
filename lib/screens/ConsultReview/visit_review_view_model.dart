@@ -105,6 +105,9 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
         includeDDX ?? this.diagnosisStepState.includeDDX;
     this.diagnosisStepState.ddxOption =
         ddxOption ?? this.diagnosisStepState.ddxOption;
+    this.diagnosisStepState.diagnosis = this
+        .consultReviewOptions
+        .diagnosisList[this.diagnosisStepState.selectedItemIndex];
     notifyListeners(VisitReviewVMProperties.diagnosisStep);
   }
 }

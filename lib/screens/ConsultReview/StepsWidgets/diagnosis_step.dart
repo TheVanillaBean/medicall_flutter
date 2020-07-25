@@ -2,6 +2,7 @@ import 'package:Medicall/screens/ConsultReview/visit_review_view_model.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:direct_select/direct_select.dart';
 import 'package:flutter/material.dart';
+import 'package:grouped_buttons/grouped_buttons.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
 
 class DiagnosisStep extends StatelessWidget {
@@ -12,6 +13,7 @@ class DiagnosisStep extends StatelessWidget {
       context,
       properties: [VisitReviewVMProperties.diagnosisStep],
     ).value;
+    final width = MediaQuery.of(context).size.width;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
@@ -30,13 +32,50 @@ class DiagnosisStep extends StatelessWidget {
           selectedIndex: model.diagnosisStepState.selectedItemIndex,
           child: CustomSelectionItem(
             isForList: false,
-            title: model.consultReviewOptions
+            title: model.diagnosisStepState.diagnosis = model
+                .consultReviewOptions
                 .diagnosisList[model.diagnosisStepState.selectedItemIndex],
           ),
           onSelectedItemChanged: (index) =>
               model.updateDiagnosisStepWith(selectedItemIndex: index),
           items: _buildDiagnosisItem(model),
         ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(0, 32, 0, 12),
+          child: Text(
+            "Would you like to include a ddx?",
+            style: TextStyle(
+              color: Colors.grey,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+        Container(
+          width: width * 0.8,
+          child: RadioButtonGroup(
+            labels: <String>[
+              "No",
+              "Yes",
+            ],
+            picked: model.diagnosisStepState.includeDDX ? "Yes" : "No",
+            onSelected: (String selected) => model.updateDiagnosisStepWith(
+                includeDDX: selected == "Yes" ? true : false),
+          ),
+        ),
+        if (model.diagnosisStepState.includeDDX)
+          Padding(
+            padding: const EdgeInsets.only(left: 64),
+            child: Container(
+              width: width * 0.8,
+              child: RadioButtonGroup(
+                labels: model.consultReviewOptions
+                    .ddxOptions[model.diagnosisStepState.diagnosis],
+                picked: model.diagnosisStepState.ddxOption,
+                onSelected: (String selected) =>
+                    model.updateDiagnosisStepWith(ddxOption: selected),
+              ),
+            ),
+          ),
       ],
     );
   }
