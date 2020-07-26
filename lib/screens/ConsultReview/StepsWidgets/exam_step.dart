@@ -7,7 +7,12 @@ import 'package:property_change_notifier/property_change_notifier.dart';
 
 import '../visit_review_view_model.dart';
 
-class ExamStep extends StatelessWidget {
+class ExamStep extends StatefulWidget {
+  @override
+  _ExamStepState createState() => _ExamStepState();
+}
+
+class _ExamStepState extends State<ExamStep> {
   @override
   Widget build(BuildContext context) {
     final VisitReviewViewModel model =
@@ -17,44 +22,108 @@ class ExamStep extends StatelessWidget {
     ).value;
     final width = MediaQuery.of(context).size.width;
     if (model.diagnosisOptions != null)
-      return SwipeGestureRecognizer(
-        onSwipeLeft: () => model.incrementIndex(),
-        onSwipeRight: () => model.decrementIndex(),
-        child: CustomScrollView(
-          slivers: <Widget>[
-            SliverFillRemaining(
-              hasScrollBody: false,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 32, 0, 12),
-                    child: Text(
-                      "Check all that apply",
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontWeight: FontWeight.w500,
+      return GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          FocusScope.of(context).requestFocus(FocusNode());
+        },
+        child: SwipeGestureRecognizer(
+          onSwipeLeft: () => model.incrementIndex(),
+          onSwipeRight: () => model.decrementIndex(),
+          child: CustomScrollView(
+            slivers: <Widget>[
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 32, 0, 12),
+                      child: Text(
+                        "Check all that apply",
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
-                  ),
-                  Container(
-                    width: width * 0.8,
-                    child: CheckboxGroup(
-                      labels: model.diagnosisOptions.exam,
-                      onSelected: (List<String> checked) => model
-                          .updateExamStepWith(selectedExamOptions: checked),
+                    Container(
+                      width: width * 0.8,
+                      child: CheckboxGroup(
+                        labels: model.diagnosisOptions.exam,
+                        onSelected: (List<String> checked) => model
+                            .updateExamStepWith(selectedExamOptions: checked),
+                      ),
                     ),
-                  ),
-                  ContinueButton(
-                    width: width,
-                    model: model,
-                  ),
-                ],
+                    if (model.examStepState.selectedExamOptions.length > 0)
+                      for (String examOption
+                          in model.examStepState.selectedExamOptions)
+                        ..._buildLocationItem(examOption, model),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    ContinueButton(
+                      width: width,
+                      model: model,
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       );
     return EmptyDiagnosis(model: model);
+  }
+
+  List<Widget> _buildLocationItem(
+      String examOption, VisitReviewViewModel model) {
+    String locationQuestion = examOption.toLowerCase() == "other"
+        ? "Enter custom entry for \"Other\""
+        : "What is the location of the $examOption? (Optional)";
+    return [
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: Text(
+          locationQuestion,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Colors.grey,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: TextField(
+          autocorrect: false,
+          keyboardType: TextInputType.text,
+          onChanged: (String text) =>
+              model.updateExamStepWith(locationMap: {examOption: text}),
+          style: TextStyle(color: Color.fromRGBO(80, 80, 80, 1)),
+          decoration: InputDecoration(
+            labelStyle: TextStyle(
+              color: Theme.of(context).colorScheme.onSurface.withAlpha(90),
+            ),
+            hintStyle: TextStyle(
+              color: Color.fromRGBO(100, 100, 100, 1),
+            ),
+            filled: true,
+            fillColor: Colors.grey.withAlpha(20),
+            prefixIcon: Icon(
+              Icons.email,
+              color: Theme.of(context).colorScheme.onSurface.withAlpha(120),
+            ),
+            labelText: examOption.toLowerCase() == "other"
+                ? "Custom Treatment"
+                : "Location",
+            hintText: 'Optional',
+          ),
+        ),
+      ),
+      SizedBox(
+        height: 12,
+      ),
+    ];
   }
 }

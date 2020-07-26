@@ -123,12 +123,21 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
 
   void updateExamStepWith({
     List<String> selectedExamOptions,
-    List<Map<String, String>> examLocations,
+    Map<String, String> locationMap,
   }) {
     this.examStepState.selectedExamOptions =
         selectedExamOptions ?? this.examStepState.selectedExamOptions;
-    this.examStepState.examLocations =
-        examLocations ?? this.examStepState.examLocations;
+    int index = this
+        .examStepState
+        .examLocations
+        .indexWhere((element) => element.containsKey(locationMap.keys.first));
+    if (index > -1) {
+      this.examStepState.examLocations[index] = locationMap;
+    } else {
+      if (locationMap != null) {
+        this.examStepState.examLocations.add(locationMap);
+      }
+    }
     notifyListeners(VisitReviewVMProperties.examStep);
   }
 
