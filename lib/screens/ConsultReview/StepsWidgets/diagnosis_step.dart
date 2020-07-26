@@ -16,77 +16,92 @@ class DiagnosisStep extends StatelessWidget {
       properties: [VisitReviewVMProperties.diagnosisStep],
     ).value;
     final width = MediaQuery.of(context).size.width;
-    return SwipeGestureRecognizer(
-      onSwipeLeft: () => model.incrementIndex(),
-      onSwipeRight: () => model.decrementIndex(),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 32, 0, 12),
-            child: Text(
-              "What is your diagnosis for this patient?",
-              style: TextStyle(
-                color: Colors.grey,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-          DirectSelect(
-            itemExtent: 60.0,
-            selectedIndex: model.diagnosisStepState.selectedItemIndex,
-            child: CustomSelectionItem(
-              isForList: false,
-              title: model.diagnosisStepState.diagnosis = model
-                  .consultReviewOptions
-                  .diagnosisList[model.diagnosisStepState.selectedItemIndex],
-            ),
-            onSelectedItemChanged: (index) =>
-                model.updateDiagnosisStepWith(selectedItemIndex: index),
-            items: _buildDiagnosisItem(model),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 32, 0, 12),
-            child: Text(
-              "Would you like to include a ddx?",
-              style: TextStyle(
-                color: Colors.grey,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-          Container(
-            width: width * 0.8,
-            child: RadioButtonGroup(
-              labels: <String>[
-                "No",
-                "Yes",
-              ],
-              picked: model.diagnosisStepState.includeDDX ? "Yes" : "No",
-              onSelected: (String selected) => model.updateDiagnosisStepWith(
-                  includeDDX: selected == "Yes" ? true : false),
-            ),
-          ),
-          if (model.diagnosisStepState.includeDDX)
-            Padding(
-              padding: const EdgeInsets.only(left: 64),
-              child: Container(
-                width: width * 0.8,
-                child: RadioButtonGroup(
-                  labels: model.consultReviewOptions
-                      .ddxOptions[model.diagnosisStepState.diagnosis],
-                  picked: model.diagnosisStepState.ddxOption,
-                  onSelected: (String selected) =>
-                      model.updateDiagnosisStepWith(ddxOption: selected),
+    return LayoutBuilder(
+      builder: (context, constraint) {
+        return SwipeGestureRecognizer(
+          onSwipeLeft: () => model.incrementIndex(),
+          onSwipeRight: () => model.decrementIndex(),
+          child: CustomScrollView(
+            slivers: <Widget>[
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child:  Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 32, 0, 12),
+                      child: Text(
+                        "What is your diagnosis for this patient?",
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    DirectSelect(
+                      itemExtent: 60.0,
+                      selectedIndex: model.diagnosisStepState.selectedItemIndex,
+                      child: CustomSelectionItem(
+                        isForList: false,
+                        title: model.diagnosisStepState.diagnosis =
+                        model.consultReviewOptions.diagnosisList[
+                        model.diagnosisStepState.selectedItemIndex],
+                      ),
+                      onSelectedItemChanged: (index) =>
+                          model.updateDiagnosis(index),
+                      items: _buildDiagnosisItem(model),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 32, 0, 12),
+                      child: Text(
+                        "Would you like to include a ddx?",
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: width * 0.8,
+                      child: RadioButtonGroup(
+                        labels: <String>[
+                          "No",
+                          "Yes",
+                        ],
+                        picked:
+                        model.diagnosisStepState.includeDDX ? "Yes" : "No",
+                        onSelected: (String selected) =>
+                            model.updateDiagnosisStepWith(
+                                includeDDX: selected == "Yes" ? true : false),
+                      ),
+                    ),
+                    if (model.diagnosisStepState.includeDDX)
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(64, 0, 0, 16),
+                        child: Container(
+                          width: width * 0.8,
+                          child: RadioButtonGroup(
+                            labels: model.consultReviewOptions
+                                .ddxOptions[model.diagnosisStepState.diagnosis],
+                            picked: model.diagnosisStepState.ddxOption,
+                            onSelected: (String selected) => model
+                                .updateDiagnosisStepWith(ddxOption: selected),
+                          ),
+                        ),
+                      ),
+                    ContinueButton(
+                      width: width,
+                      model: model,
+                    ),
+                  ],
                 ),
-              ),
-            ),
-          ContinueButton(
-            width: width,
-            model: model,
+              )
+            ],
+
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 

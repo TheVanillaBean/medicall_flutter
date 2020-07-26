@@ -94,6 +94,14 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
     notifyListeners(VisitReviewVMProperties.visitReview);
   }
 
+  Future<void> updateDiagnosis(int selectedItemIndex) async {
+    updateDiagnosisStepWith(selectedItemIndex: selectedItemIndex);
+    this.diagnosisOptions =
+        await firestoreDatabase.consultReviewDiagnosisOptions(
+            symptomName: "Hairloss",
+            diagnosis: this.diagnosisStepState.diagnosis);
+  }
+
   void updateDiagnosisStepWith({
     int selectedItemIndex,
     bool includeDDX,
@@ -108,6 +116,18 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
     this.diagnosisStepState.diagnosis = this
         .consultReviewOptions
         .diagnosisList[this.diagnosisStepState.selectedItemIndex];
+
     notifyListeners(VisitReviewVMProperties.diagnosisStep);
+  }
+
+  void updateExamStepWith({
+    List<String> selectedExamOptions,
+    List<Map<String, String>> examLocations,
+  }) {
+    this.examStepState.selectedExamOptions =
+        selectedExamOptions ?? this.examStepState.selectedExamOptions;
+    this.examStepState.examLocations =
+        examLocations ?? this.examStepState.examLocations;
+    notifyListeners(VisitReviewVMProperties.examStep);
   }
 }
