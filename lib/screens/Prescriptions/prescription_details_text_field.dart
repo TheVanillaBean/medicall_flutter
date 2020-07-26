@@ -8,7 +8,7 @@ class PrescriptionDetailsTextField extends StatelessWidget {
     this.keyboardType,
     this.validator,
     this.controller,
-    this.enabled,
+    this.enabled = true,
     this.errorText,
     this.maxLines,
     this.focusNode,
@@ -43,6 +43,7 @@ class PrescriptionDetailsTextField extends StatelessWidget {
           fontSize: 16,
           color: Colors.black87,
         ),
+        enabled: this.enabled,
         decoration: InputDecoration(
           contentPadding: EdgeInsets.fromLTRB(0, 15, 0, 15),
           isDense: true,
@@ -52,7 +53,7 @@ class PrescriptionDetailsTextField extends StatelessWidget {
             fontSize: 16,
             color: Colors.black,
           ),
-          hintText: initialValue,
+          hintText: this.initialValue,
           hintStyle: TextStyle(fontSize: 16, color: Colors.black26),
           border: UnderlineInputBorder(),
           enabledBorder: UnderlineInputBorder(

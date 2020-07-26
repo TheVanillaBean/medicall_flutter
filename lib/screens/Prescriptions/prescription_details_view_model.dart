@@ -12,6 +12,8 @@ class PrescriptionDetailsViewModel with ChangeNotifier {
 
   bool initialDateSet = false;
 
+  bool treatmentUpdated = false;
+
   String medicationName = '';
   String quantity = '';
   String refills = '';
@@ -69,13 +71,17 @@ class PrescriptionDetailsViewModel with ChangeNotifier {
     String frequency,
     String instructions,
   }) {
-    this.medicationName = medicationName ?? this.medicationName;
-    this.quantity = quantity ?? this.quantity;
-    this.refills = refills ?? this.refills;
-    this.form = form ?? this.form;
-    this.dose = dose ?? this.dose;
-    this.frequency = frequency ?? this.frequency;
-    this.instructions = instructions ?? this.instructions;
+    this.treatmentOptions.medicationName =
+        medicationName ?? this.treatmentOptions.medicationName;
+    this.treatmentOptions.quantity = quantity ?? this.treatmentOptions.quantity;
+    this.treatmentOptions.refills = refills ?? this.treatmentOptions.refills;
+    this.treatmentOptions.form = form ?? this.treatmentOptions.form;
+    this.treatmentOptions.dose = dose ?? this.treatmentOptions.dose;
+    this.treatmentOptions.frequency =
+        frequency ?? this.treatmentOptions.frequency;
+    this.treatmentOptions.instructions =
+        instructions ?? this.treatmentOptions.instructions;
+    treatmentUpdated = true;
     notifyListeners();
   }
 

@@ -1,5 +1,6 @@
 import 'package:Medicall/models/consult-review/consult_review_options_model.dart';
 import 'package:Medicall/models/consult-review/diagnosis_options_model.dart';
+import 'package:Medicall/models/consult-review/treatment_options.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/screens/ConsultReview/StepsViewModels/diagnosis_step_state.dart';
 import 'package:Medicall/screens/ConsultReview/StepsViewModels/educational_step_state.dart';
@@ -132,10 +133,41 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
   }
 
   void updateTreatmentStepWith({
-    List<String> selectedTreatments,
+    TreatmentOptions selectedTreatment,
   }) {
-    this.treatmentNoteStepState.selectedTreatments =
-        selectedTreatments ?? this.treatmentNoteStepState.selectedTreatments;
+    if (this
+            .treatmentNoteStepState
+            .selectedTreatmentOptions
+            .where((element) =>
+                element.medicationName == selectedTreatment.medicationName)
+            .toList()
+            .length ==
+        0) {
+      this
+          .treatmentNoteStepState
+          .selectedTreatmentOptions
+          .add(selectedTreatment);
+    } else {
+      int index = this
+          .treatmentNoteStepState
+          .selectedTreatmentOptions
+          .indexWhere((element) =>
+              element.medicationName == selectedTreatment.medicationName);
+      if (index > -1) {
+        this.treatmentNoteStepState.selectedTreatmentOptions[index] =
+            selectedTreatment;
+      }
+    }
+    notifyListeners(VisitReviewVMProperties.treatmentStep);
+  }
+
+  void deselectTreatmentStep(
+    TreatmentOptions selectedTreatment,
+  ) {
+    this.treatmentNoteStepState.selectedTreatmentOptions.removeWhere(
+          (element) =>
+              element.medicationName == selectedTreatment.medicationName,
+        );
     notifyListeners(VisitReviewVMProperties.treatmentStep);
   }
 

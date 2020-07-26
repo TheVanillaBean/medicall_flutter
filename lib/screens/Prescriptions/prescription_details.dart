@@ -1,11 +1,14 @@
+import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
 import 'package:Medicall/models/consult-review/treatment_options.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/ConsultReview/visit_review_view_model.dart';
 import 'package:Medicall/screens/Prescriptions/prescription_details_text_field.dart';
 import 'package:Medicall/screens/Prescriptions/prescription_details_view_model.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:property_change_notifier/property_change_notifier.dart';
 import 'package:provider/provider.dart';
 
 class PrescriptionDetails extends StatelessWidget {
@@ -17,6 +20,11 @@ class PrescriptionDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final VisitReviewViewModel visitReviewViewModel =
+        PropertyChangeProvider.of<VisitReviewViewModel>(
+      context,
+      properties: [VisitReviewVMProperties.treatmentStep],
+    ).value;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -27,7 +35,21 @@ class PrescriptionDetails extends StatelessWidget {
                 Icons.close,
                 color: Colors.grey,
               ),
-              onPressed: () {
+              onPressed: () async {
+                if (model.treatmentUpdated) {
+                  final didPressYes = await PlatformAlertDialog(
+                    title: "Update Treatment?",
+                    content:
+                        "Would you like to save the changes you made to this treatment option?",
+                    defaultActionText: "Yes",
+                    cancelActionText: "No, don't update",
+                  ).show(context);
+                  if (didPressYes) {
+                    visitReviewViewModel.updateTreatmentStepWith(
+                      selectedTreatment: model.treatmentOptions,
+                    );
+                  }
+                }
                 Navigator.of(context).pop();
               },
             );
@@ -58,6 +80,7 @@ class PrescriptionDetails extends StatelessWidget {
                     labelText: 'Medication Name',
                     initialValue: this.model.treatmentOptions.medicationName,
                     onChanged: model.updateMedicationName,
+                    enabled: false,
                   ),
                   Row(
                     children: <Widget>[
@@ -127,7 +150,12 @@ class PrescriptionDetails extends StatelessWidget {
                     height: 50,
                     width: 250,
                     child: RaisedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        visitReviewViewModel.updateTreatmentStepWith(
+                          selectedTreatment: model.treatmentOptions,
+                        );
+                        Navigator.of(context).pop();
+                      },
                       shape: StadiumBorder(),
                       color: Colors.blue,
                       textColor: Colors.white,
@@ -147,20 +175,24 @@ class PrescriptionDetails extends StatelessWidget {
   static Widget create(
     BuildContext context,
     TreatmentOptions treatmentOptions,
+    VisitReviewViewModel visitReviewViewModel,
   ) {
     final FirestoreDatabase database = Provider.of<FirestoreDatabase>(context);
     final UserProvider provider = Provider.of<UserProvider>(context);
     final AuthBase auth = Provider.of<AuthBase>(context, listen: false);
-    return ChangeNotifierProvider<PrescriptionDetailsViewModel>(
-      create: (context) => PrescriptionDetailsViewModel(
-        database: database,
-        userProvider: provider,
-        auth: auth,
-        treatmentOptions: treatmentOptions,
-      ),
-      child: Consumer<PrescriptionDetailsViewModel>(
-        builder: (_, model, __) => PrescriptionDetails(
-          model: model,
+    return PropertyChangeProvider(
+      value: visitReviewViewModel,
+      child: ChangeNotifierProvider<PrescriptionDetailsViewModel>(
+        create: (context) => PrescriptionDetailsViewModel(
+          database: database,
+          userProvider: provider,
+          auth: auth,
+          treatmentOptions: treatmentOptions,
+        ),
+        child: Consumer<PrescriptionDetailsViewModel>(
+          builder: (_, model, __) => PrescriptionDetails(
+            model: model,
+          ),
         ),
       ),
     );
@@ -169,11 +201,13 @@ class PrescriptionDetails extends StatelessWidget {
   static Future<void> show({
     BuildContext context,
     TreatmentOptions treatmentOptions,
+    VisitReviewViewModel visitReviewViewModel,
   }) async {
     await Navigator.of(context).pushNamed(
       Routes.prescriptionDetails,
       arguments: {
         'treatmentOptions': treatmentOptions,
+        'visitReviewViewModel': visitReviewViewModel,
       },
     );
   }

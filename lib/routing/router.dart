@@ -11,6 +11,7 @@ import 'package:Medicall/screens/ConsultReview/consult_photos.dart';
 import 'package:Medicall/screens/ConsultReview/review_visit_information.dart';
 import 'package:Medicall/screens/ConsultReview/visit_overview.dart';
 import 'package:Medicall/screens/ConsultReview/visit_review.dart';
+import 'package:Medicall/screens/ConsultReview/visit_review_view_model.dart';
 import 'package:Medicall/screens/Consults/previous_consults.dart';
 import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard.dart';
 import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
@@ -164,9 +165,14 @@ class Router {
       case Routes.prescriptionDetails:
         final Map<String, dynamic> mapArgs = args;
         final TreatmentOptions treatmentOptions = mapArgs['treatmentOptions'];
+        final VisitReviewViewModel visitReviewViewModel =
+            mapArgs['visitReviewViewModel'];
         return MaterialPageRoute<dynamic>(
-          builder: (context) =>
-              PrescriptionDetails.create(context, treatmentOptions),
+          builder: (context) => PrescriptionDetails.create(
+            context,
+            treatmentOptions,
+            visitReviewViewModel,
+          ),
           settings: settings,
           fullscreenDialog: true,
         );

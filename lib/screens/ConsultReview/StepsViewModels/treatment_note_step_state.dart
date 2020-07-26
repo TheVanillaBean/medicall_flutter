@@ -1,3 +1,5 @@
+import 'package:Medicall/models/consult-review/treatment_options.dart';
+
 class TreatmentNoteStepState {
-  List<String> selectedTreatments = [];
+  List<TreatmentOptions> selectedTreatmentOptions = [];
 }

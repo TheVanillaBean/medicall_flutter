@@ -1,3 +1,4 @@
+import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
 import 'package:Medicall/models/consult-review/treatment_options.dart';
 import 'package:Medicall/screens/ConsultReview/ReusableWidgets/continue_button.dart';
 import 'package:Medicall/screens/ConsultReview/ReusableWidgets/emty_diagnosis_widget.dart';
@@ -45,7 +46,11 @@ class TreatmentStep extends StatelessWidget {
                       labels: model.diagnosisOptions.treatments
                           .map((t) => t.medicationName)
                           .toList(),
-                      onChange: (isChecked, label, index) {
+                      checked: model
+                          .treatmentNoteStepState.selectedTreatmentOptions
+                          .map((e) => e.medicationName)
+                          .toList(),
+                      onChange: (isChecked, label, index) async {
                         if (isChecked) {
                           TreatmentOptions treatmentOptions = model
                               .diagnosisOptions.treatments
@@ -53,13 +58,46 @@ class TreatmentStep extends StatelessWidget {
                                   (element) => element.medicationName == label)
                               .toList()
                               .first;
+                          model.updateTreatmentStepWith(
+                              selectedTreatment: treatmentOptions);
                           PrescriptionDetails.show(
+                            context: context,
+                            treatmentOptions: treatmentOptions,
+                            visitReviewViewModel: model,
+                          );
+                        } else {
+                          final didPressEdit = await PlatformAlertDialog(
+                            title: "Deselect Treatment?",
+                            content:
+                                "Do you want to deselect this treatment option or do you want to edit it?",
+                            defaultActionText: "Edit",
+                            cancelActionText: "Deselect",
+                          ).show(context);
+                          if (!didPressEdit) {
+                            TreatmentOptions treatmentOptions = model
+                                .diagnosisOptions.treatments
+                                .where((element) =>
+                                    element.medicationName == label)
+                                .toList()
+                                .first;
+                            model.deselectTreatmentStep(treatmentOptions);
+                          } else {
+                            TreatmentOptions treatmentOptions = model
+                                .diagnosisOptions.treatments
+                                .where((element) =>
+                                    element.medicationName == label)
+                                .toList()
+                                .first;
+                            model.updateTreatmentStepWith(
+                                selectedTreatment: treatmentOptions);
+                            PrescriptionDetails.show(
                               context: context,
-                              treatmentOptions: treatmentOptions);
+                              treatmentOptions: treatmentOptions,
+                              visitReviewViewModel: model,
+                            );
+                          }
                         }
                       },
-                      onSelected: (List<String> checked) => model
-                          .updateTreatmentStepWith(selectedTreatments: checked),
                     ),
                   ),
                   ContinueButton(
