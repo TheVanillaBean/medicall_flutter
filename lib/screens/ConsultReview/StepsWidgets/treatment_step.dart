@@ -1,6 +1,8 @@
+import 'package:Medicall/models/consult-review/treatment_options.dart';
 import 'package:Medicall/screens/ConsultReview/ReusableWidgets/continue_button.dart';
 import 'package:Medicall/screens/ConsultReview/ReusableWidgets/emty_diagnosis_widget.dart';
 import 'package:Medicall/screens/ConsultReview/ReusableWidgets/swipe_gesture_recognizer.dart';
+import 'package:Medicall/screens/Prescriptions/prescription_details.dart';
 import 'package:flutter/material.dart';
 import 'package:grouped_buttons/grouped_buttons.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
@@ -43,6 +45,19 @@ class TreatmentStep extends StatelessWidget {
                       labels: model.diagnosisOptions.treatments
                           .map((t) => t.medicationName)
                           .toList(),
+                      onChange: (isChecked, label, index) {
+                        if (isChecked) {
+                          TreatmentOptions treatmentOptions = model
+                              .diagnosisOptions.treatments
+                              .where(
+                                  (element) => element.medicationName == label)
+                              .toList()
+                              .first;
+                          PrescriptionDetails.show(
+                              context: context,
+                              treatmentOptions: treatmentOptions);
+                        }
+                      },
                       onSelected: (List<String> checked) => model
                           .updateTreatmentStepWith(selectedTreatments: checked),
                     ),

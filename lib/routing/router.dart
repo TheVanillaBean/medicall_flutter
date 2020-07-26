@@ -1,4 +1,5 @@
 import 'package:Medicall/models/consult-review/consult_review_options_model.dart';
+import 'package:Medicall/models/consult-review/treatment_options.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/provider_user_model.dart';
 import 'package:Medicall/models/symptom_model.dart';
@@ -161,8 +162,11 @@ class Router {
         );
 
       case Routes.prescriptionDetails:
+        final Map<String, dynamic> mapArgs = args;
+        final TreatmentOptions treatmentOptions = mapArgs['treatmentOptions'];
         return MaterialPageRoute<dynamic>(
-          builder: (context) => PrescriptionDetails.create(context),
+          builder: (context) =>
+              PrescriptionDetails.create(context, treatmentOptions),
           settings: settings,
           fullscreenDialog: true,
         );

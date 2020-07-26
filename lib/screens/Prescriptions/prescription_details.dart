@@ -1,3 +1,4 @@
+import 'package:Medicall/models/consult-review/treatment_options.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Prescriptions/prescription_details_text_field.dart';
 import 'package:Medicall/screens/Prescriptions/prescription_details_view_model.dart';
@@ -8,7 +9,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class PrescriptionDetails extends StatelessWidget {
-  const PrescriptionDetails({this.model});
+  const PrescriptionDetails({
+    @required this.model,
+  });
+
   final PrescriptionDetailsViewModel model;
 
   @override
@@ -20,7 +24,7 @@ class PrescriptionDetails extends StatelessWidget {
           builder: (BuildContext context) {
             return IconButton(
               icon: Icon(
-                Icons.arrow_back,
+                Icons.close,
                 color: Colors.grey,
               ),
               onPressed: () {
@@ -50,10 +54,9 @@ class PrescriptionDetails extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   PrescriptionDetailsTextField(
-                    controller: model.medicationNameController,
                     focusNode: model.medicationNameFocusNode,
                     labelText: 'Medication Name',
-                    hint: 'Betamethasone 0.05% cream',
+                    initialValue: this.model.treatmentOptions.medicationName,
                     onChanged: model.updateMedicationName,
                   ),
                   Row(
@@ -61,10 +64,9 @@ class PrescriptionDetails extends StatelessWidget {
                       Expanded(
                         child: Container(
                           child: PrescriptionDetailsTextField(
-                            controller: model.quantityController,
                             focusNode: model.quantityFocusNode,
                             labelText: 'Quantity',
-                            hint: '60 grams',
+                            initialValue: this.model.treatmentOptions.quantity,
                             onChanged: model.updateQuantity,
                           ),
                         ),
@@ -72,10 +74,9 @@ class PrescriptionDetails extends StatelessWidget {
                       Expanded(
                         child: Container(
                           child: PrescriptionDetailsTextField(
-                            controller: model.refillsController,
                             focusNode: model.refillsFocusNode,
                             labelText: 'Refills',
-                            hint: '1',
+                            initialValue: this.model.treatmentOptions.refills,
                             onChanged: model.updateRefills,
                           ),
                         ),
@@ -83,10 +84,9 @@ class PrescriptionDetails extends StatelessWidget {
                     ],
                   ),
                   PrescriptionDetailsTextField(
-                    controller: model.formController,
                     focusNode: model.formFocusNode,
                     labelText: 'Form',
-                    hint: 'Cream',
+                    initialValue: this.model.treatmentOptions.form,
                     onChanged: model.updateForm,
                   ),
                   Row(
@@ -94,10 +94,9 @@ class PrescriptionDetails extends StatelessWidget {
                       Expanded(
                         child: Container(
                           child: PrescriptionDetailsTextField(
-                            controller: model.doseController,
                             focusNode: model.doseFocusNode,
                             labelText: 'Dose',
-                            hint: 'Thin layer',
+                            initialValue: this.model.treatmentOptions.dose,
                             onChanged: model.updateDose,
                           ),
                         ),
@@ -105,10 +104,9 @@ class PrescriptionDetails extends StatelessWidget {
                       Expanded(
                         child: Container(
                           child: PrescriptionDetailsTextField(
-                            controller: model.frequencyController,
                             focusNode: model.frequencyFocusNode,
                             labelText: 'Frequency',
-                            hint: '2 times daily',
+                            initialValue: this.model.treatmentOptions.frequency,
                             onChanged: model.updateFrequency,
                           ),
                         ),
@@ -116,12 +114,10 @@ class PrescriptionDetails extends StatelessWidget {
                     ],
                   ),
                   PrescriptionDetailsTextField(
-                    controller: model.instructionsController,
                     focusNode: model.instructionsFocusNode,
                     maxLines: 8,
                     labelText: 'Instructions',
-                    hint:
-                        'Apply thin layer of ointment to cover the affected area. Do not use for more than 14 days per month.',
+                    initialValue: this.model.treatmentOptions.instructions,
                     onChanged: model.updateInstructions,
                   ),
                   SizedBox(
@@ -148,7 +144,10 @@ class PrescriptionDetails extends StatelessWidget {
     );
   }
 
-  static Widget create(BuildContext context) {
+  static Widget create(
+    BuildContext context,
+    TreatmentOptions treatmentOptions,
+  ) {
     final FirestoreDatabase database = Provider.of<FirestoreDatabase>(context);
     final UserProvider provider = Provider.of<UserProvider>(context);
     final AuthBase auth = Provider.of<AuthBase>(context, listen: false);
@@ -157,6 +156,7 @@ class PrescriptionDetails extends StatelessWidget {
         database: database,
         userProvider: provider,
         auth: auth,
+        treatmentOptions: treatmentOptions,
       ),
       child: Consumer<PrescriptionDetailsViewModel>(
         builder: (_, model, __) => PrescriptionDetails(
@@ -166,7 +166,15 @@ class PrescriptionDetails extends StatelessWidget {
     );
   }
 
-  static Future<void> show({BuildContext context}) async {
-    await Navigator.of(context).pushNamed(Routes.prescriptionDetails);
+  static Future<void> show({
+    BuildContext context,
+    TreatmentOptions treatmentOptions,
+  }) async {
+    await Navigator.of(context).pushNamed(
+      Routes.prescriptionDetails,
+      arguments: {
+        'treatmentOptions': treatmentOptions,
+      },
+    );
   }
 }
