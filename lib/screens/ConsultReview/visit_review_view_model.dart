@@ -67,7 +67,7 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
     } else if (index == VisitReviewSteps.FollowUpStep) {
       return "Follow Up";
     } else if (index == VisitReviewSteps.EducationalContentStep) {
-      return "Edu";
+      return "Educational";
     } else if (index == VisitReviewSteps.PatientNote) {
       return "Note";
     } else {
@@ -129,5 +129,30 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
     this.examStepState.examLocations =
         examLocations ?? this.examStepState.examLocations;
     notifyListeners(VisitReviewVMProperties.examStep);
+  }
+
+  void updateTreatmentStepWith({
+    List<String> selectedTreatments,
+  }) {
+    this.treatmentNoteStepState.selectedTreatments =
+        selectedTreatments ?? this.treatmentNoteStepState.selectedTreatments;
+    notifyListeners(VisitReviewVMProperties.treatmentStep);
+  }
+
+  void updateFollowUpStepWith({
+    String followUp,
+  }) {
+    this.followUpStepState.followUp =
+        followUp ?? this.followUpStepState.followUp;
+    notifyListeners(VisitReviewVMProperties.followUpStep);
+  }
+
+  void updateEducationalInformation({
+    List<String> selectedEducationalOptions,
+  }) {
+    this.educationalStepState.selectedEducationalOptions =
+        selectedEducationalOptions ??
+            this.educationalStepState.selectedEducationalOptions;
+    notifyListeners(VisitReviewVMProperties.educationalContent);
   }
 }

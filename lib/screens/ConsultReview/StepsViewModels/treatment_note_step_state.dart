@@ -1,1 +1,3 @@
-class TreatmentNoteStepState {}
+class TreatmentNoteStepState {
+  List<String> selectedTreatments = [];
+}

@@ -13,37 +13,44 @@ class ExamStep extends StatelessWidget {
     final VisitReviewViewModel model =
         PropertyChangeProvider.of<VisitReviewViewModel>(
       context,
-      properties: [VisitReviewVMProperties.diagnosisStep],
+      properties: [VisitReviewVMProperties.examStep],
     ).value;
     final width = MediaQuery.of(context).size.width;
     if (model.diagnosisOptions != null)
       return SwipeGestureRecognizer(
         onSwipeLeft: () => model.incrementIndex(),
         onSwipeRight: () => model.decrementIndex(),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 32, 0, 12),
-              child: Text(
-                "Check all that apply",
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontWeight: FontWeight.w500,
-                ),
+        child: CustomScrollView(
+          slivers: <Widget>[
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 32, 0, 12),
+                    child: Text(
+                      "Check all that apply",
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: width * 0.8,
+                    child: CheckboxGroup(
+                      labels: model.diagnosisOptions.exam,
+                      onSelected: (List<String> checked) => model
+                          .updateExamStepWith(selectedExamOptions: checked),
+                    ),
+                  ),
+                  ContinueButton(
+                    width: width,
+                    model: model,
+                  ),
+                ],
               ),
-            ),
-            Container(
-              width: width * 0.8,
-              child: CheckboxGroup(
-                labels: model.diagnosisOptions.exam,
-                onSelected: (List<String> checked) =>
-                    model.updateExamStepWith(selectedExamOptions: checked),
-              ),
-            ),
-            ContinueButton(
-              width: width,
-              model: model,
             ),
           ],
         ),

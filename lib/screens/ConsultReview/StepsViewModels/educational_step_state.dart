@@ -1,1 +1,3 @@
-class EducationalStepState {}
+class EducationalStepState {
+  List<String> selectedEducationalOptions = [];
+}
