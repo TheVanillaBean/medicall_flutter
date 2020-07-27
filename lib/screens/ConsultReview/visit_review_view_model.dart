@@ -1,6 +1,7 @@
 import 'package:Medicall/models/consult-review/consult_review_options_model.dart';
 import 'package:Medicall/models/consult-review/diagnosis_options_model.dart';
 import 'package:Medicall/models/consult-review/treatment_options.dart';
+import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/screens/ConsultReview/StepsViewModels/diagnosis_step_state.dart';
 import 'package:Medicall/screens/ConsultReview/StepsViewModels/educational_step_state.dart';
@@ -40,6 +41,7 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
   final ConsultReviewOptions consultReviewOptions;
   final Consult consult;
   DiagnosisOptions diagnosisOptions;
+  VisitReviewData visitReviewData;
 
   int currentStep = VisitReviewSteps.DiagnosisStep;
 
@@ -56,6 +58,7 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
     @required this.firestoreDatabase,
     @required this.consult,
     @required this.consultReviewOptions,
+    @required this.visitReviewData,
   });
 
   String getCustomStepText(int index) {

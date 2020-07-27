@@ -1,4 +1,5 @@
 import 'package:Medicall/models/consult-review/consult_review_options_model.dart';
+import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/ConsultReview/StepsWidgets/diagnosis_step.dart';
@@ -24,6 +25,7 @@ class VisitReview extends StatelessWidget {
     BuildContext context,
     Consult consult,
     ConsultReviewOptions consultReviewOptions,
+    VisitReviewData visitReviewData,
   ) {
     final FirestoreDatabase firestoreDatabase =
         Provider.of<FirestoreDatabase>(context);
@@ -32,6 +34,7 @@ class VisitReview extends StatelessWidget {
         firestoreDatabase: firestoreDatabase,
         consult: consult,
         consultReviewOptions: consultReviewOptions,
+        visitReviewData: visitReviewData,
       ),
       child: PropertyChangeConsumer<VisitReviewViewModel>(
         properties: [VisitReviewVMProperties.visitReview],
@@ -46,12 +49,14 @@ class VisitReview extends StatelessWidget {
     BuildContext context,
     Consult consult,
     ConsultReviewOptions consultReviewOptions,
+    VisitReviewData visitReviewData,
   }) async {
     await Navigator.of(context).pushNamed(
       Routes.visitReview,
       arguments: {
         'consult': consult,
         'consultReviewOptions': consultReviewOptions,
+        'visitReviewData': visitReviewData,
       },
     );
   }

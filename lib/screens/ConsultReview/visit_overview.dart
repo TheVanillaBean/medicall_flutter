@@ -2,6 +2,7 @@ import 'package:Medicall/common_widgets/flat_button.dart';
 import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
 import 'package:Medicall/common_widgets/sign_in_button.dart';
 import 'package:Medicall/models/consult-review/consult_review_options_model.dart';
+import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/patient_user_model.dart';
 import 'package:Medicall/models/user_model_base.dart';
@@ -146,10 +147,12 @@ class VisitOverview extends StatelessWidget {
       BuildContext context, FirestoreDatabase db) async {
     ConsultReviewOptions options =
         await db.consultReviewOptions(symptomName: "Hairloss");
+    VisitReviewData visitReviewData = VisitReviewData();
     return VisitReview.show(
       context: context,
       consult: consult,
       consultReviewOptions: options,
+      visitReviewData: visitReviewData,
     );
   }
 

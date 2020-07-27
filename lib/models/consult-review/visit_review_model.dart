@@ -1,7 +1,7 @@
 import 'package:Medicall/models/consult-review/treatment_options.dart';
 
 //Will be used to store the actual provider answers
-class VisitReview {
+class VisitReviewData {
   String diagnosis;
   bool includeDDX;
   String ddxOption;
@@ -16,7 +16,7 @@ class VisitReview {
 
   String patientNote;
 
-  VisitReview({
+  VisitReviewData({
     this.diagnosis,
     this.includeDDX,
     this.ddxOption,
@@ -27,7 +27,8 @@ class VisitReview {
     this.patientNote,
   });
 
-  factory VisitReview.fromMap(Map<String, dynamic> data, String documentId) {
+  factory VisitReviewData.fromMap(
+      Map<String, dynamic> data, String documentId) {
     if (data == null) {
       return null;
     }
@@ -59,7 +60,7 @@ class VisitReview {
     );
     final String patientNote = data['patient_note'] as String;
 
-    return VisitReview(
+    return VisitReviewData(
       diagnosis: diagnosis,
       includeDDX: includeDDX,
       ddxOption: ddxOption,
