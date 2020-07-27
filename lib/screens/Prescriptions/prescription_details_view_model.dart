@@ -10,8 +10,6 @@ class PrescriptionDetailsViewModel with ChangeNotifier {
   final AuthBase auth;
   final TreatmentOptions treatmentOptions;
 
-  bool initialDateSet = false;
-
   bool treatmentUpdated = false;
 
   String medicationName = '';

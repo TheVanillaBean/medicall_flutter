@@ -182,9 +182,15 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
 
   void updateFollowUpStepWith({
     String followUp,
+    String documentation,
+    String duration,
   }) {
     this.followUpStepState.followUp =
         followUp ?? this.followUpStepState.followUp;
+    this.followUpStepState.documentation =
+        documentation ?? this.followUpStepState.documentation;
+    this.followUpStepState.duration =
+        duration ?? this.followUpStepState.duration;
     notifyListeners(VisitReviewVMProperties.followUpStep);
   }
 

@@ -3,6 +3,8 @@ import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
 import 'package:Medicall/common_widgets/sign_in_button.dart';
 import 'package:Medicall/models/consult-review/consult_review_options_model.dart';
 import 'package:Medicall/models/consult_model.dart';
+import 'package:Medicall/models/patient_user_model.dart';
+import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/ConsultReview/review_visit_information.dart';
 import 'package:Medicall/screens/ConsultReview/visit_review.dart';
@@ -164,6 +166,9 @@ class VisitOverview extends StatelessWidget {
     if (didPressYes == true) {
       consult.state = ConsultStatus.InReview;
       await db.saveConsult(consultId: consult.uid, consult: consult);
+      PatientUser patient =
+          await db.userStream(USER_TYPE.PATIENT, consult.patientId).first;
+      consult.patientUser = patient;
       await navigateToVisitReviewScreen(context, db);
     }
   }

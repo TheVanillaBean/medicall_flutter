@@ -1,33 +1,57 @@
 import 'package:Medicall/common_widgets/custom_raised_button.dart';
-import 'package:Medicall/models/consult_model.dart';
+import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/ConsultReview/visit_review_view_model.dart';
 import 'package:Medicall/screens/Questions/ImmediateMedicalCare/documentation_text_field.dart';
 import 'package:Medicall/screens/Questions/ImmediateMedicalCare/immediate_medical_care_view_model.dart';
-import 'package:Medicall/services/auth.dart';
-import 'package:Medicall/services/database.dart';
-import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:property_change_notifier/property_change_notifier.dart';
 import 'package:provider/provider.dart';
 
 class ImmediateMedicalCare extends StatelessWidget {
-  const ImmediateMedicalCare({@required this.consult, @required this.model});
-  final Consult consult;
+  const ImmediateMedicalCare({@required this.model});
   final ImmediateMedicalCareViewModel model;
+
+  static Widget create(
+    BuildContext context,
+    String documentation,
+    VisitReviewViewModel visitReviewViewModel,
+  ) {
+    return PropertyChangeProvider(
+      value: visitReviewViewModel,
+      child: ChangeNotifierProvider<ImmediateMedicalCareViewModel>(
+        create: (context) =>
+            ImmediateMedicalCareViewModel(documentationText: documentation),
+        child: Consumer<ImmediateMedicalCareViewModel>(
+          builder: (_, model, __) => ImmediateMedicalCare(
+            model: model,
+          ),
+        ),
+      ),
+    );
+  }
 
   static Future<void> show({
     BuildContext context,
-    Consult consult,
+    String documentation,
+    VisitReviewViewModel visitReviewViewModel,
   }) async {
     await Navigator.of(context).pushNamed(
       Routes.immediateMedicalCare,
       arguments: {
-        'consult': consult,
+        'documentation': documentation,
+        'visitReviewViewModel': visitReviewViewModel,
       },
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final VisitReviewViewModel visitReviewViewModel =
+        PropertyChangeProvider.of<VisitReviewViewModel>(
+      context,
+      properties: [VisitReviewVMProperties.followUpStep],
+    ).value;
     return Scaffold(
       appBar: AppBar(
         leading: Builder(
@@ -37,8 +61,22 @@ class ImmediateMedicalCare extends StatelessWidget {
                 Icons.arrow_back,
                 color: Colors.grey,
               ),
-              onPressed: () {
-                Navigator.pop(context);
+              onPressed: () async {
+                if (model.documentationUpdated) {
+                  final didPressYes = await PlatformAlertDialog(
+                    title: "Update Documentation?",
+                    content:
+                        "Would you like to save the changes you made to the documentation?",
+                    defaultActionText: "Yes",
+                    cancelActionText: "No, don't save",
+                  ).show(context);
+                  if (didPressYes) {
+                    visitReviewViewModel.updateFollowUpStepWith(
+                      documentation: model.documentationText,
+                    );
+                  }
+                }
+                Navigator.of(context).pop();
               },
             );
           },
@@ -80,7 +118,7 @@ class ImmediateMedicalCare extends StatelessWidget {
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    'Patient Name: Omar Badri',
+                    'Patient Name: ${visitReviewViewModel.consult.patientUser.fullName}',
                     style: TextStyle(
                       fontFamily: 'Roboto Regular',
                       fontSize: 14.0,
@@ -94,7 +132,7 @@ class ImmediateMedicalCare extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.only(top: 5),
                     child: Text(
-                      'Patient Number: 480-861-0816',
+                      'Patient Number: ${visitReviewViewModel.consult.patientUser.phoneNumber}',
                       style: TextStyle(
                         fontFamily: 'Roboto Regular',
                         fontSize: 14.0,
@@ -118,9 +156,11 @@ class ImmediateMedicalCare extends StatelessWidget {
                   ),
                 ),
                 DocumentationTextField(
-                  hint:
-                      'Spoke with Mr. Patient and suggested he go to an Emergency Department for immediate evaluation. I was concerned about the diffuse blistering and felt he needed an inpatient admission, lab monitoring, and hydration. He understood and agreed with the plan. ',
+                  initialValue: model.documentationText.length == 0
+                      ? 'Spoke with ${visitReviewViewModel.consult.patientUser.fullName} and suggested they go to an Emergency Department for immediate evaluation. I was concerned about the diagnosis and felt the patient needed an inpatient admission, lab monitoring, and hydration. ${visitReviewViewModel.consult.patientUser.fullName} understood and agreed with the plan.'
+                      : model.documentationText,
                   maxLines: 10,
+                  onChanged: model.updateDocumentationText,
                 ),
                 SizedBox(height: 30),
                 SizedBox(
@@ -136,30 +176,18 @@ class ImmediateMedicalCare extends StatelessWidget {
                         fontSize: 14,
                       ),
                     ),
-                    onPressed: null,
+                    onPressed: () {
+                      visitReviewViewModel.updateFollowUpStepWith(
+                        documentation: model.documentationText,
+                      );
+                      Navigator.of(context).pop();
+                    },
                   ),
                 ),
               ],
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  static Widget create(BuildContext context) {
-    final FirestoreDatabase database = Provider.of<FirestoreDatabase>(context);
-    final UserProvider provider = Provider.of<UserProvider>(context);
-    final AuthBase auth = Provider.of<AuthBase>(context, listen: false);
-    return ChangeNotifierProvider<ImmediateMedicalCareViewModel>(
-      create: (context) => ImmediateMedicalCareViewModel(
-        database: database,
-        userProvider: provider,
-        auth: auth,
-      ),
-      child: Consumer<ImmediateMedicalCareViewModel>(
-        builder: (_, model, __) =>
-            ImmediateMedicalCare(model: model, consult: null),
       ),
     );
   }

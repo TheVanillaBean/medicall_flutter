@@ -15,5 +15,7 @@ abstract class FollowUpSteps {
 }
 
 class FollowUpStepState {
-  String followUp;
+  String followUp = "";
+  String documentation = ""; //if immediate care option
+  String duration = "";
 }

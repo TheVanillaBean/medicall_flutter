@@ -161,7 +161,6 @@ class Router {
           settings: settings,
           fullscreenDialog: true,
         );
-
       case Routes.prescriptionDetails:
         final Map<String, dynamic> mapArgs = args;
         final TreatmentOptions treatmentOptions = mapArgs['treatmentOptions'];
@@ -201,9 +200,15 @@ class Router {
         );
       case Routes.immediateMedicalCare:
         final Map<String, dynamic> mapArgs = args;
-//        final Consult consult = mapArgs['consult'];
+        final String documentation = mapArgs['documentation'];
+        final VisitReviewViewModel visitReviewViewModel =
+            mapArgs['visitReviewViewModel'];
         return MaterialPageRoute<dynamic>(
-          builder: (context) => ImmediateMedicalCare.create(context),
+          builder: (context) => ImmediateMedicalCare.create(
+            context,
+            documentation,
+            visitReviewViewModel,
+          ),
           settings: settings,
           fullscreenDialog: true,
         );

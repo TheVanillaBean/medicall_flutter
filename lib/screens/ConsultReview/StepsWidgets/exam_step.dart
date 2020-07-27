@@ -111,7 +111,7 @@ class _ExamStepState extends State<ExamStep> {
             filled: true,
             fillColor: Colors.grey.withAlpha(20),
             prefixIcon: Icon(
-              Icons.email,
+              Icons.text_fields,
               color: Theme.of(context).colorScheme.onSurface.withAlpha(120),
             ),
             labelText: examOption.toLowerCase() == "other"
