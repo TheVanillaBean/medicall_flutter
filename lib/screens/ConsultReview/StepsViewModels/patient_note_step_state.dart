@@ -20,4 +20,8 @@ class PatientNoteStepState {
     note += providerName;
     return note;
   }
+
+  bool get minimumRequiredFieldsFilledOut {
+    return this.patientNote.length > 0;
+  }
 }

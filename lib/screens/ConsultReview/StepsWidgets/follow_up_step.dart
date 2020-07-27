@@ -22,6 +22,7 @@ class _FollowUpStepState extends State<FollowUpStep> {
       context,
       properties: [VisitReviewVMProperties.followUpStep],
     ).value;
+    model.currentStep = VisitReviewSteps.FollowUpStep;
     final width = MediaQuery.of(context).size.width;
     if (model.diagnosisOptions != null)
       return SwipeGestureRecognizer(

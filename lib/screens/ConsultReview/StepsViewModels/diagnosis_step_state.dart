@@ -6,8 +6,12 @@ class DiagnosisStepState {
 
   DiagnosisStepState({
     this.diagnosis = '',
-    this.selectedItemIndex = 2,
+    this.selectedItemIndex = 0,
     this.includeDDX = false,
     this.ddxOption = '',
   });
+
+  bool get minimumRequiredFieldsFilledOut {
+    return this.diagnosis.length > 0;
+  }
 }

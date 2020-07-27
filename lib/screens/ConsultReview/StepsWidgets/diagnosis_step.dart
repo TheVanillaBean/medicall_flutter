@@ -15,6 +15,7 @@ class DiagnosisStep extends StatelessWidget {
       context,
       properties: [VisitReviewVMProperties.diagnosisStep],
     ).value;
+    model.currentStep = VisitReviewSteps.DiagnosisStep;
     final width = MediaQuery.of(context).size.width;
     return LayoutBuilder(
       builder: (context, constraint) {
@@ -25,7 +26,7 @@ class DiagnosisStep extends StatelessWidget {
             slivers: <Widget>[
               SliverFillRemaining(
                 hasScrollBody: false,
-                child:  Column(
+                child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
@@ -45,8 +46,8 @@ class DiagnosisStep extends StatelessWidget {
                       child: CustomSelectionItem(
                         isForList: false,
                         title: model.diagnosisStepState.diagnosis =
-                        model.consultReviewOptions.diagnosisList[
-                        model.diagnosisStepState.selectedItemIndex],
+                            model.consultReviewOptions.diagnosisList[
+                                model.diagnosisStepState.selectedItemIndex],
                       ),
                       onSelectedItemChanged: (index) =>
                           model.updateDiagnosis(index),
@@ -70,7 +71,7 @@ class DiagnosisStep extends StatelessWidget {
                           "Yes",
                         ],
                         picked:
-                        model.diagnosisStepState.includeDDX ? "Yes" : "No",
+                            model.diagnosisStepState.includeDDX ? "Yes" : "No",
                         onSelected: (String selected) =>
                             model.updateDiagnosisStepWith(
                                 includeDDX: selected == "Yes" ? true : false),
@@ -98,7 +99,6 @@ class DiagnosisStep extends StatelessWidget {
                 ),
               )
             ],
-
           ),
         );
       },

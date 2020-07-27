@@ -20,6 +20,7 @@ class _ExamStepState extends State<ExamStep> {
       context,
       properties: [VisitReviewVMProperties.examStep],
     ).value;
+    model.currentStep = VisitReviewSteps.ExamStep;
     final width = MediaQuery.of(context).size.width;
     if (model.diagnosisOptions != null)
       return GestureDetector(

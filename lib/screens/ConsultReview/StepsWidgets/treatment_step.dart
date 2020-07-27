@@ -18,6 +18,7 @@ class TreatmentStep extends StatelessWidget {
       context,
       properties: [VisitReviewVMProperties.treatmentStep],
     ).value;
+    model.currentStep = VisitReviewSteps.TreatmentStep;
     final width = MediaQuery.of(context).size.width;
     if (model.diagnosisOptions != null)
       return SwipeGestureRecognizer(

@@ -18,4 +18,8 @@ class FollowUpStepState {
   String followUp = "";
   String documentation = ""; //if immediate care option
   String duration = "";
+
+  bool get minimumRequiredFieldsFilledOut {
+    return this.followUp.length > 0;
+  }
 }

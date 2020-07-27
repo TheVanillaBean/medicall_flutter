@@ -18,6 +18,7 @@ class _PatientNoteStepState extends State<PatientNoteStep> {
       context,
       properties: [VisitReviewVMProperties.patientNote],
     ).value;
+    model.currentStep = VisitReviewSteps.PatientNote;
     final width = MediaQuery.of(context).size.width;
     if (model.diagnosisOptions != null) {
       return GestureDetector(

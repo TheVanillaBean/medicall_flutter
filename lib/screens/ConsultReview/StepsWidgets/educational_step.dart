@@ -14,6 +14,7 @@ class EducationalContentStep extends StatelessWidget {
       context,
       properties: [VisitReviewVMProperties.educationalContent],
     ).value;
+    model.currentStep = VisitReviewSteps.EducationalContentStep;
     final width = MediaQuery.of(context).size.width;
     if (model.diagnosisOptions != null)
       return SwipeGestureRecognizer(

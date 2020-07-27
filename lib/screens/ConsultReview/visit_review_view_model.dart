@@ -45,6 +45,8 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
 
   int currentStep = VisitReviewSteps.DiagnosisStep;
 
+  List<int> completedSteps = [];
+
   //used to de-clutter this view model, but they do not update listeners themselves
   final DiagnosisStepState diagnosisStepState = DiagnosisStepState();
   final EducationalStepState educationalStepState = EducationalStepState();
@@ -79,10 +81,52 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
     }
   }
 
+  bool get canContinue {
+    if (currentStep == VisitReviewSteps.DiagnosisStep) {
+      return this.diagnosisStepState.minimumRequiredFieldsFilledOut;
+    } else if (currentStep == VisitReviewSteps.ExamStep) {
+      return this.examStepState.minimumRequiredFieldsFilledOut;
+    } else if (currentStep == VisitReviewSteps.TreatmentStep) {
+      return this.treatmentNoteStepState.minimumRequiredFieldsFilledOut;
+    } else if (currentStep == VisitReviewSteps.FollowUpStep) {
+      return this.followUpStepState.minimumRequiredFieldsFilledOut;
+    } else if (currentStep == VisitReviewSteps.EducationalContentStep) {
+      return this.educationalStepState.minimumRequiredFieldsFilledOut;
+    } else if (currentStep == VisitReviewSteps.PatientNote) {
+      return this.patientNoteStepState.minimumRequiredFieldsFilledOut;
+    } else {
+      return false;
+    }
+  }
+
+  void updateCompletedStepsList() {
+    List<int> completedSteps = [];
+    if (this.diagnosisStepState.minimumRequiredFieldsFilledOut) {
+      completedSteps.add(VisitReviewSteps.DiagnosisStep);
+    }
+    if (this.examStepState.minimumRequiredFieldsFilledOut) {
+      completedSteps.add(VisitReviewSteps.ExamStep);
+    }
+    if (this.treatmentNoteStepState.minimumRequiredFieldsFilledOut) {
+      completedSteps.add(VisitReviewSteps.TreatmentStep);
+    }
+    if (this.followUpStepState.minimumRequiredFieldsFilledOut) {
+      completedSteps.add(VisitReviewSteps.FollowUpStep);
+    }
+    if (this.educationalStepState.minimumRequiredFieldsFilledOut) {
+      completedSteps.add(VisitReviewSteps.EducationalContentStep);
+    }
+    if (this.patientNoteStepState.minimumRequiredFieldsFilledOut) {
+      completedSteps.add(VisitReviewSteps.PatientNote);
+    }
+    this.completedSteps = completedSteps;
+  }
+
   void incrementIndex() {
     this.currentStep = this.currentStep == VisitReviewSteps.TotalSteps - 1
         ? this.currentStep
         : this.currentStep + 1;
+    updateCompletedStepsList();
     notifyListeners(VisitReviewVMProperties.visitReview);
   }
 
@@ -90,11 +134,13 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
     this.currentStep = this.currentStep == VisitReviewSteps.DiagnosisStep
         ? this.currentStep
         : this.currentStep - 1;
+    updateCompletedStepsList();
     notifyListeners(VisitReviewVMProperties.visitReview);
   }
 
   void updateIndex(int index) {
     this.currentStep = index;
+    updateCompletedStepsList();
     notifyListeners(VisitReviewVMProperties.visitReview);
   }
 
