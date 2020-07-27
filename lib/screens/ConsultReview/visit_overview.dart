@@ -1,3 +1,4 @@
+import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/flat_button.dart';
 import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
 import 'package:Medicall/common_widgets/sign_in_button.dart';
@@ -29,19 +30,9 @@ class VisitOverview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: Icon(Icons.arrow_back),
-            );
-          },
-        ),
-        centerTitle: true,
-        title: Text("Visit Overview"),
+      appBar: CustomAppBar.getAppBar(
+        type: AppBarType.Back,
+        title: "Visit Overview",
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,

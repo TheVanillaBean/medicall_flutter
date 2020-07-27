@@ -1,3 +1,5 @@
+import 'package:Medicall/common_widgets/custom_app_bar.dart';
+import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
@@ -33,21 +35,9 @@ class SymptomDetailScreen extends StatelessWidget {
     } catch (e) {}
 
     return Scaffold(
-      appBar: AppBar(
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: Icon(Icons.arrow_back),
-            );
-          },
-        ),
-        centerTitle: true,
-        title: Text(
-          StringUtils.capitalize(symptom.name) + ' Visit',
-        ),
+      appBar: CustomAppBar.getAppBar(
+        type: AppBarType.Back,
+        title: StringUtils.capitalize(symptom.name) + ' Visit',
       ),
       body: Container(
         padding: EdgeInsets.fromLTRB(40, 40, 40, 40),
@@ -92,24 +82,21 @@ class SymptomDetailScreen extends StatelessWidget {
       ),
       _buildMedicationsDialog(context),
       SizedBox(height: 80),
-      FlatButton(
-        color: Colors.blue,
-        textColor: Colors.white,
-        padding: EdgeInsets.fromLTRB(35, 15, 35, 15),
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(40.0)),
-        child: Text(
-          'Explore Providers',
-          style: TextStyle(fontSize: 14),
+      Expanded(
+        child: Align(
+          alignment: FractionalOffset.bottomCenter,
+          child: ReusableRaisedButton(
+            title: 'Explore Providers',
+            onPressed: () {
+              if (medicallUser != null && medicallUser.uid.length > 0) {
+                SelectProviderScreen.show(context: context, symptom: symptom);
+              } else {
+                ZipCodeVerifyScreen.show(context: context, symptom: symptom);
+              }
+            },
+          ),
         ),
-        onPressed: () {
-          if (medicallUser != null && medicallUser.uid.length > 0) {
-            SelectProviderScreen.show(context: context, symptom: symptom);
-          } else {
-            ZipCodeVerifyScreen.show(context: context, symptom: symptom);
-          }
-        },
-      )
+      ),
     ];
   }
 

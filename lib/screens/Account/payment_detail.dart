@@ -1,3 +1,4 @@
+import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/list_items_builder.dart';
 import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/screens/Account/payment_list_item.dart';
@@ -49,28 +50,9 @@ class PaymentDetail extends StatelessWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              icon: Icon(
-                Icons.arrow_back,
-                color: Colors.grey,
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            );
-          },
-        ),
-        title: Text(
-          'Payment Cards',
-          style: TextStyle(
-            fontSize:
-                Theme.of(context).platform == TargetPlatform.iOS ? 17.0 : 20.0,
-          ),
-        ),
+      appBar: CustomAppBar.getAppBar(
+        type: AppBarType.Back,
+        title: "Payment Card",
       ),
       body: SingleChildScrollView(
         child: _buildChildren(),

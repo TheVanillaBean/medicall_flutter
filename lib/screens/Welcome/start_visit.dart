@@ -1,3 +1,5 @@
+import 'package:Medicall/common_widgets/custom_app_bar.dart';
+import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Questions/questions_screen.dart';
@@ -26,29 +28,26 @@ class StartVisitScreen extends StatelessWidget {
     final GlobalKey<FormBuilderState> formKey = GlobalKey<FormBuilderState>();
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(),
-      body: Container(
-        padding: EdgeInsets.fromLTRB(40, 40, 40, 0),
-        child: Stack(
-          alignment: Alignment.center,
+      appBar: CustomAppBar.getAppBar(
+        type: AppBarType.Back,
+        title: "Start your visit!",
+      ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Text("Start your visit!"),
-                SizedBox(height: 20),
-                Text(
-                  "We will ask a few questions about your health and then focus on the reason for your visit.",
-                  style: TextStyle(fontSize: 16),
-                ),
-                SizedBox(height: 20),
-                Text(
-                  "It is important you answer the questions carefully and provide complete information.",
-                  style: TextStyle(fontSize: 16),
-                ),
-                SizedBox(height: 80),
-              ],
+            SizedBox(height: 20),
+            Text(
+              "We will ask a few questions about your health and then focus on the reason for your visit.",
+              style: TextStyle(fontSize: 16),
             ),
+            SizedBox(height: 20),
+            Text(
+              "It is important you answer the questions carefully and provide complete information.",
+              style: TextStyle(fontSize: 16),
+            ),
+            SizedBox(height: 80),
             Container(
               height: 80,
               child: FormBuilder(
@@ -64,33 +63,21 @@ class StartVisitScreen extends StatelessWidget {
                     ],
                   )),
             ),
-            Positioned(
-              bottom: 20,
-              child: FlatButton(
-                color: Colors.blue,
-                textColor: Colors.white,
-                onPressed: () async {
-                  QuestionsScreen.show(
-                    context: context,
-                    consult: consult,
-                  );
-                },
-                padding: EdgeInsets.fromLTRB(35, 15, 35, 15),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(40.0)),
-                child: Column(
-                  children: <Widget>[
-                    Text(
-                      'Start Visit',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
+            Expanded(
+              child: Align(
+                alignment: FractionalOffset.bottomCenter,
+                child: ReusableRaisedButton(
+                  title: 'Start Visit',
+                  onPressed: () async {
+                    QuestionsScreen.show(
+                      context: context,
+                      consult: consult,
+                    );
+                  },
                 ),
               ),
             ),
+            SizedBox(height: 20),
           ],
         ),
       ),

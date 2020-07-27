@@ -1,4 +1,5 @@
-import 'package:Medicall/common_widgets/custom_raised_button.dart';
+import 'package:Medicall/common_widgets/custom_app_bar.dart';
+import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:flutter/material.dart';
 
 class CongratsScreen extends StatelessWidget {
@@ -9,11 +10,9 @@ class CongratsScreen extends StatelessWidget {
     //UserProvider userProvider = Provider.of<UserProvider>(context);
 
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(
-          'Congratulations!',
-        ),
+      appBar: CustomAppBar.getAppBar(
+        type: AppBarType.Back,
+        title: 'Congratulations!',
       ),
       body: Container(
         child: SafeArea(
@@ -43,21 +42,12 @@ class CongratsScreen extends StatelessWidget {
       SizedBox(
         height: 8,
       ),
-      CustomRaisedButton(
-        height: 50,
-        color: Colors.blue,
-        child: Text(
-          "Go to your dashboard",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 15.0,
-            letterSpacing: 1.3,
-          ),
-        ),
+      ReusableRaisedButton(
+        title: 'Go to your dashboard',
         onPressed: () {
           Navigator.of(context).pushNamed("/dashboard");
         },
-      )
+      ),
     ];
   }
 }

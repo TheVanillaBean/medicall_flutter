@@ -1,4 +1,6 @@
+import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/custom_raised_button.dart';
+import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:flutter/material.dart';
 
 class OCRScreen extends StatelessWidget {
@@ -9,11 +11,9 @@ class OCRScreen extends StatelessWidget {
     //UserProvider userProvider = Provider.of<UserProvider>(context);
 
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(
-          'Almost Done!',
-        ),
+      appBar: CustomAppBar.getAppBar(
+        type: AppBarType.Back,
+        title: "Almost Done!",
       ),
       body: Container(
         child: SafeArea(
@@ -43,17 +43,8 @@ class OCRScreen extends StatelessWidget {
       SizedBox(
         height: 8,
       ),
-      CustomRaisedButton(
-        height: 50,
-        color: Colors.blue,
-        child: Text(
-          "Continue",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 15.0,
-            letterSpacing: 1.3,
-          ),
-        ),
+      ReusableRaisedButton(
+        title: 'Continue',
         onPressed: () {
           Navigator.of(context).pushNamed("/personalInfo");
         },

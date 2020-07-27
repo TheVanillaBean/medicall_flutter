@@ -1,4 +1,6 @@
+import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/custom_raised_button.dart';
+import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Questions/CompleteVisit/complete_visit_view_model.dart';
@@ -28,27 +30,9 @@ class CompleteVisit extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              icon: Icon(
-                Icons.arrow_back,
-                color: Colors.grey,
-              ),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            );
-          },
-        ),
-        centerTitle: true,
-        title: Text('Complete Visit',
-            style: TextStyle(
-              fontFamily: 'Roboto Thin',
-              fontSize: 18,
-              color: Colors.blue,
-            )),
+      appBar: CustomAppBar.getAppBar(
+        type: AppBarType.Back,
+        title: "Complete Visit",
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -102,21 +86,9 @@ class CompleteVisit extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 30),
-              SizedBox(
-                width: 200,
-                child: CustomRaisedButton(
-                  color: Colors.blue,
-                  borderRadius: 14,
-                  child: Text(
-                    "Complete Visit",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: 'Roboto Medium',
-                      fontSize: 14,
-                    ),
-                  ),
-                  onPressed: null,
-                ),
+              ReusableRaisedButton(
+                title: 'Complete Visit',
+                onPressed: model.checkValue ? () => {} : null,
               ),
             ],
           ),

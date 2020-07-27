@@ -1,5 +1,6 @@
 import 'package:Medicall/common_widgets/custom_raised_button.dart';
 import 'package:Medicall/common_widgets/list_items_builder.dart';
+import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/question_model.dart';
 import 'package:Medicall/screens/PersonalInfo/personal_info.dart';
 import 'package:Medicall/screens/Questions/ReviewPage/review_page_list_item.dart';
@@ -23,10 +24,9 @@ class ReviewPage extends StatelessWidget {
     ).value;
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
-          //crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
               'Please review your consult:',
@@ -51,47 +51,37 @@ class ReviewPage extends StatelessWidget {
               ),
             ),
             SizedBox(height: 20),
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: CustomRaisedButton(
-                      color: Colors.blue,
-                      borderRadius: 14,
-                      child: Text(
-                        "Previous",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: 'Roboto Medium',
-                          fontSize: 14,
-                        ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    flex: 1,
+                    child: Align(
+                      alignment: FractionalOffset.bottomCenter,
+                      child: ReusableRaisedButton(
+                        title: 'Previous',
+                        onPressed: () => model.previousPage(),
                       ),
-                      onPressed: () => model.previousPage(),
                     ),
                   ),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: CustomRaisedButton(
-                      color: Colors.blue,
-                      borderRadius: 14,
-                      child: Text(
-                        'Complete consult',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: 'Roboto Medium',
-                          fontSize: 14,
-                        ),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Align(
+                      alignment: FractionalOffset.bottomCenter,
+                      child: ReusableRaisedButton(
+                        title: 'Complete Consult',
+                        onPressed: !model.submitted
+                            ? () => completeConsultBtnPressed(context, model)
+                            : null,
                       ),
-                      onPressed: !model.submitted
-                          ? () => completeConsultBtnPressed(context, model)
-                          : null,
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             SizedBox(height: 20),
           ],

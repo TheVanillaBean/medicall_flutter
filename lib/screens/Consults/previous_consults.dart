@@ -1,3 +1,4 @@
+import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/list_items_builder.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
@@ -15,28 +16,9 @@ class PreviousConsults extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              icon: Icon(
-                Icons.arrow_back,
-                color: Colors.grey,
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            );
-          },
-        ),
-        title: Text(
-          'Previous Consults',
-          style: TextStyle(
-            fontSize:
-                Theme.of(context).platform == TargetPlatform.iOS ? 17.0 : 20.0,
-          ),
-        ),
+      appBar: CustomAppBar.getAppBar(
+        type: AppBarType.Back,
+        title: "Previous Consults",
       ),
       body: SafeArea(
         child: Padding(

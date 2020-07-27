@@ -8,7 +8,7 @@ class ImmediateMedicalCareViewModel with ChangeNotifier {
   final UserProvider userProvider;
   final AuthBase auth;
 
-  String documentationText;
+  String documentationText = "";
 
   final TextEditingController documentationTextController =
       TextEditingController();

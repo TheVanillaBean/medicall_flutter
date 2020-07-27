@@ -1,3 +1,4 @@
+import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/list_items_builder.dart';
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/symptom_model.dart';
@@ -18,21 +19,9 @@ class SymptomsScreen extends StatelessWidget {
     NonAuthDatabase db = Provider.of<NonAuthDatabase>(context, listen: false);
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: Icon(Icons.arrow_back),
-            );
-          },
-        ),
-        centerTitle: true,
-        title: Text(
-          'How can we help you today?',
-        ),
+      appBar: CustomAppBar.getAppBar(
+        type: AppBarType.Back,
+        title: "How can we help you today?",
       ),
       drawer: DrawerMenu(),
       body: StreamBuilder<List<Symptom>>(

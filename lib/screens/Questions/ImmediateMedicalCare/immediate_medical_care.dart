@@ -1,4 +1,6 @@
+import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/custom_raised_button.dart';
+import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Questions/ImmediateMedicalCare/documentation_text_field.dart';
@@ -29,27 +31,9 @@ class ImmediateMedicalCare extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              icon: Icon(
-                Icons.arrow_back,
-                color: Colors.grey,
-              ),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            );
-          },
-        ),
-        centerTitle: true,
-        title: Text('Immediate Medical Care',
-            style: TextStyle(
-              fontFamily: 'Roboto Thin',
-              fontSize: 18,
-              color: Colors.blue,
-            )),
+      appBar: CustomAppBar.getAppBar(
+        type: AppBarType.Back,
+        title: "Immediate Medical Care",
       ),
       body: SingleChildScrollView(
         child: GestureDetector(
@@ -121,23 +105,13 @@ class ImmediateMedicalCare extends StatelessWidget {
                   hint:
                       'Spoke with Mr. Patient and suggested he go to an Emergency Department for immediate evaluation. I was concerned about the diffuse blistering and felt he needed an inpatient admission, lab monitoring, and hydration. He understood and agreed with the plan. ',
                   maxLines: 10,
+                  onChanged: model.updateDocumentationText,
                 ),
                 SizedBox(height: 30),
-                SizedBox(
-                  width: 200,
-                  child: CustomRaisedButton(
-                    color: Colors.blue,
-                    borderRadius: 14,
-                    child: Text(
-                      "Continue",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontFamily: 'Roboto Medium',
-                        fontSize: 14,
-                      ),
-                    ),
-                    onPressed: null,
-                  ),
+                ReusableRaisedButton(
+                  title: 'Continue',
+                  onPressed:
+                      model.documentationText.length > 0 ? () => {} : null,
                 ),
               ],
             ),

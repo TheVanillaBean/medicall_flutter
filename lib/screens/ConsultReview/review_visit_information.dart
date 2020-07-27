@@ -1,3 +1,4 @@
+import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/flat_button.dart';
 import 'package:Medicall/common_widgets/list_items_builder.dart';
 import 'package:Medicall/models/consult_model.dart';
@@ -31,19 +32,9 @@ class ReviewVisitInformation extends StatelessWidget {
   Widget build(BuildContext context) {
     final db = Provider.of<FirestoreDatabase>(context);
     return Scaffold(
-      appBar: AppBar(
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: Icon(Icons.arrow_back),
-            );
-          },
-        ),
-        centerTitle: true,
-        title: Text("Visit Information"),
+      appBar: CustomAppBar.getAppBar(
+        type: AppBarType.Back,
+        title: "Visit Information",
       ),
       body: FutureBuilder<ScreeningQuestions>(
         future: db.consultQuestionnaire(consultId: consult.uid),
