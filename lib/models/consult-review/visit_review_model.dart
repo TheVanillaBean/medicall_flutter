@@ -10,7 +10,7 @@ class VisitReviewData {
 
   List<TreatmentOptions> treatmentOptions;
 
-  List<Map<String, String>> selectedEducationalOptions;
+  List<Map<String, String>> educationalOptions;
 
   Map<String, String> followUp;
 
@@ -22,7 +22,7 @@ class VisitReviewData {
     this.ddxOption,
     this.examLocations,
     this.treatmentOptions,
-    this.selectedEducationalOptions,
+    this.educationalOptions,
     this.followUp,
     this.patientNote,
   });
@@ -66,22 +66,23 @@ class VisitReviewData {
       ddxOption: ddxOption,
       examLocations: examLocations,
       treatmentOptions: treatmentOptions,
-      selectedEducationalOptions: selectedEducationalOptions,
+      educationalOptions: selectedEducationalOptions,
       followUp: followUp,
       patientNote: patientNote,
     );
   }
 
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
+    dynamic e = <String, dynamic>{
       'diagnosis': diagnosis,
       'include_DDX': includeDDX,
       'ddx_option': ddxOption,
-      'exam_locations': examLocations,
-      'treatment_options': treatmentOptions,
-      'selected_educational_options': selectedEducationalOptions,
+      'exam_locations': examLocations.toList(),
+      'treatment_options': treatmentOptions.map((e) => e.toMap()).toList(),
+      'selected_educational_options': educationalOptions,
       'follow_up': followUp,
       'patient_note': patientNote,
     };
+    return e;
   }
 }

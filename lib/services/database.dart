@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:Medicall/models/consult-review/consult_review_options_model.dart';
 import 'package:Medicall/models/consult-review/diagnosis_options_model.dart';
+import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/consult_status_modal.dart';
@@ -191,6 +192,15 @@ class FirestoreDatabase implements Database {
         sort: (lhs, rhs) => rhs.date.compareTo(lhs.date),
         builder: (data, documentId) => Consult.fromMap(data, documentId),
       );
+
+  Future<void> saveVisitReview(
+      {String consultId, VisitReviewData visitReviewData}) async {
+    await _service.setData(
+      path: FirestorePath.visitReview(consultId),
+      data: visitReviewData.toMap(),
+      merge: true,
+    );
+  }
 
   @override
   Future getConsultDetail(DetailedHistoryState detailedHistoryState) async {

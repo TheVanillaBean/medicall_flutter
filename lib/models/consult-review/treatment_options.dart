@@ -40,4 +40,16 @@ class TreatmentOptions {
       refills: refills,
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'medication_name': medicationName,
+      'dose': dose,
+      'form': form,
+      'frequency': frequency,
+      'instructions': instructions,
+      'quantity': quantity,
+      'refills': refills,
+    };
+  }
 }

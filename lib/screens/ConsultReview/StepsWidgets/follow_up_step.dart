@@ -1,6 +1,6 @@
 import 'package:Medicall/common_widgets/sign_in_button.dart';
 import 'package:Medicall/screens/ConsultReview/ReusableWidgets/continue_button.dart';
-import 'package:Medicall/screens/ConsultReview/ReusableWidgets/emty_diagnosis_widget.dart';
+import 'package:Medicall/screens/ConsultReview/ReusableWidgets/empty_diagnosis_widget.dart';
 import 'package:Medicall/screens/ConsultReview/ReusableWidgets/swipe_gesture_recognizer.dart';
 import 'package:Medicall/screens/ConsultReview/StepsViewModels/follow_up_step_state.dart';
 import 'package:Medicall/screens/ConsultReview/visit_review_view_model.dart';
@@ -22,7 +22,6 @@ class _FollowUpStepState extends State<FollowUpStep> {
       context,
       properties: [VisitReviewVMProperties.followUpStep],
     ).value;
-    model.currentStep = VisitReviewSteps.FollowUpStep;
     final width = MediaQuery.of(context).size.width;
     if (model.diagnosisOptions != null)
       return SwipeGestureRecognizer(
@@ -89,7 +88,6 @@ class _FollowUpStepState extends State<FollowUpStep> {
                   ),
                   ContinueButton(
                     width: width,
-                    model: model,
                   ),
                 ],
               ),

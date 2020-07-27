@@ -22,4 +22,15 @@ class FollowUpStepState {
   bool get minimumRequiredFieldsFilledOut {
     return this.followUp.length > 0;
   }
+
+  Map<String, String> get followUpMap {
+    if (followUp == FollowUpSteps.ViaMedicall ||
+        followUp == FollowUpSteps.InPerson) {
+      return {followUp: duration};
+    } else if (followUp == FollowUpSteps.Emergency) {
+      return {followUp: documentation};
+    } else {
+      return {followUp.length > 0 ? followUp : "N/A": "N/A"};
+    }
+  }
 }

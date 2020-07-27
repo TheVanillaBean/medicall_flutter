@@ -1,5 +1,5 @@
 import 'package:Medicall/screens/ConsultReview/ReusableWidgets/continue_button.dart';
-import 'package:Medicall/screens/ConsultReview/ReusableWidgets/emty_diagnosis_widget.dart';
+import 'package:Medicall/screens/ConsultReview/ReusableWidgets/empty_diagnosis_widget.dart';
 import 'package:Medicall/screens/ConsultReview/ReusableWidgets/swipe_gesture_recognizer.dart';
 import 'package:Medicall/screens/ConsultReview/visit_review_view_model.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +14,6 @@ class EducationalContentStep extends StatelessWidget {
       context,
       properties: [VisitReviewVMProperties.educationalContent],
     ).value;
-    model.currentStep = VisitReviewSteps.EducationalContentStep;
     final width = MediaQuery.of(context).size.width;
     if (model.diagnosisOptions != null)
       return SwipeGestureRecognizer(
@@ -51,7 +50,6 @@ class EducationalContentStep extends StatelessWidget {
                   ),
                   ContinueButton(
                     width: width,
-                    model: model,
                   ),
                 ],
               ),

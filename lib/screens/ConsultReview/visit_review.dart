@@ -9,6 +9,7 @@ import 'package:Medicall/screens/ConsultReview/StepsWidgets/follow_up_step.dart'
 import 'package:Medicall/screens/ConsultReview/StepsWidgets/patient_note_step.dart';
 import 'package:Medicall/screens/ConsultReview/visit_review_view_model.dart';
 import 'package:Medicall/services/database.dart';
+import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
 import 'package:provider/provider.dart';
@@ -16,7 +17,7 @@ import 'package:step_progress_indicator/step_progress_indicator.dart';
 
 import 'StepsWidgets/treatment_step.dart';
 
-class VisitReview extends StatelessWidget {
+class VisitReview extends StatefulWidget {
   final VisitReviewViewModel model;
 
   const VisitReview({@required this.model});
@@ -62,7 +63,13 @@ class VisitReview extends StatelessWidget {
   }
 
   @override
+  _VisitReviewState createState() => _VisitReviewState();
+}
+
+class _VisitReviewState extends State<VisitReview> with VisitReviewStatus {
+  @override
   Widget build(BuildContext context) {
+    widget.model.visitReviewStatus = this;
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
@@ -78,7 +85,7 @@ class VisitReview extends StatelessWidget {
         ),
         centerTitle: true,
         title: Text(
-          model.getCustomStepText(model.currentStep),
+          widget.model.getCustomStepText(widget.model.currentStep),
         ),
       ),
       body: Column(
@@ -87,7 +94,7 @@ class VisitReview extends StatelessWidget {
           Expanded(
             flex: 8,
             child: IndexedStack(
-              index: model.currentStep,
+              index: widget.model.currentStep,
               children: <Widget>[
                 DiagnosisStep(),
                 ExamStep(),
@@ -112,11 +119,11 @@ class VisitReview extends StatelessWidget {
                   child: StepProgressIndicator(
                     direction: Axis.horizontal,
                     totalSteps: VisitReviewSteps.TotalSteps,
-                    currentStep: model.currentStep,
+                    currentStep: widget.model.currentStep,
                     size: 48,
                     roundedEdges: Radius.circular(25),
                     customStep: (index, color, size) => buildCustomStep(index),
-                    onTap: (index) => () => model.updateIndex(index),
+                    onTap: (index) => () => widget.model.updateIndex(index),
                   ),
                 ),
               ),
@@ -129,13 +136,29 @@ class VisitReview extends StatelessWidget {
 
   Widget buildCustomStep(int stepIndex) {
     return Container(
-      color: model.currentStep == stepIndex ? Colors.indigo : Colors.blue,
+      color: getColorForStep(stepIndex),
       child: Center(
         child: Text(
-          model.getCustomStepText(stepIndex),
+          widget.model.getCustomStepText(stepIndex),
           style: TextStyle(fontSize: 12, color: Colors.white),
         ),
       ),
     );
+  }
+
+  MaterialColor getColorForStep(int stepIndex) {
+    if (widget.model.completedSteps.contains(stepIndex)) {
+      return Colors.blueGrey;
+    }
+    if (widget.model.currentStep == stepIndex) {
+      return Colors.indigo;
+    } else {
+      return Colors.blue;
+    }
+  }
+
+  @override
+  void updateStatus(String msg) {
+    AppUtil().showFlushBar(msg, context);
   }
 }

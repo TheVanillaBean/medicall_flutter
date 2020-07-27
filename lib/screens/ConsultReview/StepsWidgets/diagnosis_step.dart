@@ -15,7 +15,6 @@ class DiagnosisStep extends StatelessWidget {
       context,
       properties: [VisitReviewVMProperties.diagnosisStep],
     ).value;
-    model.currentStep = VisitReviewSteps.DiagnosisStep;
     final width = MediaQuery.of(context).size.width;
     return LayoutBuilder(
       builder: (context, constraint) {
@@ -45,8 +44,9 @@ class DiagnosisStep extends StatelessWidget {
                       selectedIndex: model.diagnosisStepState.selectedItemIndex,
                       child: CustomSelectionItem(
                         isForList: false,
-                        title: model.diagnosisStepState.diagnosis =
-                            model.consultReviewOptions.diagnosisList[
+                        title: model.diagnosisStepState.diagnosis.length > 0
+                            ? model.diagnosisStepState.diagnosis
+                            : model.consultReviewOptions.diagnosisList[
                                 model.diagnosisStepState.selectedItemIndex],
                       ),
                       onSelectedItemChanged: (index) =>
@@ -93,7 +93,6 @@ class DiagnosisStep extends StatelessWidget {
                       ),
                     ContinueButton(
                       width: width,
-                      model: model,
                     ),
                   ],
                 ),

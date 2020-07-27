@@ -1,5 +1,5 @@
 import 'package:Medicall/screens/ConsultReview/ReusableWidgets/continue_button.dart';
-import 'package:Medicall/screens/ConsultReview/ReusableWidgets/emty_diagnosis_widget.dart';
+import 'package:Medicall/screens/ConsultReview/ReusableWidgets/empty_diagnosis_widget.dart';
 import 'package:Medicall/screens/ConsultReview/ReusableWidgets/swipe_gesture_recognizer.dart';
 import 'package:Medicall/screens/ConsultReview/visit_review_view_model.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +18,6 @@ class _PatientNoteStepState extends State<PatientNoteStep> {
       context,
       properties: [VisitReviewVMProperties.patientNote],
     ).value;
-    model.currentStep = VisitReviewSteps.PatientNote;
     final width = MediaQuery.of(context).size.width;
     if (model.diagnosisOptions != null) {
       return GestureDetector(
@@ -89,7 +88,6 @@ class _PatientNoteStepState extends State<PatientNoteStep> {
                     ),
                     ContinueButton(
                       width: width,
-                      model: model,
                     ),
                   ],
                 ),

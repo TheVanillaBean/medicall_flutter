@@ -15,6 +15,7 @@ import 'package:property_change_notifier/property_change_notifier.dart';
 
 // Properties
 abstract class VisitReviewVMProperties {
+  static String get continueBtn => 'continue_btn';
   static String get diagnosisStep => 'diagnosis_step';
   static String get examStep => 'exam_step';
   static String get treatmentStep => 'treatment_step';
@@ -42,10 +43,13 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
   final Consult consult;
   DiagnosisOptions diagnosisOptions;
   VisitReviewData visitReviewData;
+  VisitReviewStatus visitReviewStatus;
 
   int currentStep = VisitReviewSteps.DiagnosisStep;
 
   List<int> completedSteps = [];
+
+  bool continueBtnPressed = false;
 
   //used to de-clutter this view model, but they do not update listeners themselves
   final DiagnosisStepState diagnosisStepState = DiagnosisStepState();
@@ -62,6 +66,10 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
     @required this.consultReviewOptions,
     @required this.visitReviewData,
   });
+
+  void setVisitReviewStatus(VisitReviewStatus visitReviewStatus) {
+    this.visitReviewStatus = visitReviewStatus;
+  }
 
   String getCustomStepText(int index) {
     if (index == VisitReviewSteps.DiagnosisStep) {
@@ -100,47 +108,88 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
   }
 
   void updateCompletedStepsList() {
+    if (canContinue &&
+        !continueBtnPressed &&
+        !this.completedSteps.contains(this.currentStep)) {
+      this
+          .visitReviewStatus
+          .updateStatus("Press continue to save your work for this step.");
+    }
     List<int> completedSteps = [];
-    if (this.diagnosisStepState.minimumRequiredFieldsFilledOut) {
-      completedSteps.add(VisitReviewSteps.DiagnosisStep);
+    if (continueBtnPressed) {
+      if (this.diagnosisStepState.minimumRequiredFieldsFilledOut) {
+        completedSteps.add(VisitReviewSteps.DiagnosisStep);
+      }
+      if (this.examStepState.minimumRequiredFieldsFilledOut) {
+        completedSteps.add(VisitReviewSteps.ExamStep);
+      }
+      if (this.treatmentNoteStepState.minimumRequiredFieldsFilledOut) {
+        completedSteps.add(VisitReviewSteps.TreatmentStep);
+      }
+      if (this.followUpStepState.minimumRequiredFieldsFilledOut) {
+        completedSteps.add(VisitReviewSteps.FollowUpStep);
+      }
+      if (this.educationalStepState.minimumRequiredFieldsFilledOut) {
+        completedSteps.add(VisitReviewSteps.EducationalContentStep);
+      }
+      if (this.patientNoteStepState.minimumRequiredFieldsFilledOut) {
+        completedSteps.add(VisitReviewSteps.PatientNote);
+      }
+      this.completedSteps = completedSteps;
     }
-    if (this.examStepState.minimumRequiredFieldsFilledOut) {
-      completedSteps.add(VisitReviewSteps.ExamStep);
-    }
-    if (this.treatmentNoteStepState.minimumRequiredFieldsFilledOut) {
-      completedSteps.add(VisitReviewSteps.TreatmentStep);
-    }
-    if (this.followUpStepState.minimumRequiredFieldsFilledOut) {
-      completedSteps.add(VisitReviewSteps.FollowUpStep);
-    }
-    if (this.educationalStepState.minimumRequiredFieldsFilledOut) {
-      completedSteps.add(VisitReviewSteps.EducationalContentStep);
-    }
-    if (this.patientNoteStepState.minimumRequiredFieldsFilledOut) {
-      completedSteps.add(VisitReviewSteps.PatientNote);
-    }
-    this.completedSteps = completedSteps;
+  }
+
+  Future<void> saveVisitReviewToFirestore() async {
+    this.visitReviewData.diagnosis = this.diagnosisStepState.diagnosis;
+    this.visitReviewData.includeDDX = this.diagnosisStepState.includeDDX;
+    this.visitReviewData.ddxOption = this.diagnosisStepState.ddxOption;
+    this.visitReviewData.examLocations = this.examStepState.examLocations;
+    this.visitReviewData.treatmentOptions =
+        this.treatmentNoteStepState.selectedTreatmentOptions;
+    this.visitReviewData.educationalOptions =
+        this.educationalStepState.selectedEducationalOptions.map((option) {
+      var link = this
+          .diagnosisOptions
+          .educationalContent
+          .where((e) => e.containsKey(option))
+          .toList()
+          .first
+          .values
+          .first;
+      return {option: link};
+    }).toList();
+    this.visitReviewData.followUp = this.followUpStepState.followUpMap;
+    this.visitReviewData.patientNote = this.patientNoteStepState.patientNote;
+
+    await firestoreDatabase.saveVisitReview(
+        consultId: this.consult.uid, visitReviewData: this.visitReviewData);
+  }
+
+  void updateContinueBtnPressed(bool pressed) {
+    this.continueBtnPressed = pressed;
+    notifyListeners(VisitReviewVMProperties.continueBtn);
   }
 
   void incrementIndex() {
+    updateCompletedStepsList();
     this.currentStep = this.currentStep == VisitReviewSteps.TotalSteps - 1
         ? this.currentStep
         : this.currentStep + 1;
-    updateCompletedStepsList();
+    updateContinueBtnPressed(false);
     notifyListeners(VisitReviewVMProperties.visitReview);
   }
 
   void decrementIndex() {
+    updateCompletedStepsList();
     this.currentStep = this.currentStep == VisitReviewSteps.DiagnosisStep
         ? this.currentStep
         : this.currentStep - 1;
-    updateCompletedStepsList();
     notifyListeners(VisitReviewVMProperties.visitReview);
   }
 
   void updateIndex(int index) {
-    this.currentStep = index;
     updateCompletedStepsList();
+    this.currentStep = index;
     notifyListeners(VisitReviewVMProperties.visitReview);
   }
 
@@ -259,4 +308,8 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
         patientNote ?? this.patientNoteStepState.patientNote;
     notifyListeners(VisitReviewVMProperties.patientNote);
   }
+}
+
+mixin VisitReviewStatus {
+  void updateStatus(String msg);
 }
