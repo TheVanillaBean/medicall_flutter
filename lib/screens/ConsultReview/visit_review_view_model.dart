@@ -70,7 +70,7 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
     } else if (index == VisitReviewSteps.EducationalContentStep) {
       return "Educational";
     } else if (index == VisitReviewSteps.PatientNote) {
-      return "Note";
+      return "Patient Note";
     } else {
       return "Error";
     }
@@ -201,5 +201,13 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
         selectedEducationalOptions ??
             this.educationalStepState.selectedEducationalOptions;
     notifyListeners(VisitReviewVMProperties.educationalContent);
+  }
+
+  void updatePatientNoteStepWith({
+    String patientNote,
+  }) {
+    this.patientNoteStepState.patientNote =
+        patientNote ?? this.patientNoteStepState.patientNote;
+    notifyListeners(VisitReviewVMProperties.patientNote);
   }
 }
