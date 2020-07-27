@@ -79,10 +79,23 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: AnimatedProgressbar(),
-        leading: IconButton(
-          icon: Icon(Icons.close),
-          onPressed: () => Navigator.pop(context),
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Icon(Icons.arrow_back),
+            );
+          },
         ),
+        actions: <Widget>[
+          IconButton(
+              icon: Icon(Icons.home),
+              onPressed: () {
+                Navigator.of(context).pushNamed('/dashboard');
+              })
+        ],
       ),
       body: FutureBuilder<List<ScreeningQuestions>>(
           future:

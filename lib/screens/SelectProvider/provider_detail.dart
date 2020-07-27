@@ -63,6 +63,13 @@ class ProviderDetailScreen extends StatelessWidget {
         title: Text(
           provider.fullName + ' ' + provider.titles,
         ),
+        actions: <Widget>[
+          IconButton(
+              icon: Icon(Icons.home),
+              onPressed: () {
+                Navigator.of(context).pushNamed('/dashboard');
+              })
+        ],
       ),
       body: SingleChildScrollView(
         child: Container(

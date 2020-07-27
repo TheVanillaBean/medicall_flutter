@@ -48,6 +48,13 @@ class SymptomDetailScreen extends StatelessWidget {
         title: Text(
           StringUtils.capitalize(symptom.name) + ' visit',
         ),
+        actions: <Widget>[
+          IconButton(
+              icon: Icon(Icons.home),
+              onPressed: () {
+                Navigator.of(context).pushNamed('/dashboard');
+              })
+        ],
       ),
       body: Container(
         padding: EdgeInsets.fromLTRB(40, 40, 40, 40),
