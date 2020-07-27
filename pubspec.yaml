@@ -39,6 +39,7 @@ dependencies:
   flutter_auth_buttons: ^0.3.1
   flutter_form_builder: '3.6.0'
   flutter_typeahead: ^1.7.0
+  fading_edge_scrollview: ^1.1.4
   #camera/images
   camera: ^0.5.8+2
   video_player: ^0.10.11+1

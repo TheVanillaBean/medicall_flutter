@@ -46,7 +46,7 @@ class SymptomDetailScreen extends StatelessWidget {
         ),
         centerTitle: true,
         title: Text(
-          StringUtils.capitalize(symptom.name) + ' Visit',
+          StringUtils.capitalize(symptom.name) + ' visit',
         ),
       ),
       body: Container(
