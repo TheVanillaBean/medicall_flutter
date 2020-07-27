@@ -133,35 +133,37 @@ class ProviderDetailScreen extends StatelessWidget {
         ),
       ),
       Expanded(
-        flex: 1,
-        child: FlatButton(
-          color: Colors.blue,
-          textColor: Colors.white,
-          padding: EdgeInsets.fromLTRB(35, 15, 35, 15),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(40.0),
-          ),
-          child: Text(
-            'Start Visit',
-            style: TextStyle(fontSize: 14),
-          ),
-          onPressed: () {
-            Consult consult = Consult(
-              providerId: provider.uid,
-              symptom: symptom.name,
-              date: DateTime.now(),
-              price: 49,
-            );
-            if (currentUser != null) {
-              StartVisitScreen.show(
-                context: context,
-                consult: consult,
+        child: Align(
+          alignment: Alignment.bottomCenter,
+          child: FlatButton(
+            color: Theme.of(context).colorScheme.primary,
+            textColor: Theme.of(context).colorScheme.onPrimary,
+            padding: EdgeInsets.fromLTRB(35, 15, 35, 15),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+            child: Text(
+              'Start Visit',
+              style: TextStyle(fontSize: 14),
+            ),
+            onPressed: () {
+              Consult consult = Consult(
+                providerId: provider.uid,
+                symptom: symptom.name,
+                date: DateTime.now(),
+                price: 49,
               );
-            } else {
-              tempUserProvider.consult = consult;
-              RegistrationScreen.show(context: context);
-            }
-          },
+              if (currentUser != null) {
+                StartVisitScreen.show(
+                  context: context,
+                  consult: consult,
+                );
+              } else {
+                tempUserProvider.consult = consult;
+                RegistrationScreen.show(context: context);
+              }
+            },
+          ),
         ),
       )
     ];

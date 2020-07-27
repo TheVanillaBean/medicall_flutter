@@ -38,16 +38,7 @@ class PreviousConsults extends StatelessWidget {
           ),
         ),
       ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(30, 20, 30, 20),
-          child: Column(
-            children: <Widget>[
-              _buildChildren(),
-            ],
-          ),
-        ),
-      ),
+      body: _buildChildren(),
     );
   }
 
@@ -56,22 +47,18 @@ class PreviousConsults extends StatelessWidget {
       stream: model.consultStream.stream,
       builder:
           (BuildContext context, AsyncSnapshot<List<Consult>> consultSnapshot) {
-        return Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              SizedBox(height: 12),
-              Expanded(
-                child: ListItemsBuilder<Consult>(
-                  snapshot: consultSnapshot,
-                  itemBuilder: (context, consult) => PreviousConsultsListItem(
-                    consult: consult,
-                    onTap: null,
-                  ),
-                ),
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            SizedBox(height: 12),
+            ListItemsBuilder<Consult>(
+              snapshot: consultSnapshot,
+              itemBuilder: (context, consult) => PreviousConsultsListItem(
+                consult: consult,
+                onTap: null,
               ),
-            ],
-          ),
+            ),
+          ],
         );
       },
     );

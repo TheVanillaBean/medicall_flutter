@@ -15,23 +15,31 @@ class PreviousConsultsListItem extends StatelessWidget {
         Provider.of<ExtImageProvider>(context);
     if (consult.providerUser != null) {
       return Container(
-        child: ListTile(
-          contentPadding: EdgeInsets.only(left: 0.0, right: 0.0),
-          dense: true,
-          leading: consult.providerUser.profilePic.length > 0
-              ? displayProfilePicture(
-                  extImageProvider, consult.providerUser.profilePic)
-              : Icon(
-                  Icons.account_circle,
-                  size: 40,
-                  color: Colors.grey,
-                ),
-          title: Text(
-            'Dr. ${consult.providerUser.fullName}',
+        padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
+        child: Card(
+          elevation: 2,
+          borderOnForeground: false,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          clipBehavior: Clip.antiAlias,
+          child: ListTile(
+            contentPadding: EdgeInsets.fromLTRB(20, 5, 20, 5),
+            dense: true,
+            leading: consult.providerUser.profilePic.length > 0
+                ? displayProfilePicture(
+                    extImageProvider, consult.providerUser.profilePic)
+                : Icon(
+                    Icons.account_circle,
+                    size: 40,
+                    color: Colors.grey,
+                  ),
+            title: Text(
+              'Dr. ${consult.providerUser.fullName}',
+            ),
+            subtitle: Text("${consult.symptom} visit"),
+            trailing: Icon(Icons.chevron_right, color: Colors.grey),
+            onTap: onTap,
           ),
-          subtitle: Text("${consult.symptom} visit"),
-          trailing: Icon(Icons.chevron_right, color: Colors.grey),
-          onTap: onTap,
         ),
       );
     }

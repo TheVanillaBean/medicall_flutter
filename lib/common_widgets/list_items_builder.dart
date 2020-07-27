@@ -46,13 +46,12 @@ class ListItemsBuilder<T> extends StatelessWidget {
   }
 
   Widget _buildList(List<T> items, context) {
-    return ListView.separated(
+    return ListView.builder(
       physics: scrollable
           ? AlwaysScrollableScrollPhysics()
           : NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemCount: items.length + 2,
-      separatorBuilder: (context, index) => const Divider(height: 0.5),
       itemBuilder: (context, index) {
         if (index == 0 || index == items.length + 1) {
           return Container(); // zero height: not visible
