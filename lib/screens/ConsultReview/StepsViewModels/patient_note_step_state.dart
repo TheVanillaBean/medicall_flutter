@@ -18,6 +18,7 @@ class PatientNoteStepState {
     note += "Regards,";
     note += "\n";
     note += providerName;
+    patientNote = note;
     return note;
   }
 

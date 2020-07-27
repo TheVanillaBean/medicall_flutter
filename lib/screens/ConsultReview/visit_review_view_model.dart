@@ -143,7 +143,8 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
     this.visitReviewData.diagnosis = this.diagnosisStepState.diagnosis;
     this.visitReviewData.includeDDX = this.diagnosisStepState.includeDDX;
     this.visitReviewData.ddxOption = this.diagnosisStepState.ddxOption;
-    this.visitReviewData.examLocations = this.examStepState.examLocations;
+    this.visitReviewData.examLocations =
+        this.examStepState.examLocationsForSerialization;
     this.visitReviewData.treatmentOptions =
         this.treatmentNoteStepState.selectedTreatmentOptions;
     this.visitReviewData.educationalOptions =
@@ -167,6 +168,7 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
       this.consult.state = ConsultStatus.Completed;
       await firestoreDatabase.saveConsult(
           consultId: consult.uid, consult: consult);
+      this.visitReviewStatus.updateStatus("All steps completed!");
     }
   }
 
