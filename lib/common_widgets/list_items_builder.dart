@@ -48,21 +48,33 @@ class ListItemsBuilder<T> extends StatelessWidget {
 
   Widget _buildList(List<T> items, context) {
     final _controller = ScrollController();
-    return FadingEdgeScrollView.fromScrollView(
-      child: ListView.builder(
-        controller: _controller,
-        physics: scrollable
-            ? AlwaysScrollableScrollPhysics()
-            : NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        itemCount: items.length + 2,
-        itemBuilder: (context, index) {
-          if (index == 0 || index == items.length + 1) {
-            return Container(); // zero height: not visible
-          }
-          return itemBuilder(context, items[index - 1]);
-        },
+    return ScrollConfiguration(
+      behavior: MyBehavior(),
+      child: FadingEdgeScrollView.fromScrollView(
+        shouldDisposeScrollController: true,
+        child: ListView.builder(
+          controller: _controller,
+          physics: scrollable
+              ? AlwaysScrollableScrollPhysics()
+              : NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: items.length + 2,
+          itemBuilder: (context, index) {
+            if (index == 0 || index == items.length + 1) {
+              return Container(); // zero height: not visible
+            }
+            return itemBuilder(context, items[index - 1]);
+          },
+        ),
       ),
     );
+  }
+}
+
+class MyBehavior extends ScrollBehavior {
+  @override
+  Widget buildViewportChrome(
+      BuildContext context, Widget child, AxisDirection axisDirection) {
+    return child;
   }
 }
