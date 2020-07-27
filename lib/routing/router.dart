@@ -189,7 +189,7 @@ class Router {
         final Map<String, dynamic> mapArgs = args;
         final Consult consult = mapArgs['consult'];
         return MaterialPageRoute<dynamic>(
-          builder: (context) => VisitOverview(consult: consult),
+          builder: (context) => VisitOverview(consultOld: consult),
           settings: settings,
           fullscreenDialog: true,
         );

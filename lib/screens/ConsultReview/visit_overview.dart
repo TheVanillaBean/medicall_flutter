@@ -15,9 +15,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class VisitOverview extends StatelessWidget {
-  final Consult consult;
+  final Consult consultOld;
 
-  const VisitOverview({@required this.consult});
+  const VisitOverview({@required this.consultOld});
 
   static Future<void> show({
     BuildContext context,
@@ -50,14 +50,24 @@ class VisitOverview extends StatelessWidget {
         centerTitle: true,
         title: Text("Visit Overview"),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: _buildChildren(context, firestoreDatabase),
-      ),
+      body: StreamBuilder<Consult>(
+          stream: firestoreDatabase.consultStream(consultId: consultOld.uid),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              Consult consult = snapshot.data;
+              consult.patientUser = consultOld.patientUser;
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: _buildChildren(context, firestoreDatabase, consult),
+              );
+            }
+            return Center(child: CircularProgressIndicator());
+          }),
     );
   }
 
-  List<Widget> _buildChildren(BuildContext context, FirestoreDatabase db) {
+  List<Widget> _buildChildren(
+      BuildContext context, FirestoreDatabase db, Consult consult) {
     return <Widget>[
       Padding(
         padding: const EdgeInsets.all(16.0),
@@ -83,39 +93,35 @@ class VisitOverview extends StatelessWidget {
       ),
       CustomFlatButton(
         text: "DIAGNOSIS & TREATMENT PLAN",
-        onPressed: consult.state == ConsultStatus.PendingReview
-            ? () => _showDialog(context)
-            : () async => navigateToVisitReviewScreen(context, db),
+        onPressed: onContinueBtnPressed(context, db, consult),
       ),
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Divider(),
       ),
-      CustomFlatButton(
-        text: "MESSAGE PATIENT",
-        onPressed: () => {},
-      ),
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Divider(),
-      ),
-      CustomFlatButton(
-        text: "REFUND PATIENT FEE",
-        onPressed: () => {},
-      ),
+//      CustomFlatButton(
+//        text: "MESSAGE PATIENT",
+//        onPressed: () => {},
+//      ),
+//      Padding(
+//        padding: const EdgeInsets.symmetric(horizontal: 16),
+//        child: Divider(),
+//      ),
+//      CustomFlatButton(
+//        text: "REFUND PATIENT FEE",
+//        onPressed: () => {},
+//      ),
       Expanded(
         child: Align(
           alignment: FractionalOffset.bottomCenter,
           child: Padding(
             padding: const EdgeInsets.only(bottom: 32),
             child: SignInButton(
-              text: getContinueBtnText(),
+              text: getContinueBtnText(consult),
               height: 8,
-              color: getContinueBtnColor(),
+              color: getContinueBtnColor(consult),
               textColor: Colors.white,
-              onPressed: consult.state == ConsultStatus.PendingReview
-                  ? () => _showDialog(context)
-                  : () async => navigateToVisitReviewScreen(context, db),
+              onPressed: onContinueBtnPressed(context, db, consult),
             ),
           ),
         ),
@@ -123,28 +129,45 @@ class VisitOverview extends StatelessWidget {
     ];
   }
 
-  Color getContinueBtnColor() {
+  Function onContinueBtnPressed(
+      BuildContext context, FirestoreDatabase db, Consult consult) {
+    if (consult.state == ConsultStatus.PendingReview) {
+      return () => _showBeginReviewDialog(context, consult);
+    } else if (consult.state == ConsultStatus.InReview) {
+      return () async => navigateToVisitReviewScreen(context, db, consult);
+    } else if (consult.state == ConsultStatus.Completed) {
+      return () async => _showSignReviewDialog(context, consult);
+    } else {
+      return null;
+    }
+  }
+
+  Color getContinueBtnColor(Consult consult) {
     if (consult.state == ConsultStatus.PendingReview) {
       return Colors.blue;
     } else if (consult.state == ConsultStatus.InReview) {
       return Colors.orange;
-    } else {
+    } else if (consult.state == ConsultStatus.Completed) {
       return Colors.deepOrangeAccent;
+    } else {
+      return Colors.deepPurpleAccent;
     }
   }
 
-  String getContinueBtnText() {
+  String getContinueBtnText(Consult consult) {
     if (consult.state == ConsultStatus.PendingReview) {
       return "Begin Diagnosis & Treatment Plan";
     } else if (consult.state == ConsultStatus.InReview) {
       return "Continue Diagnosis & Treatment Plan";
-    } else {
+    } else if (consult.state == ConsultStatus.Completed) {
       return "Sign and Complete Visit";
+    } else {
+      return "Visit Already Signed";
     }
   }
 
   Future<void> navigateToVisitReviewScreen(
-      BuildContext context, FirestoreDatabase db) async {
+      BuildContext context, FirestoreDatabase db, Consult consult) async {
     ConsultReviewOptions options =
         await db.consultReviewOptions(symptomName: "Hairloss");
     VisitReviewData visitReviewData = VisitReviewData();
@@ -156,7 +179,8 @@ class VisitOverview extends StatelessWidget {
     );
   }
 
-  Future<void> _showDialog(BuildContext context) async {
+  Future<void> _showBeginReviewDialog(
+      BuildContext context, Consult consult) async {
     final db = Provider.of<FirestoreDatabase>(context, listen: false);
     final didPressYes = await PlatformAlertDialog(
       title: "Begin Visit Review",
@@ -172,7 +196,24 @@ class VisitOverview extends StatelessWidget {
       PatientUser patient =
           await db.userStream(USER_TYPE.PATIENT, consult.patientId).first;
       consult.patientUser = patient;
-      await navigateToVisitReviewScreen(context, db);
+      await navigateToVisitReviewScreen(context, db, consult);
+    }
+  }
+
+  Future<void> _showSignReviewDialog(
+      BuildContext context, Consult consult) async {
+    final db = Provider.of<FirestoreDatabase>(context, listen: false);
+    final didPressYes = await PlatformAlertDialog(
+      title: "Sign Review",
+      content:
+          "Would you like to sign this review? Once you sign it, any additional changes will be made as addendums to the original review.",
+      defaultActionText: "Yes, sign",
+      cancelActionText: "No, not yet",
+    ).show(context);
+
+    if (didPressYes == true) {
+      consult.state = ConsultStatus.Signed;
+      await db.saveConsult(consultId: consult.uid, consult: consult);
     }
   }
 }

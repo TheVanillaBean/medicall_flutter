@@ -34,8 +34,8 @@ class ContinueButton extends StatelessWidget {
               onPressed: model.canContinue && !model.continueBtnPressed
                   ? () async {
                       model.updateContinueBtnPressed(true);
-                      await model.saveVisitReviewToFirestore();
                       model.incrementIndex();
+                      await model.saveVisitReviewToFirestore();
                     }
                   : null,
             ),

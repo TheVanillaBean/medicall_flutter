@@ -118,6 +118,11 @@ class FirestoreDatabase implements Database {
     return cid;
   }
 
+  Stream<Consult> consultStream({String consultId}) => _service.documentStream(
+        path: FirestorePath.consult(consultId),
+        builder: (data, documentId) => Consult.fromMap(data, documentId),
+      );
+
   Future<void> saveQuestionnaire(
           {String consultId, ScreeningQuestions screeningQuestions}) =>
       _service.setData(

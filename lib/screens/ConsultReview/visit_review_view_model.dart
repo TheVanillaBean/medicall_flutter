@@ -163,6 +163,11 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
 
     await firestoreDatabase.saveVisitReview(
         consultId: this.consult.uid, visitReviewData: this.visitReviewData);
+    if (this.completedSteps.length == 6) {
+      this.consult.state = ConsultStatus.Completed;
+      await firestoreDatabase.saveConsult(
+          consultId: consult.uid, consult: consult);
+    }
   }
 
   void updateContinueBtnPressed(bool pressed) {
