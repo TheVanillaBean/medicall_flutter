@@ -26,16 +26,18 @@ class StartVisitScreen extends StatelessWidget {
     final GlobalKey<FormBuilderState> formKey = GlobalKey<FormBuilderState>();
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Text("Get Ready"),
+        centerTitle: true,
+      ),
       body: Container(
-        padding: EdgeInsets.fromLTRB(40, 40, 40, 0),
-        child: Stack(
-          alignment: Alignment.center,
+        padding: EdgeInsets.fromLTRB(40, 40, 40, 35),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                Text("Start your visit!"),
                 SizedBox(height: 20),
                 Text(
                   "We will ask a few questions about your health and then focus on the reason for your visit.",
@@ -50,25 +52,37 @@ class StartVisitScreen extends StatelessWidget {
               ],
             ),
             Container(
-              height: 80,
               child: FormBuilder(
                   key: formKey,
                   child: Column(
                     children: <Widget>[
-                      FormBuilderRadio(attribute: 'medhistory', options: [
-                        FormBuilderFieldOption(
-                          value: true,
-                          label: 'Has your medical history changed recently?',
-                        )
-                      ])
+                      FormBuilderCheckboxList(
+                          initialValue:
+                              "No recent changes in my medical history",
+                          attribute: "medhistory",
+                          options: [
+                            FormBuilderFieldOption(
+                                value:
+                                    'No recent changes in my medical history'),
+                            FormBuilderFieldOption(
+                                value:
+                                    'I\'ve had a recent change in my medical history')
+                          ])
+                      // FormBuilderRadio(attribute: 'medhistory', options: [
+                      //   FormBuilderFieldOption(
+                      //     value: true,
+                      //     label:
+                      //         'I have no recent changes in my medical history',
+                      //   )
+                      // ]),
                     ],
                   )),
             ),
-            Positioned(
-              bottom: 20,
+            Align(
+              alignment: Alignment.bottomCenter,
               child: FlatButton(
-                color: Colors.blue,
-                textColor: Colors.white,
+                color: Theme.of(context).colorScheme.primary,
+                textColor: Theme.of(context).colorScheme.onPrimary,
                 onPressed: () async {
                   QuestionsScreen.show(
                     context: context,
@@ -77,7 +91,7 @@ class StartVisitScreen extends StatelessWidget {
                 },
                 padding: EdgeInsets.fromLTRB(35, 15, 35, 15),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(40.0)),
+                    borderRadius: BorderRadius.circular(12.0)),
                 child: Column(
                   children: <Widget>[
                     Text(
