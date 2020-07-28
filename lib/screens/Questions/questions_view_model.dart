@@ -76,6 +76,7 @@ class QuestionsViewModel extends PropertyChangeNotifier
     await saveConsultPhotos(consultId, questions);
     await database.saveQuestionnaire(
         consultId: consultId, screeningQuestions: questions);
+    consult.uid = consultId;
   }
 
   Future<void> saveConsultPhotos(

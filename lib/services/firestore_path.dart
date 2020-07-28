@@ -18,6 +18,8 @@ class FirestorePath {
   static String consultReviewOptionsDiagnosis(
           String symptom, String diagnosis) =>
       'parsed-symptoms-list/$symptom/review-options/diagnoses-list/$diagnosis/diagnosis';
+  static String visitReview(String consultId) =>
+      'consults/$consultId/visit-review/original/';
 
   //Firebase Storage
   static String userProfileImage({String uid, String assetName}) =>

@@ -1,3 +1,4 @@
+import 'package:Medicall/models/consult-review/treatment_options.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
@@ -7,23 +8,17 @@ class PrescriptionDetailsViewModel with ChangeNotifier {
   final FirestoreDatabase database;
   final UserProvider userProvider;
   final AuthBase auth;
+  final TreatmentOptions treatmentOptions;
 
-  String medicationName;
-  String quantity;
-  String refills;
-  String form;
-  String dose;
-  String frequency;
-  String instructions;
+  bool treatmentUpdated = false;
 
-  final TextEditingController medicationNameController =
-      TextEditingController();
-  final TextEditingController quantityController = TextEditingController();
-  final TextEditingController refillsController = TextEditingController();
-  final TextEditingController formController = TextEditingController();
-  final TextEditingController doseController = TextEditingController();
-  final TextEditingController frequencyController = TextEditingController();
-  final TextEditingController instructionsController = TextEditingController();
+  String medicationName = '';
+  String quantity = '';
+  String refills = '';
+  String form = '';
+  String dose = '';
+  String frequency = '';
+  String instructions = '';
 
   final FocusNode medicationNameFocusNode = FocusNode();
   final FocusNode quantityFocusNode = FocusNode();
@@ -35,13 +30,6 @@ class PrescriptionDetailsViewModel with ChangeNotifier {
 
   @override
   void dispose() {
-    medicationNameController.dispose();
-    quantityController.dispose();
-    refillsController.dispose();
-    formController.dispose();
-    doseController.dispose();
-    frequencyController.dispose();
-    instructionsController.dispose();
     medicationNameFocusNode.dispose();
     quantityFocusNode.dispose();
     refillsFocusNode.dispose();
@@ -52,10 +40,25 @@ class PrescriptionDetailsViewModel with ChangeNotifier {
     super.dispose();
   }
 
-  PrescriptionDetailsViewModel(
-      {@required this.database,
-      @required this.userProvider,
-      @required this.auth});
+  PrescriptionDetailsViewModel({
+    @required this.database,
+    @required this.userProvider,
+    @required this.auth,
+    @required this.treatmentOptions,
+  }) {
+    updateWithTreatmentModel();
+  }
+
+  void updateWithTreatmentModel() {
+    this.medicationName =
+        this.treatmentOptions.medicationName ?? this.medicationName;
+    this.quantity = this.treatmentOptions.quantity ?? this.quantity;
+    this.refills = this.treatmentOptions.refills ?? this.refills;
+    this.form = this.treatmentOptions.form ?? this.form;
+    this.dose = this.treatmentOptions.dose ?? this.dose;
+    this.frequency = this.treatmentOptions.frequency ?? this.frequency;
+    this.instructions = this.treatmentOptions.instructions ?? this.instructions;
+  }
 
   void updateWith({
     String medicationName,
@@ -66,13 +69,17 @@ class PrescriptionDetailsViewModel with ChangeNotifier {
     String frequency,
     String instructions,
   }) {
-    this.medicationName = medicationName ?? this.medicationName;
-    this.quantity = quantity ?? this.quantity;
-    this.refills = refills ?? this.refills;
-    this.form = form ?? this.form;
-    this.dose = dose ?? this.dose;
-    this.frequency = frequency ?? this.frequency;
-    this.instructions = instructions ?? this.instructions;
+    this.treatmentOptions.medicationName =
+        medicationName ?? this.treatmentOptions.medicationName;
+    this.treatmentOptions.quantity = quantity ?? this.treatmentOptions.quantity;
+    this.treatmentOptions.refills = refills ?? this.treatmentOptions.refills;
+    this.treatmentOptions.form = form ?? this.treatmentOptions.form;
+    this.treatmentOptions.dose = dose ?? this.treatmentOptions.dose;
+    this.treatmentOptions.frequency =
+        frequency ?? this.treatmentOptions.frequency;
+    this.treatmentOptions.instructions =
+        instructions ?? this.treatmentOptions.instructions;
+    treatmentUpdated = true;
     notifyListeners();
   }
 

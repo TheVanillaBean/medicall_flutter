@@ -1,13 +1,15 @@
+import 'package:Medicall/common_widgets/empty_content.dart';
 import 'package:Medicall/common_widgets/list_items_builder.dart';
+import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/ConsultReview/visit_overview.dart';
 import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard_list_item.dart';
 import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard_view_model.dart';
-import 'package:Medicall/screens/Questions/ImmediateMedicalCare/immediate_medical_care.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 class ProviderDashboardScreen extends StatelessWidget {
@@ -48,60 +50,103 @@ class ProviderDashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+              icon: Icon(
+                Icons.home,
+              ),
+            );
+          },
+        ),
         centerTitle: true,
         title: Text(
-          'Visits',
+          'Hello ${model.userProvider.user.firstName}!',
         ),
       ),
-      body: StreamBuilder<List<Consult>>(
-        stream: model.consultStream.stream,
-        builder: (BuildContext context, AsyncSnapshot<List<Consult>> snapshot) {
-          return SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                SizedBox(),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ListItemsBuilder<Consult>(
-                    snapshot: snapshot,
-                    itemBuilder: (context, consult) =>
-                        ProviderDashboardListItem(
+      drawer: DrawerMenu(),
+      body: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.dark,
+        sized: false,
+        child: Container(
+          child: SafeArea(
+            child: Padding(
+              padding: EdgeInsets.all(width * .1),
+              child: Column(
+                children: _buildChildren(context: context, height: height),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _buildChildren({BuildContext context, double height}) {
+    return [
+      _buildHeader(),
+      SizedBox(
+        height: height * 0.1,
+      ),
+      FlatButton(
+        onPressed: () {
+          Navigator.of(context).pushNamed(Routes.immediateMedicalCare);
+        },
+        child: Text(
+          'Immediate Medical Care',
+        ),
+        textColor: Colors.blue,
+      ),
+      FlatButton(
+        onPressed: () {
+          Navigator.of(context).pushNamed(Routes.completeVisit);
+        },
+        child: Text(
+          'Complete Visit',
+        ),
+        textColor: Colors.blue,
+      ),
+    ];
+  }
+
+  Widget _buildHeader({BuildContext context, double height}) {
+    return StreamBuilder<List<Consult>>(
+      stream: model.consultStream.stream,
+      builder:
+          (BuildContext context, AsyncSnapshot<List<Consult>> consultSnapshot) {
+        return Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text("Current pending visits for you:"),
+              SizedBox(height: 12),
+              Expanded(
+                child: ListItemsBuilder<Consult>(
+                  snapshot: consultSnapshot,
+                  emptyContentWidget: EmptyContent(
+                    title: "",
+                    message: "You do not have any pending visits to review",
+                  ),
+                  itemBuilder: (context, consult) => ProviderDashboardListItem(
+                    consult: consult,
+                    onTap: () => VisitOverview.show(
+                      context: context,
                       consult: consult,
-                      onTap: () => VisitOverview.show(
-                        context: context,
-                        consult: consult,
-                      ),
                     ),
                   ),
                 ),
-                FlatButton(
-                  onPressed: () {
-                    Navigator.of(context)
-                        .pushNamed(Routes.immediateMedicalCare);
-                  },
-                  child: Text(
-                    'Immediate Medical Care',
-                  ),
-                  textColor: Colors.blue,
-                ),
-                FlatButton(
-                  onPressed: () {
-                    Navigator.of(context).pushNamed(Routes.completeVisit);
-                  },
-                  child: Text(
-                    'Complete Visit',
-                  ),
-                  textColor: Colors.blue,
-                ),
-                SizedBox(height: 50),
-              ],
-            ),
-          );
-        },
-      ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

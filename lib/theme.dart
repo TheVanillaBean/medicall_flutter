@@ -6,11 +6,13 @@ setStatusBarColor() {
       SystemUiOverlayStyle(statusBarColor: Colors.white));
 }
 
+final primaryColor = Color(0xff5388b3);
+
 final ThemeData myTheme = ThemeData(
   primarySwatch: Colors.blue,
   primaryColor: Colors.white,
   primaryColorBrightness: Brightness.dark,
-  brightness: Brightness.dark,
+  brightness: Brightness.light,
   primaryColorLight: Color(0xffbbdefb),
   primaryColorDark: Color(0xff107FA2),
   accentColor: Color(0xff2196f3),
@@ -23,21 +25,21 @@ final ThemeData myTheme = ThemeData(
       brightness: Brightness.light,
       color: Colors.white,
       iconTheme: IconThemeData(
-        color: Colors.blue,
+        color: primaryColor,
       ),
-      actionsIconTheme: IconThemeData(color: Colors.blue),
+      actionsIconTheme: IconThemeData(color: primaryColor),
       textTheme: TextTheme(
           button: TextStyle(
-            color: Colors.blue,
+            color: primaryColor,
             fontWeight: FontWeight.w400,
             fontStyle: FontStyle.normal,
           ),
-          headline1: TextStyle(color: Colors.blue),
-          headline2: TextStyle(color: Colors.blue),
-          headline3: TextStyle(color: Colors.blue),
-          headline4: TextStyle(color: Colors.blue),
-          headline5: TextStyle(color: Colors.blue),
-          headline6: TextStyle(color: Colors.blueGrey, fontSize: 21))),
+          headline1: TextStyle(color: primaryColor),
+          headline2: TextStyle(color: primaryColor),
+          headline3: TextStyle(color: primaryColor),
+          headline4: TextStyle(color: primaryColor),
+          headline5: TextStyle(color: primaryColor),
+          headline6: TextStyle(color: primaryColor, fontSize: 21))),
   bottomAppBarTheme: BottomAppBarTheme(
     elevation: 0,
     color: Color(0xFF2F97C1),
@@ -97,7 +99,7 @@ final ThemeData myTheme = ThemeData(
     ),
   ),
   colorScheme: ColorScheme(
-    primary: Color(0xff5388b3),
+    primary: primaryColor,
     primaryVariant: Color(0xff1976d2),
     secondary: Color(0xfff16477),
     secondaryVariant: Color(0xffA54969),
@@ -143,9 +145,10 @@ final ThemeData myTheme = ThemeData(
       fontStyle: FontStyle.normal,
     ),
     headline6: TextStyle(
-      color: Color(0xdd000000),
-      fontSize: null,
-      fontWeight: FontWeight.w400,
+      color: primaryColor,
+      fontSize: 16,
+      letterSpacing: 1.25,
+      fontWeight: FontWeight.w500,
       fontStyle: FontStyle.normal,
     ),
     subtitle1: TextStyle(
@@ -156,7 +159,6 @@ final ThemeData myTheme = ThemeData(
     ),
     bodyText1: TextStyle(
       color: Color(0xdd000000),
-      fontSize: null,
       fontWeight: FontWeight.w400,
       fontStyle: FontStyle.normal,
     ),
@@ -169,6 +171,7 @@ final ThemeData myTheme = ThemeData(
     caption: TextStyle(
       color: Color(0x8a000000),
       fontSize: 12,
+      height: 1.3,
       fontWeight: FontWeight.w400,
       fontStyle: FontStyle.normal,
     ),
@@ -450,17 +453,17 @@ final ThemeData myTheme = ThemeData(
     ),
   ),
   iconTheme: IconThemeData(
-    color: Colors.blue,
+    color: primaryColor,
     opacity: 1,
     size: 24,
   ),
   primaryIconTheme: IconThemeData(
-    color: Colors.blue,
+    color: primaryColor,
     opacity: 1,
     size: 24,
   ),
   accentIconTheme: IconThemeData(
-    color: Colors.blueAccent,
+    color: primaryColor,
     opacity: 1,
     size: 24,
   ),
@@ -487,8 +490,8 @@ final ThemeData myTheme = ThemeData(
   ),
   tabBarTheme: TabBarTheme(
     indicatorSize: TabBarIndicatorSize.label,
-    labelColor: Colors.blue,
-    unselectedLabelColor: Colors.blue.withAlpha(100),
+    labelColor: primaryColor,
+    unselectedLabelColor: primaryColor.withAlpha(100),
   ),
   chipTheme: ChipThemeData(
     backgroundColor: Color(0x1f000000),

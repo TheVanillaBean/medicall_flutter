@@ -11,11 +11,18 @@ class SymptomListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(StringUtils.capitalize(symptom.name)),
-      subtitle: Text(symptom.duration),
-      trailing: Icon(Icons.chevron_right),
-      onTap: onTap,
+    return Card(
+      elevation: 2,
+      margin: EdgeInsets.fromLTRB(25, 5, 25, 5),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      clipBehavior: Clip.antiAlias,
+      child: ListTile(
+        contentPadding: EdgeInsets.fromLTRB(20, 5, 20, 5),
+        title: Text(StringUtils.capitalize(symptom.name)),
+        subtitle: Text(symptom.duration),
+        trailing: Icon(Icons.chevron_right),
+        onTap: onTap,
+      ),
     );
   }
 }

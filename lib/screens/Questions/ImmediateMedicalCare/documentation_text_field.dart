@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class DocumentationTextField extends StatelessWidget {
   final TextEditingController controller;
   final String labelText;
-  final String hint;
+  final String initialValue;
   final int maxLines;
   final FocusNode focusNode;
   final ValueChanged<String> onChanged;
@@ -11,7 +11,7 @@ class DocumentationTextField extends StatelessWidget {
   const DocumentationTextField({
     this.controller,
     this.labelText,
-    this.hint,
+    this.initialValue,
     this.maxLines,
     this.focusNode,
     this.onChanged,
@@ -21,6 +21,7 @@ class DocumentationTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: TextFormField(
+        initialValue: initialValue,
         controller: controller,
         focusNode: focusNode,
         autocorrect: false,
@@ -42,7 +43,6 @@ class DocumentationTextField extends StatelessWidget {
             fontSize: 16.0,
             color: Colors.black87,
           ),
-          hintText: hint,
           hintStyle: TextStyle(
             fontFamily: 'Roboto Regular',
             fontSize: 14.0,

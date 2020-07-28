@@ -1,3 +1,4 @@
+import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/list_items_builder.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
@@ -15,39 +16,11 @@ class PreviousConsults extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              icon: Icon(
-                Icons.arrow_back,
-                color: Colors.grey,
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            );
-          },
-        ),
-        title: Text(
-          'Previous Consults',
-          style: TextStyle(
-            fontSize:
-                Theme.of(context).platform == TargetPlatform.iOS ? 17.0 : 20.0,
-          ),
-        ),
+      appBar: CustomAppBar.getAppBar(
+        type: AppBarType.Back,
+        title: "Previous Consults",
       ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(30, 20, 30, 20),
-          child: Column(
-            children: <Widget>[
-              _buildChildren(),
-            ],
-          ),
-        ),
-      ),
+      body: _buildChildren(),
     );
   }
 
@@ -56,22 +29,18 @@ class PreviousConsults extends StatelessWidget {
       stream: model.consultStream.stream,
       builder:
           (BuildContext context, AsyncSnapshot<List<Consult>> consultSnapshot) {
-        return Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              SizedBox(height: 12),
-              Expanded(
-                child: ListItemsBuilder<Consult>(
-                  snapshot: consultSnapshot,
-                  itemBuilder: (context, consult) => PreviousConsultsListItem(
-                    consult: consult,
-                    onTap: null,
-                  ),
-                ),
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            SizedBox(height: 12),
+            ListItemsBuilder<Consult>(
+              snapshot: consultSnapshot,
+              itemBuilder: (context, consult) => PreviousConsultsListItem(
+                consult: consult,
+                onTap: null,
               ),
-            ],
-          ),
+            ),
+          ],
         );
       },
     );

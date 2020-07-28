@@ -39,6 +39,7 @@ dependencies:
   flutter_auth_buttons: ^0.3.1
   flutter_form_builder: '3.6.0'
   flutter_typeahead: ^1.7.0
+  fading_edge_scrollview: ^1.1.4
   #camera/images
   camera: ^0.5.8+2
   video_player: ^0.10.11+1
@@ -65,6 +66,10 @@ dependencies:
   enum_to_string: ^1.0.9
   datetime_picker_formfield: ^1.0.0
   photo_view: ^0.9.2
+  step_progress_indicator: ^0.2.3+6
+  direct_select: ^1.0.2+1
+  auto_size_text: ^2.1.0
+  grouped_buttons: ^1.0.4
 
 
 dependency_overrides:

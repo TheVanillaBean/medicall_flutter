@@ -1,3 +1,4 @@
+import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/screens/Registration/Provider/provider_custom_text_field.dart';
 import 'package:Medicall/screens/Registration/Provider/provider_registration_view_model.dart';
 import 'package:Medicall/common_widgets/custom_dropdown_formfield.dart';
@@ -114,9 +115,10 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
             ),
           ),
           SizedBox(height: 20),
-          Container(
-            width: 250,
-            child: RaisedButton(
+          Align(
+            alignment: FractionalOffset.bottomCenter,
+            child: ReusableRaisedButton(
+              title: 'Register',
               onPressed: model.canSubmit
                   ? () {
                       if (_formKey.currentState.validate()) {
@@ -124,13 +126,9 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
                       }
                     }
                   : null,
-              shape: StadiumBorder(),
-              color: Colors.green,
-              textColor: Colors.white,
-              child: Text('Register'),
             ),
           ),
-          SizedBox(height: 24),
+          SizedBox(height: 30),
           if (model.isLoading)
             Container(
                 margin: EdgeInsets.symmetric(vertical: 24),

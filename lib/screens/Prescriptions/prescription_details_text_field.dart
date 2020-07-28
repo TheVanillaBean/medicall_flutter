@@ -4,18 +4,18 @@ class PrescriptionDetailsTextField extends StatelessWidget {
   const PrescriptionDetailsTextField({
     this.onChanged,
     this.labelText,
-    this.hint,
+    this.initialValue,
     this.keyboardType,
     this.validator,
     this.controller,
-    this.enabled,
+    this.enabled = true,
     this.errorText,
     this.maxLines,
     this.focusNode,
   });
   final ValueChanged<String> onChanged;
   final String labelText;
-  final String hint;
+  final String initialValue;
   final TextInputType keyboardType;
   final bool enabled;
   final String errorText;
@@ -32,6 +32,7 @@ class PrescriptionDetailsTextField extends StatelessWidget {
         right: 0,
       ),
       child: TextFormField(
+        initialValue: this.initialValue,
         focusNode: focusNode,
         maxLines: maxLines,
         autocorrect: false,
@@ -42,6 +43,7 @@ class PrescriptionDetailsTextField extends StatelessWidget {
           fontSize: 16,
           color: Colors.black87,
         ),
+        enabled: this.enabled,
         decoration: InputDecoration(
           contentPadding: EdgeInsets.fromLTRB(0, 15, 0, 15),
           isDense: true,
@@ -51,7 +53,7 @@ class PrescriptionDetailsTextField extends StatelessWidget {
             fontSize: 16,
             color: Colors.black,
           ),
-          hintText: hint,
+          hintText: this.initialValue,
           hintStyle: TextStyle(fontSize: 16, color: Colors.black26),
           border: UnderlineInputBorder(),
           enabledBorder: UnderlineInputBorder(

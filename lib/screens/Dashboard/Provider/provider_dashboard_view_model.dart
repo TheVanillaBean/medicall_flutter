@@ -19,7 +19,7 @@ class ProviderDashboardViewModel with ChangeNotifier {
     @required this.userProvider,
   }) {
     database
-        .getConsultsForProvider(userProvider.user.uid)
+        .getPendingConsultsForProvider(userProvider.user.uid)
         .listen((List<Consult> consults) {
       List<String> uniquePatientIds = [];
 
@@ -29,16 +29,20 @@ class ProviderDashboardViewModel with ChangeNotifier {
         }
       });
 
-      uniquePatientIds.forEach((patientId) {
-        database.userStream(USER_TYPE.PATIENT, patientId).listen((User user) {
-          for (Consult consult in consults) {
-            if (consult.patientId == user.uid) {
-              consult.patientUser = user as PatientUser;
+      if (uniquePatientIds.length == 0) {
+        consultStream.add([]);
+      } else {
+        uniquePatientIds.forEach((patientId) {
+          database.userStream(USER_TYPE.PATIENT, patientId).listen((User user) {
+            for (Consult consult in consults) {
+              if (consult.patientId == user.uid) {
+                consult.patientUser = user as PatientUser;
+              }
             }
-          }
-          consultStream.add(consults.length > 0 ? consults : null);
+            consultStream.add(consults.length > 0 ? consults : null);
+          });
         });
-      });
+      }
     });
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/list_items_builder.dart';
 import 'package:Medicall/models/provider_user_model.dart';
 import 'package:Medicall/models/symptom_model.dart';
@@ -32,41 +33,56 @@ class SelectProviderScreen extends StatelessWidget {
     final NonAuthDatabase db = Provider.of<NonAuthDatabase>(context);
     return Scaffold(
       appBar: AppBar(
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Icon(Icons.arrow_back),
+            );
+          },
+        ),
         centerTitle: true,
         title: Text('Doctors in your area'),
+        actions: <Widget>[
+          IconButton(
+              icon: Icon(Icons.home),
+              onPressed: () {
+                Navigator.of(context).pushNamed('/dashboard');
+              })
+        ],
       ),
-      body: Container(
-        color: Colors.white,
-        child: Column(
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.fromLTRB(40, 20, 40, 20),
-              child: Text(
-                'Great news! We are in your area. Check out the dermatologist who can help you today.',
-                style: TextStyle(color: Colors.grey),
+      body: StreamBuilder(
+        stream: db.getAllProviders(),
+        builder:
+            (BuildContext context, AsyncSnapshot<List<ProviderUser>> snapshot) {
+          return Stack(
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.fromLTRB(25, 5, 25, 5),
+                child: Text(
+                  'Great news! We are in your area. Check out the dermatologist who can help you today.',
+                  style: Theme.of(context).textTheme.caption,
+                ),
               ),
-            ),
-            StreamBuilder(
-              stream: db.getAllProviders(),
-              builder: (BuildContext context,
-                  AsyncSnapshot<List<ProviderUser>> snapshot) {
-                return Expanded(
-                  child: ListItemsBuilder<ProviderUser>(
-                    snapshot: snapshot,
-                    itemBuilder: (context, provider) => ProviderListItem(
+              Padding(
+                padding: EdgeInsets.only(top: 40),
+                child: ListItemsBuilder<ProviderUser>(
+                  snapshot: snapshot,
+                  itemBuilder: (context, provider) => ProviderListItem(
+                    provider: provider,
+                    onTap: () => ProviderDetailScreen.show(
+                      context: context,
                       provider: provider,
-                      onTap: () => ProviderDetailScreen.show(
-                        context: context,
-                        provider: provider,
-                        symptom: symptom,
-                      ),
+                      symptom: symptom,
                     ),
                   ),
-                );
-              },
-            )
-          ],
-        ),
+                ),
+              )
+            ],
+          );
+        },
       ),
     );
   }
