@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/list_items_builder.dart';
 import 'package:Medicall/models/provider_user_model.dart';
 import 'package:Medicall/models/symptom_model.dart';
@@ -31,9 +32,9 @@ class SelectProviderScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final NonAuthDatabase db = Provider.of<NonAuthDatabase>(context);
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text('Doctors in your area'),
+      appBar: CustomAppBar.getAppBar(
+        type: AppBarType.Back,
+        title: "Doctors in your area",
       ),
       body: Container(
         color: Colors.white,

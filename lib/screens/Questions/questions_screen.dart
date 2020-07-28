@@ -1,4 +1,5 @@
 import 'package:Medicall/common_widgets/custom_raised_button.dart';
+import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/screening_questions_model.dart';
 import 'package:Medicall/routing/router.dart';
@@ -178,15 +179,13 @@ class NavigationButtons extends StatelessWidget {
         children: <Widget>[
           Expanded(
             flex: 1,
-            child: CustomRaisedButton(
-              color: Colors.blue,
-              borderRadius: 14,
-              child: Text(
-                "Previous",
-                style: TextStyle(color: Colors.white),
+            child: Align(
+              alignment: FractionalOffset.bottomCenter,
+              child: ReusableRaisedButton(
+                title: 'Previous',
+                onPressed:
+                    model.canAccessPrevious ? () => model.previousPage() : null,
               ),
-              onPressed:
-                  model.canAccessPrevious ? () => model.previousPage() : null,
             ),
           ),
           SizedBox(
@@ -194,14 +193,12 @@ class NavigationButtons extends StatelessWidget {
           ),
           Expanded(
             flex: 1,
-            child: CustomRaisedButton(
-              color: Colors.blue,
-              borderRadius: 14,
-              child: Text(
-                "Next",
-                style: TextStyle(color: Colors.white),
+            child: Align(
+              alignment: FractionalOffset.bottomCenter,
+              child: ReusableRaisedButton(
+                title: 'Next',
+                onPressed: model.canAccessNext ? () => model.nextPage() : null,
               ),
-              onPressed: model.canAccessNext ? () => model.nextPage() : null,
             ),
           ),
         ],

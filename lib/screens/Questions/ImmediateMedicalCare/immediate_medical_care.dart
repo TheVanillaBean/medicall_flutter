@@ -1,5 +1,7 @@
+import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/custom_raised_button.dart';
 import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
+import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/ConsultReview/visit_review_view_model.dart';
 import 'package:Medicall/screens/Questions/ImmediateMedicalCare/documentation_text_field.dart';
@@ -163,26 +165,14 @@ class ImmediateMedicalCare extends StatelessWidget {
                   onChanged: model.updateDocumentationText,
                 ),
                 SizedBox(height: 30),
-                SizedBox(
-                  width: 200,
-                  child: CustomRaisedButton(
-                    color: Colors.blue,
-                    borderRadius: 14,
-                    child: Text(
-                      "Continue",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontFamily: 'Roboto Medium',
-                        fontSize: 14,
-                      ),
-                    ),
+                ReusableRaisedButton(
+                  title: 'Continue',
                     onPressed: () {
                       visitReviewViewModel.updateFollowUpStepWith(
                         documentation: model.documentationText,
                       );
                       Navigator.of(context).pop();
                     },
-                  ),
                 ),
               ],
             ),

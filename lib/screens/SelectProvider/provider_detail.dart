@@ -1,3 +1,5 @@
+import 'package:Medicall/common_widgets/custom_app_bar.dart';
+import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/patient_user_model.dart';
 import 'package:Medicall/models/provider_user_model.dart';
@@ -48,21 +50,9 @@ class ProviderDetailScreen extends StatelessWidget {
 
     ScreenUtil.init(context);
     return Scaffold(
-      appBar: AppBar(
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: Icon(Icons.arrow_back),
-            );
-          },
-        ),
-        centerTitle: true,
-        title: Text(
-          provider.fullName + ' ' + provider.titles,
-        ),
+      appBar: CustomAppBar.getAppBar(
+        type: AppBarType.Back,
+        title: provider.fullName + ' ' + provider.titles,
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -134,34 +124,28 @@ class ProviderDetailScreen extends StatelessWidget {
       ),
       Expanded(
         flex: 1,
-        child: FlatButton(
-          color: Colors.blue,
-          textColor: Colors.white,
-          padding: EdgeInsets.fromLTRB(35, 15, 35, 15),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(40.0),
-          ),
-          child: Text(
-            'Start Visit',
-            style: TextStyle(fontSize: 14),
-          ),
-          onPressed: () {
-            Consult consult = Consult(
-              providerId: provider.uid,
-              symptom: symptom.name,
-              date: DateTime.now(),
-              price: 49,
-            );
-            if (currentUser != null) {
-              StartVisitScreen.show(
-                context: context,
-                consult: consult,
+        child: Align(
+          alignment: FractionalOffset.bottomCenter,
+          child: ReusableRaisedButton(
+            title: "Start Visit",
+            onPressed: () {
+              Consult consult = Consult(
+                providerId: provider.uid,
+                symptom: symptom.name,
+                date: DateTime.now(),
+                price: 49,
               );
-            } else {
-              tempUserProvider.consult = consult;
-              RegistrationScreen.show(context: context);
-            }
-          },
+              if (currentUser != null) {
+                StartVisitScreen.show(
+                  context: context,
+                  consult: consult,
+                );
+              } else {
+                tempUserProvider.consult = consult;
+                RegistrationScreen.show(context: context);
+              }
+            },
+          ),
         ),
       )
     ];

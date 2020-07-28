@@ -1,3 +1,4 @@
+import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
 import 'package:Medicall/models/consult-review/treatment_options.dart';
 import 'package:Medicall/routing/router.dart';
@@ -133,8 +134,27 @@ class PrescriptionDetails extends StatelessWidget {
                             onChanged: model.updateFrequency,
                           ),
                         ),
-                      )
-                    ],
+                      ),
+                    )
+                  ],
+                ),
+                PrescriptionDetailsTextField(
+                  controller: model.instructionsController,
+                  focusNode: model.instructionsFocusNode,
+                  maxLines: 8,
+                  labelText: 'Instructions',
+                  hint:
+                      'Apply thin layer of ointment to cover the affected area. Do not use for more than 14 days per month.',
+                  onChanged: model.updateInstructions,
+                ),
+                SizedBox(
+                  height: 30,
+                ),
+                Align(
+                  alignment: FractionalOffset.bottomCenter,
+                  child: ReusableRaisedButton(
+                    title: 'Done',
+                    onPressed: () {},
                   ),
                   PrescriptionDetailsTextField(
                     focusNode: model.instructionsFocusNode,

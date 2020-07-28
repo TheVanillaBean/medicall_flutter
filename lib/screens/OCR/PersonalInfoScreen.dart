@@ -1,4 +1,6 @@
+import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/custom_raised_button.dart';
+import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:flutter/material.dart';
 
 class PersonalInfoScreen extends StatelessWidget {
@@ -9,11 +11,9 @@ class PersonalInfoScreen extends StatelessWidget {
     //UserProvider userProvider = Provider.of<UserProvider>(context);
 
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(
-          'Personal Information',
-        ),
+      appBar: CustomAppBar.getAppBar(
+        type: AppBarType.Back,
+        title: "Personal Information",
       ),
       body: Container(
         child: SafeArea(
@@ -50,20 +50,14 @@ class PersonalInfoScreen extends StatelessWidget {
       SizedBox(
         height: 8,
       ),
-      CustomRaisedButton(
-        height: 50,
-        color: Colors.blue,
-        child: Text(
-          "Looks Good!",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 15.0,
-            letterSpacing: 1.3,
-          ),
+      Align(
+        alignment: FractionalOffset.bottomCenter,
+        child: ReusableRaisedButton(
+          title: 'Looks Good!',
+          onPressed: () {
+            Navigator.of(context).pushNamed("/consultReview");
+          },
         ),
-        onPressed: () {
-          Navigator.of(context).pushNamed("/consultReview");
-        },
       )
     ];
   }

@@ -1,3 +1,4 @@
+import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/flat_button.dart';
 import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
 import 'package:Medicall/common_widgets/sign_in_button.dart';
@@ -36,19 +37,9 @@ class VisitOverview extends StatelessWidget {
     FirestoreDatabase firestoreDatabase =
         Provider.of<FirestoreDatabase>(context, listen: false);
     return Scaffold(
-      appBar: AppBar(
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: Icon(Icons.arrow_back),
-            );
-          },
-        ),
-        centerTitle: true,
-        title: Text("Visit Overview"),
+      appBar: CustomAppBar.getAppBar(
+        type: AppBarType.Back,
+        title: "Visit Overview",
       ),
       body: StreamBuilder<Consult>(
           stream: firestoreDatabase.consultStream(consultId: consultOld.uid),
