@@ -1,4 +1,5 @@
 import 'package:Medicall/common_widgets/empty_content.dart';
+import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 
 typedef ItemWidgetBuilder<T> = Widget Function(BuildContext context, T item);
@@ -56,19 +57,34 @@ class ListItemsBuilder<T> extends StatelessWidget {
   }
 
   Widget _buildList(List<T> items, context) {
-    return ListView.separated(
-      physics: scrollable
-          ? AlwaysScrollableScrollPhysics()
-          : NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      itemCount: items.length + 2,
-      separatorBuilder: (context, index) => const Divider(height: 0.5),
-      itemBuilder: (context, index) {
-        if (index == 0 || index == items.length + 1) {
-          return Container(); // zero height: not visible
-        }
-        return itemBuilder(context, items[index - 1]);
-      },
+    final _controller = ScrollController();
+    return ScrollConfiguration(
+      behavior: MyBehavior(),
+      child: FadingEdgeScrollView.fromScrollView(
+        shouldDisposeScrollController: true,
+        child: ListView.builder(
+          controller: _controller,
+          physics: scrollable
+              ? AlwaysScrollableScrollPhysics()
+              : NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: items.length + 2,
+          itemBuilder: (context, index) {
+            if (index == 0 || index == items.length + 1) {
+              return Container(); // zero height: not visible
+            }
+            return itemBuilder(context, items[index - 1]);
+          },
+        ),
+      ),
     );
+  }
+}
+
+class MyBehavior extends ScrollBehavior {
+  @override
+  Widget buildViewportChrome(
+      BuildContext context, Widget child, AxisDirection axisDirection) {
+    return child;
   }
 }

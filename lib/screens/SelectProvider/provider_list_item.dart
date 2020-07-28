@@ -15,28 +15,38 @@ class ProviderListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final ExtImageProvider extImageProvider =
         Provider.of<ExtImageProvider>(context);
-    return ListTile(
-      contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-      leading: provider.profilePic.length > 0
-          ? displayProfilePicture(extImageProvider, provider.profilePic)
-          : Icon(
-              Icons.account_circle,
-              size: 40,
-              color: Colors.grey,
-            ),
-      title: Text(StringUtils.getFormattedProviderName(
-        firstName: provider.firstName,
-        lastName: provider.lastName,
-        titles: provider.titles,
-      )),
-      subtitle: Text(provider.address),
-      trailing: Icon(
-        Icons.chevron_right,
-        color: Colors.grey,
-        size: 15.0,
+    return Container(
+      padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
+      child: Card(
+        elevation: 3,
+        shadowColor: Colors.grey.withAlpha(120),
+        borderOnForeground: false,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        clipBehavior: Clip.antiAlias,
+        child: ListTile(
+          contentPadding: EdgeInsets.fromLTRB(20, 5, 20, 5),
+          dense: true,
+          leading: provider.profilePic.length > 0
+              ? displayProfilePicture(extImageProvider, provider.profilePic)
+              : Icon(
+                  Icons.account_circle,
+                  size: 40,
+                  color: Colors.grey,
+                ),
+          title: Text(StringUtils.getFormattedProviderName(
+            firstName: provider.firstName,
+            lastName: provider.lastName,
+            titles: provider.titles,
+          )),
+          subtitle: Text(provider.address),
+          trailing: Icon(
+            Icons.chevron_right,
+            color: Colors.grey,
+            size: 15.0,
+          ),
+          onTap: onTap,
+        ),
       ),
-      onTap: onTap,
-      dense: true,
     );
   }
 

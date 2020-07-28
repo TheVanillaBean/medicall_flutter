@@ -52,7 +52,7 @@ class SymptomsScreen extends StatelessWidget {
 
   Widget buildVisitFeeContainer() {
     return Container(
-      padding: EdgeInsets.fromLTRB(25, 10, 25, 10),
+      padding: EdgeInsets.fromLTRB(25, 10, 25, 15),
       child: Column(
         children: <Widget>[
           Text(

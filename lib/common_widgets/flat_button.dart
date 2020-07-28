@@ -13,11 +13,13 @@ class CustomFlatButton extends FlatButton {
   })  : assert(text != null),
         super(
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16),
+            padding: EdgeInsets.symmetric(vertical: 16),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 if (leadingIcon != null) Icon(leadingIcon),
+                SizedBox(
+                  width: 30,
+                ),
                 Text(
                   text,
                   style: TextStyle(

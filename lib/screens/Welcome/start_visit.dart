@@ -28,38 +28,72 @@ class StartVisitScreen extends StatelessWidget {
     final GlobalKey<FormBuilderState> formKey = GlobalKey<FormBuilderState>();
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CustomAppBar.getAppBar(
-        type: AppBarType.Back,
-        title: "Start your visit!",
+      appBar: AppBar(
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Icon(Icons.arrow_back),
+            );
+          },
+        ),
+        title: Text("Get Ready"),
+        centerTitle: true,
+        actions: <Widget>[
+          IconButton(
+              icon: Icon(Icons.home),
+              onPressed: () {
+                Navigator.of(context).pushNamed('/dashboard');
+              })
+        ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+      body: Container(
+        padding: EdgeInsets.fromLTRB(40, 40, 40, 35),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            SizedBox(height: 20),
-            Text(
-              "We will ask a few questions about your health and then focus on the reason for your visit.",
-              style: TextStyle(fontSize: 16),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                SizedBox(height: 20),
+                Text(
+                  "We will ask a few questions about your health and then focus on the reason for your visit.",
+                  style: TextStyle(fontSize: 16),
+                ),
+                SizedBox(height: 20),
+                Text(
+                  "It is important you answer the questions carefully and provide complete information.",
+                  style: TextStyle(fontSize: 16),
+                ),
+                SizedBox(height: 80),
+              ],
             ),
-            SizedBox(height: 20),
-            Text(
-              "It is important you answer the questions carefully and provide complete information.",
-              style: TextStyle(fontSize: 16),
-            ),
-            SizedBox(height: 80),
             Container(
-              height: 80,
               child: FormBuilder(
                   key: formKey,
                   child: Column(
                     children: <Widget>[
-                      FormBuilderRadio(attribute: 'medhistory', options: [
-                        FormBuilderFieldOption(
-                          value: true,
-                          label: 'Has your medical history changed recently?',
-                        )
-                      ])
+                      FormBuilderCheckboxList(
+                          initialValue:
+                              "No recent changes in my medical history",
+                          attribute: "medhistory",
+                          options: [
+                            FormBuilderFieldOption(
+                                value:
+                                    'No recent changes in my medical history'),
+                            FormBuilderFieldOption(
+                                value:
+                                    'I\'ve had a recent change in my medical history')
+                          ])
+                      // FormBuilderRadio(attribute: 'medhistory', options: [
+                      //   FormBuilderFieldOption(
+                      //     value: true,
+                      //     label:
+                      //         'I have no recent changes in my medical history',
+                      //   )
+                      // ]),
                     ],
                   )),
             ),

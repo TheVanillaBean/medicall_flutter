@@ -137,6 +137,48 @@ class ExtendedImageProvider implements ExtImageProvider {
       cache: cache,
       mode: mode,
       initGestureConfigHandler: initGestureConfigHandler,
+      loadStateChanged: (ExtendedImageState state) {
+        switch (state.extendedImageLoadState) {
+          case LoadState.loading:
+            return CircularProgressIndicator();
+            break;
+
+          ///if you don't want override completed widget
+          ///please return null or state.completedWidget
+          //return null;
+          //return state.completedWidget;
+          case LoadState.completed:
+            return ExtendedRawImage(
+              image: state.extendedImageInfo?.image,
+            );
+            break;
+          case LoadState.failed:
+            return GestureDetector(
+              child: Container(
+                color: Colors.grey.withAlpha(50),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(
+                      Icons.broken_image,
+                      color: Colors.black12,
+                      size: 40,
+                    ),
+                    Text(
+                      "load image failed, click to reload",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 10, color: Colors.black54),
+                    )
+                  ],
+                ),
+              ),
+              onTap: () {
+                state.reLoadImage();
+              },
+            );
+            break;
+        }
+      },
     );
   }
 

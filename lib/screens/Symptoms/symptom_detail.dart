@@ -35,9 +35,28 @@ class SymptomDetailScreen extends StatelessWidget {
     } catch (e) {}
 
     return Scaffold(
-      appBar: CustomAppBar.getAppBar(
-        type: AppBarType.Back,
-        title: StringUtils.capitalize(symptom.name) + ' Visit',
+      appBar: AppBar(
+        leading: Builder(
+          builder: (BuildContext context) {
+            return IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Icon(Icons.arrow_back),
+            );
+          },
+        ),
+        centerTitle: true,
+        title: Text(
+          StringUtils.capitalize(symptom.name) + ' visit',
+        ),
+        actions: <Widget>[
+          IconButton(
+              icon: Icon(Icons.home),
+              onPressed: () {
+                Navigator.of(context).pushNamed('/dashboard');
+              })
+        ],
       ),
       body: Container(
         padding: EdgeInsets.fromLTRB(40, 40, 40, 40),
@@ -62,13 +81,13 @@ class SymptomDetailScreen extends StatelessWidget {
           ),
           Container(
             child: Text(
-              symptom.price.toString(),
+              "\$" + symptom.price.toString(),
               style: TextStyle(fontSize: 18),
             ),
           )
         ],
       ),
-      SizedBox(height: 30),
+      Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 10), child: Divider()),
       Container(
         child: Text(
           symptom.description,
@@ -108,14 +127,14 @@ class SymptomDetailScreen extends StatelessWidget {
           builder: (BuildContext context) {
             return AlertDialog(
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0)),
+                  borderRadius: BorderRadius.circular(12.0)),
               title: Text(
                 "Prescriptions Information",
-                style: TextStyle(color: Colors.blue),
+                style: Theme.of(context).textTheme.headline6,
               ),
               content: Text(
                 "If a prescription is prescribed, we can send it to your local pharmacy or you can use our prescription service and have your medications delivered to your door with free 2-day shipping. Our prices are lower than most co-pays. Typical medications that are prescribed for hair loss include:",
-                style: TextStyle(fontSize: 12, height: 1.5),
+                style: Theme.of(context).textTheme.caption,
               ),
               actions: <Widget>[
                 // usually buttons at the bottom of the dialog
@@ -130,15 +149,25 @@ class SymptomDetailScreen extends StatelessWidget {
           },
         );
       },
-      child: Container(
+      child: Align(
         alignment: Alignment.centerLeft,
-        padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-        child: Text(
-          'Common medications',
-          style: TextStyle(
-              fontSize: 12,
-              color: Colors.blue,
-              decoration: TextDecoration.underline),
+        child: Container(
+          width: 120,
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                  width: 1.0, color: Theme.of(context).colorScheme.primary),
+            ),
+          ),
+          alignment: Alignment.centerLeft,
+          margin: EdgeInsets.fromLTRB(0, 15, 0, 0),
+          padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
+          child: Text(
+            'Common medications',
+            textAlign: TextAlign.left,
+            style: TextStyle(
+                fontSize: 12, color: Theme.of(context).colorScheme.primary),
+          ),
         ),
       ),
     );
