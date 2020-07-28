@@ -1,3 +1,4 @@
+import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
 import 'package:flutter/cupertino.dart';
@@ -16,24 +17,9 @@ class ConfirmConsult extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         resizeToAvoidBottomPadding: false,
-        appBar: AppBar(
-          centerTitle: true,
-          leading: Builder(
-            builder: (BuildContext context) {
-              return IconButton(
-                icon: Icon(
-                  Icons.arrow_back,
-                  color: Colors.grey,
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              );
-            },
-          ),
-          title: Text(
-            'Consult confirmed',
-          ),
+        appBar: CustomAppBar.getAppBar(
+          type: AppBarType.Back,
+          title: "Consult Confirmed",
         ),
         body: SingleChildScrollView(
           child: Padding(

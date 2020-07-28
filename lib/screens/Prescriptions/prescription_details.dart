@@ -1,4 +1,6 @@
+import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
+import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/consult-review/treatment_options.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/ConsultReview/visit_review_view_model.dart';
@@ -17,7 +19,6 @@ class PrescriptionDetails extends StatelessWidget {
   });
 
   final PrescriptionDetailsViewModel model;
-
   @override
   Widget build(BuildContext context) {
     final VisitReviewViewModel visitReviewViewModel =
@@ -26,42 +27,26 @@ class PrescriptionDetails extends StatelessWidget {
       properties: [VisitReviewVMProperties.treatmentStep],
     ).value;
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              icon: Icon(
-                Icons.close,
-                color: Colors.grey,
-              ),
-              onPressed: () async {
-                if (model.treatmentUpdated) {
-                  final didPressYes = await PlatformAlertDialog(
-                    title: "Update Treatment?",
-                    content:
-                        "Would you like to save the changes you made to this treatment option?",
-                    defaultActionText: "Yes",
-                    cancelActionText: "No, don't update",
-                  ).show(context);
-                  if (didPressYes) {
-                    visitReviewViewModel.updateTreatmentStepWith(
-                      selectedTreatment: model.treatmentOptions,
-                    );
-                  }
-                }
-                Navigator.of(context).pop();
-              },
-            );
-          },
-        ),
-        title: Text(
-          'Prescription Details',
-          style: TextStyle(
-            fontSize:
-                Theme.of(context).platform == TargetPlatform.iOS ? 17.0 : 20.0,
-          ),
-        ),
+      appBar: CustomAppBar.getAppBar(
+        type: AppBarType.Back,
+        title: "Prescription Details",
+        onPressed: () async {
+          if (model.treatmentUpdated) {
+            final didPressYes = await PlatformAlertDialog(
+              title: "Update Treatment?",
+              content:
+                  "Would you like to save the changes you made to this treatment option?",
+              defaultActionText: "Yes",
+              cancelActionText: "No, don't update",
+            ).show(context);
+            if (didPressYes) {
+              visitReviewViewModel.updateTreatmentStepWith(
+                selectedTreatment: model.treatmentOptions,
+              );
+            }
+          }
+          Navigator.of(context).pop();
+        },
       ),
       body: SingleChildScrollView(
         child: GestureDetector(
@@ -146,24 +131,14 @@ class PrescriptionDetails extends StatelessWidget {
                   SizedBox(
                     height: 30,
                   ),
-                  SizedBox(
-                    height: 50,
-                    width: 250,
-                    child: RaisedButton(
-                      onPressed: () {
-                        visitReviewViewModel.updateTreatmentStepWith(
-                          selectedTreatment: model.treatmentOptions,
-                        );
-                        Navigator.of(context).pop();
-                      },
-                      shape: StadiumBorder(),
-                      color: Colors.blue,
-                      textColor: Colors.white,
-                      child: Text('Done'),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 30,
+                  ReusableRaisedButton(
+                    title: 'Continue',
+                    onPressed: () {
+                      visitReviewViewModel.updateTreatmentStepWith(
+                        selectedTreatment: model.treatmentOptions,
+                      );
+                      Navigator.of(context).pop();
+                    },
                   ),
                 ],
               ),

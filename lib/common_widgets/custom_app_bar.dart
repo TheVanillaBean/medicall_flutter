@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 enum AppBarType { Back, Close }
 
 class CustomAppBar {
-  const CustomAppBar({@required this.title});
-  final String title;
-
-  static getAppBar({AppBarType type, String title}) {
+  static getAppBar({AppBarType type, String title, Function onPressed}) {
     if (type == AppBarType.Back) {
       return AppBar(
         leading: Builder(
@@ -16,9 +13,11 @@ class CustomAppBar {
                 Icons.arrow_back,
                 color: Colors.grey,
               ),
-              onPressed: () {
-                Navigator.pop(context);
-              },
+              onPressed: onPressed != null
+                  ? onPressed
+                  : () {
+                      Navigator.pop(context);
+                    },
             );
           },
         ),
@@ -41,9 +40,11 @@ class CustomAppBar {
                 Icons.close,
                 color: Colors.grey,
               ),
-              onPressed: () {
-                Navigator.pop(context);
-              },
+              onPressed: onPressed != null
+                  ? onPressed
+                  : () {
+                      Navigator.pop(context);
+                    },
             );
           },
         ),

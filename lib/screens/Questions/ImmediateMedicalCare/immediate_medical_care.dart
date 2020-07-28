@@ -1,7 +1,6 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
-import 'package:Medicall/common_widgets/custom_raised_button.dart';
 import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
-import 'package:Medicall/models/consult_model.dart';
+import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/ConsultReview/visit_review_view_model.dart';
 import 'package:Medicall/screens/Questions/ImmediateMedicalCare/documentation_text_field.dart';
@@ -55,41 +54,26 @@ class ImmediateMedicalCare extends StatelessWidget {
       properties: [VisitReviewVMProperties.followUpStep],
     ).value;
     return Scaffold(
-      appBar: AppBar(
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              icon: Icon(
-                Icons.arrow_back,
-                color: Colors.grey,
-              ),
-              onPressed: () async {
-                if (model.documentationUpdated) {
-                  final didPressYes = await PlatformAlertDialog(
-                    title: "Update Documentation?",
-                    content:
-                        "Would you like to save the changes you made to the documentation?",
-                    defaultActionText: "Yes",
-                    cancelActionText: "No, don't save",
-                  ).show(context);
-                  if (didPressYes) {
-                    visitReviewViewModel.updateFollowUpStepWith(
-                      documentation: model.documentationText,
-                    );
-                  }
-                }
-                Navigator.of(context).pop();
-              },
-            );
-          },
-        ),
-        centerTitle: true,
-        title: Text('Immediate Medical Care',
-            style: TextStyle(
-              fontFamily: 'Roboto Thin',
-              fontSize: 18,
-              color: Colors.blue,
-            )),
+      appBar: CustomAppBar.getAppBar(
+        type: AppBarType.Back,
+        title: "Immediate Medical Care",
+        onPressed: () async {
+          if (model.documentationUpdated) {
+            final didPressYes = await PlatformAlertDialog(
+              title: "Update Documentation?",
+              content:
+                  "Would you like to save the changes you made to the documentation?",
+              defaultActionText: "Yes",
+              cancelActionText: "No, don't save",
+            ).show(context);
+            if (didPressYes) {
+              visitReviewViewModel.updateFollowUpStepWith(
+                documentation: model.documentationText,
+              );
+            }
+          }
+          Navigator.of(context).pop();
+        },
       ),
       body: SingleChildScrollView(
         child: GestureDetector(
@@ -167,12 +151,12 @@ class ImmediateMedicalCare extends StatelessWidget {
                 SizedBox(height: 30),
                 ReusableRaisedButton(
                   title: 'Continue',
-                    onPressed: () {
-                      visitReviewViewModel.updateFollowUpStepWith(
-                        documentation: model.documentationText,
-                      );
-                      Navigator.of(context).pop();
-                    },
+                  onPressed: () {
+                    visitReviewViewModel.updateFollowUpStepWith(
+                      documentation: model.documentationText,
+                    );
+                    Navigator.of(context).pop();
+                  },
                 ),
               ],
             ),
