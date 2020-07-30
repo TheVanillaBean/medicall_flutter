@@ -7,13 +7,13 @@ import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 
-class PreviousConsultsViewModel with ChangeNotifier {
+class PreviousVisitsViewModel with ChangeNotifier {
   final FirestoreDatabase database;
   final UserProvider userProvider;
 
   StreamController<List<Consult>> consultStream = StreamController();
 
-  PreviousConsultsViewModel(
+  PreviousVisitsViewModel(
       {@required this.database, @required this.userProvider}) {
     database
         .getTotalConsultsForPatient(userProvider.user.uid)

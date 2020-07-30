@@ -2,23 +2,24 @@ import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/list_items_builder.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
-import 'package:Medicall/screens/Consults/previous_consults_list_item.dart';
-import 'package:Medicall/screens/Consults/previous_consults_view_model.dart';
+import 'package:Medicall/screens/Consults/previous_visits_list_item.dart';
+import 'package:Medicall/screens/Consults/previous_visits_view_model.dart';
+import 'package:Medicall/screens/VisitDetails/visit_details_overview.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class PreviousConsults extends StatelessWidget {
-  final PreviousConsultsViewModel model;
-  const PreviousConsults({@required this.model});
+class PreviousVisits extends StatelessWidget {
+  final PreviousVisitsViewModel model;
+  const PreviousVisits({@required this.model});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
         type: AppBarType.Back,
-        title: "Previous Consults",
+        title: "Previous Visits",
       ),
       body: _buildChildren(),
     );
@@ -35,9 +36,10 @@ class PreviousConsults extends StatelessWidget {
             SizedBox(height: 12),
             ListItemsBuilder<Consult>(
               snapshot: consultSnapshot,
-              itemBuilder: (context, consult) => PreviousConsultsListItem(
+              itemBuilder: (context, consult) => PreviousVisitsListItem(
                 consult: consult,
-                onTap: null,
+                onTap: () => VisitDetailsOverview.show(
+                    context: context, consultId: consult.uid),
               ),
             ),
           ],
@@ -49,13 +51,13 @@ class PreviousConsults extends StatelessWidget {
   static Widget create(BuildContext context) {
     final FirestoreDatabase database = Provider.of<FirestoreDatabase>(context);
     final UserProvider provider = Provider.of<UserProvider>(context);
-    return ChangeNotifierProvider<PreviousConsultsViewModel>(
-      create: (context) => PreviousConsultsViewModel(
+    return ChangeNotifierProvider<PreviousVisitsViewModel>(
+      create: (context) => PreviousVisitsViewModel(
         database: database,
         userProvider: provider,
       ),
-      child: Consumer<PreviousConsultsViewModel>(
-        builder: (_, model, __) => PreviousConsults(
+      child: Consumer<PreviousVisitsViewModel>(
+        builder: (_, model, __) => PreviousVisits(
           model: model,
         ),
       ),

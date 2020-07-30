@@ -1,4 +1,5 @@
 import 'package:Medicall/models/user_model_base.dart';
+import 'package:Medicall/screens/Consults/previous_visits.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
@@ -112,8 +113,7 @@ class DrawerMenu extends StatelessWidget {
                         ),
                         onTap: () {
                           Navigator.of(context).pop();
-                          Navigator.of(context)
-                              .pushReplacementNamed('/history');
+                          PreviousVisits.show(context: context);
                         }),
                     ListTile(
                         contentPadding: listContentPadding,

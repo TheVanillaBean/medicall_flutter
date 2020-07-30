@@ -3,8 +3,8 @@ import 'package:Medicall/services/extimage_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class PreviousConsultsListItem extends StatelessWidget {
-  const PreviousConsultsListItem({Key key, this.consult, this.onTap})
+class PreviousVisitsListItem extends StatelessWidget {
+  const PreviousVisitsListItem({Key key, this.consult, this.onTap})
       : super(key: key);
   final Consult consult;
   final VoidCallback onTap;
