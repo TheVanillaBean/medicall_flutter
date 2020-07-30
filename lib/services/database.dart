@@ -207,6 +207,13 @@ class FirestoreDatabase implements Database {
     );
   }
 
+  Stream<VisitReviewData> visitReviewStream({String consultId}) =>
+      _service.documentStream(
+        path: FirestorePath.visitReview(consultId),
+        builder: (data, documentId) =>
+            VisitReviewData.fromMap(data, documentId),
+      );
+
   @override
   Future getConsultDetail(DetailedHistoryState detailedHistoryState) async {
     if (consultSnapshot == null &&
