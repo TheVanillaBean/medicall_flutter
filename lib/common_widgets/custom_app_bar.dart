@@ -3,7 +3,12 @@ import 'package:flutter/material.dart';
 enum AppBarType { Back, Close }
 
 class CustomAppBar {
-  static getAppBar({AppBarType type, String title, Function onPressed}) {
+  static getAppBar({
+    AppBarType type,
+    String title,
+    BuildContext context,
+    Function onPressed,
+  }) {
     if (type == AppBarType.Back) {
       return AppBar(
         leading: Builder(
@@ -11,7 +16,7 @@ class CustomAppBar {
             return IconButton(
               icon: Icon(
                 Icons.arrow_back,
-                color: Colors.grey,
+                color: Theme.of(context).appBarTheme.iconTheme.color,
               ),
               onPressed: onPressed != null
                   ? onPressed
@@ -24,11 +29,7 @@ class CustomAppBar {
         centerTitle: true,
         title: Text(
           title,
-          style: TextStyle(
-            fontFamily: 'Roboto Thin',
-            fontSize: 18,
-            color: Colors.blue,
-          ),
+          style: Theme.of(context).appBarTheme.textTheme.headline6,
         ),
       );
     } else {
@@ -38,7 +39,7 @@ class CustomAppBar {
             return IconButton(
               icon: Icon(
                 Icons.close,
-                color: Colors.grey,
+                color: Theme.of(context).appBarTheme.iconTheme.color,
               ),
               onPressed: onPressed != null
                   ? onPressed
@@ -51,11 +52,7 @@ class CustomAppBar {
         centerTitle: true,
         title: Text(
           title,
-          style: TextStyle(
-            fontFamily: 'Roboto Thin',
-            fontSize: 18,
-            color: Colors.blue,
-          ),
+          style: Theme.of(context).appBarTheme.textTheme.headline6,
         ),
       );
     }

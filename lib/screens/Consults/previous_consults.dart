@@ -19,6 +19,7 @@ class PreviousConsults extends StatelessWidget {
       appBar: CustomAppBar.getAppBar(
         type: AppBarType.Back,
         title: "Previous Consults",
+        context: context,
       ),
       body: _buildChildren(),
     );

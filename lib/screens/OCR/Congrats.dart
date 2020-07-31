@@ -13,6 +13,7 @@ class CongratsScreen extends StatelessWidget {
       appBar: CustomAppBar.getAppBar(
         type: AppBarType.Back,
         title: 'Congratulations!',
+        context: context,
       ),
       body: Container(
         child: SafeArea(

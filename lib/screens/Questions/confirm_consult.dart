@@ -20,6 +20,7 @@ class ConfirmConsult extends StatelessWidget {
         appBar: CustomAppBar.getAppBar(
           type: AppBarType.Back,
           title: "Consult Confirmed",
+          context: context,
         ),
         body: SingleChildScrollView(
           child: Padding(

@@ -30,6 +30,7 @@ class PrescriptionDetails extends StatelessWidget {
       appBar: CustomAppBar.getAppBar(
         type: AppBarType.Back,
         title: "Prescription Details",
+        context: context,
         onPressed: () async {
           if (model.treatmentUpdated) {
             final didPressYes = await PlatformAlertDialog(

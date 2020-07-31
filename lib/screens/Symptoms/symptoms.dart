@@ -22,6 +22,7 @@ class SymptomsScreen extends StatelessWidget {
       appBar: CustomAppBar.getAppBar(
         type: AppBarType.Back,
         title: "How can we help you today?",
+        context: context,
       ),
       drawer: DrawerMenu(),
       body: StreamBuilder<List<Symptom>>(
