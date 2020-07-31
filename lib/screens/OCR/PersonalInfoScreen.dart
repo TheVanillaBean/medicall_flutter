@@ -14,6 +14,7 @@ class PersonalInfoScreen extends StatelessWidget {
       appBar: CustomAppBar.getAppBar(
         type: AppBarType.Back,
         title: "Personal Information",
+        context: context,
       ),
       body: Container(
         child: SafeArea(

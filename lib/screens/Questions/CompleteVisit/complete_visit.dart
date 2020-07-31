@@ -33,6 +33,7 @@ class CompleteVisit extends StatelessWidget {
       appBar: CustomAppBar.getAppBar(
         type: AppBarType.Back,
         title: "Complete Visit",
+        context: context,
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -50,7 +51,7 @@ class CompleteVisit extends StatelessWidget {
                     style: TextStyle(
                       fontFamily: 'Roboto Regular',
                       fontSize: 14.0,
-                      color: Colors.blue,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                     textAlign: TextAlign.left,
                   ),
@@ -58,13 +59,7 @@ class CompleteVisit extends StatelessWidget {
               ),
               Text(
                 'Marking the visit \"complete\" will notify the patient that you\'ve completed your evaluation. The patient will still be able to message you with questions for 7 days.',
-                style: TextStyle(
-                  height: 1.5,
-                  fontFamily: 'Roboto Regular',
-                  fontSize: 14.0,
-                  color: Colors.black54,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: Theme.of(context).textTheme.bodyText1,
                 textAlign: TextAlign.justify,
               ),
               SizedBox(height: 250),
@@ -74,11 +69,7 @@ class CompleteVisit extends StatelessWidget {
                   controlAffinity: ListTileControlAffinity.leading,
                   title: Text(
                     'Please send a copy of my note to my office manager via secure email.',
-                    style: TextStyle(
-                      fontFamily: 'Roboto Regular',
-                      fontSize: 14.0,
-                      color: Colors.black54,
-                    ),
+                    style: Theme.of(context).textTheme.bodyText1,
                     textAlign: TextAlign.left,
                   ),
                   value: model.checkValue ?? false,

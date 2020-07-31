@@ -57,6 +57,7 @@ class ImmediateMedicalCare extends StatelessWidget {
       appBar: CustomAppBar.getAppBar(
         type: AppBarType.Back,
         title: "Immediate Medical Care",
+        context: context,
         onPressed: () async {
           if (model.documentationUpdated) {
             final didPressYes = await PlatformAlertDialog(

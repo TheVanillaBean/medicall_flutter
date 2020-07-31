@@ -14,6 +14,7 @@ class OCRScreen extends StatelessWidget {
       appBar: CustomAppBar.getAppBar(
         type: AppBarType.Back,
         title: "Almost Done!",
+        context: context,
       ),
       body: Container(
         child: SafeArea(

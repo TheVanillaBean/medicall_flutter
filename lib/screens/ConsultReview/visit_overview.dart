@@ -40,6 +40,7 @@ class VisitOverview extends StatelessWidget {
       appBar: CustomAppBar.getAppBar(
         type: AppBarType.Back,
         title: "Visit Overview",
+        context: context,
       ),
       body: StreamBuilder<Consult>(
           stream: firestoreDatabase.consultStream(consultId: consultOld.uid),
