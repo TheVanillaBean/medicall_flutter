@@ -72,6 +72,11 @@ class ConsultPhotos extends StatelessWidget {
                 photoURLS.add(url);
               });
             });
+            if (photoQuestions.length == 0) {
+              return Center(
+                child: Text("There are no photos for this visit."),
+              );
+            }
             return PhotoViewGallery.builder(
               scrollPhysics: const BouncingScrollPhysics(),
               builder: (BuildContext context, int index) {

@@ -25,7 +25,7 @@ class ScreeningQuestions {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'screening_question': screeningQuestions.map((q) => q.toMap()).toList(),
+      'screening_questions': screeningQuestions.map((q) => q.toMap()).toList(),
     };
   }
 }
