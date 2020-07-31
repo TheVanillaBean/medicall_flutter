@@ -20,6 +20,7 @@ class PreviousVisits extends StatelessWidget {
       appBar: CustomAppBar.getAppBar(
         type: AppBarType.Back,
         title: "Previous Visits",
+        context: context,
       ),
       body: _buildChildren(),
     );
@@ -39,7 +40,7 @@ class PreviousVisits extends StatelessWidget {
               itemBuilder: (context, consult) => PreviousVisitsListItem(
                 consult: consult,
                 onTap: () => VisitDetailsOverview.show(
-                    context: context, consultId: consult.uid),
+                    context: context, consult: consult),
               ),
             ),
           ],

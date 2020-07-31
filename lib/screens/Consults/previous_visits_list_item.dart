@@ -36,7 +36,7 @@ class PreviousVisitsListItem extends StatelessWidget {
             title: Text(
               'Dr. ${consult.providerUser.fullName}',
             ),
-            subtitle: Text("${consult.symptom} visit"),
+            subtitle: Text('${consult.symptom} visit'),
             trailing: Icon(Icons.chevron_right, color: Colors.grey),
             onTap: onTap,
           ),

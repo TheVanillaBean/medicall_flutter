@@ -53,6 +53,7 @@ class PaymentDetail extends StatelessWidget {
       appBar: CustomAppBar.getAppBar(
         type: AppBarType.Back,
         title: "Payment Card",
+        context: context,
       ),
       body: SingleChildScrollView(
         child: _buildChildren(),

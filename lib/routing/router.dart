@@ -14,6 +14,7 @@ import 'package:Medicall/screens/ConsultReview/visit_overview.dart';
 import 'package:Medicall/screens/ConsultReview/visit_review.dart';
 import 'package:Medicall/screens/ConsultReview/visit_review_view_model.dart';
 import 'package:Medicall/screens/Consults/previous_visits.dart';
+import 'package:Medicall/screens/Consults/ProviderVisits/provider_visits.dart';
 import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard.dart';
 import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/History/Detail/index.dart';
@@ -90,6 +91,7 @@ class Routes {
   static const immediateMedicalCare = '/immediate-medical-care';
   static const completeVisit = '/complete-visit';
   static const visitReview = '/visit-review';
+  static const providerVisits = '/provider-visits';
 }
 
 class Router {
@@ -166,6 +168,13 @@ class Router {
           settings: settings,
           fullscreenDialog: true,
         );
+      case Routes.providerVisits:
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => ProviderVisits.create(context),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+
       case Routes.prescriptionDetails:
         final Map<String, dynamic> mapArgs = args;
         final TreatmentOptions treatmentOptions = mapArgs['treatmentOptions'];
@@ -196,10 +205,10 @@ class Router {
           fullscreenDialog: true,
         );
       case Routes.visitDetailsOverview:
-        final Map<String, String> mapArgs = args;
-        final String consultId = mapArgs['consultId'];
+        final Map<String, dynamic> mapArgs = args;
+        final Consult consult = mapArgs['consult'];
         return MaterialPageRoute<dynamic>(
-          builder: (context) => VisitDetailsOverview(consultId: consultId),
+          builder: (context) => VisitDetailsOverview(consult: consult),
           settings: settings,
           fullscreenDialog: true,
         );
