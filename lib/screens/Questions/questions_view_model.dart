@@ -30,6 +30,7 @@ class QuestionsViewModel extends PropertyChangeNotifier
   final PageController controller = PageController(initialPage: 0);
   double progress;
   int pageIndex = 0;
+  bool displayMedHistory = false;
 
   //Question Page Form Fields (question_form.dart)
   String input;
@@ -53,6 +54,7 @@ class QuestionsViewModel extends PropertyChangeNotifier
     @required this.consult,
     @required this.database,
     @required this.storageService,
+    @required this.displayMedHistory,
     this.progress = 0.0,
     this.input = '',
   });
@@ -60,6 +62,21 @@ class QuestionsViewModel extends PropertyChangeNotifier
   void setQuestionnaireStatusListener(
       QuestionnaireStatusUpdate questionnaireStatusUpdate) {
     this.questionnaireStatusUpdate = questionnaireStatusUpdate;
+  }
+
+  Future<void> saveMedicalHistory() async {
+    disableNavButtons();
+    this.submitted = true;
+    notifyListeners(QuestionVMProperties.questionPageView);
+    ScreeningQuestions questions =
+        ScreeningQuestions(screeningQuestions: consult.questions);
+    String uid = (await this.auth.currentUser()).uid;
+    await database.saveMedicalHistory(
+      userId: uid,
+      screeningQuestions: questions,
+    );
+    this.displayMedHistory = false;
+    this.submitted = false;
   }
 
   Future<void> saveConsultation() async {

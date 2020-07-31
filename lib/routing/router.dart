@@ -322,9 +322,11 @@ class Router {
       case Routes.questions:
         final Map<String, dynamic> mapArgs = args;
         final Consult consult = mapArgs['consult'];
+        final bool displayMedHistory = mapArgs['displayMedHistory'];
         return MaterialPageRoute<dynamic>(
           builder: (context) => QuestionsScreen.create(
             context,
+            displayMedHistory,
             consult,
           ),
           settings: settings,

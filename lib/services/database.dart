@@ -130,6 +130,14 @@ class FirestoreDatabase implements Database {
         data: screeningQuestions.toMap(),
       );
 
+  Future<void> saveMedicalHistory(
+          {String userId, ScreeningQuestions screeningQuestions}) =>
+      _service.setData(
+        path: FirestorePath.medicalHistory(userId),
+        data: screeningQuestions.toMap(),
+        merge: true,
+      );
+
   Stream<List<Consult>> getPendingConsultsForProvider(String uid) =>
       _service.collectionStream(
         path: FirestorePath.consults(),
@@ -213,6 +221,16 @@ class FirestoreDatabase implements Database {
         builder: (data, documentId) =>
             VisitReviewData.fromMap(data, documentId),
       );
+
+  Future<List<ScreeningQuestions>> getScreeningQuestions(
+          {String symptomName}) =>
+      _service
+          .collectionStream(
+            path: FirestorePath.screeningQuestions(symptomName),
+            builder: (data, documentId) =>
+                ScreeningQuestions.fromMap(data, documentId),
+          )
+          .first;
 
   @override
   Future getConsultDetail(DetailedHistoryState detailedHistoryState) async {

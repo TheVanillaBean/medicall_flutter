@@ -1,6 +1,5 @@
 import 'package:Medicall/models/patient_user_model.dart';
 import 'package:Medicall/models/provider_user_model.dart';
-import 'package:Medicall/models/screening_questions_model.dart';
 import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/services/firestore_service.dart';
@@ -11,7 +10,6 @@ import 'firestore_path.dart';
 abstract class NonAuthDatabase {
   Future<void> setUser(User user);
   Stream<List<Symptom>> symptomsStream();
-  Future<List<ScreeningQuestions>> getScreeningQuestions({String symptomName});
   Future<List<String>> getAllProviderAddresses();
   Stream<List<ProviderUser>> getAllProviders();
   Stream<User> providerStream({String uid});
@@ -32,17 +30,6 @@ class NonAuthFirestoreDB implements NonAuthDatabase {
         path: FirestorePath.symptoms(),
         builder: (data, documentId) => Symptom.fromMap(data, documentId),
       );
-
-  @override
-  Future<List<ScreeningQuestions>> getScreeningQuestions(
-          {String symptomName}) =>
-      _service
-          .collectionStream(
-            path: FirestorePath.screeningQuestions(symptomName),
-            builder: (data, documentId) =>
-                ScreeningQuestions.fromMap(data, documentId),
-          )
-          .first;
 
   @override
   Future<List<String>> getAllProviderAddresses() => _service

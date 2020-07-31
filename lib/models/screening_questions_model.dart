@@ -14,7 +14,7 @@ class ScreeningQuestions {
       return null;
     }
 
-    final questions = (data['screening_question'] as List ?? [])
+    final questions = (data['screening_questions'] as List ?? [])
         .map((v) => Question.fromMap(v))
         .toList();
 

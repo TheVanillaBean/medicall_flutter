@@ -1,4 +1,3 @@
-import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
@@ -39,7 +38,7 @@ class StartVisitScreen extends StatelessWidget {
             );
           },
         ),
-        title: Text("Get Ready"),
+        title: Text("Prepare"),
         centerTitle: true,
         actions: <Widget>[
           IconButton(
@@ -75,25 +74,12 @@ class StartVisitScreen extends StatelessWidget {
                   key: formKey,
                   child: Column(
                     children: <Widget>[
-                      FormBuilderCheckboxList(
-                          initialValue:
-                              "No recent changes in my medical history",
-                          attribute: "medhistory",
-                          options: [
-                            FormBuilderFieldOption(
-                                value:
-                                    'No recent changes in my medical history'),
-                            FormBuilderFieldOption(
-                                value:
-                                    'I\'ve had a recent change in my medical history')
-                          ])
-                      // FormBuilderRadio(attribute: 'medhistory', options: [
-                      //   FormBuilderFieldOption(
-                      //     value: true,
-                      //     label:
-                      //         'I have no recent changes in my medical history',
-                      //   )
-                      // ]),
+                      FormBuilderCheckbox(
+                        attribute: 'medical_history',
+                        label: Text(
+                            'I have no changes in my medical history since last using Medicall'),
+                        initialValue: false,
+                      )
                     ],
                   )),
             ),
@@ -103,10 +89,14 @@ class StartVisitScreen extends StatelessWidget {
                 child: ReusableRaisedButton(
                   title: 'Start Visit',
                   onPressed: () async {
-                    QuestionsScreen.show(
-                      context: context,
-                      consult: consult,
-                    );
+                    if (formKey.currentState.saveAndValidate()) {
+                      QuestionsScreen.show(
+                        context: context,
+                        displayMedHistory: formKey
+                            .currentState.value["medical_history"] as bool,
+                        consult: consult,
+                      );
+                    }
                   },
                 ),
               ),

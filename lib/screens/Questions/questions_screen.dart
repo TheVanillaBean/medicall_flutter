@@ -1,8 +1,8 @@
-import 'package:Medicall/common_widgets/custom_raised_button.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/screening_questions_model.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/Questions/ReviewPage/review_page.dart';
 import 'package:Medicall/screens/Questions/progress_bar.dart';
 import 'package:Medicall/screens/Questions/question_page.dart';
@@ -10,7 +10,6 @@ import 'package:Medicall/screens/Questions/questions_view_model.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/firebase_storage_service.dart';
-import 'package:Medicall/services/non_auth_firestore_db.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
@@ -21,6 +20,7 @@ class QuestionsScreen extends StatefulWidget {
 
   static Widget create(
     BuildContext context,
+    bool displayMedHistory,
     Consult consult,
   ) {
     final AuthBase auth = Provider.of<AuthBase>(context, listen: false);
@@ -30,10 +30,12 @@ class QuestionsScreen extends StatefulWidget {
         Provider.of<FirebaseStorageService>(context, listen: false);
     return PropertyChangeProvider(
       value: QuestionsViewModel(
-          auth: auth,
-          consult: consult,
-          database: database,
-          storageService: firebaseStorageService),
+        auth: auth,
+        consult: consult,
+        database: database,
+        storageService: firebaseStorageService,
+        displayMedHistory: displayMedHistory,
+      ),
       child: PropertyChangeConsumer<QuestionsViewModel>(
         properties: [QuestionVMProperties.questionScreen],
         builder: (_, model, __) => QuestionsScreen(
@@ -46,11 +48,13 @@ class QuestionsScreen extends StatefulWidget {
   static Future<void> show({
     @required BuildContext context,
     @required Consult consult,
+    @required bool displayMedHistory,
   }) async {
-    await Navigator.of(context).pushNamed(
+    await Navigator.of(context).pushReplacementNamed(
       Routes.questions,
       arguments: {
         'consult': consult,
+        'displayMedHistory': displayMedHistory,
       },
     );
   }
@@ -77,7 +81,8 @@ class _QuestionsScreenState extends State<QuestionsScreen>
 
   @override
   Widget build(BuildContext context) {
-    NonAuthDatabase db = Provider.of<NonAuthDatabase>(context, listen: false);
+    FirestoreDatabase db =
+        Provider.of<FirestoreDatabase>(context, listen: false);
     model.setQuestionnaireStatusListener(this);
     return Scaffold(
       appBar: AppBar(
@@ -96,13 +101,18 @@ class _QuestionsScreenState extends State<QuestionsScreen>
           IconButton(
               icon: Icon(Icons.home),
               onPressed: () {
-                Navigator.of(context).pushNamed('/dashboard');
+                PatientDashboardScreen.show(
+                  context: context,
+                  pushReplaceNamed: true,
+                );
               })
         ],
       ),
       body: FutureBuilder<List<ScreeningQuestions>>(
-          future:
-              db.getScreeningQuestions(symptomName: this.model.consult.symptom),
+          future: model.displayMedHistory
+              ? db.getScreeningQuestions(symptomName: "General Medical History")
+              : db.getScreeningQuestions(
+                  symptomName: this.model.consult.symptom),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               this.model.consult.questions =
@@ -164,7 +174,8 @@ class QuestionsPageView extends StatelessWidget {
               ),
             ),
           ),
-        if (!model.submitted)
+        if (!model.submitted &&
+            model.pageIndex != model.consult.questions.length)
           Expanded(
             flex: 2,
             child: NavigationButtons(),

@@ -1,18 +1,24 @@
-import 'package:Medicall/common_widgets/custom_raised_button.dart';
 import 'package:Medicall/common_widgets/list_items_builder.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/question_model.dart';
 import 'package:Medicall/screens/PersonalInfo/personal_info.dart';
 import 'package:Medicall/screens/Questions/ReviewPage/review_page_list_item.dart';
+import 'package:Medicall/screens/Questions/questions_screen.dart';
 import 'package:Medicall/screens/Questions/questions_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
 
 class ReviewPage extends StatelessWidget {
-  Future<void> completeConsultBtnPressed(
+  Future<void> completeBtnPressed(
       BuildContext context, QuestionsViewModel model) async {
-    await model.saveConsultation();
-    PersonalInfoScreen.show(context: context, consult: model.consult);
+    if (model.displayMedHistory) {
+      await model.saveMedicalHistory();
+      QuestionsScreen.show(
+          context: context, consult: model.consult, displayMedHistory: false);
+    } else {
+      await model.saveConsultation();
+      PersonalInfoScreen.show(context: context, consult: model.consult);
+    }
   }
 
   @override
@@ -22,6 +28,14 @@ class ReviewPage extends StatelessWidget {
       context,
       properties: [QuestionVMProperties.questionNavButtons],
     ).value;
+
+    String title = model.displayMedHistory
+        ? "Please review your medical history:"
+        : "Please review your consult:";
+
+    String completeBtnText =
+        model.displayMedHistory ? "Save medical history" : "Complete Consult";
+
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -29,7 +43,7 @@ class ReviewPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Text(
-              'Please review your consult:',
+              title,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontFamily: 'Roboto Regular',
@@ -41,6 +55,7 @@ class ReviewPage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
               child: ListItemsBuilder<Question>(
+                scrollable: false,
                 snapshot: null,
                 itemsList: model.consult.questions
                     .where((question) => question.type != Q_TYPE.PHOTO)
@@ -61,7 +76,9 @@ class ReviewPage extends StatelessWidget {
                       alignment: FractionalOffset.bottomCenter,
                       child: ReusableRaisedButton(
                         title: 'Previous',
-                        onPressed: !model.submitted ? () => model.previousPage() : null,
+                        onPressed: !model.submitted
+                            ? () => model.previousPage()
+                            : null,
                       ),
                     ),
                   ),
@@ -73,9 +90,9 @@ class ReviewPage extends StatelessWidget {
                     child: Align(
                       alignment: FractionalOffset.bottomCenter,
                       child: ReusableRaisedButton(
-                        title: 'Complete Consult',
+                        title: completeBtnText,
                         onPressed: !model.submitted
-                            ? () => completeConsultBtnPressed(context, model)
+                            ? () => completeBtnPressed(context, model)
                             : null,
                       ),
                     ),
