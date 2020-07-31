@@ -17,9 +17,10 @@ class CustomFlatButton extends FlatButton {
             child: Row(
               children: <Widget>[
                 if (leadingIcon != null) Icon(leadingIcon),
-                SizedBox(
-                  width: 30,
-                ),
+                if (leadingIcon != null)
+                  SizedBox(
+                    width: 30,
+                  ),
                 Text(
                   text,
                   style: TextStyle(

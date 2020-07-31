@@ -1,5 +1,6 @@
 import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/screens/Consults/ProviderVisits/provider_visits.dart';
+import 'package:Medicall/screens/Consults/previous_visits.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
@@ -98,23 +99,41 @@ class DrawerMenu extends StatelessWidget {
                               Navigator.of(context).pushNamed('/symptoms',
                                   arguments: {'user': medicallUser});
                             }),
-                    ListTile(
-                        contentPadding: listContentPadding,
-                        title: Container(
-                          margin: EdgeInsets.only(left: 20),
-                          child: Text(
-                            'My Visits',
-                            style: Theme.of(context).textTheme.headline6,
-                          ),
-                        ),
-                        leading: Icon(
-                          Icons.recent_actors,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                        onTap: () {
-                          Navigator.of(context).pop();
-                          ProviderVisits.show(context: context);
-                        }),
+                    medicallUser.type == USER_TYPE.PROVIDER
+                        ? ListTile(
+                            contentPadding: listContentPadding,
+                            title: Container(
+                              margin: EdgeInsets.only(left: 20),
+                              child: Text(
+                                'My Visits',
+                                style: Theme.of(context).textTheme.headline6,
+                              ),
+                            ),
+                            leading: Icon(
+                              Icons.recent_actors,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                            onTap: () {
+                              Navigator.of(context).pop();
+                              ProviderVisits.show(context: context);
+                            })
+                        : ListTile(
+                            contentPadding: listContentPadding,
+                            title: Container(
+                              margin: EdgeInsets.only(left: 20),
+                              child: Text(
+                                'Previous Visits',
+                                style: Theme.of(context).textTheme.headline6,
+                              ),
+                            ),
+                            leading: Icon(
+                              Icons.recent_actors,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                            onTap: () {
+                              Navigator.of(context).pop();
+                              PreviousVisits.show(context: context);
+                            }),
                     ListTile(
                         contentPadding: listContentPadding,
                         title: Container(

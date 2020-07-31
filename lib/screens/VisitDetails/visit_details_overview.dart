@@ -1,20 +1,22 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
+import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/ConsultReview/review_visit_information.dart';
 import 'package:flutter/material.dart';
 
 class VisitDetailsOverview extends StatelessWidget {
-  final String consultId;
+  final Consult consult;
 
-  const VisitDetailsOverview({@required this.consultId});
+  const VisitDetailsOverview({@required this.consult});
 
   static Future<void> show({
     BuildContext context,
-    String consultId,
+    Consult consult,
   }) async {
     await Navigator.of(context).pushNamed(
       Routes.visitDetailsOverview,
       arguments: {
-        'consultId': consultId,
+        'consult': consult,
       },
     );
   }
@@ -23,11 +25,22 @@ class VisitDetailsOverview extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
-          type: AppBarType.Back, title: "Visit Overview"),
+        type: AppBarType.Back,
+        title: "Visit Overview",
+        context: context,
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            _buildCardButton("Review Information", Icons.assignment, () => {}),
+            _buildCardButton(
+                "Review Information",
+                Icons.assignment,
+                () => {
+                      ReviewVisitInformation.show(
+                        context: context,
+                        consult: consult,
+                      )
+                    }),
             _buildCardButton("Prescriptions", Icons.local_pharmacy, () => {}),
             _buildCardButton("Doctor Note", Icons.note, () => {}),
             _buildCardButton("Educational Content", Icons.smartphone, () => {}),

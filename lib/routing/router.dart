@@ -205,10 +205,10 @@ class Router {
           fullscreenDialog: true,
         );
       case Routes.visitDetailsOverview:
-        final Map<String, String> mapArgs = args;
-        final String consultId = mapArgs['consultId'];
+        final Map<String, dynamic> mapArgs = args;
+        final Consult consult = mapArgs['consult'];
         return MaterialPageRoute<dynamic>(
-          builder: (context) => VisitDetailsOverview(consultId: consultId),
+          builder: (context) => VisitDetailsOverview(consult: consult),
           settings: settings,
           fullscreenDialog: true,
         );

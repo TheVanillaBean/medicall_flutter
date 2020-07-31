@@ -61,6 +61,7 @@ class ReviewVisitInformation extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: ListItemsBuilder<Question>(
+                    scrollable: false,
                     snapshot: null,
                     itemsList: snapshot.data != null
                         ? snapshot.data.screeningQuestions
@@ -88,7 +89,8 @@ class ReviewVisitInformation extends StatelessWidget {
                       consult: consult,
                     )
                   },
-                )
+                ),
+                SizedBox(height: 8),
               ],
             ),
           );

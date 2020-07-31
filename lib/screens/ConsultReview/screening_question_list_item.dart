@@ -14,7 +14,16 @@ class ScreeningQuestionListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       title: Text(question.question),
-      subtitle: Text(question.answer.answer.first),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          for (String answer in question.answer.answer)
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(answer),
+            ),
+        ],
+      ),
       onTap: onTap,
     );
   }
