@@ -6,9 +6,10 @@ setStatusBarColor() {
       SystemUiOverlayStyle(statusBarColor: Colors.white));
 }
 
-final primaryColor = Color(0xff5388b3);
+final primaryColor = Color(0xff6E0063);
 
 final ThemeData myTheme = ThemeData(
+  fontFamily: 'Inter',
   primarySwatch: Colors.blue,
   primaryColor: Colors.white,
   primaryColorBrightness: Brightness.dark,
@@ -34,6 +35,7 @@ final ThemeData myTheme = ThemeData(
             fontWeight: FontWeight.w400,
             fontStyle: FontStyle.normal,
           ),
+          subtitle1: TextStyle(color: primaryColor, fontSize: 12),
           headline1: TextStyle(color: primaryColor),
           headline2: TextStyle(color: primaryColor),
           headline3: TextStyle(color: primaryColor),
@@ -140,14 +142,14 @@ final ThemeData myTheme = ThemeData(
     ),
     headline5: TextStyle(
       color: Color(0xdd000000),
-      fontSize: null,
+      fontSize: 18,
       fontWeight: FontWeight.w400,
       fontStyle: FontStyle.normal,
     ),
     headline6: TextStyle(
       color: primaryColor,
       fontSize: 16,
-      letterSpacing: 1.25,
+      letterSpacing: 1.15,
       fontWeight: FontWeight.w500,
       fontStyle: FontStyle.normal,
     ),

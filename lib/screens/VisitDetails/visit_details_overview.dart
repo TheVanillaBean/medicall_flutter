@@ -1,7 +1,11 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/models/consult_model.dart';
+import 'package:Medicall/presentation/medicall_icons_icons.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:intl/intl.dart';
 import 'package:Medicall/screens/ConsultReview/review_visit_information.dart';
+import 'package:Medicall/screens/VisitDetails/visit_doc_note.dart';
+import 'package:Medicall/screens/VisitDetails/visit_education.dart';
 import 'package:flutter/material.dart';
 
 class VisitDetailsOverview extends StatelessWidget {
@@ -26,8 +30,24 @@ class VisitDetailsOverview extends StatelessWidget {
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
         type: AppBarType.Back,
-        title: "Visit Overview",
-        context: context,
+        title: consult.symptom + ' visit',
+        subtitle: 'with ' +
+            consult.providerUser.titles +
+            ' ' +
+            consult.providerUser.fullName +
+            ' on ' +
+            DateFormat('MM-dd-yyyy').format(consult.date).toString(),
+        theme: Theme.of(context),
+        actions: [
+          IconButton(
+              icon: Icon(
+                Icons.home,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              onPressed: () {
+                Navigator.of(context).pushNamed('/dashboard');
+              })
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -42,8 +62,24 @@ class VisitDetailsOverview extends StatelessWidget {
                       )
                     }),
             _buildCardButton("Prescriptions", Icons.local_pharmacy, () => {}),
-            _buildCardButton("Doctor Note", Icons.note, () => {}),
-            _buildCardButton("Educational Content", Icons.smartphone, () => {}),
+            _buildCardButton(
+                "Doctor Note",
+                MedicallIcons.clipboard_1,
+                () => {
+                      VisitDocNote.show(
+                        context: context,
+                        consult: consult,
+                      )
+                    }),
+            _buildCardButton(
+                "Education",
+                Icons.school,
+                () => {
+                      VisitEducation.show(
+                        context: context,
+                        consult: consult,
+                      )
+                    }),
             _buildCardButton("Message Doctor", Icons.message, () => {}),
           ],
         ),
@@ -61,18 +97,17 @@ class VisitDetailsOverview extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         clipBehavior: Clip.antiAlias,
         child: ListTile(
-          contentPadding: EdgeInsets.fromLTRB(20, 5, 20, 5),
+          contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
           dense: true,
           leading: Icon(
             icon,
-            size: 40,
+            size: 25,
             color: Colors.grey,
           ),
           title: Text(title),
           trailing: Icon(
             Icons.chevron_right,
             color: Colors.grey,
-            size: 15.0,
           ),
           onTap: onTap,
         ),

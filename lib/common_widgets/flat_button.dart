@@ -8,15 +8,21 @@ class CustomFlatButton extends FlatButton {
     IconData trailingIcon,
     Color color,
     Color textColor,
+    EdgeInsets padding,
     double fontSize = 18,
     VoidCallback onPressed,
   })  : assert(text != null),
         super(
           child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 16),
+            padding:
+                padding != null ? padding : EdgeInsets.symmetric(vertical: 16),
             child: Row(
               children: <Widget>[
-                if (leadingIcon != null) Icon(leadingIcon),
+                if (leadingIcon != null)
+                  Icon(
+                    leadingIcon,
+                    color: textColor,
+                  ),
                 if (leadingIcon != null)
                   SizedBox(
                     width: 30,
@@ -32,7 +38,7 @@ class CustomFlatButton extends FlatButton {
                   Expanded(
                     child: Align(
                       alignment: Alignment.bottomRight,
-                      child: Icon(trailingIcon),
+                      child: Icon(trailingIcon, color: textColor,),
                     ),
                   ),
               ],

@@ -1,4 +1,4 @@
-import 'package:Medicall/common_widgets/reusable_raised_button.dart';
+import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/screening_questions_model.dart';
 import 'package:Medicall/routing/router.dart';
@@ -85,28 +85,17 @@ class _QuestionsScreenState extends State<QuestionsScreen>
         Provider.of<FirestoreDatabase>(context, listen: false);
     model.setQuestionnaireStatusListener(this);
     return Scaffold(
-      appBar: AppBar(
-        title: AnimatedProgressbar(),
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: Icon(Icons.arrow_back),
-            );
-          },
-        ),
-        actions: <Widget>[
-          IconButton(
-              icon: Icon(Icons.home),
-              onPressed: () {
-                PatientDashboardScreen.show(
-                  context: context,
-                  pushReplaceNamed: true,
-                );
-              })
-        ],
+      appBar: CustomAppBar.getAppBar(
+        type: AppBarType.Back,
+        theme: Theme.of(context),
+        leading: IconButton(
+            icon: Icon(Icons.close),
+            onPressed: () {
+              PatientDashboardScreen.show(
+                context: context,
+                pushReplaceNamed: true,
+              );
+            }),
       ),
       body: FutureBuilder<List<ScreeningQuestions>>(
           future: model.displayMedHistory
@@ -143,6 +132,7 @@ class QuestionsPageView extends StatelessWidget {
       properties: [QuestionVMProperties.questionPageView],
     ).value;
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Expanded(
           flex: 8,
@@ -177,7 +167,7 @@ class QuestionsPageView extends StatelessWidget {
         if (!model.submitted &&
             model.pageIndex != model.consult.questions.length)
           Expanded(
-            flex: 2,
+            flex: 1,
             child: NavigationButtons(),
           ),
       ],
@@ -205,24 +195,24 @@ class NavigationButtons extends StatelessWidget {
             flex: 1,
             child: Align(
               alignment: FractionalOffset.bottomCenter,
-              child: ReusableRaisedButton(
-                title: 'Previous',
-                onPressed:
-                    model.canAccessPrevious ? () => model.previousPage() : null,
-              ),
+              child: IconButton(
+                  icon: Icon(Icons.arrow_back_ios),
+                  onPressed:
+                      model.canAccessNext ? () => model.previousPage() : null),
             ),
           ),
-          SizedBox(
-            width: 8,
-          ),
+          Expanded(
+              flex: 5,
+              child: Align(
+                  alignment: Alignment.center, child: AnimatedProgressbar())),
           Expanded(
             flex: 1,
             child: Align(
               alignment: FractionalOffset.bottomCenter,
-              child: ReusableRaisedButton(
-                title: 'Next',
-                onPressed: model.canAccessNext ? () => model.nextPage() : null,
-              ),
+              child: IconButton(
+                  icon: Icon(Icons.arrow_forward_ios),
+                  onPressed:
+                      model.canAccessNext ? () => model.nextPage() : null),
             ),
           ),
         ],

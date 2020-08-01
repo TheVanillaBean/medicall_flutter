@@ -35,29 +35,20 @@ class SymptomDetailScreen extends StatelessWidget {
     } catch (e) {}
 
     return Scaffold(
-      appBar: AppBar(
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: Icon(Icons.arrow_back),
-            );
-          },
-        ),
-        centerTitle: true,
-        title: Text(
-          StringUtils.capitalize(symptom.name) + ' visit',
-        ),
-        actions: <Widget>[
-          IconButton(
-              icon: Icon(Icons.home),
-              onPressed: () {
-                Navigator.of(context).pushNamed('/dashboard');
-              })
-        ],
-      ),
+      appBar: CustomAppBar.getAppBar(
+          type: AppBarType.Back,
+          title: StringUtils.capitalize(symptom.name) + ' visit',
+          theme: Theme.of(context),
+          actions: [
+            IconButton(
+                icon: Icon(
+                  Icons.home,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                onPressed: () {
+                  Navigator.of(context).pushNamed('/dashboard');
+                })
+          ]),
       body: Container(
         padding: EdgeInsets.fromLTRB(40, 40, 40, 40),
         color: Colors.white,
@@ -91,12 +82,7 @@ class SymptomDetailScreen extends StatelessWidget {
       Container(
         child: Text(
           symptom.description,
-          style: TextStyle(
-            height: 1.6,
-            fontSize: 14,
-            letterSpacing: 0.6,
-            wordSpacing: 1,
-          ),
+          style: Theme.of(context).textTheme.bodyText1,
         ),
       ),
       _buildMedicationsDialog(context),
@@ -152,7 +138,7 @@ class SymptomDetailScreen extends StatelessWidget {
       child: Align(
         alignment: Alignment.centerLeft,
         child: Container(
-          width: 120,
+          width: 130,
           decoration: BoxDecoration(
             border: Border(
               bottom: BorderSide(

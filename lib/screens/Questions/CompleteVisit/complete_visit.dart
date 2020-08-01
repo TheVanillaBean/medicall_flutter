@@ -33,7 +33,7 @@ class CompleteVisit extends StatelessWidget {
       appBar: CustomAppBar.getAppBar(
         type: AppBarType.Back,
         title: "Complete Visit",
-        context: context,
+        theme: Theme.of(context),
       ),
       body: SingleChildScrollView(
         child: Padding(

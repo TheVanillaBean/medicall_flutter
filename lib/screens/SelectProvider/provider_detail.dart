@@ -50,29 +50,20 @@ class ProviderDetailScreen extends StatelessWidget {
 
     ScreenUtil.init(context);
     return Scaffold(
-      appBar: AppBar(
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: Icon(Icons.arrow_back),
-            );
-          },
-        ),
-        centerTitle: true,
-        title: Text(
-          provider.fullName + ' ' + provider.titles,
-        ),
-        actions: <Widget>[
-          IconButton(
-              icon: Icon(Icons.home),
-              onPressed: () {
-                Navigator.of(context).pushNamed('/dashboard');
-              })
-        ],
-      ),
+      appBar: CustomAppBar.getAppBar(
+          type: AppBarType.Back,
+          title: provider.titles + ' ' + provider.fullName,
+          theme: Theme.of(context),
+          actions: [
+            IconButton(
+                icon: Icon(
+                  Icons.home,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                onPressed: () {
+                  Navigator.of(context).pushNamed('/dashboard');
+                })
+          ]),
       body: SingleChildScrollView(
         child: Container(
           height: ScreenUtil.screenHeightDp - (ScreenUtil.statusBarHeight + 50),

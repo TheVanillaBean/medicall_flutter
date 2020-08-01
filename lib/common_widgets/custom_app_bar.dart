@@ -3,33 +3,59 @@ import 'package:flutter/material.dart';
 enum AppBarType { Back, Close }
 
 class CustomAppBar {
-  static getAppBar({
-    AppBarType type,
-    String title,
-    BuildContext context,
-    Function onPressed,
-  }) {
+  static getAppBar(
+      {AppBarType type,
+      String title,
+      String subtitle,
+      Widget leading,
+      List<Widget> actions,
+      ThemeData theme,
+      Function onPressed,
+      Widget progress}) {
     if (type == AppBarType.Back) {
       return AppBar(
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              icon: Icon(
-                Icons.arrow_back,
-                color: Theme.of(context).appBarTheme.iconTheme.color,
+        leading: leading != null
+            ? leading
+            : Builder(
+                builder: (BuildContext context) {
+                  return IconButton(
+                    icon: Icon(
+                      Icons.arrow_back,
+                      color: theme.appBarTheme.iconTheme.color,
+                    ),
+                    onPressed: onPressed != null
+                        ? onPressed
+                        : () {
+                            Navigator.pop(context);
+                          },
+                  );
+                },
               ),
-              onPressed: onPressed != null
-                  ? onPressed
-                  : () {
-                      Navigator.pop(context);
-                    },
-            );
-          },
-        ),
+        actions: actions,
         centerTitle: true,
-        title: Text(
-          title,
-          style: Theme.of(context).appBarTheme.textTheme.headline6,
+        title: Column(
+          children: <Widget>[
+            subtitle != null
+                ? Column(
+                    children: <Widget>[
+                      Text(
+                        title,
+                        style: theme.appBarTheme.textTheme.headline6,
+                      ),
+                      Text(
+                        subtitle,
+                        textAlign: TextAlign.center,
+                        style: theme.appBarTheme.textTheme.subtitle1,
+                      )
+                    ],
+                  )
+                : progress != null && title == null
+                    ? progress
+                    : Text(
+                        title != null ? title : "",
+                        style: theme.appBarTheme.textTheme.headline6,
+                      )
+          ],
         ),
       );
     } else {
@@ -39,7 +65,7 @@ class CustomAppBar {
             return IconButton(
               icon: Icon(
                 Icons.close,
-                color: Theme.of(context).appBarTheme.iconTheme.color,
+                color: theme.appBarTheme.iconTheme.color,
               ),
               onPressed: onPressed != null
                   ? onPressed
@@ -52,7 +78,7 @@ class CustomAppBar {
         centerTitle: true,
         title: Text(
           title,
-          style: Theme.of(context).appBarTheme.textTheme.headline6,
+          style: theme.appBarTheme.textTheme.headline6,
         ),
       );
     }

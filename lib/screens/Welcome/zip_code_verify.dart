@@ -67,7 +67,7 @@ class _ZipCodeVerifyScreenState extends State<ZipCodeVerifyScreen> {
       appBar: CustomAppBar.getAppBar(
         type: AppBarType.Back,
         title: "Please enter your zipcode",
-        context: context,
+        theme: Theme.of(context),
       ),
       body: Container(
         color: Colors.white,

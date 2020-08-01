@@ -8,6 +8,7 @@ import 'package:Medicall/models/screening_questions_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/ConsultReview/consult_photos.dart';
 import 'package:Medicall/screens/ConsultReview/screening_question_list_item.dart';
+import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -35,10 +36,19 @@ class ReviewVisitInformation extends StatelessWidget {
     final db = Provider.of<FirestoreDatabase>(context);
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
-        type: AppBarType.Back,
-        title: "Visit Information",
-        context: context,
-      ),
+          type: AppBarType.Back,
+          title: "Visit Information",
+          theme: Theme.of(context),
+          actions: [
+            IconButton(
+                icon: Icon(
+                  Icons.home,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                onPressed: () {
+                  PatientDashboardScreen.show(context: context, pushReplaceNamed: true,);
+                })
+          ]),
       body: FutureBuilder<ScreeningQuestions>(
         future: db.consultQuestionnaire(consultId: consult.uid),
         builder:
