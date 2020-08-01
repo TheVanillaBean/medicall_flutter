@@ -35,7 +35,7 @@ class SelectProviderScreen extends StatelessWidget {
       appBar: CustomAppBar.getAppBar(
         type: AppBarType.Back,
         title: "Doctors in your area",
-        context: context,
+        theme: Theme.of(context),
       ),
       body: StreamBuilder(
         stream: db.getAllProviders(),

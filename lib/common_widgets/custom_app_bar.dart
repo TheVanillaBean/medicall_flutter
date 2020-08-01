@@ -6,30 +6,54 @@ class CustomAppBar {
   static getAppBar({
     AppBarType type,
     String title,
-    BuildContext context,
+    String subtitle,
+    Widget leading,
+    List<Widget> actions,
+    ThemeData theme,
     Function onPressed,
   }) {
     if (type == AppBarType.Back) {
       return AppBar(
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              icon: Icon(
-                Icons.arrow_back,
-                color: Theme.of(context).appBarTheme.iconTheme.color,
+        leading: leading != null
+            ? leading
+            : Builder(
+                builder: (BuildContext context) {
+                  return IconButton(
+                    icon: Icon(
+                      Icons.arrow_back,
+                      color: theme.appBarTheme.iconTheme.color,
+                    ),
+                    onPressed: onPressed != null
+                        ? onPressed
+                        : () {
+                            Navigator.pop(context);
+                          },
+                  );
+                },
               ),
-              onPressed: onPressed != null
-                  ? onPressed
-                  : () {
-                      Navigator.pop(context);
-                    },
-            );
-          },
-        ),
+        actions: actions,
         centerTitle: true,
-        title: Text(
-          title,
-          style: Theme.of(context).appBarTheme.textTheme.headline6,
+        title: Column(
+          children: <Widget>[
+            subtitle != null
+                ? Column(
+                    children: <Widget>[
+                      Text(
+                        title,
+                        style: theme.appBarTheme.textTheme.headline6,
+                      ),
+                      Text(
+                        subtitle,
+                        textAlign: TextAlign.center,
+                        style: theme.appBarTheme.textTheme.subtitle1,
+                      )
+                    ],
+                  )
+                : Text(
+                    title,
+                    style: theme.appBarTheme.textTheme.headline6,
+                  )
+          ],
         ),
       );
     } else {
@@ -39,7 +63,7 @@ class CustomAppBar {
             return IconButton(
               icon: Icon(
                 Icons.close,
-                color: Theme.of(context).appBarTheme.iconTheme.color,
+                color: theme.appBarTheme.iconTheme.color,
               ),
               onPressed: onPressed != null
                   ? onPressed
@@ -52,7 +76,7 @@ class CustomAppBar {
         centerTitle: true,
         title: Text(
           title,
-          style: Theme.of(context).appBarTheme.textTheme.headline6,
+          style: theme.appBarTheme.textTheme.headline6,
         ),
       );
     }

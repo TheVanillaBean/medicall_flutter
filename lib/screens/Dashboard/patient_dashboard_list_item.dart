@@ -1,3 +1,4 @@
+import 'package:Medicall/common_widgets/reusable_card.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:enum_to_string/enum_to_string.dart';
@@ -16,31 +17,22 @@ class PatientDashboardListItem extends StatelessWidget {
     final ExtImageProvider extImageProvider =
         Provider.of<ExtImageProvider>(context);
     if (consult.providerUser != null) {
-      return Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16.0),
-          border: Border.all(color: Colors.grey, width: 0.5),
+      return ReusableCard(
+        leading: consult.providerUser.profilePic.length > 0
+            ? displayProfilePicture(
+                extImageProvider, consult.providerUser.profilePic)
+            : Icon(
+                Icons.account_circle,
+                size: 40,
+                color: Colors.grey,
+              ),
+        title: 'Dr. ${consult.providerUser.fullName}',
+        subtitle: "${consult.symptom}",
+        trailing: Text(
+          EnumToString.parseCamelCase(consult.state) ?? "",
+          style: Theme.of(context).textTheme.caption,
         ),
-        child: ListTile(
-          contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-          leading: consult.providerUser.profilePic.length > 0
-              ? displayProfilePicture(
-                  extImageProvider, consult.providerUser.profilePic)
-              : Icon(
-                  Icons.account_circle,
-                  size: 40,
-                  color: Colors.grey,
-                ),
-          title: Text(
-            'Dr. ${consult.providerUser.fullName}',
-          ),
-          subtitle: Text("${consult.symptom} visit"),
-          trailing: Text(
-            EnumToString.parseCamelCase(consult.state) ?? "",
-            style: TextStyle(color: Colors.blue),
-          ),
-          onTap: onTap,
-        ),
+        onTap: onTap,
       );
     }
     return Center(

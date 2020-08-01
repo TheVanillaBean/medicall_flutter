@@ -7,10 +7,12 @@ import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Dashboard/patient_dashboard_list_item.dart';
 import 'package:Medicall/screens/Dashboard/patient_dashboard_view_model.dart';
 import 'package:Medicall/screens/Symptoms/symptoms.dart';
+import 'package:Medicall/screens/VisitDetails/visit_details_overview.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 class PatientDashboardScreen extends StatelessWidget {
@@ -63,8 +65,7 @@ class PatientDashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
+    ScreenUtil.init(context);
     return Scaffold(
       appBar: AppBar(
         leading: Builder(
@@ -85,75 +86,84 @@ class PatientDashboardScreen extends StatelessWidget {
         ),
       ),
       drawer: DrawerMenu(),
-      body: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.dark,
-        sized: false,
-        child: Container(
-          child: SafeArea(
-            child: Padding(
-              padding: EdgeInsets.all(width * .1),
-              child: Column(
-                children: _buildChildren(context: context, height: height),
-              ),
-            ),
+      body: Container(
+        child: SafeArea(
+          child: Column(
+            children: _buildChildren(context: context),
           ),
         ),
       ),
     );
   }
 
-  List<Widget> _buildChildren({BuildContext context, double height}) {
+  List<Widget> _buildChildren({BuildContext context}) {
     return [
       _buildHeader(),
-      SizedBox(
-        height: height * 0.1,
+      Divider(
+        thickness: 2,
+        height: 2,
       ),
       CustomFlatButton(
         text: "Start a Visit",
+        padding: EdgeInsets.fromLTRB(35, 20, 35, 20),
+        textColor: Theme.of(context).colorScheme.primary,
         leadingIcon: Icons.assignment_ind,
         onPressed: () => _navigateToVisitScreen(context),
       ),
-      Divider(height: 1),
+      Divider(
+        thickness: 1,
+        height: 1,
+      ),
       CustomFlatButton(
         text: "Prescriptions",
+        padding: EdgeInsets.fromLTRB(35, 20, 35, 20),
+        textColor: Theme.of(context).colorScheme.primary,
         leadingIcon: Icons.local_pharmacy,
         onPressed: () => _navigateToPrescriptionDetails(context),
       ),
-      Divider(height: 1),
+      Divider(
+        thickness: 1,
+        height: 1,
+      ),
       CustomFlatButton(
         text: "Previous Visits",
+        padding: EdgeInsets.fromLTRB(35, 20, 35, 20),
+        textColor: Theme.of(context).colorScheme.primary,
         leadingIcon: Icons.view_list,
         onPressed: () => _navigateToPreviousConsults(context),
       ),
-      Divider(height: 1),
     ];
   }
 
-  Widget _buildHeader({BuildContext context, double height}) {
+  Widget _buildHeader({BuildContext context}) {
     return StreamBuilder<List<Consult>>(
       stream: model.consultStream.stream,
       builder:
           (BuildContext context, AsyncSnapshot<List<Consult>> consultSnapshot) {
         return Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text("Status of active visits:"),
-              SizedBox(height: 12),
-              Expanded(
-                child: ListItemsBuilder<Consult>(
-                  snapshot: consultSnapshot,
-                  emptyContentWidget: EmptyContent(
-                    title: "",
-                    message: "You do not have any active visits",
-                  ),
-                  itemBuilder: (context, consult) => PatientDashboardListItem(
-                    consult: consult,
-                    onTap: null,
+          child: Container(
+            padding: EdgeInsets.fromLTRB(35, 5, 35, 5),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text("Status of active visits:"),
+                SizedBox(height: 12),
+                Expanded(
+                  child: ListItemsBuilder<Consult>(
+                    snapshot: consultSnapshot,
+                    emptyContentWidget: EmptyContent(
+                      title: "",
+                      message: "You do not have any active visits",
+                    ),
+                    itemBuilder: (context, consult) => PatientDashboardListItem(
+                      consult: consult,
+                      onTap: () => VisitDetailsOverview.show(
+                          context: context, consult: consult),
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },

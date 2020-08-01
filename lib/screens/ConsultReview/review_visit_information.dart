@@ -37,7 +37,7 @@ class ReviewVisitInformation extends StatelessWidget {
       appBar: CustomAppBar.getAppBar(
         type: AppBarType.Back,
         title: "Visit Information",
-        context: context,
+        theme: Theme.of(context),
       ),
       body: FutureBuilder<ScreeningQuestions>(
         future: db.consultQuestionnaire(consultId: consult.uid),

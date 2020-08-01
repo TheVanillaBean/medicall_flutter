@@ -43,7 +43,7 @@ class ProviderRegistrationScreen extends StatelessWidget {
       appBar: CustomAppBar.getAppBar(
         type: AppBarType.Back,
         title: "Provider Registration",
-        context: context,
+        theme: Theme.of(context),
       ),
       //Content of tabs
       body: GestureDetector(

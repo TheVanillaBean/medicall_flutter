@@ -35,29 +35,16 @@ class SymptomDetailScreen extends StatelessWidget {
     } catch (e) {}
 
     return Scaffold(
-      appBar: AppBar(
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: Icon(Icons.arrow_back),
-            );
-          },
-        ),
-        centerTitle: true,
-        title: Text(
-          StringUtils.capitalize(symptom.name) + ' visit',
-        ),
-        actions: <Widget>[
-          IconButton(
-              icon: Icon(Icons.home),
-              onPressed: () {
-                Navigator.of(context).pushNamed('/dashboard');
-              })
-        ],
-      ),
+      appBar: CustomAppBar.getAppBar(
+          title: StringUtils.capitalize(symptom.name) + ' visit',
+          theme: Theme.of(context),
+          actions: [
+            IconButton(
+                icon: Icon(Icons.home),
+                onPressed: () {
+                  Navigator.of(context).pushNamed('/dashboard');
+                })
+          ]),
       body: Container(
         padding: EdgeInsets.fromLTRB(40, 40, 40, 40),
         color: Colors.white,

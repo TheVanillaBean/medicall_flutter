@@ -20,7 +20,7 @@ class ProviderVisits extends StatelessWidget {
       appBar: CustomAppBar.getAppBar(
         type: AppBarType.Back,
         title: 'Provider Visits',
-        context: context,
+        theme: Theme.of(context),
       ),
       body: StreamBuilder(
           stream: model.consultStream.stream,

@@ -34,6 +34,7 @@ final ThemeData myTheme = ThemeData(
             fontWeight: FontWeight.w400,
             fontStyle: FontStyle.normal,
           ),
+          subtitle1: TextStyle(color: primaryColor, fontSize: 12),
           headline1: TextStyle(color: primaryColor),
           headline2: TextStyle(color: primaryColor),
           headline3: TextStyle(color: primaryColor),
