@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 enum AppBarType { Back, Close }
 
 class CustomAppBar {
-  static getAppBar({
-    AppBarType type,
-    String title,
-    String subtitle,
-    Widget leading,
-    List<Widget> actions,
-    ThemeData theme,
-    Function onPressed,
-  }) {
+  static getAppBar(
+      {AppBarType type,
+      String title,
+      String subtitle,
+      Widget leading,
+      List<Widget> actions,
+      ThemeData theme,
+      Function onPressed,
+      Widget progress}) {
     if (type == AppBarType.Back) {
       return AppBar(
         leading: leading != null
@@ -49,10 +49,12 @@ class CustomAppBar {
                       )
                     ],
                   )
-                : Text(
-                    title,
-                    style: theme.appBarTheme.textTheme.headline6,
-                  )
+                : progress != null && title == null
+                    ? progress
+                    : Text(
+                        title,
+                        style: theme.appBarTheme.textTheme.headline6,
+                      )
           ],
         ),
       );

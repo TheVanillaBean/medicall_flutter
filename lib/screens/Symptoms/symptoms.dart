@@ -20,10 +20,19 @@ class SymptomsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar.getAppBar(
-        type: AppBarType.Back,
-        title: "How can we help you today?",
-        theme: Theme.of(context),
-      ),
+          type: AppBarType.Back,
+          title: "How can we help you today?",
+          theme: Theme.of(context),
+          actions: [
+            IconButton(
+                icon: Icon(
+                  Icons.home,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                onPressed: () {
+                  Navigator.of(context).pushNamed('/dashboard');
+                })
+          ]),
       drawer: DrawerMenu(),
       body: StreamBuilder<List<Symptom>>(
         stream: db.symptomsStream(),

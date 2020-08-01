@@ -33,10 +33,19 @@ class SelectProviderScreen extends StatelessWidget {
     final NonAuthDatabase db = Provider.of<NonAuthDatabase>(context);
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
-        type: AppBarType.Back,
-        title: "Doctors in your area",
-        theme: Theme.of(context),
-      ),
+          type: AppBarType.Back,
+          title: "Doctors in your area",
+          theme: Theme.of(context),
+          actions: [
+            IconButton(
+                icon: Icon(
+                  Icons.home,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                onPressed: () {
+                  Navigator.of(context).pushNamed('/dashboard');
+                })
+          ]),
       body: StreamBuilder(
         stream: db.getAllProviders(),
         builder:

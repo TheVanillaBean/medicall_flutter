@@ -36,11 +36,15 @@ class SymptomDetailScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
+          type: AppBarType.Back,
           title: StringUtils.capitalize(symptom.name) + ' visit',
           theme: Theme.of(context),
           actions: [
             IconButton(
-                icon: Icon(Icons.home),
+                icon: Icon(
+                  Icons.home,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
                 onPressed: () {
                   Navigator.of(context).pushNamed('/dashboard');
                 })

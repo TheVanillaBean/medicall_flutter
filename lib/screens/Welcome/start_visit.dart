@@ -27,28 +27,20 @@ class StartVisitScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final GlobalKey<FormBuilderState> formKey = GlobalKey<FormBuilderState>();
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: Icon(Icons.arrow_back),
-            );
-          },
-        ),
-        title: Text("Get Ready"),
-        centerTitle: true,
-        actions: <Widget>[
-          IconButton(
-              icon: Icon(Icons.home),
-              onPressed: () {
-                Navigator.of(context).pushNamed('/dashboard');
-              })
-        ],
-      ),
+      appBar: CustomAppBar.getAppBar(
+          type: AppBarType.Back,
+          title: "Visit Questions",
+          theme: Theme.of(context),
+          actions: [
+            IconButton(
+                icon: Icon(
+                  Icons.home,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                onPressed: () {
+                  Navigator.of(context).pushNamed('/dashboard');
+                })
+          ]),
       body: Container(
         padding: EdgeInsets.fromLTRB(40, 40, 40, 35),
         child: Column(
@@ -59,13 +51,13 @@ class StartVisitScreen extends StatelessWidget {
               children: <Widget>[
                 SizedBox(height: 20),
                 Text(
-                  "We will ask a few questions about your health and then focus on the reason for your visit.",
-                  style: TextStyle(fontSize: 16),
+                  "We will ask a few questions, first about your medical history and after we will focus on visit questions.",
+                  style: Theme.of(context).textTheme.bodyText1,
                 ),
                 SizedBox(height: 20),
                 Text(
                   "It is important you answer the questions carefully and provide complete information.",
-                  style: TextStyle(fontSize: 16),
+                  style: Theme.of(context).textTheme.bodyText1,
                 ),
                 SizedBox(height: 80),
               ],
@@ -76,13 +68,8 @@ class StartVisitScreen extends StatelessWidget {
                   child: Column(
                     children: <Widget>[
                       FormBuilderCheckboxList(
-                          initialValue:
-                              "No recent changes in my medical history",
                           attribute: "medhistory",
                           options: [
-                            FormBuilderFieldOption(
-                                value:
-                                    'No recent changes in my medical history'),
                             FormBuilderFieldOption(
                                 value:
                                     'I\'ve had a recent change in my medical history')
