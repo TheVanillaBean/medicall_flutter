@@ -1,6 +1,8 @@
+import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/Questions/questions_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -37,7 +39,10 @@ class StartVisitScreen extends StatelessWidget {
                   color: Theme.of(context).colorScheme.primary,
                 ),
                 onPressed: () {
-                  Navigator.of(context).pushNamed('/dashboard');
+                  PatientDashboardScreen.show(
+                    context: context,
+                    pushReplaceNamed: true,
+                  );
                 })
           ]),
       body: Container(
