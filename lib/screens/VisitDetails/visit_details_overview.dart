@@ -38,6 +38,16 @@ class VisitDetailsOverview extends StatelessWidget {
             ' on ' +
             DateFormat('MM-dd-yyyy').format(consult.date).toString(),
         theme: Theme.of(context),
+        actions: [
+          IconButton(
+              icon: Icon(
+                Icons.home,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              onPressed: () {
+                Navigator.of(context).pushNamed('/dashboard');
+              })
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(

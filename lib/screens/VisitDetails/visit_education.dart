@@ -29,10 +29,19 @@ class VisitEducation extends StatelessWidget {
     final db = Provider.of<FirestoreDatabase>(context);
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
-        type: AppBarType.Back,
-        title: "Visit Education",
-        theme: Theme.of(context),
-      ),
+          type: AppBarType.Back,
+          title: "Visit Education",
+          theme: Theme.of(context),
+          actions: [
+            IconButton(
+                icon: Icon(
+                  Icons.home,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                onPressed: () {
+                  Navigator.of(context).pushNamed('/dashboard');
+                })
+          ]),
       body: FutureBuilder<ScreeningQuestions>(
         future: db.consultQuestionnaire(consultId: consult.uid),
         builder:
