@@ -3,19 +3,36 @@ import 'package:Medicall/models/patient_user_model.dart';
 import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/screens/Account/view_medical_history.dart';
 import 'package:Medicall/screens/Questions/tempLinksPage.dart';
+import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
+import 'package:Medicall/services/firebase_storage_service.dart';
 import 'package:Medicall/services/user_provider.dart';
+import 'package:Medicall/util/app_util.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:provider/provider.dart';
 
-class AccountScreen extends StatelessWidget {
+class AccountScreen extends StatefulWidget {
+  @override
+  _AccountScreenState createState() => _AccountScreenState();
+}
+
+class _AccountScreenState extends State<AccountScreen> {
+  String profileImageURL = "";
+  bool imageLoading = false;
+
   @override
   Widget build(BuildContext context) {
     UserProvider _userProvider = Provider.of<UserProvider>(context);
     ExtImageProvider _extImageProvider = Provider.of<ExtImageProvider>(context);
+    FirebaseStorageService _storageService =
+        Provider.of<FirebaseStorageService>(context);
 
     final PatientUser medicallUser = _userProvider.user;
+
+    this.profileImageURL = _userProvider.user.profilePic;
 
     return Scaffold(
       appBar: AppBar(
@@ -46,6 +63,7 @@ class AccountScreen extends StatelessWidget {
       body: SafeArea(
         child: _buildChildren(
           medicallUser: medicallUser,
+          storageService: _storageService,
           extImageProvider: _extImageProvider,
           userProvider: _userProvider,
           context: context,
@@ -54,56 +72,68 @@ class AccountScreen extends StatelessWidget {
     );
   }
 
-  Column _buildChildren({
+  Widget _buildChildren({
     User medicallUser,
+    FirebaseStorageService storageService,
     ExtImageProvider extImageProvider,
     UserProvider userProvider,
     BuildContext context,
   }) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: <Widget>[
-        SizedBox(height: 20),
-        _buildAvatarWidget(medicallUser, extImageProvider, userProvider),
-        SizedBox(height: 10),
-        Text(
-          medicallUser.fullName,
-          style: TextStyle(
-            fontFamily: 'SourceSansPro',
-            fontSize: 30.0,
-            color: Colors.grey,
-            fontWeight: FontWeight.bold,
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          SizedBox(height: 20),
+          this.imageLoading
+              ? Center(
+                  child: CircularProgressIndicator(),
+                )
+              : _buildAvatarWidget(
+                  medicallUser: medicallUser,
+                  storageService: storageService,
+                  extImageProvider: extImageProvider,
+                  userProvider: userProvider,
+                ),
+          SizedBox(height: 10),
+          Text(
+            medicallUser.fullName,
+            style: TextStyle(
+              fontFamily: 'SourceSansPro',
+              fontSize: 30.0,
+              color: Colors.grey,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        ),
-        SizedBox(height: 10),
-        Text(
-          EnumToString.parse(userProvider.user.type).toUpperCase(),
-          style: TextStyle(
-            fontFamily: 'SourceSansPro',
-            fontSize: 16.0,
-            letterSpacing: 2.5,
-            color: Colors.grey,
-            fontWeight: FontWeight.bold,
+          SizedBox(height: 10),
+          Text(
+            EnumToString.parse(userProvider.user.type).toUpperCase(),
+            style: TextStyle(
+              fontFamily: 'SourceSansPro',
+              fontSize: 16.0,
+              letterSpacing: 2.5,
+              color: Colors.grey,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        ),
-        SizedBox(
-          height: 20,
-          width: 150,
-          child: Divider(
-            color: Colors.grey[300],
+          SizedBox(
+            height: 20,
+            width: 150,
+            child: Divider(
+              color: Colors.grey[300],
+            ),
           ),
-        ),
-        _buildEmailCard(medicallUser),
-        _buildPhoneCard(medicallUser),
-        _buildPaymentMethodsCard(context),
-        _buildMedicalHistoryCard(context),
-        FlatButton(
-            onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => TempLinksPage()));
-            },
-            child: Text('Links Page')),
-      ],
+          _buildEmailCard(medicallUser),
+          _buildPhoneCard(medicallUser),
+          _buildPaymentMethodsCard(context),
+          _buildMedicalHistoryCard(context),
+          FlatButton(
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => TempLinksPage()));
+              },
+              child: Text('Links Page')),
+        ],
+      ),
     );
   }
 
@@ -178,39 +208,101 @@ class AccountScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAvatarWidget(User medicallUser,
-      ExtImageProvider extImageProvider, UserProvider userProvider) {
-    return Flexible(
-      child: Container(
-        width: 200.0,
-        height: 200.0,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: Colors.black12,
-            width: 1.0,
+  Widget _buildAvatarWidget({
+    User medicallUser,
+    FirebaseStorageService storageService,
+    ExtImageProvider extImageProvider,
+    UserProvider userProvider,
+  }) {
+    double height = MediaQuery.of(context).size.height;
+    return GestureDetector(
+      onTap: () => _loadProfileImage(
+        storageService: storageService,
+        extImageProvider: extImageProvider,
+        userProvider: userProvider,
+      ),
+      child: Stack(
+        alignment: AlignmentDirectional.bottomStart,
+        overflow: Overflow.visible,
+        children: <Widget>[
+          ClipRRect(
+            borderRadius: BorderRadius.circular(300),
+            child: this.profileImageURL.length > 0
+                ? extImageProvider.returnNetworkImage(
+                    this.profileImageURL,
+                    height: (height * 0.2),
+                    width: (height * 0.2),
+                    fit: BoxFit.fill,
+                    cache: true,
+                  )
+                : Icon(
+                    Icons.account_circle,
+                    color: Colors.blue.withAlpha(140),
+                    size: height * 0.15,
+                  ),
           ),
-        ),
-        child: ClipOval(
-          child: _buildAvatar(
-            medicallUser,
-            extImageProvider,
-            userProvider,
+          Positioned(
+            bottom: -10,
+            child: CircleAvatar(
+              backgroundColor: Colors.red,
+              radius: 20.0,
+              child: new Icon(
+                Icons.camera_alt,
+                color: Colors.white,
+              ),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
 
-  Widget _buildAvatar(User medicallUser, ExtImageProvider _extImageProvider,
-      UserProvider _userProvider) {
-    return medicallUser != null && medicallUser.profilePic.length > 0
-        ? _extImageProvider.returnNetworkImage(_userProvider.user.profilePic,
-            fit: BoxFit.cover, cache: true)
-        : Icon(
-            Icons.account_circle,
-            color: Colors.grey[200],
-            size: 200,
-          );
+  Future<void> _loadProfileImage({
+    FirebaseStorageService storageService,
+    FirestoreDatabase firestoreDatabase,
+    ExtendedImageProvider extImageProvider,
+    UserProvider userProvider,
+  }) async {
+    List<Asset> resultList = List<Asset>();
+
+    try {
+      resultList = await extImageProvider.pickImages(
+        [],
+        1,
+        true,
+        extImageProvider.pickImagesCupertinoOptions(takePhotoIcon: 'camera'),
+        extImageProvider.pickImagesMaterialOptions(
+            useDetailsView: true,
+            actionBarColor:
+                '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
+            statusBarColor:
+                '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
+            lightStatusBar: false,
+            autoCloseOnSelectionLimit: true,
+            startInAllView: true,
+            actionBarTitle: 'Select Profile Picture',
+            allViewTitle: 'All Photos'),
+        context,
+      );
+    } on PlatformException catch (e) {
+      AppUtil().showFlushBar(e, context);
+    }
+
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    if (!mounted) return;
+    if (resultList.length > 0) {
+      this.setState(() {
+        this.imageLoading = true;
+      });
+      String url =
+          await storageService.uploadProfileImage(asset: resultList.first);
+      userProvider.user.profilePic = url;
+      this.setState(() {
+        this.imageLoading = false;
+        this.profileImageURL = url;
+      });
+      await firestoreDatabase.setUser(userProvider.user);
+    }
   }
 }

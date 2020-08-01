@@ -1,8 +1,9 @@
 import 'dart:io';
 import 'dart:typed_data';
+
 import 'package:Medicall/common_widgets/carousel/carousel_state.dart';
-import 'package:flutter/material.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:provider/provider.dart';
@@ -138,45 +139,34 @@ class ExtendedImageProvider implements ExtImageProvider {
       mode: mode,
       initGestureConfigHandler: initGestureConfigHandler,
       loadStateChanged: (ExtendedImageState state) {
-        switch (state.extendedImageLoadState) {
-          case LoadState.loading:
-            return CircularProgressIndicator();
-            break;
-
-          ///if you don't want override completed widget
-          ///please return null or state.completedWidget
-          //return null;
-          //return state.completedWidget;
-          case LoadState.completed:
-            return ExtendedRawImage(
-              image: state.extendedImageInfo?.image,
-            );
-            break;
-          case LoadState.failed:
-            return GestureDetector(
-              child: Container(
-                color: Colors.grey.withAlpha(50),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Icon(
-                      Icons.broken_image,
-                      color: Colors.black12,
-                      size: 40,
-                    ),
-                    Text(
-                      "load image failed, click to reload",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 10, color: Colors.black54),
-                    )
-                  ],
-                ),
+        if (state.extendedImageLoadState == LoadState.loading) {
+          return CircularProgressIndicator();
+        } else if (state.extendedImageLoadState == LoadState.completed) {
+          return state.completedWidget;
+        } else {
+          return GestureDetector(
+            child: Container(
+              color: Colors.grey.withAlpha(50),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Icon(
+                    Icons.broken_image,
+                    color: Colors.black12,
+                    size: 40,
+                  ),
+                  Text(
+                    "load image failed, click to reload",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 10, color: Colors.black54),
+                  )
+                ],
               ),
-              onTap: () {
-                state.reLoadImage();
-              },
-            );
-            break;
+            ),
+            onTap: () {
+              state.reLoadImage();
+            },
+          );
         }
       },
     );
