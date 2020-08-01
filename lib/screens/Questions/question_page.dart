@@ -36,7 +36,10 @@ class QuestionPage extends StatelessWidget {
                 alignment: Alignment.topCenter,
                 child: Column(
                   children: <Widget>[
-                    Text(question.question),
+                    Text(
+                      question.question,
+                      style: Theme.of(context).textTheme.headline5,
+                    ),
                     if (question.maxImages > 1)
                       Padding(
                         padding: const EdgeInsets.only(top: 8),

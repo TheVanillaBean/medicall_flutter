@@ -52,7 +52,7 @@ class CustomAppBar {
                 : progress != null && title == null
                     ? progress
                     : Text(
-                        title,
+                        title != null ? title : "",
                         style: theme.appBarTheme.textTheme.headline6,
                       )
           ],

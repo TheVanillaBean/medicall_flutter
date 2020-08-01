@@ -158,13 +158,7 @@ class _QuestionFormState extends State<QuestionForm> {
 
   Widget _buildFreeResponseOption(BuildContext context) {
     return SingleChildScrollView(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          _buildFRTextField(model),
-        ],
-      ),
+      child: _buildFRTextField(model),
     );
   }
 
@@ -195,7 +189,7 @@ class _QuestionFormState extends State<QuestionForm> {
       focusNode: model.inputFocusNode,
       autocorrect: false,
       keyboardType: TextInputType.multiline,
-      maxLines: 8,
+      maxLines: 20,
       onChanged: model.updateInput,
       style: TextStyle(color: Color.fromRGBO(80, 80, 80, 1)),
       decoration: InputDecoration(

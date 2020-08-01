@@ -82,16 +82,14 @@ class _QuestionsScreenState extends State<QuestionsScreen>
     model.setQuestionnaireStatusListener(this);
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
-          type: AppBarType.Back,
-          progress: AnimatedProgressbar(),
-          theme: Theme.of(context),
-          actions: [
-            IconButton(
-                icon: Icon(Icons.home),
-                onPressed: () {
-                  Navigator.of(context).pushNamed('/dashboard');
-                })
-          ]),
+        type: AppBarType.Back,
+        theme: Theme.of(context),
+        leading: IconButton(
+            icon: Icon(Icons.close),
+            onPressed: () {
+              Navigator.of(context).pushNamed('/dashboard');
+            }),
+      ),
       body: FutureBuilder<List<ScreeningQuestions>>(
           future:
               db.getScreeningQuestions(symptomName: this.model.consult.symptom),
@@ -125,6 +123,7 @@ class QuestionsPageView extends StatelessWidget {
       properties: [QuestionVMProperties.questionPageView],
     ).value;
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Expanded(
           flex: 8,
@@ -158,7 +157,7 @@ class QuestionsPageView extends StatelessWidget {
           ),
         if (!model.submitted)
           Expanded(
-            flex: 2,
+            flex: 1,
             child: NavigationButtons(),
           ),
       ],
@@ -186,24 +185,24 @@ class NavigationButtons extends StatelessWidget {
             flex: 1,
             child: Align(
               alignment: FractionalOffset.bottomCenter,
-              child: ReusableRaisedButton(
-                title: 'Previous',
-                onPressed:
-                    model.canAccessPrevious ? () => model.previousPage() : null,
-              ),
+              child: IconButton(
+                  icon: Icon(Icons.arrow_back_ios),
+                  onPressed:
+                      model.canAccessNext ? () => model.previousPage() : null),
             ),
           ),
-          SizedBox(
-            width: 8,
-          ),
+          Expanded(
+              flex: 5,
+              child: Align(
+                  alignment: Alignment.center, child: AnimatedProgressbar())),
           Expanded(
             flex: 1,
             child: Align(
               alignment: FractionalOffset.bottomCenter,
-              child: ReusableRaisedButton(
-                title: 'Next',
-                onPressed: model.canAccessNext ? () => model.nextPage() : null,
-              ),
+              child: IconButton(
+                  icon: Icon(Icons.arrow_forward_ios),
+                  onPressed:
+                      model.canAccessNext ? () => model.nextPage() : null),
             ),
           ),
         ],

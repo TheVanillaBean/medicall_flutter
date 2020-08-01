@@ -42,30 +42,31 @@ class StartVisitScreen extends StatelessWidget {
                 })
           ]),
       body: Container(
-        padding: EdgeInsets.fromLTRB(40, 40, 40, 35),
+        padding: EdgeInsets.fromLTRB(40, 0, 40, 15),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                SizedBox(height: 20),
-                Text(
-                  "We will ask a few questions, first about your medical history and after we will focus on visit questions.",
-                  style: Theme.of(context).textTheme.bodyText1,
-                ),
-                SizedBox(height: 20),
-                Text(
-                  "It is important you answer the questions carefully and provide complete information.",
-                  style: Theme.of(context).textTheme.bodyText1,
-                ),
-                SizedBox(height: 80),
-              ],
-            ),
-            Container(
+            Expanded(
+                flex: 1,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    Text(
+                      "We will ask a few questions, first about your medical history and after we will focus on visit questions.",
+                      style: Theme.of(context).textTheme.bodyText1,
+                    ),
+                    Text(
+                      "It is important you answer the questions carefully and provide complete information.",
+                      style: Theme.of(context).textTheme.bodyText1,
+                    ),
+                  ],
+                )),
+            Expanded(
+              flex: 2,
               child: FormBuilder(
                   key: formKey,
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       FormBuilderCheckboxList(
                           attribute: "medhistory",

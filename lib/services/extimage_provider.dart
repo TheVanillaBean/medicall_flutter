@@ -140,7 +140,10 @@ class ExtendedImageProvider implements ExtImageProvider {
       loadStateChanged: (ExtendedImageState state) {
         switch (state.extendedImageLoadState) {
           case LoadState.loading:
-            return CircularProgressIndicator();
+            return Center(
+              child: Container(
+                  height: 40, width: 40, child: CircularProgressIndicator()),
+            );
             break;
 
           ///if you don't want override completed widget

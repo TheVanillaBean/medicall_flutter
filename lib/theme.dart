@@ -142,7 +142,7 @@ final ThemeData myTheme = ThemeData(
     ),
     headline5: TextStyle(
       color: Color(0xdd000000),
-      fontSize: null,
+      fontSize: 18,
       fontWeight: FontWeight.w400,
       fontStyle: FontStyle.normal,
     ),

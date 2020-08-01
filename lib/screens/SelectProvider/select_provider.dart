@@ -56,7 +56,7 @@ class SelectProviderScreen extends StatelessWidget {
                 padding: EdgeInsets.fromLTRB(25, 5, 25, 5),
                 child: Text(
                   'Great news! We are in your area. Check out the dermatologist who can help you today.',
-                  style: Theme.of(context).textTheme.caption,
+                  style: Theme.of(context).textTheme.bodyText1,
                 ),
               ),
               Padding(
