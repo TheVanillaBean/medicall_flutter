@@ -31,19 +31,13 @@ class PreviousVisits extends StatelessWidget {
       stream: model.consultStream.stream,
       builder:
           (BuildContext context, AsyncSnapshot<List<Consult>> consultSnapshot) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            SizedBox(height: 12),
-            ListItemsBuilder<Consult>(
-              snapshot: consultSnapshot,
-              itemBuilder: (context, consult) => PreviousVisitsListItem(
-                consult: consult,
-                onTap: () => VisitDetailsOverview.show(
-                    context: context, consult: consult),
-              ),
-            ),
-          ],
+        return ListItemsBuilder<Consult>(
+          snapshot: consultSnapshot,
+          itemBuilder: (context, consult) => PreviousVisitsListItem(
+            consult: consult,
+            onTap: () =>
+                VisitDetailsOverview.show(context: context, consult: consult),
+          ),
         );
       },
     );

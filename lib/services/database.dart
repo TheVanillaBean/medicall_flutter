@@ -198,6 +198,14 @@ class FirestoreDatabase implements Database {
           )
           .first;
 
+  Future<ScreeningQuestions> medicalHistory({String uid}) => _service
+      .documentStream(
+        path: FirestorePath.medicalHistory(uid),
+        builder: (data, documentId) =>
+            ScreeningQuestions.fromMap(data, documentId),
+      )
+      .first;
+
   Stream<List<Consult>> getTotalConsultsForPatient(String uid) =>
       _service.collectionStream(
         path: FirestorePath.consults(),

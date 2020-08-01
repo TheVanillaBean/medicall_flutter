@@ -1,6 +1,7 @@
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/patient_user_model.dart';
 import 'package:Medicall/models/user_model_base.dart';
+import 'package:Medicall/screens/Account/view_medical_history.dart';
 import 'package:Medicall/screens/Questions/tempLinksPage.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
@@ -95,6 +96,7 @@ class AccountScreen extends StatelessWidget {
         _buildEmailCard(medicallUser),
         _buildPhoneCard(medicallUser),
         _buildPaymentMethodsCard(context),
+        _buildMedicalHistoryCard(context),
         FlatButton(
             onPressed: () {
               Navigator.push(context,
@@ -102,6 +104,25 @@ class AccountScreen extends StatelessWidget {
             },
             child: Text('Links Page')),
       ],
+    );
+  }
+
+  Widget _buildMedicalHistoryCard(BuildContext context) {
+    return Card(
+      margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 25),
+      child: ListTile(
+        title: Text(
+          'Update Medical History',
+          style: TextStyle(color: Colors.grey),
+        ),
+        leading: Icon(
+          Icons.history,
+          color: Colors.grey,
+        ),
+        onTap: () {
+          ViewMedicalHistory.show(context: context);
+        },
+      ),
     );
   }
 

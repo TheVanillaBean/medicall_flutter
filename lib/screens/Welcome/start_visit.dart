@@ -92,8 +92,8 @@ class StartVisitScreen extends StatelessWidget {
                     if (formKey.currentState.saveAndValidate()) {
                       QuestionsScreen.show(
                         context: context,
-                        displayMedHistory: formKey
-                            .currentState.value["medical_history"] as bool,
+                        displayMedHistory: !(formKey
+                            .currentState.value["medical_history"] as bool),
                         consult: consult,
                       );
                     }

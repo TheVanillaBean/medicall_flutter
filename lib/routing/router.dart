@@ -6,6 +6,7 @@ import 'package:Medicall/models/provider_user_model.dart';
 import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/screens/Account/account.dart';
 import 'package:Medicall/screens/Account/payment_detail.dart';
+import 'package:Medicall/screens/Account/view_medical_history.dart';
 import 'package:Medicall/screens/ConfirmConsult/index.dart';
 import 'package:Medicall/screens/Consent/index.dart';
 import 'package:Medicall/screens/ConsultReview/consult_photos.dart';
@@ -13,8 +14,8 @@ import 'package:Medicall/screens/ConsultReview/review_visit_information.dart';
 import 'package:Medicall/screens/ConsultReview/visit_overview.dart';
 import 'package:Medicall/screens/ConsultReview/visit_review.dart';
 import 'package:Medicall/screens/ConsultReview/visit_review_view_model.dart';
-import 'package:Medicall/screens/Consults/previous_visits.dart';
 import 'package:Medicall/screens/Consults/ProviderVisits/provider_visits.dart';
+import 'package:Medicall/screens/Consults/previous_visits.dart';
 import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard.dart';
 import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/History/Detail/index.dart';
@@ -92,6 +93,7 @@ class Routes {
   static const completeVisit = '/complete-visit';
   static const visitReview = '/visit-review';
   static const providerVisits = '/provider-visits';
+  static const viewMedicalHistory = '/view-medical-history';
 }
 
 class Router {
@@ -145,6 +147,12 @@ class Router {
           builder: (context) => StartVisitScreen(
             consult: consult,
           ),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case Routes.viewMedicalHistory:
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => ViewMedicalHistory(),
           settings: settings,
           fullscreenDialog: true,
         );

@@ -28,7 +28,13 @@ class CustomFlatButton extends FlatButton {
                     fontSize: fontSize,
                   ),
                 ),
-                if (trailingIcon != null) Icon(trailingIcon),
+                if (trailingIcon != null)
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.bottomRight,
+                      child: Icon(trailingIcon),
+                    ),
+                  ),
               ],
             ),
           ),

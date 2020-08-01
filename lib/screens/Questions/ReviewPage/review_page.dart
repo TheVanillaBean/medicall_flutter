@@ -13,8 +13,12 @@ class ReviewPage extends StatelessWidget {
       BuildContext context, QuestionsViewModel model) async {
     if (model.displayMedHistory) {
       await model.saveMedicalHistory();
-      QuestionsScreen.show(
-          context: context, consult: model.consult, displayMedHistory: false);
+      if (model.consult.symptom.length == 0) {
+        Navigator.of(context).pop();
+      } else {
+        QuestionsScreen.show(
+            context: context, consult: model.consult, displayMedHistory: false);
+      }
     } else {
       await model.saveConsultation();
       PersonalInfoScreen.show(context: context, consult: model.consult);
