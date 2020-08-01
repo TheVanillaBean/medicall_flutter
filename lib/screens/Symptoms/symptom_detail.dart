@@ -82,12 +82,7 @@ class SymptomDetailScreen extends StatelessWidget {
       Container(
         child: Text(
           symptom.description,
-          style: TextStyle(
-            height: 1.6,
-            fontSize: 14,
-            letterSpacing: 0.6,
-            wordSpacing: 1,
-          ),
+          style: Theme.of(context).textTheme.bodyText1,
         ),
       ),
       _buildMedicationsDialog(context),
@@ -143,7 +138,7 @@ class SymptomDetailScreen extends StatelessWidget {
       child: Align(
         alignment: Alignment.centerLeft,
         child: Container(
-          width: 120,
+          width: 130,
           decoration: BoxDecoration(
             border: Border(
               bottom: BorderSide(

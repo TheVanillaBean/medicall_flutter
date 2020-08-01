@@ -104,9 +104,13 @@ flutter:
   # the Icons class.
   uses-material-design: true
   fonts:
-    - family: MedicallApp
+    - family: Inter
       fonts:
-        - asset: assets/fonts/MedicallApp.ttf
+        - asset: assets/fonts/Inter-Regular-slnt=0.ttf
+        - asset: assets/fonts/Inter-Light-slnt=0.ttf
+        - asset: assets/fonts/Inter-SemiBold-slnt=0.ttf
+        - asset: assets/fonts/Inter-Thin-slnt=0.ttf
+        - asset: assets/fonts/Inter-Bold-slnt=0.ttf
     - family: MedicallIcons
       fonts:
         - asset: assets/fonts/MedicallIcons.ttf

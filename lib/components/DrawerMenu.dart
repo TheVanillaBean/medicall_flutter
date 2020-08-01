@@ -64,7 +64,7 @@ class DrawerMenu extends StatelessWidget {
                     ListTile(
                         contentPadding: listContentPadding,
                         title: Container(
-                          margin: EdgeInsets.only(left: 20),
+                          margin: EdgeInsets.only(left: 15),
                           child: Text(
                             'Home',
                             style: Theme.of(context).textTheme.headline6,
@@ -84,7 +84,7 @@ class DrawerMenu extends StatelessWidget {
                         : ListTile(
                             contentPadding: listContentPadding,
                             title: Container(
-                              margin: EdgeInsets.only(left: 20),
+                              margin: EdgeInsets.only(left: 15),
                               child: Text(
                                 'New Visit',
                                 style: Theme.of(context).textTheme.headline6,
@@ -103,7 +103,7 @@ class DrawerMenu extends StatelessWidget {
                         ? ListTile(
                             contentPadding: listContentPadding,
                             title: Container(
-                              margin: EdgeInsets.only(left: 20),
+                              margin: EdgeInsets.only(left: 15),
                               child: Text(
                                 'My Visits',
                                 style: Theme.of(context).textTheme.headline6,
@@ -120,7 +120,7 @@ class DrawerMenu extends StatelessWidget {
                         : ListTile(
                             contentPadding: listContentPadding,
                             title: Container(
-                              margin: EdgeInsets.only(left: 20),
+                              margin: EdgeInsets.only(left: 15),
                               child: Text(
                                 'Previous Visits',
                                 style: Theme.of(context).textTheme.headline6,
@@ -137,7 +137,7 @@ class DrawerMenu extends StatelessWidget {
                     ListTile(
                         contentPadding: listContentPadding,
                         title: Container(
-                          margin: EdgeInsets.only(left: 20),
+                          margin: EdgeInsets.only(left: 15),
                           child: Text(
                             'Account',
                             style: Theme.of(context).textTheme.headline6,
@@ -159,7 +159,7 @@ class DrawerMenu extends StatelessWidget {
                     ListTile(
                       contentPadding: listContentPadding,
                       title: Container(
-                        margin: EdgeInsets.only(left: 20),
+                        margin: EdgeInsets.only(left: 15),
                         child: Text(
                           'Sign Out',
                           style: Theme.of(context).textTheme.headline6,
