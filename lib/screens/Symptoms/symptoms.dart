@@ -28,7 +28,7 @@ class SymptomsScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       appBar: CustomAppBar.getAppBar(
           type: AppBarType.Back,
-          title: "How can we help you today?",
+          title: "How can we help?",
           theme: Theme.of(context),
           actions: [
             IconButton(

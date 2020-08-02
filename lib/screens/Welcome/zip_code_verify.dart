@@ -74,7 +74,7 @@ class _ZipCodeVerifyScreenState extends State<ZipCodeVerifyScreen> {
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
           type: AppBarType.Back,
-          title: "Checking you area.",
+          title: "Checking your area.",
           theme: Theme.of(context),
           actions: [
             IconButton(
@@ -109,11 +109,19 @@ class _ZipCodeVerifyScreenState extends State<ZipCodeVerifyScreen> {
 
   List<Widget> _buildChildren() {
     return <Widget>[
-      Text(
-        'Please enter your zipcode',
-        style: Theme.of(context).textTheme.headline5,
+      SizedBox(),
+      Column(
+        children: <Widget>[
+          Text(
+            'Please enter your zipcode',
+            style: Theme.of(context).textTheme.headline5,
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          buildZipCodeForm(),
+        ],
       ),
-      buildZipCodeForm(),
       buildVerifyButton(),
     ];
   }
