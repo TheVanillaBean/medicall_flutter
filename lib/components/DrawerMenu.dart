@@ -41,10 +41,10 @@ class DrawerMenu extends StatelessWidget {
                     //           color: Theme.of(context).colorScheme.primary)),
                     // ),
                     SizedBox(
-                      width: 70,
-                      height: 70,
+                      width: 140,
+                      height: 50,
                       child: Image.asset(
-                        'assets/icon/logo_fore.png',
+                        'assets/icon/letter_mark.png',
                       ),
                     ),
                     // Container(

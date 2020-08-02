@@ -3,6 +3,7 @@ import 'package:Medicall/screens/Login/login.dart';
 import 'package:Medicall/screens/Registration/Provider/provider_registration.dart';
 import 'package:Medicall/screens/Symptoms/symptoms.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class WelcomeScreen extends StatelessWidget {
   static Future<void> show({BuildContext context}) async {
@@ -11,12 +12,16 @@ class WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(context);
     return Scaffold(
       body: SingleChildScrollView(
         padding: EdgeInsets.fromLTRB(0, 15, 0, 10),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: buildChildren(context),
+        child: Container(
+          height: ScreenUtil.screenHeightDp,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: buildChildren(context),
+          ),
         ),
       ),
     );
@@ -25,49 +30,29 @@ class WelcomeScreen extends StatelessWidget {
   List<Widget> buildChildren(BuildContext context) {
     return <Widget>[
       Container(
-        height: 110,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+        margin: EdgeInsets.only(top: 40),
+        height: 60,
+        child: Column(
           children: <Widget>[
-            Container(
-              transform: Matrix4.translationValues(18.0, 0.0, 0.0),
-              child: Text('MEDI',
-                  style: TextStyle(
-                      fontSize: 21.0,
-                      height: 1.08,
-                      letterSpacing: 2.5,
-                      fontWeight: FontWeight.w700,
-                      color: Theme.of(context).colorScheme.primary)),
-            ),
             SizedBox(
-              width: 120,
-              height: 120,
+              width: 140,
               child: Image.asset(
-                'assets/icon/logo_fore.png',
+                'assets/icon/letter_mark.png',
               ),
             ),
-            Container(
-              transform: Matrix4.translationValues(-26.0, 0.0, 0.0),
-              child: Text('CALL',
-                  style: TextStyle(
-                      fontSize: 21.0,
-                      height: 1.08,
-                      letterSpacing: 2.5,
-                      fontWeight: FontWeight.w700,
-                      color: Theme.of(context).colorScheme.primary)),
-            )
+            SizedBox(
+              height: 10,
+            ),
+            Text(
+              'Leading Local Doctors',
+              style: TextStyle(
+                  fontSize: 18, color: Theme.of(context).colorScheme.primary),
+            ),
           ],
         ),
       ),
-      Text(
-        'Leading Local Dermatologists. Anytime.',
-        style: TextStyle(
-            fontSize: 18, color: Theme.of(context).colorScheme.primary),
-      ),
-      buildStepsList(),
-      SizedBox(height: 20),
+      buildStepsList(context),
       buildGetStartedBtn(context),
-      SizedBox(height: 20),
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
@@ -78,8 +63,8 @@ class WelcomeScreen extends StatelessWidget {
               alignment: Alignment.center,
               width: 140,
               child: Text(
-                "I have an account",
-                style: TextStyle(color: Colors.black54),
+                "Login",
+                style: Theme.of(context).textTheme.caption,
               ),
             ),
             onPressed: () => LoginScreen.show(context: context),
@@ -89,10 +74,10 @@ class WelcomeScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12.0)),
             child: Container(
               alignment: Alignment.center,
-              width: 135,
+              width: 140,
               child: Text(
-                "Register as a provider",
-                style: TextStyle(color: Colors.black54),
+                "Providers",
+                style: Theme.of(context).textTheme.caption,
               ),
             ),
             onPressed: () => ProviderRegistrationScreen.show(context: context),
@@ -132,10 +117,10 @@ class WelcomeScreen extends StatelessWidget {
     );
   }
 
-  Widget buildStepsList() {
+  Widget buildStepsList(context) {
     return Container(
       alignment: Alignment.centerLeft,
-      padding: EdgeInsets.fromLTRB(50, 50, 0, 10),
+      padding: EdgeInsets.fromLTRB(50, 0, 0, 10),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -148,7 +133,7 @@ class WelcomeScreen extends StatelessWidget {
                   padding: EdgeInsets.all(10),
                   margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
                   decoration: BoxDecoration(
-                    color: Colors.black26,
+                    color: Theme.of(context).colorScheme.primary.withAlpha(140),
                     shape: BoxShape.circle,
                   ),
                   child: Text("1",
@@ -162,13 +147,13 @@ class WelcomeScreen extends StatelessWidget {
               ],
             ),
           ),
-          RotationTransition(
-            turns: AlwaysStoppedAnimation(90 / 360),
-            child: Text(
-              "--->",
-              style: TextStyle(fontSize: 21, color: Colors.black26),
-            ),
-          ),
+          // RotationTransition(
+          //   turns: AlwaysStoppedAnimation(90 / 360),
+          //   child: Text(
+          //     "--->",
+          //     style: TextStyle(fontSize: 21, color: Colors.black26),
+          //   ),
+          // ),
           Container(
             margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
             child: Row(
@@ -177,7 +162,7 @@ class WelcomeScreen extends StatelessWidget {
                   padding: EdgeInsets.all(10),
                   margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
                   decoration: BoxDecoration(
-                    color: Colors.black38,
+                    color: Theme.of(context).colorScheme.primary.withAlpha(160),
                     shape: BoxShape.circle,
                   ),
                   child: Text("2",
@@ -191,13 +176,13 @@ class WelcomeScreen extends StatelessWidget {
               ],
             ),
           ),
-          RotationTransition(
-            turns: AlwaysStoppedAnimation(90 / 360),
-            child: Text(
-              "--->",
-              style: TextStyle(fontSize: 21, color: Colors.black26),
-            ),
-          ),
+          // RotationTransition(
+          //   turns: AlwaysStoppedAnimation(90 / 360),
+          //   child: Text(
+          //     "--->",
+          //     style: TextStyle(fontSize: 21, color: Colors.black26),
+          //   ),
+          // ),
           Container(
             margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
             child: Row(
@@ -206,7 +191,7 @@ class WelcomeScreen extends StatelessWidget {
                   padding: EdgeInsets.all(10),
                   margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
                   decoration: BoxDecoration(
-                    color: Colors.black54,
+                    color: Theme.of(context).colorScheme.primary.withAlpha(180),
                     shape: BoxShape.circle,
                   ),
                   child: Text("3",
@@ -220,13 +205,13 @@ class WelcomeScreen extends StatelessWidget {
               ],
             ),
           ),
-          RotationTransition(
-            turns: AlwaysStoppedAnimation(90 / 360),
-            child: Text(
-              "--->",
-              style: TextStyle(fontSize: 21, color: Colors.black26),
-            ),
-          ),
+          // RotationTransition(
+          //   turns: AlwaysStoppedAnimation(90 / 360),
+          //   child: Text(
+          //     "--->",
+          //     style: TextStyle(fontSize: 21, color: Colors.black26),
+          //   ),
+          // ),
           Container(
             padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
             child: Row(
@@ -235,7 +220,7 @@ class WelcomeScreen extends StatelessWidget {
                   padding: EdgeInsets.all(10),
                   margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
                   decoration: BoxDecoration(
-                    color: Colors.black87,
+                    color: Theme.of(context).colorScheme.primary,
                     shape: BoxShape.circle,
                   ),
                   child: Text("4",

@@ -61,7 +61,11 @@ class ProviderDetailScreen extends StatelessWidget {
                   color: Theme.of(context).colorScheme.primary,
                 ),
                 onPressed: () {
-                  Navigator.of(context).pushNamed('/dashboard');
+                  if (currentUser != null) {
+                    Navigator.of(context).pushNamed('/dashboard');
+                  } else {
+                    Navigator.of(context).pushNamed('/welcome');
+                  }
                 })
           ]),
       body: SingleChildScrollView(

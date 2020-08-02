@@ -214,38 +214,16 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildHeader(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Container(
-          transform: Matrix4.translationValues(12.0, 0.0, 0.0),
-          child: Text('MEDI',
-              style: TextStyle(
-                  fontSize: 26.0,
-                  height: 1.08,
-                  letterSpacing: 2.5,
-                  fontWeight: FontWeight.w700,
-                  color: Theme.of(context).colorScheme.primary)),
-        ),
         SizedBox(
-          width: width * 0.25,
-          height: height * 0.15,
+          width: 160,
+          height: 120,
           child: Image.asset(
-            'assets/icon/logo_fore.png',
+            'assets/icon/letter_mark.png',
           ),
         ),
-        Container(
-          transform: Matrix4.translationValues(-20.0, 0.0, 0.0),
-          child: Text('CALL',
-              style: TextStyle(
-                  fontSize: 26.0,
-                  height: 1.08,
-                  letterSpacing: 2.5,
-                  fontWeight: FontWeight.w700,
-                  color: Theme.of(context).colorScheme.primary)),
-        )
       ],
     );
   }

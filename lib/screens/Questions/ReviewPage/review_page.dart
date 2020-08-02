@@ -50,7 +50,6 @@ class ReviewPage extends StatelessWidget {
               title,
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontFamily: 'Roboto Regular',
                 fontSize: 14.0,
                 color: Colors.black87,
               ),

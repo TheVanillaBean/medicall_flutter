@@ -7,7 +7,7 @@ setStatusBarColor() {
   );
 }
 
-final primaryColor = Color(0xff6E0063);
+final primaryColor = Color(0xff90024C);
 
 final ThemeData myTheme = ThemeData(
   fontFamily: 'Inter',
@@ -54,7 +54,7 @@ final ThemeData myTheme = ThemeData(
   selectedRowColor: Color(0xfff5f5f5),
   unselectedWidgetColor: Color(0x8a000000),
   disabledColor: Color(0x61000000),
-  buttonColor: Color(0xff5388b3),
+  buttonColor: primaryColor,
   toggleableActiveColor: Color(0xff1e88e5),
   secondaryHeaderColor: Color(0xffe3f2fd),
   textSelectionColor: Color(0xffefefef),
@@ -150,7 +150,7 @@ final ThemeData myTheme = ThemeData(
     headline6: TextStyle(
       color: primaryColor,
       fontSize: 16,
-      letterSpacing: 1.15,
+      letterSpacing: 1.1,
       fontWeight: FontWeight.w500,
       fontStyle: FontStyle.normal,
     ),
@@ -295,7 +295,6 @@ final ThemeData myTheme = ThemeData(
       fontSize: null,
       fontWeight: FontWeight.w400,
       fontStyle: FontStyle.normal,
-      fontFamily: "Roboto Thin",
     ),
     headline1: TextStyle(
       color: Color(0xb3ffffff),

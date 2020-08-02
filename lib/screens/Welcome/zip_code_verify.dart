@@ -1,10 +1,14 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
+import 'package:Medicall/common_widgets/flat_button.dart';
 import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
+import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/symptom_model.dart';
+import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/SelectProvider/select_provider.dart';
 import 'package:Medicall/screens/Welcome/zip_code_view_model.dart';
 import 'package:Medicall/services/non_auth_firestore_db.dart';
+import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:provider/provider.dart';
@@ -63,22 +67,39 @@ class _ZipCodeVerifyScreenState extends State<ZipCodeVerifyScreen> {
 
   @override
   Widget build(BuildContext context) {
+    User medicallUser;
+    try {
+      medicallUser = Provider.of<UserProvider>(context).user;
+    } catch (e) {}
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
-        type: AppBarType.Back,
-        title: "Please enter your zipcode",
-        theme: Theme.of(context),
-      ),
+          type: AppBarType.Back,
+          title: "Checking your area.",
+          theme: Theme.of(context),
+          actions: [
+            IconButton(
+                icon: Icon(
+                  Icons.home,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                onPressed: () {
+                  if (medicallUser != null) {
+                    Navigator.of(context).pushNamed('/dashboard');
+                  } else {
+                    Navigator.of(context).pushNamed('/welcome');
+                  }
+                })
+          ]),
       body: Container(
         color: Colors.white,
-        padding: EdgeInsets.symmetric(vertical: 0, horizontal: 40),
+        padding: EdgeInsets.symmetric(vertical: 40, horizontal: 40),
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: () {
             FocusScope.of(context).requestFocus(new FocusNode());
           },
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: _buildChildren(),
           ),
         ),
@@ -88,11 +109,19 @@ class _ZipCodeVerifyScreenState extends State<ZipCodeVerifyScreen> {
 
   List<Widget> _buildChildren() {
     return <Widget>[
-      Text(
-        'Let\'s make sure we are in your area.',
-        style: TextStyle(fontSize: 30),
+      SizedBox(),
+      Column(
+        children: <Widget>[
+          Text(
+            'Please enter your zipcode',
+            style: Theme.of(context).textTheme.headline5,
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          buildZipCodeForm(),
+        ],
       ),
-      buildZipCodeForm(),
       buildVerifyButton(),
     ];
   }
@@ -126,23 +155,9 @@ class _ZipCodeVerifyScreenState extends State<ZipCodeVerifyScreen> {
   }
 
   Widget buildVerifyButton() {
-    return FlatButton(
-      color: Colors.blue,
-      textColor: Colors.white,
+    return ReusableRaisedButton(
+      title: "Continue",
       onPressed: _submit,
-      padding: EdgeInsets.fromLTRB(35, 15, 35, 15),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40.0)),
-      child: Column(
-        children: <Widget>[
-          Text(
-            'Continue',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 14,
-            ),
-          ),
-        ],
-      ),
     );
   }
 

@@ -49,7 +49,6 @@ class CompleteVisit extends StatelessWidget {
                   child: Text(
                     'Please Note:',
                     style: TextStyle(
-                      fontFamily: 'Roboto Regular',
                       fontSize: 14.0,
                       color: Theme.of(context).colorScheme.primary,
                     ),

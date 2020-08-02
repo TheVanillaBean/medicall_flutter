@@ -18,7 +18,6 @@ class ReusableRaisedButton extends StatelessWidget {
           title,
           style: TextStyle(
             color: Colors.white,
-            fontFamily: 'Roboto Medium',
             fontSize: 16,
           ),
           textAlign: TextAlign.center,

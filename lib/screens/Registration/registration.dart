@@ -1,3 +1,4 @@
+import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/sign_in_button.dart';
 import 'package:Medicall/common_widgets/social_sign_in_button.dart';
 import 'package:Medicall/routing/router.dart';
@@ -124,11 +125,10 @@ class _RegistrationScreenState extends State<RegistrationScreen>
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(
-          'Protect your Information',
-        ),
+      appBar: CustomAppBar.getAppBar(
+        type: AppBarType.Back,
+        title: "Protect your information",
+        theme: Theme.of(context),
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.fromLTRB(15, 20, 15, 20),
@@ -231,7 +231,7 @@ class _RegistrationScreenState extends State<RegistrationScreen>
       decoration: InputDecoration(
         labelText: 'Email',
         hintText: 'jane@doe.com',
-        fillColor: Color.fromRGBO(35, 179, 232, 0.1),
+        fillColor: Colors.grey.withAlpha(40),
         filled: model.googleAuthModel != null || model.appleSignInModel != null
             ? false
             : true,
@@ -262,7 +262,7 @@ class _RegistrationScreenState extends State<RegistrationScreen>
       decoration: InputDecoration(
         labelText: 'Password',
         filled: true,
-        fillColor: Color.fromRGBO(35, 179, 232, 0.1),
+        fillColor: Colors.grey.withAlpha(40),
         labelStyle: TextStyle(
           color: Theme.of(context).colorScheme.onSurface,
         ),
@@ -293,7 +293,7 @@ class _RegistrationScreenState extends State<RegistrationScreen>
       decoration: InputDecoration(
         labelText: 'Confirm Password',
         filled: true,
-        fillColor: Color.fromRGBO(35, 179, 232, 0.1),
+        fillColor: Colors.grey.withAlpha(40),
         labelStyle: TextStyle(
           color: Theme.of(context).colorScheme.onSurface,
         ),

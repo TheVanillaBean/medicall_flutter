@@ -4,12 +4,14 @@ class ReusableCard extends StatelessWidget {
   final Widget leading;
   final Widget title;
   final String subtitle;
+  final double elevation;
   final VoidCallback onTap;
   final Widget trailing;
 
   const ReusableCard(
       {@required this.title,
       this.leading,
+      this.elevation,
       this.subtitle,
       this.onTap,
       this.trailing});
@@ -17,7 +19,7 @@ class ReusableCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 2,
+      elevation: elevation != null ? elevation : 2,
       borderOnForeground: false,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       clipBehavior: Clip.antiAlias,
