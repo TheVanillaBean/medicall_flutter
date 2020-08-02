@@ -1,3 +1,4 @@
+import 'package:Medicall/common_widgets/reusable_account_card.dart';
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/patient_user_model.dart';
 import 'package:Medicall/models/user_model_base.dart';
@@ -14,12 +15,12 @@ import 'package:flutter/services.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:provider/provider.dart';
 
-class AccountScreen extends StatefulWidget {
+class PatientAccountScreen extends StatefulWidget {
   @override
-  _AccountScreenState createState() => _AccountScreenState();
+  _PatientAccountScreenState createState() => _PatientAccountScreenState();
 }
 
-class _AccountScreenState extends State<AccountScreen> {
+class _PatientAccountScreenState extends State<PatientAccountScreen> {
   String profileImageURL = "";
   bool imageLoading = false;
 
@@ -45,17 +46,14 @@ class _AccountScreenState extends State<AccountScreen> {
               },
               icon: Icon(
                 Icons.home,
-                color: Colors.grey,
+                color: Theme.of(context).appBarTheme.iconTheme.color,
               ),
             );
           },
         ),
         title: Text(
           'Account',
-          style: TextStyle(
-            fontSize:
-                Theme.of(context).platform == TargetPlatform.iOS ? 17.0 : 20.0,
-          ),
+          style: Theme.of(context).appBarTheme.textTheme.headline6,
         ),
       ),
       drawer: DrawerMenu(),
@@ -80,129 +78,101 @@ class _AccountScreenState extends State<AccountScreen> {
     BuildContext context,
   }) {
     return SingleChildScrollView(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          SizedBox(height: 20),
-          this.imageLoading
-              ? Center(
-                  child: CircularProgressIndicator(),
-                )
-              : _buildAvatarWidget(
-                  medicallUser: medicallUser,
-                  storageService: storageService,
-                  extImageProvider: extImageProvider,
-                  userProvider: userProvider,
-                ),
-          SizedBox(height: 10),
-          Text(
-            medicallUser.fullName,
-            style: TextStyle(
-              fontSize: 30.0,
-              color: Colors.grey,
-              fontWeight: FontWeight.bold,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 30),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            SizedBox(height: 20),
+            this.imageLoading
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : _buildAvatarWidget(
+                    medicallUser: medicallUser,
+                    storageService: storageService,
+                    extImageProvider: extImageProvider,
+                    userProvider: userProvider,
+                  ),
+            SizedBox(height: 20),
+            Text(
+              medicallUser.fullName,
+              style: TextStyle(
+                fontFamily: 'Roboto Thin',
+                fontSize: 20.0,
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
             ),
-          ),
-          SizedBox(height: 10),
-          Text(
-            EnumToString.parse(userProvider.user.type).toUpperCase(),
-            style: TextStyle(
-              fontSize: 16.0,
-              letterSpacing: 2.5,
-              color: Colors.grey,
-              fontWeight: FontWeight.bold,
+            SizedBox(height: 10),
+            Text(
+              EnumToString.parse(userProvider.user.type).toUpperCase(),
+              style: TextStyle(
+                fontFamily: 'Roboto Thin',
+                fontSize: 14.0,
+                color: Colors.black54,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
             ),
-          ),
-          SizedBox(
-            height: 20,
-            width: 150,
-            child: Divider(
-              color: Colors.grey[300],
+            SizedBox(
+              height: 20,
+              width: 150,
+              child: Divider(
+                color: Theme.of(context).colorScheme.primary,
+              ),
             ),
-          ),
-          _buildEmailCard(medicallUser),
-          _buildPhoneCard(medicallUser),
-          _buildPaymentMethodsCard(context),
-          _buildMedicalHistoryCard(context),
-          FlatButton(
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => TempLinksPage()));
-              },
-              child: Text('Links Page')),
-        ],
+            _buildEmailCard(medicallUser),
+            _buildPhoneCard(medicallUser),
+            _buildPaymentMethodsCard(context),
+            _buildMedicalHistoryCard(context),
+            FlatButton(
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => TempLinksPage()));
+                },
+                child: Text('Links Page')),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildMedicalHistoryCard(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 25),
-      child: ListTile(
-        title: Text(
-          'Update Medical History',
-          style: TextStyle(color: Colors.grey),
-        ),
-        leading: Icon(
-          Icons.history,
-          color: Colors.grey,
-        ),
-        onTap: () {
-          ViewMedicalHistory.show(context: context);
-        },
-      ),
+    return ReusableAccountCard(
+      leading: Icons.history,
+      title: 'Update Medical History',
+      onTap: () {
+        ViewMedicalHistory.show(context: context);
+      },
     );
   }
 
   Widget _buildPaymentMethodsCard(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 25),
-      child: ListTile(
-        title: Text(
-          'Payment Cards',
-          style: TextStyle(color: Colors.grey),
-        ),
-        leading: Icon(
-          Icons.payment,
-          color: Colors.grey,
-        ),
-        onTap: () {
-          Navigator.of(context).pushNamed('/paymentDetail');
-        },
-      ),
+    return ReusableAccountCard(
+      leading: Icons.payment,
+      title: 'Payment Cards',
+      onTap: () {
+        Navigator.of(context).pushNamed('/paymentDetail');
+      },
     );
   }
 
   Widget _buildPhoneCard(User medicallUser) {
-    return Card(
-      margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 25),
-      child: ListTile(
-        enabled: false,
-        title: Text(medicallUser.phoneNumber != null &&
-                medicallUser.phoneNumber.length > 0
-            ? medicallUser.phoneNumber
-            : '(xxx)xxx-xxxx'),
-        leading: Icon(
-          Icons.phone,
-          color: Colors.grey,
-        ),
-        onTap: () {},
-      ),
+    return ReusableAccountCard(
+      leading: Icons.phone,
+      title: medicallUser.phoneNumber != null &&
+              medicallUser.phoneNumber.length > 0
+          ? medicallUser.phoneNumber
+          : '(xxx)xxx-xxxx',
     );
   }
 
   Widget _buildEmailCard(User medicallUser) {
-    return Card(
-      margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 25),
-      child: ListTile(
-        enabled: false,
-        title: Text(
-          medicallUser.email,
-          style: TextStyle(color: Colors.grey),
-        ),
-        leading: Icon(Icons.email, color: Colors.grey),
-        onTap: () {},
-      ),
+    return ReusableAccountCard(
+      title: medicallUser.email,
+      leading: Icons.email,
     );
   }
 

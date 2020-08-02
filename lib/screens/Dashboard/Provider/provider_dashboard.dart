@@ -64,6 +64,7 @@ class ProviderDashboardScreen extends StatelessWidget {
               },
               icon: Icon(
                 Icons.home,
+                color: Theme.of(context).appBarTheme.iconTheme.color,
               ),
             );
           },
@@ -71,6 +72,7 @@ class ProviderDashboardScreen extends StatelessWidget {
         centerTitle: true,
         title: Text(
           'Hello, ${model.userProvider.user.firstName}!',
+          style: Theme.of(context).appBarTheme.textTheme.headline6,
         ),
       ),
       drawer: DrawerMenu(),

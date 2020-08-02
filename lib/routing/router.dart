@@ -4,8 +4,9 @@ import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/provider_user_model.dart';
 import 'package:Medicall/models/symptom_model.dart';
-import 'package:Medicall/screens/Account/account.dart';
+import 'package:Medicall/screens/Account/patient_account.dart';
 import 'package:Medicall/screens/Account/payment_detail.dart';
+import 'package:Medicall/screens/Account/provider_account.dart';
 import 'package:Medicall/screens/Account/view_medical_history.dart';
 import 'package:Medicall/screens/ConfirmConsult/index.dart';
 import 'package:Medicall/screens/Consent/index.dart';
@@ -81,7 +82,8 @@ class Routes {
   static const makePayment = '/make-payment';
   static const history = '/history';
   static const historyDetail = '/history-detail';
-  static const account = '/account';
+  static const patientAccount = '/patient-account';
+  static const providerAccount = '/provider-account';
   static const paymentDetail = '/payment-detail';
   static const providerDashboard = '/provider-dashboard';
   static const consultDetail = '/consult-detail';
@@ -454,12 +456,20 @@ class Router {
           settings: settings,
           fullscreenDialog: true,
         );
-      case '/account':
+      case '/patient-account':
         return MaterialPageRoute<dynamic>(
-          builder: (context) => AccountScreen(),
+          builder: (context) => PatientAccountScreen(),
           settings: settings,
           fullscreenDialog: true,
         );
+
+      case '/provider-account':
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => ProviderAccountScreen(),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+
       case '/paymentDetail':
         return MaterialPageRoute<dynamic>(
           builder: (context) => PaymentDetail.create(context),
