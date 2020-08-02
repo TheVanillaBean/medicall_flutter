@@ -2,12 +2,15 @@ import 'dart:async';
 
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/list_items_builder.dart';
+import 'package:Medicall/models/patient_user_model.dart';
 import 'package:Medicall/models/provider_user_model.dart';
 import 'package:Medicall/models/symptom_model.dart';
+import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/SelectProvider/provider_detail.dart';
 import 'package:Medicall/screens/SelectProvider/provider_list_item.dart';
 import 'package:Medicall/services/non_auth_firestore_db.dart';
+import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -31,6 +34,10 @@ class SelectProviderScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final NonAuthDatabase db = Provider.of<NonAuthDatabase>(context);
+    User medicallUser;
+    try {
+      medicallUser = Provider.of<UserProvider>(context).user;
+    } catch (e) {}
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
           type: AppBarType.Back,
@@ -43,7 +50,11 @@ class SelectProviderScreen extends StatelessWidget {
                   color: Theme.of(context).colorScheme.primary,
                 ),
                 onPressed: () {
-                  Navigator.of(context).pushNamed('/dashboard');
+                  if (medicallUser != null) {
+                    Navigator.of(context).pushNamed('/dashboard');
+                  } else {
+                    Navigator.of(context).pushNamed('/welcome');
+                  }
                 })
           ]),
       body: StreamBuilder(

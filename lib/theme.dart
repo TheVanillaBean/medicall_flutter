@@ -54,7 +54,7 @@ final ThemeData myTheme = ThemeData(
   selectedRowColor: Color(0xfff5f5f5),
   unselectedWidgetColor: Color(0x8a000000),
   disabledColor: Color(0x61000000),
-  buttonColor: Color(0xff5388b3),
+  buttonColor: primaryColor,
   toggleableActiveColor: Color(0xff1e88e5),
   secondaryHeaderColor: Color(0xffe3f2fd),
   textSelectionColor: Color(0xffefefef),

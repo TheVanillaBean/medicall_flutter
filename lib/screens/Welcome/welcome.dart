@@ -64,7 +64,7 @@ class WelcomeScreen extends StatelessWidget {
         style: TextStyle(
             fontSize: 18, color: Theme.of(context).colorScheme.primary),
       ),
-      buildStepsList(),
+      buildStepsList(context),
       SizedBox(height: 20),
       buildGetStartedBtn(context),
       SizedBox(height: 20),
@@ -79,7 +79,7 @@ class WelcomeScreen extends StatelessWidget {
               width: 140,
               child: Text(
                 "I have an account",
-                style: TextStyle(color: Colors.black54),
+                style: Theme.of(context).textTheme.caption,
               ),
             ),
             onPressed: () => LoginScreen.show(context: context),
@@ -89,10 +89,10 @@ class WelcomeScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12.0)),
             child: Container(
               alignment: Alignment.center,
-              width: 135,
+              width: 140,
               child: Text(
                 "Register as a provider",
-                style: TextStyle(color: Colors.black54),
+                style: Theme.of(context).textTheme.caption,
               ),
             ),
             onPressed: () => ProviderRegistrationScreen.show(context: context),
@@ -132,7 +132,7 @@ class WelcomeScreen extends StatelessWidget {
     );
   }
 
-  Widget buildStepsList() {
+  Widget buildStepsList(context) {
     return Container(
       alignment: Alignment.centerLeft,
       padding: EdgeInsets.fromLTRB(50, 50, 0, 10),
@@ -148,7 +148,7 @@ class WelcomeScreen extends StatelessWidget {
                   padding: EdgeInsets.all(10),
                   margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
                   decoration: BoxDecoration(
-                    color: Colors.black26,
+                    color: Theme.of(context).colorScheme.primary.withAlpha(140),
                     shape: BoxShape.circle,
                   ),
                   child: Text("1",
@@ -162,13 +162,13 @@ class WelcomeScreen extends StatelessWidget {
               ],
             ),
           ),
-          RotationTransition(
-            turns: AlwaysStoppedAnimation(90 / 360),
-            child: Text(
-              "--->",
-              style: TextStyle(fontSize: 21, color: Colors.black26),
-            ),
-          ),
+          // RotationTransition(
+          //   turns: AlwaysStoppedAnimation(90 / 360),
+          //   child: Text(
+          //     "--->",
+          //     style: TextStyle(fontSize: 21, color: Colors.black26),
+          //   ),
+          // ),
           Container(
             margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
             child: Row(
@@ -177,7 +177,7 @@ class WelcomeScreen extends StatelessWidget {
                   padding: EdgeInsets.all(10),
                   margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
                   decoration: BoxDecoration(
-                    color: Colors.black38,
+                    color: Theme.of(context).colorScheme.primary.withAlpha(160),
                     shape: BoxShape.circle,
                   ),
                   child: Text("2",
@@ -191,13 +191,13 @@ class WelcomeScreen extends StatelessWidget {
               ],
             ),
           ),
-          RotationTransition(
-            turns: AlwaysStoppedAnimation(90 / 360),
-            child: Text(
-              "--->",
-              style: TextStyle(fontSize: 21, color: Colors.black26),
-            ),
-          ),
+          // RotationTransition(
+          //   turns: AlwaysStoppedAnimation(90 / 360),
+          //   child: Text(
+          //     "--->",
+          //     style: TextStyle(fontSize: 21, color: Colors.black26),
+          //   ),
+          // ),
           Container(
             margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
             child: Row(
@@ -206,7 +206,7 @@ class WelcomeScreen extends StatelessWidget {
                   padding: EdgeInsets.all(10),
                   margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
                   decoration: BoxDecoration(
-                    color: Colors.black54,
+                    color: Theme.of(context).colorScheme.primary.withAlpha(180),
                     shape: BoxShape.circle,
                   ),
                   child: Text("3",
@@ -220,13 +220,13 @@ class WelcomeScreen extends StatelessWidget {
               ],
             ),
           ),
-          RotationTransition(
-            turns: AlwaysStoppedAnimation(90 / 360),
-            child: Text(
-              "--->",
-              style: TextStyle(fontSize: 21, color: Colors.black26),
-            ),
-          ),
+          // RotationTransition(
+          //   turns: AlwaysStoppedAnimation(90 / 360),
+          //   child: Text(
+          //     "--->",
+          //     style: TextStyle(fontSize: 21, color: Colors.black26),
+          //   ),
+          // ),
           Container(
             padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
             child: Row(
@@ -235,7 +235,7 @@ class WelcomeScreen extends StatelessWidget {
                   padding: EdgeInsets.all(10),
                   margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
                   decoration: BoxDecoration(
-                    color: Colors.black87,
+                    color: Theme.of(context).colorScheme.primary,
                     shape: BoxShape.circle,
                   ),
                   child: Text("4",

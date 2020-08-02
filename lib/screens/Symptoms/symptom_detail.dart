@@ -46,7 +46,11 @@ class SymptomDetailScreen extends StatelessWidget {
                   color: Theme.of(context).colorScheme.primary,
                 ),
                 onPressed: () {
-                  Navigator.of(context).pushNamed('/dashboard');
+                  if (medicallUser != null) {
+                    Navigator.of(context).pushNamed('/dashboard');
+                  } else {
+                    Navigator.of(context).pushNamed('/welcome');
+                  }
                 })
           ]),
       body: Container(
