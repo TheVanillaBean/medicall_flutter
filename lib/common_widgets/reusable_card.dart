@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class ReusableCard extends StatelessWidget {
   final Widget leading;
-  final String title;
+  final Widget title;
   final String subtitle;
   final VoidCallback onTap;
   final Widget trailing;
@@ -22,6 +22,7 @@ class ReusableCard extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       clipBehavior: Clip.antiAlias,
       child: ListTile(
+        isThreeLine: false,
         contentPadding: EdgeInsets.fromLTRB(20, 5, 20, 5),
         dense: true,
         leading: leading,
@@ -36,6 +37,8 @@ class ReusableCard extends StatelessWidget {
         trailing: trailing,
         onTap: onTap,
       ),
+        trailing: trailing,
+        onTap: onTap,
     );
   }
 }

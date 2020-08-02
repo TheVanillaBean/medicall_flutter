@@ -1,5 +1,5 @@
 import 'package:Medicall/common_widgets/empty_content.dart';
-import 'package:Medicall/common_widgets/flat_button.dart';
+import 'package:Medicall/common_widgets/empty_visits.dart';
 import 'package:Medicall/common_widgets/list_items_builder.dart';
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/consult_model.dart';
@@ -76,6 +76,7 @@ class PatientDashboardScreen extends StatelessWidget {
               },
               icon: Icon(
                 Icons.home,
+                color: Theme.of(context).appBarTheme.iconTheme.color,
               ),
             );
           },
@@ -83,54 +84,91 @@ class PatientDashboardScreen extends StatelessWidget {
         centerTitle: true,
         title: Text(
           'Hello ${model.userProvider.user.firstName}!',
+          style: Theme.of(context).appBarTheme.textTheme.headline6,
         ),
       ),
       drawer: DrawerMenu(),
-      body: Container(
-        child: SafeArea(
-          child: Column(
-            children: _buildChildren(context: context),
+      body: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.dark,
+        sized: false,
+        child: Container(
+          child: SafeArea(
+            child: Padding(
+              padding: EdgeInsets.all(width * .05),
+              child: Column(
+                children: _buildChildren(
+                  context: context,
+                  height: height,
+                ),
+              ),
+            ),
           ),
         ),
       ),
     );
   }
 
-  List<Widget> _buildChildren({BuildContext context}) {
+  List<Widget> _buildChildren({
+    BuildContext context,
+    double height,
+  }) {
     return [
       _buildHeader(),
-      Divider(
-        thickness: 2,
-        height: 2,
-      ),
-      CustomFlatButton(
-        text: "Start a Visit",
-        padding: EdgeInsets.fromLTRB(35, 20, 35, 20),
-        textColor: Theme.of(context).colorScheme.primary,
-        leadingIcon: Icons.assignment_ind,
-        onPressed: () => _navigateToVisitScreen(context),
-      ),
-      Divider(
-        thickness: 1,
-        height: 1,
-      ),
-      CustomFlatButton(
-        text: "Prescriptions",
-        padding: EdgeInsets.fromLTRB(35, 20, 35, 20),
-        textColor: Theme.of(context).colorScheme.primary,
-        leadingIcon: Icons.local_pharmacy,
-        onPressed: () => _navigateToPrescriptionDetails(context),
-      ),
-      Divider(
-        thickness: 1,
-        height: 1,
-      ),
-      CustomFlatButton(
-        text: "Previous Visits",
-        padding: EdgeInsets.fromLTRB(35, 20, 35, 20),
-        textColor: Theme.of(context).colorScheme.primary,
-        leadingIcon: Icons.view_list,
-        onPressed: () => _navigateToPreviousConsults(context),
+      SizedBox(height: 20),
+      Align(
+        alignment: FractionalOffset.bottomCenter,
+        child: ButtonBar(
+          alignment: MainAxisAlignment.spaceBetween,
+          mainAxisSize: MainAxisSize.max,
+          children: <Widget>[
+            FlatButton(
+              onPressed: () => _navigateToVisitScreen(context),
+              child: Text(
+                'Start \na Visit',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontFamily: 'Roboto Thin',
+                  fontSize: 16.0,
+                ),
+              ),
+            ),
+            Container(
+              width: 0.5,
+              height: 30,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            FlatButton(
+              onPressed: () => _navigateToPrescriptionDetails(context),
+              child: Text(
+                'Prescriptions',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontFamily: 'Roboto Thin',
+                  fontSize: 16.0,
+                ),
+              ),
+            ),
+            Container(
+              width: 0.5,
+              height: 30,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            FlatButton(
+              onPressed: () => _navigateToPreviousConsults(context),
+              child: Text(
+                'Previous \nVisits',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontFamily: 'Roboto Thin',
+                  fontSize: 16.0,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     ];
   }
@@ -141,25 +179,28 @@ class PatientDashboardScreen extends StatelessWidget {
       builder:
           (BuildContext context, AsyncSnapshot<List<Consult>> consultSnapshot) {
         return Expanded(
-          child: Container(
-            padding: EdgeInsets.fromLTRB(35, 5, 35, 5),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text("Status of active visits:"),
-                SizedBox(height: 12),
-                Expanded(
-                  child: ListItemsBuilder<Consult>(
-                    snapshot: consultSnapshot,
-                    emptyContentWidget: EmptyContent(
-                      title: "",
-                      message: "You do not have any active visits",
-                    ),
-                    itemBuilder: (context, consult) => PatientDashboardListItem(
-                      consult: consult,
-                      onTap: () => VisitDetailsOverview.show(
-                          context: context, consult: consult),
-                    ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              SizedBox(height: 30),
+              Center(
+                child: Text(
+                  "Status of active visits:",
+                  style: TextStyle(
+                    fontFamily: 'Roboto Thin',
+                    fontSize: 20.0,
+                    color: Colors.grey,
+                  ),
+                ),
+              ),
+              SizedBox(height: 12),
+              Expanded(
+                child: ListItemsBuilder<Consult>(
+                  snapshot: null,
+                  itemsList: [],
+                  emptyContentWidget: EmptyVisits(
+                    title: "You do not have any active visits",
+                    message: "Start a visit below",
                   ),
                 ),
               ],

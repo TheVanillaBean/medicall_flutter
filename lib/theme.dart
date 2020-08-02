@@ -3,7 +3,8 @@ import 'package:flutter/services.dart';
 
 setStatusBarColor() {
   SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle(statusBarColor: Colors.white));
+    SystemUiOverlayStyle(statusBarColor: Colors.white),
+  );
 }
 
 final primaryColor = Color(0xff6E0063);
@@ -294,6 +295,7 @@ final ThemeData myTheme = ThemeData(
       fontSize: null,
       fontWeight: FontWeight.w400,
       fontStyle: FontStyle.normal,
+      fontFamily: "Roboto Thin",
     ),
     headline1: TextStyle(
       color: Color(0xb3ffffff),

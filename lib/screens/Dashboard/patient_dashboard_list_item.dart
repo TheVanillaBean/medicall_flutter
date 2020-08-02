@@ -17,22 +17,38 @@ class PatientDashboardListItem extends StatelessWidget {
     final ExtImageProvider extImageProvider =
         Provider.of<ExtImageProvider>(context);
     if (consult.providerUser != null) {
-      return ReusableCard(
-        leading: consult.providerUser.profilePic.length > 0
-            ? displayProfilePicture(
-                extImageProvider, consult.providerUser.profilePic)
-            : Icon(
-                Icons.account_circle,
-                size: 40,
-                color: Colors.grey,
-              ),
-        title: 'Dr. ${consult.providerUser.fullName}',
-        subtitle: "${consult.symptom}",
-        trailing: Text(
-          EnumToString.parseCamelCase(consult.state) ?? "",
-          style: Theme.of(context).textTheme.caption,
+      return Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16.0),
+          border: Border.all(
+            color: Colors.transparent,
+            width: 0.5,
+          ),
         ),
-        onTap: onTap,
+        child: ReusableCard(
+          leading: consult.providerUser.profilePic.length > 0
+              ? displayProfilePicture(
+                  extImageProvider, consult.providerUser.profilePic)
+              : Icon(
+                  Icons.account_circle,
+                  size: 40,
+                  color: Colors.grey,
+                ),
+          title: Text(
+            'Dr. ${consult.providerUser.fullName}',
+            style: Theme.of(context).textTheme.bodyText1,
+          ),
+          subtitle: '${consult.symptom} visit',
+          trailing: FractionallySizedBox(
+            widthFactor: 0.25,
+            child: Text(
+              EnumToString.parseCamelCase(consult.state) ?? "",
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+          ),
+        ),
       );
     }
     return Center(

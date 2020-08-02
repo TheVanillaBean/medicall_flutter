@@ -1,6 +1,8 @@
 import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/screens/Consults/ProviderVisits/provider_visits.dart';
 import 'package:Medicall/screens/Consults/previous_visits.dart';
+import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard.dart';
+import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +13,8 @@ class DrawerMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final User medicallUser = Provider.of<UserProvider>(context).user;
+    final User medicallUser =
+        Provider.of<UserProvider>(context, listen: false).user;
     final EdgeInsets listContentPadding = EdgeInsets.fromLTRB(15, 5, 0, 5);
     return Container(
       width: 250,
@@ -75,9 +78,13 @@ class DrawerMenu extends StatelessWidget {
                           color: Theme.of(context).colorScheme.primary,
                         ),
                         onTap: () {
-                          Navigator.of(context).pop();
-                          Navigator.of(context)
-                              .pushReplacementNamed('/dashboard');
+                          if (medicallUser.type == USER_TYPE.PATIENT) {
+                            PatientDashboardScreen.show(
+                                context: context, pushReplaceNamed: true);
+                          } else {
+                            ProviderDashboardScreen.show(
+                                context: context, pushReplaceNamed: true);
+                          }
                         }),
                     medicallUser.type == USER_TYPE.PROVIDER
                         ? Container()

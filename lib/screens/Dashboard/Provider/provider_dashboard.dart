@@ -1,4 +1,4 @@
-import 'package:Medicall/common_widgets/empty_content.dart';
+import 'package:Medicall/common_widgets/empty_visits.dart';
 import 'package:Medicall/common_widgets/list_items_builder.dart';
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/consult_model.dart';
@@ -18,8 +18,10 @@ class ProviderDashboardScreen extends StatelessWidget {
   const ProviderDashboardScreen({this.model});
 
   static Widget create(BuildContext context) {
-    final FirestoreDatabase database = Provider.of<FirestoreDatabase>(context);
-    final UserProvider provider = Provider.of<UserProvider>(context);
+    final FirestoreDatabase database =
+        Provider.of<FirestoreDatabase>(context, listen: false);
+    final UserProvider provider =
+        Provider.of<UserProvider>(context, listen: false);
     return ChangeNotifierProvider<ProviderDashboardViewModel>(
       create: (context) => ProviderDashboardViewModel(
         database: database,
@@ -68,7 +70,7 @@ class ProviderDashboardScreen extends StatelessWidget {
         ),
         centerTitle: true,
         title: Text(
-          'Hello ${model.userProvider.user.firstName}!',
+          'Hello, ${model.userProvider.user.firstName}!',
         ),
       ),
       drawer: DrawerMenu(),
@@ -78,7 +80,7 @@ class ProviderDashboardScreen extends StatelessWidget {
         child: Container(
           child: SafeArea(
             child: Padding(
-              padding: EdgeInsets.all(width * .1),
+              padding: EdgeInsets.all(width * .05),
               child: Column(
                 children: _buildChildren(context: context, height: height),
               ),
@@ -95,24 +97,6 @@ class ProviderDashboardScreen extends StatelessWidget {
       SizedBox(
         height: height * 0.1,
       ),
-      FlatButton(
-        onPressed: () {
-          Navigator.of(context).pushNamed(Routes.immediateMedicalCare);
-        },
-        child: Text(
-          'Immediate Medical Care',
-        ),
-        textColor: Colors.blue,
-      ),
-      FlatButton(
-        onPressed: () {
-          Navigator.of(context).pushNamed(Routes.completeVisit);
-        },
-        child: Text(
-          'Complete Visit',
-        ),
-        textColor: Colors.blue,
-      ),
     ];
   }
 
@@ -125,12 +109,17 @@ class ProviderDashboardScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text("Current pending visits for you:"),
+              Center(
+                child: Text(
+                  "Current pending visits for you:",
+                  style: Theme.of(context).textTheme.headline6,
+                ),
+              ),
               SizedBox(height: 12),
               Expanded(
                 child: ListItemsBuilder<Consult>(
                   snapshot: consultSnapshot,
-                  emptyContentWidget: EmptyContent(
+                  emptyContentWidget: EmptyVisits(
                     title: "",
                     message: "You do not have any pending visits to review",
                   ),

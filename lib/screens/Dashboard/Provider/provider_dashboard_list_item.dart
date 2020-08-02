@@ -1,3 +1,4 @@
+import 'package:Medicall/common_widgets/reusable_card.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:enum_to_string/enum_to_string.dart';
@@ -19,10 +20,9 @@ class ProviderDashboardListItem extends StatelessWidget {
       return Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16.0),
-          border: Border.all(color: Colors.grey, width: 0.5),
+          border: Border.all(color: Colors.transparent, width: 0.5),
         ),
-        child: ListTile(
-          contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+        child: ReusableCard(
           leading: consult.patientUser.profilePic.length > 0
               ? displayProfilePicture(
                   extImageProvider, consult.patientUser.profilePic)
@@ -36,18 +36,22 @@ class ProviderDashboardListItem extends StatelessWidget {
             children: <Widget>[
               Text(
                 '${consult.patientUser.fullName}',
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: Theme.of(context).textTheme.bodyText1,
               ),
-              SizedBox(height: 4),
-              Text("Reason: ${consult.symptom}"),
-              SizedBox(height: 4),
-              SizedBox(height: 16),
+              SizedBox(height: 2),
+              Text('Reason: ${consult.symptom}',
+                  style: Theme.of(context).textTheme.subtitle2),
+              SizedBox(height: 2),
             ],
           ),
-          subtitle: Text(consult.parsedDate),
-          trailing: Text(
-            EnumToString.parseCamelCase(consult.state) ?? "",
-            style: TextStyle(color: Colors.blue),
+          subtitle: '${consult.parsedDate}',
+          trailing: FractionallySizedBox(
+            widthFactor: 0.25,
+            child: Text(
+              EnumToString.parseCamelCase(consult.state) ?? "",
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.headline6,
+            ),
           ),
           onTap: onTap,
         ),
@@ -68,7 +72,7 @@ class ProviderDashboardListItem extends StatelessWidget {
           profilePicAddress,
           width: 100,
           height: 100,
-          fit: BoxFit.cover,
+          fit: BoxFit.fill,
         ),
       ),
     );
