@@ -2,7 +2,6 @@ import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/screening_questions_model.dart';
 import 'package:Medicall/routing/router.dart';
-import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/Questions/ReviewPage/review_page.dart';
 import 'package:Medicall/screens/Questions/progress_bar.dart';
 import 'package:Medicall/screens/Questions/question_page.dart';
@@ -89,13 +88,13 @@ class _QuestionsScreenState extends State<QuestionsScreen>
         type: AppBarType.Back,
         theme: Theme.of(context),
         leading: IconButton(
-            icon: Icon(Icons.close),
-            onPressed: () {
-              PatientDashboardScreen.show(
-                context: context,
-                pushReplaceNamed: true,
-              );
-            }),
+          icon: Icon(Icons.close),
+          onPressed: () {
+            Navigator.of(context).popUntil(
+              (ModalRoute.withName(Routes.providerDetail)),
+            );
+          },
+        ),
       ),
       body: FutureBuilder<List<ScreeningQuestions>>(
           future: model.displayMedHistory

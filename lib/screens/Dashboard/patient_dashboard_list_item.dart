@@ -48,6 +48,7 @@ class PatientDashboardListItem extends StatelessWidget {
               ),
             ),
           ),
+          onTap: onTap,
         ),
       );
     }

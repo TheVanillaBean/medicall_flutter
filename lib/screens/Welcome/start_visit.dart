@@ -75,8 +75,8 @@ class StartVisitScreen extends StatelessWidget {
                       FormBuilderCheckbox(
                         attribute: 'medical_history',
                         label: Text(
-                            'I have recent changes in my medical history since last using Medicall'),
-                        initialValue: null,
+                            'I have no recent changes in my medical history since last using Medicall'),
+                        initialValue: false,
                       )
                     ],
                   )),
@@ -91,10 +91,7 @@ class StartVisitScreen extends StatelessWidget {
                       QuestionsScreen.show(
                         context: context,
                         displayMedHistory:
-                            formKey.currentState.value["medical_history"] !=
-                                    null
-                                ? true
-                                : false,
+                            !formKey.currentState.value["medical_history"],
                         consult: consult,
                       );
                     }
