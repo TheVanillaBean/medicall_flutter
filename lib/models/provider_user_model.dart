@@ -31,6 +31,9 @@ class ProviderUser extends User {
   static ProviderUser fromMap(String uid, Map<String, dynamic> data) {
     ProviderUser provider = ProviderUser();
     provider.titles = data['titles'] ?? provider.titles;
+    provider.medLicense = data['med_license'] ?? provider.medLicense;
+    provider.npi = data['npi'] ?? provider.npi;
+    provider.medLicenseState = data['state_issued'] ?? provider.medLicenseState;
     provider.stripeConnectAuthorized =
         data['stripeConnectAuthorized'] ?? provider.stripeConnectAuthorized;
     return provider;

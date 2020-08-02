@@ -158,12 +158,11 @@ class DrawerMenu extends StatelessWidget {
                         onTap: () {
                           Navigator.of(context).pop();
                           if (medicallUser.type == USER_TYPE.PATIENT) {
-                            Navigator.of(context).pushNamed('/account',
+                            Navigator.of(context).pushNamed('/patient-account',
                                 arguments: {'user': medicallUser});
                           } else {
-                            AppUtil().showFlushBar(
-                                "Still working on provider account screen Omar :)",
-                                context);
+                            Navigator.of(context).pushNamed('/provider-account',
+                                arguments: {'user': medicallUser});
                           }
                         }),
                     Divider(
