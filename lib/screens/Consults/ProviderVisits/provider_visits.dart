@@ -4,7 +4,6 @@ import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Consults/ProviderVisits/provider_visits_list_Item.dart';
 import 'package:Medicall/screens/Consults/ProviderVisits/provider_visits_view_model.dart';
-import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
@@ -26,18 +25,13 @@ class ProviderVisits extends StatelessWidget {
           stream: model.consultStream.stream,
           builder: (BuildContext context,
               AsyncSnapshot<List<Consult>> consultSnapshot) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                SizedBox(height: 12),
-                ListItemsBuilder<Consult>(
-                  snapshot: consultSnapshot,
-                  itemBuilder: (context, consult) => ProviderVisitsListItem(
-                    consult: consult,
-                    onTap: null,
-                  ),
-                ),
-              ],
+            return ListItemsBuilder<Consult>(
+              scrollable: true,
+              snapshot: consultSnapshot,
+              itemBuilder: (context, consult) => ProviderVisitsListItem(
+                consult: consult,
+                onTap: null,
+              ),
             );
           }),
     );

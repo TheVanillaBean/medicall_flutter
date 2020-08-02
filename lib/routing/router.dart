@@ -366,9 +366,8 @@ class Router {
           fullscreenDialog: true,
         );
       case Routes.providerDashboard:
-        final Map<String, dynamic> mapArgs = args;
         return MaterialPageRoute<dynamic>(
-          builder: (context) => ProviderDashboardScreen(),
+          builder: (context) => ProviderDashboardScreen.create(context),
           settings: settings,
           fullscreenDialog: true,
         );

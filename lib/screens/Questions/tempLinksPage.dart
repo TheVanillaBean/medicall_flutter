@@ -1,4 +1,5 @@
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/Questions/ImmediateMedicalCare/immediate_medical_care.dart';
 import 'package:flutter/material.dart';
 
 import 'confirm_consult.dart';
@@ -27,7 +28,8 @@ class TempLinksPage extends StatelessWidget {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => ConfirmConsult()));
+                        builder: (context) => ConfirmConsult(),
+                      ));
                 },
                 child: Text(
                   'Confirm Consult',
@@ -36,7 +38,10 @@ class TempLinksPage extends StatelessWidget {
               ),
               FlatButton(
                 onPressed: () {
-                  Navigator.of(context).pushNamed(Routes.immediateMedicalCare);
+                  ImmediateMedicalCare.show(
+                      context: context,
+                      documentation: "",
+                      visitReviewViewModel: null);
                 },
                 child: Text(
                   'Immediate Medical Care',

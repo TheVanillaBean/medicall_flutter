@@ -1,3 +1,4 @@
+import 'package:Medicall/common_widgets/reusable_card.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:enum_to_string/enum_to_string.dart';
@@ -19,10 +20,12 @@ class PatientDashboardListItem extends StatelessWidget {
       return Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16.0),
-          border: Border.all(color: Colors.grey, width: 0.5),
+          border: Border.all(
+            color: Colors.transparent,
+            width: 0.5,
+          ),
         ),
-        child: ListTile(
-          contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+        child: ReusableCard(
           leading: consult.providerUser.profilePic.length > 0
               ? displayProfilePicture(
                   extImageProvider, consult.providerUser.profilePic)
@@ -33,13 +36,18 @@ class PatientDashboardListItem extends StatelessWidget {
                 ),
           title: Text(
             'Dr. ${consult.providerUser.fullName}',
+            style: Theme.of(context).textTheme.bodyText1,
           ),
-          subtitle: Text("${consult.symptom} visit"),
-          trailing: Text(
-            EnumToString.parseCamelCase(consult.state) ?? "",
-            style: TextStyle(color: Colors.blue),
+          subtitle: '${consult.symptom} visit',
+          trailing: FractionallySizedBox(
+            widthFactor: 0.25,
+            child: Text(
+              EnumToString.parseCamelCase(consult.state) ?? "",
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
           ),
-          onTap: onTap,
         ),
       );
     }

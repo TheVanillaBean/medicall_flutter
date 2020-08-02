@@ -1,4 +1,5 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
+import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
 import 'package:flutter/cupertino.dart';
@@ -19,32 +20,63 @@ class ConfirmConsult extends StatelessWidget {
         resizeToAvoidBottomPadding: false,
         appBar: CustomAppBar.getAppBar(
           type: AppBarType.Back,
-          title: "Consult Confirmed",
+          title: "Congratulations!",
           context: context,
         ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                SizedBox(height: 10),
-                Text(
-                  'Congratulations!',
-                  textAlign: TextAlign.center,
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              SizedBox(height: 20),
+              Text(
+                'You have completed your visit.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: 'Roboto Thin',
+                  fontSize: 18.0,
+                  color: Colors.grey,
+                ),
+              ),
+              SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    ConfirmConsultListItem(
+                      title: "Choose your visit and doctor",
+                    ),
+                    ConfirmConsultListItem(
+                      title: "Answer a few questions",
+                    ),
+                    ConfirmConsultListItem(
+                      title: "Payment",
+                    ),
+                    ConfirmConsultListItem(
+                        title: "Personalized treatment plan",
+                        subtitle: "*Prescriptions delivered if needed"),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(10, 20, 20, 30),
+                child: Text(
+                  'You will now be directed to your dashboard. You will be able to review this visit, message your doctor, get updates, and explore other services.',
+                  textAlign: TextAlign.justify,
                   style: TextStyle(
-                    fontFamily: 'Roboto Thin',
-                    fontSize: 32.0,
+                    fontFamily: 'Roboto Regular',
+                    fontSize: 14.0,
                     color: Colors.grey,
-                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(
-                  height: 20,
-                ),
-                Text(
-                  'You have completed your visit.',
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Text(
+                  'Thank You for choosing Medicall!',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: 'Roboto Thin',
@@ -52,80 +84,20 @@ class ConfirmConsult extends StatelessWidget {
                     color: Colors.grey,
                   ),
                 ),
-                SizedBox(
-                  height: 20,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      ConfirmConsultListItem(
-                        title: "Choose your visit and doctor",
-                      ),
-                      ConfirmConsultListItem(
-                        title: "Answer a few questions",
-                      ),
-                      ConfirmConsultListItem(
-                        title: "Payment",
-                      ),
-                      ConfirmConsultListItem(
-                          title: "Personalized treatment plan",
-                          subtitle: "*Prescriptions delivered if needed"),
-                    ],
+              ),
+              SizedBox(height: 20),
+              Expanded(
+                child: Align(
+                  alignment: FractionalOffset.bottomCenter,
+                  child: ReusableRaisedButton(
+                    title: 'Go to Dashboard',
+                    onPressed: () =>
+                        PatientDashboardScreen.show(context: context),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 20, 20, 20),
-                  child: Text(
-                    'You will now be directed to your dashboard. You will be able to review this visit, message your doctor, get updates, and explore other services.',
-                    textAlign: TextAlign.justify,
-                    style: TextStyle(
-                      fontFamily: 'Roboto Regular',
-                      fontSize: 14.0,
-                      color: Colors.grey,
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Text(
-                    'Thank You for choosing Medicall!',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontFamily: 'Roboto Thin',
-                      fontSize: 18.0,
-                      color: Colors.grey,
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: SizedBox(
-                    height: 50,
-                    child: RaisedButton(
-                      onPressed: () =>
-                          PatientDashboardScreen.show(context: context),
-                      shape: StadiumBorder(),
-                      color: Colors.green,
-                      textColor: Colors.white,
-                      child: Text(
-                        'Go to Dashboard',
-                        style: TextStyle(
-                          fontFamily: 'Roboto Medium',
-                          fontSize: 16.0,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+              ),
+              SizedBox(height: 20),
+            ],
           ),
         ));
   }

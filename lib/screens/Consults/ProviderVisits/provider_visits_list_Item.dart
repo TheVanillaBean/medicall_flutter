@@ -15,19 +15,22 @@ class ProviderVisitsListItem extends StatelessWidget {
     final ExtendedImageProvider extImageProvider =
         Provider.of<ExtImageProvider>(context);
     if (consult.patientUser != null) {
-      return ReusableCard(
-        leading: consult.patientUser.profilePic.length > 0
-            ? displayProfilePicture(
-                extImageProvider, consult.patientUser.profilePic)
-            : Icon(
-                Icons.account_circle,
-                size: 40,
-                color: Colors.grey,
-              ),
-        title: '${consult.patientUser.fullName}',
-        subtitle: '${consult.symptom} visit',
-        trailing: Icon(Icons.chevron_right, color: Colors.grey),
-        onTap: onTap,
+      return Container(
+        padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
+        child: ReusableCard(
+          leading: consult.patientUser.profilePic.length > 0
+              ? displayProfilePicture(
+                  extImageProvider, consult.patientUser.profilePic)
+              : Icon(
+                  Icons.account_circle,
+                  size: 40,
+                  color: Colors.grey,
+                ),
+          title: Text('${consult.patientUser.fullName}'),
+          subtitle: '${consult.symptom} visit',
+          trailing: Icon(Icons.chevron_right, color: Colors.grey),
+          onTap: onTap,
+        ),
       );
     }
   }
