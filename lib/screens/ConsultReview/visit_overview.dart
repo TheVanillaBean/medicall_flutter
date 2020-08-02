@@ -68,28 +68,54 @@ class VisitOverview extends StatelessWidget {
           onTap: null,
         ),
       ),
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Divider(),
-      ),
-      CustomFlatButton(
-        text: "REVIEW VISIT INFORMATION",
-        onPressed: () => ReviewVisitInformation.show(
-          context: context,
-          consult: consult,
+      Container(
+        padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
+        child: Column(
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: RaisedButton(
+                    color: Colors.white,
+                    elevation: 3,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                    child: Text(
+                      "REVIEW VISIT INFORMATION",
+                      style: Theme.of(context).textTheme.headline6,
+                    ),
+                    onPressed: () => ReviewVisitInformation.show(
+                      context: context,
+                      consult: consult,
+                    ),
+                    padding: EdgeInsets.fromLTRB(25, 20, 25, 20),
+                  ),
+                )
+              ],
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: RaisedButton(
+                    color: Colors.white,
+                    elevation: 3,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                    child: Text(
+                      "DIAGNOSIS & TREATMENT PLAN",
+                      style: Theme.of(context).textTheme.headline6,
+                    ),
+                    onPressed: onContinueBtnPressed(context, db, consult),
+                    padding: EdgeInsets.fromLTRB(25, 20, 25, 20),
+                  ),
+                ),
+              ],
+            )
+          ],
         ),
-      ),
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Divider(),
-      ),
-      CustomFlatButton(
-        text: "DIAGNOSIS & TREATMENT PLAN",
-        onPressed: onContinueBtnPressed(context, db, consult),
-      ),
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Divider(),
       ),
 //      CustomFlatButton(
 //        text: "MESSAGE PATIENT",

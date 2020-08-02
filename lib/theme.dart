@@ -150,7 +150,7 @@ final ThemeData myTheme = ThemeData(
     headline6: TextStyle(
       color: primaryColor,
       fontSize: 16,
-      letterSpacing: 1.15,
+      letterSpacing: 1.1,
       fontWeight: FontWeight.w500,
       fontStyle: FontStyle.normal,
     ),

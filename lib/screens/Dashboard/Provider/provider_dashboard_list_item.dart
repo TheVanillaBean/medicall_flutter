@@ -23,12 +23,13 @@ class ProviderDashboardListItem extends StatelessWidget {
           border: Border.all(color: Colors.transparent, width: 0.5),
         ),
         child: ReusableCard(
+          elevation: onTap == null ? 0 : 2,
           leading: consult.patientUser.profilePic.length > 0
               ? displayProfilePicture(
                   extImageProvider, consult.patientUser.profilePic)
               : Icon(
                   Icons.account_circle,
-                  size: 40,
+                  size: 60,
                   color: Colors.grey,
                 ),
           title: Column(
@@ -36,11 +37,11 @@ class ProviderDashboardListItem extends StatelessWidget {
             children: <Widget>[
               Text(
                 '${consult.patientUser.fullName}',
-                style: Theme.of(context).textTheme.bodyText1,
+                style: Theme.of(context).textTheme.headline5,
               ),
               SizedBox(height: 2),
-              Text('Reason: ${consult.symptom}',
-                  style: Theme.of(context).textTheme.subtitle2),
+              Text('${consult.symptom}',
+                  style: Theme.of(context).textTheme.headline6),
               SizedBox(height: 2),
             ],
           ),
@@ -50,7 +51,7 @@ class ProviderDashboardListItem extends StatelessWidget {
             child: Text(
               EnumToString.parseCamelCase(consult.state) ?? "",
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.headline6,
+              style: Theme.of(context).textTheme.subtitle1,
             ),
           ),
           onTap: onTap,
@@ -65,7 +66,7 @@ class ProviderDashboardListItem extends StatelessWidget {
   Widget displayProfilePicture(
       ExtendedImageProvider extImageProvider, String profilePicAddress) {
     return CircleAvatar(
-      radius: 20,
+      radius: 25,
       backgroundColor: Colors.grey.withAlpha(100),
       child: ClipOval(
         child: extImageProvider.returnNetworkImage(
