@@ -106,6 +106,10 @@ class _QuestionsScreenState extends State<QuestionsScreen>
             if (snapshot.hasData) {
               this.model.consult.questions =
                   snapshot.data.first.screeningQuestions;
+              if (this.model.consult.symptom.length == 0) {
+                // if symptom name is "", then the user is updating their medical history from the account screen, and does not need the first question asking if they have seen this provider before.
+                this.model.consult.questions.removeAt(0);
+              }
               return QuestionsPageView();
             }
             return const Scaffold(

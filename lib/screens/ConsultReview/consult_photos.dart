@@ -74,7 +74,17 @@ class ConsultPhotos extends StatelessWidget {
             });
             if (photoQuestions.length == 0) {
               return Center(
-                child: Text("There are no photos for this visit."),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    "There are no photos for this visit.",
+                    style: TextStyle(
+                      fontFamily: 'Roboto Thin',
+                      fontSize: 20.0,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ),
               );
             }
             return PhotoViewGallery.builder(

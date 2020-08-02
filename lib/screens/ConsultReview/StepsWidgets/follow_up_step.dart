@@ -24,75 +24,82 @@ class _FollowUpStepState extends State<FollowUpStep> {
     ).value;
     final width = MediaQuery.of(context).size.width;
     if (model.diagnosisOptions != null)
-      return SwipeGestureRecognizer(
-        onSwipeLeft: () => model.incrementIndex(),
-        onSwipeRight: () => model.decrementIndex(),
-        child: CustomScrollView(
-          slivers: <Widget>[
-            SliverFillRemaining(
-              hasScrollBody: false,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 32, 0, 12),
-                    child: Text(
-                      "How would you like to follow up with this patient?",
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontWeight: FontWeight.w500,
+      return GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          FocusScope.of(context).requestFocus(FocusNode());
+        },
+        child: SwipeGestureRecognizer(
+          onSwipeLeft: () => model.incrementIndex(),
+          onSwipeRight: () => model.decrementIndex(),
+          child: CustomScrollView(
+            slivers: <Widget>[
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 32, 0, 12),
+                      child: Text(
+                        "How would you like to follow up with this patient?",
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
-                  ),
-                  Container(
-                    width: width * 0.8,
-                    child: RadioButtonGroup(
-                      labels: FollowUpSteps.followUpSteps,
-                      picked: model.followUpStepState.followUp,
-                      onSelected: (String selected) {
-                        model.updateFollowUpStepWith(followUp: selected);
-                        if (selected == FollowUpSteps.Emergency) {
-                          ImmediateMedicalCare.show(
+                    Container(
+                      width: width * 0.8,
+                      child: RadioButtonGroup(
+                        labels: FollowUpSteps.followUpSteps,
+                        picked: model.followUpStepState.followUp,
+                        onSelected: (String selected) {
+                          model.updateFollowUpStepWith(followUp: selected);
+                          if (selected == FollowUpSteps.Emergency) {
+                            ImmediateMedicalCare.show(
+                              context: context,
+                              visitReviewViewModel: model,
+                              documentation:
+                                  model.followUpStepState.documentation,
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                    if (model.followUpStepState.followUp ==
+                            FollowUpSteps.ViaMedicall ||
+                        model.followUpStepState.followUp ==
+                            FollowUpSteps.InPerson)
+                      ..._buildDurationItem(model),
+                    if (model.followUpStepState.followUp ==
+                        FollowUpSteps.Emergency)
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(25, 12, 24, 0),
+                        child: SignInButton(
+                          text: "Edit Immediate Care Documentation",
+                          color: Colors.blue,
+                          textColor: Colors.white,
+                          height: 24,
+                          onPressed: () => ImmediateMedicalCare.show(
                             context: context,
                             visitReviewViewModel: model,
                             documentation:
                                 model.followUpStepState.documentation,
-                          );
-                        }
-                      },
-                    ),
-                  ),
-                  if (model.followUpStepState.followUp ==
-                          FollowUpSteps.ViaMedicall ||
-                      model.followUpStepState.followUp ==
-                          FollowUpSteps.InPerson)
-                    ..._buildDurationItem(model),
-                  if (model.followUpStepState.followUp ==
-                      FollowUpSteps.Emergency)
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(25, 12, 24, 0),
-                      child: SignInButton(
-                        text: "Edit Immediate Care Documentation",
-                        color: Colors.blue,
-                        textColor: Colors.white,
-                        height: 24,
-                        onPressed: () => ImmediateMedicalCare.show(
-                          context: context,
-                          visitReviewViewModel: model,
-                          documentation: model.followUpStepState.documentation,
+                          ),
                         ),
                       ),
+                    SizedBox(
+                      height: 8,
                     ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  ContinueButton(
-                    width: width,
-                  ),
-                ],
+                    ContinueButton(
+                      width: width,
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       );
     return EmptyDiagnosis(model: model);

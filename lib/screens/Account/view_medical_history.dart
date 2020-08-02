@@ -30,6 +30,7 @@ class ViewMedicalHistory extends StatelessWidget {
       appBar: CustomAppBar.getAppBar(
         type: AppBarType.Back,
         title: "Visit Information",
+        theme: Theme.of(context),
       ),
       body: FutureBuilder<ScreeningQuestions>(
         future: db.medicalHistory(uid: userProvider.user.uid),

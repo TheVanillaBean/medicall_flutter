@@ -146,14 +146,14 @@ class _VisitReviewState extends State<VisitReview> with VisitReviewStatus {
     );
   }
 
-  MaterialColor getColorForStep(int stepIndex) {
+  Color getColorForStep(int stepIndex) {
     if (widget.model.completedSteps.contains(stepIndex)) {
-      return Colors.blueGrey;
+      return Theme.of(context).primaryColorDark;
     }
     if (widget.model.currentStep == stepIndex) {
-      return Colors.indigo;
+      return Theme.of(context).colorScheme.primary;
     } else {
-      return Colors.blue;
+      return Theme.of(context).colorScheme.secondaryVariant;
     }
   }
 

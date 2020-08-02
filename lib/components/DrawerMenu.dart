@@ -5,6 +5,7 @@ import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard.dart';
 import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/user_provider.dart';
+import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -156,8 +157,14 @@ class DrawerMenu extends StatelessWidget {
                         ),
                         onTap: () {
                           Navigator.of(context).pop();
-                          Navigator.of(context).pushNamed('/account',
-                              arguments: {'user': medicallUser});
+                          if (medicallUser.type == USER_TYPE.PATIENT) {
+                            Navigator.of(context).pushNamed('/account',
+                                arguments: {'user': medicallUser});
+                          } else {
+                            AppUtil().showFlushBar(
+                                "Still working on provider account screen Omar :)",
+                                context);
+                          }
                         }),
                     Divider(
                       height: 0,

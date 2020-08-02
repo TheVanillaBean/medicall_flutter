@@ -26,10 +26,7 @@ class ReusableCard extends StatelessWidget {
         contentPadding: EdgeInsets.fromLTRB(20, 5, 20, 5),
         dense: true,
         leading: leading,
-        title: Text(
-          title,
-          style: Theme.of(context).textTheme.bodyText1,
-        ),
+        title: title,
         subtitle: Text(
           subtitle,
           style: Theme.of(context).textTheme.subtitle2,
@@ -37,8 +34,6 @@ class ReusableCard extends StatelessWidget {
         trailing: trailing,
         onTap: onTap,
       ),
-        trailing: trailing,
-        onTap: onTap,
     );
   }
 }

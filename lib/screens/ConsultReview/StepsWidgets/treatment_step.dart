@@ -19,69 +19,44 @@ class TreatmentStep extends StatelessWidget {
       properties: [VisitReviewVMProperties.treatmentStep],
     ).value;
     final width = MediaQuery.of(context).size.width;
-    if (model.diagnosisOptions != null)
-      return SwipeGestureRecognizer(
-        onSwipeLeft: () => model.incrementIndex(),
-        onSwipeRight: () => model.decrementIndex(),
-        child: CustomScrollView(
-          slivers: <Widget>[
-            SliverFillRemaining(
-              hasScrollBody: false,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 32, 0, 12),
-                    child: Text(
-                      "Check all that apply",
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontWeight: FontWeight.w500,
+    if (model.diagnosisOptions != null) {
+      return GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          FocusScope.of(context).requestFocus(FocusNode());
+        },
+        child: SwipeGestureRecognizer(
+          onSwipeLeft: () => model.incrementIndex(),
+          onSwipeRight: () => model.decrementIndex(),
+          child: CustomScrollView(
+            slivers: <Widget>[
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 32, 0, 12),
+                      child: Text(
+                        "Check all that apply",
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
-                  ),
-                  Container(
-                    width: width * 0.8,
-                    child: CheckboxGroup(
-                      labels: model.diagnosisOptions.treatments
-                          .map((t) => t.medicationName)
-                          .toList(),
-                      checked: model
-                          .treatmentNoteStepState.selectedTreatmentOptions
-                          .map((e) => e.medicationName)
-                          .toList(),
-                      onChange: (isChecked, label, index) async {
-                        if (isChecked) {
-                          TreatmentOptions treatmentOptions = model
-                              .diagnosisOptions.treatments
-                              .where(
-                                  (element) => element.medicationName == label)
-                              .toList()
-                              .first;
-                          model.updateTreatmentStepWith(
-                              selectedTreatment: treatmentOptions);
-                          PrescriptionDetails.show(
-                            context: context,
-                            treatmentOptions: treatmentOptions,
-                            visitReviewViewModel: model,
-                          );
-                        } else {
-                          final didPressEdit = await PlatformAlertDialog(
-                            title: "Deselect Treatment?",
-                            content:
-                                "Do you want to deselect this treatment option or do you want to edit it?",
-                            defaultActionText: "Edit",
-                            cancelActionText: "Deselect",
-                          ).show(context);
-                          if (!didPressEdit) {
-                            TreatmentOptions treatmentOptions = model
-                                .diagnosisOptions.treatments
-                                .where((element) =>
-                                    element.medicationName == label)
-                                .toList()
-                                .first;
-                            model.deselectTreatmentStep(treatmentOptions);
-                          } else {
+                    Container(
+                      width: width * 0.8,
+                      child: CheckboxGroup(
+                        labels: model.diagnosisOptions.treatments
+                            .map((t) => t.medicationName)
+                            .toList(),
+                        checked: model
+                            .treatmentNoteStepState.selectedTreatmentOptions
+                            .map((e) => e.medicationName)
+                            .toList(),
+                        onChange: (isChecked, label, index) async {
+                          if (isChecked) {
                             TreatmentOptions treatmentOptions = model
                                 .diagnosisOptions.treatments
                                 .where((element) =>
@@ -95,20 +70,52 @@ class TreatmentStep extends StatelessWidget {
                               treatmentOptions: treatmentOptions,
                               visitReviewViewModel: model,
                             );
+                          } else {
+                            final didPressEdit = await PlatformAlertDialog(
+                              title: "Deselect Treatment?",
+                              content:
+                                  "Do you want to deselect this treatment option or do you want to edit it?",
+                              defaultActionText: "Edit",
+                              cancelActionText: "Deselect",
+                            ).show(context);
+                            if (!didPressEdit) {
+                              TreatmentOptions treatmentOptions = model
+                                  .diagnosisOptions.treatments
+                                  .where((element) =>
+                                      element.medicationName == label)
+                                  .toList()
+                                  .first;
+                              model.deselectTreatmentStep(treatmentOptions);
+                            } else {
+                              TreatmentOptions treatmentOptions = model
+                                  .diagnosisOptions.treatments
+                                  .where((element) =>
+                                      element.medicationName == label)
+                                  .toList()
+                                  .first;
+                              model.updateTreatmentStepWith(
+                                  selectedTreatment: treatmentOptions);
+                              PrescriptionDetails.show(
+                                context: context,
+                                treatmentOptions: treatmentOptions,
+                                visitReviewViewModel: model,
+                              );
+                            }
                           }
-                        }
-                      },
+                        },
+                      ),
                     ),
-                  ),
-                  ContinueButton(
-                    width: width,
-                  ),
-                ],
+                    ContinueButton(
+                      width: width,
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       );
+    }
     return EmptyDiagnosis(model: model);
   }
 }

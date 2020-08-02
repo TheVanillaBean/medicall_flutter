@@ -1,4 +1,3 @@
-import 'package:Medicall/common_widgets/empty_content.dart';
 import 'package:Medicall/common_widgets/empty_visits.dart';
 import 'package:Medicall/common_widgets/list_items_builder.dart';
 import 'package:Medicall/components/DrawerMenu.dart';
@@ -7,12 +6,10 @@ import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Dashboard/patient_dashboard_list_item.dart';
 import 'package:Medicall/screens/Dashboard/patient_dashboard_view_model.dart';
 import 'package:Medicall/screens/Symptoms/symptoms.dart';
-import 'package:Medicall/screens/VisitDetails/visit_details_overview.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 class PatientDashboardScreen extends StatelessWidget {
@@ -65,7 +62,8 @@ class PatientDashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context);
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
         leading: Builder(
@@ -173,7 +171,7 @@ class PatientDashboardScreen extends StatelessWidget {
     ];
   }
 
-  Widget _buildHeader({BuildContext context}) {
+  Widget _buildHeader({BuildContext context, double height}) {
     return StreamBuilder<List<Consult>>(
       stream: model.consultStream.stream,
       builder:
@@ -196,15 +194,18 @@ class PatientDashboardScreen extends StatelessWidget {
               SizedBox(height: 12),
               Expanded(
                 child: ListItemsBuilder<Consult>(
-                  snapshot: null,
-                  itemsList: [],
+                  snapshot: consultSnapshot,
                   emptyContentWidget: EmptyVisits(
                     title: "You do not have any active visits",
                     message: "Start a visit below",
                   ),
+                  itemBuilder: (context, consult) => PatientDashboardListItem(
+                    consult: consult,
+                    onTap: null,
+                  ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         );
       },

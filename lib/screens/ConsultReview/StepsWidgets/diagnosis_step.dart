@@ -1,8 +1,8 @@
 import 'package:Medicall/screens/ConsultReview/ReusableWidgets/continue_button.dart';
+import 'package:Medicall/screens/ConsultReview/ReusableWidgets/direct_select.dart';
 import 'package:Medicall/screens/ConsultReview/ReusableWidgets/swipe_gesture_recognizer.dart';
 import 'package:Medicall/screens/ConsultReview/visit_review_view_model.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:direct_select/direct_select.dart';
 import 'package:flutter/material.dart';
 import 'package:grouped_buttons/grouped_buttons.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';

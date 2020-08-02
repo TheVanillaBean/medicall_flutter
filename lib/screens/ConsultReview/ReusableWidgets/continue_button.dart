@@ -1,4 +1,4 @@
-import 'package:Medicall/common_widgets/sign_in_button.dart';
+import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:flutter/material.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
 
@@ -26,11 +26,8 @@ class ContinueButton extends StatelessWidget {
           width: width * .5,
           child: Padding(
             padding: const EdgeInsets.only(bottom: 16),
-            child: SignInButton(
-              text: "Save and Continue",
-              height: 16,
-              color: Colors.blue,
-              textColor: Colors.white,
+            child: ReusableRaisedButton(
+              title: "Save and Continue",
               onPressed: model.canContinue && !model.continueBtnPressed
                   ? () async {
                       model.updateContinueBtnPressed(true);
