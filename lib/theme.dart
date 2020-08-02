@@ -7,7 +7,7 @@ setStatusBarColor() {
   );
 }
 
-final primaryColor = Color(0xff6E0063);
+final primaryColor = Color(0xff90024C);
 
 final ThemeData myTheme = ThemeData(
   fontFamily: 'Inter',

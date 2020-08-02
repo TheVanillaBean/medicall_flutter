@@ -40,6 +40,9 @@ class WelcomeScreen extends StatelessWidget {
                 'assets/icon/letter_mark.png',
               ),
             ),
+            SizedBox(
+              height: 10,
+            ),
             Text(
               'Leading Local Doctors',
               style: TextStyle(
