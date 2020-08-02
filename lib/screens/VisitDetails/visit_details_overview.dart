@@ -2,11 +2,11 @@ import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/presentation/medicall_icons_icons.dart';
 import 'package:Medicall/routing/router.dart';
-import 'package:intl/intl.dart';
 import 'package:Medicall/screens/ConsultReview/review_visit_information.dart';
 import 'package:Medicall/screens/VisitDetails/visit_doc_note.dart';
 import 'package:Medicall/screens/VisitDetails/visit_education.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class VisitDetailsOverview extends StatelessWidget {
   final Consult consult;
@@ -32,9 +32,9 @@ class VisitDetailsOverview extends StatelessWidget {
         type: AppBarType.Back,
         title: consult.symptom + ' visit',
         subtitle: 'with ' +
-            consult.providerUser.titles +
-            ' ' +
             consult.providerUser.fullName +
+            ' ' +
+            consult.providerUser.titles +
             ' on ' +
             DateFormat('MM-dd-yyyy').format(consult.date).toString(),
         theme: Theme.of(context),
