@@ -72,7 +72,6 @@ class PaymentDetail extends StatelessWidget {
           child: Text(
             'Your payment cards on file:',
             style: TextStyle(
-              fontFamily: 'SourceSansPro',
               fontSize: 16.0,
               color: Colors.black54,
             ),

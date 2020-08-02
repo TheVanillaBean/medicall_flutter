@@ -94,7 +94,6 @@ class ImmediateMedicalCare extends StatelessWidget {
                     'We highly recommend that you call the patient and discuss your recommendations. We suggest you document the conversation below.',
                     style: TextStyle(
                       height: 1.5,
-                      fontFamily: 'Roboto Regular',
                       fontSize: 14.0,
                       color: Colors.black54,
                       fontWeight: FontWeight.bold,
@@ -107,7 +106,6 @@ class ImmediateMedicalCare extends StatelessWidget {
                   child: Text(
                     'Patient Name: ${visitReviewViewModel.consult.patientUser.fullName}',
                     style: TextStyle(
-                      fontFamily: 'Roboto Regular',
                       fontSize: 14.0,
                       color: Colors.black54,
                     ),
@@ -121,7 +119,6 @@ class ImmediateMedicalCare extends StatelessWidget {
                     child: Text(
                       'Patient Number: ${visitReviewViewModel.consult.patientUser.phoneNumber}',
                       style: TextStyle(
-                        fontFamily: 'Roboto Regular',
                         fontSize: 14.0,
                         color: Colors.black54,
                       ),
@@ -135,7 +132,6 @@ class ImmediateMedicalCare extends StatelessWidget {
                   child: Text(
                     'DOCUMENTATION:',
                     style: TextStyle(
-                      fontFamily: 'Roboto Thin',
                       fontSize: 16.0,
                       color: Colors.black87,
                     ),

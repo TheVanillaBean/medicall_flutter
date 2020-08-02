@@ -79,7 +79,6 @@ class ConsultPhotos extends StatelessWidget {
                   child: Text(
                     "There are no photos for this visit.",
                     style: TextStyle(
-                      fontFamily: 'Roboto Thin',
                       fontSize: 20.0,
                       color: Colors.grey,
                     ),

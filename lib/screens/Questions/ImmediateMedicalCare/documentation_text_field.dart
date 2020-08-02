@@ -30,7 +30,6 @@ class DocumentationTextField extends StatelessWidget {
         maxLines: maxLines,
         style: TextStyle(
           height: 1.5,
-          fontFamily: 'Roboto Regular',
           fontSize: 14.0,
           color: Colors.black54,
         ),
@@ -39,12 +38,10 @@ class DocumentationTextField extends StatelessWidget {
           isDense: true,
           labelText: labelText,
           labelStyle: TextStyle(
-            fontFamily: 'Roboto Thin',
             fontSize: 16.0,
             color: Colors.black87,
           ),
           hintStyle: TextStyle(
-            fontFamily: 'Roboto Regular',
             fontSize: 14.0,
             color: Colors.black26,
           ),

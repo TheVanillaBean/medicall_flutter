@@ -1,4 +1,5 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
+import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/screening_questions_model.dart';
 import 'package:Medicall/routing/router.dart';
@@ -42,27 +43,21 @@ class VisitDocNote extends StatelessWidget {
                   Navigator.of(context).pushNamed('/dashboard');
                 })
           ]),
-      body: FutureBuilder<ScreeningQuestions>(
-        future: db.consultQuestionnaire(consultId: consult.uid),
-        builder:
-            (BuildContext context, AsyncSnapshot<ScreeningQuestions> snapshot) {
-          return SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                  padding: EdgeInsets.fromLTRB(40, 5, 40, 5),
-                  child: Text(
-                    'data',
-                    style: Theme.of(context).textTheme.bodyText1,
-                  ),
-                )
-              ],
-            ),
-          );
-        },
-      ),
+      body: StreamBuilder(
+          stream: db.visitReviewStream(consultId: consult.uid),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            }
+            switch (snapshot.connectionState) {
+              case ConnectionState.waiting:
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              default:
+                return Text(snapshot.data.toString());
+            }
+          }),
     );
   }
 }

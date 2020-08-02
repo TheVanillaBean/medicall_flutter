@@ -19,7 +19,6 @@ class ReviewPageListItem extends StatelessWidget {
         title: Text(
           question.question,
           style: TextStyle(
-            fontFamily: 'Roboto Regular',
             fontSize: 12,
             color: Colors.black87,
           ),
@@ -33,7 +32,6 @@ class ReviewPageListItem extends StatelessWidget {
                 child: Text(
                   answer,
                   style: TextStyle(
-                    fontFamily: 'Roboto Regular',
                     fontSize: 12,
                     fontStyle: FontStyle.italic,
                     color: Colors.black54,

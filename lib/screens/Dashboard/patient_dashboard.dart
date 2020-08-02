@@ -73,7 +73,7 @@ class PatientDashboardScreen extends StatelessWidget {
                 Scaffold.of(context).openDrawer();
               },
               icon: Icon(
-                Icons.home,
+                Icons.menu,
                 color: Theme.of(context).appBarTheme.iconTheme.color,
               ),
             );
@@ -126,7 +126,6 @@ class PatientDashboardScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.primary,
-                  fontFamily: 'Roboto Thin',
                   fontSize: 16.0,
                 ),
               ),
@@ -143,7 +142,6 @@ class PatientDashboardScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.primary,
-                  fontFamily: 'Roboto Thin',
                   fontSize: 16.0,
                 ),
               ),
@@ -160,7 +158,6 @@ class PatientDashboardScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.primary,
-                  fontFamily: 'Roboto Thin',
                   fontSize: 16.0,
                 ),
               ),
@@ -185,7 +182,6 @@ class PatientDashboardScreen extends StatelessWidget {
                 child: Text(
                   "Status of active visits:",
                   style: TextStyle(
-                    fontFamily: 'Roboto Thin',
                     fontSize: 20.0,
                     color: Colors.grey,
                   ),

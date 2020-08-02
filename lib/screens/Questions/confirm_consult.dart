@@ -34,7 +34,6 @@ class ConfirmConsult extends StatelessWidget {
                 'You have completed your visit.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontFamily: 'Roboto Thin',
                   fontSize: 18.0,
                   color: Colors.grey,
                 ),
@@ -67,7 +66,6 @@ class ConfirmConsult extends StatelessWidget {
                   'You will now be directed to your dashboard. You will be able to review this visit, message your doctor, get updates, and explore other services.',
                   textAlign: TextAlign.justify,
                   style: TextStyle(
-                    fontFamily: 'Roboto Regular',
                     fontSize: 14.0,
                     color: Colors.grey,
                   ),
@@ -79,7 +77,6 @@ class ConfirmConsult extends StatelessWidget {
                   'Thank You for choosing Medicall!',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontFamily: 'Roboto Thin',
                     fontSize: 18.0,
                     color: Colors.grey,
                   ),
@@ -121,7 +118,6 @@ class ConfirmConsultListItem extends StatelessWidget {
           title,
           textAlign: TextAlign.left,
           style: TextStyle(
-            fontFamily: 'Roboto Thin',
             fontSize: 18.0,
             color: Colors.grey,
           ),
@@ -130,7 +126,6 @@ class ConfirmConsultListItem extends StatelessWidget {
           subtitle,
           textAlign: TextAlign.left,
           style: TextStyle(
-            fontFamily: 'Roboto Regular',
             fontSize: 13.0,
             color: Colors.grey,
           ),
@@ -148,7 +143,6 @@ class ConfirmConsultListItem extends StatelessWidget {
         title,
         textAlign: TextAlign.left,
         style: TextStyle(
-          fontFamily: 'Roboto Thin',
           fontSize: 18.0,
           color: Colors.grey,
         ),

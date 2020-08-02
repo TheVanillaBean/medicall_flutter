@@ -98,7 +98,6 @@ class _AccountScreenState extends State<AccountScreen> {
           Text(
             medicallUser.fullName,
             style: TextStyle(
-              fontFamily: 'SourceSansPro',
               fontSize: 30.0,
               color: Colors.grey,
               fontWeight: FontWeight.bold,
@@ -108,7 +107,6 @@ class _AccountScreenState extends State<AccountScreen> {
           Text(
             EnumToString.parse(userProvider.user.type).toUpperCase(),
             style: TextStyle(
-              fontFamily: 'SourceSansPro',
               fontSize: 16.0,
               letterSpacing: 2.5,
               color: Colors.grey,

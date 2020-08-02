@@ -201,8 +201,10 @@ class NavigationButtons extends StatelessWidget {
               alignment: FractionalOffset.bottomCenter,
               child: IconButton(
                   icon: Icon(Icons.arrow_back_ios),
-                  onPressed:
-                      model.canAccessNext ? () => model.previousPage() : null),
+                  disabledColor: Colors.black12,
+                  onPressed: model.canAccessPrevious
+                      ? () => model.previousPage()
+                      : null),
             ),
           ),
           Expanded(
@@ -215,6 +217,7 @@ class NavigationButtons extends StatelessWidget {
               alignment: FractionalOffset.bottomCenter,
               child: IconButton(
                   icon: Icon(Icons.arrow_forward_ios),
+                  disabledColor: Colors.black12,
                   onPressed:
                       model.canAccessNext ? () => model.nextPage() : null),
             ),

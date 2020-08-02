@@ -295,7 +295,6 @@ final ThemeData myTheme = ThemeData(
       fontSize: null,
       fontWeight: FontWeight.w400,
       fontStyle: FontStyle.normal,
-      fontFamily: "Roboto Thin",
     ),
     headline1: TextStyle(
       color: Color(0xb3ffffff),
