@@ -30,8 +30,9 @@ class WelcomeScreen extends StatelessWidget {
   List<Widget> buildChildren(BuildContext context) {
     return <Widget>[
       Container(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+        margin: EdgeInsets.only(top: 40),
+        height: 60,
+        child: Column(
           children: <Widget>[
             SizedBox(
               width: 140,
@@ -39,13 +40,13 @@ class WelcomeScreen extends StatelessWidget {
                 'assets/icon/letter_mark.png',
               ),
             ),
+            Text(
+              'Leading Local Doctors',
+              style: TextStyle(
+                  fontSize: 18, color: Theme.of(context).colorScheme.primary),
+            ),
           ],
         ),
-      ),
-      Text(
-        'Leading Local Doctors',
-        style: TextStyle(
-            fontSize: 18, color: Theme.of(context).colorScheme.primary),
       ),
       buildStepsList(context),
       buildGetStartedBtn(context),
@@ -59,7 +60,7 @@ class WelcomeScreen extends StatelessWidget {
               alignment: Alignment.center,
               width: 140,
               child: Text(
-                "I have an account",
+                "Login",
                 style: Theme.of(context).textTheme.caption,
               ),
             ),
@@ -116,7 +117,7 @@ class WelcomeScreen extends StatelessWidget {
   Widget buildStepsList(context) {
     return Container(
       alignment: Alignment.centerLeft,
-      padding: EdgeInsets.fromLTRB(50, 50, 0, 10),
+      padding: EdgeInsets.fromLTRB(50, 0, 0, 10),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
