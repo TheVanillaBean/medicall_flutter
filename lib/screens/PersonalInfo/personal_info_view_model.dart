@@ -200,6 +200,10 @@ class PersonalInfoViewModel with PersonalInfoValidator, ChangeNotifier {
   }
 
   Future<void> submit() async {
+    if (!canSubmit) {
+      btnController.reset();
+      throw "Please fill out all the fields first";
+    }
     updateWith(submitted: true, isLoading: true);
     PatientUser medicallUser = userProvider.user;
     medicallUser.firstName = this.firstName;

@@ -32,7 +32,7 @@ class _PersonalInfoFormState extends State<PersonalInfoForm>
       await model.submit();
       extendedImageProvider.clearImageMemory();
       MakePayment.show(context: context, consult: model.consult);
-    } on PlatformException catch (e) {
+    } catch (e) {
       AppUtil().showFlushBar(e, context);
     }
   }
@@ -113,16 +113,16 @@ class _PersonalInfoFormState extends State<PersonalInfoForm>
                   ),
                   textAlign: TextAlign.center,
                 ),
-                onPressed: model.canSubmit
-                    ? () {
-                        if (_formKey.currentState.validate()) {
-                          _submit(
-                            model,
-                            extendedImageProvider,
-                          );
-                        }
-                      }
-                    : null,
+                onPressed: () {
+                  if (_formKey.currentState.validate()) {
+                    _submit(
+                      model,
+                      extendedImageProvider,
+                    );
+                  } else {
+                    model.btnController.reset();
+                  }
+                },
               ),
             ),
           ),

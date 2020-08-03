@@ -135,7 +135,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
       ),
       SizedBox(height: 36),
       PersonalInfoForm(),
-      SizedBox(height: 12),
+      SizedBox(height: 24),
     ];
   }
 
