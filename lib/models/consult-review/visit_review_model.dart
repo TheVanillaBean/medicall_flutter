@@ -44,11 +44,13 @@ class VisitReviewData {
             )
             .toList();
     final List<TreatmentOptions> treatmentOptions =
-        (data['treatment_options'] as List).map(
-      (e) => TreatmentOptions.fromMap(e),
-    );
+        (data['treatment_options'] as List)
+            .map(
+              (e) => TreatmentOptions.fromMap(e),
+            )
+            .toList();
     final List<Map<String, String>> selectedEducationalOptions =
-        (data['selected_educational_options'])
+        (data['selected_educational_options'] as List)
             .map(
               (e) => (e as Map).map(
                 (key, value) => MapEntry(key as String, value as String),

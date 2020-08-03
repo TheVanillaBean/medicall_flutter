@@ -77,6 +77,7 @@ class VisitOverview extends StatelessWidget {
                 Expanded(
                   child: RaisedButton(
                     color: Colors.white,
+                    disabledColor: Colors.grey.withAlpha(40),
                     elevation: 3,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12)),
@@ -101,6 +102,7 @@ class VisitOverview extends StatelessWidget {
                 Expanded(
                   child: RaisedButton(
                     color: Colors.white,
+                    disabledColor: Colors.grey.withAlpha(40),
                     elevation: 3,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12)),

@@ -1,12 +1,16 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
+import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/presentation/medicall_icons_icons.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/ConsultReview/review_visit_information.dart';
+import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/VisitDetails/visit_doc_note.dart';
 import 'package:Medicall/screens/VisitDetails/visit_education.dart';
+import 'package:Medicall/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class VisitDetailsOverview extends StatelessWidget {
   final Consult consult;
@@ -27,6 +31,8 @@ class VisitDetailsOverview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    FirestoreDatabase firestoreDatabase =
+        Provider.of<FirestoreDatabase>(context, listen: false);
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
         type: AppBarType.Back,
@@ -40,51 +46,97 @@ class VisitDetailsOverview extends StatelessWidget {
         theme: Theme.of(context),
         actions: [
           IconButton(
-              icon: Icon(
-                Icons.home,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              onPressed: () {
-                Navigator.of(context).pushNamed('/dashboard');
-              })
+            icon: Icon(
+              Icons.home,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            onPressed: () {
+              PatientDashboardScreen.show(
+                  context: context, pushReplaceNamed: true);
+            },
+          )
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            _buildCardButton(
-                "Review Information",
-                Icons.assignment,
-                () => {
-                      ReviewVisitInformation.show(
-                        context: context,
-                        consult: consult,
-                      )
-                    }),
-            _buildCardButton("Prescriptions", Icons.local_pharmacy, () => {}),
-            _buildCardButton(
-                "Doctor Note",
-                MedicallIcons.clipboard_1,
-                () => {
-                      VisitDocNote.show(
-                        context: context,
-                        consult: consult,
-                      )
-                    }),
-            _buildCardButton(
-                "Education",
-                Icons.school,
-                () => {
-                      VisitEducation.show(
-                        context: context,
-                        consult: consult,
-                      )
-                    }),
-            _buildCardButton("Message Doctor", Icons.message, () => {}),
-          ],
-        ),
-      ),
+      body: consult.state == ConsultStatus.Signed
+          ? _buildVisitReviewButtons(firestoreDatabase)
+          : Center(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  "This visit has not been reviewed yet.",
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    color: Colors.grey,
+                  ),
+                ),
+              ),
+            ),
     );
+  }
+
+  StreamBuilder<VisitReviewData> _buildVisitReviewButtons(
+      FirestoreDatabase firestoreDatabase) {
+    return StreamBuilder<VisitReviewData>(
+        stream: firestoreDatabase.visitReviewStream(consultId: consult.uid),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          if (!snapshot.hasData) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  "Error retrieving visit information.",
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    color: Colors.grey,
+                  ),
+                ),
+              ),
+            );
+          }
+          return SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                _buildCardButton(
+                    "Review Information",
+                    Icons.assignment,
+                    () => {
+                          ReviewVisitInformation.show(
+                            context: context,
+                            consult: consult,
+                          )
+                        }),
+                _buildCardButton(
+                    "Prescriptions", Icons.local_pharmacy, () => {}),
+                _buildCardButton(
+                    "Doctor Note",
+                    MedicallIcons.clipboard_1,
+                    () => {
+                          VisitDocNote.show(
+                            context: context,
+                            consult: consult,
+                            visitReviewData: snapshot.data,
+                          )
+                        }),
+                _buildCardButton(
+                    "Education",
+                    Icons.school,
+                    () => {
+                          VisitEducation.show(
+                            context: context,
+                            consult: consult,
+                            visitReviewData: snapshot.data,
+                          )
+                        }),
+                _buildCardButton("Message Doctor", Icons.message, () => {}),
+              ],
+            ),
+          );
+        });
   }
 
   Widget _buildCardButton(String title, IconData icon, Function onTap) {

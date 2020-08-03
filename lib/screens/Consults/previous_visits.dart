@@ -19,7 +19,7 @@ class PreviousVisits extends StatelessWidget {
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
         type: AppBarType.Back,
-        title: "Previous Visits",
+        title: "My Visits",
         theme: Theme.of(context),
       ),
       body: _buildChildren(),

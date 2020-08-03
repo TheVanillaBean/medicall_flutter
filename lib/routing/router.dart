@@ -46,8 +46,8 @@ import 'package:Medicall/screens/SelectProvider/select_provider.dart';
 import 'package:Medicall/screens/Symptoms/symptom_detail.dart';
 import 'package:Medicall/screens/Symptoms/symptoms.dart';
 import 'package:Medicall/screens/Terms/index.dart';
-import 'package:Medicall/screens/VisitDetails/visit_doc_note.dart';
 import 'package:Medicall/screens/VisitDetails/visit_details_overview.dart';
+import 'package:Medicall/screens/VisitDetails/visit_doc_note.dart';
 import 'package:Medicall/screens/VisitDetails/visit_education.dart';
 import 'package:Medicall/screens/Welcome//welcome.dart';
 import 'package:Medicall/screens/Welcome/start_visit.dart';
@@ -269,16 +269,24 @@ class Router {
       case Routes.visitDocNote:
         final Map<String, dynamic> mapArgs = args;
         final Consult consult = mapArgs['consult'];
+        final VisitReviewData visitReviewData = mapArgs['visitReviewData'];
         return MaterialPageRoute<dynamic>(
-          builder: (context) => VisitDocNote(consult: consult),
+          builder: (context) => VisitDocNote(
+            consult: consult,
+            visitReviewData: visitReviewData,
+          ),
           settings: settings,
           fullscreenDialog: true,
         );
       case Routes.visitEducation:
         final Map<String, dynamic> mapArgs = args;
         final Consult consult = mapArgs['consult'];
+        final VisitReviewData visitReviewData = mapArgs['visitReviewData'];
         return MaterialPageRoute<dynamic>(
-          builder: (context) => VisitEducation(consult: consult),
+          builder: (context) => VisitEducation(
+            consult: consult,
+            visitReviewData: visitReviewData,
+          ),
           settings: settings,
           fullscreenDialog: true,
         );
