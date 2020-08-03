@@ -8,7 +8,7 @@ import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class ProviderRegistrationScreen extends StatelessWidget {
+class ProviderRegistrationScreen extends StatefulWidget {
   final ProviderRegistrationViewModel model;
 
   const ProviderRegistrationScreen({@required this.model});
@@ -19,6 +19,7 @@ class ProviderRegistrationScreen extends StatelessWidget {
     final AuthBase auth = Provider.of<AuthBase>(context, listen: false);
     final TempUserProvider tempUserProvider =
         Provider.of<TempUserProvider>(context, listen: false);
+
     return ChangeNotifierProvider<ProviderRegistrationViewModel>(
       create: (context) => ProviderRegistrationViewModel(
         nonAuthDatabase: db,
@@ -38,6 +39,13 @@ class ProviderRegistrationScreen extends StatelessWidget {
   }
 
   @override
+  _ProviderRegistrationScreenState createState() =>
+      _ProviderRegistrationScreenState();
+}
+
+class _ProviderRegistrationScreenState
+    extends State<ProviderRegistrationScreen> {
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
@@ -46,12 +54,12 @@ class ProviderRegistrationScreen extends StatelessWidget {
         theme: Theme.of(context),
       ),
       //Content of tabs
-      body: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () {
-          FocusScope.of(context).requestFocus(new FocusNode());
-        },
-        child: SingleChildScrollView(
+      body: SingleChildScrollView(
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () {
+            FocusScope.of(context).requestFocus(new FocusNode());
+          },
           child: ProviderRegistrationForm(),
         ),
       ),
