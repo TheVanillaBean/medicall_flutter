@@ -17,8 +17,15 @@ class EmptyDiagnosis extends StatelessWidget {
       onSwipeLeft: () => model.incrementIndex(),
       onSwipeRight: () => model.decrementIndex(),
       child: Center(
-        child: Container(
-          child: Text("Please select a diagnosis first"),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            "Please select a diagnosis first",
+            style: TextStyle(
+              fontSize: 20.0,
+              color: Colors.grey,
+            ),
+          ),
         ),
       ),
     );

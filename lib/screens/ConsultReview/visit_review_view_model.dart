@@ -10,6 +10,7 @@ import 'package:Medicall/screens/ConsultReview/StepsViewModels/follow_up_step_st
 import 'package:Medicall/screens/ConsultReview/StepsViewModels/patient_note_step_state.dart';
 import 'package:Medicall/screens/ConsultReview/StepsViewModels/treatment_note_step_state.dart';
 import 'package:Medicall/services/database.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
 
@@ -50,6 +51,13 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
   List<int> completedSteps = [];
 
   bool continueBtnPressed = false;
+
+  ScrollController scrollController = new ScrollController(
+    initialScrollOffset: 0.0,
+    keepScrollOffset: true,
+  );
+
+  ScrollPosition _currentScrollPosition;
 
   //used to de-clutter this view model, but they do not update listeners themselves
   final DiagnosisStepState diagnosisStepState = DiagnosisStepState();
@@ -183,6 +191,11 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
         ? this.currentStep
         : this.currentStep + 1;
     updateContinueBtnPressed(false);
+    this.scrollController.animateTo(
+          this.scrollController.offset + 50,
+          duration: Duration(seconds: 1),
+          curve: Curves.easeIn,
+        );
     notifyListeners(VisitReviewVMProperties.visitReview);
   }
 

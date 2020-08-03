@@ -111,6 +111,7 @@ class _VisitReviewState extends State<VisitReview> with VisitReviewStatus {
           Expanded(
             flex: 1,
             child: SingleChildScrollView(
+              controller: widget.model.scrollController,
               scrollDirection: Axis.horizontal,
               child: SizedBox(
                 width: width * 1.5,
@@ -147,7 +148,8 @@ class _VisitReviewState extends State<VisitReview> with VisitReviewStatus {
   }
 
   Color getColorForStep(int stepIndex) {
-    if (widget.model.completedSteps.contains(stepIndex)) {
+    if (widget.model.completedSteps.contains(stepIndex) &&
+        widget.model.currentStep != stepIndex) {
       return Theme.of(context).primaryColorDark;
     }
     if (widget.model.currentStep == stepIndex) {

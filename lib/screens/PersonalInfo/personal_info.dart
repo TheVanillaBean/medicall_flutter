@@ -185,7 +185,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   List<Widget> _buildProfilePlaceholder({double height}) {
     return [
       Text(
-        "Please add a profile picture",
+        "Please add a profile picture\n(Required)",
         textAlign: TextAlign.center,
         style: TextStyle(
           fontSize: 16,

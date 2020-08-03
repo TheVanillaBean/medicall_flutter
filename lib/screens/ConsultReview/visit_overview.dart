@@ -1,17 +1,18 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
-import 'package:Medicall/common_widgets/flat_button.dart';
 import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
 import 'package:Medicall/common_widgets/sign_in_button.dart';
 import 'package:Medicall/models/consult-review/consult_review_options_model.dart';
 import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/patient_user_model.dart';
+import 'package:Medicall/models/provider_user_model.dart';
 import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/ConsultReview/review_visit_information.dart';
 import 'package:Medicall/screens/ConsultReview/visit_review.dart';
 import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard_list_item.dart';
 import 'package:Medicall/services/database.dart';
+import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -36,6 +37,8 @@ class VisitOverview extends StatelessWidget {
   Widget build(BuildContext context) {
     FirestoreDatabase firestoreDatabase =
         Provider.of<FirestoreDatabase>(context, listen: false);
+    UserProvider userProvider =
+        Provider.of<UserProvider>(context, listen: false);
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
         type: AppBarType.Back,
@@ -48,6 +51,7 @@ class VisitOverview extends StatelessWidget {
             if (snapshot.hasData) {
               Consult consult = snapshot.data;
               consult.patientUser = consultOld.patientUser;
+              consult.providerUser = userProvider.user as ProviderUser;
               return Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: _buildChildren(context, firestoreDatabase, consult),
@@ -97,25 +101,25 @@ class VisitOverview extends StatelessWidget {
             SizedBox(
               height: 20,
             ),
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: RaisedButton(
-                    color: Colors.white,
-                    disabledColor: Colors.grey.withAlpha(40),
-                    elevation: 3,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                    child: Text(
-                      "DIAGNOSIS & TREATMENT PLAN",
-                      style: Theme.of(context).textTheme.headline6,
-                    ),
-                    onPressed: onContinueBtnPressed(context, db, consult),
-                    padding: EdgeInsets.fromLTRB(25, 20, 25, 20),
-                  ),
-                ),
-              ],
-            )
+//            Row(
+//              children: <Widget>[
+//                Expanded(
+//                  child: RaisedButton(
+//                    color: Colors.white,
+//                    disabledColor: Colors.grey.withAlpha(40),
+//                    elevation: 3,
+//                    shape: RoundedRectangleBorder(
+//                        borderRadius: BorderRadius.circular(12)),
+//                    child: Text(
+//                      "DIAGNOSIS & TREATMENT PLAN",
+//                      style: Theme.of(context).textTheme.headline6,
+//                    ),
+//                    onPressed: onContinueBtnPressed(context, db, consult),
+//                    padding: EdgeInsets.fromLTRB(25, 20, 25, 20),
+//                  ),
+//                ),
+//              ],
+//            )
           ],
         ),
       ),
