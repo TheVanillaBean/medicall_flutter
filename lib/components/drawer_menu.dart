@@ -64,7 +64,7 @@ class DrawerMenu extends StatelessWidget {
     return Column(
       children: <Widget>[
         _buildHomeButton(listContentPadding, context, medicallUser),
-        if (medicallUser.type == USER_TYPE.PROVIDER)
+        if (medicallUser.type != USER_TYPE.PROVIDER)
           _buildNewVisitItem(listContentPadding, context, medicallUser),
         medicallUser.type == USER_TYPE.PROVIDER
             ? _buildProviderVisitsItem(listContentPadding, context)
@@ -130,7 +130,7 @@ class DrawerMenu extends StatelessWidget {
         title: Container(
           margin: EdgeInsets.only(left: 15),
           child: Text(
-            'Previous Visits',
+            'My Visits',
             style: Theme.of(context).textTheme.headline6,
           ),
         ),
