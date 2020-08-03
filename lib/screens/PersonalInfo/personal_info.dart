@@ -1,6 +1,5 @@
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
-import 'package:Medicall/screens/MakePayment/make_payment.dart';
 import 'package:Medicall/screens/PersonalInfo/personal_info_form.dart';
 import 'package:Medicall/screens/PersonalInfo/personal_info_view_model.dart';
 import 'package:Medicall/services/database.dart';
@@ -89,16 +88,6 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     super.dispose();
   }
 
-  Future<void> _submit() async {
-    try {
-      await model.submit();
-      extendedImageProvider.clearImageMemory();
-      MakePayment.show(context: context, consult: model.consult);
-    } on PlatformException catch (e) {
-      AppUtil().showFlushBar(e, context);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -147,7 +136,6 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
       SizedBox(height: 36),
       PersonalInfoForm(),
       SizedBox(height: 12),
-      if (model.isLoading) Center(child: const CircularProgressIndicator()),
     ];
   }
 

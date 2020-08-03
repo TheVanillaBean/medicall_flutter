@@ -70,6 +70,7 @@ dependencies:
   direct_select: ^1.0.2+1
   auto_size_text: ^2.1.0
   grouped_buttons: ^1.0.4
+  rounded_loading_button: ^1.0.0
 
 
 dependency_overrides:

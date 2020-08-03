@@ -1,14 +1,16 @@
 import 'package:Medicall/common_widgets/custom_date_picker_formfield.dart';
-import 'package:Medicall/common_widgets/reusable_raised_button.dart';
+import 'package:Medicall/common_widgets/custom_dropdown_formfield.dart';
+import 'package:Medicall/screens/MakePayment/make_payment.dart';
 import 'package:Medicall/screens/PersonalInfo/personal_info_text_field.dart';
 import 'package:Medicall/screens/PersonalInfo/personal_info_view_model.dart';
 import 'package:Medicall/screens/PhoneAuth/phone_auth_state_model.dart';
-import 'package:Medicall/common_widgets/custom_dropdown_formfield.dart';
+import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 class PersonalInfoForm extends StatefulWidget {
   @override
@@ -22,16 +24,23 @@ class _PersonalInfoFormState extends State<PersonalInfoForm>
   MaskTextInputFormatter phoneTextInputFormatter = MaskTextInputFormatter(
       mask: "(###)###-####", filter: {"#": RegExp(r'[0-9]')});
 
-  Future<void> _submit(PersonalInfoViewModel model) async {
+  Future<void> _submit(
+    PersonalInfoViewModel model,
+    ExtendedImageProvider extendedImageProvider,
+  ) async {
     try {
       await model.submit();
+      extendedImageProvider.clearImageMemory();
+      MakePayment.show(context: context, consult: model.consult);
     } on PlatformException catch (e) {
-      AppUtil.internal().showFlushBar(e, context);
+      AppUtil().showFlushBar(e, context);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final ExtendedImageProvider extendedImageProvider =
+        Provider.of<ExtImageProvider>(context);
     final PersonalInfoViewModel model =
         Provider.of<PersonalInfoViewModel>(context);
     model.setFormStatus(this);
@@ -90,22 +99,33 @@ class _PersonalInfoFormState extends State<PersonalInfoForm>
           SizedBox(height: 30),
           Align(
             alignment: FractionalOffset.bottomCenter,
-            child: ReusableRaisedButton(
-              title: 'Looks Good!',
-              onPressed: model.canSubmit
-                  ? () {
-                      if (_formKey.currentState.validate()) {
-                        _submit(model);
+            child: SizedBox(
+              height: 50,
+              width: 200,
+              child: RoundedLoadingButton(
+                controller: model.btnController,
+                color: Theme.of(context).colorScheme.primary,
+                child: Text(
+                  'Looks Good!',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                onPressed: model.canSubmit
+                    ? () {
+                        if (_formKey.currentState.validate()) {
+                          _submit(
+                            model,
+                            extendedImageProvider,
+                          );
+                        }
                       }
-                    }
-                  : null,
+                    : null,
+              ),
             ),
           ),
-          SizedBox(height: 30),
-          if (model.isLoading)
-            Container(
-                margin: EdgeInsets.symmetric(vertical: 24),
-                child: CircularProgressIndicator()),
         ],
       ),
     );

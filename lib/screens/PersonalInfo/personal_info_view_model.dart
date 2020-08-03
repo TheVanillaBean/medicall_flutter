@@ -8,6 +8,7 @@ import 'package:Medicall/util/validators.dart';
 import 'package:dash_chat/dash_chat.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 class PersonalInfoViewModel with PersonalInfoValidator, ChangeNotifier {
   String firstName;
@@ -25,6 +26,9 @@ class PersonalInfoViewModel with PersonalInfoValidator, ChangeNotifier {
   bool submitted;
   bool checkValue;
   PersonalFormStatus personalFormStatus;
+
+  final RoundedLoadingButtonController btnController =
+      RoundedLoadingButtonController();
 
   final List<String> states = const <String>[
     "AK",
@@ -212,11 +216,13 @@ class PersonalInfoViewModel with PersonalInfoValidator, ChangeNotifier {
           asset: this.profileImage.first);
     } catch (e) {
       updateWith(submitted: false, isLoading: false);
+      btnController.reset();
       throw "Could not save your profile picture!";
     }
 
     userProvider.user = medicallUser;
     await firestoreDatabase.setUser(userProvider.user);
+    btnController.success();
     updateWith(submitted: false, isLoading: false);
   }
 
