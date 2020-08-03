@@ -1,7 +1,6 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/list_items_builder.dart';
 import 'package:Medicall/components/DrawerMenu.dart';
-import 'package:Medicall/models/patient_user_model.dart';
 import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
@@ -13,7 +12,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class SymptomsScreen extends StatelessWidget {
-  static Future<void> show({BuildContext context}) async {
+  static Future<void> show({
+    BuildContext context,
+  }) async {
     await Navigator.of(context).pushNamed(Routes.symptoms);
   }
 

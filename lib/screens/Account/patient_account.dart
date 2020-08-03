@@ -2,6 +2,7 @@ import 'package:Medicall/common_widgets/reusable_account_card.dart';
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/patient_user_model.dart';
 import 'package:Medicall/models/user_model_base.dart';
+import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Account/view_medical_history.dart';
 import 'package:Medicall/screens/Questions/tempLinksPage.dart';
 import 'package:Medicall/services/database.dart';
@@ -16,6 +17,14 @@ import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:provider/provider.dart';
 
 class PatientAccountScreen extends StatefulWidget {
+  static Future<void> show({
+    BuildContext context,
+  }) async {
+    await Navigator.of(context).pushNamed(
+      Routes.patientAccount,
+    );
+  }
+
   @override
   _PatientAccountScreenState createState() => _PatientAccountScreenState();
 }

@@ -1,11 +1,13 @@
 import 'package:Medicall/models/user_model_base.dart';
+import 'package:Medicall/screens/Account/patient_account.dart';
+import 'package:Medicall/screens/Account/provider_account.dart';
 import 'package:Medicall/screens/Consults/ProviderVisits/provider_visits.dart';
 import 'package:Medicall/screens/Consults/previous_visits.dart';
 import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard.dart';
 import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
+import 'package:Medicall/screens/Symptoms/symptoms.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/user_provider.dart';
-import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -19,7 +21,7 @@ class DrawerMenu extends StatelessWidget {
     final EdgeInsets listContentPadding = EdgeInsets.fromLTRB(15, 5, 0, 5);
     return Container(
       width: 250,
-      child: (Drawer(
+      child: Drawer(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
@@ -30,16 +32,6 @@ class DrawerMenu extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    // Container(
-                    //   transform: Matrix4.translationValues(10.0, 0.0, 0.0),
-                    //   child: Text('MEDI',
-                    //       style: TextStyle(
-                    //           fontSize: 18.0,
-                    //           height: 1.08,
-                    //           letterSpacing: 2.5,
-                    //           fontWeight: FontWeight.w700,
-                    //           color: Theme.of(context).colorScheme.primary)),
-                    // ),
                     SizedBox(
                       width: 140,
                       height: 50,
@@ -47,148 +39,181 @@ class DrawerMenu extends StatelessWidget {
                         'assets/icon/letter_mark.png',
                       ),
                     ),
-                    // Container(
-                    //   transform: Matrix4.translationValues(-15.0, 0.0, 0.0),
-                    //   child: Text('CALL',
-                    //       style: TextStyle(
-                    //           fontSize: 18.0,
-                    //           height: 1.08,
-                    //           letterSpacing: 2.5,
-                    //           fontWeight: FontWeight.w700,
-                    //           color: Theme.of(context).colorScheme.primary)),
-                    // )
                   ],
                 ),
               ),
             ),
             Expanded(
                 flex: 2,
-                child: Column(
-                  children: <Widget>[
-                    ListTile(
-                        contentPadding: listContentPadding,
-                        title: Container(
-                          margin: EdgeInsets.only(left: 15),
-                          child: Text(
-                            'Home',
-                            style: Theme.of(context).textTheme.headline6,
-                          ),
-                        ),
-                        leading: Icon(
-                          Icons.home,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                        onTap: () {
-                          if (medicallUser.type == USER_TYPE.PATIENT) {
-                            PatientDashboardScreen.show(
-                                context: context, pushReplaceNamed: true);
-                          } else {
-                            ProviderDashboardScreen.show(
-                                context: context, pushReplaceNamed: true);
-                          }
-                        }),
-                    medicallUser.type == USER_TYPE.PROVIDER
-                        ? Container()
-                        : ListTile(
-                            contentPadding: listContentPadding,
-                            title: Container(
-                              margin: EdgeInsets.only(left: 15),
-                              child: Text(
-                                'New Visit',
-                                style: Theme.of(context).textTheme.headline6,
-                              ),
-                            ),
-                            leading: Icon(
-                              Icons.local_hospital,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                            onTap: () async {
-                              Navigator.of(context).pop();
-                              Navigator.of(context).pushNamed('/symptoms',
-                                  arguments: {'user': medicallUser});
-                            }),
-                    medicallUser.type == USER_TYPE.PROVIDER
-                        ? ListTile(
-                            contentPadding: listContentPadding,
-                            title: Container(
-                              margin: EdgeInsets.only(left: 15),
-                              child: Text(
-                                'My Visits',
-                                style: Theme.of(context).textTheme.headline6,
-                              ),
-                            ),
-                            leading: Icon(
-                              Icons.recent_actors,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                            onTap: () {
-                              Navigator.of(context).pop();
-                              ProviderVisits.show(context: context);
-                            })
-                        : ListTile(
-                            contentPadding: listContentPadding,
-                            title: Container(
-                              margin: EdgeInsets.only(left: 15),
-                              child: Text(
-                                'Previous Visits',
-                                style: Theme.of(context).textTheme.headline6,
-                              ),
-                            ),
-                            leading: Icon(
-                              Icons.recent_actors,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                            onTap: () {
-                              Navigator.of(context).pop();
-                              PreviousVisits.show(context: context);
-                            }),
-                    ListTile(
-                        contentPadding: listContentPadding,
-                        title: Container(
-                          margin: EdgeInsets.only(left: 15),
-                          child: Text(
-                            'Account',
-                            style: Theme.of(context).textTheme.headline6,
-                          ),
-                        ),
-                        leading: Icon(
-                          Icons.account_circle,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                        onTap: () {
-                          Navigator.of(context).pop();
-                          if (medicallUser.type == USER_TYPE.PATIENT) {
-                            Navigator.of(context).pushNamed('/patient-account',
-                                arguments: {'user': medicallUser});
-                          } else {
-                            Navigator.of(context).pushNamed('/provider-account',
-                                arguments: {'user': medicallUser});
-                          }
-                        }),
-                    Divider(
-                      height: 0,
-                      color: Colors.grey[400],
-                    ),
-                    ListTile(
-                      contentPadding: listContentPadding,
-                      title: Container(
-                        margin: EdgeInsets.only(left: 15),
-                        child: Text(
-                          'Sign Out',
-                          style: Theme.of(context).textTheme.headline6,
-                        ),
-                      ),
-                      leading: Icon(
-                        Icons.close,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                      onTap: () => _signOut(context),
-                    )
-                  ],
+                child: _buildNavigationItems(
+                  listContentPadding,
+                  context,
+                  medicallUser,
                 )),
           ],
         ),
-      )),
+      ),
+    );
+  }
+
+  Column _buildNavigationItems(
+    EdgeInsets listContentPadding,
+    BuildContext context,
+    User medicallUser,
+  ) {
+    return Column(
+      children: <Widget>[
+        _buildHomeButton(listContentPadding, context, medicallUser),
+        if (medicallUser.type == USER_TYPE.PROVIDER)
+          _buildNewVisitItem(listContentPadding, context, medicallUser),
+        medicallUser.type == USER_TYPE.PROVIDER
+            ? _buildProviderVisitsItem(listContentPadding, context)
+            : _buildPatientVisitsItem(listContentPadding, context),
+        _buildAccountItem(listContentPadding, context, medicallUser),
+        Divider(
+          height: 0,
+          color: Colors.grey[400],
+        ),
+        _buildSignOutItem(listContentPadding, context)
+      ],
+    );
+  }
+
+  ListTile _buildSignOutItem(
+      EdgeInsets listContentPadding, BuildContext context) {
+    return ListTile(
+      contentPadding: listContentPadding,
+      title: Container(
+        margin: EdgeInsets.only(left: 15),
+        child: Text(
+          'Sign Out',
+          style: Theme.of(context).textTheme.headline6,
+        ),
+      ),
+      leading: Icon(
+        Icons.close,
+        color: Theme.of(context).colorScheme.primary,
+      ),
+      onTap: () => _signOut(context),
+    );
+  }
+
+  ListTile _buildAccountItem(
+      EdgeInsets listContentPadding, BuildContext context, User medicallUser) {
+    return ListTile(
+        contentPadding: listContentPadding,
+        title: Container(
+          margin: EdgeInsets.only(left: 15),
+          child: Text(
+            'Account',
+            style: Theme.of(context).textTheme.headline6,
+          ),
+        ),
+        leading: Icon(
+          Icons.account_circle,
+          color: Theme.of(context).colorScheme.primary,
+        ),
+        onTap: () {
+          Navigator.of(context).pop();
+          if (medicallUser.type == USER_TYPE.PATIENT) {
+            PatientAccountScreen.show(context: context);
+          } else {
+            ProviderAccountScreen.show(context: context);
+          }
+        });
+  }
+
+  ListTile _buildPatientVisitsItem(
+      EdgeInsets listContentPadding, BuildContext context) {
+    return ListTile(
+        contentPadding: listContentPadding,
+        title: Container(
+          margin: EdgeInsets.only(left: 15),
+          child: Text(
+            'Previous Visits',
+            style: Theme.of(context).textTheme.headline6,
+          ),
+        ),
+        leading: Icon(
+          Icons.recent_actors,
+          color: Theme.of(context).colorScheme.primary,
+        ),
+        onTap: () {
+          Navigator.of(context).pop();
+          PreviousVisits.show(context: context);
+        });
+  }
+
+  ListTile _buildProviderVisitsItem(
+      EdgeInsets listContentPadding, BuildContext context) {
+    return ListTile(
+        contentPadding: listContentPadding,
+        title: Container(
+          margin: EdgeInsets.only(left: 15),
+          child: Text(
+            'My Visits',
+            style: Theme.of(context).textTheme.headline6,
+          ),
+        ),
+        leading: Icon(
+          Icons.recent_actors,
+          color: Theme.of(context).colorScheme.primary,
+        ),
+        onTap: () {
+          Navigator.of(context).pop();
+          ProviderVisits.show(context: context);
+        });
+  }
+
+  ListTile _buildNewVisitItem(
+      EdgeInsets listContentPadding, BuildContext context, User medicallUser) {
+    return ListTile(
+        contentPadding: listContentPadding,
+        title: Container(
+          margin: EdgeInsets.only(left: 15),
+          child: Text(
+            'New Visit',
+            style: Theme.of(context).textTheme.headline6,
+          ),
+        ),
+        leading: Icon(
+          Icons.local_hospital,
+          color: Theme.of(context).colorScheme.primary,
+        ),
+        onTap: () async {
+          Navigator.of(context).pop();
+          SymptomsScreen.show(context: context);
+        });
+  }
+
+  ListTile _buildHomeButton(
+      EdgeInsets listContentPadding, BuildContext context, User medicallUser) {
+    return ListTile(
+      contentPadding: listContentPadding,
+      title: Container(
+        margin: EdgeInsets.only(left: 15),
+        child: Text(
+          'Home',
+          style: Theme.of(context).textTheme.headline6,
+        ),
+      ),
+      leading: Icon(
+        Icons.home,
+        color: Theme.of(context).colorScheme.primary,
+      ),
+      onTap: () {
+        if (medicallUser.type == USER_TYPE.PATIENT) {
+          PatientDashboardScreen.show(
+            context: context,
+            pushReplaceNamed: true,
+          );
+        } else {
+          ProviderDashboardScreen.show(
+            context: context,
+            pushReplaceNamed: true,
+          );
+        }
+      },
     );
   }
 

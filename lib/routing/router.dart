@@ -130,6 +130,18 @@ class Router {
           settings: settings,
           fullscreenDialog: true,
         );
+      case Routes.patientAccount:
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => PatientAccountScreen(),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case Routes.providerAccount:
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => ProviderAccountScreen(),
+          settings: settings,
+          fullscreenDialog: true,
+        );
       case Routes.visitReview:
         final Map<String, dynamic> mapArgs = args;
         final Consult consult = mapArgs['consult'];

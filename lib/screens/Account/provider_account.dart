@@ -2,6 +2,7 @@ import 'package:Medicall/common_widgets/reusable_account_card.dart';
 import 'package:Medicall/components/DrawerMenu.dart';
 import 'package:Medicall/models/provider_user_model.dart';
 import 'package:Medicall/models/user_model_base.dart';
+import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/firebase_storage_service.dart';
@@ -14,6 +15,14 @@ import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:provider/provider.dart';
 
 class ProviderAccountScreen extends StatefulWidget {
+  static Future<void> show({
+    BuildContext context,
+  }) async {
+    await Navigator.of(context).pushNamed(
+      Routes.providerAccount,
+    );
+  }
+
   @override
   _ProviderAccountScreenState createState() => _ProviderAccountScreenState();
 }
