@@ -1,7 +1,7 @@
-import 'package:Medicall/common_widgets/sign_in_button.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/MakePayment/make_payment.dart';
+import 'package:Medicall/screens/PersonalInfo/personal_info_form.dart';
 import 'package:Medicall/screens/PersonalInfo/personal_info_view_model.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
@@ -145,60 +145,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
         child: _buildProfilePictureWidget(),
       ),
       SizedBox(height: 36),
-      Padding(
-        padding: const EdgeInsets.only(left: 8),
-        child: Text(
-          'Personal Information',
-          style: TextStyle(fontSize: 16),
-          textAlign: TextAlign.start,
-        ),
-      ),
-      SizedBox(height: 12),
-      Row(
-        children: <Widget>[
-          Expanded(child: _buildFirstNameTextField()),
-          Expanded(child: _buildLastNameTextField()),
-        ],
-      ),
-      SizedBox(height: 24),
-      Row(
-        children: <Widget>[
-          Expanded(child: _buildBillingAddressTextField()),
-          Expanded(child: _buildZipCodeTextField()),
-        ],
-      ),
-      SizedBox(height: 24),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          RaisedButton(
-            color: Theme.of(context).colorScheme.secondary,
-            child: Text(
-              "Birthday: ${model.birthday}",
-              style: TextStyle(color: Colors.white),
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(20),
-              ),
-            ),
-            onPressed: () => _selectDate(context),
-          ),
-        ],
-      ),
-      SizedBox(height: 24),
-      Row(
-        children: <Widget>[
-          Expanded(
-            child: SignInButton(
-              color: Theme.of(context).colorScheme.primary,
-              textColor: Colors.white,
-              text: "Looks Good!",
-              onPressed: model.canSubmit ? _submit : null,
-            ),
-          )
-        ],
-      ),
+      PersonalInfoForm(),
       SizedBox(height: 12),
       if (model.isLoading) Center(child: const CircularProgressIndicator()),
     ];
@@ -214,148 +161,6 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
           _buildProfileImgView(asset: model.profileImage.first, height: height),
       ],
     );
-  }
-
-  TextField _buildFirstNameTextField() {
-    return TextField(
-      controller: _firstNameController,
-      focusNode: _firstNameFocusNode,
-      autocorrect: false,
-      keyboardType: TextInputType.text,
-      textInputAction: TextInputAction.next,
-      onChanged: model.updateFirstName,
-      style: TextStyle(color: Color.fromRGBO(80, 80, 80, 1)),
-      decoration: InputDecoration(
-        labelStyle: TextStyle(
-          color: Theme.of(context).colorScheme.onSurface,
-        ),
-        hintStyle: TextStyle(
-          color: Color.fromRGBO(100, 100, 100, 1),
-        ),
-        filled: true,
-        fillColor: Colors.white.withAlpha(100),
-        prefixIcon: Icon(
-          Icons.person,
-          color: Theme.of(context).colorScheme.onSurface.withAlpha(150),
-        ),
-        labelText: 'First Name',
-        hintText: 'Jane',
-        errorText: model.firstNameErrorText,
-        enabled: model.isLoading == false,
-      ),
-    );
-  }
-
-  TextField _buildLastNameTextField() {
-    return TextField(
-      controller: _lastNameController,
-      focusNode: _lastNameFocusNode,
-      autocorrect: false,
-      keyboardType: TextInputType.text,
-      textInputAction: TextInputAction.next,
-      onChanged: model.updateLastName,
-      style: TextStyle(color: Color.fromRGBO(80, 80, 80, 1)),
-      decoration: InputDecoration(
-        labelStyle: TextStyle(
-          color: Theme.of(context).colorScheme.onSurface,
-        ),
-        hintStyle: TextStyle(
-          color: Color.fromRGBO(100, 100, 100, 1),
-        ),
-        filled: true,
-        fillColor: Colors.white.withAlpha(100),
-        prefixIcon: Icon(
-          Icons.person,
-          color: Theme.of(context).colorScheme.onSurface.withAlpha(150),
-        ),
-        labelText: 'Last Name',
-        hintText: 'Doe',
-        errorText: model.lastNameErrorText,
-        enabled: model.isLoading == false,
-      ),
-    );
-  }
-
-  TextField _buildBillingAddressTextField() {
-    return TextField(
-      controller: _billingAddressController,
-      focusNode: _billingAddressFocusNode,
-      autocorrect: false,
-      keyboardType: TextInputType.text,
-      textInputAction: TextInputAction.next,
-      onChanged: model.updateBillingAddress,
-      style: TextStyle(color: Color.fromRGBO(80, 80, 80, 1)),
-      decoration: InputDecoration(
-        labelStyle: TextStyle(
-          color: Theme.of(context).colorScheme.onSurface,
-        ),
-        hintStyle: TextStyle(
-          color: Color.fromRGBO(100, 100, 100, 1),
-        ),
-        filled: true,
-        fillColor: Colors.white.withAlpha(100),
-        prefixIcon: Icon(
-          Icons.location_city,
-          color: Theme.of(context).colorScheme.onSurface.withAlpha(150),
-        ),
-        labelText: 'Billing Address',
-        hintText: '541 Tremont St.',
-        errorText: model.billingAddressErrorText,
-        enabled: model.isLoading == false,
-      ),
-    );
-  }
-
-  TextField _buildZipCodeTextField() {
-    return TextField(
-      controller: _zipCodeController,
-      focusNode: _zipCodeFocusNode,
-      autocorrect: false,
-      keyboardType: TextInputType.number,
-      textInputAction: TextInputAction.next,
-      onChanged: model.updateZipCode,
-      style: TextStyle(color: Color.fromRGBO(80, 80, 80, 1)),
-      decoration: InputDecoration(
-        labelStyle: TextStyle(
-          color: Theme.of(context).colorScheme.onSurface,
-        ),
-        hintStyle: TextStyle(
-          color: Color.fromRGBO(100, 100, 100, 1),
-        ),
-        filled: true,
-        fillColor: Colors.white.withAlpha(100),
-        prefixIcon: Icon(
-          Icons.location_city,
-          color: Theme.of(context).colorScheme.onSurface.withAlpha(150),
-        ),
-        labelText: 'Zip Code',
-        hintText: '85226',
-        errorText: model.zipCodeErrorText,
-        enabled: model.isLoading == false,
-      ),
-    );
-  }
-
-  Future<Null> _selectDate(BuildContext context) async {
-    FocusScope.of(context).requestFocus(new FocusNode());
-    final DateTime currentDate = DateTime.now();
-    final initialDate = model.birthDate.year <= DateTime.now().year - 18
-        ? model.birthDate
-        : DateTime(
-            currentDate.year - 18,
-            currentDate.month,
-            currentDate.day,
-          );
-    final DateTime picked = await showDatePicker(
-      context: context,
-      initialDate: initialDate,
-      firstDate: DateTime(1920),
-      lastDate:
-          DateTime(currentDate.year - 18, currentDate.month, currentDate.day),
-    );
-    if (picked != null && picked != currentDate) {
-      model.updateWith(birthDate: picked);
-    }
   }
 
   Widget _buildProfileImgView({Asset asset, double height}) {
@@ -392,8 +197,14 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   List<Widget> _buildProfilePlaceholder({double height}) {
     return [
       Text(
-        "We will need a current profile picture, tap icon below.",
-        style: TextStyle(fontSize: 12, color: Colors.black87),
+        "Please add a profile picture",
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontSize: 16,
+          color: Colors.black87,
+          fontFamily: 'Roboto Thin',
+          fontWeight: FontWeight.w300,
+        ),
       ),
       Container(
         height: height * 0.15,

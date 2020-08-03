@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 class CustomDropdownFormField extends StatelessWidget {
   const CustomDropdownFormField({
     this.onChanged,
-    this.icon,
     this.labelText,
     this.hint,
     this.keyboardType,
@@ -16,7 +15,6 @@ class CustomDropdownFormField extends StatelessWidget {
     this.selectedItem,
   });
   final ValueChanged<String> onChanged;
-  final Icon icon;
   final String labelText;
   final String hint;
   final TextInputType keyboardType;
@@ -39,10 +37,8 @@ class CustomDropdownFormField extends StatelessWidget {
         builder: (FormFieldState state) {
           return InputDecorator(
             decoration: InputDecoration(
-              icon: IconTheme(
-                  data: IconThemeData(color: Colors.black54), child: icon),
               labelText: labelText,
-              labelStyle: TextStyle(fontSize: 16, color: Colors.black54),
+              labelStyle: Theme.of(context).textTheme.bodyText1,
               enabledBorder: UnderlineInputBorder(
                 borderSide: BorderSide(
                   color: Colors.black26,
@@ -80,7 +76,7 @@ class CustomDropdownFormField extends StatelessWidget {
                       value: value,
                       child: Text(
                         value,
-                        style: TextStyle(fontSize: 18, color: Colors.black87),
+                        style: Theme.of(context).textTheme.bodyText1,
                       ),
                     );
                   },
