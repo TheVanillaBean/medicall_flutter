@@ -7,6 +7,7 @@ import 'package:Medicall/services/database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class VisitEducation extends StatelessWidget {
   final Consult consult;
@@ -33,7 +34,6 @@ class VisitEducation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final db = Provider.of<FirestoreDatabase>(context);
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
           type: AppBarType.Back,
@@ -71,18 +71,30 @@ class VisitEducation extends StatelessWidget {
     String link,
   ) {
     return [
-      Container(
-        padding: EdgeInsets.fromLTRB(40, 5, 40, 5),
-        child: Text(
-          name,
-          style: Theme.of(context).textTheme.bodyText1,
-        ),
+      Divider(
+        thickness: 1,
       ),
-      Container(
-        padding: EdgeInsets.fromLTRB(40, 5, 40, 5),
-        child: Text(
-          link,
-          style: Theme.of(context).textTheme.bodyText1,
+      ListTile(
+        onTap: () async {
+          String url = link;
+
+          if (await canLaunch(url)) {
+            await launch(
+              url,
+              forceSafariVC: true,
+              forceWebView: true,
+            );
+          } else {
+            throw 'Could not launch $url';
+          }
+        },
+        trailing: Icon(
+          Icons.launch,
+          color: Theme.of(context).colorScheme.primaryVariant,
+        ),
+        title: Text(
+          name,
+          style: TextStyle(color: Theme.of(context).colorScheme.primaryVariant),
         ),
       ),
     ];

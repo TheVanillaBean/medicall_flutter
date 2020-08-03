@@ -46,7 +46,7 @@ class VisitDocNote extends StatelessWidget {
         ],
       ),
       body: Container(
-        padding: EdgeInsets.fromLTRB(30, 40, 30, 40),
+        padding: EdgeInsets.fromLTRB(30, 0, 30, 40),
         child: TextFormField(
           maxLines: null,
           minLines: 5,
