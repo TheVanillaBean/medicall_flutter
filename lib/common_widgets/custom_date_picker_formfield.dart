@@ -40,9 +40,9 @@ class CustomDatePickerFormField extends StatelessWidget {
         decoration: InputDecoration(
           labelText: labelText,
           errorText: errorText,
-          labelStyle: TextStyle(fontSize: 16, color: Colors.black54),
+          labelStyle: Theme.of(context).textTheme.bodyText1,
           hintText: hint,
-          hintStyle: TextStyle(fontSize: 16, color: Colors.black26),
+          hintStyle: Theme.of(context).textTheme.subtitle2,
           enabledBorder: UnderlineInputBorder(
             borderSide: BorderSide(
               color: Colors.black26,

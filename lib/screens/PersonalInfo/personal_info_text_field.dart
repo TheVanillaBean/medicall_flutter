@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
-class PatientCustomTextField extends StatelessWidget {
-  const PatientCustomTextField({
+class PersonalInfoTextField extends StatelessWidget {
+  const PersonalInfoTextField({
     this.onChanged,
-    //this.icon,
+    this.inputFormatters,
     this.labelText,
     this.hint,
     this.keyboardType,
@@ -14,7 +15,6 @@ class PatientCustomTextField extends StatelessWidget {
     this.obscureText,
   });
   final ValueChanged<String> onChanged;
-  //final Icon icon;
   final String labelText;
   final String hint;
   final TextInputType keyboardType;
@@ -23,6 +23,7 @@ class PatientCustomTextField extends StatelessWidget {
   final bool obscureText;
   final FormFieldValidator<String> validator;
   final TextEditingController controller;
+  final List<TextInputFormatter> inputFormatters;
 
   @override
   Widget build(BuildContext context) {
@@ -35,15 +36,16 @@ class PatientCustomTextField extends StatelessWidget {
         autocorrect: false,
         obscureText: obscureText ?? false,
         controller: controller,
+        inputFormatters: inputFormatters,
         onChanged: onChanged,
         autofocus: true,
-        style: TextStyle(fontSize: 18, color: Colors.black87),
+        style: Theme.of(context).textTheme.bodyText1,
         decoration: InputDecoration(
           labelText: labelText,
           errorText: errorText,
-          labelStyle: TextStyle(fontSize: 16, color: Colors.black54),
+          labelStyle: Theme.of(context).textTheme.bodyText1,
           hintText: hint,
-          hintStyle: TextStyle(fontSize: 16, color: Colors.black26),
+          hintStyle: Theme.of(context).textTheme.caption,
           enabledBorder: UnderlineInputBorder(
             borderSide: BorderSide(
               color: Colors.black26,

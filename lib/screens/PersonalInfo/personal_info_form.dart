@@ -1,24 +1,26 @@
 import 'package:Medicall/common_widgets/custom_date_picker_formfield.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
-import 'package:Medicall/screens/PersonalInfo/patient_custom_text_field.dart';
+import 'package:Medicall/screens/PersonalInfo/personal_info_text_field.dart';
 import 'package:Medicall/screens/PersonalInfo/personal_info_view_model.dart';
-import 'package:Medicall/screens/Registration/Provider/provider_registration_view_model.dart';
+import 'package:Medicall/screens/PhoneAuth/phone_auth_state_model.dart';
 import 'package:Medicall/common_widgets/custom_dropdown_formfield.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
-import 'package:super_rich_text/super_rich_text.dart';
 
-class PatientRegistrationForm extends StatefulWidget {
+class PersonalInfoForm extends StatefulWidget {
   @override
-  _PatientRegistrationFormState createState() =>
-      _PatientRegistrationFormState();
+  _PersonalInfoFormState createState() => _PersonalInfoFormState();
 }
 
-class _PatientRegistrationFormState extends State<PatientRegistrationForm>
-    with VerificationStatus {
+class _PersonalInfoFormState extends State<PersonalInfoForm>
+    with PersonalFormStatus {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  MaskTextInputFormatter phoneTextInputFormatter = MaskTextInputFormatter(
+      mask: "(###)###-####", filter: {"#": RegExp(r'[0-9]')});
 
   Future<void> _submit(PersonalInfoViewModel model) async {
     try {
@@ -32,69 +34,60 @@ class _PatientRegistrationFormState extends State<PatientRegistrationForm>
   Widget build(BuildContext context) {
     final PersonalInfoViewModel model =
         Provider.of<PersonalInfoViewModel>(context);
-    //model.setVerificationStatus(this);
+    model.setFormStatus(this);
+
     return Form(
       key: _formKey,
       child: Column(
         children: <Widget>[
           SizedBox(height: 20),
-          PatientCustomTextField(
+          PersonalInfoTextField(
             labelText: 'First Name',
             hint: 'Jane',
             onChanged: model.updateFirstName,
           ),
-          PatientCustomTextField(
+          PersonalInfoTextField(
             labelText: 'Last Name',
             hint: 'Doe',
             onChanged: model.updateLastName,
           ),
-          PatientCustomTextField(
+          PersonalInfoTextField(
+            inputFormatters: [phoneTextInputFormatter],
             labelText: 'Phone Number',
             hint: '(123)456-7890',
             keyboardType: TextInputType.phone,
             onChanged: model.updatePhoneNumber,
           ),
           CustomDatePickerFormField(
-            labelText: 'Date of Birth: mm/dd/yyyy',
+            labelText: 'Date of Birth',
             hint: 'mm/dd/yyyy',
             keyboardType: TextInputType.datetime,
             initialDate: model.initialDatePickerDate,
             onChanged: model.updateBirthDate,
           ),
-
-          PatientCustomTextField(
+          PersonalInfoTextField(
             labelText: 'Billing Address',
             hint: '123 Main St',
             onChanged: model.updateBillingAddress,
           ),
-
-          PatientCustomTextField(
+          PersonalInfoTextField(
             labelText: 'City',
             hint: 'Anytown',
             onChanged: model.updateCity,
           ),
-
           CustomDropdownFormField(
             labelText: 'State',
             onChanged: model.updateState,
             items: model.states,
             selectedItem: model.state,
           ),
-
-          PatientCustomTextField(
+          PersonalInfoTextField(
             labelText: 'Zip code',
             hint: '12345',
             keyboardType: TextInputType.number,
             onChanged: model.updateZipCode,
           ),
-
-          //SizedBox(height: 20),
-//          Container(
-//            child: ExcludeSemantics(
-//              child: _buildTermsCheckbox(model),
-//            ),
-//          ),
-          SizedBox(height: 20),
+          SizedBox(height: 30),
           Align(
             alignment: FractionalOffset.bottomCenter,
             child: ReusableRaisedButton(
@@ -117,39 +110,6 @@ class _PatientRegistrationFormState extends State<PatientRegistrationForm>
       ),
     );
   }
-
-//  Widget _buildTermsCheckbox(PersonalInfoViewModel model) {
-//    return CheckboxListTile(
-//      title: Title(
-//        color: Colors.blue,
-//        child: SuperRichText(
-//          text:
-//              'I agree to Medicall’s <terms>Terms & Conditions<terms>. I have reviewed the <privacy>Privacy Policy<privacy> and understand the benefits and risks of remote treatment.',
-//          style: TextStyle(color: Colors.black87, fontSize: 14),
-//          othersMarkers: [
-//            MarkerText.withSameFunction(
-//              marker: '<terms>',
-//              function: () => Navigator.of(context).pushNamed('/terms'),
-//              onError: (msg) => print('$msg'),
-//              style: TextStyle(
-//                  color: Colors.blue, decoration: TextDecoration.underline),
-//            ),
-//            MarkerText.withSameFunction(
-//              marker: '<privacy>',
-//              function: () => Navigator.of(context).pushNamed('/privacy'),
-//              onError: (msg) => print('$msg'),
-//              style: TextStyle(
-//                  color: Colors.blue, decoration: TextDecoration.underline),
-//            ),
-//          ],
-//        ),
-//      ),
-//      value: model.checkValue,
-//      onChanged: model.updateCheckValue,
-//      controlAffinity: ListTileControlAffinity.leading,
-//      activeColor: Colors.blue,
-//    );
-//  }
 
   void _showFlushBarMessage(String message) {
     AppUtil().showFlushBar(message, context);

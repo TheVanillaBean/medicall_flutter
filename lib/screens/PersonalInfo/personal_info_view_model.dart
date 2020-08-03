@@ -24,7 +24,7 @@ class PersonalInfoViewModel with PersonalInfoValidator, ChangeNotifier {
   bool isLoading;
   bool submitted;
   bool checkValue;
-  VerificationStatus verificationStatus;
+  PersonalFormStatus personalFormStatus;
 
   final List<String> states = const <String>[
     "AK",
@@ -110,8 +110,8 @@ class PersonalInfoViewModel with PersonalInfoValidator, ChangeNotifier {
     this.profileImage = const [],
   });
 
-  void setVerificationStatus(VerificationStatus verificationStatus) {
-    this.verificationStatus = verificationStatus;
+  void setFormStatus(PersonalFormStatus personalFormStatus) {
+    this.personalFormStatus = personalFormStatus;
   }
 
   bool get canSubmit {

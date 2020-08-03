@@ -38,7 +38,7 @@ class CustomDropdownFormField extends StatelessWidget {
           return InputDecorator(
             decoration: InputDecoration(
               labelText: labelText,
-              labelStyle: TextStyle(fontSize: 16, color: Colors.black54),
+              labelStyle: Theme.of(context).textTheme.bodyText1,
               enabledBorder: UnderlineInputBorder(
                 borderSide: BorderSide(
                   color: Colors.black26,
@@ -76,7 +76,7 @@ class CustomDropdownFormField extends StatelessWidget {
                       value: value,
                       child: Text(
                         value,
-                        style: TextStyle(fontSize: 18, color: Colors.black87),
+                        style: Theme.of(context).textTheme.bodyText1,
                       ),
                     );
                   },

@@ -48,7 +48,7 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
             onChanged: model.updateLastName,
           ),
           CustomDatePickerFormField(
-            labelText: 'Date of Birth: mm/dd/yyyy',
+            labelText: 'Date of Birth',
             hint: 'mm/dd/yyyy',
             keyboardType: TextInputType.datetime,
             initialDate: model.initialDatePickerDate,
