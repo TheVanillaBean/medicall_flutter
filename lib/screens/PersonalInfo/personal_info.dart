@@ -2,6 +2,7 @@ import 'package:Medicall/common_widgets/sign_in_button.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/MakePayment/make_payment.dart';
+import 'package:Medicall/screens/PersonalInfo/patient_registration_form.dart';
 import 'package:Medicall/screens/PersonalInfo/personal_info_view_model.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
@@ -145,62 +146,65 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
         child: _buildProfilePictureWidget(),
       ),
       SizedBox(height: 36),
-      Padding(
-        padding: const EdgeInsets.only(left: 8),
-        child: Text(
-          'Personal Information',
-          style: TextStyle(fontSize: 16),
-          textAlign: TextAlign.start,
-        ),
-      ),
+      PatientRegistrationForm(),
+
+//      Padding(
+//        padding: const EdgeInsets.only(left: 8),
+//        child: Text(
+//          'Personal Information',
+//          style: TextStyle(fontSize: 16),
+//          textAlign: TextAlign.start,
+//        ),
+//      ),
+//      SizedBox(height: 12),
+//      Row(
+//        children: <Widget>[
+//          Expanded(child: _buildFirstNameTextField()),
+//          Expanded(child: _buildLastNameTextField()),
+//        ],
+//      ),
+//      SizedBox(height: 24),
+//      Row(
+//        children: <Widget>[
+//          Expanded(child: _buildBillingAddressTextField()),
+//          Expanded(child: _buildZipCodeTextField()),
+//        ],
+//      ),
+//      SizedBox(height: 24),
+//      Row(
+//        mainAxisAlignment: MainAxisAlignment.center,
+//        children: <Widget>[
+//          RaisedButton(
+//            color: Theme.of(context).colorScheme.secondary,
+//            child: Text(
+//              "Birthday: ${model.birthday}",
+//              style: TextStyle(color: Colors.white),
+//            ),
+//            shape: RoundedRectangleBorder(
+//              borderRadius: BorderRadius.all(
+//                Radius.circular(20),
+//              ),
+//            ),
+//            onPressed: () => _selectDate(context),
+//          ),
+//        ],
+//      ),
+//      SizedBox(height: 24),
+//      Row(
+//        children: <Widget>[
+//          Expanded(
+//            child: SignInButton(
+//              color: Theme.of(context).colorScheme.primary,
+//              textColor: Colors.white,
+//              text: "Looks Good!",
+//              onPressed: model.canSubmit ? _submit : null,
+//            ),
+//          )
+//        ],
+//      ),
       SizedBox(height: 12),
-      Row(
-        children: <Widget>[
-          Expanded(child: _buildFirstNameTextField()),
-          Expanded(child: _buildLastNameTextField()),
-        ],
-      ),
-      SizedBox(height: 24),
-      Row(
-        children: <Widget>[
-          Expanded(child: _buildBillingAddressTextField()),
-          Expanded(child: _buildZipCodeTextField()),
-        ],
-      ),
-      SizedBox(height: 24),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          RaisedButton(
-            color: Theme.of(context).colorScheme.secondary,
-            child: Text(
-              "Birthday: ${model.birthday}",
-              style: TextStyle(color: Colors.white),
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(20),
-              ),
-            ),
-            onPressed: () => _selectDate(context),
-          ),
-        ],
-      ),
-      SizedBox(height: 24),
-      Row(
-        children: <Widget>[
-          Expanded(
-            child: SignInButton(
-              color: Theme.of(context).colorScheme.primary,
-              textColor: Colors.white,
-              text: "Looks Good!",
-              onPressed: model.canSubmit ? _submit : null,
-            ),
-          )
-        ],
-      ),
-      SizedBox(height: 12),
-      if (model.isLoading) Center(child: const CircularProgressIndicator()),
+      if (model.isLoading)
+        Center(child: const CircularProgressIndicator()),
     ];
   }
 

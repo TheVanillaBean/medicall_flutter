@@ -38,19 +38,16 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
         children: <Widget>[
           SizedBox(height: 20),
           ProviderCustomTextField(
-            icon: Icon(Icons.person),
             labelText: 'First Name',
             hint: 'Jane',
             onChanged: model.updateFirstName,
           ),
           ProviderCustomTextField(
-            icon: Icon(Icons.person),
             labelText: 'Last Name',
             hint: 'Doe',
             onChanged: model.updateLastName,
           ),
           CustomDatePickerFormField(
-            icon: Icon(Icons.calendar_today),
             labelText: 'Date of Birth: mm/dd/yyyy',
             hint: 'mm/dd/yyyy',
             keyboardType: TextInputType.datetime,
@@ -58,7 +55,6 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
             onChanged: model.updateDOB,
           ),
           ProviderCustomTextField(
-            icon: Icon(Icons.email),
             labelText: 'Email',
             hint: 'janedoe@email.com',
             onChanged: model.updateEmail,
@@ -66,7 +62,6 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
             enabled: model.isLoading == false,
           ),
           ProviderCustomTextField(
-            icon: Icon(Icons.security),
             labelText: 'Password',
             obscureText: true,
             onChanged: model.updatePassword,
@@ -74,7 +69,6 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
             enabled: model.isLoading == false,
           ),
           ProviderCustomTextField(
-            icon: Icon(Icons.security),
             labelText: 'Confirm Password',
             obscureText: true,
             onChanged: model.updateConfirmPassword,
@@ -82,13 +76,11 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
             enabled: model.isLoading == false,
           ),
           ProviderCustomTextField(
-            icon: Icon(Icons.home),
             labelText: 'Address',
             hint: '123 Main St, Anytown, MA 12345',
             onChanged: model.updateAddress,
           ),
           CustomDropdownFormField(
-            icon: Icon(Icons.school),
             labelText: 'Title',
             hint: 'M.D., D.O., PharmD',
             onChanged: model.updateTitles,
@@ -96,13 +88,11 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
             selectedItem: model.titles,
           ),
           ProviderCustomTextField(
-            icon: Icon(Icons.local_hospital),
             labelText: 'Medical License Number',
             hint: '12345',
             onChanged: model.updateMedLicense,
           ),
           CustomDropdownFormField(
-            icon: Icon(Icons.place),
             labelText: 'Medical License State',
             onChanged: model.updateMedLicenseState,
             items: model.states,

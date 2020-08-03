@@ -1,5 +1,6 @@
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/patient_user_model.dart';
+import 'package:Medicall/screens/PhoneAuth/phone_auth_state_model.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/firebase_storage_service.dart';
 import 'package:Medicall/services/user_provider.dart';
@@ -11,13 +12,79 @@ import 'package:multi_image_picker/multi_image_picker.dart';
 class PersonalInfoViewModel with PersonalInfoValidator, ChangeNotifier {
   String firstName;
   String lastName;
-  String billingAddress;
-  String zipCode;
+  String phoneNumber;
   DateTime birthDate = DateTime.now();
+  String billingAddress;
+  String city;
+  String state;
+  String zipCode;
+
   List<Asset> profileImage;
 
   bool isLoading;
   bool submitted;
+  bool checkValue;
+  VerificationStatus verificationStatus;
+
+  final List<String> states = const <String>[
+    "AK",
+    "AL",
+    "AR",
+    "AS",
+    "AZ",
+    "CA",
+    "CO",
+    "CT",
+    "DC",
+    "DE",
+    "FL",
+    "GA",
+    "GU",
+    "HI",
+    "IA",
+    "ID",
+    "IL",
+    "IN",
+    "KS",
+    "KY",
+    "LA",
+    "MA",
+    "MD",
+    "ME",
+    "MI",
+    "MN",
+    "MO",
+    "MP",
+    "MS",
+    "MT",
+    "NC",
+    "ND",
+    "NE",
+    "NH",
+    "NJ",
+    "NM",
+    "NV",
+    "NY",
+    "OH",
+    "OK",
+    "OR",
+    "PA",
+    "PR",
+    "RI",
+    "SC",
+    "SD",
+    "TN",
+    "TX",
+    "UM",
+    "UT",
+    "VA",
+    "VI",
+    "VT",
+    "WA",
+    "WI",
+    "WV",
+    "WY"
+  ];
 
   final Consult consult;
   final UserProvider userProvider;
@@ -31,17 +98,29 @@ class PersonalInfoViewModel with PersonalInfoValidator, ChangeNotifier {
     @required this.firebaseStorageService,
     this.firstName = '',
     this.lastName = '',
+    this.phoneNumber = '',
+    this.birthDate,
     this.billingAddress = '',
+    this.city = '',
+    this.state = '',
     this.zipCode = '',
     this.isLoading = false,
     this.submitted = false,
+    this.checkValue,
     this.profileImage = const [],
   });
+
+  void setVerificationStatus(VerificationStatus verificationStatus) {
+    this.verificationStatus = verificationStatus;
+  }
 
   bool get canSubmit {
     return inputValidator.isValid(firstName) &&
         inputValidator.isValid(lastName) &&
+        inputValidator.isValid(phoneNumber) &&
         inputValidator.isValid(billingAddress) &&
+        inputValidator.isValid(city) &&
+        inputValidator.isValid(state) &&
         inputValidator.isValid(zipCode) &&
         this.birthDate.year <= DateTime.now().year - 18 &&
         this.profileImage.length > 0 &&
@@ -65,8 +144,23 @@ class PersonalInfoViewModel with PersonalInfoValidator, ChangeNotifier {
     return showErrorText ? invalidPersonalInfoErrorText : null;
   }
 
+  String get phoneNumberErrorText {
+    bool showErrorText = submitted && !inputValidator.isValid(phoneNumber);
+    return showErrorText ? invalidPersonalInfoErrorText : null;
+  }
+
   String get billingAddressErrorText {
     bool showErrorText = submitted && !inputValidator.isValid(billingAddress);
+    return showErrorText ? invalidPersonalInfoErrorText : null;
+  }
+
+  String get cityErrorText {
+    bool showErrorText = submitted && !inputValidator.isValid(city);
+    return showErrorText ? invalidPersonalInfoErrorText : null;
+  }
+
+  String get stateErrorText {
+    bool showErrorText = submitted && !inputValidator.isValid(state);
     return showErrorText ? invalidPersonalInfoErrorText : null;
   }
 
@@ -77,17 +171,41 @@ class PersonalInfoViewModel with PersonalInfoValidator, ChangeNotifier {
 
   void updateFirstName(String firstName) => updateWith(firstName: firstName);
   void updateLastName(String lastName) => updateWith(lastName: lastName);
+  void updatePhoneNumber(String phoneNumber) =>
+      updateWith(phoneNumber: phoneNumber);
+  void updateBirthDate(DateTime birthDate) => updateWith(birthDate: birthDate);
   void updateBillingAddress(String billingAddress) =>
       updateWith(billingAddress: billingAddress);
+  void updateCity(String city) => updateWith(city: city);
+  void updateState(String state) => updateWith(state: state);
   void updateZipCode(String zipCode) => updateWith(zipCode: zipCode);
+  void updateCheckValue(bool checkValue) => updateWith(checkValue: checkValue);
+
+  DateTime get initialDatePickerDate {
+    final DateTime currentDate = DateTime.now();
+
+    this.birthDate = this.birthDate == null ? currentDate : this.birthDate;
+
+    return this.birthDate.year <= DateTime.now().year - 18
+        ? this.birthDate
+        : DateTime(
+            currentDate.year - 18,
+            currentDate.month,
+            currentDate.day,
+          );
+  }
 
   Future<void> submit() async {
     updateWith(submitted: true, isLoading: true);
     PatientUser medicallUser = userProvider.user;
     medicallUser.firstName = this.firstName;
     medicallUser.lastName = this.lastName;
+    medicallUser.phoneNumber = this.phoneNumber;
     medicallUser.address = this.billingAddress;
     medicallUser.dob = this.birthday;
+    medicallUser.state = this.state;
+    medicallUser.city = this.city;
+    medicallUser.zipCode = this.zipCode;
 
     try {
       medicallUser.profilePic = await firebaseStorageService.uploadProfileImage(
@@ -105,18 +223,25 @@ class PersonalInfoViewModel with PersonalInfoValidator, ChangeNotifier {
   void updateWith({
     String firstName,
     String lastName,
-    String billingAddress,
-    String zipCode,
+    String phoneNumber,
     DateTime birthDate,
+    String billingAddress,
+    String city,
+    String state,
+    String zipCode,
     bool isLoading,
     bool submitted,
+    bool checkValue,
     List<Asset> profileImage,
   }) {
     this.firstName = firstName ?? this.firstName;
     this.lastName = lastName ?? this.lastName;
-    this.billingAddress = billingAddress ?? this.billingAddress;
-    this.zipCode = zipCode ?? this.zipCode;
+    this.phoneNumber = phoneNumber ?? this.phoneNumber;
     this.birthDate = birthDate ?? this.birthDate;
+    this.billingAddress = billingAddress ?? this.billingAddress;
+    this.city = city ?? this.city;
+    this.state = state ?? this.state;
+    this.zipCode = zipCode ?? this.zipCode;
     this.isLoading = isLoading ?? this.isLoading;
     this.submitted = submitted ?? this.submitted;
     this.profileImage = profileImage ?? this.profileImage;

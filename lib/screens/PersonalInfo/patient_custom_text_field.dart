@@ -1,10 +1,9 @@
-import 'package:dash_chat/dash_chat.dart';
 import 'package:flutter/material.dart';
-import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 
-class CustomDatePickerFormField extends StatelessWidget {
-  const CustomDatePickerFormField({
-    this.icon,
+class PatientCustomTextField extends StatelessWidget {
+  const PatientCustomTextField({
+    this.onChanged,
+    //this.icon,
     this.labelText,
     this.hint,
     this.keyboardType,
@@ -13,10 +12,9 @@ class CustomDatePickerFormField extends StatelessWidget {
     this.enabled,
     this.errorText,
     this.obscureText,
-    this.initialDate,
-    this.onChanged,
   });
-  final Icon icon;
+  final ValueChanged<String> onChanged;
+  //final Icon icon;
   final String labelText;
   final String hint;
   final TextInputType keyboardType;
@@ -25,8 +23,6 @@ class CustomDatePickerFormField extends StatelessWidget {
   final bool obscureText;
   final FormFieldValidator<String> validator;
   final TextEditingController controller;
-  final DateTime initialDate;
-  final ValueChanged<DateTime> onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -35,8 +31,13 @@ class CustomDatePickerFormField extends StatelessWidget {
         left: 30,
         right: 30,
       ),
-      child: DateTimeField(
-        format: DateFormat('MM/dd/yyyy'),
+      child: TextFormField(
+        autocorrect: false,
+        obscureText: obscureText ?? false,
+        controller: controller,
+        onChanged: onChanged,
+        autofocus: true,
+        style: TextStyle(fontSize: 18, color: Colors.black87),
         decoration: InputDecoration(
           labelText: labelText,
           errorText: errorText,
@@ -68,17 +69,12 @@ class CustomDatePickerFormField extends StatelessWidget {
             ),
           ),
         ),
-        onChanged: onChanged,
-        onShowPicker: (context, currentValue) async {
-          FocusScope.of(context).requestFocus(new FocusNode());
-          final DateTime currentDate = DateTime.now();
-          return await showDatePicker(
-            context: context,
-            firstDate: DateTime(1920),
-            initialDate: initialDate,
-            lastDate: DateTime(
-                currentDate.year - 18, currentDate.month, currentDate.day),
-          );
+        keyboardType: keyboardType,
+        validator: (input) {
+          if (input.isEmpty) {
+            return '$labelText is required';
+          }
+          return null;
         },
       ),
     );

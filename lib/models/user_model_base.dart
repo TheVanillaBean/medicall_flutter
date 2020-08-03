@@ -18,6 +18,9 @@ abstract class User {
   String email;
   String profilePic;
   String address;
+  String state;
+  String zipCode;
+  String city;
 
   User({
     this.uid = '',
@@ -32,6 +35,9 @@ abstract class User {
     this.email = '',
     this.profilePic = '',
     this.address = '',
+    this.state = '',
+    this.zipCode = '',
+    this.city = '',
   });
 
   Map<String, dynamic> toMap();
@@ -49,6 +55,9 @@ abstract class User {
       'profile_pic': profilePic,
       'phone_number': phoneNumber,
       'address': address,
+      'state': state,
+      'zipCode': zipCode,
+      'city': city,
     };
   }
 
@@ -76,6 +85,9 @@ abstract class User {
     user.email = data['email'] ?? user.email;
     user.phoneNumber = data['phone_number'] ?? user.phoneNumber;
     user.address = data['address'] ?? user.address;
+    user.state = data['state'] ?? user.state;
+    user.zipCode = data['zipCode'] ?? user.zipCode;
+    user.city = data['city'] ?? user.city;
     return user;
   }
 }
