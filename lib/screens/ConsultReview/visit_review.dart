@@ -69,7 +69,7 @@ class VisitReview extends StatefulWidget {
 class _VisitReviewState extends State<VisitReview> with VisitReviewStatus {
   @override
   Widget build(BuildContext context) {
-    widget.model.visitReviewStatus = this;
+    widget.model.setVisitReviewStatus(this);
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(

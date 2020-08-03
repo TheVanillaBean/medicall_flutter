@@ -56,7 +56,7 @@ class StartVisitScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
                     Text(
-                      "We will ask a few questions, first about your medical history and after we will focus on visit questions.",
+                      "We will ask a few questions, starting with general medical history and after we will focus on specific visit questions.",
                       style: Theme.of(context).textTheme.bodyText1,
                     ),
                     Text(

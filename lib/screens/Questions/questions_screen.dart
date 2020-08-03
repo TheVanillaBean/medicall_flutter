@@ -1,4 +1,5 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
+import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/screening_questions_model.dart';
 import 'package:Medicall/routing/router.dart';
@@ -89,10 +90,18 @@ class _QuestionsScreenState extends State<QuestionsScreen>
         theme: Theme.of(context),
         leading: IconButton(
           icon: Icon(Icons.close),
-          onPressed: () {
-            Navigator.of(context).popUntil(
-              (ModalRoute.withName(Routes.providerDetail)),
-            );
+          onPressed: () async {
+            final didPressYes = await PlatformAlertDialog(
+              title: "Cancel Visit?",
+              content: "Are you sure you want to cancel this visit?",
+              defaultActionText: "Yes, cancel",
+              cancelActionText: "No",
+            ).show(context);
+            if (didPressYes) {
+              Navigator.of(context).popUntil(
+                (ModalRoute.withName(Routes.providerDetail)),
+              );
+            }
           },
         ),
       ),
