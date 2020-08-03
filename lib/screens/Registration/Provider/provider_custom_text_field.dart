@@ -37,15 +37,13 @@ class ProviderCustomTextField extends StatelessWidget {
         controller: controller,
         onChanged: onChanged,
         autofocus: true,
-        style: TextStyle(fontSize: 18, color: Colors.black87),
+        style: Theme.of(context).textTheme.bodyText1,
         decoration: InputDecoration(
-          icon: IconTheme(
-              data: IconThemeData(color: Colors.black54), child: icon),
           labelText: labelText,
           errorText: errorText,
-          labelStyle: TextStyle(fontSize: 16, color: Colors.black54),
+          labelStyle: Theme.of(context).textTheme.bodyText1,
           hintText: hint,
-          hintStyle: TextStyle(fontSize: 16, color: Colors.black26),
+          hintStyle: Theme.of(context).textTheme.caption,
           enabledBorder: UnderlineInputBorder(
             borderSide: BorderSide(
               color: Colors.black26,

@@ -1,10 +1,10 @@
-import 'package:dash_chat/dash_chat.dart';
 import 'package:flutter/material.dart';
-import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
+import 'package:flutter/services.dart';
 
-class CustomDatePickerFormField extends StatelessWidget {
-  const CustomDatePickerFormField({
-    this.icon,
+class PersonalInfoTextField extends StatelessWidget {
+  const PersonalInfoTextField({
+    this.onChanged,
+    this.inputFormatters,
     this.labelText,
     this.hint,
     this.keyboardType,
@@ -13,10 +13,8 @@ class CustomDatePickerFormField extends StatelessWidget {
     this.enabled,
     this.errorText,
     this.obscureText,
-    this.initialDate,
-    this.onChanged,
   });
-  final Icon icon;
+  final ValueChanged<String> onChanged;
   final String labelText;
   final String hint;
   final TextInputType keyboardType;
@@ -25,8 +23,7 @@ class CustomDatePickerFormField extends StatelessWidget {
   final bool obscureText;
   final FormFieldValidator<String> validator;
   final TextEditingController controller;
-  final DateTime initialDate;
-  final ValueChanged<DateTime> onChanged;
+  final List<TextInputFormatter> inputFormatters;
 
   @override
   Widget build(BuildContext context) {
@@ -35,14 +32,20 @@ class CustomDatePickerFormField extends StatelessWidget {
         left: 30,
         right: 30,
       ),
-      child: DateTimeField(
-        format: DateFormat('MM/dd/yyyy'),
+      child: TextFormField(
+        autocorrect: false,
+        obscureText: obscureText ?? false,
+        controller: controller,
+        inputFormatters: inputFormatters,
+        onChanged: onChanged,
+        autofocus: true,
+        style: Theme.of(context).textTheme.bodyText1,
         decoration: InputDecoration(
           labelText: labelText,
           errorText: errorText,
           labelStyle: Theme.of(context).textTheme.bodyText1,
           hintText: hint,
-          hintStyle: Theme.of(context).textTheme.subtitle2,
+          hintStyle: Theme.of(context).textTheme.caption,
           enabledBorder: UnderlineInputBorder(
             borderSide: BorderSide(
               color: Colors.black26,
@@ -68,17 +71,12 @@ class CustomDatePickerFormField extends StatelessWidget {
             ),
           ),
         ),
-        onChanged: onChanged,
-        onShowPicker: (context, currentValue) async {
-          FocusScope.of(context).requestFocus(new FocusNode());
-          final DateTime currentDate = DateTime.now();
-          return await showDatePicker(
-            context: context,
-            firstDate: DateTime(1920),
-            initialDate: initialDate,
-            lastDate: DateTime(
-                currentDate.year - 18, currentDate.month, currentDate.day),
-          );
+        keyboardType: keyboardType,
+        validator: (input) {
+          if (input.isEmpty) {
+            return '$labelText is required';
+          }
+          return null;
         },
       ),
     );

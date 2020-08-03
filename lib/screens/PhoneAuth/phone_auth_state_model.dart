@@ -34,7 +34,7 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
 
   final AuthBase auth;
   Duration timeoutDuration = Duration(seconds: 60);
-  VerificationStatus verificationStatus;
+  PersonalFormStatus verificationStatus;
 
   PhoneAuthStateModel({
     @required this.auth,
@@ -53,7 +53,7 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
     this.tempUserProvider = tempUserProvider;
   }
 
-  void setVerificationStatus(VerificationStatus verificationStatus) {
+  void setVerificationStatus(PersonalFormStatus verificationStatus) {
     this.verificationStatus = verificationStatus;
   }
 
@@ -310,6 +310,6 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
   }
 }
 
-mixin VerificationStatus {
+mixin PersonalFormStatus {
   void updateStatus(String msg);
 }
