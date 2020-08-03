@@ -171,7 +171,7 @@ class HistoryScreen extends StatelessWidget {
                   );
                 },
               ),
-              title: Text('Previous Visits'),
+              title: Text('My Visits'),
               actions: buildActions(context, model),
             )
           : null,

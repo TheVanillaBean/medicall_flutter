@@ -130,7 +130,7 @@ class DrawerMenu extends StatelessWidget {
         title: Container(
           margin: EdgeInsets.only(left: 15),
           child: Text(
-            'Previous Visits',
+            'My Visits',
             style: Theme.of(context).textTheme.headline6,
           ),
         ),

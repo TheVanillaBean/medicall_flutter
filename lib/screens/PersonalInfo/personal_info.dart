@@ -169,9 +169,9 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
           Positioned(
             bottom: -10,
             child: CircleAvatar(
-              backgroundColor: Colors.red,
+              backgroundColor: Theme.of(context).colorScheme.primary,
               radius: 20.0,
-              child: new Icon(
+              child: Icon(
                 Icons.camera_alt,
                 color: Colors.white,
               ),
@@ -205,13 +205,13 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
             children: <Widget>[
               Icon(
                 Icons.account_circle,
-                color: Colors.blue.withAlpha(140),
+                color: Colors.grey.withAlpha(140),
                 size: height * 0.15,
               ),
               Positioned(
                 bottom: -10,
                 child: CircleAvatar(
-                  backgroundColor: Colors.red,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
                   radius: 20.0,
                   child: new Icon(
                     Icons.camera_alt,

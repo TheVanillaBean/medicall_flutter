@@ -163,7 +163,7 @@ class _RegistrationScreenState extends State<RegistrationScreen>
             child: SignInButton(
               color: Theme.of(context).colorScheme.primary,
               textColor: Colors.white,
-              text: "Sign Up",
+              text: "Sign Up with Email",
               onPressed: model.canSubmit &&
                       model.googleAuthModel == null &&
                       model.appleSignInModel == null
@@ -178,7 +178,7 @@ class _RegistrationScreenState extends State<RegistrationScreen>
       SizedBox(height: 24),
       SocialSignInButton(
         imgPath: "assets/images/google-logo.png",
-        text: "Sign in with Google",
+        text: "Sign Up with Google",
         color: Colors.white,
         textColor: Colors.black87,
         onPressed: model.isLoading ? null : () => _signInWithGoogle(context),

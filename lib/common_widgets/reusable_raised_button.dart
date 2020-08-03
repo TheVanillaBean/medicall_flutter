@@ -13,7 +13,7 @@ class ReusableRaisedButton extends StatelessWidget {
       width: 200,
       child: RaisedButton(
         color: Theme.of(context).colorScheme.primary,
-        disabledColor: Theme.of(context).colorScheme.primary.withOpacity(.5),
+        disabledColor: Theme.of(context).disabledColor.withOpacity(.3),
         child: Text(
           title,
           style: TextStyle(

@@ -10,6 +10,7 @@ import 'package:dash_chat/dash_chat.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 
 class ProviderRegistrationViewModel
     with EmailAndPasswordValidators, ProviderStateValidators, ChangeNotifier {
@@ -22,11 +23,17 @@ class ProviderRegistrationViewModel
   String confirmPassword;
   String firstName;
   String lastName;
+  String phoneNumber;
   DateTime dob;
   String address;
+  String city;
+  String state;
+  String zipCode;
   String titles;
   String medLicense;
   String medLicenseState;
+  String npi;
+  String boardCertified;
 
   bool checkValue;
   bool isLoading;
@@ -123,11 +130,17 @@ class ProviderRegistrationViewModel
     this.confirmPassword = '',
     this.firstName = '',
     this.lastName = '',
+    this.phoneNumber = '',
     this.dob,
     this.address = '',
+    this.city = '',
+    this.state = '',
+    this.zipCode = '',
     this.titles = '',
     this.medLicense = '',
     this.medLicenseState = '',
+    this.npi = '',
+    this.boardCertified = '',
     this.checkValue = false,
     this.isLoading = false,
     this.submitted = false,
@@ -179,13 +192,21 @@ class ProviderRegistrationViewModel
   void updateCheckValue(bool checkValue) => updateWith(checkValue: checkValue);
   void updateFirstName(String fName) => updateWith(firstName: fName);
   void updateLastName(String lName) => updateWith(lastName: lName);
+  void updatePhoneNumber(String phoneNumber) =>
+      updateWith(phoneNumber: phoneNumber);
   void updateDOB(DateTime dob) => updateWith(dob: dob);
   void updateAddress(String address) => updateWith(address: address);
+  void updateCity(String city) => updateWith(city: city);
+  void updateState(String state) => updateWith(state: state);
+  void updateZipCode(String zipCode) => updateWith(zipCode: zipCode);
   void updateTitles(String titles) => updateWith(titles: titles);
   void updateMedLicense(String medLicense) =>
       updateWith(medLicense: medLicense);
   void updateMedLicenseState(String state) =>
       updateWith(medLicenseState: state);
+  void updateNpi(String npi) => updateWith(npi: npi);
+  void updateBoardCertified(String boardCertified) =>
+      updateWith(boardCertified: boardCertified);
 
   DateTime get initialDatePickerDate {
     final DateTime currentDate = DateTime.now();
@@ -228,12 +249,19 @@ class ProviderRegistrationViewModel
         tempUserProvider.user.email = this.email;
         tempUserProvider.user.firstName = this.firstName;
         tempUserProvider.user.lastName = this.lastName;
+        tempUserProvider.user.phoneNumber = this.phoneNumber;
         tempUserProvider.user.dob = this.birthday;
         tempUserProvider.user.address = this.address;
+        tempUserProvider.user.city = this.city;
+        tempUserProvider.user.state = this.state;
+        tempUserProvider.user.zipCode = this.zipCode;
         (tempUserProvider.user as ProviderUser).titles = this.titles;
         (tempUserProvider.user as ProviderUser).medLicense = this.medLicense;
         (tempUserProvider.user as ProviderUser).medLicenseState =
             this.medLicenseState;
+        (tempUserProvider.user as ProviderUser).npi = this.npi;
+        (tempUserProvider.user as ProviderUser).boardCertified =
+            this.boardCertified;
         updateWith(submitted: false, isLoading: false);
         saveUserDetails(user);
       } else {
@@ -263,25 +291,38 @@ class ProviderRegistrationViewModel
     String confirmPassword,
     String firstName,
     String lastName,
+    String phoneNumber,
     DateTime dob,
     String address,
+    String city,
+    String state,
+    String zipCode,
     String titles,
     String medLicense,
     String medLicenseState,
+    String npi,
+    String boardCertified,
     bool checkValue,
     bool isLoading,
     bool submitted,
     GoogleAuthModel googleAuthModel,
     AppleSignInModel appleSignInModel,
+    List<Asset> profileImage,
   }) {
     this.email = email ?? this.email;
     this.password = password ?? this.password;
     this.confirmPassword = confirmPassword ?? this.confirmPassword;
     this.firstName = firstName ?? this.firstName;
     this.lastName = lastName ?? this.lastName;
+    this.phoneNumber = phoneNumber ?? this.phoneNumber;
     this.dob = dob ?? this.dob;
     this.address = address ?? this.address;
+    this.city = city ?? this.city;
+    this.state = state ?? this.state;
+    this.zipCode = zipCode ?? this.zipCode;
     this.titles = titles ?? this.titles;
+    this.npi = npi ?? this.npi;
+    this.boardCertified = boardCertified ?? this.boardCertified;
     this.medLicense = medLicense ?? this.medLicense;
     this.medLicenseState = medLicenseState ?? this.medLicenseState;
     this.checkValue = checkValue ?? this.checkValue;

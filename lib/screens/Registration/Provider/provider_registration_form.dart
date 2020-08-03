@@ -76,9 +76,25 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
             enabled: model.isLoading == false,
           ),
           ProviderCustomTextField(
-            labelText: 'Address',
-            hint: '123 Main St, Anytown, MA 12345',
+            labelText: 'Practice Address',
+            hint: '123 Main St',
             onChanged: model.updateAddress,
+          ),
+          ProviderCustomTextField(
+            labelText: 'City',
+            hint: 'Anytown',
+            onChanged: model.updateCity,
+          ),
+          CustomDropdownFormField(
+            labelText: 'State',
+            onChanged: model.updateState,
+            items: model.states,
+            selectedItem: model.state,
+          ),
+          ProviderCustomTextField(
+            labelText: 'Zip Code',
+            hint: '12345',
+            onChanged: model.updateZipCode,
           ),
           CustomDropdownFormField(
             labelText: 'Title',
@@ -86,6 +102,11 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
             onChanged: model.updateTitles,
             items: ["M.D.", "D.O.", "P.A.", "PharmD"],
             selectedItem: model.titles,
+          ),
+          ProviderCustomTextField(
+            labelText: 'NPI Number',
+            hint: '1234567890',
+            onChanged: model.updateNpi,
           ),
           ProviderCustomTextField(
             labelText: 'Medical License Number',
@@ -97,6 +118,12 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
             onChanged: model.updateMedLicenseState,
             items: model.states,
             selectedItem: model.medLicenseState,
+          ),
+          CustomDropdownFormField(
+            labelText: 'Board Certification',
+            onChanged: model.updateBoardCertified,
+            items: ["Yes", "No", "Board Eligible"],
+            selectedItem: model.boardCertified,
           ),
           SizedBox(height: 20),
           Container(
@@ -118,7 +145,7 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
                   : null,
             ),
           ),
-          SizedBox(height: 30),
+          SizedBox(height: 70),
           if (model.isLoading)
             Container(
                 margin: EdgeInsets.symmetric(vertical: 24),
