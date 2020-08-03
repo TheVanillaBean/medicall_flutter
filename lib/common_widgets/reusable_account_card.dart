@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ReusableAccountCard extends StatelessWidget {
-  final IconData leading;
+  final String leading;
   final String title;
   final VoidCallback onTap;
 
@@ -21,16 +21,16 @@ class ReusableAccountCard extends StatelessWidget {
       child: ListTile(
         contentPadding: EdgeInsets.fromLTRB(20, 5, 20, 5),
         dense: true,
-        leading: Icon(
-          leading,
-          color: Theme.of(context).colorScheme.primary,
+        leading: Text(
+          leading ?? '',
+          style: Theme.of(context).textTheme.subtitle2,
         ),
         title: Transform(
           child: Text(
             title,
             style: Theme.of(context).textTheme.bodyText1,
           ),
-          transform: Matrix4.translationValues(-16, 0.0, 0.0),
+          transform: Matrix4.translationValues(-10, 0.0, 0.0),
         ),
         onTap: onTap,
       ),

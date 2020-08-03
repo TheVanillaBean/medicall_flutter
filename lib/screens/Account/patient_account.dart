@@ -107,7 +107,7 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
             Text(
               medicallUser.fullName,
               style: TextStyle(
-                fontFamily: 'Roboto Thin',
+                fontFamily: 'Inter',
                 fontSize: 20.0,
                 color: Theme.of(context).colorScheme.primary,
                 fontWeight: FontWeight.bold,
@@ -118,7 +118,7 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
             Text(
               EnumToString.parse(userProvider.user.type).toUpperCase(),
               style: TextStyle(
-                fontFamily: 'Roboto Thin',
+                fontFamily: 'Inter',
                 fontSize: 14.0,
                 color: Colors.black54,
                 fontWeight: FontWeight.bold,
@@ -150,8 +150,8 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
 
   Widget _buildMedicalHistoryCard(BuildContext context) {
     return ReusableAccountCard(
-      leading: Icons.history,
-      title: 'Update Medical History',
+      leading: 'Update Medical History',
+      title: '',
       onTap: () {
         ViewMedicalHistory.show(context: context);
       },
@@ -160,8 +160,8 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
 
   Widget _buildPaymentMethodsCard(BuildContext context) {
     return ReusableAccountCard(
-      leading: Icons.payment,
-      title: 'Payment Cards',
+      leading: 'Payment Cards',
+      title: '',
       onTap: () {
         Navigator.of(context).pushNamed('/paymentDetail');
       },
@@ -170,7 +170,7 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
 
   Widget _buildPhoneCard(User medicallUser) {
     return ReusableAccountCard(
-      leading: Icons.phone,
+      leading: 'Phone:',
       title: medicallUser.phoneNumber != null &&
               medicallUser.phoneNumber.length > 0
           ? medicallUser.phoneNumber
@@ -180,8 +180,8 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
 
   Widget _buildEmailCard(User medicallUser) {
     return ReusableAccountCard(
+      leading: 'Email:',
       title: medicallUser.email,
-      leading: Icons.email,
     );
   }
 

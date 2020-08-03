@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class ProviderCustomTextField extends StatelessWidget {
   const ProviderCustomTextField({
@@ -12,6 +13,7 @@ class ProviderCustomTextField extends StatelessWidget {
     this.enabled,
     this.errorText,
     this.obscureText,
+    this.inputFormatters,
   });
   final ValueChanged<String> onChanged;
   final Icon icon;
@@ -23,6 +25,7 @@ class ProviderCustomTextField extends StatelessWidget {
   final bool obscureText;
   final FormFieldValidator<String> validator;
   final TextEditingController controller;
+  final List<TextInputFormatter> inputFormatters;
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +38,7 @@ class ProviderCustomTextField extends StatelessWidget {
         autocorrect: false,
         obscureText: obscureText ?? false,
         controller: controller,
+        inputFormatters: inputFormatters,
         onChanged: onChanged,
         autofocus: true,
         style: Theme.of(context).textTheme.bodyText1,
