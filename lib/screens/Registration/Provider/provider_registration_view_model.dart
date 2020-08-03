@@ -1,14 +1,10 @@
-import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/provider_user_model.dart';
 import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/screens/Login/apple_sign_in_model.dart';
 import 'package:Medicall/screens/Login/google_auth_model.dart';
 import 'package:Medicall/services/auth.dart';
-import 'package:Medicall/services/database.dart';
-import 'package:Medicall/services/firebase_storage_service.dart';
 import 'package:Medicall/services/non_auth_firestore_db.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
-import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/validators.dart';
 import 'package:dash_chat/dash_chat.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -21,9 +17,6 @@ class ProviderRegistrationViewModel
   final NonAuthDatabase nonAuthDatabase;
   final AuthBase auth;
   final TempUserProvider tempUserProvider;
-  final FirestoreDatabase firestoreDatabase;
-  final FirebaseStorageService firebaseStorageService;
-  final UserProvider userProvider;
 
   String email;
   String password;
@@ -41,8 +34,6 @@ class ProviderRegistrationViewModel
   String medLicenseState;
   String npi;
   String boardCertified;
-
-  List<Asset> profileImage;
 
   bool checkValue;
   bool isLoading;
@@ -134,9 +125,6 @@ class ProviderRegistrationViewModel
     @required this.nonAuthDatabase,
     @required this.auth,
     @required this.tempUserProvider,
-    @required this.firestoreDatabase,
-    @required this.firebaseStorageService,
-    @required this.userProvider,
     this.email = '',
     this.password = '',
     this.confirmPassword = '',
@@ -236,15 +224,6 @@ class ProviderRegistrationViewModel
 
   Future<void> submit() async {
     updateWith(submitted: true);
-    ProviderUser medicallUser = userProvider.user;
-    medicallUser.firstName = this.firstName;
-    medicallUser.lastName = this.lastName;
-    medicallUser.phoneNumber = this.phoneNumber;
-    medicallUser.address = this.address;
-    medicallUser.dob = this.birthday;
-    medicallUser.state = this.state;
-    medicallUser.city = this.city;
-    medicallUser.zipCode = this.zipCode;
 //    if (!checkValue) {
 //      this.verificationStatus.updateStatus(
 //          "You have to agree to the Terms and Conditions, as well as the Privacy policy before signing in");
@@ -351,7 +330,6 @@ class ProviderRegistrationViewModel
     this.submitted = submitted ?? this.submitted;
     this.googleAuthModel = googleAuthModel ?? this.googleAuthModel;
     this.appleSignInModel = appleSignInModel ?? this.appleSignInModel;
-    this.profileImage = profileImage ?? this.profileImage;
     notifyListeners();
   }
 }
