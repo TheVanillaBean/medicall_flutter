@@ -57,8 +57,6 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
     keepScrollOffset: true,
   );
 
-  ScrollPosition _currentScrollPosition;
-
   //used to de-clutter this view model, but they do not update listeners themselves
   final DiagnosisStepState diagnosisStepState = DiagnosisStepState();
   final EducationalStepState educationalStepState = EducationalStepState();
@@ -193,7 +191,7 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
     updateContinueBtnPressed(false);
     this.scrollController.animateTo(
           this.scrollController.offset + 50,
-          duration: Duration(seconds: 1),
+          duration: Duration(milliseconds: 500),
           curve: Curves.easeIn,
         );
     notifyListeners(VisitReviewVMProperties.visitReview);
@@ -204,6 +202,11 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
     this.currentStep = this.currentStep == VisitReviewSteps.DiagnosisStep
         ? this.currentStep
         : this.currentStep - 1;
+    this.scrollController.animateTo(
+          this.scrollController.offset - 50,
+          duration: Duration(milliseconds: 500),
+          curve: Curves.easeIn,
+        );
     notifyListeners(VisitReviewVMProperties.visitReview);
   }
 
@@ -245,15 +248,17 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
   }) {
     this.examStepState.selectedExamOptions =
         selectedExamOptions ?? this.examStepState.selectedExamOptions;
-    int index = this
-        .examStepState
-        .examLocations
-        .indexWhere((element) => element.containsKey(locationMap.keys.first));
-    if (index > -1) {
-      this.examStepState.examLocations[index] = locationMap;
-    } else {
-      if (locationMap != null) {
-        this.examStepState.examLocations.add(locationMap);
+    if (locationMap != null) {
+      int index = this
+          .examStepState
+          .examLocations
+          .indexWhere((element) => element.containsKey(locationMap.keys.first));
+      if (index > -1) {
+        this.examStepState.examLocations[index] = locationMap;
+      } else {
+        if (locationMap != null) {
+          this.examStepState.examLocations.add(locationMap);
+        }
       }
     }
     notifyListeners(VisitReviewVMProperties.examStep);

@@ -49,11 +49,24 @@ class _FollowUpStepState extends State<FollowUpStep> {
                         ),
                       ),
                     ),
-                    Container(
-                      width: width * 0.8,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 36),
                       child: RadioButtonGroup(
                         labels: FollowUpSteps.followUpSteps,
                         picked: model.followUpStepState.followUp,
+                        itemBuilder: (Radio rb, Text txt, int i) {
+                          return Row(
+                            children: <Widget>[
+                              rb,
+                              Expanded(
+                                child: Text(
+                                  txt.data,
+                                  maxLines: 3,
+                                ),
+                              ),
+                            ],
+                          );
+                        },
                         onSelected: (String selected) {
                           model.updateFollowUpStepWith(followUp: selected);
                           if (selected == FollowUpSteps.Emergency) {
@@ -92,8 +105,10 @@ class _FollowUpStepState extends State<FollowUpStep> {
                     SizedBox(
                       height: 8,
                     ),
-                    ContinueButton(
-                      width: width,
+                    Expanded(
+                      child: ContinueButton(
+                        width: width,
+                      ),
                     ),
                   ],
                 ),
@@ -112,7 +127,7 @@ class _FollowUpStepState extends State<FollowUpStep> {
         : "What should be the estimated duration for the follow-up in-person visit?";
     return [
       Padding(
-        padding: const EdgeInsets.fromLTRB(8, 12, 8, 12),
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
         child: Text(
           question,
           textAlign: TextAlign.center,
@@ -139,10 +154,6 @@ class _FollowUpStepState extends State<FollowUpStep> {
             ),
             filled: true,
             fillColor: Colors.grey.withAlpha(20),
-            prefixIcon: Icon(
-              Icons.text_fields,
-              color: Theme.of(context).colorScheme.onSurface.withAlpha(120),
-            ),
             labelText: "Duration",
             hintText: 'Optional',
           ),

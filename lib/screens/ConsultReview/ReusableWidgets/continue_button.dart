@@ -19,23 +19,21 @@ class ContinueButton extends StatelessWidget {
       context,
       properties: [VisitReviewVMProperties.continueBtn],
     ).value;
-    return Expanded(
-      child: Align(
-        alignment: Alignment.bottomCenter,
-        child: Container(
-          width: width * .5,
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 16),
-            child: ReusableRaisedButton(
-              title: "Save and Continue",
-              onPressed: model.canContinue && !model.continueBtnPressed
-                  ? () async {
-                      model.updateContinueBtnPressed(true);
-                      model.incrementIndex();
-                      await model.saveVisitReviewToFirestore();
-                    }
-                  : null,
-            ),
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Container(
+        width: width * .5,
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 16),
+          child: ReusableRaisedButton(
+            title: "Save and Continue",
+            onPressed: model.canContinue && !model.continueBtnPressed
+                ? () async {
+                    model.updateContinueBtnPressed(true);
+                    model.incrementIndex();
+                    await model.saveVisitReviewToFirestore();
+                  }
+                : null,
           ),
         ),
       ),

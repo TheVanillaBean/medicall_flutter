@@ -45,8 +45,8 @@ class TreatmentStep extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Container(
-                      width: width * 0.8,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 36),
                       child: CheckboxGroup(
                         labels: model.diagnosisOptions.treatments
                             .map((t) => t.medicationName)
@@ -55,6 +55,19 @@ class TreatmentStep extends StatelessWidget {
                             .treatmentNoteStepState.selectedTreatmentOptions
                             .map((e) => e.medicationName)
                             .toList(),
+                        itemBuilder: (Checkbox cb, Text txt, int i) {
+                          return Row(
+                            children: <Widget>[
+                              cb,
+                              Expanded(
+                                child: Text(
+                                  txt.data,
+                                  maxLines: 3,
+                                ),
+                              ),
+                            ],
+                          );
+                        },
                         onChange: (isChecked, label, index) async {
                           if (isChecked) {
                             TreatmentOptions treatmentOptions = model
@@ -105,8 +118,10 @@ class TreatmentStep extends StatelessWidget {
                         },
                       ),
                     ),
-                    ContinueButton(
-                      width: width,
+                    Expanded(
+                      child: ContinueButton(
+                        width: width,
+                      ),
                     ),
                   ],
                 ),

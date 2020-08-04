@@ -37,19 +37,34 @@ class EducationalContentStep extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Container(
-                    width: width * 0.8,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 36),
                     child: CheckboxGroup(
                       labels: model.diagnosisOptions.educationalContent
                           .map((e) => e.keys.first.toString())
                           .toList(),
+                      itemBuilder: (Checkbox cb, Text txt, int i) {
+                        return Row(
+                          children: <Widget>[
+                            cb,
+                            Expanded(
+                              child: Text(
+                                txt.data,
+                                maxLines: 3,
+                              ),
+                            ),
+                          ],
+                        );
+                      },
                       onSelected: (List<String> checked) =>
                           model.updateEducationalInformation(
                               selectedEducationalOptions: checked),
                     ),
                   ),
-                  ContinueButton(
-                    width: width,
+                  Expanded(
+                    child: ContinueButton(
+                      width: width,
+                    ),
                   ),
                 ],
               ),

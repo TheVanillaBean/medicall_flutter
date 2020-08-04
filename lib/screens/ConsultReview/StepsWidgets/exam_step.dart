@@ -47,12 +47,26 @@ class _ExamStepState extends State<ExamStep> {
                         ),
                       ),
                     ),
-                    Container(
-                      width: width * 0.8,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 36),
                       child: CheckboxGroup(
                         labels: model.diagnosisOptions.exam,
+                        itemBuilder: (Checkbox cb, Text txt, int i) {
+                          return Row(
+                            children: <Widget>[
+                              cb,
+                              Expanded(
+                                child: Text(
+                                  txt.data,
+                                  maxLines: 3,
+                                ),
+                              ),
+                            ],
+                          );
+                        },
                         onSelected: (List<String> checked) => model
                             .updateExamStepWith(selectedExamOptions: checked),
+                        checked: model.examStepState.selectedExamOptions,
                       ),
                     ),
                     if (model.examStepState.selectedExamOptions.length > 0)
@@ -62,8 +76,10 @@ class _ExamStepState extends State<ExamStep> {
                     SizedBox(
                       height: 8,
                     ),
-                    ContinueButton(
-                      width: width,
+                    Expanded(
+                      child: ContinueButton(
+                        width: width,
+                      ),
                     ),
                   ],
                 ),
@@ -109,10 +125,6 @@ class _ExamStepState extends State<ExamStep> {
             ),
             filled: true,
             fillColor: Colors.grey.withAlpha(20),
-            prefixIcon: Icon(
-              Icons.text_fields,
-              color: Theme.of(context).colorScheme.onSurface.withAlpha(120),
-            ),
             labelText: examOption.toLowerCase() == "other"
                 ? "Custom Treatment"
                 : "Location",

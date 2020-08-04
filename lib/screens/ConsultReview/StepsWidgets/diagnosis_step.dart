@@ -91,8 +91,10 @@ class DiagnosisStep extends StatelessWidget {
                           ),
                         ),
                       ),
-                    ContinueButton(
-                      width: width,
+                    Expanded(
+                      child: ContinueButton(
+                        width: width,
+                      ),
                     ),
                   ],
                 ),

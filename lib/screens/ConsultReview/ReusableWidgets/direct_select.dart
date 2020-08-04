@@ -65,6 +65,7 @@ class _DirectSelectState extends State<DirectSelect> {
               _currentIndex = index;
             }
           },
+          onTapped: () => _removeOverlay(),
           builder: (context, index) {
             if (widget.items != null) {
               return widget.items[index];
@@ -114,8 +115,8 @@ class _DirectSelectState extends State<DirectSelect> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      onTap: () => _createOverlay(),
       onVerticalDragStart: (_) => _createOverlay(),
-      onVerticalDragEnd: (_) => _removeOverlay(),
       onVerticalDragUpdate: (details) => _controller.positions.isNotEmpty
           ? _controller.jumpTo(_controller.offset - details.primaryDelta)
           : null,
@@ -206,6 +207,7 @@ class _MySelectionList extends StatelessWidget {
   final IndexedWidgetBuilder builder;
   final int childCount;
   final ValueChanged<int> onSelectedItemChanged;
+  final Function onTapped;
   final double itemExtent;
   final Color backgroundColor;
 
@@ -216,6 +218,7 @@ class _MySelectionList extends StatelessWidget {
     @required this.childCount,
     @required this.onSelectedItemChanged,
     @required this.itemExtent,
+    @required this.onTapped,
     this.backgroundColor,
   }) : super(key: key);
 
@@ -223,20 +226,23 @@ class _MySelectionList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: backgroundColor,
-      child: Container(
-          height: MediaQuery.of(context).size.height,
-          child: CupertinoPicker.builder(
-            scrollController: controller,
-            offAxisFraction: 0.0,
-            itemExtent: itemExtent,
-            childCount: childCount,
-            useMagnifier: true,
-            magnification: 1.15,
-            diameterRatio: 3.0,
-            backgroundColor: backgroundColor,
-            onSelectedItemChanged: onSelectedItemChanged,
-            itemBuilder: builder,
-          )),
+      child: GestureDetector(
+        onTap: onTapped,
+        child: Container(
+            height: MediaQuery.of(context).size.height,
+            child: CupertinoPicker.builder(
+              scrollController: controller,
+              offAxisFraction: 0.0,
+              itemExtent: itemExtent,
+              childCount: childCount,
+              useMagnifier: true,
+              magnification: 1.15,
+              diameterRatio: 3.0,
+              backgroundColor: backgroundColor,
+              onSelectedItemChanged: onSelectedItemChanged,
+              itemBuilder: builder,
+            )),
+      ),
     );
   }
 }

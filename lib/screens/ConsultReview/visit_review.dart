@@ -89,7 +89,7 @@ class _VisitReviewState extends State<VisitReview> with VisitReviewStatus {
         ),
       ),
       body: Column(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: MainAxisSize.max,
         children: <Widget>[
           Expanded(
             flex: 8,
@@ -116,7 +116,7 @@ class _VisitReviewState extends State<VisitReview> with VisitReviewStatus {
               child: SizedBox(
                 width: width * 1.5,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
                   child: StepProgressIndicator(
                     direction: Axis.horizontal,
                     totalSteps: VisitReviewSteps.TotalSteps,

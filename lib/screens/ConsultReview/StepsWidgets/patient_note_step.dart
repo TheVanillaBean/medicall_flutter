@@ -35,59 +35,62 @@ class _PatientNoteStepState extends State<PatientNoteStep> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 32, 0, 12),
-                      child: Text(
-                        "Message",
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontWeight: FontWeight.w500,
+                    Expanded(
+                      flex: 1,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 32, 0, 0),
+                        child: Text(
+                          "Message",
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
-                      child: TextFormField(
-                        maxLines: 20,
-                        minLines: 5,
-                        initialValue: model.patientNoteStepState
-                            .getPatientNoteTemplate(
-                                model.consult.patientUser.fullName,
-                                "${model.consult.providerUser.fullName} ${model.consult.providerUser.titles}",
-                                model.diagnosisOptions.patientNoteTemplate),
-                        autocorrect: false,
-                        keyboardType: TextInputType.multiline,
-                        onChanged: (String text) =>
-                            model.updatePatientNoteStepWith(patientNote: text),
-                        style: TextStyle(color: Color.fromRGBO(80, 80, 80, 1)),
-                        decoration: InputDecoration(
-                          labelStyle: TextStyle(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurface
-                                .withAlpha(90),
+                    Expanded(
+                      flex: 10,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: TextFormField(
+                          maxLines: null,
+                          scrollPhysics: NeverScrollableScrollPhysics(),
+                          initialValue: model.patientNoteStepState
+                              .getPatientNoteTemplate(
+                                  model.consult.patientUser.fullName,
+                                  "${model.consult.providerUser.fullName} ${model.consult.providerUser.titles}",
+                                  model.diagnosisOptions.patientNoteTemplate),
+                          autocorrect: false,
+                          keyboardType: TextInputType.multiline,
+                          onChanged: (String text) => model
+                              .updatePatientNoteStepWith(patientNote: text),
+                          style:
+                              TextStyle(color: Color.fromRGBO(80, 80, 80, 1)),
+                          decoration: InputDecoration(
+                            labelStyle: TextStyle(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withAlpha(90),
+                            ),
+                            hintStyle: TextStyle(
+                              color: Color.fromRGBO(100, 100, 100, 1),
+                            ),
+                            filled: true,
+                            fillColor: Colors.grey.withAlpha(20),
+                            labelText: "Patient Note",
                           ),
-                          hintStyle: TextStyle(
-                            color: Color.fromRGBO(100, 100, 100, 1),
-                          ),
-                          filled: false,
-                          fillColor: Colors.grey.withAlpha(20),
-                          prefixIcon: Icon(
-                            Icons.text_fields,
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurface
-                                .withAlpha(120),
-                          ),
-                          labelText: "Patient Note",
                         ),
                       ),
                     ),
                     SizedBox(
                       height: 8,
                     ),
-                    ContinueButton(
-                      width: width,
+                    Expanded(
+                      flex: 1,
+                      child: ContinueButton(
+                        width: width,
+                      ),
                     ),
                   ],
                 ),
