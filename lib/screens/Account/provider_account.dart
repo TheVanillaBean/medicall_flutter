@@ -105,7 +105,7 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
               child: Text(
                 medicallUser.fullName,
                 style: TextStyle(
-                  fontFamily: 'Roboto Thin',
+                  fontFamily: 'Inter',
                   fontSize: 20.0,
                   color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.bold,
@@ -118,7 +118,7 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
               child: Text(
                 EnumToString.parse(userProvider.user.type).toUpperCase(),
                 style: TextStyle(
-                  fontFamily: 'Roboto Thin',
+                  fontFamily: 'Inter',
                   fontSize: 14.0,
                   color: Colors.black54,
                   fontWeight: FontWeight.bold,
@@ -134,10 +134,14 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
               ),
             ),
             _buildEmailCard(medicallUser),
+            _buildPhoneCard(medicallUser),
             _buildAddressCard(medicallUser),
             _buildTitleCard(medicallUser),
             _buildMedicalLicenseCard(medicallUser),
             _buildMedicalLicenseStateCard(medicallUser),
+            _buildNpiCard(medicallUser),
+            _buildBoardCertifiedCard(medicallUser),
+            SizedBox(height: 50),
           ],
         ),
       ),
@@ -146,14 +150,14 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
 
   Widget _buildEmailCard(User medicallUser) {
     return ReusableAccountCard(
+      leading: 'Email:',
       title: medicallUser.email,
-      leading: Icons.email,
     );
   }
 
   Widget _buildPhoneCard(User medicallUser) {
     return ReusableAccountCard(
-      leading: Icons.phone,
+      leading: 'Mobile Phone:',
       title: medicallUser.phoneNumber != null &&
               medicallUser.phoneNumber.length > 0
           ? medicallUser.phoneNumber
@@ -163,28 +167,44 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
 
   Widget _buildAddressCard(User medicallUser) {
     return ReusableAccountCard(
-        leading: Icons.home, title: medicallUser.address);
+      leading: 'Practice \nAddress:',
+      title:
+          '${medicallUser.address}, ${medicallUser.city}, ${medicallUser.state} ${medicallUser.zipCode}',
+    );
   }
 
   Widget _buildTitleCard(User medicallUser) {
     return ReusableAccountCard(
-      leading: Icons.school,
+      leading: 'Title:',
       title: (medicallUser as ProviderUser).titles,
     );
   }
 
   Widget _buildMedicalLicenseCard(User medicallUser) {
     return ReusableAccountCard(
-      leading: Icons.local_hospital,
-      title: 'Medical License: ${(medicallUser as ProviderUser).medLicense}',
+      leading: 'Medical License:',
+      title: '${(medicallUser as ProviderUser).medLicense}',
     );
   }
 
   Widget _buildMedicalLicenseStateCard(User medicallUser) {
     return ReusableAccountCard(
-      leading: Icons.place,
-      title:
-          'Medical License State: ${(medicallUser as ProviderUser).medLicenseState}',
+      leading: 'Medical License State:',
+      title: '${(medicallUser as ProviderUser).medLicenseState}',
+    );
+  }
+
+  Widget _buildNpiCard(User medicallUser) {
+    return ReusableAccountCard(
+      leading: 'NPI Number:',
+      title: '${(medicallUser as ProviderUser).npi}',
+    );
+  }
+
+  Widget _buildBoardCertifiedCard(User medicallUser) {
+    return ReusableAccountCard(
+      leading: 'Board Certification:',
+      title: '${(medicallUser as ProviderUser).boardCertified}',
     );
   }
 

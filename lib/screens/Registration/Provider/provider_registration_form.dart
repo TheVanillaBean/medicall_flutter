@@ -5,6 +5,7 @@ import 'package:Medicall/common_widgets/custom_dropdown_formfield.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
 import 'package:super_rich_text/super_rich_text.dart';
 import '../../../common_widgets/custom_date_picker_formfield.dart';
@@ -18,6 +19,9 @@ class ProviderRegistrationForm extends StatefulWidget {
 class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
     with VerificationStatus {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  MaskTextInputFormatter phoneTextInputFormatter = MaskTextInputFormatter(
+      mask: "(###)###-####", filter: {"#": RegExp(r'[0-9]')});
 
   Future<void> _submit(ProviderRegistrationViewModel model) async {
     try {
@@ -55,11 +59,11 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
             onChanged: model.updateDOB,
           ),
           ProviderCustomTextField(
-            labelText: 'Email',
-            hint: 'janedoe@email.com',
-            onChanged: model.updateEmail,
-            errorText: model.emailErrorText,
-            enabled: model.isLoading == false,
+            inputFormatters: [phoneTextInputFormatter],
+            labelText: 'Mobile Phone',
+            hint: '(123)456-7890',
+            keyboardType: TextInputType.phone,
+            onChanged: model.updatePhoneNumber,
           ),
           ProviderCustomTextField(
             labelText: 'Password',
