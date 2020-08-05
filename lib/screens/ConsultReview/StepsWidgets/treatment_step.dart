@@ -78,6 +78,16 @@ class TreatmentStep extends StatelessWidget {
                                 .first;
                             model.updateTreatmentStepWith(
                                 selectedTreatment: treatmentOptions);
+
+                            if (index ==
+                                model.diagnosisOptions.treatments.length - 1) {
+                              model.treatmentNoteStepState
+                                  .currentlySelectedIsOther = true;
+                            } else {
+                              model.treatmentNoteStepState
+                                  .currentlySelectedIsOther = false;
+                            }
+
                             PrescriptionDetails.show(
                               context: context,
                               treatmentOptions: treatmentOptions,
@@ -101,11 +111,21 @@ class TreatmentStep extends StatelessWidget {
                               model.deselectTreatmentStep(treatmentOptions);
                             } else {
                               TreatmentOptions treatmentOptions = model
-                                  .diagnosisOptions.treatments
+                                  .treatmentNoteStepState
+                                  .selectedTreatmentOptions
                                   .where((element) =>
                                       element.medicationName == label)
                                   .toList()
                                   .first;
+                              if (index ==
+                                  model.diagnosisOptions.treatments.length -
+                                      1) {
+                                model.treatmentNoteStepState
+                                    .currentlySelectedIsOther = true;
+                              } else {
+                                model.treatmentNoteStepState
+                                    .currentlySelectedIsOther = false;
+                              }
                               model.updateTreatmentStepWith(
                                   selectedTreatment: treatmentOptions);
                               PrescriptionDetails.show(

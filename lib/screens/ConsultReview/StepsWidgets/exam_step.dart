@@ -110,7 +110,8 @@ class _ExamStepState extends State<ExamStep> {
       ),
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
-        child: TextField(
+        child: TextFormField(
+          initialValue: model.examStepState.getExamLocation(examOption),
           autocorrect: false,
           keyboardType: TextInputType.text,
           onChanged: (String text) =>

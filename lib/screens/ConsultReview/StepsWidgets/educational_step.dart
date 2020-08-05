@@ -59,6 +59,8 @@ class EducationalContentStep extends StatelessWidget {
                       onSelected: (List<String> checked) =>
                           model.updateEducationalInformation(
                               selectedEducationalOptions: checked),
+                      checked:
+                          model.educationalStepState.selectedEducationalOptions,
                     ),
                   ),
                   Expanded(

@@ -13,4 +13,13 @@ class ExamStepState {
       return examLocations;
     }
   }
+
+  String getExamLocation(String exam) {
+    List<Map<String, String>> locations =
+        examLocations.where((element) => element.keys.first == exam).toList();
+    if (locations.length > 0) {
+      return locations.first.values.first;
+    }
+    return "";
+  }
 }

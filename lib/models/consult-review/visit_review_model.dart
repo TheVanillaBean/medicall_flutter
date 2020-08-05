@@ -17,14 +17,14 @@ class VisitReviewData {
   String patientNote;
 
   VisitReviewData({
-    this.diagnosis,
-    this.includeDDX,
-    this.ddxOption,
-    this.examLocations,
-    this.treatmentOptions,
-    this.educationalOptions,
-    this.followUp,
-    this.patientNote,
+    this.diagnosis = "",
+    this.includeDDX = false,
+    this.ddxOption = "",
+    this.examLocations = const [],
+    this.treatmentOptions = const [],
+    this.educationalOptions = const [],
+    this.followUp = const {"": ""},
+    this.patientNote = "",
   });
 
   factory VisitReviewData.fromMap(

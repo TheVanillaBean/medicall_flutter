@@ -33,4 +33,15 @@ class FollowUpStepState {
       return {followUp.length > 0 ? followUp : "N/A": "N/A"};
     }
   }
+
+  String get getInitialValueForFollowUp {
+    if (followUp == FollowUpSteps.ViaMedicall ||
+        followUp == FollowUpSteps.InPerson) {
+      return duration;
+    } else if (followUp == FollowUpSteps.Emergency) {
+      return documentation;
+    } else {
+      return "";
+    }
+  }
 }

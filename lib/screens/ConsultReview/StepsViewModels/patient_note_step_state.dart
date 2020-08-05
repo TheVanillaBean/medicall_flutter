@@ -5,21 +5,25 @@ class PatientNoteStepState {
 
   String getPatientNoteTemplate(String patientName, String providerName,
       PatientTemplateNote patientTemplateNote) {
-    String note = "Dear $patientName,";
-    note += "\n";
-    note += "\n";
-    note += patientTemplateNote.intro;
-    note += "\n";
-    note += patientTemplateNote.body["FINASTERIDE"];
-    note += "\n";
-    note += patientTemplateNote.conclusion;
-    note += "\n";
-    note += "\n";
-    note += "Regards,";
-    note += "\n";
-    note += providerName;
-    patientNote = note;
-    return note;
+    if (patientNote.length > 0) {
+      return patientNote;
+    } else {
+      String note = "Dear $patientName,";
+      note += "\n";
+      note += "\n";
+      note += patientTemplateNote.intro;
+      note += "\n";
+      note += patientTemplateNote.body["FINASTERIDE"];
+      note += "\n";
+      note += patientTemplateNote.conclusion;
+      note += "\n";
+      note += "\n";
+      note += "Regards,";
+      note += "\n";
+      note += providerName;
+      patientNote = note;
+      return note;
+    }
   }
 
   bool get minimumRequiredFieldsFilledOut {

@@ -71,7 +71,15 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
     @required this.consult,
     @required this.consultReviewOptions,
     @required this.visitReviewData,
-  });
+  }) {
+    this.setDiagnosisFromPrevData();
+    this.setExamFromPrevData();
+    this.setTreatmentFromPrevData();
+    this.setFollowUpFromPrevData();
+    this.setPatientNoteFromPrevData();
+    this.setEducationalInfoFromPrevData();
+    updateCompletedStepsList();
+  }
 
   void setVisitReviewStatus(VisitReviewStatus visitReviewStatus) {
     this.visitReviewStatus = visitReviewStatus;
@@ -114,13 +122,6 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
   }
 
   void updateCompletedStepsList() {
-    if (canContinue &&
-        !continueBtnPressed &&
-        !this.completedSteps.contains(this.currentStep)) {
-      this
-          .visitReviewStatus
-          .updateStatus("Press continue to save your work for this step.");
-    }
     List<int> completedSteps = [];
     if (continueBtnPressed) {
       if (this.diagnosisStepState.minimumRequiredFieldsFilledOut) {
@@ -142,6 +143,16 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
         completedSteps.add(VisitReviewSteps.PatientNote);
       }
       this.completedSteps = completedSteps;
+    }
+  }
+
+  void checkIfWorkSaved() {
+    if (canContinue &&
+        !continueBtnPressed &&
+        !this.completedSteps.contains(this.currentStep)) {
+      this
+          .visitReviewStatus
+          .updateStatus("Press continue to save your work for this step.");
     }
   }
 
@@ -167,7 +178,6 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
     }).toList();
     this.visitReviewData.followUp = this.followUpStepState.followUpMap;
     this.visitReviewData.patientNote = this.patientNoteStepState.patientNote;
-
     await firestoreDatabase.saveVisitReview(
         consultId: this.consult.uid, visitReviewData: this.visitReviewData);
     if (this.completedSteps.length == 6) {
@@ -184,6 +194,7 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
   }
 
   void incrementIndex() {
+    checkIfWorkSaved();
     updateCompletedStepsList();
     this.currentStep = this.currentStep == VisitReviewSteps.TotalSteps - 1
         ? this.currentStep
@@ -198,6 +209,7 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
   }
 
   void decrementIndex() {
+    checkIfWorkSaved();
     updateCompletedStepsList();
     this.currentStep = this.currentStep == VisitReviewSteps.DiagnosisStep
         ? this.currentStep
@@ -211,9 +223,37 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
   }
 
   void updateIndex(int index) {
+    checkIfWorkSaved();
     updateCompletedStepsList();
     this.currentStep = index;
     notifyListeners(VisitReviewVMProperties.visitReview);
+  }
+
+  /////DIAGNOSIS////
+
+  void setDiagnosisFromPrevData() {
+    if (this.visitReviewData.diagnosis.length > 0) {
+      this.diagnosisStepState.diagnosis = this.visitReviewData.diagnosis;
+      int diagnosisIndex = this
+          .consultReviewOptions
+          .diagnosisList
+          .indexOf(this.diagnosisStepState.diagnosis);
+      this.diagnosisStepState.selectedItemIndex =
+          diagnosisIndex > -1 ? diagnosisIndex : 0;
+      updateDiagnosis(this.diagnosisStepState.selectedItemIndex);
+      if (this.diagnosisStepState.minimumRequiredFieldsFilledOut) {
+        int index = completedSteps.indexOf(VisitReviewSteps.DiagnosisStep);
+        if (index > 0) {
+          completedSteps.insert(index, VisitReviewSteps.DiagnosisStep);
+        } else {
+          completedSteps.add(VisitReviewSteps.DiagnosisStep);
+        }
+      }
+    }
+    this.diagnosisStepState.includeDDX = this.visitReviewData.includeDDX;
+    if (this.visitReviewData.ddxOption.length > 0) {
+      this.diagnosisStepState.ddxOption = this.visitReviewData.ddxOption;
+    }
   }
 
   Future<void> updateDiagnosis(int selectedItemIndex) async {
@@ -242,6 +282,10 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
     notifyListeners(VisitReviewVMProperties.diagnosisStep);
   }
 
+  /////END DIAGNOSIS////
+
+  /////EXAM////
+
   void updateExamStepWith({
     List<String> selectedExamOptions,
     Map<String, String> locationMap,
@@ -263,6 +307,28 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
     }
     notifyListeners(VisitReviewVMProperties.examStep);
   }
+
+  void setExamFromPrevData() {
+    if (this.visitReviewData.examLocations.length > 0) {
+      this.examStepState.examLocations = this.visitReviewData.examLocations;
+      this.examStepState.selectedExamOptions =
+          this.visitReviewData.examLocations.map((e) => e.keys.first).toList();
+      updateExamStepWith(
+          selectedExamOptions: this.examStepState.selectedExamOptions);
+      if (this.examStepState.minimumRequiredFieldsFilledOut) {
+        int index = completedSteps.indexOf(VisitReviewSteps.ExamStep);
+        if (index > 0) {
+          completedSteps.insert(index, VisitReviewSteps.ExamStep);
+        } else {
+          completedSteps.add(VisitReviewSteps.ExamStep);
+        }
+      }
+    }
+  }
+
+  /////END EXAM////
+
+  /////TREATMENT////
 
   void removeTreatmentOption({
     TreatmentOptions selectedTreatment,
@@ -300,6 +366,16 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
             selectedTreatment;
       }
     }
+
+    //this determines if the diagnosis list already has this medication
+    int index = this.diagnosisOptions.treatments.indexWhere((element) =>
+        element.medicationName == selectedTreatment.medicationName);
+
+    if (index == -1) {
+      //this is the "other" option
+      this.diagnosisOptions.treatments.last = selectedTreatment;
+    }
+
     notifyListeners(VisitReviewVMProperties.treatmentStep);
   }
 
@@ -312,6 +388,26 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
         );
     notifyListeners(VisitReviewVMProperties.treatmentStep);
   }
+
+  void setTreatmentFromPrevData() {
+    if (this.visitReviewData.treatmentOptions.length > 0) {
+      this.treatmentNoteStepState.selectedTreatmentOptions =
+          this.visitReviewData.treatmentOptions;
+
+      if (this.treatmentNoteStepState.minimumRequiredFieldsFilledOut) {
+        int index = completedSteps.indexOf(VisitReviewSteps.TreatmentStep);
+        if (index > 0) {
+          completedSteps.insert(index, VisitReviewSteps.TreatmentStep);
+        } else {
+          completedSteps.add(VisitReviewSteps.TreatmentStep);
+        }
+      }
+    }
+  }
+
+  /////END TREATMENT////
+
+  /////FOLLOW UP////
 
   void updateFollowUpStepWith({
     String followUp,
@@ -327,6 +423,49 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
     notifyListeners(VisitReviewVMProperties.followUpStep);
   }
 
+  void setFollowUpFromPrevData() {
+    if (this.visitReviewData.followUp.length > 0) {
+      List<String> followUpValues = this
+          .visitReviewData
+          .followUp
+          .values
+          .where((element) => element.length > 0 && element != "N/A")
+          .toList();
+
+      String followUpValue = "";
+
+      if (followUpValues.length > 0) {
+        followUpValue = followUpValues.first;
+
+        String followUp = "";
+        this.visitReviewData.followUp.forEach((key, value) {
+          if (value == followUpValue) followUp = key;
+        });
+
+        this.followUpStepState.followUp = followUp;
+        if (followUp == FollowUpSteps.ViaMedicall ||
+            followUp == FollowUpSteps.InPerson) {
+          this.followUpStepState.duration = followUpValue;
+        } else if (followUp == FollowUpSteps.Emergency) {
+          this.followUpStepState.documentation = followUpValue;
+        }
+
+        if (this.followUpStepState.minimumRequiredFieldsFilledOut) {
+          int index = completedSteps.indexOf(VisitReviewSteps.FollowUpStep);
+          if (index > 0) {
+            completedSteps.insert(index, VisitReviewSteps.FollowUpStep);
+          } else {
+            completedSteps.add(VisitReviewSteps.FollowUpStep);
+          }
+        }
+      }
+    }
+  }
+
+  /////END FOLLOW UP////
+
+  /////EDUCATIONAL////
+
   void updateEducationalInformation({
     List<String> selectedEducationalOptions,
   }) {
@@ -336,6 +475,31 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
     notifyListeners(VisitReviewVMProperties.educationalContent);
   }
 
+  void setEducationalInfoFromPrevData() {
+    if (this.visitReviewData.educationalOptions.length > 0) {
+      this.updateEducationalInformation(
+        selectedEducationalOptions: this
+            .visitReviewData
+            .educationalOptions
+            .map((e) => e.keys.first)
+            .toList(),
+      );
+      if (this.educationalStepState.minimumRequiredFieldsFilledOut) {
+        int index =
+            completedSteps.indexOf(VisitReviewSteps.EducationalContentStep);
+        if (index > 0) {
+          completedSteps.insert(index, VisitReviewSteps.EducationalContentStep);
+        } else {
+          completedSteps.add(VisitReviewSteps.EducationalContentStep);
+        }
+      }
+    }
+  }
+
+  /////END EDUCATIONAL////
+
+  /////PATIENT NOTE////
+
   void updatePatientNoteStepWith({
     String patientNote,
   }) {
@@ -343,6 +507,24 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
         patientNote ?? this.patientNoteStepState.patientNote;
     notifyListeners(VisitReviewVMProperties.patientNote);
   }
+
+  void setPatientNoteFromPrevData() {
+    if (this.visitReviewData.patientNote.length > 0) {
+      updatePatientNoteStepWith(patientNote: this.visitReviewData.patientNote);
+
+      if (this.patientNoteStepState.minimumRequiredFieldsFilledOut) {
+        int index = completedSteps.indexOf(VisitReviewSteps.PatientNote);
+        if (index > 0) {
+          completedSteps.insert(index, VisitReviewSteps.PatientNote);
+        } else {
+          completedSteps.add(VisitReviewSteps.PatientNote);
+        }
+      }
+    }
+  }
+
+  /////END PATIENT NOTE////
+
 }
 
 mixin VisitReviewStatus {

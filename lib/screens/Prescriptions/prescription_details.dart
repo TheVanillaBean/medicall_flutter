@@ -72,14 +72,8 @@ class PrescriptionDetails extends StatelessWidget {
                     labelText: 'Medication Name',
                     initialValue: this.model.treatmentOptions.medicationName,
                     onChanged: model.updateMedicationName,
-                    enabled: this
-                                .model
-                                .treatmentOptions
-                                .medicationName
-                                .toLowerCase() ==
-                            "other"
-                        ? true
-                        : false,
+                    enabled: visitReviewViewModel
+                        .treatmentNoteStepState.currentlySelectedIsOther,
                   ),
                   Row(
                     children: <Widget>[
@@ -138,7 +132,7 @@ class PrescriptionDetails extends StatelessWidget {
                   PrescriptionDetailsTextField(
                     keyboardType: TextInputType.multiline,
                     focusNode: model.instructionsFocusNode,
-                    maxLines: 8,
+                    maxLines: null,
                     labelText: 'Instructions',
                     initialValue: this.model.treatmentOptions.instructions,
                     onChanged: model.updateInstructions,

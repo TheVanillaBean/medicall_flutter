@@ -194,7 +194,9 @@ class VisitOverview extends StatelessWidget {
       BuildContext context, FirestoreDatabase db, Consult consult) async {
     ConsultReviewOptions options =
         await db.consultReviewOptions(symptomName: "Hairloss");
-    VisitReviewData visitReviewData = VisitReviewData();
+    VisitReviewData visitReviewData =
+        await db.visitReviewStream(consultId: consult.uid).first;
+//    VisitReviewData visitReviewData = VisitReviewData();
     return VisitReview.show(
       context: context,
       consult: consult,
