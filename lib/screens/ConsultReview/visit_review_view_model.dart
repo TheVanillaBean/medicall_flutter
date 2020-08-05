@@ -78,7 +78,6 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
     this.setFollowUpFromPrevData();
     this.setPatientNoteFromPrevData();
     this.setEducationalInfoFromPrevData();
-    updateCompletedStepsList();
   }
 
   void setVisitReviewStatus(VisitReviewStatus visitReviewStatus) {
@@ -139,8 +138,14 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
       if (this.educationalStepState.minimumRequiredFieldsFilledOut) {
         completedSteps.add(VisitReviewSteps.EducationalContentStep);
       }
-      if (this.patientNoteStepState.minimumRequiredFieldsFilledOut) {
-        completedSteps.add(VisitReviewSteps.PatientNote);
+      if (this.currentStep == VisitReviewSteps.PatientNote &&
+          this.patientNoteStepState.minimumRequiredFieldsFilledOut) {
+        int index = completedSteps.indexOf(VisitReviewSteps.PatientNote);
+        if (index > 0) {
+          completedSteps.insert(index, VisitReviewSteps.PatientNote);
+        } else {
+          completedSteps.add(VisitReviewSteps.PatientNote);
+        }
       }
       this.completedSteps = completedSteps;
     }
@@ -180,6 +185,7 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
     this.visitReviewData.patientNote = this.patientNoteStepState.patientNote;
     await firestoreDatabase.saveVisitReview(
         consultId: this.consult.uid, visitReviewData: this.visitReviewData);
+
     if (this.completedSteps.length == 6) {
       this.consult.state = ConsultStatus.Completed;
       await firestoreDatabase.saveConsult(
@@ -425,29 +431,18 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
 
   void setFollowUpFromPrevData() {
     if (this.visitReviewData.followUp.length > 0) {
-      List<String> followUpValues = this
-          .visitReviewData
-          .followUp
-          .values
-          .where((element) => element.length > 0 && element != "N/A")
-          .toList();
-
-      String followUpValue = "";
-
-      if (followUpValues.length > 0) {
-        followUpValue = followUpValues.first;
-
-        String followUp = "";
-        this.visitReviewData.followUp.forEach((key, value) {
-          if (value == followUpValue) followUp = key;
-        });
-
-        this.followUpStepState.followUp = followUp;
-        if (followUp == FollowUpSteps.ViaMedicall ||
-            followUp == FollowUpSteps.InPerson) {
-          this.followUpStepState.duration = followUpValue;
-        } else if (followUp == FollowUpSteps.Emergency) {
-          this.followUpStepState.documentation = followUpValue;
+      if (this.visitReviewData.followUp.keys.first != null) {
+        this.followUpStepState.followUp =
+            this.visitReviewData.followUp.keys.first;
+        String followUpValue = this.visitReviewData.followUp.values.first;
+        if (followUpValue.length != null) {
+          if (this.followUpStepState.followUp == FollowUpSteps.ViaMedicall ||
+              this.followUpStepState.followUp == FollowUpSteps.InPerson) {
+            this.followUpStepState.duration = followUpValue;
+          } else if (this.followUpStepState.followUp ==
+              FollowUpSteps.Emergency) {
+            this.followUpStepState.documentation = followUpValue;
+          }
         }
 
         if (this.followUpStepState.minimumRequiredFieldsFilledOut) {
@@ -511,15 +506,6 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
   void setPatientNoteFromPrevData() {
     if (this.visitReviewData.patientNote.length > 0) {
       updatePatientNoteStepWith(patientNote: this.visitReviewData.patientNote);
-
-      if (this.patientNoteStepState.minimumRequiredFieldsFilledOut) {
-        int index = completedSteps.indexOf(VisitReviewSteps.PatientNote);
-        if (index > 0) {
-          completedSteps.insert(index, VisitReviewSteps.PatientNote);
-        } else {
-          completedSteps.add(VisitReviewSteps.PatientNote);
-        }
-      }
     }
   }
 

@@ -1,15 +1,17 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/empty_content.dart';
-import 'package:Medicall/common_widgets/flat_button.dart';
 import 'package:Medicall/common_widgets/list_items_builder.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/question_model.dart';
 import 'package:Medicall/models/screening_questions_model.dart';
+import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/ConsultReview/consult_photos.dart';
 import 'package:Medicall/screens/ConsultReview/screening_question_list_item.dart';
+import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard.dart';
 import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
 import 'package:Medicall/services/database.dart';
+import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -35,6 +37,8 @@ class ReviewVisitInformation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final db = Provider.of<FirestoreDatabase>(context);
+    UserProvider userProvider =
+        Provider.of<UserProvider>(context, listen: false);
     ScreenUtil.init(context);
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
@@ -48,10 +52,17 @@ class ReviewVisitInformation extends StatelessWidget {
                   color: Theme.of(context).colorScheme.primary,
                 ),
                 onPressed: () {
-                  PatientDashboardScreen.show(
-                    context: context,
-                    pushReplaceNamed: true,
-                  );
+                  if (userProvider.user.type == USER_TYPE.PATIENT) {
+                    PatientDashboardScreen.show(
+                      context: context,
+                      pushReplaceNamed: true,
+                    );
+                  } else {
+                    ProviderDashboardScreen.show(
+                      context: context,
+                      pushReplaceNamed: true,
+                    );
+                  }
                 })
           ]),
       body: FutureBuilder<ScreeningQuestions>(

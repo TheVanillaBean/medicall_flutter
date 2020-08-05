@@ -145,6 +145,7 @@ class FirestoreDatabase implements Database {
             query.where('provider_id', isEqualTo: uid).where("state", whereIn: [
           EnumToString.parse(ConsultStatus.PendingReview),
           EnumToString.parse(ConsultStatus.InReview),
+          EnumToString.parse(ConsultStatus.Completed),
         ]),
         builder: (data, documentId) => Consult.fromMap(data, documentId),
       );
@@ -219,7 +220,7 @@ class FirestoreDatabase implements Database {
     await _service.setData(
       path: FirestorePath.visitReview(consultId),
       data: visitReviewData.toMap(),
-      merge: true,
+      merge: false,
     );
   }
 

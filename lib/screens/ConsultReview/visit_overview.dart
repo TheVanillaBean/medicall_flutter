@@ -196,7 +196,9 @@ class VisitOverview extends StatelessWidget {
         await db.consultReviewOptions(symptomName: "Hairloss");
     VisitReviewData visitReviewData =
         await db.visitReviewStream(consultId: consult.uid).first;
-//    VisitReviewData visitReviewData = VisitReviewData();
+    if (visitReviewData == null) {
+      visitReviewData = VisitReviewData();
+    }
     return VisitReview.show(
       context: context,
       consult: consult,
@@ -232,14 +234,16 @@ class VisitOverview extends StatelessWidget {
     final didPressYes = await PlatformAlertDialog(
       title: "Sign Review",
       content:
-          "Would you like to sign this review? Once you sign it, any additional changes will be made as addendums to the original review.",
+          "Would you like to sign this review or edit it? Once you sign it, any additional changes will be made as addendums to the original review.",
       defaultActionText: "Yes, sign",
-      cancelActionText: "No, not yet",
+      cancelActionText: "No, edit ",
     ).show(context);
 
     if (didPressYes == true) {
       consult.state = ConsultStatus.Signed;
       await db.saveConsult(consultId: consult.uid, consult: consult);
+    } else {
+      navigateToVisitReviewScreen(context, db, consult);
     }
   }
 }

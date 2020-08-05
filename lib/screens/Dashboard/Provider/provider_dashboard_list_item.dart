@@ -1,6 +1,7 @@
 import 'package:Medicall/common_widgets/reusable_card.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/services/extimage_provider.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -47,11 +48,12 @@ class ProviderDashboardListItem extends StatelessWidget {
           ),
           subtitle: '${consult.parsedDate}',
           trailing: FractionallySizedBox(
-            widthFactor: 0.25,
-            child: Text(
+            widthFactor: 0.4,
+            child: AutoSizeText(
               EnumToString.parseCamelCase(consult.state) ?? "",
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.subtitle1,
+              maxLines: 1,
             ),
           ),
           onTap: onTap,

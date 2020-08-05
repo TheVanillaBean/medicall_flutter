@@ -127,7 +127,7 @@ class _ExamStepState extends State<ExamStep> {
             filled: true,
             fillColor: Colors.grey.withAlpha(20),
             labelText: examOption.toLowerCase() == "other"
-                ? "Custom Treatment"
+                ? "Custom Examination"
                 : "Location",
             hintText: 'Optional',
           ),

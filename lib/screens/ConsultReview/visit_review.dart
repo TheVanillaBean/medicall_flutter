@@ -162,5 +162,10 @@ class _VisitReviewState extends State<VisitReview> with VisitReviewStatus {
   @override
   void updateStatus(String msg) {
     AppUtil().showFlushBar(msg, context);
+    if (widget.model.completedSteps.length == 6) {
+      Navigator.of(context).popUntil(
+        (ModalRoute.withName(Routes.visitOverview)),
+      );
+    }
   }
 }
