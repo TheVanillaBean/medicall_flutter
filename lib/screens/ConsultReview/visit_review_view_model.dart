@@ -264,6 +264,16 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
     notifyListeners(VisitReviewVMProperties.examStep);
   }
 
+  void removeTreatmentOption({
+    TreatmentOptions selectedTreatment,
+  }) {
+    this
+        .treatmentNoteStepState
+        .selectedTreatmentOptions
+        .remove(selectedTreatment);
+    notifyListeners(VisitReviewVMProperties.treatmentStep);
+  }
+
   void updateTreatmentStepWith({
     TreatmentOptions selectedTreatment,
   }) {

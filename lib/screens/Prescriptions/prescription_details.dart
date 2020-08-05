@@ -9,6 +9,7 @@ import 'package:Medicall/screens/Prescriptions/prescription_details_view_model.d
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
+import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
 import 'package:provider/provider.dart';
@@ -32,18 +33,23 @@ class PrescriptionDetails extends StatelessWidget {
         title: "Prescription Details",
         theme: Theme.of(context),
         onPressed: () async {
-          if (model.treatmentUpdated) {
-            final didPressYes = await PlatformAlertDialog(
-              title: "Update Treatment?",
-              content:
-                  "Would you like to save the changes you made to this treatment option?",
-              defaultActionText: "Yes",
-              cancelActionText: "No, don't update",
-            ).show(context);
-            if (didPressYes) {
-              visitReviewViewModel.updateTreatmentStepWith(
-                selectedTreatment: model.treatmentOptions,
-              );
+          if (!model.allFieldsValidated) {
+            visitReviewViewModel.removeTreatmentOption(
+                selectedTreatment: model.treatmentOptions);
+          } else {
+            if (model.treatmentUpdated) {
+              final didPressYes = await PlatformAlertDialog(
+                title: "Update Treatment?",
+                content:
+                    "Would you like to save the changes you made to this treatment option?",
+                defaultActionText: "Yes",
+                cancelActionText: "No, don't update",
+              ).show(context);
+              if (didPressYes) {
+                visitReviewViewModel.updateTreatmentStepWith(
+                  selectedTreatment: model.treatmentOptions,
+                );
+              }
             }
           }
           Navigator.of(context).pop();
@@ -66,7 +72,14 @@ class PrescriptionDetails extends StatelessWidget {
                     labelText: 'Medication Name',
                     initialValue: this.model.treatmentOptions.medicationName,
                     onChanged: model.updateMedicationName,
-                    enabled: false,
+                    enabled: this
+                                .model
+                                .treatmentOptions
+                                .medicationName
+                                .toLowerCase() ==
+                            "other"
+                        ? true
+                        : false,
                   ),
                   Row(
                     children: <Widget>[
@@ -123,6 +136,7 @@ class PrescriptionDetails extends StatelessWidget {
                     ],
                   ),
                   PrescriptionDetailsTextField(
+                    keyboardType: TextInputType.multiline,
                     focusNode: model.instructionsFocusNode,
                     maxLines: 8,
                     labelText: 'Instructions',
@@ -135,10 +149,15 @@ class PrescriptionDetails extends StatelessWidget {
                   ReusableRaisedButton(
                     title: 'Continue',
                     onPressed: () {
-                      visitReviewViewModel.updateTreatmentStepWith(
-                        selectedTreatment: model.treatmentOptions,
-                      );
-                      Navigator.of(context).pop();
+                      if (!model.allFieldsValidated) {
+                        AppUtil().showFlushBar(
+                            "Please fill out all fields", context);
+                      } else {
+                        visitReviewViewModel.updateTreatmentStepWith(
+                          selectedTreatment: model.treatmentOptions,
+                        );
+                        Navigator.of(context).pop();
+                      }
                     },
                   ),
                 ],

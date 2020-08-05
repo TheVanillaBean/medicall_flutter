@@ -113,6 +113,10 @@ class PersonalInfoValidator {
   final String invalidPersonalInfoErrorText = 'Your response can\'t be empty';
 }
 
+class PrescriptionValidator {
+  final StringValidator inputValidator = NonEmptyStringValidator();
+}
+
 class PhoneNumberStringValidator implements StringValidator {
   @override
   bool isValid(String value) {

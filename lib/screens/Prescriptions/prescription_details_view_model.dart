@@ -2,9 +2,10 @@ import 'package:Medicall/models/consult-review/treatment_options.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
+import 'package:Medicall/util/validators.dart';
 import 'package:flutter/material.dart';
 
-class PrescriptionDetailsViewModel with ChangeNotifier {
+class PrescriptionDetailsViewModel with ChangeNotifier, PrescriptionValidator {
   final FirestoreDatabase database;
   final UserProvider userProvider;
   final AuthBase auth;
@@ -45,20 +46,16 @@ class PrescriptionDetailsViewModel with ChangeNotifier {
     @required this.userProvider,
     @required this.auth,
     @required this.treatmentOptions,
-  }) {
-    updateWithTreatmentModel();
-  }
+  });
 
-  void updateWithTreatmentModel() {
-    this.medicationName =
-        this.treatmentOptions.medicationName ?? this.medicationName;
-    this.quantity = this.treatmentOptions.quantity ?? this.quantity;
-    this.refills = this.treatmentOptions.refills ?? this.refills;
-    this.form = this.treatmentOptions.form ?? this.form;
-    this.dose = this.treatmentOptions.dose ?? this.dose;
-    this.frequency = this.treatmentOptions.frequency ?? this.frequency;
-    this.instructions = this.treatmentOptions.instructions ?? this.instructions;
-  }
+  bool get allFieldsValidated =>
+      inputValidator.isValid(this.treatmentOptions.medicationName) &&
+      inputValidator.isValid(this.treatmentOptions.quantity) &&
+      inputValidator.isValid(this.treatmentOptions.refills) &&
+      inputValidator.isValid(this.treatmentOptions.form) &&
+      inputValidator.isValid(this.treatmentOptions.dose) &&
+      inputValidator.isValid(this.treatmentOptions.frequency) &&
+      inputValidator.isValid(this.treatmentOptions.instructions);
 
   void updateWith({
     String medicationName,
