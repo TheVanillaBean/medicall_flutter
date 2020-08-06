@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/option_model.dart';
+import 'package:Medicall/models/patient_user_model.dart';
 import 'package:Medicall/models/question_model.dart';
 import 'package:Medicall/models/screening_questions_model.dart';
+import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/firebase_storage_service.dart';
@@ -13,6 +17,7 @@ import 'package:property_change_notifier/property_change_notifier.dart';
 
 // Properties
 abstract class QuestionVMProperties {
+  static String get questionDots => 'dots_indicator';
   static String get questionFormWidget => 'form_widget';
   static String get questionProgressBar => 'progress_bar';
   static String get questionNavButtons => 'nav_buttons';
@@ -40,6 +45,7 @@ class QuestionsViewModel extends PropertyChangeNotifier
   String questionPlaceholderURL = "";
   final TextEditingController inputController = TextEditingController();
   final FocusNode inputFocusNode = FocusNode();
+  double imageIndex = 0;
 
   //Nav buttons
   bool canAccessPrevious = false;
@@ -76,6 +82,9 @@ class QuestionsViewModel extends PropertyChangeNotifier
       screeningQuestions: questions,
     );
     this.displayMedHistory = false;
+    User user = await auth.currentUser();
+    (user as PatientUser).hasMedicalHistory = true;
+    this.database.setUser(user);
     this.submitted = false;
   }
 
@@ -121,7 +130,7 @@ class QuestionsViewModel extends PropertyChangeNotifier
         .toInt()]; //get current question based on current page
 
     Answer answer;
-    if (question.type == Q_TYPE.MC) {
+    if (question.type == Q_TYPE.MC || question.type == Q_TYPE.SC) {
       answer = Answer(answer: List.of(selectedOptionsList));
     } else if (question.type == Q_TYPE.FR) {
       inputFocusNode.unfocus();
@@ -136,7 +145,7 @@ class QuestionsViewModel extends PropertyChangeNotifier
         consult.questions.indexWhere((q) => q.question == question.question);
     consult.questions[questionIndex] = question;
 
-    if (question.type == Q_TYPE.MC) {
+    if (question.type == Q_TYPE.MC || question.type == Q_TYPE.SC) {
       for (Option opt in question.options) {
         if (opt.hasSubQuestions) {
           if (selectedOptionsList.contains(opt.value)) {
@@ -164,7 +173,7 @@ class QuestionsViewModel extends PropertyChangeNotifier
     if (opt.hasSubQuestions) {
       opt.subQuestions.forEach((question) {
         this.consult.questions.removeWhere((q) => q == question);
-        if (question.type == Q_TYPE.MC) {
+        if (question.type == Q_TYPE.MC || question.type == Q_TYPE.MC) {
           question.options.forEach((option) {
             removeSubQuestionsIfAny(option);
           });
@@ -187,7 +196,7 @@ class QuestionsViewModel extends PropertyChangeNotifier
     selectedOptionsList.clear();
     input = "";
 
-    if (question.type == Q_TYPE.MC) {
+    if (question.type == Q_TYPE.MC || question.type == Q_TYPE.SC) {
       for (Option opt in question.options) {
         optionsList.add(opt.value);
       }
@@ -256,7 +265,8 @@ class QuestionsViewModel extends PropertyChangeNotifier
       return true;
     }
     if (this.consult.questions[pageIndex].required) {
-      if (this.consult.questions[pageIndex].type == Q_TYPE.MC) {
+      if (this.consult.questions[pageIndex].type == Q_TYPE.MC ||
+          this.consult.questions[pageIndex].type == Q_TYPE.SC) {
         return this.selectedOptionsList.length > 0;
       } else if (this.consult.questions[pageIndex].type == Q_TYPE.FR) {
         return inputValidator.isValid(this.input);
@@ -272,6 +282,11 @@ class QuestionsViewModel extends PropertyChangeNotifier
     this.canAccessPrevious = false;
     this.canAccessNext = false;
     notifyListeners(QuestionVMProperties.questionNavButtons);
+  }
+
+  void updateDotsIndicator(double index) {
+    this.imageIndex = index;
+    notifyListeners(QuestionVMProperties.questionDots);
   }
 }
 

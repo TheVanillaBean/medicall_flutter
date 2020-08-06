@@ -5,10 +5,12 @@ import 'package:Medicall/screens/Questions/questions_view_model.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/firebase_storage_service.dart';
 import 'package:Medicall/util/app_util.dart';
+import 'package:dots_indicator/dots_indicator.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:grouped_buttons/grouped_buttons.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
@@ -112,26 +114,14 @@ class _QuestionFormState extends State<QuestionForm> {
       return _buildFreeResponseOption(context);
     } else if (this.question.type == Q_TYPE.MC) {
       return _buildMultipleChoiceOption(context);
+    } else if (this.question.type == Q_TYPE.SC) {
+      return _buildSingleChoiceOption(context);
     } else {
       double height = MediaQuery.of(context).size.height;
       if (model.questionPhotos.length == 0)
         return _buildPhotoOption(height: height);
       if (model.questionPhotos.length > 0)
-        return Column(
-          children: <Widget>[
-            Expanded(child: _buildPhotoOptionWithExistingImage(height: height)),
-            if (model.questionPhotos.length > 1)
-              Container(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 8),
-                  child: Text(
-                    "--- Swipeable ---",
-                    style: TextStyle(fontSize: 18),
-                  ),
-                ),
-              ),
-          ],
-        );
+        return _buildPhotoOptionWithExistingImage(height: height);
       return Container();
     }
   }
@@ -156,9 +146,67 @@ class _QuestionFormState extends State<QuestionForm> {
     );
   }
 
+  Widget _buildSingleChoiceOption(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        Expanded(
+          flex: 9,
+          child: RadioButtonGroup(
+            labels: model.optionsList,
+            picked: model.selectedOptionsList.length > 0
+                ? model.selectedOptionsList.first
+                : null,
+            itemBuilder: (Radio rb, Text txt, int i) {
+              return Row(
+                children: <Widget>[
+                  rb,
+                  Expanded(
+                    child: Text(
+                      txt.data,
+                      maxLines: 3,
+                    ),
+                  ),
+                ],
+              );
+            },
+            onSelected: (String selected) {
+              model.checkedItemsChanged([selected]);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildFreeResponseOption(BuildContext context) {
     return SingleChildScrollView(
       child: _buildFRTextField(model),
+    );
+  }
+
+  Widget _buildFRTextField(QuestionsViewModel model) {
+    return TextField(
+      controller: model.inputController,
+      focusNode: model.inputFocusNode,
+      autocorrect: false,
+      keyboardType: TextInputType.multiline,
+      maxLines: 12,
+      onChanged: model.updateInput,
+      style: TextStyle(color: Color.fromRGBO(80, 80, 80, 1)),
+      decoration: InputDecoration(
+        labelStyle: TextStyle(
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
+        hintStyle: TextStyle(
+          color: Color.fromRGBO(100, 100, 100, 1),
+        ),
+        filled: true,
+        fillColor: Colors.grey.withAlpha(50),
+        labelText: "Enter response",
+        alignLabelWithHint: true,
+      ),
     );
   }
 
@@ -183,59 +231,72 @@ class _QuestionFormState extends State<QuestionForm> {
     );
   }
 
-  Widget _buildFRTextField(QuestionsViewModel model) {
-    return TextField(
-      controller: model.inputController,
-      focusNode: model.inputFocusNode,
-      autocorrect: false,
-      keyboardType: TextInputType.multiline,
-      maxLines: 20,
-      onChanged: model.updateInput,
-      style: TextStyle(color: Color.fromRGBO(80, 80, 80, 1)),
-      decoration: InputDecoration(
-        labelStyle: TextStyle(
-          color: Theme.of(context).colorScheme.onSurface,
-        ),
-        hintStyle: TextStyle(
-          color: Color.fromRGBO(100, 100, 100, 1),
-        ),
-        filled: true,
-        fillColor: Colors.grey.withAlpha(50),
-        labelText: "Enter response",
-        alignLabelWithHint: true,
-      ),
-    );
-  }
-
   Widget _buildPhotoOptionWithExistingImage({double height}) {
-    return GestureDetector(
-      onTap: _loadProfileImage,
-      child: ClipRRect(
-        child: Container(
-          child: PhotoViewGallery.builder(
-            scrollPhysics: const BouncingScrollPhysics(),
-            builder: (BuildContext context, int index) {
-              return PhotoViewGalleryPageOptions(
-                imageProvider: MemoryImage(model
-                    .questionPhotos[index].values.first.buffer
-                    .asUint8List()),
-                initialScale: PhotoViewComputedScale.contained,
-                tightMode: true,
-                minScale: PhotoViewComputedScale.contained,
-                maxScale: PhotoViewComputedScale.covered * 4,
-              );
-            },
-            gaplessPlayback: true,
-            itemCount: model.questionPhotos.length,
-            loadingBuilder: (context, event) => Center(
-              child: CircularProgressIndicator(),
-            ),
-            backgroundDecoration: BoxDecoration(
-              color: Theme.of(context).canvasColor,
+    return Column(
+      children: <Widget>[
+        Expanded(
+          child: GestureDetector(
+            onTap: _loadProfileImage,
+            child: ClipRRect(
+              child: Container(
+                child: PhotoViewGallery.builder(
+                  scrollPhysics: const BouncingScrollPhysics(),
+                  builder: (BuildContext context, int index) {
+                    return PhotoViewGalleryPageOptions(
+                      imageProvider: MemoryImage(model
+                          .questionPhotos[index].values.first.buffer
+                          .asUint8List()),
+                      initialScale: PhotoViewComputedScale.contained,
+                      tightMode: true,
+                      minScale: PhotoViewComputedScale.contained,
+                      maxScale: PhotoViewComputedScale.covered * 4,
+                    );
+                  },
+                  gaplessPlayback: true,
+                  itemCount: model.questionPhotos.length,
+                  loadingBuilder: (context, event) => Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                  backgroundDecoration: BoxDecoration(
+                    color: Theme.of(context).canvasColor,
+                  ),
+                  onPageChanged: (page) {
+                    model.updateDotsIndicator(page.toDouble());
+                  },
+                ),
+              ),
             ),
           ),
         ),
-      ),
+        if (model.questionPhotos.length > 1)
+          Container(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: DotsQuestionnaireWidget(),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class DotsQuestionnaireWidget extends StatelessWidget {
+  const DotsQuestionnaireWidget({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final QuestionsViewModel model =
+        PropertyChangeProvider.of<QuestionsViewModel>(
+      context,
+      properties: [QuestionVMProperties.questionDots],
+    ).value;
+    return DotsIndicator(
+      dotsCount: model.questionPhotos.length,
+      position: model.imageIndex,
+      decorator:
+          DotsDecorator(activeColor: Theme.of(context).colorScheme.secondary),
     );
   }
 }

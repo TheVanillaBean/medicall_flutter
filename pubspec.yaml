@@ -71,6 +71,7 @@ dependencies:
   auto_size_text: ^2.1.0
   grouped_buttons: ^1.0.4
   rounded_loading_button: ^1.0.0
+  cached_network_image: ^2.2.0+1
 
 
 dependency_overrides:

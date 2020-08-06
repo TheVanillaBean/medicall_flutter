@@ -242,7 +242,7 @@ class Router {
         final Map<String, dynamic> mapArgs = args;
         final Consult consult = mapArgs['consult'];
         return MaterialPageRoute<dynamic>(
-          builder: (context) => ConsultPhotos(consult: consult),
+          builder: (context) => ConsultPhotos.create(context, consult),
           settings: settings,
           fullscreenDialog: true,
         );

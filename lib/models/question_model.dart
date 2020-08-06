@@ -2,7 +2,7 @@ import 'package:Medicall/models/option_model.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/services.dart';
 
-enum Q_TYPE { MC, FR, PHOTO }
+enum Q_TYPE { MC, SC, FR, PHOTO }
 
 extension EnumParser on String {
   Q_TYPE toQType() {
@@ -68,7 +68,7 @@ class Question {
       'type': EnumToString.parse(type),
       'answer': answer != null ? answer.toMap() : null,
     };
-    if (type == Q_TYPE.MC) {
+    if (type == Q_TYPE.MC || type == Q_TYPE.SC) {
       toStringMap.addAll(<String, dynamic>{
         'options': options.map((opt) => opt.toMap()).toList(),
       });

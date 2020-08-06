@@ -2,16 +2,20 @@ import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/question_model.dart';
 import 'package:Medicall/models/screening_questions_model.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/ConsultReview/consult_photos_view_model.dart';
 import 'package:Medicall/services/database.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
+import 'package:property_change_notifier/property_change_notifier.dart';
 import 'package:provider/provider.dart';
 
 class ConsultPhotos extends StatelessWidget {
-  final Consult consult;
+  final ConsultPhotosViewModel model;
 
-  const ConsultPhotos({@required this.consult});
+  const ConsultPhotos({@required this.model});
 
   static Future<void> show({
     BuildContext context,
@@ -22,6 +26,23 @@ class ConsultPhotos extends StatelessWidget {
       arguments: {
         'consult': consult,
       },
+    );
+  }
+
+  static Widget create(
+    BuildContext context,
+    Consult consult,
+  ) {
+    return PropertyChangeProvider(
+      value: ConsultPhotosViewModel(consult: consult),
+      child: PropertyChangeConsumer<ConsultPhotosViewModel>(
+        properties: [ConsultPhotosProperties.photoRoot],
+        builder: (context, model, properties) {
+          return ConsultPhotos(
+            model: model,
+          );
+        },
+      ),
     );
   }
 
@@ -54,7 +75,7 @@ class ConsultPhotos extends StatelessWidget {
 
   Widget _buildPhotoGallery(FirestoreDatabase db) {
     return FutureBuilder<ScreeningQuestions>(
-      future: db.consultQuestionnaire(consultId: consult.uid),
+      future: db.consultQuestionnaire(consultId: model.consult.uid),
       builder:
           (BuildContext context, AsyncSnapshot<ScreeningQuestions> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -86,24 +107,43 @@ class ConsultPhotos extends StatelessWidget {
                 ),
               );
             }
-            return PhotoViewGallery.builder(
-              scrollPhysics: const BouncingScrollPhysics(),
-              builder: (BuildContext context, int index) {
-                return PhotoViewGalleryPageOptions(
-                  imageProvider: NetworkImage(photoURLS[index]),
-                  initialScale: PhotoViewComputedScale.contained,
-                  tightMode: true,
-                  minScale: PhotoViewComputedScale.contained,
-                );
-              },
-              gaplessPlayback: true,
-              itemCount: photoURLS.length,
-              loadingBuilder: (context, event) => Center(
-                child: CircularProgressIndicator(),
-              ),
-              backgroundDecoration: BoxDecoration(
-                color: Theme.of(context).canvasColor,
-              ),
+            this.model.imagesCount = photoURLS.length.toDouble();
+            return Column(
+              children: <Widget>[
+                Expanded(
+                  child: PhotoViewGallery.builder(
+                    scrollPhysics: const BouncingScrollPhysics(),
+                    builder: (BuildContext context, int index) {
+                      return PhotoViewGalleryPageOptions(
+                        imageProvider: CachedNetworkImageProvider(
+                          photoURLS[index],
+                        ),
+                        initialScale: PhotoViewComputedScale.contained,
+                        tightMode: true,
+                        minScale: PhotoViewComputedScale.contained,
+                      );
+                    },
+                    gaplessPlayback: true,
+                    itemCount: photoURLS.length,
+                    loadingBuilder: (context, event) => Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                    backgroundDecoration: BoxDecoration(
+                      color: Theme.of(context).canvasColor,
+                    ),
+                    onPageChanged: (page) => model.updateDotsIndicator(
+                      index: page.toDouble(),
+                    ),
+                  ),
+                ),
+                if (photoURLS.length > 1)
+                  Container(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: DotsReviewWidget(),
+                    ),
+                  ),
+              ],
             );
           } else {
             return Center(
@@ -112,6 +152,28 @@ class ConsultPhotos extends StatelessWidget {
           }
         }
       },
+    );
+  }
+}
+
+class DotsReviewWidget extends StatelessWidget {
+  const DotsReviewWidget({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final ConsultPhotosViewModel model =
+        PropertyChangeProvider.of<ConsultPhotosViewModel>(
+      context,
+      properties: [ConsultPhotosProperties.photoDots],
+    ).value;
+    return DotsIndicator(
+      dotsCount: model.imagesCount.toInt(),
+      position: model.imageIndex,
+      decorator: DotsDecorator(
+        activeColor: Theme.of(context).colorScheme.secondary,
+      ),
     );
   }
 }
