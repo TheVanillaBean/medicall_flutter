@@ -7,6 +7,7 @@ import 'package:Medicall/screens/ConsultReview/review_visit_information.dart';
 import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/VisitDetails/visit_doc_note.dart';
 import 'package:Medicall/screens/VisitDetails/visit_education.dart';
+import 'package:Medicall/screens/VisitDetails/visit_prescriptions.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -111,7 +112,15 @@ class VisitDetailsOverview extends StatelessWidget {
                           )
                         }),
                 _buildCardButton(
-                    "Prescriptions", Icons.local_pharmacy, () => {}),
+                    "Prescriptions",
+                    Icons.local_pharmacy,
+                    () => {
+                          VisitPrescriptions.show(
+                            context: context,
+                            consult: consult,
+                            visitReviewData: snapshot.data,
+                          )
+                        }),
                 _buildCardButton(
                     "Doctor Note",
                     MedicallIcons.clipboard_1,
