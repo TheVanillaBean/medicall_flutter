@@ -154,7 +154,6 @@ class ProviderRegistrationViewModel
     return emailValidator.isValid(email) &&
         passwordValidator.isValid(password) &&
         password == confirmPassword &&
-        stateValidator.isValid(medLicenseState) &&
         !isLoading;
   }
 

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:Medicall/models/consult-review/consult_review_options_model.dart';
 import 'package:Medicall/models/consult-review/diagnosis_options_model.dart';
+import 'package:Medicall/models/consult-review/treatment_options.dart';
 import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:Medicall/models/consult_data_model.dart';
 import 'package:Medicall/models/consult_model.dart';
@@ -222,6 +223,24 @@ class FirestoreDatabase implements Database {
       data: visitReviewData.toMap(),
       merge: false,
     );
+  }
+
+  Future<void> savePrescriptions(
+      {String consultId, List<TreatmentOptions> treatmentOptions}) async {
+    for (TreatmentOptions treatmentOptions in treatmentOptions) {
+      String prescriptionId = Firestore.instance
+          .collection("consults")
+          .document(consultId)
+          .collection("prescriptions")
+          .document()
+          .documentID;
+
+      await _service.setData(
+        path: FirestorePath.prescriptions(consultId, prescriptionId),
+        data: treatmentOptions.toMap(),
+        merge: false,
+      );
+    }
   }
 
   Stream<VisitReviewData> visitReviewStream({String consultId}) =>

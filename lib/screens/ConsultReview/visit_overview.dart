@@ -242,6 +242,11 @@ class VisitOverview extends StatelessWidget {
     if (didPressYes == true) {
       consult.state = ConsultStatus.Signed;
       await db.saveConsult(consultId: consult.uid, consult: consult);
+      VisitReviewData visitReviewData =
+          await db.visitReviewStream(consultId: consult.uid).first;
+      await db.savePrescriptions(
+          consultId: consult.uid,
+          treatmentOptions: visitReviewData.treatmentOptions);
     } else {
       navigateToVisitReviewScreen(context, db, consult);
     }

@@ -38,7 +38,7 @@ class StripeConnect extends StatelessWidget {
   }
 
   void _navigateToHistoryScreen(BuildContext context) {
-    ProviderDashboardScreen.create(context);
+    ProviderDashboardScreen.show(context: context, pushReplaceNamed: true);
   }
 
   @override

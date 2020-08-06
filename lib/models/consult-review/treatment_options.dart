@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class TreatmentOptions {
   String dose;
   String form;
@@ -6,6 +8,7 @@ class TreatmentOptions {
   String medicationName;
   String quantity;
   String refills;
+  DateTime date;
 
   TreatmentOptions({
     this.dose,
@@ -15,12 +18,15 @@ class TreatmentOptions {
     this.medicationName,
     this.quantity,
     this.refills,
+    this.date,
   });
 
   factory TreatmentOptions.fromMap(Map<String, dynamic> data) {
     if (data == null) {
       return null;
     }
+
+    Timestamp dateTimeStamp = data["date"] ?? Timestamp.now();
 
     final String medicationName = data['medication_name'] as String ?? "";
     final String dose = data['dose'] as String ?? "";
@@ -30,6 +36,8 @@ class TreatmentOptions {
     final String quantity = data['quantity'] as String ?? "";
     final String refills = data['refills'] as String ?? "";
 
+    final DateTime date = DateTime.parse(dateTimeStamp.toDate().toString());
+
     return TreatmentOptions(
       medicationName: medicationName,
       dose: dose,
@@ -38,6 +46,7 @@ class TreatmentOptions {
       instructions: instructions,
       quantity: quantity,
       refills: refills,
+      date: date,
     );
   }
 
@@ -50,6 +59,7 @@ class TreatmentOptions {
       'instructions': instructions,
       'quantity': quantity,
       'refills': refills,
+      'date': date,
     };
   }
 }

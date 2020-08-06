@@ -1,13 +1,14 @@
+import 'package:Medicall/common_widgets/custom_dropdown_formfield.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/screens/Registration/Provider/provider_custom_text_field.dart';
 import 'package:Medicall/screens/Registration/Provider/provider_registration_view_model.dart';
-import 'package:Medicall/common_widgets/custom_dropdown_formfield.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
 import 'package:super_rich_text/super_rich_text.dart';
+
 import '../../../common_widgets/custom_date_picker_formfield.dart';
 
 class ProviderRegistrationForm extends StatefulWidget {
@@ -26,7 +27,7 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
   Future<void> _submit(ProviderRegistrationViewModel model) async {
     try {
       await model.submit();
-    } on PlatformException catch (e) {
+    } catch (e) {
       AppUtil.internal().showFlushBar(e, context);
     }
   }
@@ -50,6 +51,11 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
             labelText: 'Last Name',
             hint: 'Doe',
             onChanged: model.updateLastName,
+          ),
+          ProviderCustomTextField(
+            labelText: 'Email',
+            hint: 'john@doe.com',
+            onChanged: model.updateEmail,
           ),
           CustomDatePickerFormField(
             labelText: 'Date of Birth',
