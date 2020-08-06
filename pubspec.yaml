@@ -4,7 +4,7 @@ description: Telemedicine for everyone.
 version: 1.0.2+1
 
 environment:
-  sdk: '>=2.6.0 <3.0.0'
+  sdk: ">=2.8.0 <3.0.0"
 https://github:
   com/FirebaseExtended/flutterfire/commit/3fc3ca8e8f2f2577b1553e3513a7dba45da31b37:
 dependencies:
@@ -74,16 +74,16 @@ dependencies:
 
 
 dependency_overrides:
-  intl: ^0.16.0
+  intl: ^0.16.1
+  flutter_chips_input: ^1.9.0-dev.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  test: ^1.15.3
   image: ^2.0.7
   flutter_launcher_icons: ^0.7.2
   screenshots:
-  intl_translation: ^0.17.2
+  intl_translation: ^0.17.10
   flutter_driver:
     sdk: flutter
 
