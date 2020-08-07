@@ -107,22 +107,22 @@ flutter:
   fonts:
     - family: Inter
       fonts:
-        - asset: assets/fonts/Inter-Regular-slnt=0.ttf
-        - asset: assets/fonts/Inter-Light-slnt=0.ttf
-        - asset: assets/fonts/Inter-SemiBold-slnt=0.ttf
-        - asset: assets/fonts/Inter-Thin-slnt=0.ttf
-        - asset: assets/fonts/Inter-Bold-slnt=0.ttf
+        - asset: fonts/Inter-Regular.ttf
+        - asset: fonts/Inter-Light.ttf
+        - asset: fonts/Inter-SemiBold.ttf
+        - asset: fonts/Inter-Thin.ttf
+        - asset: fonts/Inter-Bold.ttf
     - family: MedicallIcons
       fonts:
-        - asset: assets/fonts/MedicallIcons.ttf
+        - asset: fonts/MedicallIcons.ttf
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
     - assets/icon/
     - assets/icon/cards/
-    - splash.flr
-    - logout.flr
-    - headerlogo.flr
+    - assets/splash.flr
+    - assets/logout.flr
+    - assets/headerlogo.flr
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/.
   # For details regarding adding assets from package dependencies, see
