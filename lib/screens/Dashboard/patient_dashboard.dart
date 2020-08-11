@@ -84,7 +84,7 @@ class PatientDashboardScreen extends StatelessWidget {
         ),
         centerTitle: true,
         title: Text(
-          'Hello ${model.userProvider.user.firstName}!',
+          'Hello, ${model.userProvider.user.firstName}!',
           style: Theme.of(context).appBarTheme.textTheme.headline6,
         ),
       ),
@@ -119,51 +119,50 @@ class PatientDashboardScreen extends StatelessWidget {
       Align(
         alignment: FractionalOffset.bottomCenter,
         child: ButtonBar(
-          alignment: MainAxisAlignment.spaceBetween,
+          alignment: MainAxisAlignment.spaceEvenly,
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
-            FlatButton(
+            OutlineButton(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.0)),
+              child: Container(
+                alignment: Alignment.center,
+                width: 80,
+                child: Text(
+                  "Start \na Visit",
+                  style: Theme.of(context).textTheme.caption,
+                  textAlign: TextAlign.center,
+                ),
+              ),
               onPressed: () => _navigateToVisitScreen(context),
-              child: Text(
-                'Start \na Visit',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontSize: 16.0,
+            ),
+            OutlineButton(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.0)),
+              child: Container(
+                alignment: Alignment.center,
+                width: 80,
+                child: Text(
+                  "Prescriptions",
+                  style: Theme.of(context).textTheme.caption,
+                  textAlign: TextAlign.center,
                 ),
               ),
-            ),
-            Container(
-              width: 0.5,
-              height: 30,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            FlatButton(
               onPressed: () => _navigateToPrescriptionDetails(context),
-              child: Text(
-                'Prescriptions',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontSize: 16.0,
+            ),
+            OutlineButton(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.0)),
+              child: Container(
+                alignment: Alignment.center,
+                width: 80,
+                child: Text(
+                  "Previous \nVisits",
+                  style: Theme.of(context).textTheme.caption,
+                  textAlign: TextAlign.center,
                 ),
               ),
-            ),
-            Container(
-              width: 0.5,
-              height: 30,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            FlatButton(
               onPressed: () => _navigateToPreviousConsults(context),
-              child: AutoSizeText(
-                'Previous \nVisits',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontSize: 16.0,
-                ),
-              ),
             ),
           ],
         ),
@@ -180,14 +179,11 @@ class PatientDashboardScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              SizedBox(height: 30),
+              SizedBox(height: 8),
               Center(
                 child: Text(
                   "Status of active visits:",
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    color: Colors.grey,
-                  ),
+                  style: Theme.of(context).textTheme.headline5,
                 ),
               ),
               SizedBox(height: 12),

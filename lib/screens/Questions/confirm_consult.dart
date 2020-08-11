@@ -31,12 +31,9 @@ class ConfirmConsult extends StatelessWidget {
             children: <Widget>[
               SizedBox(height: 20),
               Text(
-                'You have completed your visit.',
+                'You have completed your visit:',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 18.0,
-                  color: Colors.grey,
-                ),
+                style: Theme.of(context).textTheme.subtitle1,
               ),
               SizedBox(height: 20),
               Padding(
@@ -61,14 +58,11 @@ class ConfirmConsult extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(10, 20, 20, 30),
+                padding: const EdgeInsets.fromLTRB(10, 20, 10, 30),
                 child: Text(
-                  'You will now be directed to your dashboard. You will be able to review this visit, message your doctor, get updates, and explore other services.',
+                  'You will now be directed to your dashboard, where you can review this visit, message your doctor, get updates, and explore other services.',
                   textAlign: TextAlign.justify,
-                  style: TextStyle(
-                    fontSize: 14.0,
-                    color: Colors.grey,
-                  ),
+                  style: Theme.of(context).textTheme.subtitle1,
                 ),
               ),
               Padding(
@@ -76,10 +70,7 @@ class ConfirmConsult extends StatelessWidget {
                 child: Text(
                   'Thank You for choosing Medicall!',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 18.0,
-                    color: Colors.grey,
-                  ),
+                  style: Theme.of(context).textTheme.subtitle1,
                 ),
               ),
               SizedBox(height: 20),
@@ -114,43 +105,43 @@ class ConfirmConsultListItem extends StatelessWidget {
       return ListTile(
         contentPadding: EdgeInsets.only(left: 0.0, right: 0.0),
         dense: true,
-        title: Text(
-          title,
-          textAlign: TextAlign.left,
-          style: TextStyle(
-            fontSize: 18.0,
-            color: Colors.grey,
+        title: Transform(
+          child: Text(
+            title,
+            textAlign: TextAlign.left,
+            style: Theme.of(context).textTheme.subtitle1,
           ),
+          transform: Matrix4.translationValues(-16, 0.0, 0.0),
         ),
-        subtitle: Text(
-          subtitle,
-          textAlign: TextAlign.left,
-          style: TextStyle(
-            fontSize: 13.0,
-            color: Colors.grey,
+        subtitle: Transform(
+          child: Text(
+            subtitle,
+            textAlign: TextAlign.left,
+            style: Theme.of(context).textTheme.caption,
           ),
+          transform: Matrix4.translationValues(-16, 0.0, 0.0),
         ),
         leading: Icon(
           Icons.check,
-          color: Colors.green,
-          size: 28,
+          color: Theme.of(context).colorScheme.primary,
+          size: 24,
         ),
       );
     return ListTile(
       contentPadding: EdgeInsets.only(left: 0.0, right: 0.0),
       dense: true,
-      title: Text(
-        title,
-        textAlign: TextAlign.left,
-        style: TextStyle(
-          fontSize: 18.0,
-          color: Colors.grey,
+      title: Transform(
+        child: Text(
+          title,
+          textAlign: TextAlign.left,
+          style: Theme.of(context).textTheme.subtitle1,
         ),
+        transform: Matrix4.translationValues(-16, 0.0, 0.0),
       ),
       leading: Icon(
         Icons.check,
-        color: Colors.green,
-        size: 28,
+        color: Theme.of(context).colorScheme.primary,
+        size: 24,
       ),
     );
   }
