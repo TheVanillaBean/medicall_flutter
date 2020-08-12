@@ -106,23 +106,21 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
             SizedBox(height: 20),
             Text(
               medicallUser.fullName,
-              style: TextStyle(
-                fontFamily: 'Inter',
-                fontSize: 20.0,
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(context).textTheme.bodyText1.copyWith(
+                    fontSize: 20,
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 10),
             Text(
               EnumToString.parse(userProvider.user.type).toUpperCase(),
-              style: TextStyle(
-                fontFamily: 'Inter',
-                fontSize: 14.0,
-                color: Colors.black54,
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(context).textTheme.bodyText1.copyWith(
+                    fontSize: 14,
+                    color: Colors.black54,
+                    fontWeight: FontWeight.bold,
+                  ),
               textAlign: TextAlign.center,
             ),
             SizedBox(

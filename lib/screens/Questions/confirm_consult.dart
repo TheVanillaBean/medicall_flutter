@@ -33,7 +33,9 @@ class ConfirmConsult extends StatelessWidget {
               Text(
                 'You have completed your visit:',
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.subtitle1,
+                style: Theme.of(context).textTheme.bodyText1.copyWith(
+                      fontSize: 16,
+                    ),
               ),
               SizedBox(height: 20),
               Padding(
@@ -62,7 +64,9 @@ class ConfirmConsult extends StatelessWidget {
                 child: Text(
                   'You will now be directed to your dashboard, where you can review this visit, message your doctor, get updates, and explore other services.',
                   textAlign: TextAlign.justify,
-                  style: Theme.of(context).textTheme.subtitle1,
+                  style: Theme.of(context).textTheme.bodyText1.copyWith(
+                        fontSize: 16,
+                      ),
                 ),
               ),
               Padding(
@@ -70,7 +74,9 @@ class ConfirmConsult extends StatelessWidget {
                 child: Text(
                   'Thank You for choosing Medicall!',
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.subtitle1,
+                  style: Theme.of(context).textTheme.bodyText1.copyWith(
+                        fontSize: 16,
+                      ),
                 ),
               ),
               SizedBox(height: 20),
@@ -109,7 +115,10 @@ class ConfirmConsultListItem extends StatelessWidget {
           child: Text(
             title,
             textAlign: TextAlign.left,
-            style: Theme.of(context).textTheme.subtitle1,
+            style: Theme.of(context).textTheme.bodyText1.copyWith(
+                  fontSize: 16,
+                  fontStyle: FontStyle.italic,
+                ),
           ),
           transform: Matrix4.translationValues(-16, 0.0, 0.0),
         ),
@@ -117,7 +126,10 @@ class ConfirmConsultListItem extends StatelessWidget {
           child: Text(
             subtitle,
             textAlign: TextAlign.left,
-            style: Theme.of(context).textTheme.caption,
+            style: Theme.of(context).textTheme.caption.copyWith(
+                  fontSize: 12,
+                  fontStyle: FontStyle.italic,
+                ),
           ),
           transform: Matrix4.translationValues(-16, 0.0, 0.0),
         ),
@@ -134,7 +146,10 @@ class ConfirmConsultListItem extends StatelessWidget {
         child: Text(
           title,
           textAlign: TextAlign.left,
-          style: Theme.of(context).textTheme.subtitle1,
+          style: Theme.of(context)
+              .textTheme
+              .bodyText1
+              .copyWith(fontSize: 16, fontStyle: FontStyle.italic),
         ),
         transform: Matrix4.translationValues(-16, 0.0, 0.0),
       ),

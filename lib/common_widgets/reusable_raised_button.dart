@@ -16,10 +16,10 @@ class ReusableRaisedButton extends StatelessWidget {
         disabledColor: Theme.of(context).disabledColor.withOpacity(.3),
         child: Text(
           title,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-          ),
+          style: Theme.of(context).textTheme.bodyText1.copyWith(
+                fontSize: 16,
+                color: Colors.white,
+              ),
           textAlign: TextAlign.center,
         ),
         shape: RoundedRectangleBorder(

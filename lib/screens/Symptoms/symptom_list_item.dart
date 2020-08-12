@@ -18,8 +18,17 @@ class SymptomListItem extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: ListTile(
         contentPadding: EdgeInsets.fromLTRB(20, 5, 20, 5),
-        title: Text(StringUtils.capitalize(symptom.name)),
-        subtitle: Text(symptom.duration),
+        dense: true,
+        title: Text(
+          StringUtils.capitalize(
+            symptom.name,
+          ),
+          style: Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 16),
+        ),
+        subtitle: Text(
+          symptom.duration,
+          style: Theme.of(context).textTheme.caption.copyWith(fontSize: 14),
+        ),
         trailing: Icon(Icons.chevron_right),
         onTap: onTap,
       ),
