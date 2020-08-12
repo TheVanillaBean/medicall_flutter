@@ -3,7 +3,6 @@ import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard.dart';
 import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/LandingPage/auth_widget_builder.dart';
 import 'package:Medicall/screens/LandingPage/index.dart';
-import 'package:Medicall/screens/StripeConnect/index.dart';
 import 'package:Medicall/screens/Welcome/start_visit.dart';
 import 'package:Medicall/screens/Welcome/welcome.dart';
 import 'package:Medicall/services/auth.dart';
@@ -100,7 +99,6 @@ class MedicallApp extends StatelessWidget {
                   userSnapshot.data.type == USER_TYPE.PROVIDER
                       ? ProviderDashboardScreen.create(context)
                       : PatientDashboardScreen.create(context),
-              stripeConnectBuilder: (context) => StripeConnect.create(context),
               startVisitBuilder: (context) => StartVisitScreen(
                 consult: tempUserProvider.consult,
               ),

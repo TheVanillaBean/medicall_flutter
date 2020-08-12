@@ -1,4 +1,6 @@
+import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/form_submit_button.dart';
+import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard.dart';
 import 'package:Medicall/screens/StripeConnect/stripe_connect_state_model.dart';
 import 'package:Medicall/services/auth.dart';
@@ -28,6 +30,21 @@ class StripeConnect extends StatelessWidget {
     );
   }
 
+  static Future<void> show({
+    BuildContext context,
+    bool pushReplaceNamed = true,
+  }) async {
+    if (pushReplaceNamed) {
+      await Navigator.of(context).pushReplacementNamed(
+        Routes.stripeConnect,
+      );
+    } else {
+      await Navigator.of(context).pushNamed(
+        Routes.stripeConnect,
+      );
+    }
+  }
+
   void _navigateToStripeURL() async {
     String url = await model.getStripeConnectURL();
     if (await canLaunch(url)) {
@@ -37,7 +54,7 @@ class StripeConnect extends StatelessWidget {
     }
   }
 
-  void _navigateToHistoryScreen(BuildContext context) {
+  void _navigateToDashboardScreen(BuildContext context) {
     ProviderDashboardScreen.show(context: context, pushReplaceNamed: true);
   }
 
@@ -45,9 +62,14 @@ class StripeConnect extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = model.userProvider.user;
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text('Connect Your Bank Account'),
+      appBar: CustomAppBar.getAppBar(
+        type: AppBarType.Close,
+        title: "Connect Your Bank Account",
+        theme: Theme.of(context),
+        onPressed: () => ProviderDashboardScreen.show(
+          context: context,
+          pushReplaceNamed: true,
+        ),
       ),
       body: StreamBuilder<DocumentSnapshot>(
           stream: Firestore.instance
@@ -83,7 +105,7 @@ class StripeConnect extends StatelessWidget {
           SizedBox(height: 12),
           FormSubmitButton(
               text: "Continue",
-              onPressed: () => _navigateToHistoryScreen(context)),
+              onPressed: () => _navigateToDashboardScreen(context)),
           SizedBox(height: 16),
         ],
       ),

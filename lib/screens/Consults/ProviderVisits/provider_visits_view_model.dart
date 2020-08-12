@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/patient_user_model.dart';
 import 'package:Medicall/models/user_model_base.dart';
@@ -9,6 +10,7 @@ import 'package:flutter/material.dart';
 class ProviderVisitsViewModel with ChangeNotifier {
   final FirestoreDatabase database;
   final UserProvider userProvider;
+  bool isLoading = false;
 
   StreamController<List<Consult>> consultStream = StreamController();
 
@@ -36,5 +38,10 @@ class ProviderVisitsViewModel with ChangeNotifier {
         });
       });
     });
+  }
+
+  void updateWith({bool isLoading}) {
+    this.isLoading = isLoading ?? this.isLoading;
+    notifyListeners();
   }
 }

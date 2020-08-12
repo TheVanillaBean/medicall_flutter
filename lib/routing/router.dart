@@ -44,6 +44,7 @@ import 'package:Medicall/screens/Registration/registration.dart';
 import 'package:Medicall/screens/Registration/registrationType.dart';
 import 'package:Medicall/screens/SelectProvider/provider_detail.dart';
 import 'package:Medicall/screens/SelectProvider/select_provider.dart';
+import 'package:Medicall/screens/StripeConnect/index.dart';
 import 'package:Medicall/screens/Symptoms/symptom_detail.dart';
 import 'package:Medicall/screens/Symptoms/symptoms.dart';
 import 'package:Medicall/screens/Terms/index.dart';
@@ -89,6 +90,7 @@ class Routes {
   static const providerAccount = '/provider-account';
   static const paymentDetail = '/payment-detail';
   static const providerDashboard = '/provider-dashboard';
+  static const stripeConnect = '/stripe-connect';
   static const consultDetail = '/consult-detail';
   static const previousConsults = '/previous-consults';
   static const prescriptionDetails = '/prescription-details';
@@ -170,6 +172,12 @@ class Router {
           builder: (context) => StartVisitScreen(
             consult: consult,
           ),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case Routes.stripeConnect:
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => StripeConnect.create(context),
           settings: settings,
           fullscreenDialog: true,
         );

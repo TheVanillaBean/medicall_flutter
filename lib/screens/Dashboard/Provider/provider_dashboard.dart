@@ -2,10 +2,12 @@ import 'package:Medicall/common_widgets/empty_visits.dart';
 import 'package:Medicall/common_widgets/list_items_builder.dart';
 import 'package:Medicall/components/drawer_menu.dart';
 import 'package:Medicall/models/consult_model.dart';
+import 'package:Medicall/models/provider_user_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/ConsultReview/visit_overview.dart';
 import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard_list_item.dart';
 import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard_view_model.dart';
+import 'package:Medicall/screens/StripeConnect/index.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
@@ -47,6 +49,14 @@ class ProviderDashboardScreen extends StatelessWidget {
       await Navigator.of(context).pushNamed(
         Routes.providerDashboard,
       );
+    }
+  }
+
+  void consultItemPressed(BuildContext context, Consult consult) {
+    if (!(model.userProvider.user as ProviderUser).stripeConnectAuthorized) {
+      StripeConnect.show(context: context, pushReplaceNamed: true);
+    } else {
+      VisitOverview.show(context: context, consult: consult);
     }
   }
 
@@ -127,10 +137,7 @@ class ProviderDashboardScreen extends StatelessWidget {
                   ),
                   itemBuilder: (context, consult) => ProviderDashboardListItem(
                     consult: consult,
-                    onTap: () => VisitOverview.show(
-                      context: context,
-                      consult: consult,
-                    ),
+                    onTap: () => consultItemPressed(context, consult),
                   ),
                 ),
               ),

@@ -1,4 +1,3 @@
-import 'package:Medicall/models/provider_user_model.dart';
 import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +11,6 @@ class LandingPage extends StatelessWidget {
   final AsyncSnapshot<User> userSnapshot;
   final WidgetBuilder nonSignedInBuilder;
   final WidgetBuilder signedInBuilder;
-  final WidgetBuilder stripeConnectBuilder;
   final WidgetBuilder startVisitBuilder;
 
   const LandingPage({
@@ -20,7 +18,6 @@ class LandingPage extends StatelessWidget {
     @required this.userSnapshot,
     this.nonSignedInBuilder,
     this.signedInBuilder,
-    this.stripeConnectBuilder,
     this.startVisitBuilder,
   }) : super(key: key);
 
@@ -30,16 +27,10 @@ class LandingPage extends StatelessWidget {
         Provider.of<TempUserProvider>(context, listen: false);
     if (userSnapshot.connectionState == ConnectionState.active) {
       if (userSnapshot.hasData) {
-        User medicallUser = userSnapshot.data;
-        if (medicallUser.type == USER_TYPE.PROVIDER &&
-            !(medicallUser as ProviderUser).stripeConnectAuthorized) {
-          return stripeConnectBuilder(context);
+        if (tempUserProvider.consult != null) {
+          return startVisitBuilder(context);
         } else {
-          if (tempUserProvider.consult != null) {
-            return startVisitBuilder(context);
-          } else {
-            return signedInBuilder(context);
-          }
+          return signedInBuilder(context);
         }
       } else {
         return nonSignedInBuilder(context);
