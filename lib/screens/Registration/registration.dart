@@ -2,6 +2,7 @@ import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/sign_in_button.dart';
 import 'package:Medicall/common_widgets/social_sign_in_button.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/Login/login.dart';
 import 'package:Medicall/screens/Registration/registration_view_model.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/non_auth_firestore_db.dart';
@@ -176,20 +177,36 @@ class _RegistrationScreenState extends State<RegistrationScreen>
       SizedBox(height: 24),
       Text("-or-"),
       SizedBox(height: 24),
-      SocialSignInButton(
-        imgPath: "assets/images/google-logo.png",
-        text: "Sign Up with Google",
-        color: Colors.white,
-        textColor: Colors.black87,
-        onPressed: model.isLoading ? null : () => _signInWithGoogle(context),
+      Container(
+        width: MediaQuery.of(context).size.width * .75,
+        child: SignInButton(
+          color: Theme.of(context).colorScheme.primary,
+          textColor: Colors.white,
+          text: "Login using existing account",
+          onPressed: () => LoginScreen.show(context: context),
+        ),
+      ),
+      SizedBox(height: 24),
+      Container(
+        width: MediaQuery.of(context).size.width * .75,
+        child: SocialSignInButton(
+          imgPath: "assets/images/google-logo.png",
+          text: "Sign Up with Google",
+          color: Colors.white,
+          textColor: Colors.black87,
+          onPressed: model.isLoading ? null : () => _signInWithGoogle(context),
+        ),
       ),
       SizedBox(height: 24),
       if (appleSignInAvailable.isAvailable) SizedBox(height: 12),
       if (appleSignInAvailable.isAvailable)
-        AppleSignInButton(
-          style: ButtonStyle.black, // style as needed
-          type: ButtonType.signIn, // style as needed
-          onPressed: model.isLoading ? null : () => _signInWithApple(context),
+        Container(
+          width: MediaQuery.of(context).size.width * .75,
+          child: AppleSignInButton(
+            style: ButtonStyle.black, // style as needed
+            type: ButtonType.signIn, // style as needed
+            onPressed: model.isLoading ? null : () => _signInWithApple(context),
+          ),
         ),
       SizedBox(height: 12.0),
     ];
@@ -199,19 +216,19 @@ class _RegistrationScreenState extends State<RegistrationScreen>
     return Column(
       children: <Widget>[
         Container(
-          height: 75,
+          height: 85,
           child: _buildEmailTextField(),
         ),
         Container(
-          height: 75,
+          height: 85,
           child: _buildPasswordTextField(),
         ),
         Container(
-          height: 75,
+          height: 85,
           child: _buildConfirmPasswordTextField(),
         ),
         Container(
-          height: 80,
+          height: 85,
           child: _buildTermsCheckbox(),
         ),
       ],
@@ -313,7 +330,7 @@ class _RegistrationScreenState extends State<RegistrationScreen>
         color: Colors.blue,
         child: SuperRichText(
           text:
-              'I agree to Medicall’s <terms>Terms & Conditions<terms>. I have reviewed the <privacy>Privacy Policy<privacy> and consent to <consent>telemedicine services.<consent>',
+              'I agree to Medicall’s <terms>Terms & Conditions<terms>. I have reviewed the <privacy>Privacy Policy<privacy> and consent to <consent>Telemedicine Services.<consent>',
           style: TextStyle(color: Colors.black87, fontSize: 14),
           othersMarkers: [
             MarkerText.withSameFunction(

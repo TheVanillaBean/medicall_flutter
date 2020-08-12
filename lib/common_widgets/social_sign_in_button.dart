@@ -24,7 +24,7 @@ class SocialSignInButton extends CustomRaisedButton {
                   text,
                   style: TextStyle(
                     color: textColor,
-                    fontSize: 15.0,
+                    fontSize: 12.0,
                   ),
                 ),
                 Opacity(
@@ -36,5 +36,6 @@ class SocialSignInButton extends CustomRaisedButton {
           ),
           color: color,
           onPressed: onPressed,
+          height: 50,
         );
 }
