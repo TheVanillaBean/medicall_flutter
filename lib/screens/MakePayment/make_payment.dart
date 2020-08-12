@@ -1,6 +1,7 @@
 import 'dart:ui' as ui;
 
-import 'package:Medicall/common_widgets/sign_in_button.dart';
+import 'package:Medicall/common_widgets/custom_app_bar.dart';
+import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/MakePayment/make_payment_view_model.dart';
@@ -69,109 +70,75 @@ class MakePayment extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Make Payment"),
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: Icon(Icons.arrow_back),
-            );
-          },
-        ),
+      appBar: CustomAppBar.getAppBar(
+        type: AppBarType.Back,
+        title: "Make Payment",
+        theme: Theme.of(context),
       ),
-      body: SingleChildScrollView(
-        child: ConstrainedBox(
-          constraints: BoxConstraints.tightFor(
-            height: MediaQueryData.fromWindow(ui.window).size.height * 1.1,
-          ),
-          child: Container(
-            color: Colors.white,
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () {
-                FocusScope.of(context).requestFocus(new FocusNode());
-              },
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: _buildChildren(
-                    context: context,
-                  ),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 30),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(height: 60),
+            Text(
+              'You are almost done, we just need your method of payment below.',
+              style: Theme.of(context).textTheme.headline5,
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 48),
+            Text(
+              'Today\'s visit costs:',
+              style: Theme.of(context).textTheme.headline5,
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 12),
+            Card(
+              elevation: 2,
+              borderOnForeground: false,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
+              clipBehavior: Clip.antiAlias,
+              child: ListTile(
+                contentPadding: EdgeInsets.fromLTRB(24, 5, 20, 5),
+                dense: true,
+                title: Text(
+                  consult.symptom,
+                  style: Theme.of(context).textTheme.headline5,
+                ),
+                trailing: Text(
+                  "\$${consult.price}",
+                  style: Theme.of(context).textTheme.headline5,
+                  textAlign: TextAlign.center,
                 ),
               ),
             ),
-          ),
+            SizedBox(height: 24),
+            Expanded(
+              child: Align(
+                alignment: FractionalOffset.bottomCenter,
+                child: ReusableRaisedButton(
+                  title: 'Pay',
+                  onPressed:
+                      model.isLoading ? null : () => _payPressed(context),
+                ),
+              ),
+            ),
+            SizedBox(height: 8),
+            Text(
+              '256-BIT TLS SECURITY',
+              style: Theme.of(context).textTheme.caption,
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 24),
+            if (model.isLoading)
+              Center(
+                child: CircularProgressIndicator(),
+              ),
+          ],
         ),
       ),
     );
-  }
-
-  List<Widget> _buildChildren({
-    BuildContext context,
-  }) {
-    return <Widget>[
-      Text(
-        'Checkout',
-        style: TextStyle(fontSize: 30),
-      ),
-      SizedBox(height: 24),
-      Text(
-        'You are almost done, we just need your method of payment below.',
-        style: TextStyle(fontSize: 16),
-      ),
-      SizedBox(height: 24),
-      Text(
-        'Today\'s visit costs',
-        style: TextStyle(fontSize: 16),
-      ),
-      SizedBox(height: 12),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Text(
-            consult.symptom,
-            style: TextStyle(fontSize: 30),
-          ),
-          Text(
-            "\$${consult.price}",
-            style: TextStyle(fontSize: 30),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-      SizedBox(height: 32),
-      Row(
-        children: <Widget>[
-          Expanded(
-            child: SignInButton(
-              color: Colors.green,
-              textColor: Colors.white,
-              text: "Pay",
-              onPressed: model.isLoading ? null : () => _payPressed(context),
-            ),
-          )
-        ],
-      ),
-      SizedBox(height: 12),
-      Center(
-        child: Text(
-          '256-BIT TLS SECURITY',
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.blueGrey,
-          ),
-        ),
-      ),
-      SizedBox(height: 24),
-      if (model.isLoading)
-        Center(
-          child: CircularProgressIndicator(),
-        ),
-    ];
   }
 }
