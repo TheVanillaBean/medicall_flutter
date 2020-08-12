@@ -16,7 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class VisitDetailsOverview extends StatelessWidget {
+class VisitDetailsOverview extends StatefulWidget {
   final Consult consult;
 
   const VisitDetailsOverview({@required this.consult});
@@ -34,19 +34,26 @@ class VisitDetailsOverview extends StatelessWidget {
   }
 
   @override
+  _VisitDetailsOverviewState createState() => _VisitDetailsOverviewState();
+}
+
+class _VisitDetailsOverviewState extends State<VisitDetailsOverview> {
+  bool isLoading = false;
+
+  @override
   Widget build(BuildContext context) {
     FirestoreDatabase firestoreDatabase =
         Provider.of<FirestoreDatabase>(context, listen: false);
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
         type: AppBarType.Back,
-        title: consult.symptom + ' visit',
+        title: widget.consult.symptom + ' visit',
         subtitle: 'with ' +
-            consult.providerUser.fullName +
+            widget.consult.providerUser.fullName +
             ' ' +
-            consult.providerUser.titles +
+            widget.consult.providerUser.titles +
             ' on ' +
-            DateFormat('MM-dd-yyyy').format(consult.date).toString(),
+            DateFormat('MM-dd-yyyy').format(widget.consult.date).toString(),
         theme: Theme.of(context),
         actions: [
           IconButton(
@@ -61,7 +68,7 @@ class VisitDetailsOverview extends StatelessWidget {
           )
         ],
       ),
-      body: consult.state == ConsultStatus.Signed
+      body: widget.consult.state == ConsultStatus.Signed
           ? _buildVisitReviewButtons(firestoreDatabase)
           : Center(
               child: Padding(
@@ -81,7 +88,8 @@ class VisitDetailsOverview extends StatelessWidget {
   StreamBuilder<VisitReviewData> _buildVisitReviewButtons(
       FirestoreDatabase firestoreDatabase) {
     return StreamBuilder<VisitReviewData>(
-        stream: firestoreDatabase.visitReviewStream(consultId: consult.uid),
+        stream:
+            firestoreDatabase.visitReviewStream(consultId: widget.consult.uid),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
@@ -111,7 +119,7 @@ class VisitDetailsOverview extends StatelessWidget {
                     () => {
                           ReviewVisitInformation.show(
                             context: context,
-                            consult: consult,
+                            consult: widget.consult,
                           )
                         }),
                 _buildCardButton(
@@ -120,7 +128,7 @@ class VisitDetailsOverview extends StatelessWidget {
                     () => {
                           VisitPrescriptions.show(
                             context: context,
-                            consult: consult,
+                            consult: widget.consult,
                             visitReviewData: snapshot.data,
                           )
                         }),
@@ -130,7 +138,7 @@ class VisitDetailsOverview extends StatelessWidget {
                     () => {
                           VisitDocNote.show(
                             context: context,
-                            consult: consult,
+                            consult: widget.consult,
                             visitReviewData: snapshot.data,
                           )
                         }),
@@ -140,7 +148,7 @@ class VisitDetailsOverview extends StatelessWidget {
                     () => {
                           VisitEducation.show(
                             context: context,
-                            consult: consult,
+                            consult: widget.consult,
                             visitReviewData: snapshot.data,
                           )
                         }),
@@ -156,20 +164,30 @@ class VisitDetailsOverview extends StatelessWidget {
   }
 
   void navigateToChatScreen(BuildContext context) async {
-    ChatProvider chatProvider =
-        Provider.of<ChatProvider>(context, listen: false);
-    UserProvider userProvider =
-        Provider.of<UserProvider>(context, listen: false);
+    if (!isLoading) {
+      setState(() {
+        isLoading = true;
+      });
+      ChatProvider chatProvider =
+          Provider.of<ChatProvider>(context, listen: false);
+      UserProvider userProvider =
+          Provider.of<UserProvider>(context, listen: false);
 
-    final channel = chatProvider.client.channel('messaging', id: consult.uid);
+      final channel =
+          chatProvider.client.channel('messaging', id: widget.consult.uid);
 
-    channel.addMembers([consult.patientId, consult.providerId]);
+      channel.addMembers([widget.consult.patientId, widget.consult.providerId]);
 
-    await chatProvider.setUser(userProvider.user);
+      await chatProvider.setUser(userProvider.user);
 
-    await channel.watch();
+      await channel.watch();
 
-    ChatScreen.show(context: context, channel: channel);
+      setState(() {
+        isLoading = false;
+      });
+
+      ChatScreen.show(context: context, channel: channel);
+    }
   }
 
   Widget _buildCardButton(String title, IconData icon, Function onTap) {

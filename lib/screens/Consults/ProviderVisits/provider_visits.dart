@@ -41,21 +41,24 @@ class ProviderVisits extends StatelessWidget {
   }
 
   void navigateToChatScreen(BuildContext context, Consult consult) async {
-    if (consult.state == ConsultStatus.Signed && !model.isLoading) {
-      model.updateWith(isLoading: true);
-      ChatProvider chatProvider =
-          Provider.of<ChatProvider>(context, listen: false);
-      UserProvider userProvider =
-          Provider.of<UserProvider>(context, listen: false);
+    if (consult.state == ConsultStatus.Signed) {
+      if (!model.isLoading) {
+        model.updateWith(isLoading: true);
+        ChatProvider chatProvider =
+            Provider.of<ChatProvider>(context, listen: false);
+        UserProvider userProvider =
+            Provider.of<UserProvider>(context, listen: false);
 
-      final channel = chatProvider.client.channel('messaging', id: consult.uid);
+        final channel =
+            chatProvider.client.channel('messaging', id: consult.uid);
 
-      await chatProvider.setUser(userProvider.user);
+        await chatProvider.setUser(userProvider.user);
 
-      await channel.watch();
+        await channel.watch();
 
-      model.updateWith(isLoading: false);
-      ChatScreen.show(context: context, channel: channel);
+        model.updateWith(isLoading: false);
+        ChatScreen.show(context: context, channel: channel);
+      }
     } else {
       AppUtil().showFlushBar(
           "You can only chat when you sign this consult", context);
