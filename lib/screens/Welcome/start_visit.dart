@@ -37,6 +37,10 @@ class StartVisitScreen extends StatelessWidget {
           type: AppBarType.Back,
           title: "Visit Questions",
           theme: Theme.of(context),
+          onPressed: () => PatientDashboardScreen.show(
+                context: context,
+                pushReplaceNamed: true,
+              ),
           actions: [
             IconButton(
                 icon: Icon(
