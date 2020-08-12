@@ -21,6 +21,7 @@ abstract class User {
   String state;
   String zipCode;
   String city;
+  String streamChatID;
 
   User({
     this.uid = '',
@@ -38,6 +39,7 @@ abstract class User {
     this.state = '',
     this.zipCode = '',
     this.city = '',
+    this.streamChatID = '',
   });
 
   Map<String, dynamic> toMap();
@@ -88,6 +90,7 @@ abstract class User {
     user.state = data['state'] ?? user.state;
     user.zipCode = data['zipCode'] ?? user.zipCode;
     user.city = data['city'] ?? user.city;
+    user.streamChatID = data['stream_chat_id'] ?? user.streamChatID;
     return user;
   }
 }

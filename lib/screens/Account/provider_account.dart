@@ -33,10 +33,15 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
 
   @override
   Widget build(BuildContext context) {
-    UserProvider _userProvider = Provider.of<UserProvider>(context);
-    ExtImageProvider _extImageProvider = Provider.of<ExtImageProvider>(context);
+    UserProvider _userProvider =
+        Provider.of<UserProvider>(context, listen: false);
+    FirestoreDatabase _firestoreDB =
+        Provider.of<FirestoreDatabase>(context, listen: false);
+
+    ExtImageProvider _extImageProvider =
+        Provider.of<ExtImageProvider>(context, listen: false);
     FirebaseStorageService _storageService =
-        Provider.of<FirebaseStorageService>(context);
+        Provider.of<FirebaseStorageService>(context, listen: false);
 
     final ProviderUser medicallUser = _userProvider.user;
 
@@ -70,6 +75,7 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
           storageService: _storageService,
           extImageProvider: _extImageProvider,
           userProvider: _userProvider,
+          firestoreDatabase: _firestoreDB,
           context: context,
         ),
       ),
@@ -81,6 +87,7 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
     FirebaseStorageService storageService,
     ExtImageProvider extImageProvider,
     UserProvider userProvider,
+    FirestoreDatabase firestoreDatabase,
     BuildContext context,
   }) {
     return SingleChildScrollView(
@@ -99,6 +106,7 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
                     storageService: storageService,
                     extImageProvider: extImageProvider,
                     userProvider: userProvider,
+                    firestoreDatabase: firestoreDatabase,
                   ),
             SizedBox(height: 20),
             Center(
@@ -213,14 +221,15 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
     FirebaseStorageService storageService,
     ExtImageProvider extImageProvider,
     UserProvider userProvider,
+    FirestoreDatabase firestoreDatabase,
   }) {
     double height = MediaQuery.of(context).size.height;
     return GestureDetector(
       onTap: () => _loadProfileImage(
-        storageService: storageService,
-        extImageProvider: extImageProvider,
-        userProvider: userProvider,
-      ),
+          storageService: storageService,
+          extImageProvider: extImageProvider,
+          userProvider: userProvider,
+          firestoreDatabase: firestoreDatabase),
       child: Stack(
         alignment: AlignmentDirectional.bottomStart,
         overflow: Overflow.visible,

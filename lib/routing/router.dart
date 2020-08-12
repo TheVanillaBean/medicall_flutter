@@ -1,3 +1,4 @@
+import 'package:Medicall/chat/chat_screen.dart';
 import 'package:Medicall/models/consult-review/consult_review_options_model.dart';
 import 'package:Medicall/models/consult-review/treatment_options.dart';
 import 'package:Medicall/models/consult-review/visit_review_model.dart';
@@ -54,6 +55,7 @@ import 'package:Medicall/screens/Welcome//welcome.dart';
 import 'package:Medicall/screens/Welcome/start_visit.dart';
 import 'package:Medicall/screens/Welcome/zip_code_verify.dart';
 import 'package:flutter/material.dart';
+import 'package:stream_chat_flutter/stream_chat_flutter.dart';
 
 class Routes {
   static const login = '/login';
@@ -102,6 +104,7 @@ class Routes {
   static const visitReview = '/visit-review';
   static const providerVisits = '/provider-visits';
   static const viewMedicalHistory = '/view-medical-history';
+  static const chatScreen = '/chat-screen';
 }
 
 class Router {
@@ -466,6 +469,16 @@ class Router {
       case Routes.confirmConsult:
         return MaterialPageRoute<dynamic>(
           builder: (context) => ConfirmConsult(),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case Routes.chatScreen:
+        final Map<String, dynamic> mapArgs = args;
+        final Channel channel = mapArgs['channel'];
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => ChatScreen(
+            channel: channel,
+          ),
           settings: settings,
           fullscreenDialog: true,
         );

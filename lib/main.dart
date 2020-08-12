@@ -7,6 +7,7 @@ import 'package:Medicall/screens/StripeConnect/index.dart';
 import 'package:Medicall/screens/Welcome/start_visit.dart';
 import 'package:Medicall/screens/Welcome/welcome.dart';
 import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/chat_provider.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/firebase_storage_service.dart';
@@ -79,6 +80,9 @@ class MedicallApp extends StatelessWidget {
           ),
           Provider<FirebaseStorageService>(
             create: (_) => FirebaseStorageService(uid: user.uid),
+          ),
+          Provider<ChatProvider>(
+            create: (_) => ChatProvider(),
           ),
         ],
         builder: (context, userSnapshot) {

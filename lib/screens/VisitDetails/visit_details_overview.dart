@@ -1,3 +1,4 @@
+import 'package:Medicall/chat/chat_screen.dart';
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:Medicall/models/consult_model.dart';
@@ -8,7 +9,9 @@ import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/VisitDetails/visit_doc_note.dart';
 import 'package:Medicall/screens/VisitDetails/visit_education.dart';
 import 'package:Medicall/screens/VisitDetails/visit_prescriptions.dart';
+import 'package:Medicall/services/chat_provider.dart';
 import 'package:Medicall/services/database.dart';
+import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -141,11 +144,32 @@ class VisitDetailsOverview extends StatelessWidget {
                             visitReviewData: snapshot.data,
                           )
                         }),
-                _buildCardButton("Message Doctor", Icons.message, () => {}),
+                _buildCardButton(
+                  "Message Doctor",
+                  Icons.message,
+                  () => navigateToChatScreen(context),
+                ),
               ],
             ),
           );
         });
+  }
+
+  void navigateToChatScreen(BuildContext context) async {
+    ChatProvider chatProvider =
+        Provider.of<ChatProvider>(context, listen: false);
+    UserProvider userProvider =
+        Provider.of<UserProvider>(context, listen: false);
+
+    final channel = chatProvider.client.channel('messaging', id: consult.uid);
+
+    channel.addMembers([consult.patientId, consult.providerId]);
+
+    await chatProvider.setUser(userProvider.user);
+
+    await channel.watch();
+
+    ChatScreen.show(context: context, channel: channel);
   }
 
   Widget _buildCardButton(String title, IconData icon, Function onTap) {
