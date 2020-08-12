@@ -7,6 +7,7 @@ import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard.dart';
 import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/Symptoms/symptoms.dart';
 import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -221,6 +222,9 @@ class DrawerMenu extends StatelessWidget {
     try {
       Navigator.of(context).pop(context);
       final auth = Provider.of<AuthBase>(context, listen: false);
+      final tempUserProvider =
+          Provider.of<TempUserProvider>(context, listen: false);
+      tempUserProvider.consult = null;
       await auth.signOut();
     } catch (e) {
       print(e);
