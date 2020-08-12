@@ -166,6 +166,7 @@ class FirestoreDatabase implements Database {
           EnumToString.parse(ConsultStatus.PendingPayment),
           EnumToString.parse(ConsultStatus.PendingReview),
           EnumToString.parse(ConsultStatus.InReview),
+          EnumToString.parse(ConsultStatus.Completed),
         ]),
         sort: (lhs, rhs) => rhs.date.compareTo(lhs.date),
         builder: (data, documentId) => Consult.fromMap(data, documentId),

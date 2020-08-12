@@ -39,6 +39,10 @@ class PatientDashboardViewModel with ChangeNotifier {
             for (Consult consult in consults) {
               if (consult.providerId == user.uid) {
                 consult.providerUser = user as ProviderUser;
+                if (consult.state == ConsultStatus.Completed) {
+                  //Completed consults are not signed and should show to the user as in review
+                  consult.state = ConsultStatus.InReview;
+                }
               }
             }
             consultStream.add(consults.length > 0 ? consults : []);
