@@ -39,26 +39,29 @@ class CompleteVisit extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30),
           child: Column(
-            //mainAxisAlignment: MainAxisAlignment.start,
-            //crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.fromLTRB(0, 50, 0, 5),
+                padding: const EdgeInsets.fromLTRB(0, 50, 0, 8),
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
                     'Please Note:',
-                    style: TextStyle(
-                      fontSize: 14.0,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
+                    style: Theme.of(context).textTheme.bodyText1.copyWith(
+                          fontSize: 14,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
                     textAlign: TextAlign.left,
                   ),
                 ),
               ),
               Text(
                 'Marking the visit \"complete\" will notify the patient that you\'ve completed your evaluation. The patient will still be able to message you with questions for 7 days.',
-                style: Theme.of(context).textTheme.bodyText1,
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyText1
+                    .copyWith(fontSize: 14),
                 textAlign: TextAlign.justify,
               ),
               SizedBox(height: 250),
@@ -68,7 +71,9 @@ class CompleteVisit extends StatelessWidget {
                   controlAffinity: ListTileControlAffinity.leading,
                   title: Text(
                     'Please send a copy of my note to my office manager via secure email.',
-                    style: Theme.of(context).textTheme.bodyText1,
+                    style: Theme.of(context).textTheme.bodyText1.copyWith(
+                          fontSize: 14,
+                        ),
                     textAlign: TextAlign.left,
                   ),
                   value: model.checkValue ?? false,
