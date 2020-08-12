@@ -1,12 +1,7 @@
-import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
-String _returnString(user) {
-  var fullName = user.fullName;
-  var loc = user.address;
-  var dob = user.dob;
+String _returnString() {
   var now = DateTime.now();
   var formatter = DateFormat('MM-dd-yyyy');
   String formatted = formatter.format(now);
@@ -66,19 +61,10 @@ Vermont: I understand that I have the right to receive a consult with a distant-
 
 If you have a concern about a medical professional, you may contact the Medical Board in your state regarding your concerns. For applicable contact information see the list available here.
 
-Patient’s Legal Name
-$fullName
-
-Location
-$loc
-
-Date of birth
-$dob
-
 Date of consent
 $formatted
 ____
-By tapping “I Agree” below, I understand and consent to the above and the Terms of Service and Privacy Policy.
+By registering, I understand and consent to the above and the Terms of Service and Privacy Policy.
 
 Thanks again for using Medicall!''';
   return consent;
@@ -87,8 +73,6 @@ Thanks again for using Medicall!''';
 class ConsentScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final tempUserProvider = Provider.of<TempUserProvider>(context);
-    final medicallUser = tempUserProvider.user;
     final _scrollController = ScrollController();
 
     return Scaffold(
@@ -114,39 +98,15 @@ class ConsentScreen extends StatelessWidget {
               onPressed: () {
                 _scrollController.animateTo(
                     _scrollController.position.maxScrollExtent,
-                    duration: Duration(seconds: 3),
+                    duration: Duration(seconds: 1),
                     curve: Curves.ease);
               })),
       body: Container(
         child: SingleChildScrollView(
           controller: _scrollController,
           padding: EdgeInsets.fromLTRB(15, 20, 15, 20),
-          child: Column(
-            children: <Widget>[
-              Text(
-                _returnString(medicallUser),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: FlatButton(
-                      padding: EdgeInsets.all(20),
-                      onPressed: () {
-                        Navigator.of(context).pushNamed('/phoneAuth');
-                      },
-                      color: Colors.green,
-                      child: Text(
-                        'I AGREE',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  )
-                ],
-              )
-            ],
+          child: Text(
+            _returnString(),
           ),
         ),
       ),

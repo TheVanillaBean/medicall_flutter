@@ -211,7 +211,7 @@ class _RegistrationScreenState extends State<RegistrationScreen>
           child: _buildConfirmPasswordTextField(),
         ),
         Container(
-          height: 75,
+          height: 80,
           child: _buildTermsCheckbox(),
         ),
       ],
@@ -313,7 +313,7 @@ class _RegistrationScreenState extends State<RegistrationScreen>
         color: Colors.blue,
         child: SuperRichText(
           text:
-              'I agree to Medicall’s <terms>Terms & Conditions<terms>. I have reviewed the <privacy>Privacy Policy<privacy> and understand the benefits and risks of remote treatment.',
+              'I agree to Medicall’s <terms>Terms & Conditions<terms>. I have reviewed the <privacy>Privacy Policy<privacy> and consent to <consent>telemedicine services.<consent>',
           style: TextStyle(color: Colors.black87, fontSize: 14),
           othersMarkers: [
             MarkerText.withSameFunction(
@@ -326,6 +326,13 @@ class _RegistrationScreenState extends State<RegistrationScreen>
             MarkerText.withSameFunction(
               marker: '<privacy>',
               function: () => Navigator.of(context).pushNamed('/privacy'),
+              onError: (msg) => print('$msg'),
+              style: TextStyle(
+                  color: Colors.blue, decoration: TextDecoration.underline),
+            ),
+            MarkerText.withSameFunction(
+              marker: '<consent>',
+              function: () => Navigator.of(context).pushNamed('/consent'),
               onError: (msg) => print('$msg'),
               style: TextStyle(
                   color: Colors.blue, decoration: TextDecoration.underline),
