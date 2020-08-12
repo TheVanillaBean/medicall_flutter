@@ -10,6 +10,7 @@ import 'package:Medicall/screens/Questions/questions_view_model.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/firebase_storage_service.dart';
+import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
@@ -28,6 +29,8 @@ class QuestionsScreen extends StatefulWidget {
         Provider.of<FirestoreDatabase>(context, listen: false);
     final FirebaseStorageService firebaseStorageService =
         Provider.of<FirebaseStorageService>(context, listen: false);
+    final UserProvider userProvider =
+        Provider.of<UserProvider>(context, listen: false);
     return PropertyChangeProvider(
       value: QuestionsViewModel(
         auth: auth,
@@ -35,6 +38,7 @@ class QuestionsScreen extends StatefulWidget {
         database: database,
         storageService: firebaseStorageService,
         displayMedHistory: displayMedHistory,
+        userProvider: userProvider,
       ),
       child: PropertyChangeConsumer<QuestionsViewModel>(
         properties: [QuestionVMProperties.questionScreen],

@@ -9,6 +9,7 @@ import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/firebase_storage_service.dart';
+import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/validators.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -28,6 +29,7 @@ abstract class QuestionVMProperties {
 
 class QuestionsViewModel extends PropertyChangeNotifier
     with OptionInputValidator {
+  final UserProvider userProvider;
   final AuthBase auth;
   final FirestoreDatabase database;
   final FirebaseStorageService storageService;
@@ -61,6 +63,7 @@ class QuestionsViewModel extends PropertyChangeNotifier
     @required this.database,
     @required this.storageService,
     @required this.displayMedHistory,
+    @required this.userProvider,
     this.progress = 0.0,
     this.input = '',
   });
@@ -85,6 +88,7 @@ class QuestionsViewModel extends PropertyChangeNotifier
     User user = await auth.currentUser();
     (user as PatientUser).hasMedicalHistory = true;
     this.database.setUser(user);
+    this.userProvider.user = user;
     this.submitted = false;
   }
 
