@@ -77,7 +77,20 @@ class PrescriptionListItem extends StatelessWidget {
                 '${treatment.instructions}',
                 style: Theme.of(context).textTheme.bodyText1,
               ),
+              Text(
+                'Price: \$29',
+                style: Theme.of(context).textTheme.bodyText1,
+              ),
+              Text(
+                'Payment Pending',
+                style: Theme.of(context).textTheme.bodyText1,
+              ),
             ],
+          ),
+          trailing: Icon(
+            Icons.chevron_right,
+            color: Colors.grey,
+            size: 15.0,
           ),
           onTap: null,
         ),

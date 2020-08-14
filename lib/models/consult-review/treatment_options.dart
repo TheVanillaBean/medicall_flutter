@@ -1,4 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:enum_to_string/enum_to_string.dart';
+
+enum TreatmentStatus {
+  PendingPayment,
+  Paid,
+}
+
+extension EnumParser on String {
+  TreatmentStatus toTreatmentStatus() {
+    return TreatmentStatus.values.firstWhere(
+      (e) =>
+          e.toString().toLowerCase() == 'TreatmentStatus.$this'.toLowerCase(),
+      orElse: () => null,
+    ); //return null if not found
+  }
+}
 
 class TreatmentOptions {
   String dose;
@@ -9,6 +25,7 @@ class TreatmentOptions {
   String quantity;
   String refills;
   DateTime date;
+  TreatmentStatus status;
 
   TreatmentOptions({
     this.dose,
@@ -19,6 +36,7 @@ class TreatmentOptions {
     this.quantity,
     this.refills,
     this.date,
+    this.status,
   });
 
   factory TreatmentOptions.fromMap(Map<String, dynamic> data) {
@@ -35,6 +53,8 @@ class TreatmentOptions {
     final String instructions = data['instructions'] as String ?? "";
     final String quantity = data['quantity'] as String ?? "";
     final String refills = data['refills'] as String ?? "";
+    final TreatmentStatus state =
+        (data['state'] as String).toTreatmentStatus() ?? null;
 
     final DateTime date = DateTime.parse(dateTimeStamp.toDate().toString());
 
@@ -47,6 +67,7 @@ class TreatmentOptions {
       quantity: quantity,
       refills: refills,
       date: date,
+      status: state,
     );
   }
 
@@ -60,6 +81,7 @@ class TreatmentOptions {
       'quantity': quantity,
       'refills': refills,
       'date': date,
+      'state': EnumToString.parse(status),
     };
   }
 }
