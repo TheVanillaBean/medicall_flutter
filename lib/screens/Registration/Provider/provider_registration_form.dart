@@ -175,7 +175,7 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
         color: Colors.blue,
         child: SuperRichText(
           text:
-              'I agree to Medicall’s <terms>Terms & Conditions<terms>. I have reviewed the <privacy>Privacy Policy<privacy> and understand the benefits and risks of remote treatment.',
+              'I agree to Medicall’s <terms>Terms & Conditions<terms>. I have reviewed the <privacy>Privacy Policy<privacy>.',
           style: TextStyle(color: Colors.black87, fontSize: 14),
           othersMarkers: [
             MarkerText.withSameFunction(
