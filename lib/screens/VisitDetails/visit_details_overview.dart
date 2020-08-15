@@ -114,44 +114,48 @@ class _VisitDetailsOverviewState extends State<VisitDetailsOverview> {
             child: Column(
               children: <Widget>[
                 _buildCardButton(
-                    "Review Information",
-                    Icons.assignment,
-                    () => {
-                          ReviewVisitInformation.show(
-                            context: context,
-                            consult: widget.consult,
-                          )
-                        }),
+                  "Doctor Note",
+                  MedicallIcons.clipboard_1,
+                  () => {
+                    VisitDocNote.show(
+                      context: context,
+                      consult: widget.consult,
+                      visitReviewData: snapshot.data,
+                    ),
+                  },
+                ),
                 _buildCardButton(
-                    "Prescriptions",
-                    Icons.local_pharmacy,
-                    () => {
-                          VisitPrescriptions.show(
-                            context: context,
-                            consult: widget.consult,
-                            visitReviewData: snapshot.data,
-                          )
-                        }),
+                  "Prescriptions",
+                  Icons.local_pharmacy,
+                  () => {
+                    VisitPrescriptions.show(
+                      context: context,
+                      consult: widget.consult,
+                      visitReviewData: snapshot.data,
+                    ),
+                  },
+                ),
                 _buildCardButton(
-                    "Doctor Note",
-                    MedicallIcons.clipboard_1,
-                    () => {
-                          VisitDocNote.show(
-                            context: context,
-                            consult: widget.consult,
-                            visitReviewData: snapshot.data,
-                          )
-                        }),
+                  "Education",
+                  Icons.school,
+                  () => {
+                    VisitEducation.show(
+                      context: context,
+                      consult: widget.consult,
+                      visitReviewData: snapshot.data,
+                    ),
+                  },
+                ),
                 _buildCardButton(
-                    "Education",
-                    Icons.school,
-                    () => {
-                          VisitEducation.show(
-                            context: context,
-                            consult: widget.consult,
-                            visitReviewData: snapshot.data,
-                          )
-                        }),
+                  "Your Visit Information",
+                  Icons.assignment,
+                  () => {
+                    ReviewVisitInformation.show(
+                      context: context,
+                      consult: widget.consult,
+                    ),
+                  },
+                ),
                 _buildCardButton(
                   "Message Doctor",
                   Icons.message,
