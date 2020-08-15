@@ -84,6 +84,20 @@ class StateValidator implements StringValidator {
   }
 }
 
+class ShippingAddressValidator implements StringValidator {
+  @override
+  bool isValid(String value) {
+    return true;
+  }
+}
+
+class ZipCodeValidator implements StringValidator {
+  @override
+  bool isValid(String value) {
+    return true;
+  }
+}
+
 class ProviderDobValidators {
   final StringValidator dobValidator = NonEmptyStringValidator();
   final String dobErrorText = 'Please enter a valid birthday (must be 18)';
@@ -115,6 +129,18 @@ class PersonalInfoValidator {
 
 class PrescriptionValidator {
   final StringValidator inputValidator = NonEmptyStringValidator();
+}
+
+class PrescriptionCheckoutValidator {
+  final StringValidator shippingAddressValidator = ShippingAddressValidator();
+  final StringValidator cityValidator = NonEmptyStringValidator();
+  final StringValidator stateValidator = StateValidator();
+  final StringValidator zipCodeValidator = ZipCodeValidator();
+  final String shippingAddressErrorText = 'Invalid Shipping Address';
+  final String cityErrorText = 'Invalid City';
+  final String stateErrorText =
+      'Please enter a valid two letter state abbreviation code';
+  final String zipCodeErrorText = 'Invalid Zip Code';
 }
 
 class PhoneNumberStringValidator implements StringValidator {
