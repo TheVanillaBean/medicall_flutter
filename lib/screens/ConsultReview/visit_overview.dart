@@ -86,7 +86,7 @@ class VisitOverview extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12)),
                     child: Text(
-                      "REVIEW VISIT INFORMATION",
+                      "VISIT INFORMATION",
                       style: Theme.of(context).textTheme.headline6,
                     ),
                     onPressed: () => ReviewVisitInformation.show(
