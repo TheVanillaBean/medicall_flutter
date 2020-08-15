@@ -71,7 +71,7 @@ class SelectProviderScreen extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: 40),
+                padding: EdgeInsets.only(top: 60),
                 child: ListItemsBuilder<ProviderUser>(
                   snapshot: snapshot,
                   itemBuilder: (context, provider) => ProviderListItem(

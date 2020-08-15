@@ -23,11 +23,11 @@ class SymptomListItem extends StatelessWidget {
           StringUtils.capitalize(
             symptom.name,
           ),
-          style: Theme.of(context).textTheme.bodyText1.copyWith(fontSize: 16),
+          style: Theme.of(context).textTheme.headline6,
         ),
         subtitle: Text(
           symptom.duration,
-          style: Theme.of(context).textTheme.caption.copyWith(fontSize: 14),
+          style: Theme.of(context).textTheme.caption,
         ),
         trailing: Icon(Icons.chevron_right),
         onTap: onTap,

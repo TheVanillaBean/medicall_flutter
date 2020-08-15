@@ -1,3 +1,4 @@
+import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Login/login.dart';
 import 'package:Medicall/screens/Registration/Provider/provider_registration.dart';
@@ -56,31 +57,19 @@ class WelcomeScreen extends StatelessWidget {
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          OutlineButton(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.0)),
-            child: Container(
-              alignment: Alignment.center,
-              width: 140,
-              child: Text(
-                "Login",
-                style: Theme.of(context).textTheme.caption,
-              ),
-            ),
+          ReusableRaisedButton(
+            title: "Login",
             onPressed: () => LoginScreen.show(context: context),
+            width: 140,
+            color: Theme.of(context).disabledColor.withAlpha(70),
+            outlined: true,
           ),
-          OutlineButton(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.0)),
-            child: Container(
-              alignment: Alignment.center,
-              width: 140,
-              child: Text(
-                "Providers",
-                style: Theme.of(context).textTheme.caption,
-              ),
-            ),
+          ReusableRaisedButton(
+            title: "Providers",
             onPressed: () => ProviderRegistrationScreen.show(context: context),
+            width: 140,
+            color: Theme.of(context).disabledColor.withAlpha(70),
+            outlined: true,
           ),
         ],
       )
@@ -88,32 +77,10 @@ class WelcomeScreen extends StatelessWidget {
   }
 
   Widget buildGetStartedBtn(BuildContext context) {
-    return FlatButton(
-      color: Theme.of(context).buttonColor,
-      textColor: Theme.of(context).buttonTheme.colorScheme.onPrimary,
-      onPressed: () {
-        SymptomsScreen.show(context: context);
-      },
-      padding: EdgeInsets.fromLTRB(35, 15, 35, 15),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-      child: Column(
-        children: <Widget>[
-          Text(
-            'Let\'s get started!',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: Theme.of(context).textTheme.button.fontSize,
-            ),
-          ),
-          Text(
-            '(it\'s free to explore)',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: Theme.of(context).textTheme.caption.fontSize,
-            ),
-          ),
-        ],
-      ),
+    return ReusableRaisedButton(
+      title: "Let\'s get started! \n it\'s free to explore",
+      height: 80,
+      onPressed: () => SymptomsScreen.show(context: context),
     );
   }
 

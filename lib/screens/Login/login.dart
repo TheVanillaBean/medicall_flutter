@@ -1,5 +1,6 @@
 import 'dart:ui' as ui;
 
+import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/common_widgets/sign_in_button.dart';
 import 'package:Medicall/common_widgets/social_sign_in_button.dart';
 import 'package:Medicall/routing/router.dart';
@@ -170,6 +171,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 SizedBox(height: 24),
                 SocialSignInButton(
+                  context: context,
                   imgPath: "assets/images/google-logo.png",
                   text: "Sign in with Google",
                   color: Colors.white,
@@ -188,25 +190,17 @@ class _LoginScreenState extends State<LoginScreen> {
                         : () => _signInWithApple(context),
                   ),
                 SizedBox(height: 24),
-                OutlineButton(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.0)),
-                  child: Text(
-                    "Reset Password",
-                    style: TextStyle(color: Colors.black54),
-                  ),
-                  onPressed: () => _navigateToResetPasswordScreen(context),
-                ),
+                ReusableRaisedButton(
+                    title: "Reset Password",
+                    outlined: true,
+                    color: Theme.of(context).disabledColor.withAlpha(80),
+                    onPressed: () => _navigateToResetPasswordScreen(context)),
                 SizedBox(height: 5),
-                OutlineButton(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.0)),
-                  child: Text(
-                    "First time here?",
-                    style: TextStyle(color: Colors.black54),
-                  ),
-                  onPressed: () => WelcomeScreen.show(context: context),
-                ),
+                ReusableRaisedButton(
+                    title: "First time here?",
+                    outlined: true,
+                    color: Theme.of(context).disabledColor.withAlpha(80),
+                    onPressed: () => WelcomeScreen.show(context: context)),
               ],
             )),
       ),
@@ -254,6 +248,7 @@ class _LoginScreenState extends State<LoginScreen> {
       textInputAction: TextInputAction.done,
       onEditingComplete: _submit,
       onChanged: model.updatePassword,
+      style: Theme.of(context).textTheme.bodyText1,
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.grey.withAlpha(20),
@@ -280,7 +275,7 @@ class _LoginScreenState extends State<LoginScreen> {
       textInputAction: TextInputAction.next,
       onEditingComplete: () => _emailEditingComplete,
       onChanged: model.updateEmail,
-      style: TextStyle(color: Color.fromRGBO(80, 80, 80, 1)),
+      style: Theme.of(context).textTheme.bodyText1,
       decoration: InputDecoration(
         labelStyle: TextStyle(
           color: Theme.of(context).colorScheme.onSurface.withAlpha(90),

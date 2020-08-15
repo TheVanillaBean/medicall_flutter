@@ -1,4 +1,5 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
+import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/common_widgets/sign_in_button.dart';
 import 'package:Medicall/common_widgets/social_sign_in_button.dart';
 import 'package:Medicall/routing/router.dart';
@@ -132,7 +133,7 @@ class _RegistrationScreenState extends State<RegistrationScreen>
         theme: Theme.of(context),
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.fromLTRB(15, 20, 15, 20),
+        padding: EdgeInsets.fromLTRB(15, 0, 15, 20),
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: () {
@@ -154,25 +155,22 @@ class _RegistrationScreenState extends State<RegistrationScreen>
     return <Widget>[
       Text(
         "Help us protect your personal information by choosing a secure log in. This is required to start your visit.",
+        style: Theme.of(context).textTheme.bodyText2,
       ),
       SizedBox(height: 24.0),
       _buildEmailAuthForm(context),
       SizedBox(height: 12.0),
-      Row(
-        children: <Widget>[
-          Expanded(
-            child: SignInButton(
-              color: Theme.of(context).colorScheme.primary,
-              textColor: Colors.white,
-              text: "Sign Up with Email",
-              onPressed: model.canSubmit &&
-                      model.googleAuthModel == null &&
-                      model.appleSignInModel == null
-                  ? _submit
-                  : null,
-            ),
-          )
-        ],
+      Container(
+        width: MediaQuery.of(context).size.width * .75,
+        child: ReusableRaisedButton(
+          color: Theme.of(context).colorScheme.primary,
+          title: "Sign Up with Email",
+          onPressed: model.canSubmit &&
+                  model.googleAuthModel == null &&
+                  model.appleSignInModel == null
+              ? _submit
+              : null,
+        ),
       ),
       SizedBox(height: 24),
       Text("-or-"),
@@ -193,11 +191,11 @@ class _RegistrationScreenState extends State<RegistrationScreen>
           imgPath: "assets/images/google-logo.png",
           text: "Sign Up with Google",
           color: Colors.white,
+          context: context,
           textColor: Colors.black87,
           onPressed: model.isLoading ? null : () => _signInWithGoogle(context),
         ),
       ),
-      SizedBox(height: 24),
       if (appleSignInAvailable.isAvailable) SizedBox(height: 12),
       if (appleSignInAvailable.isAvailable)
         Container(
@@ -208,7 +206,6 @@ class _RegistrationScreenState extends State<RegistrationScreen>
             onPressed: model.isLoading ? null : () => _signInWithApple(context),
           ),
         ),
-      SizedBox(height: 12.0),
     ];
   }
 
@@ -240,6 +237,7 @@ class _RegistrationScreenState extends State<RegistrationScreen>
       controller: _emailController,
       focusNode: _emailFocusNode,
       autocorrect: false,
+      style: Theme.of(context).textTheme.bodyText1,
       keyboardType: TextInputType.emailAddress,
       onChanged: model.updateEmail,
       readOnly: model.googleAuthModel != null || model.appleSignInModel != null
@@ -273,9 +271,7 @@ class _RegistrationScreenState extends State<RegistrationScreen>
       obscureText: true,
       textInputAction: TextInputAction.done,
       onChanged: model.updatePassword,
-      style: TextStyle(
-        color: Color.fromRGBO(80, 80, 80, 1),
-      ),
+      style: Theme.of(context).textTheme.bodyText1,
       decoration: InputDecoration(
         labelText: 'Password',
         filled: true,
@@ -304,9 +300,7 @@ class _RegistrationScreenState extends State<RegistrationScreen>
       obscureText: true,
       textInputAction: TextInputAction.done,
       onChanged: model.updateConfirmPassword,
-      style: TextStyle(
-        color: Color.fromRGBO(80, 80, 80, 1),
-      ),
+      style: Theme.of(context).textTheme.bodyText1,
       decoration: InputDecoration(
         labelText: 'Confirm Password',
         filled: true,
@@ -331,7 +325,7 @@ class _RegistrationScreenState extends State<RegistrationScreen>
         child: SuperRichText(
           text:
               'I agree to Medicall’s <terms>Terms & Conditions<terms>. I have reviewed the <privacy>Privacy Policy<privacy> and consent to <consent>Telemedicine Services.<consent>',
-          style: TextStyle(color: Colors.black87, fontSize: 14),
+          style: Theme.of(context).textTheme.bodyText2,
           othersMarkers: [
             MarkerText.withSameFunction(
               marker: '<terms>',

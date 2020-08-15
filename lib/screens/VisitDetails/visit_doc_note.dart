@@ -46,7 +46,7 @@ class VisitDocNote extends StatelessWidget {
         ],
       ),
       body: Container(
-        padding: EdgeInsets.fromLTRB(30, 0, 30, 40),
+        padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
         child: TextFormField(
           maxLines: null,
           minLines: 5,
@@ -54,7 +54,7 @@ class VisitDocNote extends StatelessWidget {
           initialValue: visitReviewData.patientNote,
           autocorrect: false,
           keyboardType: TextInputType.multiline,
-          style: TextStyle(color: Color.fromRGBO(80, 80, 80, 1)),
+          style: Theme.of(context).textTheme.bodyText2,
           decoration: InputDecoration(
             contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
             labelStyle: TextStyle(

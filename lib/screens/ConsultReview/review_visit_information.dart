@@ -12,6 +12,7 @@ import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard.dart';
 import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
+import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -40,6 +41,7 @@ class ReviewVisitInformation extends StatelessWidget {
     UserProvider userProvider =
         Provider.of<UserProvider>(context, listen: false);
     ScreenUtil.init(context);
+    ScrollController scrollController = ScrollController();
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
           type: AppBarType.Back,
@@ -77,42 +79,48 @@ class ReviewVisitInformation extends StatelessWidget {
               children: <Widget>[
                 Expanded(
                     flex: 1,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Text(
-                              'SCREENING QUESTIONS',
-                              style: TextStyle(
-                                fontSize: 16,
+                    child: Scrollbar(
+                      child: FadingEdgeScrollView.fromSingleChildScrollView(
+                        child: SingleChildScrollView(
+                          controller: scrollController,
+                          child: Column(
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Text(
+                                  'SCREENING QUESTIONS',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                  ),
+                                ),
                               ),
-                            ),
+                              SizedBox(height: 8),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
+                                child: ListItemsBuilder<Question>(
+                                  scrollable: false,
+                                  snapshot: null,
+                                  itemsList: snapshot.data != null
+                                      ? snapshot.data.screeningQuestions
+                                          .where((question) =>
+                                              question.type != Q_TYPE.PHOTO)
+                                          .toList()
+                                      : [],
+                                  emptyContentWidget: EmptyContent(
+                                    title: "No Questions",
+                                    message: "An error likely occurred.",
+                                  ),
+                                  itemBuilder: (context, question) =>
+                                      ScreeningQuestionListItem(
+                                    question: question,
+                                    onTap: null,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                          SizedBox(height: 8),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
-                            child: ListItemsBuilder<Question>(
-                              scrollable: false,
-                              snapshot: null,
-                              itemsList: snapshot.data != null
-                                  ? snapshot.data.screeningQuestions
-                                      .where((question) =>
-                                          question.type != Q_TYPE.PHOTO)
-                                      .toList()
-                                  : [],
-                              emptyContentWidget: EmptyContent(
-                                title: "No Questions",
-                                message: "An error likely occurred.",
-                              ),
-                              itemBuilder: (context, question) =>
-                                  ScreeningQuestionListItem(
-                                question: question,
-                                onTap: null,
-                              ),
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
                     )),
                 Container(

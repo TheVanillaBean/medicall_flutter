@@ -109,7 +109,9 @@ class _ZipCodeVerifyScreenState extends State<ZipCodeVerifyScreen> {
 
   List<Widget> _buildChildren() {
     return <Widget>[
-      SizedBox(),
+      SizedBox(
+        height: 60,
+      ),
       Column(
         children: <Widget>[
           Text(
@@ -117,10 +119,13 @@ class _ZipCodeVerifyScreenState extends State<ZipCodeVerifyScreen> {
             style: Theme.of(context).textTheme.headline5,
           ),
           SizedBox(
-            height: 10,
+            height: 20,
           ),
           buildZipCodeForm(),
         ],
+      ),
+      SizedBox(
+        height: 10,
       ),
       buildVerifyButton(),
     ];
@@ -138,8 +143,9 @@ class _ZipCodeVerifyScreenState extends State<ZipCodeVerifyScreen> {
             keyboardType: TextInputType.number,
             readOnly: false,
             decoration: InputDecoration(
+              counterText: "",
               filled: true,
-              fillColor: Colors.grey.withAlpha(50),
+              fillColor: Colors.grey.withAlpha(20),
               labelText: 'Zip Code',
               labelStyle: TextStyle(color: Colors.black45),
             ),

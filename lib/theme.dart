@@ -163,11 +163,15 @@ final ThemeData myTheme = ThemeData(
     bodyText1: TextStyle(
       color: Color(0xdd000000),
       fontWeight: FontWeight.w400,
+      height: 1.5,
+      fontSize: 14,
+      letterSpacing: 1.05,
       fontStyle: FontStyle.normal,
     ),
     bodyText2: TextStyle(
       color: Color(0xdd000000),
-      fontSize: null,
+      fontSize: 12,
+      height: 1.5,
       fontWeight: FontWeight.w400,
       fontStyle: FontStyle.normal,
     ),

@@ -33,16 +33,22 @@ class ProviderListItem extends StatelessWidget {
                   size: 40,
                   color: Colors.grey,
                 ),
-          title: Text(StringUtils.getFormattedProviderName(
-            firstName: provider.firstName,
-            lastName: provider.lastName,
-            titles: provider.titles,
-          )),
-          subtitle: Text(provider.address),
+          title: Text(
+            StringUtils.getFormattedProviderName(
+              firstName: provider.firstName,
+              lastName: provider.lastName,
+              titles: provider.titles,
+            ),
+            style: Theme.of(context).textTheme.bodyText1,
+          ),
+          subtitle: Text(
+            provider.address,
+            style: Theme.of(context).textTheme.caption,
+          ),
           trailing: Icon(
             Icons.chevron_right,
             color: Colors.grey,
-            size: 15.0,
+            size: 25.0,
           ),
           onTap: onTap,
         ),
