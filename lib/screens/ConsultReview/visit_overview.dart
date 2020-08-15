@@ -186,7 +186,7 @@ class VisitOverview extends StatelessWidget {
     } else if (consult.state == ConsultStatus.Completed) {
       return "Sign and Complete Visit";
     } else {
-      return "Visit Already Signed";
+      return "Signed";
     }
   }
 
