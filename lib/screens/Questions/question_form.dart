@@ -200,7 +200,7 @@ class _QuestionFormState extends State<QuestionForm> {
           keyboardType: TextInputType.multiline,
           maxLines: 30,
           onChanged: model.updateInput,
-          style: TextStyle(color: Color.fromRGBO(80, 80, 80, 1)),
+          style: Theme.of(context).textTheme.bodyText2,
           decoration: InputDecoration(
             labelStyle: TextStyle(
               color: Theme.of(context).colorScheme.onSurface,

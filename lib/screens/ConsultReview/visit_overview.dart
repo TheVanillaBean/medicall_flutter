@@ -156,7 +156,7 @@ class VisitOverview extends StatelessWidget {
   Function onContinueBtnPressed(
       BuildContext context, FirestoreDatabase db, Consult consult) {
     if (consult.state == ConsultStatus.PendingReview) {
-      return () => _showBeginReviewDialog(context, consult);
+      return () => navigateToVisitReviewScreen(context, db, consult);
     } else if (consult.state == ConsultStatus.InReview) {
       return () async => navigateToVisitReviewScreen(context, db, consult);
     } else if (consult.state == ConsultStatus.Completed) {
