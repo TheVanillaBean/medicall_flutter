@@ -39,9 +39,10 @@ class CustomDatePickerFormField extends StatelessWidget {
         ),
         child: TextFormField(
           inputFormatters: inputFormatters,
+          style: Theme.of(context).textTheme.bodyText1,
           decoration: InputDecoration(
             hintText: 'MM/DD/YYYY',
-            labelText: 'Dob',
+            labelText: 'Date of birth',
           ),
           keyboardType: TextInputType.datetime,
           validator: (val) => isValidDob(val) ? null : 'Not a valid date',
