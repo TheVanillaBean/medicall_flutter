@@ -156,7 +156,7 @@ final ThemeData myTheme = ThemeData(
     ),
     subtitle1: TextStyle(
       color: Color(0xdd000000),
-      fontSize: null,
+      fontSize: 10,
       fontWeight: FontWeight.w400,
       fontStyle: FontStyle.normal,
     ),

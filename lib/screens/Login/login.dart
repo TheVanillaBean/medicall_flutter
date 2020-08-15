@@ -156,7 +156,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 _buildHeader(context),
                 SizedBox(height: height * 0.09),
                 _buildEmailAuthForm(context),
-                SizedBox(height: 16.0),
+                SizedBox(height: height * 0.01),
                 Row(
                   children: <Widget>[
                     Expanded(
@@ -169,7 +169,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     )
                   ],
                 ),
-                SizedBox(height: 24),
+                SizedBox(height: height * 0.01),
                 SocialSignInButton(
                   context: context,
                   imgPath: "assets/images/google-logo.png",
@@ -179,7 +179,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   onPressed:
                       model.isLoading ? null : () => _signInWithGoogle(context),
                 ),
-                SizedBox(height: 12),
+                SizedBox(height: height * 0.01),
                 if (appleSignInAvailable.isAvailable) SizedBox(height: 12),
                 if (appleSignInAvailable.isAvailable)
                   AppleSignInButton(
@@ -189,13 +189,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         ? null
                         : () => _signInWithApple(context),
                   ),
-                SizedBox(height: 24),
+                SizedBox(height: height * 0.02),
                 ReusableRaisedButton(
                     title: "Reset Password",
                     outlined: true,
                     color: Theme.of(context).disabledColor.withAlpha(80),
                     onPressed: () => _navigateToResetPasswordScreen(context)),
-                SizedBox(height: 5),
+                SizedBox(height: height * 0.01),
                 ReusableRaisedButton(
                     title: "First time here?",
                     outlined: true,

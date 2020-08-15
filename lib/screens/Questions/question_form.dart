@@ -138,6 +138,7 @@ class _QuestionFormState extends State<QuestionForm> {
             checkedItemList: model.selectedOptionsList,
             orientation: CheckboxOrientation.VERTICAL,
             checkColor: Colors.white,
+            textStyle: Theme.of(context).textTheme.bodyText1,
             activeColor: Theme.of(context).colorScheme.primary,
             onChanged: model.checkedItemsChanged,
           ),

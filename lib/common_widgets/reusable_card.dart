@@ -25,13 +25,14 @@ class ReusableCard extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: ListTile(
         isThreeLine: false,
-        contentPadding: EdgeInsets.fromLTRB(20, 5, 20, 5),
+        contentPadding: EdgeInsets.fromLTRB(15, 5, 15, 5),
         dense: true,
         leading: leading,
         title: title,
         subtitle: Text(
           subtitle,
-          style: Theme.of(context).textTheme.subtitle2,
+          overflow: TextOverflow.ellipsis,
+          style: Theme.of(context).textTheme.subtitle1,
         ),
         trailing: trailing,
         onTap: onTap,

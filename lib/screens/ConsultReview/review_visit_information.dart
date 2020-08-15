@@ -85,15 +85,6 @@ class ReviewVisitInformation extends StatelessWidget {
                           controller: scrollController,
                           child: Column(
                             children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Text(
-                                  'SCREENING QUESTIONS',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ),
                               SizedBox(height: 8),
                               Padding(
                                 padding:
