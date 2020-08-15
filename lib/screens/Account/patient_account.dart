@@ -207,7 +207,7 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
                     this.profileImageURL,
                     height: (height * 0.2),
                     width: (height * 0.2),
-                    fit: BoxFit.fill,
+                    fit: BoxFit.cover,
                     cache: true,
                   )
                 : Icon(
