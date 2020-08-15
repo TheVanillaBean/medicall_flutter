@@ -24,6 +24,9 @@ class _PersonalInfoFormState extends State<PersonalInfoForm>
   MaskTextInputFormatter phoneTextInputFormatter = MaskTextInputFormatter(
       mask: "(###)###-####", filter: {"#": RegExp(r'[0-9]')});
 
+  MaskTextInputFormatter dobTextInputFormatter = MaskTextInputFormatter(
+      mask: "##/##/####", filter: {"#": RegExp(r'[0-9]')});
+
   Future<void> _submit(
     PersonalInfoViewModel model,
     ExtendedImageProvider extendedImageProvider,
@@ -68,6 +71,7 @@ class _PersonalInfoFormState extends State<PersonalInfoForm>
             onChanged: model.updatePhoneNumber,
           ),
           CustomDatePickerFormField(
+            inputFormatters: [dobTextInputFormatter],
             labelText: 'Date of Birth',
             hint: 'mm/dd/yyyy',
             keyboardType: TextInputType.datetime,

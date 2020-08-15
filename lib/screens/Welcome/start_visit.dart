@@ -37,10 +37,7 @@ class StartVisitScreen extends StatelessWidget {
           type: AppBarType.Back,
           title: "Visit Questions",
           theme: Theme.of(context),
-          onPressed: () => PatientDashboardScreen.show(
-                context: context,
-                pushReplaceNamed: true,
-              ),
+          onPressed: () => Navigator.of(context).pop(false),
           actions: [
             IconButton(
                 icon: Icon(
@@ -55,7 +52,7 @@ class StartVisitScreen extends StatelessWidget {
                 })
           ]),
       body: Container(
-        padding: EdgeInsets.fromLTRB(40, 0, 40, 15),
+        padding: EdgeInsets.fromLTRB(30, 0, 30, 15),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
@@ -82,16 +79,19 @@ class StartVisitScreen extends StatelessWidget {
                 )),
             if ((userProvider.user as PatientUser).hasMedicalHistory)
               Expanded(
-                flex: 2,
+                flex: 1,
                 child: FormBuilder(
                     key: formKey,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         FormBuilderCheckbox(
+                          activeColor: Theme.of(context).colorScheme.primary,
                           attribute: 'medical_history',
                           label: Text(
-                              'I have no recent changes in my medical history since last using Medicall'),
+                            'I have no recent changes in my medical history since last using Medicall',
+                            style: Theme.of(context).textTheme.bodyText1,
+                          ),
                           initialValue: false,
                         )
                       ],
@@ -101,7 +101,7 @@ class StartVisitScreen extends StatelessWidget {
               child: Align(
                 alignment: FractionalOffset.bottomCenter,
                 child: ReusableRaisedButton(
-                  title: 'Start Visit',
+                  title: 'Start Questions',
                   onPressed: () async {
                     if (!(userProvider.user as PatientUser).hasMedicalHistory) {
                       QuestionsScreen.show(

@@ -31,8 +31,7 @@ class WelcomeScreen extends StatelessWidget {
   List<Widget> buildChildren(BuildContext context) {
     return <Widget>[
       Container(
-        margin: EdgeInsets.only(top: 40),
-        height: 60,
+        margin: EdgeInsets.only(top: 30),
         child: Column(
           children: <Widget>[
             SizedBox(

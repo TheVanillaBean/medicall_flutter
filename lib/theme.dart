@@ -165,7 +165,7 @@ final ThemeData myTheme = ThemeData(
       fontWeight: FontWeight.w400,
       height: 1.5,
       fontSize: 14,
-      letterSpacing: 1.05,
+      letterSpacing: 0.7,
       fontStyle: FontStyle.normal,
     ),
     bodyText2: TextStyle(
