@@ -1,6 +1,7 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/list_items_builder.dart';
 import 'package:Medicall/models/user_model_base.dart';
+import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Account/payment_list_item.dart';
 import 'package:Medicall/screens/Account/payment_list_view_model.dart';
 import 'package:Medicall/services/database.dart';
@@ -11,19 +12,21 @@ import 'package:provider/provider.dart';
 import 'package:stripe_payment/stripe_payment.dart';
 
 class PaymentDetail extends StatelessWidget {
+  final dynamic paymentModel; //from consult or prescription payment
   final PaymentDetailViewModel model;
   final FirestoreDatabase firestoreDatabase;
   final User medicallUser;
   final StripeProvider stripeProvider;
 
   const PaymentDetail({
+    @required this.paymentModel,
     @required this.model,
     @required this.firestoreDatabase,
     @required this.medicallUser,
     @required this.stripeProvider,
   });
 
-  static Widget create(BuildContext context) {
+  static Widget create(BuildContext context, dynamic paymentModel) {
     FirestoreDatabase _db = Provider.of<FirestoreDatabase>(context);
     StripeProvider _stripeProvider = Provider.of<StripeProviderBase>(context);
     User _medicallUser = Provider.of<UserProvider>(context).user;
@@ -34,12 +37,26 @@ class PaymentDetail extends StatelessWidget {
       ),
       child: Consumer<PaymentDetailViewModel>(
         builder: (_, model, __) => PaymentDetail(
+          paymentModel: paymentModel,
           model: model,
           firestoreDatabase: _db,
           stripeProvider: _stripeProvider,
           medicallUser: _medicallUser,
         ),
       ),
+    );
+  }
+
+  //dynamic so this widget can be reused
+  static Future<void> show({
+    BuildContext context,
+    dynamic paymentModel,
+  }) async {
+    await Navigator.of(context).pushNamed(
+      Routes.paymentDetail,
+      arguments: {
+        'model': paymentModel,
+      },
     );
   }
 
@@ -93,6 +110,14 @@ class PaymentDetail extends StatelessWidget {
                   onDismissed: () => {
                     print("Card deleted"),
                   },
+                  onPressed: this.paymentModel != null
+                      ? () {
+                          this
+                              .paymentModel
+                              .updateWith(paymentMethod: paymentMethod);
+                          Navigator.of(context).pop();
+                        }
+                      : null,
                 ),
               ),
             );

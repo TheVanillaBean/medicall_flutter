@@ -48,6 +48,7 @@ import 'package:Medicall/screens/StripeConnect/index.dart';
 import 'package:Medicall/screens/Symptoms/symptom_detail.dart';
 import 'package:Medicall/screens/Symptoms/symptoms.dart';
 import 'package:Medicall/screens/Terms/index.dart';
+import 'package:Medicall/screens/VisitDetails/card_select.dart';
 import 'package:Medicall/screens/VisitDetails/prescription_checkout.dart';
 import 'package:Medicall/screens/VisitDetails/visit_details_overview.dart';
 import 'package:Medicall/screens/VisitDetails/visit_doc_note.dart';
@@ -109,6 +110,7 @@ class Routes {
   static const viewMedicalHistory = '/view-medical-history';
   static const chatScreen = '/chat-screen';
   static const prescriptionCheckout = '/prescription-checkout';
+  static const cardSelect = '/card-select';
 }
 
 class Router {
@@ -201,6 +203,14 @@ class Router {
       case Routes.viewMedicalHistory:
         return MaterialPageRoute<dynamic>(
           builder: (context) => ViewMedicalHistory(),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case Routes.cardSelect:
+        final Map<String, dynamic> mapArgs = args;
+        final dynamic model = mapArgs['model'];
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => CardSelect(model: model),
           settings: settings,
           fullscreenDialog: true,
         );
@@ -534,9 +544,11 @@ class Router {
           fullscreenDialog: true,
         );
 
-      case '/paymentDetail':
+      case Routes.paymentDetail:
+        final Map<String, dynamic> mapArgs = args;
+        final dynamic model = mapArgs['model'];
         return MaterialPageRoute<dynamic>(
-          builder: (context) => PaymentDetail.create(context),
+          builder: (context) => PaymentDetail.create(context, model),
           settings: settings,
           fullscreenDialog: true,
         );

@@ -59,6 +59,7 @@ class PaymentListItem extends StatelessWidget {
               title: Text(paymentMethod.card.brand.toUpperCase() +
                   ' **** ' +
                   paymentMethod.card.last4),
+              onTap: onPressed,
             ),
           ),
         ),

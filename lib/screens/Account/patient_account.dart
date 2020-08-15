@@ -3,6 +3,7 @@ import 'package:Medicall/components/drawer_menu.dart';
 import 'package:Medicall/models/patient_user_model.dart';
 import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/Account/payment_detail.dart';
 import 'package:Medicall/screens/Account/view_medical_history.dart';
 import 'package:Medicall/screens/Questions/tempLinksPage.dart';
 import 'package:Medicall/services/database.dart';
@@ -161,7 +162,7 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
       leading: 'Payment Cards',
       title: '',
       onTap: () {
-        Navigator.of(context).pushNamed('/paymentDetail');
+        PaymentDetail.show(context: context, paymentModel: null);
       },
     );
   }

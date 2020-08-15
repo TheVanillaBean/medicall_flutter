@@ -2,6 +2,7 @@ import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/custom_dropdown_formfield.dart';
 import 'package:Medicall/models/consult-review/treatment_options.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/Account/payment_detail.dart';
 import 'package:Medicall/screens/VisitDetails/prescription_checkout_view_model.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/stripe_provider.dart';
@@ -191,7 +192,7 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
         ListTile(
           contentPadding: EdgeInsets.only(
             left: width * 0.25,
-            right: width * 0.1,
+            right: width * 0.05,
           ),
           dense: false,
           leading: ClipRRect(
@@ -205,7 +206,13 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
               this.model.selectedPaymentMethod.card.brand.toUpperCase() +
                   ' **** ' +
                   this.model.selectedPaymentMethod.card.last4),
-          trailing: Icon(Icons.edit),
+          trailing: IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: () => PaymentDetail.show(
+              context: context,
+              paymentModel: this.model,
+            ),
+          ),
         ),
       ],
     );

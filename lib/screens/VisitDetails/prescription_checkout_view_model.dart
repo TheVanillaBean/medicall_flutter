@@ -152,6 +152,7 @@ class PrescriptionCheckoutViewModel
     String city,
     String state,
     String zipCode,
+    PaymentMethod paymentMethod,
     bool useAccountAddress,
     bool isLoading,
     bool refreshCards,
@@ -163,6 +164,7 @@ class PrescriptionCheckoutViewModel
     this.useAccountAddress = useAccountAddress ?? this.useAccountAddress;
     this.isLoading = isLoading ?? this.isLoading;
     this.refreshCards = refreshCards ?? this.refreshCards;
+    this.selectedPaymentMethod = paymentMethod ?? this.selectedPaymentMethod;
     notifyListeners();
   }
 }
