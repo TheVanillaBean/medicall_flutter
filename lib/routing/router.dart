@@ -48,6 +48,7 @@ import 'package:Medicall/screens/StripeConnect/index.dart';
 import 'package:Medicall/screens/Symptoms/symptom_detail.dart';
 import 'package:Medicall/screens/Symptoms/symptoms.dart';
 import 'package:Medicall/screens/Terms/index.dart';
+import 'package:Medicall/screens/VisitDetails/prescription_checkout.dart';
 import 'package:Medicall/screens/VisitDetails/visit_details_overview.dart';
 import 'package:Medicall/screens/VisitDetails/visit_doc_note.dart';
 import 'package:Medicall/screens/VisitDetails/visit_education.dart';
@@ -107,6 +108,7 @@ class Routes {
   static const providerVisits = '/provider-visits';
   static const viewMedicalHistory = '/view-medical-history';
   static const chatScreen = '/chat-screen';
+  static const prescriptionCheckout = '/prescription-checkout';
 }
 
 class Router {
@@ -161,6 +163,21 @@ class Router {
             consult,
             consultReviewOptions,
             visitReviewData,
+          ),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case Routes.prescriptionCheckout:
+        final Map<String, dynamic> mapArgs = args;
+        final List<TreatmentOptions> treatmentOptions =
+            mapArgs['treatmentOptions'];
+        final String consultId = mapArgs['consultId'];
+
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => PrescriptionCheckout.create(
+            context,
+            consultId,
+            treatmentOptions,
           ),
           settings: settings,
           fullscreenDialog: true,

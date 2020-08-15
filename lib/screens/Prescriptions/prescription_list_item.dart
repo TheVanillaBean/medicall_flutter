@@ -87,11 +87,6 @@ class PrescriptionListItem extends StatelessWidget {
               ),
             ],
           ),
-          trailing: Icon(
-            Icons.chevron_right,
-            color: Colors.grey,
-            size: 15.0,
-          ),
           onTap: null,
         ),
       ),

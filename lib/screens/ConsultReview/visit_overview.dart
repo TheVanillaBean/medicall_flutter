@@ -2,6 +2,7 @@ import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
 import 'package:Medicall/common_widgets/sign_in_button.dart';
 import 'package:Medicall/models/consult-review/consult_review_options_model.dart';
+import 'package:Medicall/models/consult-review/treatment_options.dart';
 import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/patient_user_model.dart';
@@ -244,6 +245,10 @@ class VisitOverview extends StatelessWidget {
       await db.saveConsult(consultId: consult.uid, consult: consult);
       VisitReviewData visitReviewData =
           await db.visitReviewStream(consultId: consult.uid).first;
+      for (TreatmentOptions treatmentOptions
+          in visitReviewData.treatmentOptions) {
+        treatmentOptions.status = TreatmentStatus.PendingPayment;
+      }
       await db.savePrescriptions(
           consultId: consult.uid,
           treatmentOptions: visitReviewData.treatmentOptions);
