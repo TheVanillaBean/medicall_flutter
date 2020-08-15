@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:Medicall/models/consult-review/treatment_options.dart';
 import 'package:Medicall/services/database.dart';
+import 'package:Medicall/services/stripe_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/validators.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,6 +12,7 @@ class PrescriptionCheckoutViewModel
     with PrescriptionCheckoutValidator, ChangeNotifier {
   final UserProvider userProvider;
   final FirestoreDatabase firestoreDatabase;
+  final StripeProvider stripeProvider;
 
   String consultId;
   List<TreatmentOptions> treatmentOptions = [];
@@ -18,19 +22,23 @@ class PrescriptionCheckoutViewModel
   String zipCode;
   bool useAccountAddress;
   PaymentMethod selectedPaymentMethod;
+  List<PaymentMethod> paymentMethods;
   bool isLoading;
+  bool refreshCards;
 
   PrescriptionCheckoutViewModel({
     @required this.userProvider,
     @required this.firestoreDatabase,
     @required this.treatmentOptions,
     @required this.consultId,
+    @required this.stripeProvider,
     this.shippingAddress = "",
     this.city = "",
     this.state = "",
     this.zipCode = "",
     this.useAccountAddress = true,
     this.isLoading = false,
+    this.refreshCards = true,
   });
 
   final List<String> states = const <String>[
@@ -125,6 +133,20 @@ class PrescriptionCheckoutViewModel
 
   Future<void> submit() {}
 
+  Future<void> retrieveCards() async {
+    if (this.refreshCards) {
+      String uid = this.userProvider.user.uid;
+      this.paymentMethods =
+          await this.firestoreDatabase.getUserCardSources(uid);
+      this.selectedPaymentMethod = this.paymentMethods.first;
+      updateWith(refreshCards: false);
+    }
+  }
+
+  bool get userHasCards {
+    return this.paymentMethods != null && this.paymentMethods.length > 0;
+  }
+
   void updateWith({
     String shippingAddress,
     String city,
@@ -132,6 +154,7 @@ class PrescriptionCheckoutViewModel
     String zipCode,
     bool useAccountAddress,
     bool isLoading,
+    bool refreshCards,
   }) {
     this.shippingAddress = shippingAddress ?? this.shippingAddress;
     this.city = city ?? this.city;
@@ -139,6 +162,7 @@ class PrescriptionCheckoutViewModel
     this.zipCode = zipCode ?? this.zipCode;
     this.useAccountAddress = useAccountAddress ?? this.useAccountAddress;
     this.isLoading = isLoading ?? this.isLoading;
+    this.refreshCards = refreshCards ?? this.refreshCards;
     notifyListeners();
   }
 }

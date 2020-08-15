@@ -4,12 +4,14 @@ import 'package:Medicall/models/consult-review/treatment_options.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/VisitDetails/prescription_checkout_view_model.dart';
 import 'package:Medicall/services/database.dart';
+import 'package:Medicall/services/stripe_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:grouped_buttons/grouped_buttons.dart';
 import 'package:provider/provider.dart';
+import 'package:stripe_payment/stripe_payment.dart';
 
 class PrescriptionCheckout extends StatefulWidget {
   final PrescriptionCheckoutViewModel model;
@@ -24,12 +26,14 @@ class PrescriptionCheckout extends StatefulWidget {
     final UserProvider userProvider = Provider.of<UserProvider>(context);
     final FirestoreDatabase firestoreDatabase =
         Provider.of<FirestoreDatabase>(context);
+    StripeProvider stripeProvider = Provider.of<StripeProviderBase>(context);
     return ChangeNotifierProvider<PrescriptionCheckoutViewModel>(
       create: (context) => PrescriptionCheckoutViewModel(
         firestoreDatabase: firestoreDatabase,
         userProvider: userProvider,
         consultId: consultId,
         treatmentOptions: treatmentOptions,
+        stripeProvider: stripeProvider,
       ),
       child: Consumer<PrescriptionCheckoutViewModel>(
         builder: (_, model, __) => PrescriptionCheckout(
@@ -90,8 +94,23 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
     }
   }
 
+  void addCard({StripeProvider stripeProvider}) async {
+    this.model.updateWith(isLoading: true);
+    PaymentIntent setupIntent = await stripeProvider.addSource();
+    this.model.updateWith(isLoading: false);
+
+    bool successfullyAddedCard =
+        await stripeProvider.addCard(setupIntent: setupIntent);
+    if (successfullyAddedCard) {
+      this.model.updateWith(isLoading: true, refreshCards: true);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (this.model.refreshCards) {
+      this.model.retrieveCards();
+    }
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
         type: AppBarType.Back,
@@ -110,6 +129,11 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
               hasScrollBody: false,
               child: Column(
                 children: [
+                  if (model.isLoading)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      child: CircularProgressIndicator(),
+                    ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 30),
                     child: Text(
@@ -123,44 +147,128 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
                   _buildPriceBreakdown(),
                   _buildAddressCheckbox(),
                   if (!model.useAccountAddress) _buildAddressInputFields(),
+                  SizedBox(height: 24),
+                  _buildPaymentDetail(),
                   SizedBox(height: 12),
-                  Expanded(
-                    child: Align(
-                      alignment: FractionalOffset.bottomCenter,
-                      child: Container(
-                        height: 75.0,
-                        width: MediaQuery.of(context).size.width,
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primary,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black26,
-                              offset: Offset(0, -1),
-                              blurRadius: 6.0,
-                            ),
-                          ],
-                        ),
-                        child: Center(
-                          child: FlatButton(
-                            child: Text(
-                              'Checkout',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.w400,
-                                letterSpacing: 2.0,
-                              ),
-                            ),
-                            onPressed: () => {},
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                  _buildCheckoutButton(context),
                 ],
               ),
             )
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPaymentDetail() {
+    if (this.model.selectedPaymentMethod == null) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        child: CircularProgressIndicator(),
+      );
+    }
+    if (this.model.userHasCards) {
+      return _buildCardItem();
+    }
+    return _buildAddCardBtn();
+  }
+
+  Widget _buildCardItem() {
+    double width = MediaQuery.of(context).size.width;
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            "Select a payment method. Your default is already select.",
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.subtitle1,
+          ),
+        ),
+        SizedBox(
+          height: 8,
+        ),
+        ListTile(
+          contentPadding: EdgeInsets.only(
+            left: width * 0.25,
+            right: width * 0.1,
+          ),
+          dense: false,
+          leading: ClipRRect(
+            borderRadius: BorderRadius.all(Radius.circular(6.0)),
+            child: Image.asset(
+              'assets/icon/cards/${this.model.selectedPaymentMethod.card.brand}.png',
+              height: 32.0,
+            ),
+          ),
+          title: Text(
+              this.model.selectedPaymentMethod.card.brand.toUpperCase() +
+                  ' **** ' +
+                  this.model.selectedPaymentMethod.card.last4),
+          trailing: Icon(Icons.edit),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAddCardBtn() {
+    return FlatButton(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Icon(
+            Icons.add,
+            color: Colors.black,
+          ),
+          SizedBox(
+            width: 8,
+          ),
+          Text(
+            'Add Card',
+            style: TextStyle(
+              fontSize: 12.0,
+              color: Colors.black,
+            ),
+          ),
+        ],
+      ),
+      onPressed: model.isLoading
+          ? null
+          : () => addCard(stripeProvider: model.stripeProvider),
+    );
+  }
+
+  Widget _buildCheckoutButton(BuildContext context) {
+    return Expanded(
+      child: Align(
+        alignment: FractionalOffset.bottomCenter,
+        child: Container(
+          height: 75.0,
+          width: MediaQuery.of(context).size.width,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primary,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                offset: Offset(0, -1),
+                blurRadius: 6.0,
+              ),
+            ],
+          ),
+          child: Center(
+            child: FlatButton(
+              child: Text(
+                'Checkout',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.w400,
+                  letterSpacing: 2.0,
+                ),
+              ),
+              onPressed: () => {},
+            ),
+          ),
         ),
       ),
     );
