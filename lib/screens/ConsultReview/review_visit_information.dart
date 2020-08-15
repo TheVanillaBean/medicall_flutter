@@ -1,6 +1,9 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/empty_content.dart';
 import 'package:Medicall/common_widgets/list_items_builder.dart';
+import 'package:Medicall/common_widgets/reusable_card.dart';
+import 'package:Medicall/models/consult-review/consult_review_options_model.dart';
+import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/question_model.dart';
 import 'package:Medicall/models/screening_questions_model.dart';
@@ -8,6 +11,7 @@ import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/ConsultReview/consult_photos.dart';
 import 'package:Medicall/screens/ConsultReview/screening_question_list_item.dart';
+import 'package:Medicall/screens/ConsultReview/visit_review.dart';
 import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard.dart';
 import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
 import 'package:Medicall/services/database.dart';
@@ -114,47 +118,95 @@ class ReviewVisitInformation extends StatelessWidget {
                         ),
                       ),
                     )),
+                // Container(
+                //   child: Row(
+                //     children: [
+                //       ReusableCard(
+                //         trailing: Icon(
+                //           Icons.chevron_right,
+                //           color: Colors.grey,
+                //         ),
+                //         title: Text(
+                //           "PHOTOS",
+                //           style: Theme.of(context).textTheme.headline6,
+                //         ),
+                //         onTap: () => {
+                //           ConsultPhotos.show(
+                //             context: context,
+                //             consult: consult,
+                //           )
+                //         },
+                //       ),
+                //       ReusableCard(
+                //         title: Text("START REVIEW"),
+                //       )
+                //     ],
+                //   ),
+                // ),
                 Container(
-                  height: 85,
-                  color: Colors.transparent,
-                  padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
-                  child: Card(
-                    elevation: 3,
-                    shadowColor: Colors.grey.withAlpha(120),
-                    borderOnForeground: false,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                    clipBehavior: Clip.antiAlias,
-                    child: ListTile(
-                      contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-                      dense: true,
-                      leading: Icon(
-                        Icons.photo_album,
-                        size: 25,
-                        color: Colors.grey,
-                      ),
-                      title: Text(
-                        "VIEW PHOTOS",
-                        style: Theme.of(context).textTheme.headline6,
-                      ),
-                      trailing: Icon(
-                        Icons.chevron_right,
-                        color: Colors.grey,
-                      ),
-                      onTap: () => {
-                        ConsultPhotos.show(
-                          context: context,
-                          consult: consult,
+                    height: 85,
+                    color: Colors.transparent,
+                    padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: ReusableCard(
+                            trailing: Icon(
+                              Icons.chevron_right,
+                              color: Colors.grey,
+                            ),
+                            title: Text(
+                              "PHOTOS",
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.headline6,
+                            ),
+                            onTap: () => {
+                              ConsultPhotos.show(
+                                context: context,
+                                consult: consult,
+                              )
+                            },
+                          ),
+                        ),
+                        Expanded(
+                          child: ReusableCard(
+                            trailing: Icon(
+                              Icons.chevron_right,
+                              color: Colors.grey,
+                            ),
+                            title: Text(
+                              "REVIEW",
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.headline6,
+                            ),
+                            onTap: () => navigateToVisitReviewScreen(
+                                context, db, consult),
+                          ),
                         )
-                      },
-                    ),
-                  ),
-                ),
+                      ],
+                    )),
               ],
             ),
           );
         },
       ),
+    );
+  }
+
+  Future<void> navigateToVisitReviewScreen(
+      BuildContext context, FirestoreDatabase db, Consult consult) async {
+    ConsultReviewOptions options =
+        await db.consultReviewOptions(symptomName: "Hairloss");
+    VisitReviewData visitReviewData =
+        await db.visitReviewStream(consultId: consult.uid).first;
+    if (visitReviewData == null) {
+      visitReviewData = VisitReviewData();
+    }
+    return VisitReview.show(
+      context: context,
+      consult: consult,
+      consultReviewOptions: options,
+      visitReviewData: visitReviewData,
     );
   }
 }

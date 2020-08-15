@@ -55,7 +55,7 @@ final ThemeData myTheme = ThemeData(
   unselectedWidgetColor: Color(0x8a000000),
   disabledColor: Color(0x61000000),
   buttonColor: primaryColor,
-  toggleableActiveColor: Color(0xff1e88e5),
+  toggleableActiveColor: primaryColor,
   secondaryHeaderColor: Color(0xffe3f2fd),
   textSelectionColor: Color(0xffefefef),
   cursorColor: Color(0xffA54969),

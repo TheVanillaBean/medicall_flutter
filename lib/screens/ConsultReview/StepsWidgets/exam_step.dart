@@ -116,7 +116,7 @@ class _ExamStepState extends State<ExamStep> {
           keyboardType: TextInputType.text,
           onChanged: (String text) =>
               model.updateExamStepWith(locationMap: {examOption: text}),
-          style: TextStyle(color: Color.fromRGBO(80, 80, 80, 1)),
+          style: Theme.of(context).textTheme.bodyText2,
           decoration: InputDecoration(
             labelStyle: TextStyle(
               color: Theme.of(context).colorScheme.onSurface.withAlpha(90),
