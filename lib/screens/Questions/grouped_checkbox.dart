@@ -4,6 +4,8 @@ Date: 07/12/19
 Copyright: © 2019, Nadia Ferdoush. All rights reserved.
 */
 
+import 'package:apple_sign_in/apple_sign_in.dart';
+import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 
 enum CheckboxOrientation { HORIZONTAL, VERTICAL, WRAP }
@@ -215,9 +217,10 @@ class GroupedCheckbox extends StatefulWidget {
 
 class _GroupedCheckboxState extends State<GroupedCheckbox> {
   List<String> selectedListItems = List<String>();
-
+  ScrollController scrollController;
   @override
   Widget build(BuildContext context) {
+    scrollController = ScrollController();
     Widget finalWidget = generateItems();
     return finalWidget;
   }
@@ -236,26 +239,43 @@ class _GroupedCheckboxState extends State<GroupedCheckbox> {
       for (final item in widgetList) {
         content.add(item);
       }
-      finalWidget = SingleChildScrollView(
-          scrollDirection: Axis.vertical, child: Column(children: content));
+      finalWidget = Scrollbar(
+        child: FadingEdgeScrollView.fromSingleChildScrollView(
+          child: SingleChildScrollView(
+              controller: scrollController,
+              scrollDirection: Axis.vertical,
+              child: Column(children: content)),
+        ),
+      );
     } else if (widget.orientation == CheckboxOrientation.HORIZONTAL) {
       for (final item in widgetList) {
         content.add(Column(children: <Widget>[item]));
       }
-      finalWidget = SingleChildScrollView(
-          scrollDirection: Axis.horizontal, child: Row(children: content));
+      finalWidget = Scrollbar(
+        child: FadingEdgeScrollView.fromSingleChildScrollView(
+          child: SingleChildScrollView(
+              controller: scrollController,
+              scrollDirection: Axis.horizontal,
+              child: Row(children: content)),
+        ),
+      );
     } else {
-      finalWidget = SingleChildScrollView(
-        child: Wrap(
-            children: widgetList,
-            spacing: widget.wrapSpacing,
-            runSpacing: widget.wrapRunSpacing,
-            textDirection: widget.wrapTextDirection,
-            crossAxisAlignment: widget.wrapCrossAxisAlignment,
-            verticalDirection: widget.wrapVerticalDirection,
-            alignment: widget.wrapAlignment,
-            direction: Axis.horizontal,
-            runAlignment: widget.wrapRunAlignment),
+      finalWidget = Scrollbar(
+        child: FadingEdgeScrollView.fromSingleChildScrollView(
+          child: SingleChildScrollView(
+            controller: scrollController,
+            child: Wrap(
+                children: widgetList,
+                spacing: widget.wrapSpacing,
+                runSpacing: widget.wrapRunSpacing,
+                textDirection: widget.wrapTextDirection,
+                crossAxisAlignment: widget.wrapCrossAxisAlignment,
+                verticalDirection: widget.wrapVerticalDirection,
+                alignment: widget.wrapAlignment,
+                direction: Axis.horizontal,
+                runAlignment: widget.wrapRunAlignment),
+          ),
+        ),
       );
     }
     return finalWidget;

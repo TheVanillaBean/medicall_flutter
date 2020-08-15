@@ -203,39 +203,37 @@ class NavigationButtons extends StatelessWidget {
   }
 
   Widget _buildNavigationButtons(QuestionsViewModel model) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            flex: 1,
-            child: Align(
-              alignment: FractionalOffset.bottomCenter,
-              child: IconButton(
-                  icon: Icon(Icons.arrow_back_ios),
-                  disabledColor: Colors.black12,
-                  onPressed: model.canAccessPrevious
-                      ? () => model.previousPage()
-                      : null),
-            ),
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Expanded(
+          flex: 1,
+          child: Align(
+            alignment: FractionalOffset.center,
+            child: IconButton(
+                icon: Icon(Icons.arrow_back_ios),
+                disabledColor: Colors.black12,
+                onPressed: model.canAccessPrevious
+                    ? () => model.previousPage()
+                    : null),
           ),
-          Expanded(
-              flex: 5,
-              child: Align(
-                  alignment: Alignment.center, child: AnimatedProgressbar())),
-          Expanded(
-            flex: 1,
+        ),
+        Expanded(
+            flex: 5,
             child: Align(
-              alignment: FractionalOffset.bottomCenter,
-              child: IconButton(
-                  icon: Icon(Icons.arrow_forward_ios),
-                  disabledColor: Colors.black12,
-                  onPressed:
-                      model.canAccessNext ? () => model.nextPage() : null),
-            ),
+                alignment: Alignment.center, child: AnimatedProgressbar())),
+        Expanded(
+          flex: 1,
+          child: Align(
+            alignment: FractionalOffset.center,
+            child: IconButton(
+                icon: Icon(Icons.arrow_forward_ios),
+                disabledColor: Colors.black12,
+                onPressed: model.canAccessNext ? () => model.nextPage() : null),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
