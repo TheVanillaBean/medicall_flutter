@@ -13,6 +13,7 @@ class CustomDropdownFormField extends StatelessWidget {
     this.obscureText,
     this.items,
     this.selectedItem,
+    this.addPadding = true,
   });
   final ValueChanged<String> onChanged;
   final String labelText;
@@ -25,14 +26,17 @@ class CustomDropdownFormField extends StatelessWidget {
   final TextEditingController controller;
   final List<String> items;
   final String selectedItem;
+  final bool addPadding;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(
-        left: 30,
-        right: 30,
-      ),
+      padding: this.addPadding
+          ? EdgeInsets.only(
+              left: 30,
+              right: 30,
+            )
+          : null,
       child: FormField(
         builder: (FormFieldState state) {
           return InputDecorator(

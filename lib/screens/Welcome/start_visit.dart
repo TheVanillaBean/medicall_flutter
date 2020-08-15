@@ -84,18 +84,19 @@ class StartVisitScreen extends StatelessWidget {
               Expanded(
                 flex: 2,
                 child: FormBuilder(
-                    key: formKey,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        FormBuilderCheckbox(
-                          attribute: 'medical_history',
-                          label: Text(
-                              'I have no recent changes in my medical history since last using Medicall'),
-                          initialValue: false,
-                        )
-                      ],
-                    )),
+                  key: formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      FormBuilderCheckbox(
+                        attribute: 'medical_history',
+                        label: Text(
+                            'I have no recent changes in my medical history since last using Medicall'),
+                        initialValue: false,
+                      )
+                    ],
+                  ),
+                ),
               ),
             Expanded(
               child: Align(
