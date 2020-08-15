@@ -16,6 +16,7 @@ class PrescriptionCheckoutViewModel
   String city;
   String state;
   String zipCode;
+  bool useAccountAddress;
   PaymentMethod selectedPaymentMethod;
   bool isLoading;
 
@@ -28,6 +29,7 @@ class PrescriptionCheckoutViewModel
     this.city = "",
     this.state = "",
     this.zipCode = "",
+    this.useAccountAddress = true,
     this.isLoading = false,
   });
 
@@ -118,6 +120,9 @@ class PrescriptionCheckoutViewModel
 
   void updateZipCode(String zipCode) => updateWith(zipCode: zipCode);
 
+  void updateUseAccountAddressToggle(bool useAccountAddress) =>
+      updateWith(useAccountAddress: useAccountAddress);
+
   Future<void> submit() {}
 
   void updateWith({
@@ -125,12 +130,14 @@ class PrescriptionCheckoutViewModel
     String city,
     String state,
     String zipCode,
+    bool useAccountAddress,
     bool isLoading,
   }) {
     this.shippingAddress = shippingAddress ?? this.shippingAddress;
     this.city = city ?? this.city;
     this.state = state ?? this.state;
     this.zipCode = zipCode ?? this.zipCode;
+    this.useAccountAddress = useAccountAddress ?? this.useAccountAddress;
     this.isLoading = isLoading ?? this.isLoading;
     notifyListeners();
   }

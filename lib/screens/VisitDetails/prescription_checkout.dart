@@ -117,78 +117,45 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
                       style: Theme.of(context).textTheme.subtitle1,
                     ),
                   ),
-                  SizedBox(
-                    height: 12,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 30),
-                    child: CheckboxGroup(
-                      labels: ["Finasteride", "Minoxidil 5%", "Biotin"],
-                      itemBuilder: (Checkbox cb, Text txt, int i) {
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    txt.data,
-                                    maxLines: 1,
-                                    style:
-                                        Theme.of(context).textTheme.headline6,
-                                  ),
-                                  Text(
-                                    "\$29",
-                                    maxLines: 1,
-                                    style:
-                                        Theme.of(context).textTheme.bodyText1,
-                                  ),
-                                ],
+                  SizedBox(height: 12),
+                  _buildShoppingCart(),
+                  SizedBox(height: 12),
+                  _buildPriceBreakdown(),
+                  _buildAddressCheckbox(),
+                  if (!model.useAccountAddress) _buildAddressInputFields(),
+                  SizedBox(height: 12),
+                  Expanded(
+                    child: Align(
+                      alignment: FractionalOffset.bottomCenter,
+                      child: Container(
+                        height: 75.0,
+                        width: MediaQuery.of(context).size.width,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primary,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black26,
+                              offset: Offset(0, -1),
+                              blurRadius: 6.0,
+                            ),
+                          ],
+                        ),
+                        child: Center(
+                          child: FlatButton(
+                            child: Text(
+                              'Checkout',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.w400,
+                                letterSpacing: 2.0,
                               ),
                             ),
-                            cb,
-                          ],
-                        );
-                      },
-                    ),
-                  ),
-                  Container(),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: FormBuilderCheckbox(
-                      attribute: 'shipping_address',
-                      label: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Use my account address",
-                                  maxLines: 1,
-                                  style: Theme.of(context).textTheme.headline6,
-                                ),
-                                SizedBox(
-                                  height: 4,
-                                ),
-                                Text(
-                                  "${model.userProvider.user.address} ${model.userProvider.user.city} ${model.userProvider.user.state} ${model.userProvider.user.zipCode}",
-                                  maxLines: 3,
-                                  style: Theme.of(context).textTheme.subtitle2,
-                                ),
-                              ],
-                            ),
+                            onPressed: () => {},
                           ),
-                        ],
+                        ),
                       ),
-                      initialValue: true,
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: _buildAddressInputFields(),
                   ),
                 ],
               ),
@@ -199,53 +166,199 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
     );
   }
 
-  Widget _buildAddressInputFields() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: Colors.black26,
-          width: 1,
-        ),
+  Widget _buildShoppingCart() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 30),
+      child: CheckboxGroup(
+        labels: model.treatmentOptions.map((e) => e.medicationName).toList(),
+        itemBuilder: (Checkbox cb, Text txt, int i) {
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      txt.data,
+                      maxLines: 1,
+                      style: Theme.of(context).textTheme.headline6,
+                    ),
+                    Text(
+                      "\$29",
+                      maxLines: 1,
+                      style: Theme.of(context).textTheme.bodyText1,
+                    ),
+                  ],
+                ),
+              ),
+              cb,
+            ],
+          );
+        },
       ),
+    );
+  }
+
+  Widget _buildAddressCheckbox() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: FormBuilderCheckbox(
+        attribute: 'shipping_address',
+        label: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Ship to my mailing address",
+                    maxLines: 2,
+                    style: Theme.of(context).textTheme.headline6,
+                  ),
+                  SizedBox(
+                    height: 4,
+                  ),
+                  Text(
+                    "${model.userProvider.user.address} ${model.userProvider.user.city} ${model.userProvider.user.state} ${model.userProvider.user.zipCode}",
+                    maxLines: 3,
+                    style: Theme.of(context).textTheme.subtitle2,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        initialValue: model.useAccountAddress,
+        onChanged: (value) =>
+            model.updateUseAccountAddressToggle(value as bool),
+      ),
+    );
+  }
+
+  Widget _buildPriceBreakdown() {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(30, 20, 30, 20),
       child: Column(
-        children: [
-          buildShippingAddressTextField(
-            controller: _shippingAddressController,
-            focusNode: _shippingAddressFocusNode,
-            labelText: "Shipping Address",
-            hint: "541 Main St",
-            enabled: model.isLoading == false,
-            errorText: model.shippingAddressErrorText,
-            onChanged: model.updateShippingAddress,
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
+                'Prescriptions Cost:',
+                style: TextStyle(
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Text(
+                '\$90',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
           ),
-          buildShippingAddressTextField(
-            controller: _cityController,
-            focusNode: _cityFocusNode,
-            labelText: "City",
-            hint: "Boston",
-            enabled: model.isLoading == false,
-            onChanged: model.updateCity,
+          SizedBox(height: 10.0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
+                'Tax:',
+                style: TextStyle(
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Text(
+                '\0.00',
+                style: TextStyle(
+                  color: Colors.black87,
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
           ),
-          CustomDropdownFormField(
-            addPadding: false,
-            labelText: 'State',
-            onChanged: model.updateState,
-            items: model.states,
-            selectedItem: model.state,
-          ),
-          buildShippingAddressTextField(
-            textInputType: TextInputType.number,
-            maxLength: 5,
-            controller: _zipCodeController,
-            focusNode: _zipCodeFocusNode,
-            labelText: "Zip Code",
-            hint: "02101",
-            enabled: model.isLoading == false,
-            errorText: model.zipCodeErrorText,
-            onChanged: model.updateZipCode,
+          SizedBox(height: 10.0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
+                'Total Cost:',
+                style: TextStyle(
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Text(
+                '\$90',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildAddressInputFields() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: Colors.black26,
+            width: 1,
+          ),
+        ),
+        child: Column(
+          children: [
+            buildShippingAddressTextField(
+              controller: _shippingAddressController,
+              focusNode: _shippingAddressFocusNode,
+              labelText: "Shipping Address",
+              hint: "541 Main St",
+              enabled: model.isLoading == false,
+              errorText: model.shippingAddressErrorText,
+              onChanged: model.updateShippingAddress,
+            ),
+            buildShippingAddressTextField(
+              controller: _cityController,
+              focusNode: _cityFocusNode,
+              labelText: "City",
+              hint: "Boston",
+              enabled: model.isLoading == false,
+              onChanged: model.updateCity,
+            ),
+            CustomDropdownFormField(
+              addPadding: false,
+              labelText: 'State',
+              onChanged: model.updateState,
+              items: model.states,
+              selectedItem: model.state,
+            ),
+            buildShippingAddressTextField(
+              textInputType: TextInputType.number,
+              maxLength: 5,
+              controller: _zipCodeController,
+              focusNode: _zipCodeFocusNode,
+              labelText: "Zip Code",
+              hint: "02101",
+              enabled: model.isLoading == false,
+              errorText: model.zipCodeErrorText,
+              onChanged: model.updateZipCode,
+            ),
+          ],
+        ),
       ),
     );
   }
