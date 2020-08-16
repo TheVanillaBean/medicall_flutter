@@ -33,29 +33,34 @@ class ProviderDashboardListItem extends StatelessWidget {
                   size: 60,
                   color: Colors.grey,
                 ),
-          title: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                '${consult.patientUser.fullName}',
-                style: Theme.of(context).textTheme.bodyText1,
-              ),
-              SizedBox(height: 2),
-              Text('${consult.symptom}',
-                  style: Theme.of(context).textTheme.caption),
-              SizedBox(height: 2),
-            ],
+          title: Container(
+            width: 200,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  '${consult.patientUser.fullName}',
+                  style: Theme.of(context).textTheme.bodyText1,
+                ),
+                SizedBox(height: 2),
+                Text('${consult.symptom}',
+                    style: Theme.of(context).textTheme.caption),
+                SizedBox(height: 2),
+              ],
+            ),
           ),
           subtitle: '${consult.parsedDate}',
-          trailing: FractionallySizedBox(
-            widthFactor: 0.4,
-            child: AutoSizeText(
+          trailing: Container(
+            alignment: Alignment.bottomCenter,
+            width: 80,
+            height: 100,
+            child: Text(
               EnumToString.parseCamelCase(consult.state) ?? "",
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.subtitle1.copyWith(
+              textAlign: TextAlign.left,
+              overflow: TextOverflow.visible,
+              style: Theme.of(context).textTheme.caption.copyWith(
                   color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.bold),
-              maxLines: 1,
             ),
           ),
           onTap: onTap,

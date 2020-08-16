@@ -179,7 +179,6 @@ class PatientDashboardScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              SizedBox(height: 8),
               Center(
                 child: Text(
                   "Status of active visits:",
@@ -188,17 +187,19 @@ class PatientDashboardScreen extends StatelessWidget {
               ),
               SizedBox(height: 12),
               Expanded(
-                child: ListItemsBuilder<Consult>(
-                  snapshot: consultSnapshot,
-                  emptyContentWidget: EmptyVisits(
-                    title: "You do not have any active visits",
-                    message: "Start a visit below",
-                  ),
-                  itemBuilder: (context, consult) => PatientDashboardListItem(
-                    consult: consult,
-                    onTap: () => VisitDetailsOverview.show(
-                      context: context,
+                child: Scrollbar(
+                  child: ListItemsBuilder<Consult>(
+                    snapshot: consultSnapshot,
+                    emptyContentWidget: EmptyVisits(
+                      title: "You do not have any active visits",
+                      message: "Start a visit below",
+                    ),
+                    itemBuilder: (context, consult) => PatientDashboardListItem(
                       consult: consult,
+                      onTap: () => VisitDetailsOverview.show(
+                        context: context,
+                        consult: consult,
+                      ),
                     ),
                   ),
                 ),
