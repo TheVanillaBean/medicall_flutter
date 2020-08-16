@@ -26,6 +26,7 @@ class TreatmentOptions {
   String refills;
   DateTime date;
   TreatmentStatus status;
+  int price;
 
   TreatmentOptions({
     this.dose,
@@ -37,6 +38,7 @@ class TreatmentOptions {
     this.refills,
     this.date,
     this.status,
+    this.price = 29,
   });
 
   factory TreatmentOptions.fromMap(Map<String, dynamic> data) {

@@ -16,6 +16,7 @@ class PrescriptionCheckoutViewModel
 
   String consultId;
   List<TreatmentOptions> treatmentOptions = [];
+  List<TreatmentOptions> selectedTreatmentOptions = [];
   String shippingAddress;
   String city;
   String state;
@@ -25,6 +26,7 @@ class PrescriptionCheckoutViewModel
   List<PaymentMethod> paymentMethods;
   bool isLoading;
   bool refreshCards;
+  int totalCost;
 
   PrescriptionCheckoutViewModel({
     @required this.userProvider,
@@ -39,6 +41,7 @@ class PrescriptionCheckoutViewModel
     this.useAccountAddress = true,
     this.isLoading = false,
     this.refreshCards = true,
+    this.totalCost = 0,
   });
 
   final List<String> states = const <String>[
@@ -119,6 +122,24 @@ class PrescriptionCheckoutViewModel
     return showErrorText ? zipCodeErrorText : null;
   }
 
+  void updateTreatmentOptions(List<String> medicationNames) {
+    List<TreatmentOptions> selectedTreatmentOptions = [];
+    int cost = 0;
+    for (String name in medicationNames) {
+      int index = this
+          .treatmentOptions
+          .indexWhere((element) => element.medicationName == name);
+      if (index > -1) {
+        selectedTreatmentOptions.add(this.treatmentOptions[index]);
+        cost = cost + this.treatmentOptions[index].price;
+      }
+    }
+    updateWith(
+      selectedTreatments: selectedTreatmentOptions,
+      totalCost: cost,
+    );
+  }
+
   void updateShippingAddress(String shippingAddress) =>
       updateWith(shippingAddress: shippingAddress);
 
@@ -148,6 +169,7 @@ class PrescriptionCheckoutViewModel
   }
 
   void updateWith({
+    List<TreatmentOptions> selectedTreatments,
     String shippingAddress,
     String city,
     String state,
@@ -156,7 +178,10 @@ class PrescriptionCheckoutViewModel
     bool useAccountAddress,
     bool isLoading,
     bool refreshCards,
+    int totalCost,
   }) {
+    this.selectedTreatmentOptions =
+        selectedTreatmentOptions ?? this.selectedTreatmentOptions;
     this.shippingAddress = shippingAddress ?? this.shippingAddress;
     this.city = city ?? this.city;
     this.state = state ?? this.state;
@@ -165,6 +190,7 @@ class PrescriptionCheckoutViewModel
     this.isLoading = isLoading ?? this.isLoading;
     this.refreshCards = refreshCards ?? this.refreshCards;
     this.selectedPaymentMethod = paymentMethod ?? this.selectedPaymentMethod;
+    this.totalCost = totalCost ?? this.totalCost;
     notifyListeners();
   }
 }

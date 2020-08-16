@@ -65,7 +65,6 @@ class PrescriptionCheckout extends StatefulWidget {
 class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
   final TextEditingController _shippingAddressController =
       TextEditingController();
-
   final TextEditingController _cityController = TextEditingController();
   final TextEditingController _zipCodeController = TextEditingController();
   final FocusNode _shippingAddressFocusNode = FocusNode();
@@ -138,7 +137,7 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 30),
                     child: Text(
-                      "Select the prescriptions you would like to receive",
+                      "Select the prescription(s) you would like to receive",
                       style: Theme.of(context).textTheme.subtitle1,
                     ),
                   ),
@@ -150,7 +149,7 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
                   if (!model.useAccountAddress) _buildAddressInputFields(),
                   SizedBox(height: 24),
                   _buildPaymentDetail(),
-                  SizedBox(height: 12),
+                  SizedBox(height: 24),
                   _buildCheckoutButton(context),
                 ],
               ),
@@ -250,7 +249,7 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
       child: Align(
         alignment: FractionalOffset.bottomCenter,
         child: Container(
-          height: 75.0,
+          height: 80.0,
           width: MediaQuery.of(context).size.width,
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.primary,
@@ -300,7 +299,7 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
                       style: Theme.of(context).textTheme.headline6,
                     ),
                     Text(
-                      "\$29",
+                      "${model.treatmentOptions[i].price}",
                       maxLines: 1,
                       style: Theme.of(context).textTheme.bodyText1,
                     ),
@@ -311,6 +310,7 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
             ],
           );
         },
+        onSelected: (items) => model.updateTreatmentOptions(items),
       ),
     );
   }
@@ -368,7 +368,7 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
                 ),
               ),
               Text(
-                '\$90',
+                '\$${model.totalCost}',
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.primary,
                   fontSize: 18.0,
@@ -410,7 +410,7 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
                 ),
               ),
               Text(
-                '\$90',
+                '\$${model.totalCost}',
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.primary,
                   fontSize: 18.0,
@@ -539,42 +539,4 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
       },
     );
   }
-
-  //Keep just in case for now
-//  void _buildAddressToggleBox() {
-//  Padding(
-//  padding: const EdgeInsets.symmetric(horizontal: 30),
-//  child: Row(
-//  mainAxisAlignment: MainAxisAlignment.center,
-//  children: [
-//  Expanded(
-//  child: Column(
-//  crossAxisAlignment: CrossAxisAlignment.start,
-//  children: [
-//  Text(
-//  "Use my account address",
-//  maxLines: 1,
-//  style: Theme.of(context).textTheme.headline6,
-//  ),
-//  Text(
-//  "${model.userProvider.user.address} ${model.userProvider.user.city} ${model.userProvider.user.state} ${model.userProvider.user.zipCode}",
-//  maxLines: 1,
-//  style: Theme.of(context).textTheme.subtitle2,
-//  ),
-//  Switch(
-//  value: true,
-//  activeColor:
-//  Theme.of(context).colorScheme.primary,
-//  activeTrackColor:
-//  Theme.of(context).colorScheme.primary,
-//  onChanged: (value) => {},
-//  ),
-//  ],
-//  ),
-//  ),
-//  ],
-//  ),
-//  ),
-//  }
-
 }
