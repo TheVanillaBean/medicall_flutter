@@ -1,4 +1,5 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
+import 'package:Medicall/common_widgets/flat_button.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/models/user_model_base.dart';
@@ -71,24 +72,29 @@ class SymptomDetailScreen extends StatelessWidget {
           Container(
             child: Text(
               'Price',
-              style: TextStyle(fontSize: 18),
+              style: Theme.of(context).textTheme.headline5,
             ),
           ),
           Container(
             child: Text(
               "\$" + symptom.price.toString(),
-              style: TextStyle(fontSize: 18),
+              style: Theme.of(context).textTheme.headline5,
             ),
           )
         ],
       ),
-      Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 10), child: Divider()),
+      Padding(
+          padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+          child: Divider(
+            thickness: 1,
+          )),
       Container(
         child: Text(
           symptom.description,
           style: Theme.of(context).textTheme.bodyText1,
         ),
       ),
+      SizedBox(height: 40),
       _buildMedicationsDialog(context),
       SizedBox(height: 80),
       Expanded(
@@ -110,56 +116,38 @@ class SymptomDetailScreen extends StatelessWidget {
   }
 
   Widget _buildMedicationsDialog(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.0)),
-              title: Text(
-                "Prescriptions Information",
-                style: Theme.of(context).textTheme.headline6,
-              ),
-              content: Text(
-                "If a prescription is prescribed, we can send it to your local pharmacy or you can use our prescription service and have your medications delivered to your door with free 2-day shipping. Our prices are lower than most co-pays. Typical medications that are prescribed for hair loss include:",
-                style: Theme.of(context).textTheme.caption,
-              ),
-              actions: <Widget>[
-                // usually buttons at the bottom of the dialog
-                FlatButton(
-                  child: Text("Close"),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
+    return ReusableRaisedButton(
+        title: "Common medications",
+        outlined: true,
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.0)),
+                title: Text(
+                  "Prescriptions Information",
+                  style: Theme.of(context).textTheme.headline6,
                 ),
-              ],
-            );
-          },
-        );
-      },
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: Container(
-          width: 130,
-          decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(
-                  width: 1.0, color: Theme.of(context).colorScheme.primary),
-            ),
-          ),
-          alignment: Alignment.centerLeft,
-          margin: EdgeInsets.fromLTRB(0, 15, 0, 0),
-          padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
-          child: Text(
-            'Common medications',
-            textAlign: TextAlign.left,
-            style: TextStyle(
-                fontSize: 12, color: Theme.of(context).colorScheme.primary),
-          ),
-        ),
-      ),
-    );
+                content: Text(
+                  "If a prescription is prescribed, we can send it to your local pharmacy or you can use our prescription service and have your medications delivered to your door with free 2-day shipping. Our prices are lower than most co-pays. Typical medications that are prescribed for hair loss include:",
+                  style: Theme.of(context).textTheme.caption,
+                ),
+                actions: <Widget>[
+                  // usually buttons at the bottom of the dialog
+                  ReusableRaisedButton(
+                    outlined: true,
+                    width: 120,
+                    title: "Close",
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        });
   }
 }

@@ -58,14 +58,20 @@ class PlatformAlertDialog extends PlatformWidget {
     if (cancelActionText != null) {
       actions.add(
         PlatformAlertDialogAction(
-          child: Text(cancelActionText),
+          child: Text(
+            cancelActionText,
+            style: Theme.of(context).textTheme.headline6,
+          ),
           onPressed: () => Navigator.of(context).pop(false),
         ),
       );
     }
     actions.add(
       PlatformAlertDialogAction(
-        child: Text(defaultActionText),
+        child: Text(
+          defaultActionText,
+          style: Theme.of(context).textTheme.headline6,
+        ),
         onPressed: () => Navigator.of(context).pop(true),
       ),
     );

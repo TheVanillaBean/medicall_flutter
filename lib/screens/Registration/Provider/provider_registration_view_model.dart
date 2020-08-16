@@ -42,6 +42,9 @@ class ProviderRegistrationViewModel
   AppleSignInModel appleSignInModel;
   VerificationStatus verificationStatus;
 
+  ScrollController viewController = ScrollController();
+  ScrollController scrollController = ScrollController();
+
   bool isAdult(String birthDateString) {
     String datePattern = "MM/dd/yyyy";
 

@@ -40,6 +40,7 @@ class EducationalContentStep extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 36),
                     child: CheckboxGroup(
+                      activeColor: Theme.of(context).colorScheme.primary,
                       labels: model.diagnosisOptions.educationalContent
                           .map((e) => e.keys.first.toString())
                           .toList(),

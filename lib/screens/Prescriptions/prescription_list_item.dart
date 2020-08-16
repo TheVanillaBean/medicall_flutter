@@ -15,7 +15,7 @@ class PrescriptionListItem extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         clipBehavior: Clip.antiAlias,
         child: ListTile(
-          contentPadding: EdgeInsets.fromLTRB(20, 5, 20, 5),
+          contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 20),
           dense: true,
           title: Column(
             //mainAxisAlignment: MainAxisAlignment.start,
@@ -42,18 +42,12 @@ class PrescriptionListItem extends StatelessWidget {
                       ),
                       VerticalDivider(thickness: 2, color: Colors.grey[300]),
                       Text(
-                        '${treatment.dose}',
+                        '${treatment.dose} ',
                         style: Theme.of(context).textTheme.caption,
                       ),
-                      VerticalDivider(thickness: 2, color: Colors.grey[300]),
-                      Text(
-                        '${treatment.frequency}',
-                        style: Theme.of(context).textTheme.caption,
-                      ),
-                      VerticalDivider(thickness: 2, color: Colors.grey[300]),
                       Flexible(
                         child: Text(
-                          'Form: ${treatment.form}',
+                          '${treatment.form.toLowerCase()}',
                           style: Theme.of(context).textTheme.caption,
                         ),
                       ),
@@ -66,16 +60,12 @@ class PrescriptionListItem extends StatelessWidget {
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(bottom: 5),
-                child: Text(
-                  'Instructions:',
-                  style: Theme.of(context).textTheme.bodyText1,
-                ),
+              Divider(
+                thickness: 1,
               ),
               Text(
-                '${treatment.instructions}',
-                style: Theme.of(context).textTheme.bodyText1,
+                'Instructions: ${treatment.instructions}',
+                style: Theme.of(context).textTheme.bodyText2,
               ),
               Text(
                 'Price: \$29',

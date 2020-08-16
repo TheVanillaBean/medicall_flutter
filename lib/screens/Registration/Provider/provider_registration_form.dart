@@ -24,6 +24,9 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
   MaskTextInputFormatter phoneTextInputFormatter = MaskTextInputFormatter(
       mask: "(###)###-####", filter: {"#": RegExp(r'[0-9]')});
 
+  MaskTextInputFormatter dobTextInputFormatter = MaskTextInputFormatter(
+      mask: "##/##/####", filter: {"#": RegExp(r'[0-9]')});
+
   Future<void> _submit(ProviderRegistrationViewModel model) async {
     try {
       await model.submit();
@@ -61,6 +64,7 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
             labelText: 'Date of Birth',
             hint: 'mm/dd/yyyy',
             keyboardType: TextInputType.datetime,
+            inputFormatters: [dobTextInputFormatter],
             initialDate: model.initialDatePickerDate,
             onChanged: model.updateDOB,
           ),
@@ -171,7 +175,7 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
         color: Colors.blue,
         child: SuperRichText(
           text:
-              'I agree to Medicall’s <terms>Terms & Conditions<terms>. I have reviewed the <privacy>Privacy Policy<privacy> and understand the benefits and risks of remote treatment.',
+              'I agree to Medicall’s <terms>Terms & Conditions<terms>. I have reviewed the <privacy>Privacy Policy<privacy>.',
           style: TextStyle(color: Colors.black87, fontSize: 14),
           othersMarkers: [
             MarkerText.withSameFunction(

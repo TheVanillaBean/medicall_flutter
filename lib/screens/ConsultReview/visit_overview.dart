@@ -87,7 +87,7 @@ class VisitOverview extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12)),
                     child: Text(
-                      "REVIEW VISIT INFORMATION",
+                      "VISIT INFORMATION",
                       style: Theme.of(context).textTheme.headline6,
                     ),
                     onPressed: () => ReviewVisitInformation.show(
@@ -157,7 +157,7 @@ class VisitOverview extends StatelessWidget {
   Function onContinueBtnPressed(
       BuildContext context, FirestoreDatabase db, Consult consult) {
     if (consult.state == ConsultStatus.PendingReview) {
-      return () => _showBeginReviewDialog(context, consult);
+      return () => navigateToVisitReviewScreen(context, db, consult);
     } else if (consult.state == ConsultStatus.InReview) {
       return () async => navigateToVisitReviewScreen(context, db, consult);
     } else if (consult.state == ConsultStatus.Completed) {
@@ -187,7 +187,7 @@ class VisitOverview extends StatelessWidget {
     } else if (consult.state == ConsultStatus.Completed) {
       return "Sign and Complete Visit";
     } else {
-      return "Visit Already Signed";
+      return "Signed";
     }
   }
 

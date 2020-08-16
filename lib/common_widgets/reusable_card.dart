@@ -23,19 +23,30 @@ class ReusableCard extends StatelessWidget {
       borderOnForeground: false,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       clipBehavior: Clip.antiAlias,
-      child: ListTile(
-        isThreeLine: false,
-        contentPadding: EdgeInsets.fromLTRB(20, 5, 20, 5),
-        dense: true,
-        leading: leading,
-        title: title,
-        subtitle: Text(
-          subtitle,
-          style: Theme.of(context).textTheme.subtitle2,
-        ),
-        trailing: trailing,
-        onTap: onTap,
-      ),
+      child: subtitle != null
+          ? ListTile(
+              isThreeLine: false,
+              contentPadding: EdgeInsets.fromLTRB(15, 5, 15, 5),
+              dense: true,
+              leading: leading,
+              title: title,
+              subtitle: Text(
+                subtitle,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.subtitle1,
+              ),
+              trailing: trailing,
+              onTap: onTap,
+            )
+          : ListTile(
+              isThreeLine: false,
+              contentPadding: EdgeInsets.fromLTRB(15, 5, 15, 5),
+              dense: true,
+              leading: leading,
+              title: title,
+              trailing: trailing,
+              onTap: onTap,
+            ),
     );
   }
 }

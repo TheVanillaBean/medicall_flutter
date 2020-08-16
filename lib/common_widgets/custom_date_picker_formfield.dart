@@ -1,6 +1,6 @@
 import 'package:dash_chat/dash_chat.dart';
 import 'package:flutter/material.dart';
-import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
+import 'package:flutter/services.dart';
 
 class CustomDatePickerFormField extends StatelessWidget {
   const CustomDatePickerFormField({
@@ -14,6 +14,7 @@ class CustomDatePickerFormField extends StatelessWidget {
     this.errorText,
     this.obscureText,
     this.initialDate,
+    this.inputFormatters,
     this.onChanged,
   });
   final Icon icon;
@@ -21,6 +22,7 @@ class CustomDatePickerFormField extends StatelessWidget {
   final String hint;
   final TextInputType keyboardType;
   final bool enabled;
+  final List<TextInputFormatter> inputFormatters;
   final String errorText;
   final bool obscureText;
   final FormFieldValidator<String> validator;
@@ -31,56 +33,39 @@ class CustomDatePickerFormField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(
-        left: 30,
-        right: 30,
-      ),
-      child: DateTimeField(
-        format: DateFormat('MM/dd/yyyy'),
-        decoration: InputDecoration(
-          labelText: labelText,
-          errorText: errorText,
-          labelStyle: Theme.of(context).textTheme.bodyText1,
-          hintText: hint,
-          hintStyle: Theme.of(context).textTheme.subtitle2,
-          enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.black26,
-              width: 0.5,
-            ),
-          ),
-          focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.green,
-              width: 0.5,
-            ),
-          ),
-          errorBorder: UnderlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.red,
-              width: 0.5,
-            ),
-          ),
-          focusedErrorBorder: UnderlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.red,
-              width: 0.5,
-            ),
-          ),
+        padding: EdgeInsets.only(
+          left: 30,
+          right: 30,
         ),
-        onChanged: onChanged,
-        onShowPicker: (context, currentValue) async {
-          FocusScope.of(context).requestFocus(new FocusNode());
-          final DateTime currentDate = DateTime.now();
-          return await showDatePicker(
-            context: context,
-            firstDate: DateTime(1920),
-            initialDate: initialDate,
-            lastDate: DateTime(
-                currentDate.year - 18, currentDate.month, currentDate.day),
-          );
-        },
-      ),
-    );
+        child: TextFormField(
+          inputFormatters: inputFormatters,
+          style: Theme.of(context).textTheme.bodyText1,
+          decoration: InputDecoration(
+            hintText: 'MM/DD/YYYY',
+            labelText: 'Date of birth',
+          ),
+          keyboardType: TextInputType.datetime,
+          validator: (val) => isValidDob(val) ? null : 'Not a valid date',
+          onChanged: (val) {
+            onChanged(convertToDate(val));
+          },
+          controller: controller,
+          onSaved: (val) => convertToDate(val),
+        ));
+  }
+
+  bool isValidDob(String dob) {
+    if (dob.isEmpty) return true;
+    var d = convertToDate(dob);
+    return d != null && d.isBefore(new DateTime.now());
+  }
+
+  DateTime convertToDate(String input) {
+    try {
+      var d = new DateFormat.yMd().parseStrict(input);
+      return d;
+    } catch (e) {
+      return null;
+    }
   }
 }

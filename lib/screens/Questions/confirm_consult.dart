@@ -33,9 +33,7 @@ class ConfirmConsult extends StatelessWidget {
               Text(
                 'You have completed your visit:',
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyText1.copyWith(
-                      fontSize: 16,
-                    ),
+                style: Theme.of(context).textTheme.headline5,
               ),
               SizedBox(height: 20),
               Padding(
@@ -63,21 +61,14 @@ class ConfirmConsult extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(10, 20, 10, 30),
                 child: Text(
                   'You will now be directed to your dashboard, where you can review this visit, message your doctor, get updates, and explore other services.',
-                  textAlign: TextAlign.justify,
-                  style: Theme.of(context).textTheme.bodyText1.copyWith(
-                        fontSize: 16,
-                      ),
+                  style: Theme.of(context).textTheme.bodyText1,
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: Text(
-                  'Thank You for choosing Medicall!',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodyText1.copyWith(
-                        fontSize: 16,
-                      ),
-                ),
+                child: Text('Thank You for choosing Medicall!',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.headline5),
               ),
               SizedBox(height: 20),
               Expanded(
@@ -115,10 +106,7 @@ class ConfirmConsultListItem extends StatelessWidget {
           child: Text(
             title,
             textAlign: TextAlign.left,
-            style: Theme.of(context).textTheme.bodyText1.copyWith(
-                  fontSize: 16,
-                  fontStyle: FontStyle.italic,
-                ),
+            style: Theme.of(context).textTheme.headline5,
           ),
           transform: Matrix4.translationValues(-16, 0.0, 0.0),
         ),
@@ -146,10 +134,7 @@ class ConfirmConsultListItem extends StatelessWidget {
         child: Text(
           title,
           textAlign: TextAlign.left,
-          style: Theme.of(context)
-              .textTheme
-              .bodyText1
-              .copyWith(fontSize: 16, fontStyle: FontStyle.italic),
+          style: Theme.of(context).textTheme.headline5,
         ),
         transform: Matrix4.translationValues(-16, 0.0, 0.0),
       ),

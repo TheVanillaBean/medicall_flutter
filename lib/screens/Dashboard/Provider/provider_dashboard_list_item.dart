@@ -38,11 +38,11 @@ class ProviderDashboardListItem extends StatelessWidget {
             children: <Widget>[
               Text(
                 '${consult.patientUser.fullName}',
-                style: Theme.of(context).textTheme.headline5,
+                style: Theme.of(context).textTheme.bodyText1,
               ),
               SizedBox(height: 2),
               Text('${consult.symptom}',
-                  style: Theme.of(context).textTheme.headline6),
+                  style: Theme.of(context).textTheme.caption),
               SizedBox(height: 2),
             ],
           ),

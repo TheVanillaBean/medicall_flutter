@@ -25,7 +25,7 @@ class AnimatedProgressbar extends StatelessWidget {
               Container(
                 height: height,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).backgroundColor,
+                  color: Theme.of(context).disabledColor.withAlpha(80),
                   borderRadius: BorderRadius.all(
                     Radius.circular(height),
                   ),

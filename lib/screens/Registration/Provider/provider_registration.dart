@@ -5,6 +5,7 @@ import 'package:Medicall/screens/Registration/Provider/provider_registration_vie
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/non_auth_firestore_db.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
+import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -54,13 +55,19 @@ class _ProviderRegistrationScreenState
         theme: Theme.of(context),
       ),
       //Content of tabs
-      body: SingleChildScrollView(
-        child: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: () {
-            FocusScope.of(context).requestFocus(new FocusNode());
-          },
-          child: ProviderRegistrationForm(),
+      body: Scrollbar(
+        controller: widget.model.scrollController,
+        child: FadingEdgeScrollView.fromSingleChildScrollView(
+          child: SingleChildScrollView(
+            controller: widget.model.viewController,
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () {
+                FocusScope.of(context).requestFocus(new FocusNode());
+              },
+              child: ProviderRegistrationForm(),
+            ),
+          ),
         ),
       ),
     );

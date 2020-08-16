@@ -70,10 +70,10 @@ class ProviderDetailScreen extends StatelessWidget {
           ]),
       body: SingleChildScrollView(
         child: Container(
-          height: ScreenUtil.screenHeightDp - (ScreenUtil.statusBarHeight + 50),
-          color: Colors.white,
+          height: ScreenUtil.screenHeightDp - (ScreenUtil.statusBarHeight + 70),
           padding: EdgeInsets.all(40),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.start,
             children: _buildChildren(
               tempUserProvider,
@@ -109,7 +109,7 @@ class ProviderDetailScreen extends StatelessWidget {
       SizedBox(height: 10),
       Text(
         'Dermatologist',
-        style: TextStyle(fontSize: 16),
+        style: Theme.of(context).textTheme.bodyText1,
       ),
       SizedBox(height: 10),
       Container(
@@ -117,7 +117,7 @@ class ProviderDetailScreen extends StatelessWidget {
         width: 150,
         child: Text(
           provider.mailingAddress,
-          style: TextStyle(fontSize: 16),
+          style: Theme.of(context).textTheme.bodyText1,
           textAlign: TextAlign.center,
         ),
       ),
@@ -127,12 +127,7 @@ class ProviderDetailScreen extends StatelessWidget {
         child: Container(
           child: Text(
             symptom.description,
-            style: TextStyle(
-              height: 1.6,
-              fontSize: 14,
-              letterSpacing: 0.6,
-              wordSpacing: 1,
-            ),
+            style: Theme.of(context).textTheme.bodyText1,
           ),
         ),
       ),

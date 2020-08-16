@@ -1,4 +1,5 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
+import 'package:Medicall/common_widgets/reusable_card.dart';
 import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
@@ -71,32 +72,33 @@ class VisitEducation extends StatelessWidget {
     String link,
   ) {
     return [
-      Divider(
-        thickness: 1,
-      ),
-      ListTile(
-        onTap: () async {
-          String url = link;
+      Container(
+        margin: EdgeInsets.fromLTRB(20, 5, 20, 5),
+        child: ReusableCard(
+          title: Text(
+            name,
+            style: Theme.of(context).textTheme.headline5,
+          ),
+          onTap: () async {
+            String url = link;
 
-          if (await canLaunch(url)) {
-            await launch(
-              url,
-              forceSafariVC: true,
-              forceWebView: true,
-            );
-          } else {
-            throw 'Could not launch $url';
-          }
-        },
-        trailing: Icon(
-          Icons.launch,
-          color: Theme.of(context).colorScheme.primaryVariant,
+            if (await canLaunch(url)) {
+              await launch(
+                url,
+                forceSafariVC: true,
+                forceWebView: true,
+              );
+            } else {
+              throw 'Could not launch $url';
+            }
+          },
+          subtitle: "Additional information",
+          trailing: Icon(
+            Icons.launch,
+            color: Theme.of(context).colorScheme.primary,
+          ),
         ),
-        title: Text(
-          name,
-          style: TextStyle(color: Theme.of(context).colorScheme.primaryVariant),
-        ),
-      ),
+      )
     ];
   }
 }

@@ -241,7 +241,7 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
                     this.profileImageURL,
                     height: (height * 0.2),
                     width: (height * 0.2),
-                    fit: BoxFit.fill,
+                    fit: BoxFit.cover,
                     cache: true,
                   )
                 : Icon(

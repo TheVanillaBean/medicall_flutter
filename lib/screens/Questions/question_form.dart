@@ -138,7 +138,8 @@ class _QuestionFormState extends State<QuestionForm> {
             checkedItemList: model.selectedOptionsList,
             orientation: CheckboxOrientation.VERTICAL,
             checkColor: Colors.white,
-            activeColor: Colors.blueAccent,
+            textStyle: Theme.of(context).textTheme.bodyText1,
+            activeColor: Theme.of(context).colorScheme.primary,
             onChanged: model.checkedItemsChanged,
           ),
         ),
@@ -154,21 +155,25 @@ class _QuestionFormState extends State<QuestionForm> {
         Expanded(
           flex: 9,
           child: RadioButtonGroup(
+            activeColor: Theme.of(context).colorScheme.primary,
             labels: model.optionsList,
+            padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
             picked: model.selectedOptionsList.length > 0
                 ? model.selectedOptionsList.first
                 : null,
             itemBuilder: (Radio rb, Text txt, int i) {
-              return Row(
-                children: <Widget>[
-                  rb,
-                  Expanded(
-                    child: Text(
-                      txt.data,
-                      maxLines: 3,
+              return Container(
+                padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                child: Row(
+                  children: <Widget>[
+                    rb,
+                    Expanded(
+                      child: Text(txt.data,
+                          maxLines: 3,
+                          style: Theme.of(context).textTheme.bodyText1),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               );
             },
             onSelected: (String selected) {
@@ -181,31 +186,34 @@ class _QuestionFormState extends State<QuestionForm> {
   }
 
   Widget _buildFreeResponseOption(BuildContext context) {
-    return SingleChildScrollView(
-      child: _buildFRTextField(model),
-    );
+    return _buildFRTextField(model);
   }
 
   Widget _buildFRTextField(QuestionsViewModel model) {
-    return TextField(
-      controller: model.inputController,
-      focusNode: model.inputFocusNode,
-      autocorrect: false,
-      keyboardType: TextInputType.multiline,
-      maxLines: 12,
-      onChanged: model.updateInput,
-      style: TextStyle(color: Color.fromRGBO(80, 80, 80, 1)),
-      decoration: InputDecoration(
-        labelStyle: TextStyle(
-          color: Theme.of(context).colorScheme.onSurface,
+    return Container(
+      margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+      child: Scrollbar(
+        child: TextField(
+          controller: model.inputController,
+          focusNode: model.inputFocusNode,
+          autocorrect: false,
+          keyboardType: TextInputType.multiline,
+          maxLines: 30,
+          onChanged: model.updateInput,
+          style: Theme.of(context).textTheme.bodyText2,
+          decoration: InputDecoration(
+            labelStyle: TextStyle(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+            hintStyle: TextStyle(
+              color: Color.fromRGBO(100, 100, 100, 1),
+            ),
+            filled: true,
+            fillColor: Colors.grey.withAlpha(50),
+            labelText: "Enter response",
+            alignLabelWithHint: true,
+          ),
         ),
-        hintStyle: TextStyle(
-          color: Color.fromRGBO(100, 100, 100, 1),
-        ),
-        filled: true,
-        fillColor: Colors.grey.withAlpha(50),
-        labelText: "Enter response",
-        alignLabelWithHint: true,
       ),
     );
   }

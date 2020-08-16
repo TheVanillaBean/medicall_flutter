@@ -66,6 +66,7 @@ class DiagnosisStep extends StatelessWidget {
                     Container(
                       width: width * 0.8,
                       child: RadioButtonGroup(
+                        activeColor: Theme.of(context).colorScheme.primary,
                         labels: <String>[
                           "No",
                           "Yes",
