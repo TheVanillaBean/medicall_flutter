@@ -52,27 +52,30 @@ class VisitPrescriptions extends StatelessWidget {
           )
         ],
       ),
-      body: Column(
-        children: [
-          ListItemsBuilder<TreatmentOptions>(
-            snapshot: null,
-            itemsList: visitReviewData.treatmentOptions,
-            itemBuilder: (context, treatment) => PrescriptionListItem(
-              treatment: treatment,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            ListItemsBuilder<TreatmentOptions>(
+              scrollable: false,
+              snapshot: null,
+              itemsList: visitReviewData.treatmentOptions,
+              itemBuilder: (context, treatment) => PrescriptionListItem(
+                treatment: treatment,
+              ),
             ),
-          ),
-          SizedBox(
-            height: 12,
-          ),
-          ReusableRaisedButton(
-            title: "Pay for Prescriptions",
-            onPressed: () => PrescriptionCheckout.show(
-              context: context,
-              consultId: consult.uid,
-              treatmentOptions: visitReviewData.treatmentOptions,
+            SizedBox(
+              height: 12,
             ),
-          ),
-        ],
+            ReusableRaisedButton(
+              title: "Pay for Prescriptions",
+              onPressed: () => PrescriptionCheckout.show(
+                context: context,
+                consultId: consult.uid,
+                treatmentOptions: visitReviewData.treatmentOptions,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
