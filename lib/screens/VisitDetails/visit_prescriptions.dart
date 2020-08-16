@@ -7,7 +7,9 @@ import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Prescriptions/prescription_list_item.dart';
 import 'package:Medicall/screens/VisitDetails/prescription_checkout.dart';
+import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 class VisitPrescriptions extends StatelessWidget {
@@ -35,6 +37,8 @@ class VisitPrescriptions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ScrollController scrollController = ScrollController();
+    ScreenUtil.init(context);
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
         type: AppBarType.Back,
@@ -52,29 +56,40 @@ class VisitPrescriptions extends StatelessWidget {
           )
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            ListItemsBuilder<TreatmentOptions>(
-              scrollable: false,
-              snapshot: null,
-              itemsList: visitReviewData.treatmentOptions,
-              itemBuilder: (context, treatment) => PrescriptionListItem(
-                treatment: treatment,
-              ),
+      body: Scrollbar(
+        child: FadingEdgeScrollView.fromSingleChildScrollView(
+          gradientFractionOnEnd: 0.1,
+          gradientFractionOnStart: 0.1,
+          child: SingleChildScrollView(
+            controller: scrollController,
+            child: Column(
+              children: [
+                ListItemsBuilder<TreatmentOptions>(
+                  scrollable: false,
+                  snapshot: null,
+                  itemsList: visitReviewData.treatmentOptions,
+                  itemBuilder: (context, treatment) => PrescriptionListItem(
+                    treatment: treatment,
+                  ),
+                ),
+                SizedBox(
+                  height: 12,
+                ),
+                ReusableRaisedButton(
+                  width: (ScreenUtil.screenWidthDp * 0.6).toInt(),
+                  title: "Prescriptions Checkout",
+                  onPressed: () => PrescriptionCheckout.show(
+                    context: context,
+                    consultId: consult.uid,
+                    treatmentOptions: visitReviewData.treatmentOptions,
+                  ),
+                ),
+                SizedBox(
+                  height: 30,
+                ),
+              ],
             ),
-            SizedBox(
-              height: 12,
-            ),
-            ReusableRaisedButton(
-              title: "Pay for Prescriptions",
-              onPressed: () => PrescriptionCheckout.show(
-                context: context,
-                consultId: consult.uid,
-                treatmentOptions: visitReviewData.treatmentOptions,
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

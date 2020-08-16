@@ -1,5 +1,6 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/custom_dropdown_formfield.dart';
+import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/consult-review/treatment_options.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Account/payment_detail.dart';
@@ -149,7 +150,7 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
                     padding: const EdgeInsets.symmetric(horizontal: 30),
                     child: Text(
                       "Select the prescription(s) you would like to receive",
-                      style: Theme.of(context).textTheme.subtitle1,
+                      style: Theme.of(context).textTheme.bodyText2,
                     ),
                   ),
                   SizedBox(height: 12),
@@ -162,6 +163,7 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
                   _buildPaymentDetail(),
                   SizedBox(height: 24),
                   _buildCheckoutButton(context),
+                  SizedBox(height: 24),
                 ],
               ),
             )
@@ -337,7 +339,7 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
           child: Text(
             "Select a payment method. Your default is already select.",
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.subtitle1,
+            style: Theme.of(context).textTheme.bodyText1,
           ),
         ),
         SizedBox(
@@ -415,38 +417,9 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
   }
 
   Widget _buildCheckoutButton(BuildContext context) {
-    return Expanded(
-      child: Align(
-        alignment: FractionalOffset.bottomCenter,
-        child: Container(
-          height: 80.0,
-          width: MediaQuery.of(context).size.width,
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primary,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black26,
-                offset: Offset(0, -1),
-                blurRadius: 6.0,
-              ),
-            ],
-          ),
-          child: Center(
-            child: FlatButton(
-              child: Text(
-                'Checkout',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.w400,
-                  letterSpacing: 2.0,
-                ),
-              ),
-              onPressed: () => _submit(),
-            ),
-          ),
-        ),
-      ),
+    return ReusableRaisedButton(
+      title: "Checkout",
+      onPressed: () => _submit(),
     );
   }
 

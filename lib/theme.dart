@@ -17,7 +17,7 @@ final ThemeData myTheme = ThemeData(
   brightness: Brightness.light,
   primaryColorLight: Color(0xffbbdefb),
   primaryColorDark: Color(0xff107FA2),
-  accentColor: Color(0xff2196f3),
+  accentColor: primaryColor,
   accentColorBrightness: Brightness.dark,
   canvasColor: Color(0xffffffff),
   scaffoldBackgroundColor: Colors.white,
