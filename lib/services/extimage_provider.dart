@@ -146,13 +146,11 @@ class ExtendedImageProvider implements ExtImageProvider {
         } else {
           return GestureDetector(
             child: Container(
-              color: Colors.grey.withAlpha(50),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Icon(
                     Icons.broken_image,
-                    color: Colors.black12,
                     size: 40,
                   ),
                   Text(

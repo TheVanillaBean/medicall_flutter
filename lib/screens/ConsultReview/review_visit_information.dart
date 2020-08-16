@@ -168,21 +168,24 @@ class ReviewVisitInformation extends StatelessWidget {
                             },
                           ),
                         ),
-                        Expanded(
-                          child: ReusableCard(
-                            trailing: Icon(
-                              Icons.chevron_right,
-                              color: Colors.grey,
-                            ),
-                            title: Text(
-                              "REVIEW",
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.headline6,
-                            ),
-                            onTap: () => navigateToVisitReviewScreen(
-                                context, db, consult),
-                          ),
-                        )
+                        userProvider.user.type == USER_TYPE.PROVIDER
+                            ? Expanded(
+                                child: ReusableCard(
+                                  trailing: Icon(
+                                    Icons.chevron_right,
+                                    color: Colors.grey,
+                                  ),
+                                  title: Text(
+                                    "REVIEW",
+                                    textAlign: TextAlign.center,
+                                    style:
+                                        Theme.of(context).textTheme.headline6,
+                                  ),
+                                  onTap: () => navigateToVisitReviewScreen(
+                                      context, db, consult),
+                                ),
+                              )
+                            : Container()
                       ],
                     )),
               ],

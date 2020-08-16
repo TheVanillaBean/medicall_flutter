@@ -52,7 +52,9 @@ class ProviderDashboardListItem extends StatelessWidget {
             child: AutoSizeText(
               EnumToString.parseCamelCase(consult.state) ?? "",
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.subtitle1,
+              style: Theme.of(context).textTheme.subtitle1.copyWith(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontWeight: FontWeight.bold),
               maxLines: 1,
             ),
           ),
