@@ -70,7 +70,8 @@ class ProviderDetailScreen extends StatelessWidget {
           ]),
       body: SingleChildScrollView(
         child: Container(
-          height: ScreenUtil.screenHeightDp - (ScreenUtil.statusBarHeight + 70),
+          height:
+              ScreenUtil.screenHeightDp - (ScreenUtil.screenHeightDp * 0.11),
           padding: EdgeInsets.all(40),
           child: Column(
             mainAxisSize: MainAxisSize.min,
