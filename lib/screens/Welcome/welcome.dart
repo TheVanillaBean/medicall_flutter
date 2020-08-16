@@ -18,7 +18,7 @@ class WelcomeScreen extends StatelessWidget {
       body: SingleChildScrollView(
         padding: EdgeInsets.fromLTRB(0, 15, 0, 10),
         child: Container(
-          height: ScreenUtil.screenHeightDp,
+          height: ScreenUtil.screenHeightDp - ScreenUtil.statusBarHeight - 1,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: buildChildren(context),
@@ -31,7 +31,7 @@ class WelcomeScreen extends StatelessWidget {
   List<Widget> buildChildren(BuildContext context) {
     return <Widget>[
       Container(
-        margin: EdgeInsets.only(top: 30),
+        margin: EdgeInsets.only(top: 20),
         child: Column(
           children: <Widget>[
             SizedBox(
@@ -39,9 +39,6 @@ class WelcomeScreen extends StatelessWidget {
               child: Image.asset(
                 'assets/icon/letter_mark.png',
               ),
-            ),
-            SizedBox(
-              height: 10,
             ),
             Text(
               'Leading Local Doctors',
