@@ -82,7 +82,7 @@ class PaymentDetail extends StatelessWidget {
 
   Widget _buildChildren() {
     return Container(
-      height: ScreenUtil.screenHeightDp,
+      height: ScreenUtil.screenHeightDp - (ScreenUtil.screenHeightDp * 0.1),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[

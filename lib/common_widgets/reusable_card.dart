@@ -33,7 +33,7 @@ class ReusableCard extends StatelessWidget {
               subtitle: Text(
                 subtitle,
                 overflow: TextOverflow.visible,
-                style: Theme.of(context).textTheme.subtitle1,
+                style: Theme.of(context).textTheme.caption,
               ),
               trailing: trailing,
               onTap: onTap,
