@@ -92,8 +92,8 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
       }
     };
     if (shipTo == 'delivery') {
-      typeAheadController.text = medicallUser.address;
-      shippingAddress = medicallUser.address;
+      typeAheadController.text = medicallUser.mailingAddress;
+      shippingAddress = medicallUser.mailingAddress;
     } else {
       typeAheadController.text = '';
     }
@@ -216,7 +216,7 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
                               },
                               decoration: InputDecoration(
                                   hintText: shipTo == 'delivery'
-                                      ? medicallUser.address
+                                      ? medicallUser.mailingAddress
                                       : '',
                                   labelText: shipTo == 'delivery'
                                       ? 'Street Address'

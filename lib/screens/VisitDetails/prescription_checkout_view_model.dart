@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:Medicall/models/consult-review/treatment_options.dart';
+import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/stripe_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
@@ -152,7 +153,45 @@ class PrescriptionCheckoutViewModel
   void updateUseAccountAddressToggle(bool useAccountAddress) =>
       updateWith(useAccountAddress: useAccountAddress);
 
-  Future<void> submit() {}
+  Future<bool> updateUserShippingAddress() async {
+    updateWith(isLoading: true);
+
+    User user = this.userProvider.user;
+    if (this.useAccountAddress) {
+      user.shippingAddress = user.mailingAddress;
+      user.shippingCity = user.mailingCity;
+      user.shippingState = user.mailingState;
+      user.shippingZipCode = user.mailingZipCode;
+    } else {
+      if (!canSubmit) {
+        updateWith(isLoading: false);
+        return false;
+      } else {
+        user.shippingAddress = this.shippingAddress;
+        user.shippingCity = this.city;
+        user.shippingState = this.state;
+        user.shippingZipCode = this.zipCode;
+      }
+    }
+    await this.firestoreDatabase.setUser(user);
+    this.userProvider.user = user;
+    return true;
+  }
+
+  Future<bool> processPayment() async {
+    PaymentIntentResult paymentIntentResult =
+        await this.stripeProvider.chargePayment(
+              price: this.totalCost,
+              paymentMethodId: this.selectedPaymentMethod.id,
+            );
+
+    updateWith(isLoading: false);
+    if (paymentIntentResult.status == "succeeded") {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   Future<void> retrieveCards() async {
     if (this.refreshCards) {

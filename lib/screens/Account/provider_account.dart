@@ -177,7 +177,7 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
     return ReusableAccountCard(
       leading: 'Practice \nAddress:',
       title:
-          '${medicallUser.address}, ${medicallUser.city}, ${medicallUser.state} ${medicallUser.zipCode}',
+          '${medicallUser.mailingAddress}, ${medicallUser.mailingCity}, ${medicallUser.mailingState} ${medicallUser.mailingZipCode}',
     );
   }
 

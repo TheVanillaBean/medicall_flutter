@@ -88,7 +88,18 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
 
   Future<void> _submit() async {
     try {
-      await model.submit();
+      if (await model.updateUserShippingAddress()) {
+        if (await model.processPayment()) {
+          AppUtil().showFlushBar(
+              "Your payment has been successfully processed!", context);
+        } else {
+          AppUtil().showFlushBar(
+              "There was an error processing your payment.", context);
+        }
+      } else {
+        AppUtil().showFlushBar(
+            "There was an error processing your shipping address.", context);
+      }
     } catch (e) {
       AppUtil().showFlushBar(e, context);
     }
@@ -160,126 +171,6 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
     );
   }
 
-  Widget _buildPaymentDetail() {
-    if (this.model.selectedPaymentMethod == null) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        child: CircularProgressIndicator(),
-      );
-    }
-    if (this.model.userHasCards) {
-      return _buildCardItem();
-    }
-    return _buildAddCardBtn();
-  }
-
-  Widget _buildCardItem() {
-    double width = MediaQuery.of(context).size.width;
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            "Select a payment method. Your default is already select.",
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.subtitle1,
-          ),
-        ),
-        SizedBox(
-          height: 8,
-        ),
-        ListTile(
-          contentPadding: EdgeInsets.only(
-            left: width * 0.25,
-            right: width * 0.05,
-          ),
-          dense: false,
-          leading: ClipRRect(
-            borderRadius: BorderRadius.all(Radius.circular(6.0)),
-            child: Image.asset(
-              'assets/icon/cards/${this.model.selectedPaymentMethod.card.brand}.png',
-              height: 32.0,
-            ),
-          ),
-          title: Text(
-              this.model.selectedPaymentMethod.card.brand.toUpperCase() +
-                  ' **** ' +
-                  this.model.selectedPaymentMethod.card.last4),
-          trailing: IconButton(
-            icon: Icon(Icons.edit),
-            onPressed: () => PaymentDetail.show(
-              context: context,
-              paymentModel: this.model,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildAddCardBtn() {
-    return FlatButton(
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Icon(
-            Icons.add,
-            color: Colors.black,
-          ),
-          SizedBox(
-            width: 8,
-          ),
-          Text(
-            'Add Card',
-            style: TextStyle(
-              fontSize: 12.0,
-              color: Colors.black,
-            ),
-          ),
-        ],
-      ),
-      onPressed: model.isLoading
-          ? null
-          : () => addCard(stripeProvider: model.stripeProvider),
-    );
-  }
-
-  Widget _buildCheckoutButton(BuildContext context) {
-    return Expanded(
-      child: Align(
-        alignment: FractionalOffset.bottomCenter,
-        child: Container(
-          height: 80.0,
-          width: MediaQuery.of(context).size.width,
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primary,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black26,
-                offset: Offset(0, -1),
-                blurRadius: 6.0,
-              ),
-            ],
-          ),
-          child: Center(
-            child: FlatButton(
-              child: Text(
-                'Checkout',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.w400,
-                  letterSpacing: 2.0,
-                ),
-              ),
-              onPressed: () => {},
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildShoppingCart() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 30),
@@ -299,7 +190,7 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
                       style: Theme.of(context).textTheme.headline6,
                     ),
                     Text(
-                      "${model.treatmentOptions[i].price}",
+                      "\$${model.treatmentOptions[i].price}",
                       maxLines: 1,
                       style: Theme.of(context).textTheme.bodyText1,
                     ),
@@ -311,43 +202,6 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
           );
         },
         onSelected: (items) => model.updateTreatmentOptions(items),
-      ),
-    );
-  }
-
-  Widget _buildAddressCheckbox() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: FormBuilderCheckbox(
-        attribute: 'shipping_address',
-        label: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Ship to my mailing address",
-                    maxLines: 2,
-                    style: Theme.of(context).textTheme.headline6,
-                  ),
-                  SizedBox(
-                    height: 4,
-                  ),
-                  Text(
-                    "${model.userProvider.user.address} ${model.userProvider.user.city} ${model.userProvider.user.state} ${model.userProvider.user.zipCode}",
-                    maxLines: 3,
-                    style: Theme.of(context).textTheme.subtitle2,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        initialValue: model.useAccountAddress,
-        onChanged: (value) =>
-            model.updateUseAccountAddressToggle(value as bool),
       ),
     );
   }
@@ -420,6 +274,178 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildAddressCheckbox() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: FormBuilderCheckbox(
+        attribute: 'shipping_address',
+        label: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Ship to my mailing address",
+                    maxLines: 2,
+                    style: Theme.of(context).textTheme.headline6,
+                  ),
+                  SizedBox(
+                    height: 4,
+                  ),
+                  Text(
+                    "${model.userProvider.user.mailingAddress} ${model.userProvider.user.mailingCity} ${model.userProvider.user.mailingState} ${model.userProvider.user.mailingZipCode}",
+                    maxLines: 3,
+                    style: Theme.of(context).textTheme.subtitle2,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        initialValue: model.useAccountAddress,
+        onChanged: (value) =>
+            model.updateUseAccountAddressToggle(value as bool),
+      ),
+    );
+  }
+
+  Widget _buildPaymentDetail() {
+    if (this.model.selectedPaymentMethod == null) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        child: CircularProgressIndicator(),
+      );
+    }
+    if (this.model.userHasCards) {
+      return _buildCardItem();
+    }
+    return _buildAddCardBtn();
+  }
+
+  Widget _buildCardItem() {
+    double width = MediaQuery.of(context).size.width;
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            "Select a payment method. Your default is already select.",
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.subtitle1,
+          ),
+        ),
+        SizedBox(
+          height: 16,
+        ),
+        ListTile(
+          contentPadding: EdgeInsets.only(
+            left: width * 0.25,
+            right: width * 0.05,
+          ),
+          dense: false,
+          leading: ClipRRect(
+            borderRadius: BorderRadius.all(Radius.circular(6.0)),
+            child: Image.asset(
+              'assets/icon/cards/${this.model.selectedPaymentMethod.card.brand}.png',
+              height: 32.0,
+            ),
+          ),
+          title: Text(
+              this.model.selectedPaymentMethod.card.brand.toUpperCase() +
+                  ' **** ' +
+                  this.model.selectedPaymentMethod.card.last4),
+          trailing: IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: () => PaymentDetail.show(
+              context: context,
+              paymentModel: this.model,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAddCardBtn() {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            "Please add a payment method",
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.subtitle1,
+          ),
+        ),
+        SizedBox(
+          height: 16,
+        ),
+        FlatButton(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Icon(
+                Icons.add,
+                color: Colors.black,
+              ),
+              SizedBox(
+                width: 8,
+              ),
+              Text(
+                'Add Card',
+                style: TextStyle(
+                  fontSize: 12.0,
+                  color: Colors.black,
+                ),
+              ),
+            ],
+          ),
+          onPressed: model.isLoading
+              ? null
+              : () => addCard(stripeProvider: model.stripeProvider),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCheckoutButton(BuildContext context) {
+    return Expanded(
+      child: Align(
+        alignment: FractionalOffset.bottomCenter,
+        child: Container(
+          height: 80.0,
+          width: MediaQuery.of(context).size.width,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primary,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                offset: Offset(0, -1),
+                blurRadius: 6.0,
+              ),
+            ],
+          ),
+          child: Center(
+            child: FlatButton(
+              child: Text(
+                'Checkout',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.w400,
+                  letterSpacing: 2.0,
+                ),
+              ),
+              onPressed: () => _submit(),
+            ),
+          ),
+        ),
       ),
     );
   }

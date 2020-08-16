@@ -116,7 +116,7 @@ class ProviderDetailScreen extends StatelessWidget {
         alignment: Alignment.center,
         width: 150,
         child: Text(
-          provider.address,
+          provider.mailingAddress,
           style: TextStyle(fontSize: 16),
           textAlign: TextAlign.center,
         ),

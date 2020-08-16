@@ -657,7 +657,7 @@ class FirestoreDatabase implements Database {
     await documentReference.get().then((datasnapshot) async {
       if (datasnapshot.data != null) {
         patientDetail = PatientUser();
-        patientDetail.address = datasnapshot.data['address'];
+        patientDetail.mailingAddress = datasnapshot.data['address'];
         patientDetail.fullName = datasnapshot.data['name'];
         patientDetail.dob = datasnapshot.data['dob'];
         patientDetail.gender = datasnapshot.data['gender'];

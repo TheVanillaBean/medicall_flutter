@@ -420,7 +420,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                             ? db.consultSnapshot
                                                 .data['shipping_address']
                                                 .replaceFirst(',', '\n')
-                                            : db.patientDetail.address
+                                            : db.patientDetail.mailingAddress
                                                 .replaceFirst(',', '\n')),
                                       ],
                                     )

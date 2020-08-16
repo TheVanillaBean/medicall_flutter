@@ -38,7 +38,7 @@ class ProviderListItem extends StatelessWidget {
             lastName: provider.lastName,
             titles: provider.titles,
           )),
-          subtitle: Text(provider.address),
+          subtitle: Text(provider.mailingAddress),
           trailing: Icon(
             Icons.chevron_right,
             color: Colors.grey,

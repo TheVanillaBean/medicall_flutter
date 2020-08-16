@@ -98,7 +98,7 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
                                           ? widget
                                               .snapshot.data['shipping_address']
                                               .replaceFirst(',', '\n')
-                                          : db.patientDetail.address
+                                          : db.patientDetail.mailingAddress
                                               .replaceFirst(',', '\n')),
                                     ],
                                   )

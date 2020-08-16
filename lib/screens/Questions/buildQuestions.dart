@@ -352,7 +352,11 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                                           .widget
                                           .data['questions'][i]["index"]]) !=
                                   -1) {
-                            this.widget.data['parent'].state.setState(() {
+                            this
+                                .widget
+                                .data['parent']
+                                .mailingState
+                                .setState(() {
                               this.widget.data['questions'][i]['visible'] =
                                   true;
                             });
@@ -362,7 +366,11 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                                       .widget
                                       .data['questions'][i]["index"]]) ==
                               -1) {
-                            this.widget.data['parent'].state.setState(() {
+                            this
+                                .widget
+                                .data['parent']
+                                .mailingState
+                                .setState(() {
                               this.widget.data['questions'][i]['visible'] =
                                   false;
                             });
@@ -375,7 +383,11 @@ class _BuildQuestionsState extends State<BuildQuestions> {
                           if (currQuestionObj["question"] ==
                               this.widget.data['questions'][i]
                                   ['parent_question']) {
-                            this.widget.data['parent'].state.setState(() {
+                            this
+                                .widget
+                                .data['parent']
+                                .mailingState
+                                .setState(() {
                               this.widget.data['questions'][i]['visible'] =
                                   false;
                             });

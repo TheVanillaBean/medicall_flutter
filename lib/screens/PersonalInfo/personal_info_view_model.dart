@@ -209,11 +209,11 @@ class PersonalInfoViewModel with PersonalInfoValidator, ChangeNotifier {
     medicallUser.firstName = this.firstName;
     medicallUser.lastName = this.lastName;
     medicallUser.phoneNumber = this.phoneNumber;
-    medicallUser.address = this.billingAddress;
+    medicallUser.mailingAddress = this.billingAddress;
     medicallUser.dob = this.birthday;
-    medicallUser.state = this.state;
-    medicallUser.city = this.city;
-    medicallUser.zipCode = this.zipCode;
+    medicallUser.mailingState = this.state;
+    medicallUser.mailingCity = this.city;
+    medicallUser.mailingZipCode = this.zipCode;
 
     try {
       medicallUser.profilePic = await firebaseStorageService.uploadProfileImage(

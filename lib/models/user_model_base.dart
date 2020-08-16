@@ -17,10 +17,14 @@ abstract class User {
   String phoneNumber;
   String email;
   String profilePic;
-  String address;
-  String state;
-  String zipCode;
-  String city;
+  String mailingAddress;
+  String mailingState;
+  String mailingZipCode;
+  String mailingCity;
+  String shippingAddress;
+  String shippingState;
+  String shippingZipCode;
+  String shippingCity;
   String streamChatID;
 
   User({
@@ -35,10 +39,14 @@ abstract class User {
     this.phoneNumber = '',
     this.email = '',
     this.profilePic = '',
-    this.address = '',
-    this.state = '',
-    this.zipCode = '',
-    this.city = '',
+    this.mailingAddress = '',
+    this.mailingState = '',
+    this.mailingZipCode = '',
+    this.mailingCity = '',
+    this.shippingAddress = '',
+    this.shippingState = '',
+    this.shippingZipCode = '',
+    this.shippingCity = '',
     this.streamChatID = '',
   });
 
@@ -56,10 +64,14 @@ abstract class User {
       'gender': gender,
       'profile_pic': profilePic,
       'phone_number': phoneNumber,
-      'address': address,
-      'state': state,
-      'zipCode': zipCode,
-      'city': city,
+      'mailing_address': mailingAddress,
+      'mailing_state': mailingState,
+      'mailing_zip_code': mailingZipCode,
+      'mailing_city': mailingCity,
+      'shipping_address': shippingAddress,
+      'shipping_state': shippingState,
+      'shipping_zip_code': shippingZipCode,
+      'shipping_city': shippingCity,
     };
   }
 
@@ -86,10 +98,14 @@ abstract class User {
     user.profilePic = data['profile_pic'] ?? user.profilePic;
     user.email = data['email'] ?? user.email;
     user.phoneNumber = data['phone_number'] ?? user.phoneNumber;
-    user.address = data['address'] ?? user.address;
-    user.state = data['state'] ?? user.state;
-    user.zipCode = data['zipCode'] ?? user.zipCode;
-    user.city = data['city'] ?? user.city;
+    user.mailingAddress = data['mailing_address'] ?? user.mailingAddress;
+    user.mailingState = data['mailing_state'] ?? user.mailingState;
+    user.mailingZipCode = data['mailing_zip_code'] ?? user.mailingZipCode;
+    user.mailingCity = data['mailing_city'] ?? user.mailingCity;
+    user.shippingAddress = data['shipping_address'] ?? user.shippingAddress;
+    user.shippingState = data['shipping_state'] ?? user.shippingState;
+    user.shippingZipCode = data['shipping_zip_code'] ?? user.shippingZipCode;
+    user.shippingCity = data['shipping_city'] ?? user.shippingCity;
     user.streamChatID = data['stream_chat_id'] ?? user.streamChatID;
     return user;
   }

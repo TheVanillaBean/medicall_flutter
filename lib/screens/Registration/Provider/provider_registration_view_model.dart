@@ -250,10 +250,10 @@ class ProviderRegistrationViewModel
         tempUserProvider.user.lastName = this.lastName;
         tempUserProvider.user.phoneNumber = this.phoneNumber;
         tempUserProvider.user.dob = this.birthday;
-        tempUserProvider.user.address = this.address;
-        tempUserProvider.user.city = this.city;
-        tempUserProvider.user.state = this.state;
-        tempUserProvider.user.zipCode = this.zipCode;
+        tempUserProvider.user.mailingAddress = this.address;
+        tempUserProvider.user.mailingCity = this.city;
+        tempUserProvider.user.mailingState = this.state;
+        tempUserProvider.user.mailingZipCode = this.zipCode;
         (tempUserProvider.user as ProviderUser).titles = this.titles;
         (tempUserProvider.user as ProviderUser).medLicense = this.medLicense;
         (tempUserProvider.user as ProviderUser).medLicenseState =
