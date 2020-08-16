@@ -108,7 +108,6 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
             Text(
               medicallUser.fullName,
               style: Theme.of(context).textTheme.bodyText1.copyWith(
-                    fontSize: 20,
                     color: Theme.of(context).colorScheme.primary,
                     fontWeight: FontWeight.bold,
                   ),
@@ -118,7 +117,6 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
             Text(
               EnumToString.parse(userProvider.user.type).toUpperCase(),
               style: Theme.of(context).textTheme.bodyText1.copyWith(
-                    fontSize: 14,
                     color: Colors.black54,
                     fontWeight: FontWeight.bold,
                   ),

@@ -159,7 +159,7 @@ final ThemeData myTheme = ThemeData(
         fontSize: 10,
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
-        letterSpacing: 1.1),
+        letterSpacing: 0.7),
     bodyText1: TextStyle(
       color: Color(0xdd000000),
       fontWeight: FontWeight.w400,

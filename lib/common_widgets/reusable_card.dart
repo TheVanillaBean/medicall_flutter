@@ -26,7 +26,7 @@ class ReusableCard extends StatelessWidget {
       child: subtitle != null
           ? ListTile(
               isThreeLine: false,
-              contentPadding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+              contentPadding: EdgeInsets.fromLTRB(15, 5, 15, 5),
               dense: true,
               leading: leading,
               title: title,
@@ -40,7 +40,7 @@ class ReusableCard extends StatelessWidget {
             )
           : ListTile(
               isThreeLine: false,
-              contentPadding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+              contentPadding: EdgeInsets.fromLTRB(15, 5, 15, 5),
               dense: true,
               leading: leading,
               title: title,

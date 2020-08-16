@@ -34,19 +34,27 @@ class PatientDashboardListItem extends StatelessWidget {
                   size: 40,
                   color: Colors.grey,
                 ),
-          title: Text(
-            'Dr. ${consult.providerUser.fullName}',
-            style: Theme.of(context).textTheme.bodyText1,
-          ),
-          subtitle: '${consult.symptom} visit',
-          trailing: FractionallySizedBox(
-            widthFactor: 0.25,
-            child: Text(
-              EnumToString.parseCamelCase(consult.state) ?? "",
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.primary,
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                '${consult.providerUser.fullName}',
+                style: Theme.of(context).textTheme.bodyText1,
               ),
-            ),
+              SizedBox(height: 2),
+              Text('${consult.symptom} visit',
+                  style: Theme.of(context).textTheme.caption),
+              SizedBox(height: 2),
+            ],
+          ),
+          subtitle: '${consult.parsedDate}',
+          trailing: Container(
+            width: 60,
+            alignment: Alignment.bottomCenter,
+            child: Text(EnumToString.parseCamelCase(consult.state) ?? "",
+                style: Theme.of(context).textTheme.caption.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.bold)),
           ),
           onTap: onTap,
         ),

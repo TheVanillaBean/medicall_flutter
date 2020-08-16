@@ -23,16 +23,12 @@ class ReusableAccountCard extends StatelessWidget {
         dense: true,
         leading: Text(
           leading ?? '',
-          style: Theme.of(context).textTheme.bodyText1.copyWith(
-                fontSize: 14,
-              ),
+          style: Theme.of(context).textTheme.bodyText1,
         ),
         title: Transform(
           child: Text(
             title,
-            style: Theme.of(context).textTheme.bodyText1.copyWith(
-                  fontSize: 14,
-                ),
+            style: Theme.of(context).textTheme.bodyText1,
           ),
           transform: Matrix4.translationValues(-10, 0.0, 0.0),
         ),
