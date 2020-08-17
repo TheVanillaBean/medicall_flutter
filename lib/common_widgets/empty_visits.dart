@@ -17,8 +17,8 @@ class EmptyVisits extends StatelessWidget {
         children: <Widget>[
           Container(
             child: Image.asset(
-              'assets/images/empty-folder.png',
-              width: 100,
+              'assets/images/clipboard.png',
+              width: 150,
             ),
           ),
           SizedBox(
@@ -26,22 +26,14 @@ class EmptyVisits extends StatelessWidget {
           ),
           Text(
             title,
-            style: TextStyle(
-              fontSize: 18.0,
-              color: Colors.black54,
-              fontWeight: FontWeight.w500,
-            ),
+            style: Theme.of(context).textTheme.headline5,
           ),
           SizedBox(
             height: 12,
           ),
           Text(
             message,
-            style: TextStyle(
-              fontSize: 14.0,
-              color: Colors.black54,
-              fontWeight: FontWeight.w400,
-            ),
+            style: Theme.of(context).textTheme.bodyText1,
           ),
         ],
       ),
