@@ -43,7 +43,18 @@ class PrescriptionCheckoutViewModel
     this.isLoading = false,
     this.refreshCards = true,
     this.totalCost = 0,
-  });
+  }) {
+    List<TreatmentOptions> selectedTreatmentOptions = [];
+    int cost = 0;
+    for (TreatmentOptions treatmentOptions in this.treatmentOptions) {
+      if (treatmentOptions.status == TreatmentStatus.PendingPayment) {
+        selectedTreatmentOptions.add(treatmentOptions);
+      }
+      cost = cost + treatmentOptions.price;
+    }
+    this.selectedTreatmentOptions = selectedTreatmentOptions;
+    this.totalCost = cost;
+  }
 
   final List<String> states = const <String>[
     "AK",
@@ -227,7 +238,7 @@ class PrescriptionCheckoutViewModel
     int totalCost,
   }) {
     this.selectedTreatmentOptions =
-        selectedTreatmentOptions ?? this.selectedTreatmentOptions;
+        selectedTreatments ?? this.selectedTreatmentOptions;
     this.shippingAddress = shippingAddress ?? this.shippingAddress;
     this.city = city ?? this.city;
     this.state = state ?? this.state;

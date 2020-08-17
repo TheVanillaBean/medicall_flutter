@@ -37,8 +37,8 @@ class TreatmentOptions {
     this.quantity,
     this.refills,
     this.date,
-    this.status,
-    this.price = 29,
+    this.status = TreatmentStatus.PendingPayment,
+    this.price,
   });
 
   factory TreatmentOptions.fromMap(Map<String, dynamic> data) {
@@ -55,6 +55,7 @@ class TreatmentOptions {
     final String instructions = data['instructions'] as String ?? "";
     final String quantity = data['quantity'] as String ?? "";
     final String refills = data['refills'] as String ?? "";
+    final int price = data['price'] as int ?? 29;
     final TreatmentStatus state =
         (data['state'] as String).toTreatmentStatus() ??
             TreatmentStatus.PendingPayment;
@@ -71,6 +72,7 @@ class TreatmentOptions {
       refills: refills,
       date: date,
       status: state,
+      price: price,
     );
   }
 
@@ -84,6 +86,7 @@ class TreatmentOptions {
       'quantity': quantity,
       'refills': refills,
       'date': date,
+      'price': price,
       'state': EnumToString.parse(status),
     };
   }

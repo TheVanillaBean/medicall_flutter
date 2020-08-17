@@ -217,6 +217,9 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
           );
         },
         onSelected: (items) => model.updateTreatmentOptions(items),
+        checked: model.selectedTreatmentOptions
+            .map((e) => e.medicationName)
+            .toList(),
       ),
     );
   }
