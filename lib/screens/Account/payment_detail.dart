@@ -82,9 +82,9 @@ class PaymentDetail extends StatelessWidget {
 
   Widget _buildChildren() {
     return Container(
-      height: ScreenUtil.screenHeightDp - (ScreenUtil.screenHeightDp * 0.1),
+      margin: EdgeInsets.only(top: ScreenUtil.screenHeightDp * 0.1),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Text(
             'Your payment cards on file:',
@@ -92,6 +92,9 @@ class PaymentDetail extends StatelessWidget {
               fontSize: 16.0,
               color: Colors.black54,
             ),
+          ),
+          SizedBox(
+            height: ScreenUtil.screenHeightDp * 0.05,
           ),
           StreamBuilder<List<PaymentMethod>>(
             stream: model.paymentMethodsStream.stream,
@@ -101,6 +104,7 @@ class PaymentDetail extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 36),
                 child: ListItemsBuilder<PaymentMethod>(
                   displayEmptyContentView: false,
+                  scrollable: false,
                   snapshot: snapshot,
                   itemBuilder: (context, paymentMethod) => PaymentListItem(
                     key: UniqueKey(),
@@ -120,6 +124,9 @@ class PaymentDetail extends StatelessWidget {
                 ),
               );
             },
+          ),
+          SizedBox(
+            height: ScreenUtil.screenHeightDp * 0.05,
           ),
           ReusableRaisedButton(
             title: 'Add Card',

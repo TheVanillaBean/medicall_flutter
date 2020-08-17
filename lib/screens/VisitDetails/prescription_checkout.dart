@@ -11,6 +11,7 @@ import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_screenutil/screenutil.dart';
 import 'package:grouped_buttons/grouped_buttons.dart';
 import 'package:provider/provider.dart';
 import 'package:stripe_payment/stripe_payment.dart';
@@ -50,7 +51,7 @@ class PrescriptionCheckout extends StatefulWidget {
     String consultId,
     List<TreatmentOptions> treatmentOptions,
   }) async {
-    await Navigator.of(context).pushReplacementNamed(
+    await Navigator.of(context).pushNamed(
       Routes.prescriptionCheckout,
       arguments: {
         'consultId': consultId,
@@ -120,6 +121,7 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(context);
     if (this.model.refreshCards) {
       this.model.retrieveCards();
     }
@@ -180,26 +182,37 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
         labels: model.treatmentOptions.map((e) => e.medicationName).toList(),
         itemBuilder: (Checkbox cb, Text txt, int i) {
           return Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      txt.data,
-                      maxLines: 1,
-                      style: Theme.of(context).textTheme.headline6,
-                    ),
-                    Text(
-                      "\$${model.treatmentOptions[i].price}",
-                      maxLines: 1,
+              model.treatmentOptions[i].status == TreatmentStatus.PendingPayment
+                  ? SizedBox(
+                      width: Checkbox.width,
+                      child: cb,
+                    )
+                  : Text(
+                      "Already paid",
                       style: Theme.of(context).textTheme.bodyText1,
                     ),
-                  ],
+              Expanded(
+                flex: 9,
+                child: Text(
+                  txt.data,
+                  maxLines: 1,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.headline6,
                 ),
               ),
-              cb,
+              Expanded(
+                flex: 1,
+                child: Text(
+                  "\$${model.treatmentOptions[i].price}",
+                  maxLines: 1,
+                  textAlign: TextAlign.right,
+                  style: Theme.of(context).textTheme.bodyText1.copyWith(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                ),
+              ),
             ],
           );
         },
@@ -218,60 +231,65 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
             children: <Widget>[
               Text(
                 'Prescriptions Cost:',
-                style: TextStyle(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: Theme.of(context).textTheme.headline5,
               ),
               Text(
                 '\$${model.totalCost}',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: Theme.of(context).textTheme.headline5.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
               ),
             ],
           ),
-          SizedBox(height: 10.0),
+          SizedBox(height: 12.0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
+                'Shipping:',
+                style: Theme.of(context).textTheme.headline5,
+              ),
+              Text(
+                'FREE',
+                style: Theme.of(context).textTheme.headline5.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+              ),
+            ],
+          ),
+          SizedBox(height: 12.0),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text(
                 'Tax:',
-                style: TextStyle(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: Theme.of(context).textTheme.headline5,
               ),
               Text(
-                '\0.00',
-                style: TextStyle(
-                  color: Colors.black87,
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.w600,
-                ),
+                '\$\0.00',
+                style: Theme.of(context).textTheme.headline5.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
               ),
             ],
           ),
-          SizedBox(height: 10.0),
+          SizedBox(height: 12.0),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text(
                 'Total Cost:',
-                style: TextStyle(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: Theme.of(context)
+                    .textTheme
+                    .headline5
+                    .copyWith(fontWeight: FontWeight.w600),
               ),
               Text(
                 '\$${model.totalCost}',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: Theme.of(context).textTheme.headline5.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
               ),
             ],
           ),
@@ -331,7 +349,7 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
   }
 
   Widget _buildCardItem() {
-    double width = MediaQuery.of(context).size.width;
+    double width = ScreenUtil.screenWidthDp;
     return Column(
       children: [
         Padding(
@@ -348,7 +366,7 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
         ListTile(
           contentPadding: EdgeInsets.only(
             left: width * 0.25,
-            right: width * 0.05,
+            right: width * 0.1,
           ),
           dense: false,
           leading: ClipRRect(
@@ -359,15 +377,21 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
             ),
           ),
           title: Text(
-              this.model.selectedPaymentMethod.card.brand.toUpperCase() +
-                  ' **** ' +
-                  this.model.selectedPaymentMethod.card.last4),
+            this.model.selectedPaymentMethod.card.brand.toUpperCase() +
+                ' **** ' +
+                this.model.selectedPaymentMethod.card.last4,
+            style: Theme.of(context).textTheme.bodyText1,
+          ),
           trailing: IconButton(
             icon: Icon(Icons.edit),
             onPressed: () => PaymentDetail.show(
               context: context,
               paymentModel: this.model,
             ),
+          ),
+          onTap: () => PaymentDetail.show(
+            context: context,
+            paymentModel: this.model,
           ),
         ),
       ],

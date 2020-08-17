@@ -187,6 +187,13 @@ class PrescriptionCheckoutViewModel
 
     updateWith(isLoading: false);
     if (paymentIntentResult.status == "succeeded") {
+      for (TreatmentOptions treatmentOptions in this.selectedTreatmentOptions) {
+        treatmentOptions.status = TreatmentStatus.Paid;
+      }
+      await this.firestoreDatabase.savePrescriptions(
+            consultId: this.consultId,
+            treatmentOptions: this.selectedTreatmentOptions,
+          );
       return true;
     } else {
       return false;

@@ -1,4 +1,5 @@
 import 'package:Medicall/models/consult-review/treatment_options.dart';
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 
 class PrescriptionListItem extends StatelessWidget {
@@ -67,13 +68,19 @@ class PrescriptionListItem extends StatelessWidget {
                 'Instructions: ${treatment.instructions}',
                 style: Theme.of(context).textTheme.bodyText2,
               ),
-              Text(
-                'Price: \$29',
-                style: Theme.of(context).textTheme.bodyText1,
+              SizedBox(
+                height: 4,
               ),
               Text(
-                'Payment Pending',
+                'Price: \$${this.treatment.price}',
                 style: Theme.of(context).textTheme.bodyText1,
+              ),
+              SizedBox(
+                height: 4,
+              ),
+              Text(
+                EnumToString.parseCamelCase(this.treatment.status) ?? "",
+                style: Theme.of(context).textTheme.headline6,
               ),
             ],
           ),

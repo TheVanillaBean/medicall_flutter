@@ -56,7 +56,8 @@ class TreatmentOptions {
     final String quantity = data['quantity'] as String ?? "";
     final String refills = data['refills'] as String ?? "";
     final TreatmentStatus state =
-        (data['state'] as String).toTreatmentStatus() ?? null;
+        (data['state'] as String).toTreatmentStatus() ??
+            TreatmentStatus.PendingPayment;
 
     final DateTime date = DateTime.parse(dateTimeStamp.toDate().toString());
 
