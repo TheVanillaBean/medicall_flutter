@@ -171,15 +171,13 @@ class Router {
         );
       case Routes.prescriptionCheckout:
         final Map<String, dynamic> mapArgs = args;
-        final List<TreatmentOptions> treatmentOptions =
-            mapArgs['treatmentOptions'];
         final String consultId = mapArgs['consultId'];
-
+        final VisitReviewData visitReviewData = mapArgs['visitReviewData'];
         return MaterialPageRoute<dynamic>(
           builder: (context) => PrescriptionCheckout.create(
             context,
+            visitReviewData,
             consultId,
-            treatmentOptions,
           ),
           settings: settings,
           fullscreenDialog: true,

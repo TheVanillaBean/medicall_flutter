@@ -1,7 +1,7 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/custom_dropdown_formfield.dart';
-import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/consult-review/treatment_options.dart';
+import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Account/payment_detail.dart';
 import 'package:Medicall/screens/VisitDetails/prescription_checkout_view_model.dart';
@@ -11,8 +11,10 @@ import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_screenutil/screenutil.dart';
 import 'package:grouped_buttons/grouped_buttons.dart';
 import 'package:provider/provider.dart';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:stripe_payment/stripe_payment.dart';
 
 class PrescriptionCheckout extends StatefulWidget {
@@ -22,8 +24,8 @@ class PrescriptionCheckout extends StatefulWidget {
 
   static Widget create(
     BuildContext context,
+    VisitReviewData visitReviewData,
     String consultId,
-    List<TreatmentOptions> treatmentOptions,
   ) {
     final UserProvider userProvider = Provider.of<UserProvider>(context);
     final FirestoreDatabase firestoreDatabase =
@@ -33,9 +35,9 @@ class PrescriptionCheckout extends StatefulWidget {
       create: (context) => PrescriptionCheckoutViewModel(
         firestoreDatabase: firestoreDatabase,
         userProvider: userProvider,
-        consultId: consultId,
-        treatmentOptions: treatmentOptions,
         stripeProvider: stripeProvider,
+        visitReviewData: visitReviewData,
+        consultId: consultId,
       ),
       child: Consumer<PrescriptionCheckoutViewModel>(
         builder: (_, model, __) => PrescriptionCheckout(
@@ -48,13 +50,13 @@ class PrescriptionCheckout extends StatefulWidget {
   static Future<void> show({
     BuildContext context,
     String consultId,
-    List<TreatmentOptions> treatmentOptions,
+    VisitReviewData visitReviewData,
   }) async {
-    await Navigator.of(context).pushReplacementNamed(
+    await Navigator.of(context).pushNamed(
       Routes.prescriptionCheckout,
       arguments: {
+        'visitReviewData': visitReviewData,
         'consultId': consultId,
-        'treatmentOptions': treatmentOptions,
       },
     );
   }
@@ -114,12 +116,16 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
     bool successfullyAddedCard =
         await stripeProvider.addCard(setupIntent: setupIntent);
     if (successfullyAddedCard) {
-      this.model.updateWith(isLoading: true, refreshCards: true);
+      this.model.updateWith(isLoading: false, refreshCards: true);
+    } else {
+      this.model.updateWith(isLoading: false);
+      AppUtil().showFlushBar("There was an error adding your card.", context);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(context);
     if (this.model.refreshCards) {
       this.model.retrieveCards();
     }
@@ -141,11 +147,6 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
               hasScrollBody: false,
               child: Column(
                 children: [
-                  if (model.isLoading)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      child: CircularProgressIndicator(),
-                    ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 30),
                     child: Text(
@@ -177,33 +178,53 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 30),
       child: CheckboxGroup(
-        labels: model.treatmentOptions.map((e) => e.medicationName).toList(),
+        labels: model.visitReviewData.treatmentOptions
+            .map((e) => e.medicationName)
+            .toList(),
         itemBuilder: (Checkbox cb, Text txt, int i) {
           return Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      txt.data,
-                      maxLines: 1,
+              model.visitReviewData.treatmentOptions[i].status ==
+                      TreatmentStatus.PendingPayment
+                  ? SizedBox(
+                      width: Checkbox.width,
+                      child: cb,
+                    )
+                  : Text(
+                      "Paid",
                       style: Theme.of(context).textTheme.headline6,
                     ),
-                    Text(
-                      "\$${model.treatmentOptions[i].price}",
-                      maxLines: 1,
-                      style: Theme.of(context).textTheme.bodyText1,
-                    ),
-                  ],
+              Expanded(
+                flex: 9,
+                child: Text(
+                  txt.data,
+                  maxLines: 1,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.headline6,
                 ),
               ),
-              cb,
+              Expanded(
+                flex: model.visitReviewData.treatmentOptions[i].status ==
+                        TreatmentStatus.Paid
+                    ? 2
+                    : 1,
+                child: Text(
+                  "\$${model.visitReviewData.treatmentOptions[i].price}",
+                  maxLines: 1,
+                  textAlign: TextAlign.right,
+                  style: Theme.of(context).textTheme.bodyText1.copyWith(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                ),
+              ),
             ],
           );
         },
         onSelected: (items) => model.updateTreatmentOptions(items),
+        checked: model.selectedTreatmentOptions
+            .map((e) => e.medicationName)
+            .toList(),
       ),
     );
   }
@@ -218,60 +239,65 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
             children: <Widget>[
               Text(
                 'Prescriptions Cost:',
-                style: TextStyle(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: Theme.of(context).textTheme.headline5,
               ),
               Text(
                 '\$${model.totalCost}',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: Theme.of(context).textTheme.headline5.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
               ),
             ],
           ),
-          SizedBox(height: 10.0),
+          SizedBox(height: 12.0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
+                'Shipping:',
+                style: Theme.of(context).textTheme.headline5,
+              ),
+              Text(
+                'FREE',
+                style: Theme.of(context).textTheme.headline5.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+              ),
+            ],
+          ),
+          SizedBox(height: 12.0),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text(
                 'Tax:',
-                style: TextStyle(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: Theme.of(context).textTheme.headline5,
               ),
               Text(
-                '\0.00',
-                style: TextStyle(
-                  color: Colors.black87,
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.w600,
-                ),
+                '\$\0.00',
+                style: Theme.of(context).textTheme.headline5.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
               ),
             ],
           ),
-          SizedBox(height: 10.0),
+          SizedBox(height: 12.0),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text(
                 'Total Cost:',
-                style: TextStyle(
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: Theme.of(context)
+                    .textTheme
+                    .headline5
+                    .copyWith(fontWeight: FontWeight.w600),
               ),
               Text(
                 '\$${model.totalCost}',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: Theme.of(context).textTheme.headline5.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
               ),
             ],
           ),
@@ -285,6 +311,7 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: FormBuilderCheckbox(
         attribute: 'shipping_address',
+        readOnly: model.allPrescriptionsPaidFor,
         label: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -318,12 +345,6 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
   }
 
   Widget _buildPaymentDetail() {
-    if (this.model.selectedPaymentMethod == null) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        child: CircularProgressIndicator(),
-      );
-    }
     if (this.model.userHasCards) {
       return _buildCardItem();
     }
@@ -331,7 +352,7 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
   }
 
   Widget _buildCardItem() {
-    double width = MediaQuery.of(context).size.width;
+    double width = ScreenUtil.screenWidthDp;
     return Column(
       children: [
         Padding(
@@ -348,7 +369,7 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
         ListTile(
           contentPadding: EdgeInsets.only(
             left: width * 0.25,
-            right: width * 0.05,
+            right: width * 0.08,
           ),
           dense: false,
           leading: ClipRRect(
@@ -359,16 +380,26 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
             ),
           ),
           title: Text(
-              this.model.selectedPaymentMethod.card.brand.toUpperCase() +
-                  ' **** ' +
-                  this.model.selectedPaymentMethod.card.last4),
-          trailing: IconButton(
-            icon: Icon(Icons.edit),
-            onPressed: () => PaymentDetail.show(
-              context: context,
-              paymentModel: this.model,
-            ),
+            this.model.selectedPaymentMethod.card.brand.toUpperCase() +
+                ' **** ' +
+                this.model.selectedPaymentMethod.card.last4,
+            style: Theme.of(context).textTheme.bodyText1,
           ),
+          trailing: !model.allPrescriptionsPaidFor
+              ? IconButton(
+                  icon: Icon(Icons.edit),
+                  onPressed: () => PaymentDetail.show(
+                    context: context,
+                    paymentModel: this.model,
+                  ),
+                )
+              : null,
+          onTap: !model.allPrescriptionsPaidFor
+              ? () => PaymentDetail.show(
+                    context: context,
+                    paymentModel: this.model,
+                  )
+              : null,
         ),
       ],
     );
@@ -382,7 +413,7 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
           child: Text(
             "Please add a payment method",
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.subtitle1,
+            style: Theme.of(context).textTheme.bodyText1,
           ),
         ),
         SizedBox(
@@ -417,9 +448,22 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
   }
 
   Widget _buildCheckoutButton(BuildContext context) {
-    return ReusableRaisedButton(
-      title: "Checkout",
-      onPressed: () => _submit(),
+    return SizedBox(
+      height: 50,
+      width: 200,
+      child: RoundedLoadingButton(
+        controller: model.btnController,
+        color: Theme.of(context).colorScheme.primary,
+        child: Text(
+          'Checkout',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        onPressed: model.canSubmit ? () => _submit() : null,
+      ),
     );
   }
 

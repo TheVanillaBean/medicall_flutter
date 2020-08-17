@@ -1,5 +1,3 @@
-import 'dart:ui' as ui;
-
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/common_widgets/sign_in_button.dart';
 import 'package:Medicall/common_widgets/social_sign_in_button.dart';
@@ -150,7 +148,7 @@ class _LoginScreenState extends State<LoginScreen> {
       FadeIn(
         2,
         Padding(
-            padding: const EdgeInsets.fromLTRB(60, 15, 60, 15),
+            padding: const EdgeInsets.fromLTRB(45, 15, 45, 15),
             child: Column(
               children: <Widget>[
                 _buildHeader(context),

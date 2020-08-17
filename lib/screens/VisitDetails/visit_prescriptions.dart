@@ -81,7 +81,7 @@ class VisitPrescriptions extends StatelessWidget {
                   onPressed: () => PrescriptionCheckout.show(
                     context: context,
                     consultId: consult.uid,
-                    treatmentOptions: visitReviewData.treatmentOptions,
+                    visitReviewData: visitReviewData,
                   ),
                 ),
                 SizedBox(
