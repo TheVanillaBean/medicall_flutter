@@ -1,12 +1,14 @@
 import 'dart:async';
 
 import 'package:Medicall/models/consult-review/treatment_options.dart';
+import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/stripe_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/validators.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:stripe_payment/stripe_payment.dart';
 
 class PrescriptionCheckoutViewModel
@@ -14,9 +16,12 @@ class PrescriptionCheckoutViewModel
   final UserProvider userProvider;
   final FirestoreDatabase firestoreDatabase;
   final StripeProvider stripeProvider;
+  final RoundedLoadingButtonController btnController =
+      RoundedLoadingButtonController();
 
+  VisitReviewData visitReviewData;
   String consultId;
-  List<TreatmentOptions> treatmentOptions = [];
+  List<TreatmentOptions> alreadyPaidForPrescriptions = [];
   List<TreatmentOptions> selectedTreatmentOptions = [];
   String shippingAddress;
   String city;
@@ -28,11 +33,12 @@ class PrescriptionCheckoutViewModel
   bool isLoading;
   bool refreshCards;
   int totalCost;
+  bool userHasCards;
 
   PrescriptionCheckoutViewModel({
     @required this.userProvider,
     @required this.firestoreDatabase,
-    @required this.treatmentOptions,
+    @required this.visitReviewData,
     @required this.consultId,
     @required this.stripeProvider,
     this.shippingAddress = "",
@@ -43,12 +49,16 @@ class PrescriptionCheckoutViewModel
     this.isLoading = false,
     this.refreshCards = true,
     this.totalCost = 0,
+    this.userHasCards = false,
   }) {
     List<TreatmentOptions> selectedTreatmentOptions = [];
     int cost = 0;
-    for (TreatmentOptions treatmentOptions in this.treatmentOptions) {
+    for (TreatmentOptions treatmentOptions
+        in this.visitReviewData.treatmentOptions) {
       if (treatmentOptions.status == TreatmentStatus.PendingPayment) {
         selectedTreatmentOptions.add(treatmentOptions);
+      } else {
+        this.alreadyPaidForPrescriptions.add(treatmentOptions);
       }
       cost = cost + treatmentOptions.price;
     }
@@ -116,10 +126,33 @@ class PrescriptionCheckoutViewModel
     "WY"
   ];
 
+  bool get allPrescriptionsPaidFor {
+    bool allPaidFor = true;
+    this.visitReviewData.treatmentOptions.forEach((element) {
+      if (element.status == TreatmentStatus.PendingPayment) {
+        allPaidFor = false;
+      }
+    });
+    return allPaidFor;
+  }
+
   bool get canSubmit {
-    return shippingAddressValidator.isValid(shippingAddress) &&
+    if (this.selectedPaymentMethod == null) {
+      return false;
+    }
+
+    if (allPrescriptionsPaidFor) {
+      this.btnController.success();
+      return false;
+    }
+
+    if (this.useAccountAddress) {
+      return !this.isLoading && this.selectedTreatmentOptions.length > 0;
+    }
+
+    return this.selectedTreatmentOptions.length > 0 &&
+        shippingAddressValidator.isValid(shippingAddress) &&
         cityValidator.isValid(city) &&
-        stateValidator.isValid(state) &&
         !isLoading;
   }
 
@@ -139,11 +172,16 @@ class PrescriptionCheckoutViewModel
     int cost = 0;
     for (String name in medicationNames) {
       int index = this
+          .visitReviewData
           .treatmentOptions
           .indexWhere((element) => element.medicationName == name);
       if (index > -1) {
-        selectedTreatmentOptions.add(this.treatmentOptions[index]);
-        cost = cost + this.treatmentOptions[index].price;
+        if (this.visitReviewData.treatmentOptions[index].status ==
+            TreatmentStatus.PendingPayment) {
+          selectedTreatmentOptions
+              .add(this.visitReviewData.treatmentOptions[index]);
+          cost = cost + this.visitReviewData.treatmentOptions[index].price;
+        }
       }
     }
     updateWith(
@@ -175,6 +213,7 @@ class PrescriptionCheckoutViewModel
       user.shippingZipCode = user.mailingZipCode;
     } else {
       if (!canSubmit) {
+        this.btnController.reset();
         updateWith(isLoading: false);
         return false;
       } else {
@@ -201,12 +240,33 @@ class PrescriptionCheckoutViewModel
       for (TreatmentOptions treatmentOptions in this.selectedTreatmentOptions) {
         treatmentOptions.status = TreatmentStatus.Paid;
       }
+      await firestoreDatabase.saveVisitReview(
+        consultId: this.consultId,
+        visitReviewData: this.visitReviewData,
+      );
+      List<TreatmentOptions> treatmentsToBeSaved = [];
+      for (TreatmentOptions selectedTreatment
+          in this.selectedTreatmentOptions) {
+        bool includeTreatment = true;
+        for (TreatmentOptions alreadyPaidForPrescription
+            in this.alreadyPaidForPrescriptions) {
+          if (selectedTreatment.medicationName ==
+              alreadyPaidForPrescription.medicationName) {
+            includeTreatment = false;
+          }
+        }
+        if (includeTreatment) {
+          treatmentsToBeSaved.add(selectedTreatment);
+        }
+      }
       await this.firestoreDatabase.savePrescriptions(
             consultId: this.consultId,
-            treatmentOptions: this.selectedTreatmentOptions,
+            treatmentOptions: treatmentsToBeSaved,
           );
+      this.btnController.success();
       return true;
     } else {
+      this.btnController.reset();
       return false;
     }
   }
@@ -217,12 +277,9 @@ class PrescriptionCheckoutViewModel
       this.paymentMethods =
           await this.firestoreDatabase.getUserCardSources(uid);
       this.selectedPaymentMethod = this.paymentMethods.first;
+      this.userHasCards = this.selectedPaymentMethod != null;
       updateWith(refreshCards: false);
     }
-  }
-
-  bool get userHasCards {
-    return this.paymentMethods != null && this.paymentMethods.length > 0;
   }
 
   void updateWith({
