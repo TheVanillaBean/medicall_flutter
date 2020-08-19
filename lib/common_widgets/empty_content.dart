@@ -22,14 +22,14 @@ class EmptyContent extends StatelessWidget {
             ),
             Text(
               title,
-              style: TextStyle(fontSize: 32.0, color: Colors.black54),
+              style: Theme.of(context).textTheme.headline5,
             ),
             SizedBox(
               height: 16,
             ),
             Text(
               message,
-              style: TextStyle(fontSize: 16.0, color: Colors.black54),
+              style: Theme.of(context).textTheme.bodyText1,
             ),
           ],
         ),
