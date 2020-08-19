@@ -18,6 +18,8 @@ class PatientDashboardViewModel with ChangeNotifier {
     @required this.database,
     @required this.userProvider,
   }) {
+    consultStream.add([]);
+
     database
         .getActiveConsultsForPatient(userProvider.user.uid)
         .listen((List<Consult> consults) {

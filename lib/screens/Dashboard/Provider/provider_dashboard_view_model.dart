@@ -18,6 +18,8 @@ class ProviderDashboardViewModel with ChangeNotifier {
     @required this.database,
     @required this.userProvider,
   }) {
+    consultStream.add([]);
+
     database.getPendingConsultsForProvider(userProvider.user.uid).listen(
       (List<Consult> consults) {
         List<String> uniquePatientIds = [];

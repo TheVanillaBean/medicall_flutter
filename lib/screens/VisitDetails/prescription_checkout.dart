@@ -274,7 +274,7 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
                 style: Theme.of(context).textTheme.headline5,
               ),
               Text(
-                '\$\0.00',
+                '\$0',
                 style: Theme.of(context).textTheme.headline5.copyWith(
                       color: Theme.of(context).colorScheme.primary,
                     ),

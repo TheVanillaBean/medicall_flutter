@@ -16,7 +16,6 @@ import 'package:Medicall/services/firestore_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:dash_chat/dash_chat.dart';
-import 'package:enum_to_string/enum_to_string.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart' as path;
@@ -142,12 +141,16 @@ class FirestoreDatabase implements Database {
   Stream<List<Consult>> getPendingConsultsForProvider(String uid) =>
       _service.collectionStream(
         path: FirestorePath.consults(),
-        queryBuilder: (query) =>
-            query.where('provider_id', isEqualTo: uid).where("state", whereIn: [
-          EnumToString.parse(ConsultStatus.PendingReview),
-          EnumToString.parse(ConsultStatus.InReview),
-          EnumToString.parse(ConsultStatus.Completed),
-        ]),
+        queryBuilder: (query) => query
+            .where('provider_id', isEqualTo: uid)
+            .orderBy("date", descending: true)
+            .where(
+              "date",
+              isGreaterThanOrEqualTo: DateTime.now().subtract(
+                Duration(days: 7),
+              ),
+            )
+            .limit(5),
         builder: (data, documentId) => Consult.fromMap(data, documentId),
       );
 
@@ -161,13 +164,15 @@ class FirestoreDatabase implements Database {
   Stream<List<Consult>> getActiveConsultsForPatient(String uid) =>
       _service.collectionStream(
         path: FirestorePath.consults(),
-        queryBuilder: (query) =>
-            query.where('patient_id', isEqualTo: uid).where("state", whereIn: [
-          EnumToString.parse(ConsultStatus.PendingPayment),
-          EnumToString.parse(ConsultStatus.PendingReview),
-          EnumToString.parse(ConsultStatus.InReview),
-          EnumToString.parse(ConsultStatus.Completed),
-        ]),
+        queryBuilder: (query) => query
+            .where('patient_id', isEqualTo: uid)
+            .orderBy("date", descending: true)
+            .where(
+              "date",
+              isGreaterThanOrEqualTo:
+                  DateTime.now().subtract(Duration(days: 7)),
+            )
+            .limit(3),
         sort: (lhs, rhs) => rhs.date.compareTo(lhs.date),
         builder: (data, documentId) => Consult.fromMap(data, documentId),
       );

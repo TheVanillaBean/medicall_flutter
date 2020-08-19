@@ -5,6 +5,7 @@ import 'package:Medicall/models/consult-review/treatment_options.dart';
 import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/Prescriptions/prescription_list_item.dart';
 import 'package:Medicall/screens/VisitDetails/prescription_checkout.dart';
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
@@ -51,7 +52,7 @@ class VisitPrescriptions extends StatelessWidget {
               color: Theme.of(context).colorScheme.primary,
             ),
             onPressed: () {
-              Provider.of(context).pop();
+             PatientDashboardScreen.show(context: context, pushReplaceNamed: true);
             },
           )
         ],
