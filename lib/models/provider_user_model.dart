@@ -21,7 +21,7 @@ class ProviderUser extends User {
   Map<String, dynamic> toMap() {
     Map<String, dynamic> userMap = super.baseToMap();
     userMap.addAll({
-      'stripeConnectAuthorized': stripeConnectAuthorized,
+      'stripe_connect_authorized': stripeConnectAuthorized,
       'titles': titles,
       'npi': npi,
       'med_license': medLicense,
@@ -40,7 +40,7 @@ class ProviderUser extends User {
         data['board_certified'] ?? provider.boardCertified;
     provider.medLicenseState = data['state_issued'] ?? provider.medLicenseState;
     provider.stripeConnectAuthorized =
-        data['stripeConnectAuthorized'] ?? provider.stripeConnectAuthorized;
+        data['stripe_connect_authorized'] ?? provider.stripeConnectAuthorized;
     return provider;
   }
 }

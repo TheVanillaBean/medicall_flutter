@@ -1,5 +1,6 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/form_submit_button.dart';
+import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard.dart';
 import 'package:Medicall/screens/StripeConnect/stripe_connect_state_model.dart';
@@ -78,7 +79,12 @@ class StripeConnect extends StatelessWidget {
               .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              if (snapshot.data['stripeConnectAuthorized'] == true) {
+              if (snapshot.data['stripe_connect_authorized'] == true) {
+                User provider = User.fromMap(
+                    userType: USER_TYPE.PROVIDER,
+                    data: snapshot.data.data, //lol
+                    uid: user.uid);
+                this.model.userProvider.user = provider;
                 return _buildStripeAuthenticatedWidget(context);
               } else {
                 return _buildStripeUnauthenticatedWidget(context);
