@@ -19,7 +19,7 @@ class ProviderRegistrationViewModel
         EmailAndPasswordValidators,
         DobValidators,
         MobilePhoneValidators,
-        PracticeAddressValidators,
+        AddressValidators,
         CityValidators,
         StateValidators,
         ZipCodeValidators,

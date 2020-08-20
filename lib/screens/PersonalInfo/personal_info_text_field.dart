@@ -72,12 +72,12 @@ class PersonalInfoTextField extends StatelessWidget {
           ),
         ),
         keyboardType: keyboardType,
-        validator: (input) {
-          if (input.isEmpty) {
-            return '$labelText is required';
-          }
-          return null;
-        },
+//        validator: (input) {
+//          if (input.isEmpty) {
+//            return '$labelText is required';
+//          }
+//          return null;
+//        },
       ),
     );
   }

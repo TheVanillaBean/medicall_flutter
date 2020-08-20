@@ -27,6 +27,9 @@ class _PersonalInfoFormState extends State<PersonalInfoForm>
   MaskTextInputFormatter dobTextInputFormatter = MaskTextInputFormatter(
       mask: "##/##/####", filter: {"#": RegExp(r'[0-9]')});
 
+  MaskTextInputFormatter zipCodeTextInputFormatter =
+      MaskTextInputFormatter(mask: "#####", filter: {"#": RegExp(r'[0-9]')});
+
   Future<void> _submit(
     PersonalInfoViewModel model,
     ExtendedImageProvider extendedImageProvider,
@@ -56,11 +59,13 @@ class _PersonalInfoFormState extends State<PersonalInfoForm>
           PersonalInfoTextField(
             labelText: 'First Name',
             hint: 'Jane',
+            errorText: model.firstNameErrorText,
             onChanged: model.updateFirstName,
           ),
           PersonalInfoTextField(
             labelText: 'Last Name',
             hint: 'Doe',
+            errorText: model.lastNameErrorText,
             onChanged: model.updateLastName,
           ),
           PersonalInfoTextField(
@@ -68,6 +73,7 @@ class _PersonalInfoFormState extends State<PersonalInfoForm>
             labelText: 'Phone Number',
             hint: '(123)456-7890',
             keyboardType: TextInputType.phone,
+            errorText: model.phoneNumberErrorText,
             onChanged: model.updatePhoneNumber,
           ),
           CustomDatePickerFormField(
@@ -76,28 +82,34 @@ class _PersonalInfoFormState extends State<PersonalInfoForm>
             hint: 'mm/dd/yyyy',
             keyboardType: TextInputType.datetime,
             initialDate: model.initialDatePickerDate,
+            errorText: model.patientDobErrorText,
             onChanged: model.updateBirthDate,
           ),
           PersonalInfoTextField(
             labelText: 'Billing Address',
             hint: '123 Main St',
+            errorText: model.billingAddressErrorText,
             onChanged: model.updateBillingAddress,
           ),
           PersonalInfoTextField(
             labelText: 'City',
             hint: 'Anytown',
+            errorText: model.cityErrorText,
             onChanged: model.updateCity,
           ),
           CustomDropdownFormField(
             labelText: 'State',
             onChanged: model.updateState,
             items: model.states,
+            errorText: model.stateErrorText,
             selectedItem: model.state,
           ),
           PersonalInfoTextField(
             labelText: 'Zip code',
+            inputFormatters: [zipCodeTextInputFormatter],
             hint: '12345',
             keyboardType: TextInputType.number,
+            errorText: model.zipCodeErrorText,
             onChanged: model.updateZipCode,
           ),
           SizedBox(height: 30),

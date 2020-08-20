@@ -11,7 +11,16 @@ import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 class PersonalInfoViewModel
-    with PersonalInfoValidators, DobValidators, ChangeNotifier {
+    with
+        FirstNameValidators,
+        LastNameValidators,
+        PhoneValidators,
+        DobValidators,
+        AddressValidators,
+        CityValidators,
+        StateValidators,
+        ZipCodeValidators,
+        ChangeNotifier {
   String firstName;
   String lastName;
   String phoneNumber;
@@ -120,14 +129,14 @@ class PersonalInfoViewModel
   }
 
   bool get canSubmit {
-    return inputValidator.isValid(firstName) &&
-        inputValidator.isValid(lastName) &&
-        inputValidator.isValid(phoneNumber) &&
-        inputValidator.isValid(billingAddress) &&
-        inputValidator.isValid(city) &&
-        inputValidator.isValid(state) &&
-        inputValidator.isValid(zipCode) &&
-        this.birthDate.year <= DateTime.now().year - 18 &&
+    return firstNameValidator.isValid(firstName) &&
+        lastNameValidator.isValid(lastName) &&
+        phoneNumberEmptyValidator.isValid(phoneNumber) &&
+        billingAddressValidator.isValid(billingAddress) &&
+        cityValidator.isValid(city) &&
+        stateValidator.isValid(state) &&
+        zipCodeValidator.isValid(zipCode) &&
+        dobValidator.isValid(birthDate) &&
         this.profileImage.length > 0 &&
         !isLoading;
   }
@@ -140,38 +149,41 @@ class PersonalInfoViewModel
   }
 
   String get firstNameErrorText {
-    bool showErrorText = submitted && !inputValidator.isValid(firstName);
-    return showErrorText ? invalidPersonalInfoErrorText : null;
+    bool showErrorText =
+        this.submitted && !firstNameValidator.isValid(firstName);
+    return showErrorText ? fNameErrorText : null;
   }
 
   String get lastNameErrorText {
-    bool showErrorText = submitted && !inputValidator.isValid(lastName);
-    return showErrorText ? invalidPersonalInfoErrorText : null;
+    bool showErrorText = this.submitted && !lastNameValidator.isValid(lastName);
+    return showErrorText ? lNameErrorText : null;
   }
 
   String get phoneNumberErrorText {
-    bool showErrorText = submitted && !inputValidator.isValid(phoneNumber);
-    return showErrorText ? invalidPersonalInfoErrorText : null;
+    bool showErrorText =
+        submitted && !phoneNumberEmptyValidator.isValid(phoneNumber);
+    return showErrorText ? phoneErrorText : null;
   }
 
   String get billingAddressErrorText {
-    bool showErrorText = submitted && !inputValidator.isValid(billingAddress);
-    return showErrorText ? invalidPersonalInfoErrorText : null;
+    bool showErrorText =
+        submitted && !billingAddressValidator.isValid(billingAddress);
+    return showErrorText ? billingAddressErrorText : null;
   }
 
   String get cityErrorText {
-    bool showErrorText = submitted && !inputValidator.isValid(city);
-    return showErrorText ? invalidPersonalInfoErrorText : null;
+    bool showErrorText = submitted && !cityValidator.isValid(city);
+    return showErrorText ? cityErrorText : null;
   }
 
   String get stateErrorText {
-    bool showErrorText = submitted && !inputValidator.isValid(state);
-    return showErrorText ? invalidPersonalInfoErrorText : null;
+    bool showErrorText = submitted && !stateValidator.isValid(state);
+    return showErrorText ? stateErrorText : null;
   }
 
   String get zipCodeErrorText {
-    bool showErrorText = submitted && !inputValidator.isValid(zipCode);
-    return showErrorText ? invalidPersonalInfoErrorText : null;
+    bool showErrorText = submitted && !zipCodeValidator.isValid(zipCode);
+    return showErrorText ? zipCodeErrorText : null;
   }
 
   String get patientDobErrorText {

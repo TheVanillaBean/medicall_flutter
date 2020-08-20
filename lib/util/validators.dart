@@ -161,7 +161,7 @@ class EmailAndPasswordValidators {
 
 class DobValidators {
   final DateTimeValidator dobValidator = DobValidator();
-  final String dobErrorText = 'Please enter a valid birth date (must be 18)';
+  final String dobErrorText = 'Please enter a valid birth date (must be 18+)';
 }
 
 class MobilePhoneValidators {
@@ -175,15 +175,20 @@ class PhoneValidators {
   final StringValidator phoneNumberLengthValidator =
       PhoneNumberStringValidator();
   final StringValidator codeLengthValidator = SMSCodeStringValidator();
+  final String phoneErrorText = 'Please enter a valid phone number';
   final String emptyPhoneNumberErrorText = 'Your phone number can\'t be empty';
   final String emptyCodeErrorText = 'Your verification code can\'t be empty';
   final String phoneNumberLengthErrorText = 'This phone number is invalid!';
   final String codeLengthErrorText = 'This verification code is invalid!';
 }
 
-class PracticeAddressValidators {
+class AddressValidators {
   final StringValidator practiceAddressValidator = NonEmptyStringValidator();
+  final StringValidator mailingAddressValidator = NonEmptyStringValidator();
+  final StringValidator billingAddressValidator = NonEmptyStringValidator();
   final String addressErrorText = 'Please enter a valid street address';
+  final String mailingAddressErrorText = 'Please enter a valid mailing address';
+  final String billingAddressErrorText = 'Please enter a valid billing address';
 }
 
 class CityValidators {
