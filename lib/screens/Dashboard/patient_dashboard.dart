@@ -6,11 +6,11 @@ import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Consults/previous_visits.dart';
 import 'package:Medicall/screens/Dashboard/patient_dashboard_list_item.dart';
 import 'package:Medicall/screens/Dashboard/patient_dashboard_view_model.dart';
+import 'package:Medicall/screens/MakePayment/make_payment.dart';
 import 'package:Medicall/screens/Symptoms/symptoms.dart';
 import 'package:Medicall/screens/VisitDetails/visit_details_overview.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -196,10 +196,12 @@ class PatientDashboardScreen extends StatelessWidget {
                     ),
                     itemBuilder: (context, consult) => PatientDashboardListItem(
                       consult: consult,
-                      onTap: () => VisitDetailsOverview.show(
-                        context: context,
-                        consult: consult,
-                      ),
+                      onTap: () => consult.state == ConsultStatus.PendingPayment
+                          ? MakePayment.show(context: context, consult: consult)
+                          : VisitDetailsOverview.show(
+                              context: context,
+                              consult: consult,
+                            ),
                     ),
                   ),
                 ),

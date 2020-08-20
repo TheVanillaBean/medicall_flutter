@@ -51,6 +51,8 @@ class Consult {
     this.date,
     this.state,
     this.questions = const <Question>[],
+    this.providerUser,
+    this.patientUser,
   });
 
   factory Consult.fromMap(Map<String, dynamic> data, String documentId) {

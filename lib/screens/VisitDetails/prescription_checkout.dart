@@ -358,7 +358,7 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
-            "Select a payment method. Your default is already select.",
+            "Select a payment method. Your default is already selected.",
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyText1,
           ),

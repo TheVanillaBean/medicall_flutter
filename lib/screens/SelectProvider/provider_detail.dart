@@ -141,6 +141,7 @@ class ProviderDetailScreen extends StatelessWidget {
             onPressed: () {
               Consult consult = Consult(
                 providerId: provider.uid,
+                providerUser: provider,
                 symptom: symptom.name,
                 date: DateTime.now(),
                 price: 49,

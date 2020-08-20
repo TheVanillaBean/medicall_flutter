@@ -11,7 +11,6 @@ import 'package:Medicall/screens/VisitDetails/prescription_checkout.dart';
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:provider/provider.dart';
 
 class VisitPrescriptions extends StatelessWidget {
   final Consult consult;
@@ -52,7 +51,8 @@ class VisitPrescriptions extends StatelessWidget {
               color: Theme.of(context).colorScheme.primary,
             ),
             onPressed: () {
-             PatientDashboardScreen.show(context: context, pushReplaceNamed: true);
+              PatientDashboardScreen.show(
+                  context: context, pushReplaceNamed: true);
             },
           )
         ],
