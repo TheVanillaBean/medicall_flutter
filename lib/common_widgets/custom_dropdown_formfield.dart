@@ -43,6 +43,7 @@ class CustomDropdownFormField extends StatelessWidget {
             decoration: InputDecoration(
               labelText: labelText,
               labelStyle: Theme.of(context).textTheme.bodyText1,
+              errorText: errorText,
               enabledBorder: UnderlineInputBorder(
                 borderSide: BorderSide(
                   color: Colors.black26,

@@ -29,35 +29,54 @@ class CustomDatePickerFormField extends StatelessWidget {
   final TextEditingController controller;
   final DateTime initialDate;
   final ValueChanged<DateTime> onChanged;
-
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: EdgeInsets.only(
-          left: 30,
-          right: 30,
-        ),
-        child: TextFormField(
-          inputFormatters: inputFormatters,
-          style: Theme.of(context).textTheme.bodyText1,
-          decoration: InputDecoration(
-            hintText: 'MM/DD/YYYY',
-            labelText: 'Date of birth',
+      padding: EdgeInsets.only(
+        left: 30,
+        right: 30,
+      ),
+      child: TextFormField(
+        inputFormatters: inputFormatters,
+        style: Theme.of(context).textTheme.bodyText1,
+        decoration: InputDecoration(
+          hintText: 'MM/DD/YYYY',
+          hintStyle: Theme.of(context).textTheme.caption,
+          labelText: 'Date of birth',
+          labelStyle: Theme.of(context).textTheme.bodyText1,
+          errorText: errorText,
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.black26,
+              width: 0.5,
+            ),
           ),
-          keyboardType: TextInputType.datetime,
-          validator: (val) => isValidDob(val) ? null : 'Not a valid date',
-          onChanged: (val) {
-            onChanged(convertToDate(val));
-          },
-          controller: controller,
-          onSaved: (val) => convertToDate(val),
-        ));
-  }
-
-  bool isValidDob(String dob) {
-    if (dob.isEmpty) return true;
-    var d = convertToDate(dob);
-    return d != null && d.isBefore(new DateTime.now());
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.green,
+              width: 0.5,
+            ),
+          ),
+          errorBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.red,
+              width: 0.5,
+            ),
+          ),
+          focusedErrorBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.red,
+              width: 0.5,
+            ),
+          ),
+        ),
+        keyboardType: TextInputType.number,
+        onChanged: (val) => onChanged(
+          convertToDate(val),
+        ),
+        controller: controller,
+      ),
+    );
   }
 
   DateTime convertToDate(String input) {

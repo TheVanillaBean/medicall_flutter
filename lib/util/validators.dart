@@ -1,7 +1,12 @@
 import 'package:Medicall/util/string_utils.dart';
+import 'package:dash_chat/dash_chat.dart';
 
 abstract class StringValidator {
   bool isValid(String value);
+}
+
+abstract class DateTimeValidator {
+  bool isValid(DateTime value);
 }
 
 class NonEmptyStringValidator implements StringValidator {
@@ -15,6 +20,31 @@ class EmailValidator implements StringValidator {
   @override
   bool isValid(String value) {
     return StringUtils.isEmail(value);
+  }
+}
+
+class BoardCertificationValidator implements StringValidator {
+  List<String> boardCertification = [
+    "Yes",
+    "No",
+    "Board Eligible",
+  ];
+  @override
+  bool isValid(String value) {
+    return boardCertification.contains(value);
+  }
+}
+
+class ProfessionalTitleValidator implements StringValidator {
+  List<String> titles = [
+    "M.D.",
+    "D.O.",
+    "P.A.",
+    "PharmD",
+  ];
+  @override
+  bool isValid(String value) {
+    return titles.contains(value);
   }
 }
 
@@ -94,37 +124,114 @@ class ShippingAddressValidator implements StringValidator {
 class ZipCodeValidator implements StringValidator {
   @override
   bool isValid(String value) {
-    return true;
+    return value.length == 5;
   }
 }
 
-class ProviderDobValidators {
-  final StringValidator dobValidator = NonEmptyStringValidator();
-  final String dobErrorText = 'Please enter a valid birthday (must be 18)';
+class DobValidator implements DateTimeValidator {
+  @override
+  bool isValid(DateTime dob) {
+    return dob != null &&
+        dob.isBefore(new DateTime.now().subtract(Duration(days: 18 * 365)));
+  }
 }
 
-class ProviderStateValidators {
-  final StringValidator stateValidator = StateValidator();
-  final String medStateErrorText =
-      'Please enter a valid two letter state abbreviation code';
+class FirstNameValidators {
+  final StringValidator firstNameValidator = NonEmptyStringValidator();
+  final String fNameErrorText = 'Please enter your first name';
+}
+
+class LastNameValidators {
+  final StringValidator lastNameValidator = NonEmptyStringValidator();
+  final String lNameErrorText = 'Please enter your last name';
+}
+
+class PersonalInfoValidators {
+  final StringValidator inputValidator = NonEmptyStringValidator();
+  final String invalidPersonalInfoErrorText = 'Your response can\'t be empty';
 }
 
 class EmailAndPasswordValidators {
   final StringValidator emailValidator = EmailValidator();
   final StringValidator passwordValidator = NonEmptyStringValidator();
-  final String invalidEmailErrorText = 'Incorrect email format';
+  final String invalidEmailErrorText = 'Please enter a valid email';
   final String invalidPasswordErrorText = 'Password can\'t be empty';
   final String invalidConfirmPasswordErrorText = 'Passwords do not match';
+}
+
+class DobValidators {
+  final DateTimeValidator dobValidator = DobValidator();
+  final String dobErrorText = 'Please enter a valid birth date (must be 18)';
+}
+
+class MobilePhoneValidators {
+  final StringValidator mobilePhoneValidator = NonEmptyStringValidator();
+  final String mPhoneErrorText = 'Please enter a valid mobile phone number';
+}
+
+class PhoneValidators {
+  final StringValidator phoneNumberEmptyValidator = NonEmptyStringValidator();
+  final StringValidator codeEmptyValidator = NonEmptyStringValidator();
+  final StringValidator phoneNumberLengthValidator =
+      PhoneNumberStringValidator();
+  final StringValidator codeLengthValidator = SMSCodeStringValidator();
+  final String emptyPhoneNumberErrorText = 'Your phone number can\'t be empty';
+  final String emptyCodeErrorText = 'Your verification code can\'t be empty';
+  final String phoneNumberLengthErrorText = 'This phone number is invalid!';
+  final String codeLengthErrorText = 'This verification code is invalid!';
+}
+
+class PracticeAddressValidators {
+  final StringValidator practiceAddressValidator = NonEmptyStringValidator();
+  final String addressErrorText = 'Please enter a valid street address';
+}
+
+class CityValidators {
+  final StringValidator cityValidator = NonEmptyStringValidator();
+  final String cityErrorText = 'Please enter a valid city';
+}
+
+class StateValidators {
+  final StringValidator stateValidator = StateValidator();
+  final String stateErrorText = 'Please select your state';
+}
+
+class ZipCodeValidators {
+  final StringValidator zipCodeValidator = ZipCodeValidator();
+  final String zipCodeErrorText = 'Please enter a valid zip code';
+}
+
+class ProfessionalTitleValidators {
+  final StringValidator titleValidator = ProfessionalTitleValidator();
+  final String titleErrorText = 'Please select your professional title';
+}
+
+class NpiValidators {
+  final StringValidator npiValidator = NonEmptyStringValidator();
+  final String npiErrorText = 'Please enter your NPI number';
+}
+
+class MedicalLicenseValidators {
+  final StringValidator medicalLicenseValidator = NonEmptyStringValidator();
+  final String medLicenseErrorText = 'Please enter your medical license number';
+}
+
+class MedicalLicenseStateValidators {
+  final StringValidator medicalLicenseStateValidator = StateValidator();
+  final String medicalLicenseStateErrorText =
+      'Please select your medical license state';
+}
+
+class BoardCertificationValidators {
+  final StringValidator boardCertificationValidator =
+      BoardCertificationValidator();
+  final String boardCertifiedErrorText =
+      'Please select your Board Certification status';
 }
 
 class OptionInputValidator {
   final StringValidator inputValidator = NonEmptyStringValidator();
   final String invalidInputErrorText = 'Your response can\'t be empty';
-}
-
-class PersonalInfoValidator {
-  final StringValidator inputValidator = NonEmptyStringValidator();
-  final String invalidPersonalInfoErrorText = 'Your response can\'t be empty';
 }
 
 class PrescriptionValidator {
@@ -155,16 +262,4 @@ class SMSCodeStringValidator implements StringValidator {
   bool isValid(String value) {
     return value.length >= 6;
   }
-}
-
-class PhoneValidators {
-  final StringValidator phoneNumberEmptyValidator = NonEmptyStringValidator();
-  final StringValidator codeEmptyValidator = NonEmptyStringValidator();
-  final StringValidator phoneNumberLengthValidator =
-      PhoneNumberStringValidator();
-  final StringValidator codeLengthValidator = SMSCodeStringValidator();
-  final String emptyPhoneNumberErrorText = 'Your phone number can\'t be empty';
-  final String emptyCodeErrorText = 'Your verification code can\'t be empty';
-  final String phoneNumberLengthErrorText = 'This phone number is invalid!';
-  final String codeLengthErrorText = 'This verification code is invalid!';
 }
