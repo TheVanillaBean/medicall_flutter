@@ -14,6 +14,7 @@ class ProviderCustomTextField extends StatelessWidget {
     this.errorText,
     this.obscureText,
     this.inputFormatters,
+    this.onTapped,
   });
   final ValueChanged<String> onChanged;
   final Icon icon;
@@ -26,6 +27,7 @@ class ProviderCustomTextField extends StatelessWidget {
   final FormFieldValidator<String> validator;
   final TextEditingController controller;
   final List<TextInputFormatter> inputFormatters;
+  final GestureTapCallback onTapped;
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +44,7 @@ class ProviderCustomTextField extends StatelessWidget {
         onChanged: onChanged,
         autofocus: true,
         style: Theme.of(context).textTheme.bodyText1,
+        onTap: onTapped,
         decoration: InputDecoration(
           labelText: labelText,
           errorText: errorText,
@@ -74,12 +77,12 @@ class ProviderCustomTextField extends StatelessWidget {
           ),
         ),
         keyboardType: keyboardType,
-        validator: (input) {
-          if (input.isEmpty) {
-            return '$labelText is required';
-          }
-          return null;
-        },
+//        validator: (input) {
+//          if (input.isEmpty) {
+//            return '$labelText is required';
+//          }
+//          return null;
+//        },
       ),
     );
   }

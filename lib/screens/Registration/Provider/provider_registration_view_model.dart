@@ -13,7 +13,22 @@ import 'package:flutter/cupertino.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 
 class ProviderRegistrationViewModel
-    with EmailAndPasswordValidators, ProviderStateValidators, ChangeNotifier {
+    with
+        FirstNameValidators,
+        LastNameValidators,
+        EmailAndPasswordValidators,
+        DobValidators,
+        MobilePhoneValidators,
+        PracticeAddressValidators,
+        CityValidators,
+        StateValidators,
+        ZipCodeValidators,
+        ProfessionalTitleValidators,
+        NpiValidators,
+        MedicalLicenseValidators,
+        MedicalLicenseStateValidators,
+        BoardCertificationValidators,
+        ChangeNotifier {
   final NonAuthDatabase nonAuthDatabase;
   final AuthBase auth;
   final TempUserProvider tempUserProvider;
@@ -24,7 +39,7 @@ class ProviderRegistrationViewModel
   String firstName;
   String lastName;
   String phoneNumber;
-  DateTime dob;
+  DateTime dob = DateTime.now();
   String address;
   String city;
   String state;
@@ -44,25 +59,6 @@ class ProviderRegistrationViewModel
 
   ScrollController viewController = ScrollController();
   ScrollController scrollController = ScrollController();
-
-  bool isAdult(String birthDateString) {
-    String datePattern = "MM/dd/yyyy";
-
-    // Current time - at this moment
-    DateTime today = DateTime.now();
-
-    // Parsed date to check
-    DateTime birthDate = DateFormat(datePattern).parse(birthDateString);
-
-    // Date to check but moved 18 years ahead
-    DateTime adultDate = DateTime(
-      birthDate.year + 18,
-      birthDate.month,
-      birthDate.day,
-    );
-
-    return adultDate.isBefore(today);
-  }
 
   final List<String> states = const <String>[
     "AK",
@@ -157,27 +153,101 @@ class ProviderRegistrationViewModel
     return emailValidator.isValid(email) &&
         passwordValidator.isValid(password) &&
         password == confirmPassword &&
+        firstNameValidator.isValid(firstName) &&
+        lastNameValidator.isValid(lastName) &&
+        dobValidator.isValid(dob) &&
+        mobilePhoneValidator.isValid(phoneNumber) &&
+        practiceAddressValidator.isValid(address) &&
+        cityValidator.isValid(city) &&
+        zipCodeValidator.isValid(zipCode) &&
+        titleValidator.isValid(titles) &&
         !isLoading;
   }
 
+  String get firstNameErrorText {
+    bool showErrorText =
+        this.submitted && !firstNameValidator.isValid(firstName);
+    return showErrorText ? fNameErrorText : null;
+  }
+
+  String get lastNameErrorText {
+    bool showErrorText = this.submitted && !lastNameValidator.isValid(lastName);
+    return showErrorText ? lNameErrorText : null;
+  }
+
+  String get emailErrorText {
+    bool showErrorText = this.submitted && !emailValidator.isValid(email);
+    return showErrorText ? invalidEmailErrorText : null;
+  }
+
+  String get providerDobErrorText {
+    bool showErrorText = this.submitted && !dobValidator.isValid(dob);
+    return showErrorText ? dobErrorText : null;
+  }
+
+  String get mobilePhoneErrorText {
+    bool showErrorText =
+        this.submitted && !mobilePhoneValidator.isValid(phoneNumber);
+    return showErrorText ? mPhoneErrorText : null;
+  }
+
   String get passwordErrorText {
-    bool showErrorText = submitted && !passwordValidator.isValid(password);
+    bool showErrorText = this.submitted && !passwordValidator.isValid(password);
     return showErrorText ? invalidPasswordErrorText : null;
   }
 
   String get confirmPasswordErrorText {
-    bool showErrorText = submitted && confirmPassword != password;
+    bool showErrorText = this.submitted && confirmPassword != password;
     return showErrorText ? invalidConfirmPasswordErrorText : null;
   }
 
-  String get emailErrorText {
-    bool showErrorText = submitted && !emailValidator.isValid(email);
-    return showErrorText ? invalidEmailErrorText : null;
+  String get practiceAddressErrorText {
+    bool showErrorText =
+        this.submitted && !practiceAddressValidator.isValid(address);
+    return showErrorText ? addressErrorText : null;
   }
 
-  String get medStateErrorText {
-    bool showErrorText = submitted && !stateValidator.isValid(medLicenseState);
-    return showErrorText ? medStateErrorText : null;
+  String get practiceCityErrorText {
+    bool showErrorText = this.submitted && !cityValidator.isValid(city);
+    return showErrorText ? cityErrorText : null;
+  }
+
+  String get practiceStateErrorText {
+    bool showErrorText = this.submitted && !stateValidator.isValid(state);
+    return showErrorText ? stateErrorText : null;
+  }
+
+  String get practiceZipCodeErrorText {
+    bool showErrorText = this.submitted && !zipCodeValidator.isValid(zipCode);
+    return showErrorText ? zipCodeErrorText : null;
+  }
+
+  String get professionalTitleErrorText {
+    bool showErrorText = this.submitted && !titleValidator.isValid(titles);
+    return showErrorText ? titleErrorText : null;
+  }
+
+  String get npiNumberErrorText {
+    bool showErrorText = this.submitted && !npiValidator.isValid(npi);
+    return showErrorText ? npiErrorText : null;
+  }
+
+  String get medicalLicenseErrorText {
+    bool showErrorText =
+        this.submitted && !medicalLicenseValidator.isValid(medLicense);
+    return showErrorText ? medLicenseErrorText : null;
+  }
+
+  String get medicalStateErrorText {
+    bool showErrorText = this.submitted &&
+        !medicalLicenseStateValidator.isValid(medLicenseState);
+    return showErrorText ? medicalLicenseStateErrorText : null;
+  }
+
+  String get boardCertificationErrorText {
+    bool showErrorText =
+        this.submitted && !boardCertificationValidator.isValid(boardCertified);
+    return showErrorText ? boardCertifiedErrorText : null;
   }
 
   String get birthday {
@@ -226,24 +296,30 @@ class ProviderRegistrationViewModel
 
   Future<void> submit() async {
     updateWith(submitted: true);
-//    if (!checkValue) {
-//      this.verificationStatus.updateStatus(
-//          "You have to agree to the Terms and Conditions, as well as the Privacy policy before signing in");
-//      return;
-//    }
+    if (!this.canSubmit) {
+      this
+          .verificationStatus
+          .updateStatus("Please correct the errors below...");
+      return;
+    }
+    if (!checkValue) {
+      this.verificationStatus.updateStatus(
+          "You have to agree to the Terms and Conditions, as well as the Privacy policy before signing in");
+      return;
+    }
 
-//    if (password != confirmPassword) {
-//      this.verificationStatus.updateStatus("Passwords do not match.");
-//      return;
-//    }
+    if (password != confirmPassword) {
+      this.verificationStatus.updateStatus("Passwords do not match.");
+      return;
+    }
 
     try {
       updateWith(isLoading: true);
       bool emailAlreadyUsed = await auth.emailAlreadyUsed(email: this.email);
       if (!emailAlreadyUsed) {
         this.auth.triggerAuthStream = false;
-//        this.verificationStatus.updateStatus(
-//            'Saving User Details. This may take several seconds...');
+        this.verificationStatus.updateStatus(
+            'Saving User Details. This may take several seconds...');
         FirebaseUser user = await auth.createUserWithEmailAndPassword(
             email: this.email, password: this.password);
         tempUserProvider.setUser(userType: USER_TYPE.PROVIDER);

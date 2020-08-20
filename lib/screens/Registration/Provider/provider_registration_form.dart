@@ -8,7 +8,6 @@ import 'package:flutter/services.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
 import 'package:super_rich_text/super_rich_text.dart';
-
 import '../../../common_widgets/custom_date_picker_formfield.dart';
 
 class ProviderRegistrationForm extends StatefulWidget {
@@ -27,6 +26,9 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
   MaskTextInputFormatter dobTextInputFormatter = MaskTextInputFormatter(
       mask: "##/##/####", filter: {"#": RegExp(r'[0-9]')});
 
+  MaskTextInputFormatter zipCodeTextInputFormatter =
+      MaskTextInputFormatter(mask: "#####", filter: {"#": RegExp(r'[0-9]')});
+
   Future<void> _submit(ProviderRegistrationViewModel model) async {
     try {
       await model.submit();
@@ -40,8 +42,10 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
     final ProviderRegistrationViewModel model =
         Provider.of<ProviderRegistrationViewModel>(context);
     model.setVerificationStatus(this);
+
     return Form(
       key: _formKey,
+      autovalidate: false,
       child: Column(
         children: <Widget>[
           SizedBox(height: 20),
@@ -49,23 +53,27 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
             labelText: 'First Name',
             hint: 'Jane',
             onChanged: model.updateFirstName,
+            errorText: model.firstNameErrorText,
           ),
           ProviderCustomTextField(
             labelText: 'Last Name',
             hint: 'Doe',
             onChanged: model.updateLastName,
+            errorText: model.lastNameErrorText,
           ),
           ProviderCustomTextField(
             labelText: 'Email',
-            hint: 'john@doe.com',
+            hint: 'jane@email.com',
+            errorText: model.emailErrorText,
             onChanged: model.updateEmail,
           ),
           CustomDatePickerFormField(
             labelText: 'Date of Birth',
             hint: 'mm/dd/yyyy',
-            keyboardType: TextInputType.datetime,
+            keyboardType: TextInputType.number,
             inputFormatters: [dobTextInputFormatter],
             initialDate: model.initialDatePickerDate,
+            errorText: model.providerDobErrorText,
             onChanged: model.updateDOB,
           ),
           ProviderCustomTextField(
@@ -73,6 +81,7 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
             labelText: 'Mobile Phone',
             hint: '(123)456-7890',
             keyboardType: TextInputType.phone,
+            errorText: model.mobilePhoneErrorText,
             onChanged: model.updatePhoneNumber,
           ),
           ProviderCustomTextField(
@@ -92,11 +101,13 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
           ProviderCustomTextField(
             labelText: 'Practice Address',
             hint: '123 Main St',
+            errorText: model.practiceAddressErrorText,
             onChanged: model.updateAddress,
           ),
           ProviderCustomTextField(
             labelText: 'City',
             hint: 'Anytown',
+            errorText: model.practiceCityErrorText,
             onChanged: model.updateCity,
           ),
           CustomDropdownFormField(
@@ -104,27 +115,36 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
             onChanged: model.updateState,
             items: model.states,
             selectedItem: model.state,
+            errorText: model.practiceStateErrorText,
           ),
           ProviderCustomTextField(
             labelText: 'Zip Code',
+            inputFormatters: [zipCodeTextInputFormatter],
             hint: '12345',
+            keyboardType: TextInputType.number,
+            errorText: model.practiceZipCodeErrorText,
             onChanged: model.updateZipCode,
           ),
           CustomDropdownFormField(
-            labelText: 'Title',
-            hint: 'M.D., D.O., PharmD',
+            labelText: 'Select Your Title',
+            hint: 'Select your title',
             onChanged: model.updateTitles,
             items: ["M.D.", "D.O.", "P.A.", "PharmD"],
             selectedItem: model.titles,
+            errorText: model.professionalTitleErrorText,
           ),
           ProviderCustomTextField(
             labelText: 'NPI Number',
             hint: '1234567890',
+            keyboardType: TextInputType.number,
+            errorText: model.npiNumberErrorText,
             onChanged: model.updateNpi,
           ),
           ProviderCustomTextField(
             labelText: 'Medical License Number',
             hint: '12345',
+            keyboardType: TextInputType.number,
+            errorText: model.medicalLicenseErrorText,
             onChanged: model.updateMedLicense,
           ),
           CustomDropdownFormField(
@@ -132,12 +152,14 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
             onChanged: model.updateMedLicenseState,
             items: model.states,
             selectedItem: model.medLicenseState,
+            errorText: model.medicalStateErrorText,
           ),
           CustomDropdownFormField(
             labelText: 'Board Certification',
             onChanged: model.updateBoardCertified,
             items: ["Yes", "No", "Board Eligible"],
             selectedItem: model.boardCertified,
+            errorText: model.boardCertificationErrorText,
           ),
           SizedBox(height: 20),
           Container(
@@ -150,7 +172,7 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
             alignment: FractionalOffset.bottomCenter,
             child: ReusableRaisedButton(
               title: 'Register',
-              onPressed: model.canSubmit
+              onPressed: !model.isLoading
                   ? () {
                       if (_formKey.currentState.validate()) {
                         _submit(model);

@@ -10,7 +10,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
-class PersonalInfoViewModel with PersonalInfoValidator, ChangeNotifier {
+class PersonalInfoViewModel
+    with PersonalInfoValidators, DobValidators, ChangeNotifier {
   String firstName;
   String lastName;
   String phoneNumber;
@@ -171,6 +172,11 @@ class PersonalInfoViewModel with PersonalInfoValidator, ChangeNotifier {
   String get zipCodeErrorText {
     bool showErrorText = submitted && !inputValidator.isValid(zipCode);
     return showErrorText ? invalidPersonalInfoErrorText : null;
+  }
+
+  String get patientDobErrorText {
+    bool showErrorText = this.submitted && !dobValidator.isValid(birthDate);
+    return showErrorText ? dobErrorText : null;
   }
 
   void updateFirstName(String firstName) => updateWith(firstName: firstName);

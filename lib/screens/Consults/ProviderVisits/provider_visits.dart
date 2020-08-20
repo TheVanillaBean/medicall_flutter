@@ -1,5 +1,6 @@
 import 'package:Medicall/chat/chat_screen.dart';
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
+import 'package:Medicall/common_widgets/empty_content.dart';
 import 'package:Medicall/common_widgets/list_items_builder.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
@@ -31,6 +32,10 @@ class ProviderVisits extends StatelessWidget {
             return ListItemsBuilder<Consult>(
               scrollable: true,
               snapshot: consultSnapshot,
+              emptyContentWidget: EmptyContent(
+                title: "You do not have any patient visits yet",
+                message: "",
+              ),
               itemBuilder: (context, consult) => ProviderVisitsListItem(
                 consult: consult,
                 onTap: () => navigateToChatScreen(context, consult),
