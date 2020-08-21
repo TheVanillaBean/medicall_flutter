@@ -232,7 +232,7 @@ class PrescriptionCheckoutViewModel
 
   Future<bool> processPayment() async {
     PaymentIntentResult paymentIntentResult =
-        await this.stripeProvider.chargePayment(
+        await this.stripeProvider.chargePaymentForPrescription(
               price: this.totalCost,
               paymentMethodId: this.selectedPaymentMethod.id,
               consultId: consultId,

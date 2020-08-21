@@ -6,9 +6,14 @@ import 'package:stripe_payment/stripe_payment.dart';
 abstract class StripeProviderBase {
   Future<PaymentIntent> addSource();
   Future<bool> addCard({PaymentIntent setupIntent});
-  Future<PaymentIntentResult> chargePayment({
-    int price,
-    String paymentMethodId,
+  Future<PaymentIntentResult> chargePaymentForConsult({
+    @required int price,
+    @required String paymentMethodId,
+  });
+  Future<PaymentIntentResult> chargePaymentForPrescription({
+    @required int price,
+    @required String paymentMethodId,
+    @required String consultId,
   });
 }
 
@@ -48,14 +53,36 @@ class StripeProvider implements StripeProviderBase {
   }
 
   @override
-  Future<PaymentIntentResult> chargePayment({
+  Future<PaymentIntentResult> chargePaymentForConsult({
+    @required int price,
+    @required String paymentMethodId,
+  }) async {
+    final HttpsCallable callable = CloudFunctions.instance.getHttpsCallable(
+        functionName: 'createPaymentIntentAndChargeForConsult')
+      ..timeout = const Duration(seconds: 30);
+
+    final HttpsCallableResult result = await callable.call(
+      <String, dynamic>{
+        'amount': price * 100,
+        'payment_method': paymentMethodId,
+      },
+    );
+
+    final PaymentIntentResult paymentIntentResult =
+        PaymentIntentResult.fromJson(result.data);
+
+    return paymentIntentResult;
+  }
+
+  @override
+  Future<PaymentIntentResult> chargePaymentForPrescription({
     @required int price,
     @required String paymentMethodId,
     @required String consultId,
   }) async {
-    final HttpsCallable callable = CloudFunctions.instance
-        .getHttpsCallable(functionName: 'createPaymentIntentAndCharge')
-          ..timeout = const Duration(seconds: 30);
+    final HttpsCallable callable = CloudFunctions.instance.getHttpsCallable(
+        functionName: 'createPaymentIntentAndChargeForPrescription')
+      ..timeout = const Duration(seconds: 30);
 
     final HttpsCallableResult result = await callable.call(
       <String, dynamic>{

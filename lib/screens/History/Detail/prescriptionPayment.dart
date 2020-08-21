@@ -346,7 +346,7 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
       isLoading = true;
       List<PaymentMethod> sources =
           (await db.getUserCardSources(medicallUser.uid));
-      _stripeProvider.chargePayment(
+      _stripeProvider.chargePaymentForPrescription(
         price: int.parse(widget.scriptData['price']),
         paymentMethodId: sources.first.id,
         consultId: "",

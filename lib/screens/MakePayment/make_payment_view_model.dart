@@ -38,10 +38,9 @@ class MakePaymentViewModel with ChangeNotifier {
 
   Future<bool> processPayment() async {
     PaymentIntentResult paymentIntentResult =
-        await this.stripeProvider.chargePayment(
+        await this.stripeProvider.chargePaymentForConsult(
               price: this.consult.price,
               paymentMethodId: this.selectedPaymentMethod.id,
-              consultId: consult.uid,
             );
 
     updateWith(isLoading: false);
