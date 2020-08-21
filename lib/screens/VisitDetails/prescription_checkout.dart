@@ -104,7 +104,7 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
             "There was an error processing your shipping address.", context);
       }
     } catch (e) {
-      AppUtil().showFlushBar(e, context);
+      AppUtil().showFlushBar(e.toString(), context);
     }
   }
 
@@ -347,6 +347,9 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
   Widget _buildPaymentDetail() {
     if (this.model.userHasCards) {
       return _buildCardItem();
+    }
+    if (this.model.refreshCards) {
+      return CircularProgressIndicator();
     }
     return _buildAddCardBtn();
   }

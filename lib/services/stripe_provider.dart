@@ -1,12 +1,15 @@
 import 'package:Medicall/secrets.dart';
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:flutter/foundation.dart';
 import 'package:stripe_payment/stripe_payment.dart';
 
 abstract class StripeProviderBase {
   Future<PaymentIntent> addSource();
   Future<bool> addCard({PaymentIntent setupIntent});
-  Future<PaymentIntentResult> chargePayment(
-      {int price, String paymentMethodId});
+  Future<PaymentIntentResult> chargePayment({
+    int price,
+    String paymentMethodId,
+  });
 }
 
 class StripeProvider implements StripeProviderBase {
@@ -45,8 +48,11 @@ class StripeProvider implements StripeProviderBase {
   }
 
   @override
-  Future<PaymentIntentResult> chargePayment(
-      {int price, String paymentMethodId}) async {
+  Future<PaymentIntentResult> chargePayment({
+    @required int price,
+    @required String paymentMethodId,
+    @required String consultId,
+  }) async {
     final HttpsCallable callable = CloudFunctions.instance
         .getHttpsCallable(functionName: 'createPaymentIntentAndCharge')
           ..timeout = const Duration(seconds: 30);
@@ -55,6 +61,7 @@ class StripeProvider implements StripeProviderBase {
       <String, dynamic>{
         'amount': price * 100,
         'payment_method': paymentMethodId,
+        'consult_id': consultId,
       },
     );
 

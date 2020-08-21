@@ -18,9 +18,10 @@ class PrescriptionCheckoutViewModel
   final StripeProvider stripeProvider;
   final RoundedLoadingButtonController btnController =
       RoundedLoadingButtonController();
+  final VisitReviewData visitReviewData;
+  final String consultId;
+  final String providerId;
 
-  VisitReviewData visitReviewData;
-  String consultId;
   List<TreatmentOptions> alreadyPaidForPrescriptions = [];
   List<TreatmentOptions> selectedTreatmentOptions = [];
   String shippingAddress;
@@ -41,6 +42,7 @@ class PrescriptionCheckoutViewModel
     @required this.visitReviewData,
     @required this.consultId,
     @required this.stripeProvider,
+    @required this.providerId,
     this.shippingAddress = "",
     this.city = "",
     this.state = "",
@@ -233,6 +235,7 @@ class PrescriptionCheckoutViewModel
         await this.stripeProvider.chargePayment(
               price: this.totalCost,
               paymentMethodId: this.selectedPaymentMethod.id,
+              consultId: consultId,
             );
 
     updateWith(isLoading: false);

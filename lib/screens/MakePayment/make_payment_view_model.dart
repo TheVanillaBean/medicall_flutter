@@ -41,6 +41,7 @@ class MakePaymentViewModel with ChangeNotifier {
         await this.stripeProvider.chargePayment(
               price: this.consult.price,
               paymentMethodId: this.selectedPaymentMethod.id,
+              consultId: consult.uid,
             );
 
     updateWith(isLoading: false);
