@@ -117,6 +117,8 @@ class MakePayment extends StatelessWidget {
                   SizedBox(height: 24),
                   _buildCheckoutButton(context),
                   SizedBox(height: 24),
+                  if (model.isLoading && !model.userHasCards)
+                    CircularProgressIndicator(),
                 ],
               ),
             )

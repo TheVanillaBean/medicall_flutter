@@ -74,7 +74,7 @@ class WelcomeScreen extends StatelessWidget {
 
   Widget buildGetStartedBtn(BuildContext context) {
     return ReusableRaisedButton(
-      title: "Let\'s get started! \n it\'s free to explore",
+      title: "Let\'s get started! \n It\'s free to explore",
       height: 80,
       onPressed: () => SymptomsScreen.show(context: context),
     );

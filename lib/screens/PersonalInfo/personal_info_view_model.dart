@@ -133,7 +133,7 @@ class PersonalInfoViewModel
   }
 
   String get birthday {
-    final f = new DateFormat('MMMM-dd-yyyy');
+    final f = new DateFormat('MM/dd/yyyy');
     return this.birthDate.year <= DateTime.now().year - 18
         ? "${f.format(this.birthDate)}"
         : "Please Select";

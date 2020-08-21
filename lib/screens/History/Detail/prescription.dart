@@ -89,7 +89,7 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
                                                 .split(' ')[1]
                                                 .substring(1),
                                       ),
-                                      Text(db.patientDetail.dob),
+                                      Text('db.patientDetail.dob'),
                                       Text(widget.snapshot.data.containsKey(
                                                   'shipping_address') &&
                                               widget.snapshot.data[

@@ -62,7 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _submit() async {
     try {
       await model.submit();
-    } on PlatformException catch (e) {
+    } catch (e) {
       AppUtil().showFlushBar(e, context);
     }
   }

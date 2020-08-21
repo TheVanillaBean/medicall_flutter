@@ -414,7 +414,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                                   .split(' ')[1]
                                                   .substring(1),
                                         ),
-                                        Text(db.patientDetail.dob),
+                                        Text('db.patientDetail.dob'),
                                         Text(db.consultSnapshot.data
                                                 .containsKey('shipping_address')
                                             ? db.consultSnapshot
