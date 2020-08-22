@@ -37,10 +37,14 @@ class BoardCertificationValidator implements StringValidator {
 
 class ProfessionalTitleValidator implements StringValidator {
   List<String> titles = [
-    "M.D.",
-    "D.O.",
-    "P.A.",
-    "PharmD",
+    "MD",
+    "DO",
+    "NP",
+    "PA",
+    "DMD",
+    "DDS",
+    "LCP",
+    "PT",
   ];
   @override
   bool isValid(String value) {
@@ -106,7 +110,7 @@ class StateValidator implements StringValidator {
     "WA",
     "WI",
     "WV",
-    "WY"
+    "WY",
   ];
   @override
   bool isValid(String value) {

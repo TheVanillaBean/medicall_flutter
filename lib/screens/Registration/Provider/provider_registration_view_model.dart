@@ -60,6 +60,23 @@ class ProviderRegistrationViewModel
   ScrollController viewController = ScrollController();
   ScrollController scrollController = ScrollController();
 
+  final List<String> boardCertification = const <String>[
+    "Yes",
+    "No",
+    "Board Eligible"
+  ];
+
+  final List<String> professionalTitles = const <String>[
+    "MD",
+    "DO",
+    "NP",
+    "PA",
+    "DMD",
+    "DDS",
+    "LCP",
+    "PT"
+  ];
+
   final List<String> states = const <String>[
     "AK",
     "AL",
