@@ -36,7 +36,7 @@ class BoardCertificationValidator implements StringValidator {
 }
 
 class ProfessionalTitleValidator implements StringValidator {
-  List<String> titles = [
+  List<String> professionalTitles = [
     "MD",
     "DO",
     "NP",
@@ -48,7 +48,7 @@ class ProfessionalTitleValidator implements StringValidator {
   ];
   @override
   bool isValid(String value) {
-    return titles.contains(value);
+    return professionalTitles.contains(value);
   }
 }
 
@@ -211,8 +211,9 @@ class ZipCodeValidators {
 }
 
 class ProfessionalTitleValidators {
-  final StringValidator titleValidator = ProfessionalTitleValidator();
-  final String titleErrorText = 'Please select your professional title';
+  final StringValidator professionalTitleValidator =
+      ProfessionalTitleValidator();
+  final String profTitleErrorText = 'Please select your professional title';
 }
 
 class NpiValidators {

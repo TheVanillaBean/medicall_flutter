@@ -53,7 +53,7 @@ class _PatientNoteStepState extends State<PatientNoteStep> {
                         initialValue:
                             model.patientNoteStepState.getPatientNoteTemplate(
                           model.consult.patientUser.fullName,
-                          "${model.consult.providerUser.fullName} ${model.consult.providerUser.titles}",
+                          "${model.consult.providerUser.fullName}, ${model.consult.providerUser.professionalTitle}",
                           model.diagnosisOptions.patientNoteTemplate,
                         ),
                         autocorrect: false,

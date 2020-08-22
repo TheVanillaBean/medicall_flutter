@@ -124,10 +124,6 @@ class PersonalInfoViewModel
     this.profileImage = const [],
   });
 
-  void setFormStatus(PersonalFormStatus personalFormStatus) {
-    this.personalFormStatus = personalFormStatus;
-  }
-
   bool get canSubmit {
     return firstNameValidator.isValid(firstName) &&
         lastNameValidator.isValid(lastName) &&
@@ -165,23 +161,23 @@ class PersonalInfoViewModel
     return showErrorText ? phoneErrorText : null;
   }
 
-  String get billingAddressErrorText {
+  String get patientBillingAddressErrorText {
     bool showErrorText =
         submitted && !billingAddressValidator.isValid(billingAddress);
     return showErrorText ? billingAddressErrorText : null;
   }
 
-  String get cityErrorText {
+  String get patientCityErrorText {
     bool showErrorText = submitted && !cityValidator.isValid(city);
     return showErrorText ? cityErrorText : null;
   }
 
-  String get stateErrorText {
+  String get patientStateErrorText {
     bool showErrorText = submitted && !stateValidator.isValid(state);
     return showErrorText ? stateErrorText : null;
   }
 
-  String get zipCodeErrorText {
+  String get patientZipCodeErrorText {
     bool showErrorText = submitted && !zipCodeValidator.isValid(zipCode);
     return showErrorText ? zipCodeErrorText : null;
   }
@@ -218,11 +214,13 @@ class PersonalInfoViewModel
   }
 
   Future<void> submit() async {
+    updateWith(submitted: true);
+    //check for photo and if null, throw approprate message
     if (!canSubmit) {
       btnController.reset();
-      throw "Please fill out all the fields first";
+      throw "Please correct the errors below...";
     }
-    updateWith(submitted: true, isLoading: true);
+    updateWith(isLoading: true);
     PatientUser medicallUser = userProvider.user;
     medicallUser.firstName = this.firstName;
     medicallUser.lastName = this.lastName;

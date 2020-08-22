@@ -80,7 +80,6 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     _lastNameController.dispose();
     _billingAddressController.dispose();
     _zipCodeController.dispose();
-
     _firstNameFocusNode.dispose();
     _lastNameFocusNode.dispose();
     _billingAddressFocusNode.dispose();

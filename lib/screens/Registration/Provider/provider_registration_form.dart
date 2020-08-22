@@ -129,9 +129,9 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
             labelText: 'Select Your Title',
             hint: 'Select your title',
             items: model.professionalTitles,
-            selectedItem: model.titles,
+            selectedItem: model.professionalTitle,
             errorText: model.professionalTitleErrorText,
-            onChanged: model.updateTitles,
+            onChanged: model.updateProfessionalTitle,
           ),
           ProviderCustomTextField(
             labelText: 'NPI Number',

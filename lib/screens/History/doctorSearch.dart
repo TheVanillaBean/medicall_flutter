@@ -71,7 +71,8 @@ class DoctorSearch extends StatelessWidget {
                         StringUtils.getFormattedProviderName(
                           firstName: userDocuments[i].data['first_name'],
                           lastName: userDocuments[i].data['last_name'],
-                          titles: userDocuments[i].data['titles'],
+                          professionalTitle:
+                              userDocuments[i].data['professional_title'],
                         ),
                       ),
                       subtitle:
@@ -109,7 +110,8 @@ class DoctorSearch extends StatelessWidget {
                         ),
                         offset: Offset.fromDirection(0.0, -20.0),
                         onSelected: (val) {
-                          providerTitles = userDocuments[i].data['titles'];
+                          providerTitles =
+                              userDocuments[i].data['professional_title'];
                           selectedProvider = userDocuments[i].data['name'];
                           _consult.provider = selectedProvider;
                           _consult.providerProfilePic =
@@ -231,7 +233,7 @@ class CustomSearchDelegate extends SearchDelegate {
                           title: Text(
                               '${userDocuments[i].data['name'].split(" ")[0][0].toUpperCase()}${userDocuments[i].data['name'].split(" ")[0].substring(1)} ${userDocuments[i].data['name'].split(" ")[1][0].toUpperCase()}${userDocuments[i].data['name'].split(" ")[1].substring(1)}' +
                                   " " +
-                                  userDocuments[i].data['titles']),
+                                  userDocuments[i].data['professional_title']),
                           subtitle:
                               Text(userDocuments[i].data['address'].toString()),
                           trailing: FlatButton(
@@ -270,8 +272,8 @@ class CustomSearchDelegate extends SearchDelegate {
                                   ),
                                   offset: Offset.fromDirection(0.0, -20.0),
                                   onSelected: (val) {
-                                    providerTitles =
-                                        userDocuments[i].data['titles'];
+                                    providerTitles = userDocuments[i]
+                                        .data['professional_title'];
                                     selectedProvider =
                                         userDocuments[i].data['name'];
                                     _consult.provider = selectedProvider;

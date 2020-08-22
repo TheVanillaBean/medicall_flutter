@@ -37,7 +37,7 @@ class ProviderListItem extends StatelessWidget {
             StringUtils.getFormattedProviderName(
               firstName: provider.firstName,
               lastName: provider.lastName,
-              titles: provider.titles,
+              professionalTitle: provider.professionalTitle,
             ),
             style: Theme.of(context).textTheme.bodyText1,
           ),

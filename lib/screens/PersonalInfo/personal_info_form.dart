@@ -17,8 +17,7 @@ class PersonalInfoForm extends StatefulWidget {
   _PersonalInfoFormState createState() => _PersonalInfoFormState();
 }
 
-class _PersonalInfoFormState extends State<PersonalInfoForm>
-    with PersonalFormStatus {
+class _PersonalInfoFormState extends State<PersonalInfoForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   MaskTextInputFormatter phoneTextInputFormatter = MaskTextInputFormatter(
@@ -49,7 +48,6 @@ class _PersonalInfoFormState extends State<PersonalInfoForm>
         Provider.of<ExtImageProvider>(context);
     final PersonalInfoViewModel model =
         Provider.of<PersonalInfoViewModel>(context);
-    model.setFormStatus(this);
 
     return Form(
       key: _formKey,
@@ -81,35 +79,35 @@ class _PersonalInfoFormState extends State<PersonalInfoForm>
             labelText: 'Date of Birth',
             hint: 'mm/dd/yyyy',
             keyboardType: TextInputType.datetime,
-            initialDate: model.initialDatePickerDate,
             errorText: model.patientDobErrorText,
+            initialDate: model.initialDatePickerDate,
             onChanged: model.updateBirthDate,
           ),
           PersonalInfoTextField(
             labelText: 'Billing Address',
             hint: '123 Main St',
-            errorText: model.billingAddressErrorText,
+            errorText: model.patientBillingAddressErrorText,
             onChanged: model.updateBillingAddress,
           ),
           PersonalInfoTextField(
             labelText: 'City',
             hint: 'Anytown',
-            errorText: model.cityErrorText,
+            errorText: model.patientCityErrorText,
             onChanged: model.updateCity,
           ),
           CustomDropdownFormField(
             labelText: 'State',
             onChanged: model.updateState,
             items: model.states,
-            errorText: model.stateErrorText,
+            errorText: model.patientStateErrorText,
             selectedItem: model.state,
           ),
           PersonalInfoTextField(
             labelText: 'Zip code',
             inputFormatters: [zipCodeTextInputFormatter],
             hint: '12345',
+            errorText: model.patientZipCodeErrorText,
             keyboardType: TextInputType.number,
-            errorText: model.zipCodeErrorText,
             onChanged: model.updateZipCode,
           ),
           SizedBox(height: 30),
@@ -129,30 +127,21 @@ class _PersonalInfoFormState extends State<PersonalInfoForm>
                   ),
                   textAlign: TextAlign.center,
                 ),
-                onPressed: () {
-                  if (_formKey.currentState.validate()) {
-                    _submit(
-                      model,
-                      extendedImageProvider,
-                    );
-                  } else {
-                    model.btnController.reset();
-                  }
-                },
+                onPressed: !model.isLoading
+                    ? () {
+                        if (_formKey.currentState.validate()) {
+                          _submit(
+                            model,
+                            extendedImageProvider,
+                          );
+                        }
+                      }
+                    : null,
               ),
             ),
           ),
         ],
       ),
     );
-  }
-
-  void _showFlushBarMessage(String message) {
-    AppUtil().showFlushBar(message, context);
-  }
-
-  @override
-  void updateStatus(String msg) {
-    _showFlushBarMessage(msg);
   }
 }
