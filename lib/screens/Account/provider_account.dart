@@ -144,7 +144,7 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
             _buildEmailCard(medicallUser),
             _buildPhoneCard(medicallUser),
             _buildAddressCard(medicallUser),
-            _buildTitleCard(medicallUser),
+            _buildProfessionalTitleCard(medicallUser),
             _buildMedicalLicenseCard(medicallUser),
             _buildMedicalLicenseStateCard(medicallUser),
             _buildNpiCard(medicallUser),
@@ -177,14 +177,14 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
     return ReusableAccountCard(
       leading: 'Practice \nAddress:',
       title:
-          '${medicallUser.mailingAddress}, ${medicallUser.mailingCity}, ${medicallUser.mailingState} ${medicallUser.mailingZipCode}',
+          '${medicallUser.mailingAddress}, \n${medicallUser.mailingCity}, ${medicallUser.mailingState} ${medicallUser.mailingZipCode}',
     );
   }
 
-  Widget _buildTitleCard(User medicallUser) {
+  Widget _buildProfessionalTitleCard(User medicallUser) {
     return ReusableAccountCard(
       leading: 'Title:',
-      title: (medicallUser as ProviderUser).titles,
+      title: (medicallUser as ProviderUser).professionalTitle,
     );
   }
 

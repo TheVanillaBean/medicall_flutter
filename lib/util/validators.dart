@@ -36,15 +36,19 @@ class BoardCertificationValidator implements StringValidator {
 }
 
 class ProfessionalTitleValidator implements StringValidator {
-  List<String> titles = [
-    "M.D.",
-    "D.O.",
-    "P.A.",
-    "PharmD",
+  List<String> professionalTitles = [
+    "MD",
+    "DO",
+    "NP",
+    "PA",
+    "DMD",
+    "DDS",
+    "LCP",
+    "PT",
   ];
   @override
   bool isValid(String value) {
-    return titles.contains(value);
+    return professionalTitles.contains(value);
   }
 }
 
@@ -106,7 +110,7 @@ class StateValidator implements StringValidator {
     "WA",
     "WI",
     "WV",
-    "WY"
+    "WY",
   ];
   @override
   bool isValid(String value) {
@@ -161,7 +165,7 @@ class EmailAndPasswordValidators {
 
 class DobValidators {
   final DateTimeValidator dobValidator = DobValidator();
-  final String dobErrorText = 'Please enter a valid birth date (must be 18)';
+  final String dobErrorText = 'Please enter a valid birth date (must be 18+)';
 }
 
 class MobilePhoneValidators {
@@ -175,15 +179,20 @@ class PhoneValidators {
   final StringValidator phoneNumberLengthValidator =
       PhoneNumberStringValidator();
   final StringValidator codeLengthValidator = SMSCodeStringValidator();
+  final String phoneErrorText = 'Please enter a valid phone number';
   final String emptyPhoneNumberErrorText = 'Your phone number can\'t be empty';
   final String emptyCodeErrorText = 'Your verification code can\'t be empty';
   final String phoneNumberLengthErrorText = 'This phone number is invalid!';
   final String codeLengthErrorText = 'This verification code is invalid!';
 }
 
-class PracticeAddressValidators {
+class AddressValidators {
   final StringValidator practiceAddressValidator = NonEmptyStringValidator();
+  final StringValidator mailingAddressValidator = NonEmptyStringValidator();
+  final StringValidator billingAddressValidator = NonEmptyStringValidator();
   final String addressErrorText = 'Please enter a valid street address';
+  final String mailingAddressErrorText = 'Please enter a valid mailing address';
+  final String billingAddressErrorText = 'Please enter a valid billing address';
 }
 
 class CityValidators {
@@ -202,8 +211,9 @@ class ZipCodeValidators {
 }
 
 class ProfessionalTitleValidators {
-  final StringValidator titleValidator = ProfessionalTitleValidator();
-  final String titleErrorText = 'Please select your professional title';
+  final StringValidator professionalTitleValidator =
+      ProfessionalTitleValidator();
+  final String profTitleErrorText = 'Please select your professional title';
 }
 
 class NpiValidators {

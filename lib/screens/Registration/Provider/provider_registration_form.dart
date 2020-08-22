@@ -128,10 +128,10 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
           CustomDropdownFormField(
             labelText: 'Select Your Title',
             hint: 'Select your title',
-            onChanged: model.updateTitles,
-            items: ["M.D.", "D.O.", "P.A.", "PharmD"],
-            selectedItem: model.titles,
+            items: model.professionalTitles,
+            selectedItem: model.professionalTitle,
             errorText: model.professionalTitleErrorText,
+            onChanged: model.updateProfessionalTitle,
           ),
           ProviderCustomTextField(
             labelText: 'NPI Number',
@@ -143,7 +143,6 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
           ProviderCustomTextField(
             labelText: 'Medical License Number',
             hint: '12345',
-            keyboardType: TextInputType.number,
             errorText: model.medicalLicenseErrorText,
             onChanged: model.updateMedLicense,
           ),
@@ -157,7 +156,7 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
           CustomDropdownFormField(
             labelText: 'Board Certification',
             onChanged: model.updateBoardCertified,
-            items: ["Yes", "No", "Board Eligible"],
+            items: model.boardCertification,
             selectedItem: model.boardCertified,
             errorText: model.boardCertificationErrorText,
           ),
