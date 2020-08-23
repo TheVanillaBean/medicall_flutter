@@ -103,7 +103,7 @@ class MakePayment extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 30),
                     child: Text(
-                      "Please confirm your payment details and pay below for your consult with Dr. ${this.model.consult.providerUser.fullName} ${this.model.consult.providerUser.titles}",
+                      "Please confirm your payment details and pay below for your consult with ${this.model.consult.providerUser.fullName}, ${this.model.consult.providerUser.professionalTitle}",
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.bodyText2,
                     ),

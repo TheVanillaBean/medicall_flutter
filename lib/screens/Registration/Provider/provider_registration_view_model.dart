@@ -19,7 +19,7 @@ class ProviderRegistrationViewModel
         EmailAndPasswordValidators,
         DobValidators,
         MobilePhoneValidators,
-        PracticeAddressValidators,
+        AddressValidators,
         CityValidators,
         StateValidators,
         ZipCodeValidators,
@@ -44,7 +44,7 @@ class ProviderRegistrationViewModel
   String city;
   String state;
   String zipCode;
-  String titles;
+  String professionalTitle;
   String medLicense;
   String medLicenseState;
   String npi;
@@ -59,6 +59,23 @@ class ProviderRegistrationViewModel
 
   ScrollController viewController = ScrollController();
   ScrollController scrollController = ScrollController();
+
+  final List<String> boardCertification = const <String>[
+    "Yes",
+    "No",
+    "Board Eligible"
+  ];
+
+  final List<String> professionalTitles = const <String>[
+    "MD",
+    "DO",
+    "NP",
+    "PA",
+    "DMD",
+    "DDS",
+    "LCP",
+    "PT"
+  ];
 
   final List<String> states = const <String>[
     "AK",
@@ -135,7 +152,7 @@ class ProviderRegistrationViewModel
     this.city = '',
     this.state = '',
     this.zipCode = '',
-    this.titles = '',
+    this.professionalTitle = '',
     this.medLicense = '',
     this.medLicenseState = '',
     this.npi = '',
@@ -160,7 +177,7 @@ class ProviderRegistrationViewModel
         practiceAddressValidator.isValid(address) &&
         cityValidator.isValid(city) &&
         zipCodeValidator.isValid(zipCode) &&
-        titleValidator.isValid(titles) &&
+        professionalTitleValidator.isValid(professionalTitle) &&
         !isLoading;
   }
 
@@ -223,8 +240,9 @@ class ProviderRegistrationViewModel
   }
 
   String get professionalTitleErrorText {
-    bool showErrorText = this.submitted && !titleValidator.isValid(titles);
-    return showErrorText ? titleErrorText : null;
+    bool showErrorText = this.submitted &&
+        !professionalTitleValidator.isValid(professionalTitle);
+    return showErrorText ? profTitleErrorText : null;
   }
 
   String get npiNumberErrorText {
@@ -271,7 +289,8 @@ class ProviderRegistrationViewModel
   void updateCity(String city) => updateWith(city: city);
   void updateState(String state) => updateWith(state: state);
   void updateZipCode(String zipCode) => updateWith(zipCode: zipCode);
-  void updateTitles(String titles) => updateWith(titles: titles);
+  void updateProfessionalTitle(String professionalTitle) =>
+      updateWith(professionalTitle: professionalTitle);
   void updateMedLicense(String medLicense) =>
       updateWith(medLicense: medLicense);
   void updateMedLicenseState(String state) =>
@@ -333,7 +352,8 @@ class ProviderRegistrationViewModel
         tempUserProvider.user.mailingCity = this.city;
         tempUserProvider.user.mailingState = this.state;
         tempUserProvider.user.mailingZipCode = this.zipCode;
-        (tempUserProvider.user as ProviderUser).titles = this.titles;
+        (tempUserProvider.user as ProviderUser).professionalTitle =
+            this.professionalTitle;
         (tempUserProvider.user as ProviderUser).medLicense = this.medLicense;
         (tempUserProvider.user as ProviderUser).medLicenseState =
             this.medLicenseState;
@@ -375,7 +395,7 @@ class ProviderRegistrationViewModel
     String city,
     String state,
     String zipCode,
-    String titles,
+    String professionalTitle,
     String medLicense,
     String medLicenseState,
     String npi,
@@ -398,7 +418,7 @@ class ProviderRegistrationViewModel
     this.city = city ?? this.city;
     this.state = state ?? this.state;
     this.zipCode = zipCode ?? this.zipCode;
-    this.titles = titles ?? this.titles;
+    this.professionalTitle = professionalTitle ?? this.professionalTitle;
     this.npi = npi ?? this.npi;
     this.boardCertified = boardCertified ?? this.boardCertified;
     this.medLicense = medLicense ?? this.medLicense;

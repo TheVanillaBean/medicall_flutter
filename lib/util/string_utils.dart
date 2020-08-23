@@ -4,9 +4,9 @@ class StringUtils {
   static String getFormattedProviderName({
     @required String firstName,
     @required String lastName,
-    @required String titles,
+    @required String professionalTitle,
   }) {
-    return '${capitalize(firstName)} ${capitalize(lastName)} $titles';
+    return '${capitalize(firstName)} ${capitalize(lastName)}, $professionalTitle';
   }
 
   static String capitalize(String s) {

@@ -48,21 +48,13 @@ class CompleteVisit extends StatelessWidget {
                   alignment: Alignment.centerLeft,
                   child: Text(
                     'Please Note:',
-                    style: Theme.of(context).textTheme.bodyText1.copyWith(
-                          fontSize: 14,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                    textAlign: TextAlign.left,
+                    style: Theme.of(context).textTheme.bodyText1,
                   ),
                 ),
               ),
               Text(
                 'Marking the visit \"complete\" will notify the patient that you\'ve completed your evaluation. The patient will still be able to message you with questions for 7 days.',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyText1
-                    .copyWith(fontSize: 14),
-                textAlign: TextAlign.justify,
+                style: Theme.of(context).textTheme.bodyText1,
               ),
               SizedBox(height: 250),
               ListTileTheme(
@@ -71,9 +63,7 @@ class CompleteVisit extends StatelessWidget {
                   controlAffinity: ListTileControlAffinity.leading,
                   title: Text(
                     'Please send a copy of my note to my office manager via secure email.',
-                    style: Theme.of(context).textTheme.bodyText1.copyWith(
-                          fontSize: 14,
-                        ),
+                    style: Theme.of(context).textTheme.bodyText1,
                     textAlign: TextAlign.left,
                   ),
                   value: model.checkValue ?? false,

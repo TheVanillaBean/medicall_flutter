@@ -42,9 +42,9 @@ class VisitDetailsOverview extends StatelessWidget {
         type: AppBarType.Back,
         title: this.consult.symptom + ' visit',
         subtitle: 'with ' +
-            this.consult.providerUser.fullName +
-            ' ' +
-            this.consult.providerUser.titles +
+            widget.consult.providerUser.fullName +
+            ', ' +
+            widget.consult.providerUser.professionalTitle +
             ' on ' +
             DateFormat('MM-dd-yyyy').format(this.consult.date).toString(),
         theme: Theme.of(context),

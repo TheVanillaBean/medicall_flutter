@@ -52,7 +52,7 @@ class ProviderDetailScreen extends StatelessWidget {
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
           type: AppBarType.Back,
-          title: provider.titles + ' ' + provider.fullName,
+          title: provider.fullName + ', ' + provider.professionalTitle,
           theme: Theme.of(context),
           actions: [
             IconButton(

@@ -1,5 +1,6 @@
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/PersonalInfo/personal_info_form.dart';
 import 'package:Medicall/screens/PersonalInfo/personal_info_view_model.dart';
 import 'package:Medicall/services/database.dart';
@@ -80,7 +81,6 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     _lastNameController.dispose();
     _billingAddressController.dispose();
     _zipCodeController.dispose();
-
     _firstNameFocusNode.dispose();
     _lastNameFocusNode.dispose();
     _billingAddressFocusNode.dispose();
@@ -97,10 +97,8 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
           builder: (BuildContext context) {
             return IconButton(
               onPressed: () {
-                Navigator.popUntil(
-                  context,
-                  ModalRoute.withName(Routes.symptoms),
-                );
+                PatientDashboardScreen.show(
+                    context: context, pushReplaceNamed: true);
               },
               icon: Icon(Icons.close),
             );
@@ -187,12 +185,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
       Text(
         "Please add a profile picture\n(Required)",
         textAlign: TextAlign.center,
-        style: TextStyle(
-          fontSize: 16,
-          color: Colors.black87,
-          fontFamily: 'Roboto Thin',
-          fontWeight: FontWeight.w300,
-        ),
+        style: Theme.of(context).textTheme.bodyText1,
       ),
       Container(
         height: height * 0.15,

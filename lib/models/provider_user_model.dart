@@ -1,7 +1,7 @@
 import 'package:Medicall/models/user_model_base.dart';
 
 class ProviderUser extends User {
-  String titles;
+  String professionalTitle;
   String medLicense;
   String medLicenseState;
   String npi;
@@ -9,7 +9,7 @@ class ProviderUser extends User {
   bool stripeConnectAuthorized;
 
   ProviderUser({
-    this.titles = '',
+    this.professionalTitle = '',
     this.npi = '',
     this.boardCertified = '',
     this.medLicense = '',
@@ -22,7 +22,7 @@ class ProviderUser extends User {
     Map<String, dynamic> userMap = super.baseToMap();
     userMap.addAll({
       'stripe_connect_authorized': stripeConnectAuthorized,
-      'titles': titles,
+      'professional_title': professionalTitle,
       'npi': npi,
       'med_license': medLicense,
       'state_issued': medLicenseState,
@@ -33,7 +33,8 @@ class ProviderUser extends User {
 
   static ProviderUser fromMap(String uid, Map<String, dynamic> data) {
     ProviderUser provider = ProviderUser();
-    provider.titles = data['titles'] ?? provider.titles;
+    provider.professionalTitle =
+        data['professional_title'] ?? provider.professionalTitle;
     provider.medLicense = data['med_license'] ?? provider.medLicense;
     provider.npi = data['npi'] ?? provider.npi;
     provider.boardCertified =

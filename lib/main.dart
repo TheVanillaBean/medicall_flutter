@@ -1,4 +1,5 @@
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/Account/provider_account.dart';
 import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard.dart';
 import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/LandingPage/auth_widget_builder.dart';
@@ -99,6 +100,7 @@ class MedicallApp extends StatelessWidget {
                   userSnapshot.data.type == USER_TYPE.PROVIDER
                       ? ProviderDashboardScreen.create(context)
                       : PatientDashboardScreen.create(context),
+              providerPhotoBuilder: (context) => ProviderAccountScreen(),
               startVisitBuilder: (context) => StartVisitScreen(
                 consult: tempUserProvider.consult,
               ),
