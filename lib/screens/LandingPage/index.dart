@@ -1,4 +1,5 @@
 import 'package:Medicall/common_widgets/sign_in_button.dart';
+import 'package:Medicall/models/provider_user_model.dart';
 import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
@@ -14,6 +15,7 @@ class LandingPage extends StatelessWidget {
   final WidgetBuilder nonSignedInBuilder;
   final WidgetBuilder signedInBuilder;
   final WidgetBuilder startVisitBuilder;
+  final WidgetBuilder providerPhotoBuilder;
 
   const LandingPage({
     Key key,
@@ -21,6 +23,7 @@ class LandingPage extends StatelessWidget {
     this.nonSignedInBuilder,
     this.signedInBuilder,
     this.startVisitBuilder,
+    this.providerPhotoBuilder,
   }) : super(key: key);
 
   @override
@@ -32,6 +35,9 @@ class LandingPage extends StatelessWidget {
       if (userSnapshot.hasData) {
         if (tempUserProvider.consult != null) {
           return startVisitBuilder(context);
+        } else if (userSnapshot.data.type == USER_TYPE.PROVIDER &&
+            userSnapshot.data.profilePic.length == 0) {
+          return providerPhotoBuilder(context);
         } else {
           return signedInBuilder(context);
         }
