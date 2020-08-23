@@ -1,3 +1,4 @@
+import 'package:Medicall/chat/chat_screen.dart';
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
 import 'package:Medicall/common_widgets/sign_in_button.dart';
@@ -11,8 +12,10 @@ import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/ConsultReview/review_visit_information.dart';
 import 'package:Medicall/screens/ConsultReview/visit_review.dart';
 import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard_list_item.dart';
+import 'package:Medicall/services/chat_provider.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
+import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -46,11 +49,12 @@ class VisitOverview extends StatelessWidget {
         theme: Theme.of(context),
       ),
       body: StreamBuilder<Consult>(
-          stream: firestoreDatabase.consultStream(consultId: consultOld.uid),
+          stream:
+              firestoreDatabase.consultStream(consultId: this.consultOld.uid),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               Consult consult = snapshot.data;
-              consult.patientUser = consultOld.patientUser;
+              consult.patientUser = this.consultOld.patientUser;
               consult.providerUser = userProvider.user as ProviderUser;
               return Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -101,40 +105,28 @@ class VisitOverview extends StatelessWidget {
             SizedBox(
               height: 20,
             ),
-//            Row(
-//              children: <Widget>[
-//                Expanded(
-//                  child: RaisedButton(
-//                    color: Colors.white,
-//                    disabledColor: Colors.grey.withAlpha(40),
-//                    elevation: 3,
-//                    shape: RoundedRectangleBorder(
-//                        borderRadius: BorderRadius.circular(12)),
-//                    child: Text(
-//                      "DIAGNOSIS & TREATMENT PLAN",
-//                      style: Theme.of(context).textTheme.headline6,
-//                    ),
-//                    onPressed: onContinueBtnPressed(context, db, consult),
-//                    padding: EdgeInsets.fromLTRB(25, 20, 25, 20),
-//                  ),
-//                ),
-//              ],
-//            )
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: RaisedButton(
+                    color: Colors.white,
+                    disabledColor: Colors.grey.withAlpha(40),
+                    elevation: 3,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                    child: Text(
+                      "MESSAGE PATIENT",
+                      style: Theme.of(context).textTheme.headline6,
+                    ),
+                    onPressed: () => navigateToChatScreen(context, consult),
+                    padding: EdgeInsets.fromLTRB(25, 20, 25, 20),
+                  ),
+                ),
+              ],
+            )
           ],
         ),
       ),
-//      CustomFlatButton(
-//        text: "MESSAGE PATIENT",
-//        onPressed: () => {},
-//      ),
-//      Padding(
-//        padding: const EdgeInsets.symmetric(horizontal: 16),
-//        child: Divider(),
-//      ),
-//      CustomFlatButton(
-//        text: "REFUND PATIENT FEE",
-//        onPressed: () => {},
-//      ),
       Expanded(
         child: Align(
           alignment: FractionalOffset.bottomCenter,
@@ -156,7 +148,7 @@ class VisitOverview extends StatelessWidget {
   Function onContinueBtnPressed(
       BuildContext context, FirestoreDatabase db, Consult consult) {
     if (consult.state == ConsultStatus.PendingReview) {
-      return () => navigateToVisitReviewScreen(context, db, consult);
+      return () => _showBeginReviewDialog(context, consult);
     } else if (consult.state == ConsultStatus.InReview) {
       return () async => navigateToVisitReviewScreen(context, db, consult);
     } else if (consult.state == ConsultStatus.Completed) {
@@ -193,7 +185,7 @@ class VisitOverview extends StatelessWidget {
   Future<void> navigateToVisitReviewScreen(
       BuildContext context, FirestoreDatabase db, Consult consult) async {
     ConsultReviewOptions options =
-        await db.consultReviewOptions(symptomName: "Hairloss");
+        await db.consultReviewOptions(symptomName: consult.symptom);
     VisitReviewData visitReviewData =
         await db.visitReviewStream(consultId: consult.uid).first;
     if (visitReviewData == null) {
@@ -244,6 +236,22 @@ class VisitOverview extends StatelessWidget {
       await db.saveConsult(consultId: consult.uid, consult: consult);
     } else {
       navigateToVisitReviewScreen(context, db, consult);
+    }
+  }
+
+  void navigateToChatScreen(BuildContext context, Consult consult) async {
+    if (consult.state == ConsultStatus.Signed) {
+      ChatProvider chatProvider =
+          Provider.of<ChatProvider>(context, listen: false);
+      final channel = chatProvider.client.channel('messaging', id: consult.uid);
+      ChatScreen.show(
+        context: context,
+        channel: channel,
+        consult: consult,
+      );
+    } else {
+      AppUtil().showFlushBar(
+          "You can only chat when you sign this consult", context);
     }
   }
 }

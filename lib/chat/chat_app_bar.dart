@@ -58,6 +58,8 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
   /// Callback to call when the image is tapped.
   final VoidCallback onImageTap;
 
+  final String otherUser;
+
   /// Creates a channel header
   ChatAppBar({
     Key key,
@@ -65,6 +67,7 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.onBackPressed,
     this.onTitleTap,
     this.onImageTap,
+    this.otherUser,
   })  : preferredSize = Size.fromHeight(kToolbarHeight),
         super(key: key);
 
@@ -112,8 +115,9 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              ChannelName(
-                textStyle: StreamChatTheme.of(context)
+              Text(
+                "Chatting with $otherUser",
+                style: StreamChatTheme.of(context)
                     .channelTheme
                     .channelHeaderTheme
                     .title,

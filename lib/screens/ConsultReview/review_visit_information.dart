@@ -199,7 +199,7 @@ class ReviewVisitInformation extends StatelessWidget {
   Future<void> navigateToVisitReviewScreen(
       BuildContext context, FirestoreDatabase db, Consult consult) async {
     ConsultReviewOptions options =
-        await db.consultReviewOptions(symptomName: "Hairloss");
+        await db.consultReviewOptions(symptomName: consult.symptom);
     VisitReviewData visitReviewData =
         await db.visitReviewStream(consultId: consult.uid).first;
     if (visitReviewData == null) {

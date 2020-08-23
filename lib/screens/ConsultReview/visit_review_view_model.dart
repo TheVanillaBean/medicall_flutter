@@ -266,7 +266,7 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
     updateDiagnosisStepWith(selectedItemIndex: selectedItemIndex);
     this.diagnosisOptions =
         await firestoreDatabase.consultReviewDiagnosisOptions(
-            symptomName: "Hairloss",
+            symptomName: consult.symptom,
             diagnosis: this.diagnosisStepState.diagnosis);
   }
 

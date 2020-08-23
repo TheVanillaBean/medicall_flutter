@@ -508,9 +508,11 @@ class Router {
       case Routes.chatScreen:
         final Map<String, dynamic> mapArgs = args;
         final Channel channel = mapArgs['channel'];
+        final Consult consult = mapArgs['consult'];
         return MaterialPageRoute<dynamic>(
           builder: (context) => ChatScreen(
             channel: channel,
+            consult: consult,
           ),
           settings: settings,
           fullscreenDialog: true,
