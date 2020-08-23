@@ -197,10 +197,12 @@ class PatientDashboardScreen extends StatelessWidget {
                     ),
                     itemBuilder: (context, consult) => PatientDashboardListItem(
                       consult: consult,
-                      onTap: () => PersonalInfoScreen.show(
-                        context: context,
-                        consult: consult,
-                      ),
+                      onTap: () => consult.state == ConsultStatus.PendingPayment
+                          ? MakePayment.show(context: context, consult: consult)
+                          : VisitDetailsOverview.show(
+                              context: context,
+                              consult: consult,
+                            ),
                     ),
                   ),
                 ),
@@ -212,10 +214,3 @@ class PatientDashboardScreen extends StatelessWidget {
     );
   }
 }
-
-//() => consult.state == ConsultStatus.PendingPayment
-//? MakePayment.show(context: context, consult: consult)
-//: VisitDetailsOverview.show(
-//context: context,
-//consult: consult,
-//)
