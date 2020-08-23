@@ -96,14 +96,20 @@ class ProviderDetailScreen extends StatelessWidget {
   ) {
     return <Widget>[
       CircleAvatar(
-        radius: 50.0,
+        radius: 80.0,
         child: ClipOval(
-          child: extImageProvider.returnNetworkImage(
-            provider.profilePic,
-            width: 100,
-            height: 100,
-            fit: BoxFit.cover,
-          ),
+          child: provider.profilePic.length > 0
+              ? extImageProvider.returnNetworkImage(
+                  provider.profilePic,
+                  width: 150,
+                  height: 150,
+                  fit: BoxFit.cover,
+                )
+              : Icon(
+                  Icons.account_circle,
+                  size: 150,
+                  color: Colors.grey,
+                ),
         ),
         backgroundColor: Colors.transparent,
       ),
@@ -112,17 +118,23 @@ class ProviderDetailScreen extends StatelessWidget {
         'Dermatologist',
         style: Theme.of(context).textTheme.bodyText1,
       ),
-      SizedBox(height: 10),
+      SizedBox(
+        height: 20,
+        width: 80,
+        child: Divider(
+          color: Theme.of(context).colorScheme.primary,
+        ),
+      ),
       Container(
         alignment: Alignment.center,
         width: 150,
         child: Text(
-          provider.mailingAddress,
+          '${provider.mailingAddress}, \n${provider.mailingCity}, ${provider.mailingState} ${provider.mailingZipCode}',
           style: Theme.of(context).textTheme.bodyText1,
           textAlign: TextAlign.center,
         ),
       ),
-      SizedBox(height: 30),
+      SizedBox(height: 20),
       Expanded(
         flex: 5,
         child: Container(
