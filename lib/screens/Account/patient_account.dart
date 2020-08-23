@@ -133,12 +133,6 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
             _buildPhoneCard(medicallUser),
             _buildPaymentMethodsCard(context),
             _buildMedicalHistoryCard(context),
-            FlatButton(
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => TempLinksPage()));
-                },
-                child: Text('Links Page')),
           ],
         ),
       ),
