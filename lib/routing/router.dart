@@ -1,4 +1,3 @@
-import 'package:Medicall/chat/chat_screen.dart';
 import 'package:Medicall/models/consult-review/consult_review_options_model.dart';
 import 'package:Medicall/models/consult-review/treatment_options.dart';
 import 'package:Medicall/models/consult-review/visit_review_model.dart';
@@ -10,6 +9,7 @@ import 'package:Medicall/screens/Account/patient_account.dart';
 import 'package:Medicall/screens/Account/payment_detail.dart';
 import 'package:Medicall/screens/Account/provider_account.dart';
 import 'package:Medicall/screens/Account/view_medical_history.dart';
+import 'package:Medicall/screens/Chat/chat_screen.dart';
 import 'package:Medicall/screens/ConfirmConsult/index.dart';
 import 'package:Medicall/screens/Consent/index.dart';
 import 'package:Medicall/screens/ConsultReview/consult_photos.dart';
