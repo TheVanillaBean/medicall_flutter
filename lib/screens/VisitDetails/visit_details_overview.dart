@@ -50,7 +50,7 @@ class _VisitDetailsOverviewState extends State<VisitDetailsOverview> {
         title: widget.consult.symptom + ' visit',
         subtitle: 'with ' +
             widget.consult.providerUser.fullName +
-            ' ' +
+            ', ' +
             widget.consult.providerUser.professionalTitle +
             ' on ' +
             DateFormat('MM-dd-yyyy').format(widget.consult.date).toString(),

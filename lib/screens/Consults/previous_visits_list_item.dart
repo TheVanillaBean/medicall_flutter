@@ -38,7 +38,7 @@ class PreviousVisitsListItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  '${consult.providerUser.fullName}',
+                  '${consult.providerUser.fullName}, ${consult.providerUser.professionalTitle}',
                   style: Theme.of(context).textTheme.bodyText1,
                 ),
                 SizedBox(height: 2),

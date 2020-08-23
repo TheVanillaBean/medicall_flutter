@@ -215,11 +215,17 @@ class PersonalInfoViewModel
 
   Future<void> submit() async {
     updateWith(submitted: true);
-    //check for photo and if null, throw approprate message
+
+    if (this.profileImage.length == 0) {
+      btnController.reset();
+      throw "Please add a profile image...";
+    }
+
     if (!canSubmit) {
       btnController.reset();
-      throw "Please correct the errors below...";
+      throw "Please correct the errors...";
     }
+
     updateWith(isLoading: true);
     PatientUser medicallUser = userProvider.user;
     medicallUser.firstName = this.firstName;
