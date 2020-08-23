@@ -11,7 +11,6 @@ import 'package:Medicall/screens/VisitDetails/visit_education.dart';
 import 'package:Medicall/screens/VisitDetails/visit_prescriptions.dart';
 import 'package:Medicall/services/chat_provider.dart';
 import 'package:Medicall/services/database.dart';
-import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -42,9 +41,9 @@ class VisitDetailsOverview extends StatelessWidget {
         type: AppBarType.Back,
         title: this.consult.symptom + ' visit',
         subtitle: 'with ' +
-            widget.consult.providerUser.fullName +
+            this.consult.providerUser.fullName +
             ', ' +
-            widget.consult.providerUser.professionalTitle +
+            this.consult.providerUser.professionalTitle +
             ' on ' +
             DateFormat('MM-dd-yyyy').format(this.consult.date).toString(),
         theme: Theme.of(context),

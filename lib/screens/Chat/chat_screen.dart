@@ -105,7 +105,7 @@ class ChannelPage extends StatelessWidget {
 
   String get otherUserName {
     if (userProvider.user.uid == consult.patientId) {
-      return "${consult.providerUser.fullName} ${consult.providerUser.titles}";
+      return "${consult.providerUser.fullName} ${consult.providerUser.professionalTitle}";
     }
     return consult.patientUser.fullName;
   }
