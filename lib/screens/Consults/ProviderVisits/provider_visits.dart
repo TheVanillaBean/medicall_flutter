@@ -38,7 +38,8 @@ class ProviderVisits extends StatelessWidget {
                 consult: consult,
                 onTap: () => VisitOverview.show(
                   context: context,
-                  consult: consult,
+                  consultId: consult.uid,
+                  patientUser: consult.patientUser,
                 ),
               ),
             );

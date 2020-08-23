@@ -59,6 +59,8 @@
 	<string>This app needs access to location in the background.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app needs access to the photo library to upload profile data and to complete consultations.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app needs access to your microphone when recording videos in the chat screen.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
@@ -85,5 +87,10 @@
 	<true/>
 	<key>io.flutter.embedded_views_preview</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 </dict>
 </plist>

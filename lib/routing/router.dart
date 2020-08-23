@@ -3,6 +3,7 @@ import 'package:Medicall/models/consult-review/consult_review_options_model.dart
 import 'package:Medicall/models/consult-review/treatment_options.dart';
 import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:Medicall/models/consult_model.dart';
+import 'package:Medicall/models/patient_user_model.dart';
 import 'package:Medicall/models/provider_user_model.dart';
 import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/screens/Account/patient_account.dart';
@@ -262,9 +263,13 @@ class Router {
         );
       case Routes.visitOverview:
         final Map<String, dynamic> mapArgs = args;
-        final Consult consult = mapArgs['consult'];
+        final String consultId = mapArgs['consultId'];
+        final PatientUser patientUser = mapArgs['patientUser'];
         return MaterialPageRoute<dynamic>(
-          builder: (context) => VisitOverview(consultOld: consult),
+          builder: (context) => VisitOverview(
+            consultId: consultId,
+            patientUser: patientUser,
+          ),
           settings: settings,
           fullscreenDialog: true,
         );

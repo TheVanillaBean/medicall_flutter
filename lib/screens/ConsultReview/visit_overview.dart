@@ -20,18 +20,24 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class VisitOverview extends StatelessWidget {
-  final Consult consultOld;
+  final String consultId;
+  final PatientUser patientUser;
 
-  const VisitOverview({@required this.consultOld});
+  const VisitOverview({
+    @required this.consultId,
+    @required this.patientUser,
+  });
 
   static Future<void> show({
     BuildContext context,
-    Consult consult,
+    String consultId,
+    PatientUser patientUser,
   }) async {
     await Navigator.of(context).pushNamed(
       Routes.visitOverview,
       arguments: {
-        'consult': consult,
+        'consultId': consultId,
+        'patientUser': patientUser,
       },
     );
   }
@@ -49,12 +55,11 @@ class VisitOverview extends StatelessWidget {
         theme: Theme.of(context),
       ),
       body: StreamBuilder<Consult>(
-          stream:
-              firestoreDatabase.consultStream(consultId: this.consultOld.uid),
+          stream: firestoreDatabase.consultStream(consultId: this.consultId),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               Consult consult = snapshot.data;
-              consult.patientUser = this.consultOld.patientUser;
+              consult.patientUser = this.patientUser;
               consult.providerUser = userProvider.user as ProviderUser;
               return Column(
                 mainAxisAlignment: MainAxisAlignment.start,

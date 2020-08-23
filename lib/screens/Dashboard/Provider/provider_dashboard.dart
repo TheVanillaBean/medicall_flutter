@@ -56,7 +56,11 @@ class ProviderDashboardScreen extends StatelessWidget {
     if (!(model.userProvider.user as ProviderUser).stripeConnectAuthorized) {
       StripeConnect.show(context: context, pushReplaceNamed: true);
     } else {
-      VisitOverview.show(context: context, consult: consult);
+      VisitOverview.show(
+        context: context,
+        consultId: consult.uid,
+        patientUser: consult.patientUser,
+      );
     }
   }
 
