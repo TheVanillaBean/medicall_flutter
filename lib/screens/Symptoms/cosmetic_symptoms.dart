@@ -5,40 +5,28 @@ import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
-import 'package:Medicall/screens/Symptoms/cosmetic_symptoms.dart';
 import 'package:Medicall/screens/Symptoms/symptom_detail.dart';
 import 'package:Medicall/screens/Symptoms/symptom_list_item.dart';
-import 'package:Medicall/screens/Symptoms/symptoms_view_model.dart';
 import 'package:Medicall/screens/Welcome/welcome.dart';
-import 'package:Medicall/services/non_auth_firestore_db.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class SymptomsScreen extends StatelessWidget {
-  final SymptomsViewModel model;
+class CosmeticSymptomsScreen extends StatelessWidget {
+  final List<Symptom> symptoms;
 
-  const SymptomsScreen({@required this.model});
-
-  static Widget create(BuildContext context) {
-    NonAuthDatabase db = Provider.of<NonAuthDatabase>(context, listen: false);
-
-    return ChangeNotifierProvider<SymptomsViewModel>(
-      create: (context) => SymptomsViewModel(
-        database: db,
-      ),
-      child: Consumer<SymptomsViewModel>(
-        builder: (_, model, __) => SymptomsScreen(
-          model: model,
-        ),
-      ),
-    );
-  }
+  const CosmeticSymptomsScreen({@required this.symptoms});
 
   static Future<void> show({
     BuildContext context,
+    List<Symptom> symptoms,
   }) async {
-    await Navigator.of(context).pushNamed(Routes.symptoms);
+    await Navigator.of(context).pushNamed(
+      Routes.cosmeticSymptoms,
+      arguments: {
+        'symptoms': symptoms,
+      },
+    );
   }
 
   @override
@@ -51,7 +39,7 @@ class SymptomsScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       appBar: CustomAppBar.getAppBar(
           type: AppBarType.Back,
-          title: "How can we help?",
+          title: "Cosmetic Symptoms",
           theme: Theme.of(context),
           actions: [
             IconButton(
@@ -71,32 +59,23 @@ class SymptomsScreen extends StatelessWidget {
                 })
           ]),
       drawer: DrawerMenu(),
-      body: StreamBuilder<List<Symptom>>(
-        stream: model.symptomsStream.stream,
-        builder: (BuildContext context, AsyncSnapshot<List<Symptom>> snapshot) {
-          return Column(
-            children: <Widget>[
-              buildVisitFeeContainer(context),
-              Expanded(
-                child: ListItemsBuilder<Symptom>(
-                  snapshot: snapshot,
-                  itemBuilder: (context, symptom) => SymptomListItem(
-                    symptom: symptom,
-                    onTap: symptom.category == "cosmetic"
-                        ? () => CosmeticSymptomsScreen.show(
-                              context: context,
-                              symptoms: model.cosmeticSymptoms,
-                            )
-                        : () => SymptomDetailScreen.show(
-                              context: context,
-                              symptom: symptom,
-                            ),
-                  ),
+      body: Column(
+        children: <Widget>[
+          buildVisitFeeContainer(context),
+          Expanded(
+            child: ListItemsBuilder<Symptom>(
+              snapshot: null,
+              itemsList: this.symptoms,
+              itemBuilder: (context, symptom) => SymptomListItem(
+                symptom: symptom,
+                onTap: () => SymptomDetailScreen.show(
+                  context: context,
+                  symptom: symptom,
                 ),
               ),
-            ],
-          );
-        },
+            ),
+          ),
+        ],
       ),
     );
   }

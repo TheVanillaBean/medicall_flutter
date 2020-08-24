@@ -30,7 +30,6 @@ class NonAuthFirestoreDB implements NonAuthDatabase {
         path: FirestorePath.symptoms(),
         builder: (data, documentId) => Symptom.fromMap(data, documentId),
       );
-
   @override
   Future<List<String>> getAllProviderAddresses() => _service
       .collectionStream(

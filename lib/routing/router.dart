@@ -46,6 +46,7 @@ import 'package:Medicall/screens/Registration/registrationType.dart';
 import 'package:Medicall/screens/SelectProvider/provider_detail.dart';
 import 'package:Medicall/screens/SelectProvider/select_provider.dart';
 import 'package:Medicall/screens/StripeConnect/index.dart';
+import 'package:Medicall/screens/Symptoms/cosmetic_symptoms.dart';
 import 'package:Medicall/screens/Symptoms/symptom_detail.dart';
 import 'package:Medicall/screens/Symptoms/symptoms.dart';
 import 'package:Medicall/screens/Terms/index.dart';
@@ -81,6 +82,7 @@ class Routes {
   static const consent = '/consent';
   static const malpractice = '/malpractice';
   static const symptoms = '/symptoms';
+  static const cosmeticSymptoms = '/cosmetic-symptoms';
   static const symptomDetail = '/symptoms-detail';
   static const questions = '/questions';
   static const selectProvider = '/select-provider';
@@ -421,7 +423,15 @@ class Router {
         );
       case Routes.symptoms:
         return MaterialPageRoute<dynamic>(
-          builder: (context) => SymptomsScreen(),
+          builder: (context) => SymptomsScreen.create(context),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case Routes.cosmeticSymptoms:
+        final Map<String, dynamic> mapArgs = args;
+        final List<Symptom> symptoms = mapArgs['symptoms'];
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => CosmeticSymptomsScreen(symptoms: symptoms),
           settings: settings,
           fullscreenDialog: true,
         );
