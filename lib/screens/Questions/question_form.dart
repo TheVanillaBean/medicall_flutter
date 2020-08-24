@@ -216,23 +216,32 @@ class _QuestionFormState extends State<QuestionForm> {
   }
 
   Widget _buildPhotoOption({double height}) {
-    return GestureDetector(
-      onTap: _loadProfileImage,
-      child: ClipRRect(
-        child: model.questionPlaceholderURL.length > 0
-            ? this.extendedImageProvider.returnNetworkImage(
-                  model.questionPlaceholderURL,
-                  mode: ExtendedImageMode.none,
-                  fit: BoxFit.fitWidth,
-                  height: (height * 0.5),
-                  width: (height * 0.5),
-                )
-            : Icon(
-                Icons.image,
-                color: Colors.blue.withAlpha(140),
-                size: height * 0.5,
-              ),
-      ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        Expanded(
+          flex: 9,
+          child: GestureDetector(
+            onTap: _loadProfileImage,
+            child: ClipRRect(
+              child: model.questionPlaceholderURL.length > 0
+                  ? this.extendedImageProvider.returnNetworkImage(
+                        model.questionPlaceholderURL,
+                        mode: ExtendedImageMode.none,
+                        fit: BoxFit.fitWidth,
+                        height: (height * 0.5),
+                        width: (height * 0.5),
+                      )
+                  : Icon(
+                      Icons.add_a_photo,
+                      color: Theme.of(context).colorScheme.primary,
+                      size: height * 0.25,
+                    ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 

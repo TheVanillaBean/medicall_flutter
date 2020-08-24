@@ -29,38 +29,33 @@ class QuestionPage extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Flexible(
-            fit: FlexFit.loose,
-            flex: 2,
-            child: Scrollbar(
-              child: FadingEdgeScrollView.fromSingleChildScrollView(
-                child: SingleChildScrollView(
-                  controller: scrollController,
-                  child: Container(
-                    padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
-                    alignment: Alignment.topCenter,
-                    child: Column(
-                      children: <Widget>[
-                        Text(
-                          question.question,
-                          style: Theme.of(context).textTheme.headline5,
+          Scrollbar(
+            child: FadingEdgeScrollView.fromSingleChildScrollView(
+              child: SingleChildScrollView(
+                controller: scrollController,
+                child: Container(
+                  padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
+                  alignment: Alignment.topCenter,
+                  child: Column(
+                    children: <Widget>[
+                      Text(
+                        question.question,
+                        style: Theme.of(context).textTheme.headline5,
+                      ),
+                      if (question.maxImages > 1)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: Text(
+                              "Select up to ${question.maxImages} images."),
                         ),
-                        if (question.maxImages > 1)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8),
-                            child: Text(
-                                "Select up to ${question.maxImages} images."),
-                          ),
-                      ],
-                    ),
+                    ],
                   ),
                 ),
               ),
             ),
           ),
+          SizedBox(height: 24),
           Flexible(
-            fit: FlexFit.loose,
-            flex: 8,
             child: QuestionForm.create(
               context,
               question,
