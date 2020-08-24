@@ -1,14 +1,12 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
+import 'package:Medicall/common_widgets/empty_content.dart';
 import 'package:Medicall/common_widgets/list_items_builder.dart';
 import 'package:Medicall/models/consult-review/treatment_options.dart';
 import 'package:Medicall/routing/router.dart';
-import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/Prescriptions/PatientPrescriptions/patient_prescriptions_list_tem.dart';
 import 'package:Medicall/screens/Prescriptions/PatientPrescriptions/patient_prescriptions_view_model.dart';
-import 'package:Medicall/screens/Prescriptions/prescription_list_item.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
-import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -36,6 +34,10 @@ class PatientPrescriptions extends StatelessWidget {
                       scrollable: false,
                       snapshot: null,
                       itemsList: snapshot.data,
+                      emptyContentWidget: EmptyContent(
+                        title: "You do not have any prescriptions",
+                        message: "",
+                      ),
                       itemBuilder: (context, treatment) =>
                           PatientPrescriptionsListItem(
                         treatment: treatment,

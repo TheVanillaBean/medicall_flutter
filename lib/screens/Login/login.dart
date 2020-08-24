@@ -144,6 +144,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final appleSignInAvailable =
         Provider.of<AppleSignInAvailable>(context, listen: false);
     final height = MediaQuery.of(context).size.height;
+    final width = MediaQuery.of(context).size.width;
     return [
       FadeIn(
         2,
@@ -167,7 +168,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     )
                   ],
                 ),
-                SizedBox(height: height * 0.01),
+                SizedBox(height: 24),
+                Text("-or-"),
+                SizedBox(height: 24),
                 SocialSignInButton(
                   context: context,
                   imgPath: "assets/images/google-logo.png",
@@ -180,12 +183,15 @@ class _LoginScreenState extends State<LoginScreen> {
                 SizedBox(height: height * 0.01),
                 if (appleSignInAvailable.isAvailable) SizedBox(height: 12),
                 if (appleSignInAvailable.isAvailable)
-                  AppleSignInButton(
-                    style: ButtonStyle.black, // style as needed
-                    type: ButtonType.signIn, // style as needed
-                    onPressed: model.isLoading
-                        ? null
-                        : () => _signInWithApple(context),
+                  SizedBox(
+                    height: 40,
+                    child: AppleSignInButton(
+                      style: ButtonStyle.whiteOutline,
+                      type: ButtonType.signIn,
+                      onPressed: model.isLoading
+                          ? null
+                          : () => _signInWithApple(context),
+                    ),
                   ),
                 SizedBox(height: height * 0.02),
                 ReusableRaisedButton(

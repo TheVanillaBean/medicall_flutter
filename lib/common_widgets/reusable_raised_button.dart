@@ -39,15 +39,16 @@ class ReusableRaisedButton extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(
-              Radius.circular(14),
-            ),
-            side: outlined == true
-                ? BorderSide(
-                    color: color != null
-                        ? color
-                        : Theme.of(context).colorScheme.primary)
-                : BorderSide(color: Theme.of(context).colorScheme.background)),
+          borderRadius: BorderRadius.all(
+            Radius.circular(14),
+          ),
+          side: outlined == true
+              ? BorderSide(
+                  color: color != null
+                      ? color
+                      : Theme.of(context).colorScheme.primary)
+              : BorderSide(color: Theme.of(context).colorScheme.primary),
+        ),
         onPressed: onPressed,
       ),
     );

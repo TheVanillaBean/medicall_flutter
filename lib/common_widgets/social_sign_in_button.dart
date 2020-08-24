@@ -23,7 +23,7 @@ class SocialSignInButton extends CustomRaisedButton {
                 Image.asset(imgPath),
                 Text(
                   text,
-                  style: Theme.of(context).textTheme.bodyText1,
+                  style: Theme.of(context).textTheme.bodyText2,
                 ),
                 Opacity(
                   opacity: 0,
@@ -34,6 +34,6 @@ class SocialSignInButton extends CustomRaisedButton {
           ),
           color: color,
           onPressed: onPressed,
-          height: 50,
+          height: 40,
         );
 }

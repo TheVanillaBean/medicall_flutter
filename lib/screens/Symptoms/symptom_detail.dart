@@ -123,7 +123,7 @@ class SymptomDetailScreen extends StatelessWidget {
 
   Widget _buildMedicationsDialog(BuildContext context) {
     return ReusableRaisedButton(
-      title: "Common medications",
+      title: "Common Medications",
       outlined: true,
       onPressed: () {
         showDialog(

@@ -229,6 +229,9 @@ class MakePayment extends StatelessWidget {
     if (this.model.userHasCards) {
       return _buildCardItem(context: context);
     }
+    if (this.model.refreshCards) {
+      return CircularProgressIndicator();
+    }
     return _buildAddCardBtn(context: context);
   }
 

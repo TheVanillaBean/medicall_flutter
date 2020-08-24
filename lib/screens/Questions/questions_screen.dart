@@ -95,9 +95,19 @@ class _QuestionsScreenState extends State<QuestionsScreen>
         leading: IconButton(
           icon: Icon(Icons.close),
           onPressed: () async {
+            String cancelText = "";
+            String cancelTitle = "";
+            if (this.model.displayMedHistory) {
+              cancelTitle = "Don't Update?";
+              cancelText =
+                  "Are you sure you don't want to update your medical history?";
+            } else {
+              cancelTitle = "Cancel Visit?";
+              cancelText = "Are you sure you want to cancel this visit?";
+            }
             final didPressYes = await PlatformAlertDialog(
-              title: "Cancel Visit?",
-              content: "Are you sure you want to cancel this visit?",
+              title: cancelTitle,
+              content: cancelText,
               defaultActionText: "Yes, cancel",
               cancelActionText: "No",
             ).show(context);
