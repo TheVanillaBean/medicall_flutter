@@ -8,6 +8,7 @@ import 'package:Medicall/screens/Dashboard/patient_dashboard_list_item.dart';
 import 'package:Medicall/screens/Dashboard/patient_dashboard_view_model.dart';
 import 'package:Medicall/screens/MakePayment/make_payment.dart';
 import 'package:Medicall/screens/PersonalInfo/personal_info.dart';
+import 'package:Medicall/screens/Prescriptions/PatientPrescriptions/patient_prescriptions.dart';
 import 'package:Medicall/screens/Symptoms/symptoms.dart';
 import 'package:Medicall/screens/VisitDetails/visit_details_overview.dart';
 import 'package:Medicall/services/database.dart';
@@ -20,8 +21,10 @@ class PatientDashboardScreen extends StatelessWidget {
   final PatientDashboardViewModel model;
 
   static Widget create(BuildContext context) {
-    final FirestoreDatabase database = Provider.of<FirestoreDatabase>(context);
-    final UserProvider provider = Provider.of<UserProvider>(context);
+    final FirestoreDatabase database =
+        Provider.of<FirestoreDatabase>(context, listen: false);
+    final UserProvider provider =
+        Provider.of<UserProvider>(context, listen: false);
     return ChangeNotifierProvider<PatientDashboardViewModel>(
       create: (context) => PatientDashboardViewModel(
         database: database,
@@ -57,7 +60,7 @@ class PatientDashboardScreen extends StatelessWidget {
   }
 
   void _navigateToPrescriptionDetails(BuildContext context) {
-    Navigator.of(context).pushNamed('/prescription-details');
+    PatientPrescriptions.show(context: context);
   }
 
   void _navigateToPreviousConsults(BuildContext context) {
@@ -139,7 +142,8 @@ class PatientDashboardScreen extends StatelessWidget {
             ),
             OutlineButton(
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.0)),
+                borderRadius: BorderRadius.circular(12.0),
+              ),
               child: Container(
                 alignment: Alignment.center,
                 width: 80,

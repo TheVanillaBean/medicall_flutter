@@ -136,7 +136,7 @@ class ProviderDetailScreen extends StatelessWidget {
       ),
       Container(
         alignment: Alignment.center,
-        width: 150,
+        width: 250,
         child: Text(
           '${provider.mailingAddress}, \n${provider.mailingCity}, ${provider.mailingState} ${provider.mailingZipCode}',
           style: Theme.of(context).textTheme.bodyText1,
