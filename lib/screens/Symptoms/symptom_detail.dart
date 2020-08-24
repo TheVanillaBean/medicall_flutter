@@ -1,10 +1,11 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
-import 'package:Medicall/common_widgets/flat_button.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/SelectProvider/select_provider.dart';
+import 'package:Medicall/screens/Welcome/welcome.dart';
 import 'package:Medicall/screens/Welcome/zip_code_verify.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/string_utils.dart';
@@ -48,9 +49,14 @@ class SymptomDetailScreen extends StatelessWidget {
                 ),
                 onPressed: () {
                   if (medicallUser != null) {
-                    Navigator.of(context).pushNamed('/dashboard');
+                    PatientDashboardScreen.show(
+                      context: context,
+                      pushReplaceNamed: true,
+                    );
                   } else {
-                    Navigator.of(context).pushNamed('/welcome');
+                    WelcomeScreen.show(
+                      context: context,
+                    );
                   }
                 })
           ]),
@@ -117,37 +123,38 @@ class SymptomDetailScreen extends StatelessWidget {
 
   Widget _buildMedicationsDialog(BuildContext context) {
     return ReusableRaisedButton(
-        title: "Common medications",
-        outlined: true,
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.0)),
-                title: Text(
-                  "Prescriptions Information",
-                  style: Theme.of(context).textTheme.headline6,
+      title: "Common medications",
+      outlined: true,
+      onPressed: () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              title: Text(
+                "Common Medications",
+                style: Theme.of(context).textTheme.headline6,
+              ),
+              content: Text(
+                symptom.commonMedications,
+                style: Theme.of(context).textTheme.caption,
+              ),
+              actions: <Widget>[
+                ReusableRaisedButton(
+                  outlined: true,
+                  width: 120,
+                  title: "Close",
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
                 ),
-                content: Text(
-                  "If a prescription is prescribed, we can send it to your local pharmacy or you can use our prescription service and have your medications delivered to your door with free 2-day shipping. Our prices are lower than most co-pays. Typical medications that are prescribed for hair loss include:",
-                  style: Theme.of(context).textTheme.caption,
-                ),
-                actions: <Widget>[
-                  // usually buttons at the bottom of the dialog
-                  ReusableRaisedButton(
-                    outlined: true,
-                    width: 120,
-                    title: "Close",
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              );
-            },
-          );
-        });
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 }

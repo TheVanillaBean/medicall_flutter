@@ -35,6 +35,7 @@ class FirestoreService {
     }
     final Stream<QuerySnapshot> snapshots = query.snapshots();
     return snapshots.map((snapshot) {
+      print("SNAPSHOT QUERY FROM CACHE: ${snapshot.metadata.isFromCache}");
       final result = snapshot.documents
           .map((snapshot) => builder(snapshot.data, snapshot.documentID))
           .where((value) => value != null)

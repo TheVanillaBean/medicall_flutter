@@ -150,12 +150,14 @@ class QuestionsViewModel extends PropertyChangeNotifier
     consult.questions[questionIndex] = question;
 
     if (question.type == Q_TYPE.MC || question.type == Q_TYPE.SC) {
+      int insertIndex = questionIndex;
       for (Option opt in question.options) {
         if (opt.hasSubQuestions) {
           if (selectedOptionsList.contains(opt.value)) {
             opt.subQuestions.forEach((subQuestion) {
               if (!this.consult.questions.contains(subQuestion)) {
-                this.consult.questions.insert(questionIndex + 1, subQuestion);
+                this.consult.questions.insert(insertIndex + 1, subQuestion);
+                insertIndex = insertIndex + 1;
               }
             });
           } else {
@@ -177,7 +179,7 @@ class QuestionsViewModel extends PropertyChangeNotifier
     if (opt.hasSubQuestions) {
       opt.subQuestions.forEach((question) {
         this.consult.questions.removeWhere((q) => q == question);
-        if (question.type == Q_TYPE.MC || question.type == Q_TYPE.MC) {
+        if (question.type == Q_TYPE.MC || question.type == Q_TYPE.SC) {
           question.options.forEach((option) {
             removeSubQuestionsIfAny(option);
           });

@@ -162,18 +162,15 @@ class _QuestionFormState extends State<QuestionForm> {
                 ? model.selectedOptionsList.first
                 : null,
             itemBuilder: (Radio rb, Text txt, int i) {
-              return Container(
-                padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-                child: Row(
-                  children: <Widget>[
-                    rb,
-                    Expanded(
-                      child: Text(txt.data,
-                          maxLines: 3,
-                          style: Theme.of(context).textTheme.bodyText1),
-                    ),
-                  ],
-                ),
+              return Row(
+                children: <Widget>[
+                  rb,
+                  Expanded(
+                    child: Text(txt.data,
+                        maxLines: 3,
+                        style: Theme.of(context).textTheme.bodyText1),
+                  ),
+                ],
               );
             },
             onSelected: (String selected) {

@@ -5,8 +5,10 @@ import 'package:Medicall/models/patient_user_model.dart';
 import 'package:Medicall/models/provider_user_model.dart';
 import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/Registration/registration.dart';
 import 'package:Medicall/screens/Welcome/start_visit.dart';
+import 'package:Medicall/screens/Welcome/welcome.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
@@ -18,7 +20,10 @@ class ProviderDetailScreen extends StatelessWidget {
   final Symptom symptom;
   final ProviderUser provider;
 
-  const ProviderDetailScreen({@required this.symptom, @required this.provider});
+  const ProviderDetailScreen({
+    @required this.symptom,
+    @required this.provider,
+  });
 
   static Future<void> show({
     BuildContext context,
@@ -51,23 +56,27 @@ class ProviderDetailScreen extends StatelessWidget {
     ScreenUtil.init(context);
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
-          type: AppBarType.Back,
-          title: provider.fullName + ', ' + provider.professionalTitle,
-          theme: Theme.of(context),
-          actions: [
-            IconButton(
-                icon: Icon(
-                  Icons.home,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                onPressed: () {
-                  if (currentUser != null) {
-                    Navigator.of(context).pushNamed('/dashboard');
-                  } else {
-                    Navigator.of(context).pushNamed('/welcome');
-                  }
-                })
-          ]),
+        type: AppBarType.Back,
+        title: provider.fullName + ', ' + provider.professionalTitle,
+        theme: Theme.of(context),
+        actions: [
+          IconButton(
+              icon: Icon(
+                Icons.home,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              onPressed: () {
+                if (currentUser != null) {
+                  PatientDashboardScreen.show(
+                    context: context,
+                    pushReplaceNamed: true,
+                  );
+                } else {
+                  WelcomeScreen.show(context: context);
+                }
+              })
+        ],
+      ),
       body: SingleChildScrollView(
         child: Container(
           height:
@@ -141,34 +150,32 @@ class ProviderDetailScreen extends StatelessWidget {
           child: Text(
             symptom.description,
             style: Theme.of(context).textTheme.bodyText1,
+            textAlign: TextAlign.center,
           ),
         ),
       ),
-      Expanded(
-        flex: 1,
-        child: Align(
-          alignment: FractionalOffset.bottomCenter,
-          child: ReusableRaisedButton(
-            title: "Start Visit",
-            onPressed: () {
-              Consult consult = Consult(
-                providerId: provider.uid,
-                providerUser: provider,
-                symptom: symptom.name,
-                date: DateTime.now(),
-                price: 49,
+      Align(
+        alignment: FractionalOffset.bottomCenter,
+        child: ReusableRaisedButton(
+          title: "Start Visit",
+          onPressed: () {
+            Consult consult = Consult(
+              providerId: provider.uid,
+              providerUser: provider,
+              symptom: symptom.name,
+              date: DateTime.now(),
+              price: 49,
+            );
+            if (currentUser != null) {
+              StartVisitScreen.show(
+                context: context,
+                consult: consult,
               );
-              if (currentUser != null) {
-                StartVisitScreen.show(
-                  context: context,
-                  consult: consult,
-                );
-              } else {
-                tempUserProvider.consult = consult;
-                RegistrationScreen.show(context: context);
-              }
-            },
-          ),
+            } else {
+              tempUserProvider.consult = consult;
+              RegistrationScreen.show(context: context);
+            }
+          },
         ),
       )
     ];

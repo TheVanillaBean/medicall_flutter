@@ -6,6 +6,7 @@ class Symptom {
   final String duration;
   final int price;
   final String category;
+  final String commonMedications;
 
   Symptom({
     @required this.name,
@@ -13,6 +14,7 @@ class Symptom {
     @required this.duration,
     @required this.price,
     @required this.category,
+    @required this.commonMedications,
   });
 
   factory Symptom.fromMap(Map<String, dynamic> data, String documentId) {
@@ -23,6 +25,7 @@ class Symptom {
     final String duration = data['duration'];
     final int price = data['price'];
     final String category = data['category'] ?? "None";
+    final String commonMedications = data['common_medications'] ?? "";
 
     return Symptom(
       name: documentId,
@@ -30,6 +33,7 @@ class Symptom {
       duration: duration,
       price: price,
       category: category,
+      commonMedications: commonMedications,
     );
   }
 
