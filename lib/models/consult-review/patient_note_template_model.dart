@@ -16,16 +16,17 @@ class PatientTemplateNote {
       return null;
     }
 
-    final String intro = data['Intro'] as String;
+    final String intro = data['Intro'] as String ?? "";
 
-    final String conclusion = data['Conclusion'] as String;
+    final String conclusion = data['Conclusion'] as String ?? "";
 
     final Map<String, String> body = (data['Body'] as Map).map(
-      (key, value) => MapEntry(
-        key as String,
-        value as String,
-      ),
-    );
+          (key, value) => MapEntry(
+            key as String,
+            value as String,
+          ),
+        ) ??
+        {"": ""};
 
     return PatientTemplateNote(
       intro: intro,

@@ -31,6 +31,7 @@ import 'package:Medicall/screens/OCR/OCRScreen.dart';
 import 'package:Medicall/screens/PasswordReset/index.dart';
 import 'package:Medicall/screens/PersonalInfo/personal_info.dart';
 import 'package:Medicall/screens/PhoneAuth/index.dart';
+import 'package:Medicall/screens/Prescriptions/PatientPrescriptions/patient_prescriptions.dart';
 import 'package:Medicall/screens/Prescriptions/prescription_details.dart';
 import 'package:Medicall/screens/Privacy/index.dart';
 import 'package:Medicall/screens/Questions/CompleteVisit/complete_visit.dart';
@@ -97,6 +98,7 @@ class Routes {
   static const consultDetail = '/consult-detail';
   static const previousConsults = '/previous-consults';
   static const prescriptionDetails = '/prescription-details';
+  static const patientPrescriptions = '/patient-prescriptions';
   static const visitOverview = '/visit-overview';
   static const visitDetailsOverview = '/visit-details-overview';
   static const visitInformation = '/visit-information';
@@ -133,6 +135,12 @@ class Router {
       case '/registrationType':
         return MaterialPageRoute<dynamic>(
           builder: (context) => RegistrationTypeScreen(),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case Routes.patientPrescriptions:
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => PatientPrescriptions.create(context),
           settings: settings,
           fullscreenDialog: true,
         );

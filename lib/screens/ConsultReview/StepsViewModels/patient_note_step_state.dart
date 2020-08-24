@@ -13,7 +13,7 @@ class PatientNoteStepState {
       note += "\n";
       note += patientTemplateNote.intro;
       note += "\n";
-      note += patientTemplateNote.body["FINASTERIDE"];
+      note += patientTemplateNote.body["FINASTERIDE"] ?? "";
       note += "\n";
       note += patientTemplateNote.conclusion;
       note += "\n";
