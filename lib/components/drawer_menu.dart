@@ -228,7 +228,9 @@ class DrawerMenu extends StatelessWidget {
       final ChatProvider chatProvider =
           Provider.of<ChatProvider>(context, listen: false);
       tempUserProvider.consult = null;
-      await chatProvider.client.disconnect(flushOfflineStorage: true);
+      if (chatProvider.client != null && chatProvider.userSet) {
+        await chatProvider.client.disconnect(flushOfflineStorage: true);
+      }
       await auth.signOut();
     } catch (e) {
       print(e);
