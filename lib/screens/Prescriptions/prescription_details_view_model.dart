@@ -48,14 +48,19 @@ class PrescriptionDetailsViewModel with ChangeNotifier, PrescriptionValidator {
     @required this.treatmentOptions,
   });
 
-  bool get allFieldsValidated =>
-      inputValidator.isValid(this.treatmentOptions.medicationName) &&
-      inputValidator.isValid(this.treatmentOptions.quantity) &&
-      inputValidator.isValid(this.treatmentOptions.refills) &&
-      inputValidator.isValid(this.treatmentOptions.form) &&
-      inputValidator.isValid(this.treatmentOptions.dose) &&
-      inputValidator.isValid(this.treatmentOptions.frequency) &&
-      inputValidator.isValid(this.treatmentOptions.instructions);
+  bool get allFieldsValidated {
+    if (this.treatmentOptions.quantity.length == 0 &&
+        this.treatmentOptions.dose.length == 0) {
+      return true;
+    }
+    return inputValidator.isValid(this.treatmentOptions.medicationName) &&
+        inputValidator.isValid(this.treatmentOptions.quantity) &&
+        inputValidator.isValid(this.treatmentOptions.refills) &&
+        inputValidator.isValid(this.treatmentOptions.form) &&
+        inputValidator.isValid(this.treatmentOptions.dose) &&
+        inputValidator.isValid(this.treatmentOptions.frequency) &&
+        inputValidator.isValid(this.treatmentOptions.instructions);
+  }
 
   void updateWith({
     String medicationName,

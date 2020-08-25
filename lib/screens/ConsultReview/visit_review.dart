@@ -1,3 +1,4 @@
+import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
 import 'package:Medicall/models/consult-review/consult_review_options_model.dart';
 import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:Medicall/models/consult_model.dart';
@@ -76,8 +77,16 @@ class _VisitReviewState extends State<VisitReview> with VisitReviewStatus {
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
-              onPressed: () {
-                Navigator.pop(context);
+              onPressed: () async {
+                final didPressYes = await PlatformAlertDialog(
+                  title: "Cancel Review?",
+                  content: "Are you sure you want to cancel?",
+                  defaultActionText: "Yes, cancel",
+                  cancelActionText: "No",
+                ).show(context);
+                if (didPressYes) {
+                  Navigator.pop(context);
+                }
               },
               icon: Icon(Icons.arrow_back),
             );

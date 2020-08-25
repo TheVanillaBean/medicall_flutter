@@ -191,6 +191,7 @@ class _QuestionFormState extends State<QuestionForm> {
       margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
       child: Scrollbar(
         child: TextField(
+          textCapitalization: TextCapitalization.sentences,
           controller: model.inputController,
           focusNode: model.inputFocusNode,
           autocorrect: false,

@@ -20,13 +20,16 @@ class PatientTemplateNote {
 
     final String conclusion = data['Conclusion'] as String ?? "";
 
-    final Map<String, String> body = (data['Body'] as Map).map(
-          (key, value) => MapEntry(
-            key as String,
-            value as String,
-          ),
-        ) ??
-        {"": ""};
+    Map<String, String> body = {"": ""};
+
+    if (data.containsKey("Body")) {
+      body = (data['Body'] as Map).map(
+        (key, value) => MapEntry(
+          key as String,
+          value as String,
+        ),
+      );
+    }
 
     return PatientTemplateNote(
       intro: intro,

@@ -20,7 +20,6 @@ class PrescriptionCheckoutViewModel
       RoundedLoadingButtonController();
   final VisitReviewData visitReviewData;
   final String consultId;
-  final String providerId;
 
   List<TreatmentOptions> alreadyPaidForPrescriptions = [];
   List<TreatmentOptions> selectedTreatmentOptions = [];
@@ -42,7 +41,6 @@ class PrescriptionCheckoutViewModel
     @required this.visitReviewData,
     @required this.consultId,
     @required this.stripeProvider,
-    @required this.providerId,
     this.shippingAddress = "",
     this.city = "",
     this.state = "",
@@ -155,16 +153,22 @@ class PrescriptionCheckoutViewModel
     return this.selectedTreatmentOptions.length > 0 &&
         shippingAddressValidator.isValid(shippingAddress) &&
         cityValidator.isValid(city) &&
+        zipCodeValidator.isValid(zipCode) &&
         !isLoading;
   }
 
-  String get shippingAddressErrorText {
+  String get shippingAddressErrorTxt {
     bool showErrorText =
         !isLoading && !shippingAddressValidator.isValid(shippingAddress);
     return showErrorText ? shippingAddressErrorText : null;
   }
 
-  String get zipCodeErrorText {
+  String get shippingCityErrorText {
+    bool showErrorText = !isLoading && !cityValidator.isValid(city);
+    return showErrorText ? cityErrorText : null;
+  }
+
+  String get shippingZipCodeErrorText {
     bool showErrorText = !isLoading && !zipCodeValidator.isValid(zipCode);
     return showErrorText ? zipCodeErrorText : null;
   }

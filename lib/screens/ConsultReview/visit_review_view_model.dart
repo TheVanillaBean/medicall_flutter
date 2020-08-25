@@ -430,7 +430,8 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
   }
 
   void setFollowUpFromPrevData() {
-    if (this.visitReviewData.followUp.length > 0) {
+    if (this.visitReviewData.followUp.keys.first.length > 0 &&
+        this.visitReviewData.followUp.keys.first != "N/A") {
       if (this.visitReviewData.followUp.keys.first != null) {
         this.followUpStepState.followUp =
             this.visitReviewData.followUp.keys.first;

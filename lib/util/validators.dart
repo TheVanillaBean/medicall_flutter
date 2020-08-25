@@ -1,5 +1,4 @@
 import 'package:Medicall/util/string_utils.dart';
-import 'package:dash_chat/dash_chat.dart';
 
 abstract class StringValidator {
   bool isValid(String value);
@@ -121,7 +120,7 @@ class StateValidator implements StringValidator {
 class ShippingAddressValidator implements StringValidator {
   @override
   bool isValid(String value) {
-    return true;
+    return value.length > 0;
   }
 }
 
