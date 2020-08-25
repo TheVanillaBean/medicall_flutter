@@ -164,7 +164,8 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
   Future<void> saveVisitReviewToFirestore() async {
     this.visitReviewData.diagnosis = this.diagnosisStepState.diagnosis;
     this.visitReviewData.includeDDX = this.diagnosisStepState.includeDDX;
-    this.visitReviewData.ddxOption = this.diagnosisStepState.ddxOption;
+    this.visitReviewData.ddxOptions =
+        this.diagnosisStepState.selectedDDXOptions;
     this.visitReviewData.examLocations =
         this.examStepState.examLocationsForSerialization;
     this.visitReviewData.treatmentOptions =
@@ -257,8 +258,9 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
       }
     }
     this.diagnosisStepState.includeDDX = this.visitReviewData.includeDDX;
-    if (this.visitReviewData.ddxOption.length > 0) {
-      this.diagnosisStepState.ddxOption = this.visitReviewData.ddxOption;
+    if (this.visitReviewData.ddxOptions.length > 0) {
+      this.diagnosisStepState.selectedDDXOptions =
+          this.visitReviewData.ddxOptions;
     }
   }
 
@@ -273,14 +275,14 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
   void updateDiagnosisStepWith({
     int selectedItemIndex,
     bool includeDDX,
-    String ddxOption,
+    List<String> selectedDDXOptions,
   }) {
     this.diagnosisStepState.selectedItemIndex =
         selectedItemIndex ?? this.diagnosisStepState.selectedItemIndex;
     this.diagnosisStepState.includeDDX =
         includeDDX ?? this.diagnosisStepState.includeDDX;
-    this.diagnosisStepState.ddxOption =
-        ddxOption ?? this.diagnosisStepState.ddxOption;
+    this.diagnosisStepState.selectedDDXOptions =
+        selectedDDXOptions ?? this.diagnosisStepState.selectedDDXOptions;
     this.diagnosisStepState.diagnosis = this
         .consultReviewOptions
         .diagnosisList[this.diagnosisStepState.selectedItemIndex];

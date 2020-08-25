@@ -81,15 +81,26 @@ class DiagnosisStep extends StatelessWidget {
                     if (model.diagnosisStepState.includeDDX)
                       Padding(
                         padding: const EdgeInsets.fromLTRB(64, 0, 0, 16),
-                        child: Container(
-                          width: width * 0.8,
-                          child: RadioButtonGroup(
-                            labels: model.consultReviewOptions
-                                .ddxOptions[model.diagnosisStepState.diagnosis],
-                            picked: model.diagnosisStepState.ddxOption,
-                            onSelected: (String selected) => model
-                                .updateDiagnosisStepWith(ddxOption: selected),
-                          ),
+                        child: CheckboxGroup(
+                          labels: model.consultReviewOptions
+                              .ddxOptions[model.diagnosisStepState.diagnosis],
+                          itemBuilder: (Checkbox cb, Text txt, int i) {
+                            return Row(
+                              children: <Widget>[
+                                cb,
+                                Expanded(
+                                  child: Text(
+                                    txt.data,
+                                    maxLines: 3,
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                          onSelected: (List<String> checked) =>
+                              model.updateDiagnosisStepWith(
+                                  selectedDDXOptions: checked),
+                          checked: model.diagnosisStepState.selectedDDXOptions,
                         ),
                       ),
                     Expanded(

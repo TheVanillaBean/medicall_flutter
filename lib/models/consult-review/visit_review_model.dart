@@ -4,7 +4,7 @@ import 'package:Medicall/models/consult-review/treatment_options.dart';
 class VisitReviewData {
   String diagnosis;
   bool includeDDX;
-  String ddxOption;
+  List<String> ddxOptions;
 
   List<Map<String, String>> examLocations;
 
@@ -19,7 +19,7 @@ class VisitReviewData {
   VisitReviewData({
     this.diagnosis = "",
     this.includeDDX = false,
-    this.ddxOption = "",
+    this.ddxOptions = const [],
     this.examLocations = const [],
     this.treatmentOptions = const [],
     this.educationalOptions = const [],
@@ -34,7 +34,8 @@ class VisitReviewData {
     }
     final String diagnosis = data['diagnosis'] as String;
     final bool includeDDX = data['include_DDX'] as bool;
-    final String ddxOption = data['ddx_option'] as String;
+    final List<String> ddxOptions =
+        (data['ddx_options'] as List).map((e) => e.toString()).toList();
     final List<Map<String, String>> examLocations =
         (data['exam_locations'] as List)
             .map(
@@ -65,7 +66,7 @@ class VisitReviewData {
     return VisitReviewData(
       diagnosis: diagnosis,
       includeDDX: includeDDX,
-      ddxOption: ddxOption,
+      ddxOptions: ddxOptions,
       examLocations: examLocations,
       treatmentOptions: treatmentOptions,
       educationalOptions: selectedEducationalOptions,
@@ -78,7 +79,7 @@ class VisitReviewData {
     dynamic e = <String, dynamic>{
       'diagnosis': diagnosis,
       'include_DDX': includeDDX,
-      'ddx_option': ddxOption,
+      'ddx_options': ddxOptions,
       'exam_locations': examLocations.toList(),
       'treatment_options': treatmentOptions.map((e) => e.toMap()).toList(),
       'selected_educational_options': educationalOptions,
