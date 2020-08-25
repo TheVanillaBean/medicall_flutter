@@ -2,20 +2,19 @@ import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/empty_content.dart';
 import 'package:Medicall/common_widgets/list_items_builder.dart';
 import 'package:Medicall/common_widgets/reusable_card.dart';
-import 'package:Medicall/models/consult-review/consult_review_options_model.dart';
-import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/question_model.dart';
 import 'package:Medicall/models/screening_questions_model.dart';
 import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/ConsultReview/consult_photos.dart';
+import 'package:Medicall/screens/ConsultReview/review_medical_history.dart';
 import 'package:Medicall/screens/ConsultReview/screening_question_list_item.dart';
-import 'package:Medicall/screens/ConsultReview/visit_review.dart';
 import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard.dart';
 import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -82,109 +81,95 @@ class ReviewVisitInformation extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Expanded(
-                    flex: 1,
-                    child: Scrollbar(
-                      child: FadingEdgeScrollView.fromSingleChildScrollView(
-                        child: SingleChildScrollView(
-                          controller: scrollController,
-                          child: Column(
-                            children: <Widget>[
-                              SizedBox(height: 8),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 8),
-                                child: ListItemsBuilder<Question>(
-                                  scrollable: false,
-                                  snapshot: null,
-                                  itemsList: snapshot.data != null
-                                      ? snapshot.data.screeningQuestions
-                                          .where((question) =>
-                                              question.type != Q_TYPE.PHOTO)
-                                          .toList()
-                                      : [],
-                                  emptyContentWidget: EmptyContent(
-                                    title: "No Questions",
-                                    message: "An error likely occurred.",
-                                  ),
-                                  itemBuilder: (context, question) =>
-                                      ScreeningQuestionListItem(
-                                    question: question,
-                                    onTap: null,
-                                  ),
+                  flex: 1,
+                  child: Scrollbar(
+                    child: FadingEdgeScrollView.fromSingleChildScrollView(
+                      child: SingleChildScrollView(
+                        controller: scrollController,
+                        child: Column(
+                          children: <Widget>[
+                            SizedBox(height: 8),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8),
+                              child: ListItemsBuilder<Question>(
+                                scrollable: false,
+                                snapshot: null,
+                                itemsList: snapshot.data != null
+                                    ? snapshot.data.screeningQuestions
+                                        .where((question) =>
+                                            question.type != Q_TYPE.PHOTO)
+                                        .toList()
+                                    : [],
+                                emptyContentWidget: EmptyContent(
+                                  title: "No Questions",
+                                  message: "An error likely occurred.",
+                                ),
+                                itemBuilder: (context, question) =>
+                                    ScreeningQuestionListItem(
+                                  question: question,
+                                  onTap: null,
                                 ),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
-                    )),
+                    ),
+                  ),
+                ),
                 Container(
-                    height: 85,
-                    color: Colors.transparent,
-                    padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
-                    child: Row(
-                      children: [
+                  height: 85,
+                  color: Colors.transparent,
+                  padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: ReusableCard(
+                          trailing: Icon(
+                            Icons.chevron_right,
+                            color: Colors.grey,
+                          ),
+                          title: Text(
+                            "PHOTOS",
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.headline6,
+                          ),
+                          onTap: () => {
+                            ConsultPhotos.show(
+                              context: context,
+                              consult: consult,
+                            )
+                          },
+                        ),
+                      ),
+                      if (userProvider.user.type == USER_TYPE.PROVIDER)
                         Expanded(
                           child: ReusableCard(
                             trailing: Icon(
                               Icons.chevron_right,
                               color: Colors.grey,
                             ),
-                            title: Text(
-                              "PHOTOS",
+                            title: AutoSizeText(
+                              "Medical History",
                               textAlign: TextAlign.center,
                               style: Theme.of(context).textTheme.headline6,
+                              minFontSize: 10,
                             ),
-                            onTap: () => {
-                              ConsultPhotos.show(
-                                context: context,
-                                consult: consult,
-                              )
-                            },
+                            onTap: () => ReviewMedicalHistory.show(
+                              context: context,
+                              consult: consult,
+                            ),
                           ),
-                        ),
-                        userProvider.user.type == USER_TYPE.PROVIDER
-                            ? Expanded(
-                                child: ReusableCard(
-                                  trailing: Icon(
-                                    Icons.chevron_right,
-                                    color: Colors.grey,
-                                  ),
-                                  title: Text(
-                                    "REVIEW",
-                                    textAlign: TextAlign.center,
-                                    style:
-                                        Theme.of(context).textTheme.headline6,
-                                  ),
-                                  onTap: () => navigateToVisitReviewScreen(
-                                      context, db, consult),
-                                ),
-                              )
-                            : Container()
-                      ],
-                    )),
+                        )
+                    ],
+                  ),
+                ),
               ],
             ),
           );
         },
       ),
-    );
-  }
-
-  Future<void> navigateToVisitReviewScreen(
-      BuildContext context, FirestoreDatabase db, Consult consult) async {
-    ConsultReviewOptions options =
-        await db.consultReviewOptions(symptomName: consult.symptom);
-    VisitReviewData visitReviewData =
-        await db.visitReviewStream(consultId: consult.uid).first;
-    if (visitReviewData == null) {
-      visitReviewData = VisitReviewData();
-    }
-    return VisitReview.show(
-      context: context,
-      consult: consult,
-      consultReviewOptions: options,
-      visitReviewData: visitReviewData,
     );
   }
 }

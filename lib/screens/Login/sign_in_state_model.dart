@@ -72,7 +72,7 @@ class SignInStateModel with EmailAndPasswordValidators, ChangeNotifier {
               appleIdCredential: appleSignInModel.credential);
         } else {
           AppUtil().showFlushBar(
-              "Account already linked with different sign in method, please sign in using Apple or Google.",
+              "Account already linked with different sign in method, please sign in using Google Sign In.",
               context);
           updateWith(submitted: false, isLoading: false);
         }
@@ -100,7 +100,7 @@ class SignInStateModel with EmailAndPasswordValidators, ChangeNotifier {
           await auth.signInWithGoogle(credential: googleAuthModel.credential);
         } else {
           AppUtil().showFlushBar(
-              "Account already linked with different sign in method, please sign in using Apple or Google.",
+              "Account already linked with different sign in method, please sign in using Apple Sign In.",
               context);
           updateWith(submitted: false, isLoading: false);
         }

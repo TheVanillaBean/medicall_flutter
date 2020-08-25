@@ -13,6 +13,7 @@ import 'package:Medicall/screens/Chat/chat_screen.dart';
 import 'package:Medicall/screens/ConfirmConsult/index.dart';
 import 'package:Medicall/screens/Consent/index.dart';
 import 'package:Medicall/screens/ConsultReview/consult_photos.dart';
+import 'package:Medicall/screens/ConsultReview/review_medical_history.dart';
 import 'package:Medicall/screens/ConsultReview/review_visit_information.dart';
 import 'package:Medicall/screens/ConsultReview/visit_overview.dart';
 import 'package:Medicall/screens/ConsultReview/visit_review.dart';
@@ -104,6 +105,7 @@ class Routes {
   static const visitOverview = '/visit-overview';
   static const visitDetailsOverview = '/visit-details-overview';
   static const visitInformation = '/visit-information';
+  static const reviewMedicalHistory = '/review-medical-history';
   static const visitConsultPhotos = '/visit-consult-photos';
   static const visitDocNote = '/visit-doc-note';
   static const visitEducation = '/visit-education';
@@ -340,6 +342,14 @@ class Router {
         final Consult consult = mapArgs['consult'];
         return MaterialPageRoute<dynamic>(
           builder: (context) => ReviewVisitInformation(consult: consult),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case Routes.reviewMedicalHistory:
+        final Map<String, dynamic> mapArgs = args;
+        final Consult consult = mapArgs['consult'];
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => ReviewMedicalHistory(consult: consult),
           settings: settings,
           fullscreenDialog: true,
         );

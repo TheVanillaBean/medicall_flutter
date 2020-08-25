@@ -70,13 +70,6 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _signInWithGoogle(BuildContext context) async {
     try {
       await model.signInWithGooglePressed(context);
-      if (model.googleAuthModel != null) {
-        model.tempUserProvider.user.email = model.googleAuthModel.email;
-        model.tempUserProvider.user.fullName = model.googleAuthModel.fullName;
-        model.tempUserProvider.googleAuthModel = model.googleAuthModel;
-
-        _navigateToRegistrationScreen(context);
-      }
     } on PlatformException catch (e) {
       AppUtil().showFlushBar(e, context);
     }
@@ -85,19 +78,9 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _signInWithApple(BuildContext context) async {
     try {
       await model.signInWithApplePressed(context);
-      if (model.appleSignInModel != null) {
-        model.tempUserProvider.user.email = model.appleSignInModel.email;
-        model.tempUserProvider.user.fullName = model.appleSignInModel.fullName;
-        model.tempUserProvider.appleSignInModel = model.appleSignInModel;
-        _navigateToRegistrationScreen(context);
-      }
     } catch (e) {
       AppUtil().showFlushBar(e, context);
     }
-  }
-
-  void _navigateToRegistrationScreen(BuildContext context) {
-    Navigator.of(context).pushNamed('/registrationType');
   }
 
   void _navigateToResetPasswordScreen(BuildContext context) {
