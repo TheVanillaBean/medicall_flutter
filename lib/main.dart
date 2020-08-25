@@ -50,7 +50,6 @@ class MedicallApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Firestore.instance.settings(persistenceEnabled: false);
     return MultiProvider(
       providers: [
         Provider<AppleSignInAvailable>.value(
