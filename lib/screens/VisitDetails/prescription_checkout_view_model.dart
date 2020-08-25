@@ -160,17 +160,28 @@ class PrescriptionCheckoutViewModel
   String get shippingAddressErrorTxt {
     bool showErrorText =
         !isLoading && !shippingAddressValidator.isValid(shippingAddress);
-    return showErrorText ? shippingAddressErrorText : null;
+    if (showErrorText) {
+      return shippingAddress.length > 0
+          ? shippingAddressErrorText
+          : "Please enter a shipping address";
+    }
+    return null;
   }
 
   String get shippingCityErrorText {
     bool showErrorText = !isLoading && !cityValidator.isValid(city);
-    return showErrorText ? cityErrorText : null;
+    if (showErrorText) {
+      return city.length > 0 ? cityErrorText : "Please enter a city";
+    }
+    return null;
   }
 
   String get shippingZipCodeErrorText {
     bool showErrorText = !isLoading && !zipCodeValidator.isValid(zipCode);
-    return showErrorText ? zipCodeErrorText : null;
+    if (showErrorText) {
+      return zipCode.length > 0 ? zipCodeErrorText : "Please enter a zip code";
+    }
+    return null;
   }
 
   void updateTreatmentOptions(List<String> medicationNames) {
