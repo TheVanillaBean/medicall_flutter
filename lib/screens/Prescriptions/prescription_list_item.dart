@@ -1,4 +1,5 @@
 import 'package:Medicall/models/consult-review/treatment_options.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 
@@ -8,10 +9,13 @@ class PrescriptionListItem extends StatelessWidget {
   const PrescriptionListItem({Key key, this.treatment}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    String priceText = this.treatment.price > 0
+        ? "Price \$${this.treatment.price}"
+        : "Price to be determined because this is a non-standard prescription. You will receive a phone call from our pharmacy with the price.";
     return Container(
       padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
       child: Card(
-        elevation: 2,
+        elevation: this.treatment.price > 0 ? 2 : 0,
         borderOnForeground: false,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         clipBehavior: Clip.antiAlias,
@@ -19,7 +23,6 @@ class PrescriptionListItem extends StatelessWidget {
           contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 20),
           dense: true,
           title: Column(
-            //mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Text(
@@ -71,9 +74,11 @@ class PrescriptionListItem extends StatelessWidget {
               SizedBox(
                 height: 4,
               ),
-              Text(
-                'Price: \$${this.treatment.price}',
+              AutoSizeText(
+                priceText,
                 style: Theme.of(context).textTheme.bodyText1,
+                minFontSize: 10,
+                maxLines: 3,
               ),
               SizedBox(
                 height: 4,

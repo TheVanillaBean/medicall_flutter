@@ -51,6 +51,11 @@ class PrescriptionCheckoutViewModel
     this.totalCost = 0,
     this.userHasCards = false,
   }) {
+    this.visitReviewData.treatmentOptions = this
+        .visitReviewData
+        .treatmentOptions
+        .where((element) => element.price > 0)
+        .toList();
     List<TreatmentOptions> selectedTreatmentOptions = [];
     int cost = 0;
     for (TreatmentOptions treatmentOptions

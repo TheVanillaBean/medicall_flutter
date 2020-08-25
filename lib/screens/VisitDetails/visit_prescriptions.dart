@@ -68,7 +68,9 @@ class VisitPrescriptions extends StatelessWidget {
                 ListItemsBuilder<TreatmentOptions>(
                   scrollable: false,
                   snapshot: null,
-                  itemsList: visitReviewData.treatmentOptions,
+                  itemsList: visitReviewData.treatmentOptions
+                      .where((e) => e.price >= 0)
+                      .toList(),
                   itemBuilder: (context, treatment) => PrescriptionListItem(
                     treatment: treatment,
                   ),
