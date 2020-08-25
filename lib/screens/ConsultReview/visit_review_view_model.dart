@@ -72,6 +72,8 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
     @required this.consultReviewOptions,
     @required this.visitReviewData,
   }) {
+    this.consultReviewOptions.diagnosisList.insert(0, "Select a Diagnosis");
+    updateDiagnosisStepWith(selectedItemIndex: 0);
     this.setDiagnosisFromPrevData();
     this.setExamFromPrevData();
     this.setTreatmentFromPrevData();
@@ -166,6 +168,8 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
     this.visitReviewData.includeDDX = this.diagnosisStepState.includeDDX;
     this.visitReviewData.ddxOptions =
         this.diagnosisStepState.selectedDDXOptions;
+    this.visitReviewData.ddxOtherOption =
+        this.diagnosisStepState.ddxOtherOption;
     this.visitReviewData.examLocations =
         this.examStepState.examLocationsForSerialization;
     this.visitReviewData.treatmentOptions =
@@ -261,31 +265,57 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
     if (this.visitReviewData.ddxOptions.length > 0) {
       this.diagnosisStepState.selectedDDXOptions =
           this.visitReviewData.ddxOptions;
+      this.diagnosisStepState.ddxOtherOption =
+          this.visitReviewData.ddxOtherOption;
     }
   }
 
   Future<void> updateDiagnosis(int selectedItemIndex) async {
     updateDiagnosisStepWith(selectedItemIndex: selectedItemIndex);
-    this.diagnosisOptions =
-        await firestoreDatabase.consultReviewDiagnosisOptions(
-            symptomName: consult.symptom,
-            diagnosis: this.diagnosisStepState.diagnosis);
+    if (this.diagnosisStepState.diagnosis != "Select a Diagnosis") {
+      this.diagnosisOptions =
+          await firestoreDatabase.consultReviewDiagnosisOptions(
+              symptomName: consult.symptom,
+              diagnosis: this.diagnosisStepState.diagnosis);
+    } else {
+      this.diagnosisOptions = null;
+    }
   }
 
   void updateDiagnosisStepWith({
     int selectedItemIndex,
     bool includeDDX,
     List<String> selectedDDXOptions,
+    String ddxOtherOption,
   }) {
     this.diagnosisStepState.selectedItemIndex =
         selectedItemIndex ?? this.diagnosisStepState.selectedItemIndex;
-    this.diagnosisStepState.includeDDX =
-        includeDDX ?? this.diagnosisStepState.includeDDX;
-    this.diagnosisStepState.selectedDDXOptions =
-        selectedDDXOptions ?? this.diagnosisStepState.selectedDDXOptions;
+
     this.diagnosisStepState.diagnosis = this
         .consultReviewOptions
         .diagnosisList[this.diagnosisStepState.selectedItemIndex];
+
+    this.diagnosisStepState.includeDDX =
+        includeDDX ?? this.diagnosisStepState.includeDDX;
+
+    this.diagnosisStepState.ddxOtherOption =
+        ddxOtherOption ?? this.diagnosisStepState.ddxOtherOption;
+
+    if (this.diagnosisStepState.includeDDX &&
+        this
+            .consultReviewOptions
+            .ddxOptions
+            .containsKey(this.diagnosisStepState.diagnosis)) {
+      this.diagnosisStepState.selectedDDXOptions =
+          selectedDDXOptions ?? this.diagnosisStepState.selectedDDXOptions;
+    } else {
+      this.diagnosisStepState.includeDDX = false;
+    }
+
+    if (!this.diagnosisStepState.includeDDX ||
+        !this.diagnosisStepState.selectedDDXOptions.contains("Other")) {
+      this.diagnosisStepState.ddxOtherOption = "";
+    }
 
     notifyListeners(VisitReviewVMProperties.diagnosisStep);
   }

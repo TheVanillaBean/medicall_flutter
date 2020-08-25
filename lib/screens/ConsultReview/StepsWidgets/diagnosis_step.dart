@@ -2,6 +2,7 @@ import 'package:Medicall/screens/ConsultReview/ReusableWidgets/continue_button.d
 import 'package:Medicall/screens/ConsultReview/ReusableWidgets/direct_select.dart';
 import 'package:Medicall/screens/ConsultReview/ReusableWidgets/swipe_gesture_recognizer.dart';
 import 'package:Medicall/screens/ConsultReview/visit_review_view_model.dart';
+import 'package:Medicall/util/app_util.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:grouped_buttons/grouped_buttons.dart';
@@ -73,17 +74,26 @@ class DiagnosisStep extends StatelessWidget {
                         ],
                         picked:
                             model.diagnosisStepState.includeDDX ? "Yes" : "No",
-                        onSelected: (String selected) =>
-                            model.updateDiagnosisStepWith(
-                                includeDDX: selected == "Yes" ? true : false),
+                        onSelected: (String selected) {
+                          if (model.diagnosisStepState.diagnosis ==
+                                  "Select a Diagnosis" &&
+                              selected == "Yes") {
+                            AppUtil().showFlushBar(
+                                "Please select a diagnosis first", context);
+                          }
+
+                          model.updateDiagnosisStepWith(
+                              includeDDX: selected == "Yes" ? true : false);
+                        },
                       ),
                     ),
                     if (model.diagnosisStepState.includeDDX)
                       Padding(
                         padding: const EdgeInsets.fromLTRB(64, 0, 0, 16),
                         child: CheckboxGroup(
-                          labels: model.consultReviewOptions
-                              .ddxOptions[model.diagnosisStepState.diagnosis],
+                          labels: model.consultReviewOptions.ddxOptions[
+                                  model.diagnosisStepState.diagnosis] ??
+                              [],
                           itemBuilder: (Checkbox cb, Text txt, int i) {
                             return Row(
                               children: <Widget>[
@@ -103,6 +113,36 @@ class DiagnosisStep extends StatelessWidget {
                           checked: model.diagnosisStepState.selectedDDXOptions,
                         ),
                       ),
+                    if (model.diagnosisStepState.selectedDDXOptions
+                            .contains("Other") &&
+                        model.diagnosisStepState.includeDDX)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: TextFormField(
+                          initialValue: model.diagnosisStepState.ddxOtherOption,
+                          autocorrect: false,
+                          keyboardType: TextInputType.text,
+                          onChanged: (String text) => model
+                              .updateDiagnosisStepWith(ddxOtherOption: text),
+                          style: Theme.of(context).textTheme.bodyText2,
+                          decoration: InputDecoration(
+                            labelStyle: TextStyle(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withAlpha(90),
+                            ),
+                            hintStyle: TextStyle(
+                              color: Color.fromRGBO(100, 100, 100, 1),
+                            ),
+                            filled: true,
+                            fillColor: Colors.grey.withAlpha(20),
+                            labelText: "Enter DDX Option",
+                            hintText: 'Optional',
+                          ),
+                        ),
+                      ),
+                    SizedBox(height: 8),
                     Expanded(
                       child: ContinueButton(
                         width: width,

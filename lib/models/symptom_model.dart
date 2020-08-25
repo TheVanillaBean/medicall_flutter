@@ -25,7 +25,8 @@ class Symptom {
     final String duration = data['duration'];
     final int price = data['price'];
     final String category = data['category'] ?? "None";
-    final String commonMedications = data['common_medications'] ?? "";
+    final String commonMedications = data['common_medications'] ??
+        "Medications are not prescribed for this symptom.";
 
     return Symptom(
       name: documentId,

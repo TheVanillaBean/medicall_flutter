@@ -5,6 +5,7 @@ class VisitReviewData {
   String diagnosis;
   bool includeDDX;
   List<String> ddxOptions;
+  String ddxOtherOption;
 
   List<Map<String, String>> examLocations;
 
@@ -20,6 +21,7 @@ class VisitReviewData {
     this.diagnosis = "",
     this.includeDDX = false,
     this.ddxOptions = const [],
+    this.ddxOtherOption = "",
     this.examLocations = const [],
     this.treatmentOptions = const [],
     this.educationalOptions = const [],
@@ -36,6 +38,7 @@ class VisitReviewData {
     final bool includeDDX = data['include_DDX'] as bool;
     final List<String> ddxOptions =
         (data['ddx_options'] as List).map((e) => e.toString()).toList();
+    final String ddxOtherOption = data['ddx_other_option'] as String ?? "";
     final List<Map<String, String>> examLocations =
         (data['exam_locations'] as List)
             .map(
@@ -67,6 +70,7 @@ class VisitReviewData {
       diagnosis: diagnosis,
       includeDDX: includeDDX,
       ddxOptions: ddxOptions,
+      ddxOtherOption: ddxOtherOption,
       examLocations: examLocations,
       treatmentOptions: treatmentOptions,
       educationalOptions: selectedEducationalOptions,
@@ -80,6 +84,7 @@ class VisitReviewData {
       'diagnosis': diagnosis,
       'include_DDX': includeDDX,
       'ddx_options': ddxOptions,
+      'ddx_other_option': ddxOtherOption,
       'exam_locations': examLocations.toList(),
       'treatment_options': treatmentOptions.map((e) => e.toMap()).toList(),
       'selected_educational_options': educationalOptions,

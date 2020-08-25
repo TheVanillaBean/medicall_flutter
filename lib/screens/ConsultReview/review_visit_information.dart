@@ -118,31 +118,6 @@ class ReviewVisitInformation extends StatelessWidget {
                         ),
                       ),
                     )),
-                // Container(
-                //   child: Row(
-                //     children: [
-                //       ReusableCard(
-                //         trailing: Icon(
-                //           Icons.chevron_right,
-                //           color: Colors.grey,
-                //         ),
-                //         title: Text(
-                //           "PHOTOS",
-                //           style: Theme.of(context).textTheme.headline6,
-                //         ),
-                //         onTap: () => {
-                //           ConsultPhotos.show(
-                //             context: context,
-                //             consult: consult,
-                //           )
-                //         },
-                //       ),
-                //       ReusableCard(
-                //         title: Text("START REVIEW"),
-                //       )
-                //     ],
-                //   ),
-                // ),
                 Container(
                     height: 85,
                     color: Colors.transparent,

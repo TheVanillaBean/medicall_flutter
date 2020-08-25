@@ -18,18 +18,24 @@ class SymptomsViewModel with ChangeNotifier {
     symptomsStream.add([]);
     database.symptomsStream().listen((symptomsSnapshot) {
       List<Symptom> symptoms = symptomsSnapshot
-          .where((element) =>
-              element.category == "hairloss" || element.category == "spots")
+          .where(
+            (element) =>
+                element.category == "hairloss" ||
+                element.category == "spots" ||
+                element.category == "rosacea",
+          )
           .toList();
       this.cosmeticSymptoms = symptomsSnapshot
           .where((element) => element.category == "cosmetic")
           .toList();
       Symptom cosmeticSymptom = Symptom(
-          name: "Cosmetic",
-          description: "Various symptoms related to cosmetics",
-          duration: "Depends on the specific symptom",
-          price: 0,
-          category: "cosmetic");
+        name: "Cosmetic",
+        commonMedications: "",
+        description: "Various symptoms related to cosmetics",
+        duration: "Depends on the specific symptom",
+        price: 0,
+        category: "cosmetic",
+      );
       symptoms.add(cosmeticSymptom);
       symptomsStream.add(symptoms);
     });
