@@ -179,6 +179,7 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
       padding: const EdgeInsets.symmetric(horizontal: 30),
       child: CheckboxGroup(
         labels: model.visitReviewData.treatmentOptions
+            .where((element) => element.price > 0)
             .map((e) => e.medicationName)
             .toList(),
         itemBuilder: (Checkbox cb, Text txt, int i) {

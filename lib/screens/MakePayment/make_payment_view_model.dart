@@ -63,7 +63,9 @@ class MakePaymentViewModel with ChangeNotifier {
     if (this.refreshCards) {
       String uid = this.userProvider.user.uid;
       this.paymentMethods = await this.db.getUserCardSources(uid);
-      this.selectedPaymentMethod = this.paymentMethods.first;
+      if (this.paymentMethods.length > 0) {
+        this.selectedPaymentMethod = this.paymentMethods.first;
+      }
       this.userHasCards = this.selectedPaymentMethod != null;
       updateWith(refreshCards: false);
     }

@@ -55,7 +55,7 @@ class TreatmentOptions {
     final String instructions = data['instructions'] as String ?? "";
     final String quantity = data['quantity'] as String ?? "";
     final String refills = data['refills'] as String ?? "";
-    final int price = data['price'] as int ?? 29;
+    final int price = data['price'] as int ?? -1;
     final TreatmentStatus state =
         (data['state'] as String).toTreatmentStatus() ??
             TreatmentStatus.PendingPayment;

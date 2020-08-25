@@ -51,11 +51,6 @@ class PrescriptionCheckoutViewModel
     this.totalCost = 0,
     this.userHasCards = false,
   }) {
-    this.visitReviewData.treatmentOptions = this
-        .visitReviewData
-        .treatmentOptions
-        .where((element) => element.price > 0)
-        .toList();
     List<TreatmentOptions> selectedTreatmentOptions = [];
     int cost = 0;
     for (TreatmentOptions treatmentOptions
@@ -134,7 +129,8 @@ class PrescriptionCheckoutViewModel
   bool get allPrescriptionsPaidFor {
     bool allPaidFor = true;
     this.visitReviewData.treatmentOptions.forEach((element) {
-      if (element.status == TreatmentStatus.PendingPayment) {
+      if (element.status == TreatmentStatus.PendingPayment &&
+          element.price > 0) {
         allPaidFor = false;
       }
     });
@@ -234,16 +230,10 @@ class PrescriptionCheckoutViewModel
       user.shippingState = user.mailingState;
       user.shippingZipCode = user.mailingZipCode;
     } else {
-      if (!canSubmit) {
-        this.btnController.reset();
-        updateWith(isLoading: false);
-        return false;
-      } else {
-        user.shippingAddress = this.shippingAddress;
-        user.shippingCity = this.city;
-        user.shippingState = this.state;
-        user.shippingZipCode = this.zipCode;
-      }
+      user.shippingAddress = this.shippingAddress;
+      user.shippingCity = this.city;
+      user.shippingState = this.state;
+      user.shippingZipCode = this.zipCode;
     }
     await this.firestoreDatabase.setUser(user);
     this.userProvider.user = user;
@@ -299,7 +289,9 @@ class PrescriptionCheckoutViewModel
       String uid = this.userProvider.user.uid;
       this.paymentMethods =
           await this.firestoreDatabase.getUserCardSources(uid);
-      this.selectedPaymentMethod = this.paymentMethods.first;
+      if (this.paymentMethods.length > 0) {
+        this.selectedPaymentMethod = this.paymentMethods.first;
+      }
       this.userHasCards = this.selectedPaymentMethod != null;
       updateWith(refreshCards: false);
     }
