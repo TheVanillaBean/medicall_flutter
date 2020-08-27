@@ -7,7 +7,6 @@ import 'package:Medicall/screens/Consults/previous_visits.dart';
 import 'package:Medicall/screens/Dashboard/patient_dashboard_list_item.dart';
 import 'package:Medicall/screens/Dashboard/patient_dashboard_view_model.dart';
 import 'package:Medicall/screens/MakePayment/make_payment.dart';
-import 'package:Medicall/screens/PersonalInfo/personal_info.dart';
 import 'package:Medicall/screens/Prescriptions/PatientPrescriptions/patient_prescriptions.dart';
 import 'package:Medicall/screens/Symptoms/symptoms.dart';
 import 'package:Medicall/screens/VisitDetails/visit_details_overview.dart';
@@ -88,7 +87,7 @@ class PatientDashboardScreen extends StatelessWidget {
         ),
         centerTitle: true,
         title: Text(
-          'Hello, ${model.userProvider.user.firstName}!',
+          'Hello, ${model.userFullName}!',
           style: Theme.of(context).appBarTheme.textTheme.headline6,
         ),
       ),

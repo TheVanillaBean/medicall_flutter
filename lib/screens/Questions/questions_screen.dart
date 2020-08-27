@@ -3,6 +3,7 @@ import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/screening_questions_model.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/Questions/ReviewPage/review_page.dart';
 import 'package:Medicall/screens/Questions/progress_bar.dart';
 import 'package:Medicall/screens/Questions/question_page.dart';
@@ -10,6 +11,7 @@ import 'package:Medicall/screens/Questions/questions_view_model.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/firebase_storage_service.dart';
+import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
@@ -112,9 +114,21 @@ class _QuestionsScreenState extends State<QuestionsScreen>
               cancelActionText: "No",
             ).show(context);
             if (didPressYes) {
-              Navigator.of(context).popUntil(
-                (ModalRoute.withName(Routes.providerDetail)),
+              TempUserProvider tempUserProvider = Provider.of<TempUserProvider>(
+                context,
+                listen: false,
               );
+              if (tempUserProvider.consult != null) {
+                tempUserProvider.consult = null;
+                PatientDashboardScreen.show(
+                  context: context,
+                  pushReplaceNamed: true,
+                );
+              } else {
+                Navigator.of(context).popUntil(
+                  (ModalRoute.withName(Routes.providerDetail)),
+                );
+              }
             }
           },
         ),
@@ -126,6 +140,23 @@ class _QuestionsScreenState extends State<QuestionsScreen>
                   symptomName: this.model.consult.symptom),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
+              if (snapshot.data.length == 0) {
+                return Scaffold(
+                  body: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Center(
+                        child: Text(
+                          "An error has occurred loading this questionnaire. Please contact customer support.",
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.headline6,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }
+
               this.model.consult.questions =
                   snapshot.data.first.screeningQuestions;
               if (this.model.consult.symptom.length == 0) {

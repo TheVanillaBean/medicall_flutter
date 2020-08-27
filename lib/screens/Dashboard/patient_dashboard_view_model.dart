@@ -11,6 +11,10 @@ class PatientDashboardViewModel with ChangeNotifier {
   final FirestoreDatabase database;
   final UserProvider userProvider;
 
+  String get userFullName => userProvider.user.fullName.length > 3
+      ? userProvider.user.fullName
+      : "Patient";
+
   // ignore: close_sinks
   StreamController<List<Consult>> consultStream = StreamController();
 

@@ -5,6 +5,7 @@ import 'package:Medicall/models/patient_user_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/Questions/questions_screen.dart';
+import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -37,7 +38,21 @@ class StartVisitScreen extends StatelessWidget {
           type: AppBarType.Back,
           title: "Visit Questions",
           theme: Theme.of(context),
-          onPressed: () => Navigator.of(context).pop(false),
+          onPressed: () {
+            TempUserProvider tempUserProvider = Provider.of<TempUserProvider>(
+              context,
+              listen: false,
+            );
+            if (tempUserProvider.consult != null) {
+              tempUserProvider.consult = null;
+              PatientDashboardScreen.show(
+                context: context,
+                pushReplaceNamed: true,
+              );
+            } else {
+              Navigator.of(context).pop();
+            }
+          },
           actions: [
             IconButton(
                 icon: Icon(
@@ -45,6 +60,14 @@ class StartVisitScreen extends StatelessWidget {
                   color: Theme.of(context).colorScheme.primary,
                 ),
                 onPressed: () {
+                  TempUserProvider tempUserProvider =
+                      Provider.of<TempUserProvider>(
+                    context,
+                    listen: false,
+                  );
+                  if (tempUserProvider.consult != null) {
+                    tempUserProvider.consult = null;
+                  }
                   PatientDashboardScreen.show(
                     context: context,
                     pushReplaceNamed: true,
