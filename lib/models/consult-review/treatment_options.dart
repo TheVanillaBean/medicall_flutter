@@ -27,6 +27,7 @@ class TreatmentOptions {
   DateTime date;
   TreatmentStatus status;
   int price;
+  bool notAPrescription;
 
   TreatmentOptions({
     this.dose,
@@ -39,6 +40,7 @@ class TreatmentOptions {
     this.date,
     this.status = TreatmentStatus.PendingPayment,
     this.price,
+    this.notAPrescription,
   });
 
   factory TreatmentOptions.fromMap(Map<String, dynamic> data) {
@@ -56,6 +58,7 @@ class TreatmentOptions {
     final String quantity = data['quantity'] as String ?? "";
     final String refills = data['refills'] as String ?? "";
     final int price = data['price'] as int ?? -1;
+    final bool notAPrescription = data['not_a_prescription'] as bool ?? false;
     final TreatmentStatus state =
         (data['state'] as String).toTreatmentStatus() ??
             TreatmentStatus.PendingPayment;
@@ -73,6 +76,7 @@ class TreatmentOptions {
       date: date,
       status: state,
       price: price,
+      notAPrescription: notAPrescription,
     );
   }
 
@@ -87,6 +91,7 @@ class TreatmentOptions {
       'refills': refills,
       'date': date,
       'price': price,
+      'not_a_prescription': notAPrescription,
       'state': EnumToString.parse(status),
     };
   }

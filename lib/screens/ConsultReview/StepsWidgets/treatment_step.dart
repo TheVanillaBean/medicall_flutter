@@ -75,11 +75,13 @@ class TreatmentStep extends StatelessWidget {
                                   .currentlySelectedIsOther = false;
                             }
 
-                            PrescriptionDetails.show(
-                              context: context,
-                              treatmentOptions: treatmentOptions,
-                              visitReviewViewModel: model,
-                            );
+                            if (!treatmentOptions.notAPrescription) {
+                              PrescriptionDetails.show(
+                                context: context,
+                                treatmentOptions: treatmentOptions,
+                                visitReviewViewModel: model,
+                              );
+                            }
                           } else {
                             final didPressEdit = await PlatformAlertDialog(
                               title: "Deselect Treatment?",
@@ -115,11 +117,13 @@ class TreatmentStep extends StatelessWidget {
                               }
                               model.updateTreatmentStepWith(
                                   selectedTreatment: treatmentOptions);
-                              PrescriptionDetails.show(
-                                context: context,
-                                treatmentOptions: treatmentOptions,
-                                visitReviewViewModel: model,
-                              );
+                              if (!treatmentOptions.notAPrescription) {
+                                PrescriptionDetails.show(
+                                  context: context,
+                                  treatmentOptions: treatmentOptions,
+                                  visitReviewViewModel: model,
+                                );
+                              }
                             }
                           }
                         },
