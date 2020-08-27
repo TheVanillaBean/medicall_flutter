@@ -2,6 +2,7 @@ import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Account/payment_detail.dart';
+import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/MakePayment/make_payment_view_model.dart';
 import 'package:Medicall/screens/Questions/confirm_consult.dart';
 import 'package:Medicall/services/database.dart';
@@ -42,7 +43,7 @@ class MakePayment extends StatelessWidget {
     BuildContext context,
     Consult consult,
   }) async {
-    await Navigator.of(context).pushNamed(
+    await Navigator.of(context).pushReplacementNamed(
       Routes.makePayment,
       arguments: {
         'consult': consult,
@@ -84,10 +85,13 @@ class MakePayment extends StatelessWidget {
     }
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
-        type: AppBarType.Back,
+        type: AppBarType.Close,
         title: "Consult Checkout",
         theme: Theme.of(context),
-        onPressed: () => Navigator.of(context).pop(),
+        onPressed: () => PatientDashboardScreen.show(
+          context: context,
+          pushReplaceNamed: true,
+        ),
       ),
       body: GestureDetector(
         behavior: HitTestBehavior.opaque,

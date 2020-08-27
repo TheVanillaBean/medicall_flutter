@@ -143,6 +143,12 @@ class FirestoreDatabase implements Database {
         path: FirestorePath.consults(),
         queryBuilder: (query) => query
             .where('provider_id', isEqualTo: uid)
+            .where("state", whereIn: [
+              "PendingReview",
+              "InReview",
+              "Completed",
+              "Signed",
+            ])
             .orderBy("date", descending: true)
             .where(
               "date",

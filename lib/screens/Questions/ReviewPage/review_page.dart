@@ -1,6 +1,8 @@
 import 'package:Medicall/common_widgets/list_items_builder.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
+import 'package:Medicall/models/patient_user_model.dart';
 import 'package:Medicall/models/question_model.dart';
+import 'package:Medicall/screens/MakePayment/make_payment.dart';
 import 'package:Medicall/screens/PersonalInfo/personal_info.dart';
 import 'package:Medicall/screens/Questions/ReviewPage/review_page_list_item.dart';
 import 'package:Medicall/screens/Questions/questions_screen.dart';
@@ -22,7 +24,13 @@ class ReviewPage extends StatelessWidget {
       }
     } else {
       await model.saveConsultation();
-      PersonalInfoScreen.show(context: context, consult: model.consult);
+      if ((model.userProvider.user as PatientUser).fullName.length > 2 &&
+          (model.userProvider.user as PatientUser).profilePic.length > 2 &&
+          (model.userProvider.user as PatientUser).mailingAddress.length > 2) {
+        MakePayment.show(context: context, consult: model.consult);
+      } else {
+        PersonalInfoScreen.show(context: context, consult: model.consult);
+      }
     }
   }
 
