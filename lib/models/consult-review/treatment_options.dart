@@ -58,7 +58,6 @@ class TreatmentOptions {
     final String quantity = data['quantity'] as String ?? "";
     final String refills = data['refills'] as String ?? "";
     final int price = data['price'] as int ?? -1;
-    final bool notAPrescription = data['not_a_prescription'] as bool ?? false;
     final TreatmentStatus state =
         (data['state'] as String).toTreatmentStatus() ??
             TreatmentStatus.PendingPayment;
@@ -66,18 +65,17 @@ class TreatmentOptions {
     final DateTime date = DateTime.parse(dateTimeStamp.toDate().toString());
 
     return TreatmentOptions(
-      medicationName: medicationName,
-      dose: dose,
-      form: form,
-      frequency: frequency,
-      instructions: instructions,
-      quantity: quantity,
-      refills: refills,
-      date: date,
-      status: state,
-      price: price,
-      notAPrescription: notAPrescription,
-    );
+        medicationName: medicationName,
+        dose: dose,
+        form: form,
+        frequency: frequency,
+        instructions: instructions,
+        quantity: quantity,
+        refills: refills,
+        date: date,
+        status: state,
+        price: price,
+        notAPrescription: price == -1);
   }
 
   Map<String, dynamic> toMap() {
@@ -91,7 +89,6 @@ class TreatmentOptions {
       'refills': refills,
       'date': date,
       'price': price,
-      'not_a_prescription': notAPrescription,
       'state': EnumToString.parse(status),
     };
   }

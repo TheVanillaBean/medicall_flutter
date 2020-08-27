@@ -72,8 +72,6 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
     @required this.consultReviewOptions,
     @required this.visitReviewData,
   }) {
-    this.consultReviewOptions.diagnosisList.insert(0, "Select a Diagnosis");
-    updateDiagnosisStepWith(selectedItemIndex: 0);
     this.setDiagnosisFromPrevData();
     this.setExamFromPrevData();
     this.setTreatmentFromPrevData();
@@ -286,6 +284,7 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
     int selectedItemIndex,
     bool includeDDX,
     List<String> selectedDDXOptions,
+    String otherDiagnosis,
     String ddxOtherOption,
   }) {
     this.diagnosisStepState.selectedItemIndex =
@@ -310,6 +309,17 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
           selectedDDXOptions ?? this.diagnosisStepState.selectedDDXOptions;
     } else {
       this.diagnosisStepState.includeDDX = false;
+    }
+
+    if (this.diagnosisStepState.diagnosis == "Other") {
+      this.diagnosisStepState.otherDiagnosis =
+          otherDiagnosis ?? this.diagnosisStepState.otherDiagnosis;
+      if (this.diagnosisStepState.otherDiagnosis.length < 2) {
+        this.diagnosisOptions =
+            null; //if Other is selected, then an other value from textField has to be entered
+      }
+    } else {
+      this.diagnosisStepState.otherDiagnosis = "";
     }
 
     if (!this.diagnosisStepState.includeDDX ||

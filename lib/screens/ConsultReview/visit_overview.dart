@@ -15,7 +15,6 @@ import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard_list_item
 import 'package:Medicall/services/chat_provider.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
-import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -196,6 +195,7 @@ class VisitOverview extends StatelessWidget {
     if (visitReviewData == null) {
       visitReviewData = VisitReviewData();
     }
+    options.diagnosisList.insert(0, "Select a Diagnosis");
     return VisitReview.show(
       context: context,
       consult: consult,
@@ -245,18 +245,13 @@ class VisitOverview extends StatelessWidget {
   }
 
   void navigateToChatScreen(BuildContext context, Consult consult) async {
-    if (consult.state == ConsultStatus.Signed) {
-      ChatProvider chatProvider =
-          Provider.of<ChatProvider>(context, listen: false);
-      final channel = chatProvider.client.channel('messaging', id: consult.uid);
-      ChatScreen.show(
-        context: context,
-        channel: channel,
-        consult: consult,
-      );
-    } else {
-      AppUtil().showFlushBar(
-          "You can only chat when you sign this consult", context);
-    }
+    ChatProvider chatProvider =
+        Provider.of<ChatProvider>(context, listen: false);
+    final channel = chatProvider.client.channel('messaging', id: consult.uid);
+    ChatScreen.show(
+      context: context,
+      channel: channel,
+      consult: consult,
+    );
   }
 }

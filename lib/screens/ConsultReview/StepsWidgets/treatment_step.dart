@@ -83,20 +83,26 @@ class TreatmentStep extends StatelessWidget {
                               );
                             }
                           } else {
+                            TreatmentOptions treatmentOptions = model
+                                .diagnosisOptions.treatments
+                                .where((element) =>
+                                    element.medicationName == label)
+                                .toList()
+                                .first;
+                            String dialogText = treatmentOptions
+                                    .notAPrescription
+                                ? "Are you sure you want to deselect this treatment?"
+                                : "Do you want to deselect this treatment option or do you want to edit it?";
                             final didPressEdit = await PlatformAlertDialog(
                               title: "Deselect Treatment?",
-                              content:
-                                  "Do you want to deselect this treatment option or do you want to edit it?",
-                              defaultActionText: "Edit",
+                              content: dialogText,
+                              defaultActionText:
+                                  treatmentOptions.notAPrescription
+                                      ? "No"
+                                      : "Edit",
                               cancelActionText: "Deselect",
                             ).show(context);
                             if (!didPressEdit) {
-                              TreatmentOptions treatmentOptions = model
-                                  .diagnosisOptions.treatments
-                                  .where((element) =>
-                                      element.medicationName == label)
-                                  .toList()
-                                  .first;
                               model.deselectTreatmentStep(treatmentOptions);
                             } else {
                               TreatmentOptions treatmentOptions = model
