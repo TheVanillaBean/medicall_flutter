@@ -1,9 +1,9 @@
+import 'package:Medicall/common_widgets/grouped_buttons/checkbox_group.dart';
 import 'package:Medicall/screens/ConsultReview/ReusableWidgets/continue_button.dart';
 import 'package:Medicall/screens/ConsultReview/ReusableWidgets/empty_diagnosis_widget.dart';
 import 'package:Medicall/screens/ConsultReview/ReusableWidgets/swipe_gesture_recognizer.dart';
 import 'package:Medicall/screens/ConsultReview/visit_review_view_model.dart';
 import 'package:flutter/material.dart';
-import 'package:grouped_buttons/grouped_buttons.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
 
 class EducationalContentStep extends StatelessWidget {
@@ -44,19 +44,6 @@ class EducationalContentStep extends StatelessWidget {
                       labels: model.diagnosisOptions.educationalContent
                           .map((e) => e.keys.first.toString())
                           .toList(),
-                      itemBuilder: (Checkbox cb, Text txt, int i) {
-                        return Row(
-                          children: <Widget>[
-                            cb,
-                            Expanded(
-                              child: Text(
-                                txt.data,
-                                maxLines: 3,
-                              ),
-                            ),
-                          ],
-                        );
-                      },
                       onSelected: (List<String> checked) =>
                           model.updateEducationalInformation(
                               selectedEducationalOptions: checked),

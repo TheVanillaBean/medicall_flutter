@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:Medicall/common_widgets/grouped_buttons/radio_button_group.dart';
 import 'package:Medicall/models/question_model.dart';
 import 'package:Medicall/screens/Questions/questions_view_model.dart';
 import 'package:Medicall/services/extimage_provider.dart';
@@ -10,7 +11,6 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:grouped_buttons/grouped_buttons.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
@@ -161,18 +161,6 @@ class _QuestionFormState extends State<QuestionForm> {
             picked: model.selectedOptionsList.length > 0
                 ? model.selectedOptionsList.first
                 : null,
-            itemBuilder: (Radio rb, Text txt, int i) {
-              return Row(
-                children: <Widget>[
-                  rb,
-                  Expanded(
-                    child: Text(txt.data,
-                        maxLines: 3,
-                        style: Theme.of(context).textTheme.bodyText1),
-                  ),
-                ],
-              );
-            },
             onSelected: (String selected) {
               model.checkedItemsChanged([selected]);
             },

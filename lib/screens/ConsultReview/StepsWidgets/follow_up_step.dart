@@ -1,3 +1,4 @@
+import 'package:Medicall/common_widgets/grouped_buttons/radio_button_group.dart';
 import 'package:Medicall/common_widgets/sign_in_button.dart';
 import 'package:Medicall/screens/ConsultReview/ReusableWidgets/continue_button.dart';
 import 'package:Medicall/screens/ConsultReview/ReusableWidgets/empty_diagnosis_widget.dart';
@@ -6,7 +7,6 @@ import 'package:Medicall/screens/ConsultReview/StepsViewModels/follow_up_step_st
 import 'package:Medicall/screens/ConsultReview/visit_review_view_model.dart';
 import 'package:Medicall/screens/Questions/ImmediateMedicalCare/immediate_medical_care.dart';
 import 'package:flutter/material.dart';
-import 'package:grouped_buttons/grouped_buttons.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
 
 class FollowUpStep extends StatefulWidget {
@@ -54,19 +54,6 @@ class _FollowUpStepState extends State<FollowUpStep> {
                       child: RadioButtonGroup(
                         labels: FollowUpSteps.followUpSteps,
                         picked: model.followUpStepState.followUp,
-                        itemBuilder: (Radio rb, Text txt, int i) {
-                          return Row(
-                            children: <Widget>[
-                              rb,
-                              Expanded(
-                                child: Text(
-                                  txt.data,
-                                  maxLines: 3,
-                                ),
-                              ),
-                            ],
-                          );
-                        },
                         onSelected: (String selected) {
                           model.updateFollowUpStepWith(followUp: selected);
                           if (selected == FollowUpSteps.Emergency) {

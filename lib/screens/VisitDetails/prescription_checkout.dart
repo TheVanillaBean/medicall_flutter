@@ -1,5 +1,6 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/custom_dropdown_formfield.dart';
+import 'package:Medicall/common_widgets/grouped_buttons/checkbox_group.dart';
 import 'package:Medicall/models/consult-review/treatment_options.dart';
 import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:Medicall/routing/router.dart';
@@ -12,7 +13,6 @@ import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_screenutil/screenutil.dart';
-import 'package:grouped_buttons/grouped_buttons.dart';
 import 'package:provider/provider.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:stripe_payment/stripe_payment.dart';
@@ -182,7 +182,7 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
             .where((element) => element.price > 0)
             .map((e) => e.medicationName)
             .toList(),
-        itemBuilder: (Checkbox cb, Text txt, int i) {
+        itemBuilder: (Checkbox cb, GestureDetector gd, Text txt, int i) {
           return Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[

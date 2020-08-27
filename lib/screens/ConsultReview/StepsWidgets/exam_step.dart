@@ -1,8 +1,8 @@
+import 'package:Medicall/common_widgets/grouped_buttons/checkbox_group.dart';
 import 'package:Medicall/screens/ConsultReview/ReusableWidgets/continue_button.dart';
 import 'package:Medicall/screens/ConsultReview/ReusableWidgets/empty_diagnosis_widget.dart';
 import 'package:Medicall/screens/ConsultReview/ReusableWidgets/swipe_gesture_recognizer.dart';
 import 'package:flutter/material.dart';
-import 'package:grouped_buttons/grouped_buttons.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
 
 import '../visit_review_view_model.dart';
@@ -51,19 +51,6 @@ class _ExamStepState extends State<ExamStep> {
                       padding: const EdgeInsets.symmetric(horizontal: 36),
                       child: CheckboxGroup(
                         labels: model.diagnosisOptions.exam,
-                        itemBuilder: (Checkbox cb, Text txt, int i) {
-                          return Row(
-                            children: <Widget>[
-                              cb,
-                              Expanded(
-                                child: Text(
-                                  txt.data,
-                                  maxLines: 3,
-                                ),
-                              ),
-                            ],
-                          );
-                        },
                         onSelected: (List<String> checked) => model
                             .updateExamStepWith(selectedExamOptions: checked),
                         checked: model.examStepState.selectedExamOptions,

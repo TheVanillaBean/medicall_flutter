@@ -1,3 +1,5 @@
+import 'package:Medicall/common_widgets/grouped_buttons/checkbox_group.dart';
+import 'package:Medicall/common_widgets/grouped_buttons/radio_button_group.dart';
 import 'package:Medicall/screens/ConsultReview/ReusableWidgets/continue_button.dart';
 import 'package:Medicall/screens/ConsultReview/ReusableWidgets/direct_select.dart';
 import 'package:Medicall/screens/ConsultReview/ReusableWidgets/swipe_gesture_recognizer.dart';
@@ -5,7 +7,6 @@ import 'package:Medicall/screens/ConsultReview/visit_review_view_model.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:grouped_buttons/grouped_buttons.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
 
 class DiagnosisStep extends StatelessWidget {
@@ -94,19 +95,6 @@ class DiagnosisStep extends StatelessWidget {
                           labels: model.consultReviewOptions.ddxOptions[
                                   model.diagnosisStepState.diagnosis] ??
                               [],
-                          itemBuilder: (Checkbox cb, Text txt, int i) {
-                            return Row(
-                              children: <Widget>[
-                                cb,
-                                Expanded(
-                                  child: Text(
-                                    txt.data,
-                                    maxLines: 3,
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
                           onSelected: (List<String> checked) =>
                               model.updateDiagnosisStepWith(
                                   selectedDDXOptions: checked),
