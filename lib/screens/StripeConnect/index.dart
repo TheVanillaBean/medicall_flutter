@@ -104,7 +104,7 @@ class StripeConnect extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Text(
-            "Success! You are now registered to use Medicall and recieve consultation requests.",
+            "Success! You are now registered to use Medicall and can receive consultation requests.",
             style: TextStyle(color: Colors.black87, fontSize: 15),
             textAlign: TextAlign.center,
           ),

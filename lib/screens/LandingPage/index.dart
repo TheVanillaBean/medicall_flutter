@@ -1,5 +1,4 @@
 import 'package:Medicall/models/user_model_base.dart';
-import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -28,7 +27,6 @@ class LandingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final TempUserProvider tempUserProvider =
         Provider.of<TempUserProvider>(context, listen: false);
-    final AuthBase auth = Provider.of<AuthBase>(context, listen: false);
     if (userSnapshot.connectionState == ConnectionState.active) {
       if (userSnapshot.hasData) {
         if (tempUserProvider.consult != null) {
@@ -44,7 +42,14 @@ class LandingPage extends StatelessWidget {
       }
     }
     return Scaffold(
-      body: const CircularProgressIndicator(),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -1,5 +1,8 @@
+import 'dart:ui';
+
 import 'package:Medicall/common_widgets/empty_visits.dart';
 import 'package:Medicall/common_widgets/list_items_builder.dart';
+import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/components/drawer_menu.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/provider_user_model.dart';
@@ -108,15 +111,18 @@ class ProviderDashboardScreen extends StatelessWidget {
   }
 
   List<Widget> _buildChildren({BuildContext context, double height}) {
+    ProviderUser user = this.model.userProvider.user as ProviderUser;
     return [
-      _buildHeader(),
+      user.stripeConnectAuthorized
+          ? _buildStripeAuthorizedHeader()
+          : _buildNeedsAuthHeader(),
       SizedBox(
         height: height * 0.1,
       ),
     ];
   }
 
-  Widget _buildHeader({BuildContext context, double height}) {
+  Widget _buildStripeAuthorizedHeader() {
     return StreamBuilder<List<Consult>>(
       stream: model.consultStream.stream,
       builder:
@@ -143,6 +149,37 @@ class ProviderDashboardScreen extends StatelessWidget {
                     consult: consult,
                     onTap: () => consultItemPressed(context, consult),
                   ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildNeedsAuthHeader() {
+    return StreamBuilder<List<Consult>>(
+      stream: model.consultStream.stream,
+      builder:
+          (BuildContext context, AsyncSnapshot<List<Consult>> consultSnapshot) {
+        return Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Center(
+                child: Text(
+                  "You are not connected to Stripe. We use Stripe to send payouts to you for each visit you review.",
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.headline6,
+                ),
+              ),
+              SizedBox(height: 24),
+              ReusableRaisedButton(
+                title: "Connect my account with Stripe",
+                onPressed: () => StripeConnect.show(
+                  context: context,
+                  pushReplaceNamed: false,
                 ),
               ),
             ],
