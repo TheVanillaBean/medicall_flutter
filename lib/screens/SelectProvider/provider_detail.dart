@@ -138,7 +138,7 @@ class ProviderDetailScreen extends StatelessWidget {
         alignment: Alignment.center,
         width: 250,
         child: Text(
-          '${provider.mailingAddress}, \n${provider.mailingCity}, ${provider.mailingState} ${provider.mailingZipCode}',
+          '${provider.mailingAddress}\n${provider.mailingCity}, ${provider.mailingState} ${provider.mailingZipCode}',
           style: Theme.of(context).textTheme.bodyText1,
           textAlign: TextAlign.center,
         ),
@@ -150,7 +150,7 @@ class ProviderDetailScreen extends StatelessWidget {
           child: Text(
             symptom.description,
             style: Theme.of(context).textTheme.bodyText1,
-            textAlign: TextAlign.center,
+            textAlign: TextAlign.left,
           ),
         ),
       ),
