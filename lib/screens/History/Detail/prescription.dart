@@ -162,8 +162,6 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
                                         color: Colors.grey, width: 5.0),
                                   ),
                                 ),
-                                textCapitalization:
-                                    TextCapitalization.sentences,
                                 validators: [
                                   FormBuilderValidators.required(
                                       errorText: "Required field."),

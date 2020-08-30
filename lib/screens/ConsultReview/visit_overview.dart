@@ -137,7 +137,7 @@ class VisitOverview extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.only(bottom: 32),
             child: SignInButton(
-              text: getContinueBtnText(consult),
+              text: getContinueBtnText(consult).toUpperCase(),
               height: 8,
               color: getContinueBtnColor(consult),
               textColor: Colors.white,
