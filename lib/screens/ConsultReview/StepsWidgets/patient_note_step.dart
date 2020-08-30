@@ -48,6 +48,7 @@ class _PatientNoteStepState extends State<PatientNoteStep> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 24),
                       child: TextFormField(
+                        textCapitalization: TextCapitalization.sentences,
                         maxLines: null,
                         scrollPhysics: NeverScrollableScrollPhysics(),
                         initialValue:
@@ -56,7 +57,7 @@ class _PatientNoteStepState extends State<PatientNoteStep> {
                           "${model.consult.providerUser.fullName}, ${model.consult.providerUser.professionalTitle}",
                           model.diagnosisOptions.patientNoteTemplate,
                         ),
-                        autocorrect: false,
+                        autocorrect: true,
                         keyboardType: TextInputType.multiline,
                         onChanged: (String text) =>
                             model.updatePatientNoteStepWith(patientNote: text),

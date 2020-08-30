@@ -66,9 +66,10 @@ class DiagnosisStep extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 24),
                           child: TextFormField(
+                            textCapitalization: TextCapitalization.sentences,
                             initialValue:
                                 model.diagnosisStepState.otherDiagnosis,
-                            autocorrect: false,
+                            autocorrect: true,
                             keyboardType: TextInputType.text,
                             onChanged: (String text) => model
                                 .updateDiagnosisStepWith(otherDiagnosis: text),
@@ -144,9 +145,10 @@ class DiagnosisStep extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 24),
                           child: TextFormField(
+                            textCapitalization: TextCapitalization.sentences,
                             initialValue:
                                 model.diagnosisStepState.ddxOtherOption,
-                            autocorrect: false,
+                            autocorrect: true,
                             keyboardType: TextInputType.text,
                             onChanged: (String text) => model
                                 .updateDiagnosisStepWith(ddxOtherOption: text),

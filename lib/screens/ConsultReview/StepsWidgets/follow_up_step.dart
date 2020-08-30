@@ -127,8 +127,9 @@ class _FollowUpStepState extends State<FollowUpStep> {
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
         child: TextFormField(
+          textCapitalization: TextCapitalization.sentences,
           initialValue: model.followUpStepState.getInitialValueForFollowUp,
-          autocorrect: false,
+          autocorrect: true,
           keyboardType: TextInputType.text,
           onChanged: (String text) =>
               model.updateFollowUpStepWith(duration: text),

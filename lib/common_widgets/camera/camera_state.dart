@@ -12,7 +12,7 @@ class CameraState with ChangeNotifier {
   CameraController controller;
   String imagePath;
   String videoPath;
-  Map imageData;
+  dynamic imageData;
   VideoPlayerController videoController;
   VoidCallback videoPlayerListener;
   bool enableAudio = true;
@@ -54,8 +54,11 @@ class CameraState with ChangeNotifier {
 
   void showInSnackBar(String message) {
     scaffoldKey.currentState.showSnackBar(SnackBar(
-      content: Text(message),
-      backgroundColor: Colors.white,
+      content: Text(
+        message,
+        style: TextStyle(color: Colors.white),
+      ),
+      backgroundColor: Colors.black,
     ));
   }
 

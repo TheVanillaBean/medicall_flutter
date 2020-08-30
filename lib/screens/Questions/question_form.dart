@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:Medicall/common_widgets/camera/Camera.dart';
 import 'package:Medicall/common_widgets/grouped_buttons/radio_button_group.dart';
 import 'package:Medicall/models/question_model.dart';
 import 'package:Medicall/screens/Questions/questions_view_model.dart';
@@ -182,7 +183,7 @@ class _QuestionFormState extends State<QuestionForm> {
           textCapitalization: TextCapitalization.sentences,
           controller: model.inputController,
           focusNode: model.inputFocusNode,
-          autocorrect: false,
+          autocorrect: true,
           keyboardType: TextInputType.multiline,
           maxLines: 30,
           onChanged: model.updateInput,
@@ -212,7 +213,17 @@ class _QuestionFormState extends State<QuestionForm> {
         Expanded(
           flex: 9,
           child: GestureDetector(
-            onTap: _loadProfileImage,
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CameraScreen.create(context, model, {
+                      'fullscreen': true,
+                      'video': false,
+                      'max_images': question.maxImages
+                    }),
+                  ));
+            },
             child: ClipRRect(
               child: model.questionPlaceholderURL.length > 0
                   ? this.extendedImageProvider.returnNetworkImage(

@@ -1,11 +1,14 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:Medicall/common_widgets/camera/camera_state.dart';
 import 'package:Medicall/services/extimage_provider.dart';
+import 'package:Medicall/services/firebase_storage_service.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 
@@ -144,19 +147,22 @@ class _CameraScreenState extends State<CameraScreen> {
         return Stack(
           alignment: Alignment.center,
           children: <Widget>[
-            Positioned(
-              top: 20 * ScreenUtil.pixelRatio,
-              right: 20,
-              child: Container(
-                alignment: Alignment.centerRight,
-                child: IconButton(
-                  icon: Icon(Icons.videocam),
-                  color: Colors.white,
-                  onPressed: model.controller != null &&
-                          model.controller.value.isInitialized &&
-                          !model.controller.value.isRecordingVideo
-                      ? model.onVideoRecordButtonPressed
-                      : null,
+            Visibility(
+              visible: model.options['video'],
+              child: Positioned(
+                top: 20,
+                right: 10,
+                child: Container(
+                  alignment: Alignment.centerRight,
+                  child: IconButton(
+                    icon: Icon(Icons.videocam),
+                    color: Colors.white,
+                    onPressed: model.controller != null &&
+                            model.controller.value.isInitialized &&
+                            !model.controller.value.isRecordingVideo
+                        ? model.onVideoRecordButtonPressed
+                        : null,
+                  ),
                 ),
               ),
             ),
@@ -204,7 +210,7 @@ class _CameraScreenState extends State<CameraScreen> {
                     model.videoPath != null &&
                         !model.controller.value.isRecordingVideo,
                 child: Positioned(
-                  bottom: 20,
+                  bottom: 10,
                   child: Row(
                     children: <Widget>[
                       MaterialButton(
@@ -217,7 +223,7 @@ class _CameraScreenState extends State<CameraScreen> {
                           child: Icon(
                             Icons.close,
                             color: Colors.red,
-                            size: 40,
+                            size: 30,
                           ),
                           onPressed: () {
                             model.imagePath = null;
@@ -238,7 +244,7 @@ class _CameraScreenState extends State<CameraScreen> {
                           child: Icon(
                             Icons.check,
                             color: Colors.green,
-                            size: 40,
+                            size: 30,
                           ),
                           onPressed: () {
                             Navigator.pop(context);
@@ -250,7 +256,7 @@ class _CameraScreenState extends State<CameraScreen> {
                 visible: model.imagePath == null && model.videoPath == null,
                 child: Positioned(
                   right: 20,
-                  bottom: 20,
+                  bottom: 10,
                   child: SizedBox(
                       width: 40.0,
                       child: IconButton(
@@ -267,7 +273,7 @@ class _CameraScreenState extends State<CameraScreen> {
             Visibility(
                 visible: model.imagePath == null && model.videoPath == null,
                 child:
-                    Positioned(bottom: 20, child: _captureControlRowWidget())),
+                    Positioned(bottom: 10, child: _captureControlRowWidget())),
             // Positioned(bottom: 0, right: 0, child: _toggleAudioWidget()),
             Center(
               child: AspectRatio(
@@ -278,7 +284,7 @@ class _CameraScreenState extends State<CameraScreen> {
             Visibility(
                 visible: model.imagePath == null && model.videoPath == null,
                 child: Positioned(
-                    bottom: 20, left: 0, child: _cameraTogglesRowWidget())),
+                    bottom: 10, left: 0, child: _cameraTogglesRowWidget())),
             Visibility(
                 visible: model.imagePath != null ||
                     model.videoPath != null &&
@@ -305,7 +311,7 @@ class _CameraScreenState extends State<CameraScreen> {
       await model.extImageProvider
           .pickImages(
               model.extImageProvider.currentAssetList,
-              model.imageData['max_images'],
+              model.options['max_images'],
               false,
               model.extImageProvider
                   .pickImagesCupertinoOptions(takePhotoIcon: 'chat'),
@@ -316,12 +322,18 @@ class _CameraScreenState extends State<CameraScreen> {
                   actionBarTitle: 'Select Images',
                   allViewTitle: 'All Photos'),
               context)
-          .then((onValue) {
+          .then((onValue) async {
         model.extImageProvider.currentAssetList = onValue;
         for (var i = 0; i < onValue.length; i++) {
           model.extImageProvider.assetList.add(onValue[i]);
         }
-        model.imageData['image'] = onValue;
+        List<Map<String, ByteData>> resultMap = [];
+        for (Asset asset in model.extImageProvider.currentAssetList) {
+          ByteData byteData =
+              await FirebaseStorageService.getAccurateByteData(asset);
+          resultMap.add({asset.name: byteData});
+        }
+        model.imageData.updateQuestionPageWith(questionPhotos: resultMap);
         Navigator.pop(context);
         //setState(() {});
       });
