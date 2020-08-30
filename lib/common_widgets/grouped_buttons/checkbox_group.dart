@@ -32,7 +32,7 @@ class CheckboxGroup extends StatefulWidget {
   final void Function(List<String> selected) onSelected;
 
   /// The style to use for the labels.
-  TextStyle labelStyle;
+  final TextStyle labelStyle;
 
   /// Specifies the orientation to display elements.
   final GroupedButtonsOrientation orientation;
@@ -114,10 +114,10 @@ class _CheckboxGroupState extends State<CheckboxGroup> {
             widget.activeColor ?? Theme.of(context).toggleableActiveColor,
         tristate: widget.tristate,
       );
-
-      if (widget.labelStyle == null) {
-        widget.labelStyle = Theme.of(context).textTheme.bodyText2;
-      }
+      //why are we setting this here when grouped is immutable class
+      // if (widget.labelStyle == null) {
+      //   widget.labelStyle = Theme.of(context).textTheme.bodyText2;
+      // }
 
       Text t = Text(widget.labels.elementAt(i),
           maxLines: 3,

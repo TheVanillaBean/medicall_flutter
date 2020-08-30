@@ -5,7 +5,6 @@ import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Account/payment_detail.dart';
 import 'package:Medicall/screens/Account/view_medical_history.dart';
-import 'package:Medicall/screens/Questions/tempLinksPage.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/firebase_storage_service.dart';

@@ -329,8 +329,8 @@ class Router {
         );
 
       case Routes.completeVisit:
-        final Map<String, dynamic> mapArgs = args;
-//        final Consult consult = mapArgs['consult'];
+        // final Map<String, dynamic> mapArgs = args;
+        // final Consult consult = mapArgs['consult'];
         return MaterialPageRoute<dynamic>(
           builder: (context) => CompleteVisit.create(context),
           settings: settings,
@@ -385,7 +385,7 @@ class Router {
         );
       case '/photoID':
         return MaterialPageRoute<dynamic>(
-          builder: (context) => PhotoIdScreen(),
+          builder: (context) => PhotoIdScreen.create(context),
           settings: settings,
           fullscreenDialog: true,
         );

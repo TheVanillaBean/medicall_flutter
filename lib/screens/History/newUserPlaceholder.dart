@@ -50,7 +50,7 @@ class NewUserPlaceHolder extends StatelessWidget {
                   ? 10
                   : 0,
               child: Text(
-                medicallUser.type == 'patient'
+                medicallUser.type == USER_TYPE.PATIENT
                     ? 'Connect with local doctors now!'
                     : 'Connect with patients now!',
                 style: TextStyle(
@@ -76,7 +76,7 @@ class NewUserPlaceHolder extends StatelessWidget {
                     color: Colors.purple.withAlpha(140),
                   ),
                   Text(
-                      medicallUser.type == 'patient'
+                      medicallUser.type == USER_TYPE.PATIENT
                           ? 'Select medical \nconcern'
                           : 'Receive patient \nrequests',
                       textAlign: TextAlign.center,
@@ -107,7 +107,7 @@ class NewUserPlaceHolder extends StatelessWidget {
                     color: Colors.redAccent.withAlpha(200),
                   ),
                   Text(
-                    medicallUser.type == 'patient'
+                    medicallUser.type == USER_TYPE.PATIENT
                         ? 'If needed meds\nare delivered'
                         : 'Provide\nprescription\nif needed',
                     textAlign: TextAlign.center,
@@ -136,7 +136,7 @@ class NewUserPlaceHolder extends StatelessWidget {
                     color: Colors.green.withAlpha(200),
                   ),
                   Text(
-                    medicallUser.type == 'patient'
+                    medicallUser.type == USER_TYPE.PATIENT
                         ? 'Answer\nquestions'
                         : 'View request\ndetails',
                     textAlign: TextAlign.center,

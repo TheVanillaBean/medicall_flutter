@@ -54,9 +54,4 @@ class AnimatedProgressbar extends StatelessWidget {
   _floor(double value, [min = 0.0]) {
     return value.sign <= min ? min : value;
   }
-
-  _colorGen(double value) {
-    int rbg = (value * 255).toInt();
-    return Colors.deepOrange.withGreen(255 - rbg).withRed(255 - rbg);
-  }
 }

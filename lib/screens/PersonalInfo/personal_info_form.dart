@@ -3,7 +3,6 @@ import 'package:Medicall/common_widgets/custom_dropdown_formfield.dart';
 import 'package:Medicall/screens/MakePayment/make_payment.dart';
 import 'package:Medicall/screens/PersonalInfo/personal_info_text_field.dart';
 import 'package:Medicall/screens/PersonalInfo/personal_info_view_model.dart';
-import 'package:Medicall/screens/PhoneAuth/phone_auth_state_model.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';

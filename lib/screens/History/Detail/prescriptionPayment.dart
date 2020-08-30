@@ -100,7 +100,7 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
     return widget.scriptData.containsKey('medication_name') &&
             widget.scriptData['medication_name'].length > 0 &&
             widget.scriptData['pay_date'] == null &&
-            medicallUser.type == 'patient'
+            medicallUser.type == USER_TYPE.PATIENT
         ? FormBuilder(
             key: prescriptionPaymentKey,
             child: Column(

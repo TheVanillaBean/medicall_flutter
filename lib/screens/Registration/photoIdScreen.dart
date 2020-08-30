@@ -167,24 +167,7 @@ class _PhotoIdScreenState extends State<PhotoIdScreen> {
                 widget.model.govIdImage.length == 1
             ? Theme.of(context).colorScheme.primary
             : Colors.grey,
-        onPressed: () async {
-          if (widget.model.profileImage.length == 1 &&
-              widget.model.govIdImage.length == 1) {
-            List<Asset> images = [
-              ...widget.model.profileImage,
-              ...widget.model.govIdImage
-            ];
-
-//            widget.model.tempUserProvider.updateWith(
-//                images:
-//                    images); //You can make further changes here. Technically the model is not updated here, we are just calling tempUserprovider.updateWith() which is separate from the model class created here. We could do  widget.model.updateWith(images: images), but I'll leave you to do that.
-//            if (widget.model.tempUserProvider.medicallUser.type == 'patient') {
-//              Navigator.of(context).pushNamed('/consent');
-//            } else {
-//              Navigator.of(context).pushNamed('/malpractice');
-//            }
-          }
-        },
+        onPressed: () async {},
         child: Text(
           widget.model.profileImage.length == 1 &&
                   widget.model.govIdImage.length == 1

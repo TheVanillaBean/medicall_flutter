@@ -28,7 +28,9 @@ class HistoryState with ChangeNotifier {
         return Firestore.instance
             .collection('consults')
             .where(
-                medicallUser.type == 'provider' ? 'provider_id' : 'patient_id',
+                medicallUser.type == USER_TYPE.PROVIDER
+                    ? 'provider_id'
+                    : 'patient_id',
                 isEqualTo: medicallUser.uid)
             .orderBy('date', descending: true)
             .snapshots();
@@ -37,9 +39,14 @@ class HistoryState with ChangeNotifier {
         return Firestore.instance
             .collection('consults')
             .where(
-                medicallUser.type == 'provider' ? 'provider_id' : 'patient_id',
+                medicallUser.type == USER_TYPE.PROVIDER
+                    ? 'provider_id'
+                    : 'patient_id',
                 isEqualTo: medicallUser.uid)
-            .orderBy(medicallUser.type == 'provider' ? 'patient' : 'provider',
+            .orderBy(
+                medicallUser.type == USER_TYPE.PROVIDER
+                    ? USER_TYPE.PATIENT
+                    : 'provider',
                 descending: false)
             .snapshots();
       }
@@ -47,7 +54,9 @@ class HistoryState with ChangeNotifier {
         return Firestore.instance
             .collection('consults')
             .where(
-                medicallUser.type == 'provider' ? 'provider_id' : 'patient_id',
+                medicallUser.type == USER_TYPE.PROVIDER
+                    ? 'provider_id'
+                    : 'patient_id',
                 isEqualTo: medicallUser.uid)
             .where('state', isEqualTo: 'new')
             .orderBy('date', descending: true)
@@ -57,7 +66,9 @@ class HistoryState with ChangeNotifier {
         return Firestore.instance
             .collection('consults')
             .where(
-                medicallUser.type == 'provider' ? 'provider_id' : 'patient_id',
+                medicallUser.type == USER_TYPE.PROVIDER
+                    ? 'provider_id'
+                    : 'patient_id',
                 isEqualTo: medicallUser.uid)
             .where('state', isEqualTo: 'in progress')
             .orderBy('date', descending: true)
@@ -67,7 +78,9 @@ class HistoryState with ChangeNotifier {
         return Firestore.instance
             .collection('consults')
             .where(
-                medicallUser.type == 'provider' ? 'provider_id' : 'patient_id',
+                medicallUser.type == USER_TYPE.PROVIDER
+                    ? 'provider_id'
+                    : 'patient_id',
                 isEqualTo: medicallUser.uid)
             .where('state', isEqualTo: 'prescription waiting')
             .orderBy('date', descending: true)
@@ -77,7 +90,9 @@ class HistoryState with ChangeNotifier {
         return Firestore.instance
             .collection('consults')
             .where(
-                medicallUser.type == 'provider' ? 'provider_id' : 'patient_id',
+                medicallUser.type == USER_TYPE.PROVIDER
+                    ? 'provider_id'
+                    : 'patient_id',
                 isEqualTo: medicallUser.uid)
             .where('state', isEqualTo: 'done')
             .orderBy('date', descending: true)
@@ -92,7 +107,7 @@ class HistoryState with ChangeNotifier {
       for (var i = 0; i < snapshot.data.documents.length; i++) {
         // if (!sortedUserHistory.contains(snapshot.data.documents[i])) {
         //   if (searchInput.length > 0) {
-        //     if (snapshot.data.documents[i].data['patient']
+        //     if (snapshot.data.documents[i].data[USER_TYPE.PATIENT]
         //             .toLowerCase()
         //             .contains(
         //               searchInput.toLowerCase(),

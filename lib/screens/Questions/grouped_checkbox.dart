@@ -3,8 +3,6 @@ Name: Nadia Ferdoush
 Date: 07/12/19
 Copyright: © 2019, Nadia Ferdoush. All rights reserved.
 */
-
-import 'package:apple_sign_in/apple_sign_in.dart';
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 

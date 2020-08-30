@@ -127,7 +127,6 @@ class _LoginScreenState extends State<LoginScreen> {
     final appleSignInAvailable =
         Provider.of<AppleSignInAvailable>(context, listen: false);
     final height = MediaQuery.of(context).size.height;
-    final width = MediaQuery.of(context).size.width;
     return [
       FadeIn(
         2,

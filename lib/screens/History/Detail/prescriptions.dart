@@ -22,7 +22,7 @@ class PrescriptionsScreen extends StatelessWidget {
           title: Text('Prescriptions'),
           centerTitle: true,
           actions: <Widget>[
-            medicallUser.type == 'provider'
+            medicallUser.type == USER_TYPE.PROVIDER
                 ? IconButton(
                     icon: Icon(Icons.add),
                     onPressed: () {

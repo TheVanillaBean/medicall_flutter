@@ -367,14 +367,14 @@ class DetailsLandingScreen extends StatelessWidget {
                       Positioned(
                         top: 42,
                         child: Text(
-                          medicallUser.type == 'patient'
+                          medicallUser.type == USER_TYPE.PATIENT
                               ? 'Message Doctor'
                               : 'Message Patient',
                           style: TextStyle(color: Colors.blueGrey),
                           textAlign: TextAlign.center,
                         ),
                       ),
-                      medicallUser.type == 'provider' &&
+                      medicallUser.type == USER_TYPE.PROVIDER &&
                               consultSnapshot
                                   .containsKey('provider_unread_chat') &&
                               consultSnapshot['provider_unread_chat'] > 0
@@ -391,7 +391,7 @@ class DetailsLandingScreen extends StatelessWidget {
                               ),
                             )
                           : Container(),
-                      medicallUser.type == 'patient' &&
+                      medicallUser.type == USER_TYPE.PATIENT &&
                               consultSnapshot
                                   .containsKey('patient_unread_chat') &&
                               consultSnapshot['patient_unread_chat'] > 0

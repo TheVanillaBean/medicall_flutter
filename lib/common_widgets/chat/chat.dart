@@ -65,10 +65,10 @@ class _ChatState extends State<Chat> {
   void onSend(ChatMessage message) {
     //print(message.toJson());
     _db.createNewConsultChatMsg(message);
-    if (_medicallUser.type == 'provider') {
+    if (_medicallUser.type == USER_TYPE.PROVIDER) {
       _db.updatePatientUnreadChat(false);
     }
-    if (_medicallUser.type == 'patient') {
+    if (_medicallUser.type == USER_TYPE.PATIENT) {
       _db.updateProviderUnreadChat(false);
     }
     _textController.clear();
@@ -91,10 +91,10 @@ class _ChatState extends State<Chat> {
     _medicallUser = Provider.of<UserProvider>(context).user;
     _db = Provider.of<Database>(context);
     _extImageProvider = Provider.of<ExtImageProvider>(context);
-    if (_medicallUser.type == 'provider') {
+    if (_medicallUser.type == USER_TYPE.PROVIDER) {
       _db.updateProviderUnreadChat(true);
     }
-    if (_medicallUser.type == 'patient') {
+    if (_medicallUser.type == USER_TYPE.PATIENT) {
       _db.updatePatientUnreadChat(true);
     }
     user = ChatUser(
@@ -102,17 +102,21 @@ class _ChatState extends State<Chat> {
         uid: _medicallUser.uid,
         avatar: _medicallUser.profilePic);
 
-    otherUser = _medicallUser.type == 'provider'
+    otherUser = _medicallUser.type == USER_TYPE.PROVIDER
         ? ChatUser(
-            name: _db.consultSnapshot.data['patient']
+            name: _db.consultSnapshot.data[USER_TYPE.PATIENT]
                     .split(' ')[0][0]
                     .toUpperCase() +
-                _db.consultSnapshot.data['patient'].split(' ')[0].substring(1) +
+                _db.consultSnapshot.data[USER_TYPE.PATIENT]
+                    .split(' ')[0]
+                    .substring(1) +
                 ' ' +
-                _db.consultSnapshot.data['patient']
+                _db.consultSnapshot.data[USER_TYPE.PATIENT]
                     .split(' ')[1][0]
                     .toUpperCase() +
-                _db.consultSnapshot.data['patient'].split(' ')[1].substring(1),
+                _db.consultSnapshot.data[USER_TYPE.PATIENT]
+                    .split(' ')[1]
+                    .substring(1),
             uid: _db.consultSnapshot['patient_id'])
         : ChatUser(
             name: _db.consultSnapshot.data['provider']

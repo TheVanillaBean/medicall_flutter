@@ -33,6 +33,7 @@ class ProviderVisitsListItem extends StatelessWidget {
         ),
       );
     }
+    return CircularProgressIndicator();
   }
 
   Widget displayProfilePicture(

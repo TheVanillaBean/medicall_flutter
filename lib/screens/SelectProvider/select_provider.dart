@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/list_items_builder.dart';
-import 'package:Medicall/models/patient_user_model.dart';
 import 'package:Medicall/models/provider_user_model.dart';
 import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/models/user_model_base.dart';

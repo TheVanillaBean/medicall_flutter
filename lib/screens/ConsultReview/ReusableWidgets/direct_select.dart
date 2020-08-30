@@ -117,6 +117,7 @@ class _DirectSelectState extends State<DirectSelect> {
     return GestureDetector(
       onTap: () => _createOverlay(),
       onVerticalDragStart: (_) => _createOverlay(),
+      //the member 'positions' can only be used within instance members of subclasses of 'package:flutter/src/widgets/scroll_controller.dart'.dart(invalid_use_of_protected_member)
       onVerticalDragUpdate: (details) => _controller.positions.isNotEmpty
           ? _controller.jumpTo(_controller.offset - details.primaryDelta)
           : null,

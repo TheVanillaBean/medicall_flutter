@@ -1,5 +1,3 @@
-import 'dart:ui' as ui;
-
 import 'package:Medicall/common_widgets/sign_in_button.dart';
 import 'package:Medicall/screens/PasswordReset/reset_password_state_model.dart';
 import 'package:Medicall/services/auth.dart';

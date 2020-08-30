@@ -189,7 +189,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
               selectedItemColor: Theme.of(context).colorScheme.onPrimary,
               currentIndex:
                   currentDetailsIndex, // this will be set when a new tab is tapped
-              items: medicallUser.type == 'patient'
+              items: medicallUser.type == USER_TYPE.PATIENT
                   ? [
                       BottomNavigationBarItem(
                         icon: Container(),
@@ -225,7 +225,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                         : 3,
                     itemBuilder: (context, i) {
                       List<Widget> finalArray = [];
-                      if (medicallUser.type == 'patient') {
+                      if (medicallUser.type == USER_TYPE.PATIENT) {
                         if (currentDetailsIndex == i) {
                           for (var y = 0;
                               y < consultSnapshot['details'][i].length;
@@ -431,7 +431,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                         consultSnapshot['medication_name']
                                                 .length ==
                                             0 &&
-                                        medicallUser.type == 'patient'
+                                        medicallUser.type == USER_TYPE.PATIENT
                                     ? Container(
                                         margin:
                                             EdgeInsets.fromLTRB(0, 10, 0, 0),
@@ -477,7 +477,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                                 consultSnapshot['state'] ==
                                                             'done' ||
                                                         medicallUser.type ==
-                                                            'patient' ||
+                                                            USER_TYPE.PATIENT ||
                                                         consultSnapshot[
                                                                 'pay_date'] !=
                                                             null
@@ -489,18 +489,17 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                               labelText: 'Medication Name',
                                               hintText:
                                                   'Enter patient\'s medication name',
-                                              fillColor:
-                                                  consultSnapshot['state'] ==
-                                                              'done' ||
-                                                          medicallUser.type ==
-                                                              'patient' ||
-                                                          consultSnapshot
-                                                              .containsKey(
-                                                                  'pay_date')
-                                                      ? Colors.grey
-                                                          .withAlpha(30)
-                                                      : Color.fromRGBO(
-                                                          35, 179, 232, 0.1),
+                                              fillColor: consultSnapshot[
+                                                              'state'] ==
+                                                          'done' ||
+                                                      medicallUser.type ==
+                                                          USER_TYPE.PATIENT ||
+                                                      consultSnapshot
+                                                          .containsKey(
+                                                              'pay_date')
+                                                  ? Colors.grey.withAlpha(30)
+                                                  : Color.fromRGBO(
+                                                      35, 179, 232, 0.1),
                                               filled: true,
                                               border: OutlineInputBorder(
                                                 borderSide: BorderSide(
@@ -544,7 +543,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                                 consultSnapshot['state'] ==
                                                             'done' ||
                                                         medicallUser.type ==
-                                                            'patient' ||
+                                                            USER_TYPE.PATIENT ||
                                                         consultSnapshot[
                                                                 'pay_date'] !=
                                                             null
@@ -555,18 +554,17 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                                   color: Colors.black45),
                                               labelText: 'Quantity',
                                               hintText: '',
-                                              fillColor:
-                                                  consultSnapshot['state'] ==
-                                                              'done' ||
-                                                          medicallUser.type ==
-                                                              'patient' ||
-                                                          consultSnapshot
-                                                              .containsKey(
-                                                                  'pay_date')
-                                                      ? Colors.grey
-                                                          .withAlpha(30)
-                                                      : Color.fromRGBO(
-                                                          35, 179, 232, 0.1),
+                                              fillColor: consultSnapshot[
+                                                              'state'] ==
+                                                          'done' ||
+                                                      medicallUser.type ==
+                                                          USER_TYPE.PATIENT ||
+                                                      consultSnapshot
+                                                          .containsKey(
+                                                              'pay_date')
+                                                  ? Colors.grey.withAlpha(30)
+                                                  : Color.fromRGBO(
+                                                      35, 179, 232, 0.1),
                                               filled: true,
                                               border: OutlineInputBorder(
                                                 borderSide: BorderSide(
@@ -605,16 +603,16 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                                 consultSnapshot['state'] ==
                                                             'done' ||
                                                         medicallUser.type ==
-                                                            'patient' ||
+                                                            USER_TYPE.PATIENT ||
                                                         consultSnapshot[
                                                                 'pay_date'] !=
                                                             null
                                                     ? true
                                                     : false,
-                                            iconSize:
-                                                medicallUser.type == 'patient'
-                                                    ? 0
-                                                    : 24,
+                                            iconSize: medicallUser.type ==
+                                                    USER_TYPE.PATIENT
+                                                ? 0
+                                                : 24,
                                             decoration: InputDecoration(
                                                 alignLabelWithHint: true,
                                                 contentPadding:
@@ -627,7 +625,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                                                 'state'] ==
                                                             'done' ||
                                                         medicallUser.type ==
-                                                            'patient' ||
+                                                            USER_TYPE.PATIENT ||
                                                         consultSnapshot
                                                             .containsKey(
                                                                 'pay_date')
@@ -673,15 +671,15 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                                 ? consultSnapshot['units']
                                                 : 'Capsule',
                                             attribute: "units",
-                                            iconSize:
-                                                medicallUser.type == 'patient'
-                                                    ? 0
-                                                    : 24,
+                                            iconSize: medicallUser.type ==
+                                                    USER_TYPE.PATIENT
+                                                ? 0
+                                                : 24,
                                             readOnly:
                                                 consultSnapshot['state'] ==
                                                             'done' ||
                                                         medicallUser.type ==
-                                                            'patient' ||
+                                                            USER_TYPE.PATIENT ||
                                                         consultSnapshot[
                                                                 'pay_date'] !=
                                                             null
@@ -698,7 +696,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                                                 'state'] ==
                                                             'done' ||
                                                         medicallUser.type ==
-                                                            'patient' ||
+                                                            USER_TYPE.PATIENT ||
                                                         consultSnapshot
                                                             .containsKey(
                                                                 'pay_date')
@@ -748,7 +746,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                                 consultSnapshot['state'] ==
                                                             'done' ||
                                                         medicallUser.type ==
-                                                            'patient' ||
+                                                            USER_TYPE.PATIENT ||
                                                         consultSnapshot[
                                                                 'pay_date'] !=
                                                             null
@@ -758,18 +756,17 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                               labelText: 'Dose',
                                               labelStyle: TextStyle(
                                                   color: Colors.black45),
-                                              fillColor:
-                                                  consultSnapshot['state'] ==
-                                                              'done' ||
-                                                          medicallUser.type ==
-                                                              'patient' ||
-                                                          consultSnapshot
-                                                              .containsKey(
-                                                                  'pay_date')
-                                                      ? Colors.grey
-                                                          .withAlpha(30)
-                                                      : Color.fromRGBO(
-                                                          35, 179, 232, 0.1),
+                                              fillColor: consultSnapshot[
+                                                              'state'] ==
+                                                          'done' ||
+                                                      medicallUser.type ==
+                                                          USER_TYPE.PATIENT ||
+                                                      consultSnapshot
+                                                          .containsKey(
+                                                              'pay_date')
+                                                  ? Colors.grey.withAlpha(30)
+                                                  : Color.fromRGBO(
+                                                      35, 179, 232, 0.1),
                                               filled: true,
                                               border: OutlineInputBorder(
                                                 borderSide: BorderSide(
@@ -806,7 +803,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                                 consultSnapshot['state'] ==
                                                             'done' ||
                                                         medicallUser.type ==
-                                                            'patient' ||
+                                                            USER_TYPE.PATIENT ||
                                                         consultSnapshot[
                                                                 'pay_date'] !=
                                                             null
@@ -816,18 +813,17 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                               labelText: 'Frequency',
                                               labelStyle: TextStyle(
                                                   color: Colors.black45),
-                                              fillColor:
-                                                  consultSnapshot['state'] ==
-                                                              'done' ||
-                                                          medicallUser.type ==
-                                                              'patient' ||
-                                                          consultSnapshot
-                                                              .containsKey(
-                                                                  'pay_date')
-                                                      ? Colors.grey
-                                                          .withAlpha(30)
-                                                      : Color.fromRGBO(
-                                                          35, 179, 232, 0.1),
+                                              fillColor: consultSnapshot[
+                                                              'state'] ==
+                                                          'done' ||
+                                                      medicallUser.type ==
+                                                          USER_TYPE.PATIENT ||
+                                                      consultSnapshot
+                                                          .containsKey(
+                                                              'pay_date')
+                                                  ? Colors.grey.withAlpha(30)
+                                                  : Color.fromRGBO(
+                                                      35, 179, 232, 0.1),
                                               filled: true,
                                               border: OutlineInputBorder(
                                                 borderSide: BorderSide(
@@ -869,7 +865,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                                 consultSnapshot['state'] ==
                                                             'done' ||
                                                         medicallUser.type ==
-                                                            'patient' ||
+                                                            USER_TYPE.PATIENT ||
                                                         consultSnapshot[
                                                                 'pay_date'] !=
                                                             null
@@ -879,18 +875,17 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                               labelText: 'Instructions',
                                               labelStyle: TextStyle(
                                                   color: Colors.black45),
-                                              fillColor:
-                                                  consultSnapshot['state'] ==
-                                                              'done' ||
-                                                          medicallUser.type ==
-                                                              'patient' ||
-                                                          consultSnapshot
-                                                              .containsKey(
-                                                                  'pay_date')
-                                                      ? Colors.grey
-                                                          .withAlpha(30)
-                                                      : Color.fromRGBO(
-                                                          35, 179, 232, 0.1),
+                                              fillColor: consultSnapshot[
+                                                              'state'] ==
+                                                          'done' ||
+                                                      medicallUser.type ==
+                                                          USER_TYPE.PATIENT ||
+                                                      consultSnapshot
+                                                          .containsKey(
+                                                              'pay_date')
+                                                  ? Colors.grey.withAlpha(30)
+                                                  : Color.fromRGBO(
+                                                      35, 179, 232, 0.1),
                                               filled: true,
                                               border: OutlineInputBorder(
                                                 borderSide: BorderSide(
@@ -909,7 +904,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
                                     SizedBox(
                                       height: 10,
                                     ),
-                                    medicallUser.type == 'provider' &&
+                                    medicallUser.type == USER_TYPE.PROVIDER &&
                                             consultSnapshot['pay_date'] ==
                                                 null &&
                                             consultSnapshot['state'] != 'done'

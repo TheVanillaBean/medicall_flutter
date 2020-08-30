@@ -1,3 +1,4 @@
+import 'package:Medicall/models/user_model_base.dart';
 import 'package:Medicall/presentation/medicall_icons_icons.dart' as CustomIcons;
 import 'package:Medicall/screens/History/history_state.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +15,7 @@ class HistoryTiles extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
         child: Container(
-          height: ScreenUtil.screenHeightDp - 80,
+            height: ScreenUtil.screenHeightDp - 80,
             child: ListView.builder(
                 itemCount: model.historySnapshot.data.documents.length,
                 itemBuilder: (context, index) {
@@ -69,7 +70,7 @@ class HistoryTiles extends StatelessWidget {
                             dense: true,
                             isThreeLine: true,
                             title: Text(
-                              model.medicallUser.type == 'patient'
+                              model.medicallUser.type == USER_TYPE.PATIENT
                                   ? '${model.historySnapshot.data.documents[index].data['provider']} ${model.historySnapshot.data.documents[index].data['providerTitles']}'
                                   : '${model.historySnapshot.data.documents[index].data['patient'].split(" ")[0][0].toUpperCase()}${model.historySnapshot.data.documents[index].data['patient'].split(" ")[0].substring(1)} ${model.historySnapshot.data.documents[index].data['patient'].split(" ")[1][0].toUpperCase()}${model.historySnapshot.data.documents[index].data['patient'].split(" ")[1].substring(1)}',
                               style: TextStyle(
@@ -163,7 +164,8 @@ class HistoryTiles extends StatelessWidget {
                               ),
                               onPressed: () {},
                             ),
-                            leading: model.medicallUser.type == 'patient'
+                            leading: model.medicallUser.type ==
+                                    USER_TYPE.PATIENT
                                 ? CircleAvatar(
                                     radius: 20,
                                     backgroundColor: Colors.grey.withAlpha(100),

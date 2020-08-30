@@ -96,46 +96,4 @@ class _OptionListItemState extends State<OptionListItem> {
   Widget _buildFreeResponseOption(BuildContext context) {
     return Expanded(child: Column());
   }
-
-  TextField _buildFRTextField() {
-    return TextField(
-      controller: _inputController,
-      focusNode: _inputFocusNode,
-      autocorrect: false,
-      keyboardType: TextInputType.multiline,
-      style: TextStyle(color: Color.fromRGBO(80, 80, 80, 1)),
-      decoration: InputDecoration(
-        labelStyle: TextStyle(
-          color: Theme.of(context).colorScheme.onSurface,
-        ),
-        hintStyle: TextStyle(
-          color: Color.fromRGBO(100, 100, 100, 1),
-        ),
-        filled: true,
-        fillColor: Colors.white.withAlpha(100),
-        labelText: 'Enter response',
-        errorText: model.inputErrorText,
-        enabled: model.isLoading == false,
-      ),
-    );
-  }
 }
-//model.selected = opt;
-//          model.nextPage();
-
-//child: Row(
-//children: [
-//Icon(
-//model.selected == opt ? Icons.create : Icons.cached,
-//size: 30),
-//Expanded(
-//child: Container(
-//margin: EdgeInsets.only(left: 16),
-//child: Text(
-//opt.value,
-//style: Theme.of(context).textTheme.bodyText1,
-//),
-//),
-//)
-//],
-//),

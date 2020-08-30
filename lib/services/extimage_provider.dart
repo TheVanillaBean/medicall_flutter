@@ -76,6 +76,7 @@ abstract class ExtImageProvider {
 }
 
 class ExtendedImageProvider implements ExtImageProvider {
+  final picker = ImagePicker();
   @override
   List<Uint8List> listaU8L = [];
   @override
@@ -233,12 +234,13 @@ class ExtendedImageProvider implements ExtImageProvider {
   }
 
   setChatImage() async {
-    chatMedia = await ImagePicker.pickImage(
+    final pickedFile = await picker.getImage(
       source: ImageSource.gallery,
       imageQuality: 80,
       maxHeight: 400,
       maxWidth: 400,
     );
+    chatMedia = File(pickedFile.path);
   }
 
   Future<List<Asset>> pickImages(

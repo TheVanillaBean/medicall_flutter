@@ -75,37 +75,37 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            widget.model.medicallUser.type == 'patient'
+                            widget.model.medicallUser.type == USER_TYPE.PATIENT
                                 ? widget.model.db.consultSnapshot.data['provider']
                                         .split(' ')[0][0]
                                         .toUpperCase() +
-                                    widget.model.db.consultSnapshot
-                                        .data['provider']
+                                    widget.model.db.consultSnapshot.data['provider']
                                         .split(' ')[0]
                                         .substring(1) +
                                     ' ' +
-                                    widget.model.db.consultSnapshot
-                                        .data['provider']
+                                    widget.model.db.consultSnapshot.data['provider']
                                         .split(' ')[1][0]
                                         .toUpperCase() +
-                                    widget.model.db.consultSnapshot
-                                        .data['provider']
+                                    widget.model.db.consultSnapshot.data['provider']
                                         .split(' ')[1]
                                         .substring(1) +
                                     ' ' +
                                     widget.model.db.consultSnapshot
                                         .data['providerTitles']
-                                : widget.model.db.consultSnapshot.data['patient']
+                                : widget.model.db.consultSnapshot.data[USER_TYPE.PATIENT]
                                         .split(' ')[0][0]
                                         .toUpperCase() +
-                                    widget.model.db.consultSnapshot.data['patient']
+                                    widget.model.db.consultSnapshot
+                                        .data[USER_TYPE.PATIENT]
                                         .split(' ')[0]
                                         .substring(1) +
                                     ' ' +
-                                    widget.model.db.consultSnapshot.data['patient']
+                                    widget.model.db.consultSnapshot
+                                        .data[USER_TYPE.PATIENT]
                                         .split(' ')[1][0]
                                         .toUpperCase() +
-                                    widget.model.db.consultSnapshot.data['patient']
+                                    widget.model.db.consultSnapshot
+                                        .data[USER_TYPE.PATIENT]
                                         .split(' ')[1]
                                         .substring(1),
                             style: TextStyle(
@@ -142,7 +142,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
           //   indicatorColor: Theme.of(context).primaryColor,
           //   indicatorWeight: 3,
           //   labelStyle: TextStyle(fontSize: 12),
-          //   tabs: widget.model.medicallUser.type == 'patient'
+          //   tabs: widget.model.medicallUser.type == USER_TYPE.PATIENT
           //       ? <Tab>[
           //           Tab(
           //             // set icon to the tab
@@ -186,7 +186,8 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen>
             },
           ),
         ),
-        bottomNavigationBar: widget.model.medicallUser.type == 'provider'
+        bottomNavigationBar: widget.model.medicallUser.type ==
+                USER_TYPE.PROVIDER
             ? Row(
                 mainAxisSize: MainAxisSize.max,
                 children: <Widget>[

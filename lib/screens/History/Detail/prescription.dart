@@ -5,6 +5,7 @@ import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:provider/provider.dart';
 
@@ -52,7 +53,7 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
                     child: Column(
                       children: <Widget>[
                         db.patientDetail != null &&
-                                medicallUser.type == 'provider'
+                                medicallUser.type == USER_TYPE.PROVIDER
                             ? Row(
                                 children: <Widget>[
                                   Column(
@@ -109,7 +110,7 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
                                 widget.snapshot.data['medication_name']
                                         .length ==
                                     0 &&
-                                medicallUser.type == 'patient'
+                                medicallUser.type == USER_TYPE.PATIENT
                             ? Container(
                                 margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
                                 padding: EdgeInsets.all(10),
@@ -148,7 +149,8 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
                                   hintText: 'Enter patient\'s medication name',
                                   fillColor:
                                       widget.snapshot.data['state'] == 'done' ||
-                                              medicallUser.type == 'patient' ||
+                                              medicallUser.type ==
+                                                  USER_TYPE.PATIENT ||
                                               widget.snapshot.data
                                                   .containsKey('pay_date')
                                           ? Colors.grey.withAlpha(30)
@@ -159,6 +161,8 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
                                         color: Colors.grey, width: 5.0),
                                   ),
                                 ),
+                                textCapitalization:
+                                    TextCapitalization.sentences,
                                 validators: [
                                   FormBuilderValidators.required(
                                       errorText: "Required field."),
@@ -192,7 +196,8 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
                                   hintText: '',
                                   fillColor:
                                       widget.snapshot.data['state'] == 'done' ||
-                                              medicallUser.type == 'patient' ||
+                                              medicallUser.type ==
+                                                  USER_TYPE.PATIENT ||
                                               widget.snapshot.data
                                                   .containsKey('pay_date')
                                           ? Colors.grey.withAlpha(30)
@@ -224,8 +229,9 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
                                         : 0,
                                 attribute: "refills",
                                 readOnly: true,
-                                iconSize:
-                                    medicallUser.type == 'patient' ? 0 : 24,
+                                iconSize: medicallUser.type == USER_TYPE.PATIENT
+                                    ? 0
+                                    : 24,
                                 decoration: InputDecoration(
                                     alignLabelWithHint: true,
                                     contentPadding:
@@ -235,7 +241,8 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
                                     labelText: 'Refills',
                                     fillColor: widget.snapshot.data['state'] ==
                                                 'done' ||
-                                            medicallUser.type == 'patient' ||
+                                            medicallUser.type ==
+                                                USER_TYPE.PATIENT ||
                                             widget.snapshot.data
                                                 .containsKey('pay_date')
                                         ? Colors.grey.withAlpha(30)
@@ -272,8 +279,9 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
                                     ? widget.snapshot.data['units']
                                     : 'Capsule',
                                 attribute: "units",
-                                iconSize:
-                                    medicallUser.type == 'patient' ? 0 : 24,
+                                iconSize: medicallUser.type == USER_TYPE.PATIENT
+                                    ? 0
+                                    : 24,
                                 readOnly: true,
                                 decoration: InputDecoration(
                                     contentPadding:
@@ -283,7 +291,8 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
                                     labelText: 'Units',
                                     fillColor: widget.snapshot.data['state'] ==
                                                 'done' ||
-                                            medicallUser.type == 'patient' ||
+                                            medicallUser.type ==
+                                                USER_TYPE.PATIENT ||
                                             widget.snapshot.data
                                                 .containsKey('pay_date')
                                         ? Colors.grey.withAlpha(30)
@@ -325,7 +334,8 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
                                   labelStyle: TextStyle(color: Colors.black45),
                                   fillColor:
                                       widget.snapshot.data['state'] == 'done' ||
-                                              medicallUser.type == 'patient' ||
+                                              medicallUser.type ==
+                                                  USER_TYPE.PATIENT ||
                                               widget.snapshot.data
                                                   .containsKey('pay_date')
                                           ? Colors.grey.withAlpha(30)
@@ -361,7 +371,8 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
                                   labelStyle: TextStyle(color: Colors.black45),
                                   fillColor:
                                       widget.snapshot.data['state'] == 'done' ||
-                                              medicallUser.type == 'patient' ||
+                                              medicallUser.type ==
+                                                  USER_TYPE.PATIENT ||
                                               widget.snapshot.data
                                                   .containsKey('pay_date')
                                           ? Colors.grey.withAlpha(30)
@@ -401,7 +412,8 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
                                   labelStyle: TextStyle(color: Colors.black45),
                                   fillColor:
                                       widget.snapshot.data['state'] == 'done' ||
-                                              medicallUser.type == 'patient' ||
+                                              medicallUser.type ==
+                                                  USER_TYPE.PATIENT ||
                                               widget.snapshot.data
                                                   .containsKey('pay_date')
                                           ? Colors.grey.withAlpha(30)

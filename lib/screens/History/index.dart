@@ -49,7 +49,7 @@ class HistoryScreen extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       drawer: DrawerMenu(),
-      bottomNavigationBar: model.medicallUser.type == 'patient'
+      bottomNavigationBar: model.medicallUser.type == USER_TYPE.PATIENT
           ? StreamBuilder(
               stream: model.getUserHistorySnapshot(
                   model.medicallUser, this.query, model.sortBy),

@@ -1,7 +1,6 @@
 import 'package:Medicall/common_widgets/reusable_card.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/services/extimage_provider.dart';
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

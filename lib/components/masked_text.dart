@@ -55,7 +55,7 @@ class MaskedTextFieldState extends State<MaskedTextField> {
       keyboardType: widget.keyboardType,
       decoration: widget.inputDecoration,
       inputFormatters: [
-        WhitelistingTextInputFormatter(
+        FilteringTextInputFormatter.allow(
             RegExp(r"^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$"))
       ],
       textAlign: widget.textAlign ?? TextAlign.start,
