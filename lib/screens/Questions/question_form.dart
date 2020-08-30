@@ -156,6 +156,7 @@ class _QuestionFormState extends State<QuestionForm> {
         Expanded(
           flex: 9,
           child: RadioButtonGroup(
+            labelStyle: Theme.of(context).textTheme.bodyText1,
             activeColor: Theme.of(context).colorScheme.primary,
             labels: model.optionsList,
             padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
@@ -195,10 +196,17 @@ class _QuestionFormState extends State<QuestionForm> {
             hintStyle: TextStyle(
               color: Color.fromRGBO(100, 100, 100, 1),
             ),
-            filled: true,
+            filled: false,
             fillColor: Colors.grey.withAlpha(50),
             labelText: "Enter response",
             alignLabelWithHint: true,
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                  color: Theme.of(context).colorScheme.primary, width: 1.0),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey, width: 1.0),
+            ),
           ),
         ),
       ),

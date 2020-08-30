@@ -38,8 +38,7 @@ class RadioButtonGroup extends StatefulWidget {
   final GroupedButtonsOrientation orientation;
 
   /// Called when needed to build a RadioButtonGroup element.
-  final Widget Function(
-          Radio radioButton, GestureDetector label, String text, int index)
+  final Widget Function(Radio radioButton, Text label, String text, int index)
       itemBuilder;
 
   //RADIO BUTTON FIELDS
@@ -111,23 +110,12 @@ class _RadioButtonGroupState extends State<RadioButtonGroup> {
                     widget.onSelected(widget.labels.elementAt(i));
                 }),
       );
-
-      GestureDetector t = GestureDetector(
-        onTap: () => setState(() {
-          _selected = widget.labels.elementAt(i);
-          if (widget.onChange != null)
-            widget.onChange(widget.labels.elementAt(i), i);
-          if (widget.onSelected != null)
-            widget.onSelected(widget.labels.elementAt(i));
-        }),
-        child: Text(widget.labels.elementAt(i),
-            maxLines: 3,
-            style: (widget.disabled != null &&
-                    widget.disabled.contains(widget.labels.elementAt(i)))
-                ? widget.labelStyle
-                    .apply(color: Theme.of(context).disabledColor)
-                : widget.labelStyle),
-      );
+      Text t = Text(widget.labels.elementAt(i),
+          maxLines: 3,
+          style: (widget.disabled != null &&
+                  widget.disabled.contains(widget.labels.elementAt(i)))
+              ? widget.labelStyle.apply(color: Theme.of(context).disabledColor)
+              : widget.labelStyle);
 
       //use user defined method to build
       if (widget.itemBuilder != null)
@@ -137,12 +125,20 @@ class _RadioButtonGroupState extends State<RadioButtonGroup> {
 
         //vertical orientation means Column with Row inside
         if (widget.orientation == GroupedButtonsOrientation.VERTICAL) {
-          content.add(Row(children: <Widget>[
-            SizedBox(width: 12.0),
-            rb,
-            SizedBox(width: 12.0),
-            Expanded(child: t),
-          ]));
+          content.add(GestureDetector(
+              onTap: () => setState(() {
+                    _selected = widget.labels.elementAt(i);
+                    if (widget.onChange != null)
+                      widget.onChange(widget.labels.elementAt(i), i);
+                    if (widget.onSelected != null)
+                      widget.onSelected(widget.labels.elementAt(i));
+                  }),
+              child: Row(children: <Widget>[
+                SizedBox(width: 12.0),
+                rb,
+                SizedBox(width: 12.0),
+                Expanded(child: t),
+              ])));
         } else {
           //horizontal orientation means Row with Column inside
 

@@ -52,6 +52,7 @@ class _FollowUpStepState extends State<FollowUpStep> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 36),
                       child: RadioButtonGroup(
+                        labelStyle: Theme.of(context).textTheme.bodyText1,
                         labels: FollowUpSteps.followUpSteps,
                         picked: model.followUpStepState.followUp,
                         onSelected: (String selected) {

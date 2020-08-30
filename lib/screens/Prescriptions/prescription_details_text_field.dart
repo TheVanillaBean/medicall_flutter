@@ -32,6 +32,7 @@ class PrescriptionDetailsTextField extends StatelessWidget {
         right: 0,
       ),
       child: TextFormField(
+        textCapitalization: TextCapitalization.sentences,
         initialValue: this.initialValue,
         focusNode: focusNode,
         maxLines: maxLines,

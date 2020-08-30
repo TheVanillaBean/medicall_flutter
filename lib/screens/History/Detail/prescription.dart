@@ -133,6 +133,7 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
                               width: MediaQuery.of(context).size.width - 20,
                               padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
                               child: FormBuilderTextField(
+                                textCapitalization: TextCapitalization.words,
                                 initialValue: widget.snapshot.data
                                             .containsKey('medication_name') &&
                                         widget.snapshot.data['medication_name']

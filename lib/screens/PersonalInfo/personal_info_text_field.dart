@@ -33,6 +33,7 @@ class PersonalInfoTextField extends StatelessWidget {
         right: 30,
       ),
       child: TextFormField(
+        textCapitalization: TextCapitalization.words,
         autocorrect: false,
         obscureText: obscureText ?? false,
         controller: controller,
