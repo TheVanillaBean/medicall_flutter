@@ -151,7 +151,7 @@ class ReviewVisitInformation extends StatelessWidget {
                               color: Colors.grey,
                             ),
                             title: AutoSizeText(
-                              "Medical History",
+                              "HISTORY",
                               textAlign: TextAlign.center,
                               style: Theme.of(context).textTheme.headline6,
                               minFontSize: 10,
