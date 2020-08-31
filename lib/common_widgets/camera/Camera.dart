@@ -384,8 +384,8 @@ class _CameraScreenState extends State<CameraScreen> {
                         12) //                 <--- border radius here
                     ),
                 color: Theme.of(context).canvasColor.withAlpha(80),
-                border: Border.all(
-                    color: Theme.of(context).colorScheme.primary, width: 2)),
+                border:
+                    Border.all(color: Theme.of(context).canvasColor, width: 2)),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(11),
               child: Image.file(
@@ -411,8 +411,8 @@ class _CameraScreenState extends State<CameraScreen> {
                         12) //                 <--- border radius here
                     ),
                 color: Theme.of(context).canvasColor.withAlpha(80),
-                border: Border.all(
-                    color: Theme.of(context).colorScheme.primary, width: 2)),
+                border:
+                    Border.all(color: Theme.of(context).canvasColor, width: 2)),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(11),
               child: Text((i + 1 + model.imagePathList.length).toString()),
@@ -535,8 +535,9 @@ class _CameraScreenState extends State<CameraScreen> {
                           : 1.0,
                       child: VideoPlayer(model.videoController)),
                 ),
-                decoration:
-                    BoxDecoration(border: Border.all(color: Colors.pink)),
+                decoration: BoxDecoration(
+                    border: Border.all(
+                        color: Theme.of(context).colorScheme.primary)),
               );
   }
 
