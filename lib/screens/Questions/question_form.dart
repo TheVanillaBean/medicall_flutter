@@ -12,6 +12,7 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
@@ -96,7 +97,9 @@ class _QuestionFormState extends State<QuestionForm> {
     for (Asset asset in resultList) {
       ByteData byteData =
           await FirebaseStorageService.getAccurateByteData(asset);
-      resultMap.add({asset.name: byteData});
+      String assetPath =
+          await FlutterAbsolutePath.getAbsolutePath(asset.identifier);
+      resultMap.add({assetPath: byteData});
     }
     setState(() {
       isLoading = false;
@@ -258,7 +261,17 @@ class _QuestionFormState extends State<QuestionForm> {
       children: <Widget>[
         Expanded(
           child: GestureDetector(
-            onTap: _loadProfileImage,
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CameraScreen.create(context, model, {
+                      'fullscreen': true,
+                      'video': false,
+                      'max_images': question.maxImages
+                    }),
+                  ));
+            },
             child: ClipRRect(
               child: Container(
                 child: PhotoViewGallery.builder(
