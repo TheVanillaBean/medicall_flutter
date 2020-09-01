@@ -349,7 +349,6 @@ class _PrescriptionPaymentState extends State<PrescriptionPayment> {
       _stripeProvider.chargePaymentForPrescription(
         price: int.parse(widget.scriptData['price']),
         paymentMethodId: sources.first.id,
-        consultId: "",
       );
       await db.setPrescriptionPayment(
         'prescription paid',

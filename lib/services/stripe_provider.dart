@@ -13,7 +13,6 @@ abstract class StripeProviderBase {
   Future<PaymentIntentResult> chargePaymentForPrescription({
     @required int price,
     @required String paymentMethodId,
-    @required String consultId,
   });
 }
 
@@ -56,15 +55,17 @@ class StripeProvider implements StripeProviderBase {
   Future<PaymentIntentResult> chargePaymentForConsult({
     @required int price,
     @required String paymentMethodId,
+    @required String consultId,
   }) async {
     final HttpsCallable callable = CloudFunctions.instance.getHttpsCallable(
-        functionName: 'createPaymentIntentAndChargeForConsult')
+        functionName: 'createPaymentIntentAndChargeForConsultV2')
       ..timeout = const Duration(seconds: 30);
 
     final HttpsCallableResult result = await callable.call(
       <String, dynamic>{
         'amount': price * 100,
         'payment_method': paymentMethodId,
+        'consult_id': consultId,
       },
     );
 
@@ -78,7 +79,6 @@ class StripeProvider implements StripeProviderBase {
   Future<PaymentIntentResult> chargePaymentForPrescription({
     @required int price,
     @required String paymentMethodId,
-    @required String consultId,
   }) async {
     final HttpsCallable callable = CloudFunctions.instance.getHttpsCallable(
         functionName: 'createPaymentIntentAndChargeForPrescription')
@@ -88,7 +88,6 @@ class StripeProvider implements StripeProviderBase {
       <String, dynamic>{
         'amount': price * 100,
         'payment_method': paymentMethodId,
-        'consult_id': consultId,
       },
     );
 

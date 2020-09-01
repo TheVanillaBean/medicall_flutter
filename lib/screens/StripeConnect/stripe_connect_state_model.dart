@@ -23,7 +23,7 @@ class StripeConnectStateModel with ChangeNotifier {
     String idToken = await auth.currentUserIdToken();
 
     final response = await http.get(
-      'https://us-central1-telmed-216305.cloudfunctions.net/api/stripe/authorize',
+      'https://us-central1-medicall-dev-58c31.cloudfunctions.net/api/stripe/authorize',
       headers: {HttpHeaders.authorizationHeader: "Bearer $idToken"},
     );
 

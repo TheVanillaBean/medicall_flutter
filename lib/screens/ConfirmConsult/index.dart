@@ -399,7 +399,6 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
     _stripeProvider.chargePaymentForPrescription(
       price: int.tryParse(price),
       paymentMethodId: paymentMethodId,
-      consultId: "",
     );
     await _db.addConsult(
       context,

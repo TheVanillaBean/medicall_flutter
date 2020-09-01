@@ -245,7 +245,6 @@ class PrescriptionCheckoutViewModel
         await this.stripeProvider.chargePaymentForPrescription(
               price: this.totalCost,
               paymentMethodId: this.selectedPaymentMethod.id,
-              consultId: consultId,
             );
 
     updateWith(isLoading: false);

@@ -187,8 +187,9 @@ class FirestoreDatabase implements Database {
             .orderBy("date", descending: true)
             .where(
               "date",
-              isGreaterThanOrEqualTo:
-                  DateTime.now().subtract(Duration(days: 7)),
+              isGreaterThanOrEqualTo: DateTime.now().subtract(
+                Duration(days: 7),
+              ),
             )
             .limit(3),
         sort: (lhs, rhs) => rhs.date.compareTo(lhs.date),
