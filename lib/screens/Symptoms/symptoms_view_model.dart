@@ -22,7 +22,8 @@ class SymptomsViewModel with ChangeNotifier {
             (element) =>
                 element.category == "hairloss" ||
                 element.category == "spots" ||
-                element.category == "rosacea",
+                element.category == "rosacea" ||
+                element.category == "acne",
           )
           .toList();
       this.cosmeticSymptoms = symptomsSnapshot

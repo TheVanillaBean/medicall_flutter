@@ -1,4 +1,5 @@
 class FirestorePath {
+  static String version() => 'version-management /version_info';
   static String users() => 'users/';
   static String user(String uid) => 'users/$uid/';
   static String medicalHistory(String uid) =>

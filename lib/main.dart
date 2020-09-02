@@ -4,6 +4,7 @@ import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard.dart';
 import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/LandingPage/auth_widget_builder.dart';
 import 'package:Medicall/screens/LandingPage/index.dart';
+import 'package:Medicall/screens/LandingPage/version_checker.dart';
 import 'package:Medicall/screens/Welcome/start_visit.dart';
 import 'package:Medicall/screens/Welcome/welcome.dart';
 import 'package:Medicall/services/auth.dart';
@@ -17,7 +18,6 @@ import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/theme.dart';
 import 'package:Medicall/util/apple_sign_in_available.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -94,16 +94,18 @@ class MedicallApp extends StatelessWidget {
             title: 'Medicall',
             debugShowCheckedModeBanner: false,
             theme: myTheme,
-            home: LandingPage(
-              userSnapshot: userSnapshot,
-              nonSignedInBuilder: (context) => WelcomeScreen(),
-              signedInBuilder: (context) =>
-                  userSnapshot.data.type == USER_TYPE.PROVIDER
-                      ? ProviderDashboardScreen.create(context)
-                      : PatientDashboardScreen.create(context),
-              providerPhotoBuilder: (context) => ProviderAccountScreen(),
-              startVisitBuilder: (context) => StartVisitScreen(
-                consult: tempUserProvider.consult,
+            home: VersionChecker(
+              landingPageBuilder: (context) => LandingPage(
+                userSnapshot: userSnapshot,
+                nonSignedInBuilder: (context) => WelcomeScreen(),
+                signedInBuilder: (context) =>
+                    userSnapshot.data.type == USER_TYPE.PROVIDER
+                        ? ProviderDashboardScreen.create(context)
+                        : PatientDashboardScreen.create(context),
+                providerPhotoBuilder: (context) => ProviderAccountScreen(),
+                startVisitBuilder: (context) => StartVisitScreen(
+                  consult: tempUserProvider.consult,
+                ),
               ),
             ),
             onGenerateRoute: Router.onGenerateRoute,
