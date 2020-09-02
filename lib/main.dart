@@ -19,6 +19,7 @@ import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/theme.dart';
 import 'package:Medicall/util/apple_sign_in_available.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import 'models/user_model_base.dart';
@@ -50,6 +51,9 @@ class MedicallApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
     return MultiProvider(
       providers: [
         Provider<AppleSignInAvailable>.value(

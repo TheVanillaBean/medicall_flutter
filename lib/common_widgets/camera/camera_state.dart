@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:Medicall/services/extimage_provider.dart';
+import 'package:Medicall/util/app_util.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
@@ -11,6 +12,7 @@ class CameraState with ChangeNotifier {
   Map options;
   CameraController controller;
   String imagePath;
+  List<String> imagePathList = [];
   String videoPath;
   dynamic imageData;
   VideoPlayerController videoController;
@@ -22,11 +24,13 @@ class CameraState with ChangeNotifier {
   void updateWith({
     CameraController controller,
     String imagePath,
+    List<String> imagePathList,
     String videoPath,
     VideoPlayerController videoController,
   }) {
     this.controller = controller ?? this.controller;
     this.imagePath = imagePath ?? this.imagePath;
+    this.imagePathList = imagePathList ?? this.imagePathList;
     this.videoPath = videoPath ?? this.videoPath;
     this.videoController = videoController ?? this.videoController;
     notifyListeners();
@@ -52,17 +56,11 @@ class CameraState with ChangeNotifier {
 
   String timestamp() => DateTime.now().millisecondsSinceEpoch.toString();
 
-  void showInSnackBar(String message) {
-    scaffoldKey.currentState.showSnackBar(SnackBar(
-      content: Text(
-        message,
-        style: TextStyle(color: Colors.white),
-      ),
-      backgroundColor: Colors.black,
-    ));
+  void showInSnackBar(String message, context) {
+    AppUtil().showFlushBar(message, context);
   }
 
-  void onNewCameraSelected(CameraDescription cameraDescription) async {
+  void onNewCameraSelected(CameraDescription cameraDescription, context) async {
     if (controller != null) {
       await controller.dispose();
     }
@@ -83,50 +81,52 @@ class CameraState with ChangeNotifier {
     try {
       await controller.initialize();
     } on CameraException catch (e) {
-      _showCameraException(e);
+      _showCameraException(e, context);
     }
   }
 
-  void onTakePictureButtonPressed() {
-    takePicture().then((String filePath) {
+  void onTakePictureButtonPressed(context) {
+    takePicture(context).then((String filePath) {
       videoController?.dispose();
       updateWith(imagePath: filePath, videoController: null);
-      if (filePath != null) showInSnackBar('Picture saved to $filePath');
+      if (filePath != null)
+        showInSnackBar('Picture saved to $filePath', context);
     });
   }
 
-  void onVideoRecordButtonPressed() {
-    startVideoRecording().then((String filePath) {
-      if (filePath != null) showInSnackBar('Saving video to $filePath');
+  void onVideoRecordButtonPressed(context) {
+    startVideoRecording(context).then((String filePath) {
+      if (filePath != null)
+        showInSnackBar('Saving video to $filePath', context);
     });
   }
 
-  void onStopButtonPressed() {
-    stopVideoRecording().then((_) {
-      showInSnackBar('Video recorded to: $videoPath');
+  void onStopButtonPressed(context) {
+    stopVideoRecording(context).then((_) {
+      showInSnackBar('Video recorded to: $videoPath', context);
     });
   }
 
-  void onPauseButtonPressed() {
-    pauseVideoRecording().then((_) {
-      showInSnackBar('Video recording paused');
+  void onPauseButtonPressed(context) {
+    pauseVideoRecording(context).then((_) {
+      showInSnackBar('Video recording paused', context);
     });
   }
 
-  void onResumeButtonPressed() {
-    resumeVideoRecording().then((_) {
-      showInSnackBar('Video recording resumed');
+  void onResumeButtonPressed(context) {
+    resumeVideoRecording(context).then((_) {
+      showInSnackBar('Video recording resumed', context);
     });
   }
 
-  Future<String> startVideoRecording() async {
+  Future<String> startVideoRecording(context) async {
     if (!controller.value.isInitialized) {
-      showInSnackBar('Error: select a camera first.');
+      showInSnackBar('Error: select a camera first.', context);
       return null;
     }
 
     final Directory extDir = await getApplicationDocumentsDirectory();
-    final String dirPath = '${extDir.path}/Movies/flutter_test';
+    final String dirPath = '${extDir.path}/Movies/';
     await Directory(dirPath).create(recursive: true);
     final String filePath = '$dirPath/${timestamp()}.mp4';
 
@@ -139,13 +139,13 @@ class CameraState with ChangeNotifier {
       updateWith(videoPath: filePath);
       await controller.startVideoRecording(filePath);
     } on CameraException catch (e) {
-      _showCameraException(e);
+      _showCameraException(e, context);
       return null;
     }
     return filePath;
   }
 
-  Future<void> stopVideoRecording() async {
+  Future<void> stopVideoRecording(context) async {
     if (!controller.value.isRecordingVideo) {
       return null;
     }
@@ -153,14 +153,14 @@ class CameraState with ChangeNotifier {
     try {
       await controller.stopVideoRecording();
     } on CameraException catch (e) {
-      _showCameraException(e);
+      _showCameraException(e, context);
       return null;
     }
 
     await _startVideoPlayer();
   }
 
-  Future<void> pauseVideoRecording() async {
+  Future<void> pauseVideoRecording(context) async {
     if (!controller.value.isRecordingVideo) {
       return null;
     }
@@ -168,12 +168,12 @@ class CameraState with ChangeNotifier {
     try {
       await controller.pauseVideoRecording();
     } on CameraException catch (e) {
-      _showCameraException(e);
+      _showCameraException(e, context);
       rethrow;
     }
   }
 
-  Future<void> resumeVideoRecording() async {
+  Future<void> resumeVideoRecording(context) async {
     if (!controller.value.isRecordingVideo) {
       return null;
     }
@@ -181,7 +181,7 @@ class CameraState with ChangeNotifier {
     try {
       await controller.resumeVideoRecording();
     } on CameraException catch (e) {
-      _showCameraException(e);
+      _showCameraException(e, context);
       rethrow;
     }
   }
@@ -203,13 +203,13 @@ class CameraState with ChangeNotifier {
     await vcontroller.play();
   }
 
-  Future<String> takePicture() async {
+  Future<String> takePicture(context) async {
     if (!controller.value.isInitialized) {
-      showInSnackBar('Error: select a camera first.');
+      showInSnackBar('Error: select a camera first.', context);
       return null;
     }
     final Directory extDir = await getApplicationDocumentsDirectory();
-    final String dirPath = '${extDir.path}/Pictures/flutter_test';
+    final String dirPath = '${extDir.path}/Pictures';
     await Directory(dirPath).create(recursive: true);
     final String filePath = '$dirPath/${timestamp()}.jpg';
 
@@ -221,14 +221,14 @@ class CameraState with ChangeNotifier {
     try {
       await controller.takePicture(filePath);
     } on CameraException catch (e) {
-      _showCameraException(e);
+      _showCameraException(e, context);
       return null;
     }
     return filePath;
   }
 
-  void _showCameraException(CameraException e) {
+  void _showCameraException(CameraException e, context) {
     logError(e.code, e.description);
-    showInSnackBar('Error: ${e.code}\n${e.description}');
+    showInSnackBar('Error: ${e.code}\n${e.description}', context);
   }
 }

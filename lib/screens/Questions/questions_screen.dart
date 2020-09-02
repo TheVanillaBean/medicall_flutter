@@ -192,7 +192,7 @@ class QuestionsPageView extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Expanded(
-          flex: 8,
+          flex: 9,
           child: PageView.builder(
             physics: NeverScrollableScrollPhysics(),
             scrollDirection: Axis.horizontal,
@@ -224,7 +224,7 @@ class QuestionsPageView extends StatelessWidget {
         if (!model.submitted &&
             model.pageIndex != model.consult.questions.length)
           Expanded(
-            flex: 1,
+            flex: 2,
             child: NavigationButtons(),
           ),
       ],
@@ -253,7 +253,11 @@ class NavigationButtons extends StatelessWidget {
           child: Align(
             alignment: FractionalOffset.center,
             child: IconButton(
-                icon: Icon(Icons.arrow_back_ios),
+                iconSize: 80,
+                icon: Icon(
+                  Icons.arrow_back_ios,
+                  size: 40,
+                ),
                 disabledColor: Colors.black12,
                 onPressed: model.canAccessPrevious
                     ? () => model.previousPage()
@@ -261,7 +265,7 @@ class NavigationButtons extends StatelessWidget {
           ),
         ),
         Expanded(
-            flex: 5,
+            flex: 4,
             child: Align(
                 alignment: Alignment.center, child: AnimatedProgressbar())),
         Expanded(
@@ -269,7 +273,11 @@ class NavigationButtons extends StatelessWidget {
           child: Align(
             alignment: FractionalOffset.center,
             child: IconButton(
-                icon: Icon(Icons.arrow_forward_ios),
+                iconSize: 80,
+                icon: Icon(
+                  Icons.arrow_forward_ios,
+                  size: 40,
+                ),
                 disabledColor: Colors.black12,
                 onPressed: model.canAccessNext ? () => model.nextPage() : null),
           ),

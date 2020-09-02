@@ -111,7 +111,6 @@ class _RadioButtonGroupState extends State<RadioButtonGroup> {
                 }),
       );
       Text t = Text(widget.labels.elementAt(i),
-          maxLines: 3,
           style: (widget.disabled != null &&
                   widget.disabled.contains(widget.labels.elementAt(i)))
               ? widget.labelStyle.apply(color: Theme.of(context).disabledColor)
@@ -126,19 +125,20 @@ class _RadioButtonGroupState extends State<RadioButtonGroup> {
         //vertical orientation means Column with Row inside
         if (widget.orientation == GroupedButtonsOrientation.VERTICAL) {
           content.add(GestureDetector(
-              onTap: () => setState(() {
-                    _selected = widget.labels.elementAt(i);
-                    if (widget.onChange != null)
-                      widget.onChange(widget.labels.elementAt(i), i);
-                    if (widget.onSelected != null)
-                      widget.onSelected(widget.labels.elementAt(i));
-                  }),
-              child: Row(children: <Widget>[
-                SizedBox(width: 12.0),
-                rb,
-                SizedBox(width: 12.0),
-                Expanded(child: t),
-              ])));
+            onTap: () => setState(() {
+              _selected = widget.labels.elementAt(i);
+              if (widget.onChange != null)
+                widget.onChange(widget.labels.elementAt(i), i);
+              if (widget.onSelected != null)
+                widget.onSelected(widget.labels.elementAt(i));
+            }),
+            child: Row(children: <Widget>[
+              rb,
+              Expanded(
+                  child: Container(
+                      padding: EdgeInsets.fromLTRB(0, 5, 0, 5), child: t)),
+            ]),
+          ));
         } else {
           //horizontal orientation means Row with Column inside
 
