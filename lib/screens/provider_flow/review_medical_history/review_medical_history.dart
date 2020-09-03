@@ -1,37 +1,33 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/empty_content.dart';
 import 'package:Medicall/common_widgets/list_items_builder.dart';
-import 'package:Medicall/common_widgets/reusable_card.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/questionnaire/question_model.dart';
 import 'package:Medicall/models/questionnaire/screening_questions_model.dart';
 import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
-import 'package:Medicall/screens/Shared/visit_information/consult_photos.dart';
 import 'package:Medicall/screens/provider_flow/dashboard/provider_dashboard.dart';
-import 'package:Medicall/screens/provider_flow/review_medical_history/review_medical_history.dart';
 import 'package:Medicall/screens/shared/visit_information/screening_question_list_item.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
-class ReviewVisitInformation extends StatelessWidget {
+class ReviewMedicalHistory extends StatelessWidget {
   final Consult consult;
 
-  const ReviewVisitInformation({@required this.consult});
+  const ReviewMedicalHistory({@required this.consult});
 
   static Future<void> show({
     BuildContext context,
     Consult consult,
   }) async {
     await Navigator.of(context).pushNamed(
-      Routes.visitInformation,
+      Routes.reviewMedicalHistory,
       arguments: {
         'consult': consult,
       },
@@ -48,30 +44,31 @@ class ReviewVisitInformation extends StatelessWidget {
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
           type: AppBarType.Back,
-          title: "Visit Information",
+          title: "Medical History",
           theme: Theme.of(context),
           actions: [
             IconButton(
-                icon: Icon(
-                  Icons.home,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                onPressed: () {
-                  if (userProvider.user.type == USER_TYPE.PATIENT) {
-                    PatientDashboardScreen.show(
-                      context: context,
-                      pushReplaceNamed: true,
-                    );
-                  } else {
-                    ProviderDashboardScreen.show(
-                      context: context,
-                      pushReplaceNamed: true,
-                    );
-                  }
-                })
+              icon: Icon(
+                Icons.home,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              onPressed: () {
+                if (userProvider.user.type == USER_TYPE.PATIENT) {
+                  PatientDashboardScreen.show(
+                    context: context,
+                    pushReplaceNamed: true,
+                  );
+                } else {
+                  ProviderDashboardScreen.show(
+                    context: context,
+                    pushReplaceNamed: true,
+                  );
+                }
+              },
+            )
           ]),
       body: FutureBuilder<ScreeningQuestions>(
-        future: db.consultQuestionnaire(consultId: consult.uid),
+        future: db.medicalHistory(uid: consult.patientId),
         builder:
             (BuildContext context, AsyncSnapshot<ScreeningQuestions> snapshot) {
           return Container(
@@ -116,53 +113,6 @@ class ReviewVisitInformation extends StatelessWidget {
                         ),
                       ),
                     ),
-                  ),
-                ),
-                Container(
-                  height: 85,
-                  color: Colors.transparent,
-                  padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: ReusableCard(
-                          trailing: Icon(
-                            Icons.chevron_right,
-                            color: Colors.grey,
-                          ),
-                          title: Text(
-                            "PHOTOS",
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.headline6,
-                          ),
-                          onTap: () => {
-                            ConsultPhotos.show(
-                              context: context,
-                              consult: consult,
-                            )
-                          },
-                        ),
-                      ),
-                      if (userProvider.user.type == USER_TYPE.PROVIDER)
-                        Expanded(
-                          child: ReusableCard(
-                            trailing: Icon(
-                              Icons.chevron_right,
-                              color: Colors.grey,
-                            ),
-                            title: AutoSizeText(
-                              "HISTORY",
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.headline6,
-                              minFontSize: 10,
-                            ),
-                            onTap: () => ReviewMedicalHistory.show(
-                              context: context,
-                              consult: consult,
-                            ),
-                          ),
-                        )
-                    ],
                   ),
                 ),
               ],

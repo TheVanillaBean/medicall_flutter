@@ -2,7 +2,6 @@ import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/questionnaire/question_model.dart';
 import 'package:Medicall/models/questionnaire/screening_questions_model.dart';
 import 'package:Medicall/routing/router.dart';
-import 'package:Medicall/screens/ConsultReview/consult_photos_view_model.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dots_indicator/dots_indicator.dart';
@@ -11,6 +10,8 @@ import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
 import 'package:provider/provider.dart';
+
+import 'consult_photos_view_model.dart';
 
 class ConsultPhotos extends StatelessWidget {
   final ConsultPhotosViewModel model;

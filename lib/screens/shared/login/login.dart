@@ -3,7 +3,7 @@ import 'package:Medicall/common_widgets/sign_in_button.dart';
 import 'package:Medicall/common_widgets/social_sign_in_button.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Shared/Login/sign_in_state_model.dart';
-import 'package:Medicall/screens/Welcome/welcome.dart';
+import 'package:Medicall/screens/shared/welcome.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
