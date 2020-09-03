@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:Medicall/models/user/user_model_base.dart';
-import 'package:Medicall/screens/Login/apple_sign_in_model.dart';
-import 'package:Medicall/screens/Login/google_auth_model.dart';
+import 'package:Medicall/screens/shared/login/apple_sign_in_model.dart';
+import 'package:Medicall/screens/shared/login/google_auth_model.dart';
 import 'package:apple_sign_in/apple_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';

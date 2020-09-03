@@ -1,7 +1,7 @@
 import 'package:Medicall/models/user/provider_user_model.dart';
 import 'package:Medicall/models/user/user_model_base.dart';
-import 'package:Medicall/screens/Login/apple_sign_in_model.dart';
-import 'package:Medicall/screens/Login/google_auth_model.dart';
+import 'package:Medicall/screens/Shared/Login/apple_sign_in_model.dart';
+import 'package:Medicall/screens/Shared/Login/google_auth_model.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/non_auth_firestore_db.dart';
 import 'package:Medicall/services/temp_user_provider.dart';

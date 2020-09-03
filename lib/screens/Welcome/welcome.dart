@@ -1,7 +1,7 @@
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/routing/router.dart';
-import 'package:Medicall/screens/Login/login.dart';
 import 'package:Medicall/screens/Registration/Provider/provider_registration.dart';
+import 'package:Medicall/screens/Shared/Login/login.dart';
 import 'package:Medicall/screens/Symptoms/symptoms.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
