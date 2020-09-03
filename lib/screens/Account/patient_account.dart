@@ -80,7 +80,7 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
   }
 
   Widget _buildChildren({
-    User medicallUser,
+    MedicallUser medicallUser,
     FirebaseStorageService storageService,
     ExtImageProvider extImageProvider,
     UserProvider userProvider,
@@ -158,7 +158,7 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
     );
   }
 
-  Widget _buildPhoneCard(User medicallUser) {
+  Widget _buildPhoneCard(MedicallUser medicallUser) {
     return ReusableAccountCard(
       leading: 'Phone:',
       title: medicallUser.phoneNumber != null &&
@@ -168,7 +168,7 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
     );
   }
 
-  Widget _buildEmailCard(User medicallUser) {
+  Widget _buildEmailCard(MedicallUser medicallUser) {
     return ReusableAccountCard(
       leading: 'Email:',
       title: medicallUser.email,
@@ -176,7 +176,7 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
   }
 
   Widget _buildAvatarWidget({
-    User medicallUser,
+    MedicallUser medicallUser,
     FirebaseStorageService storageService,
     ExtImageProvider extImageProvider,
     UserProvider userProvider,

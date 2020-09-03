@@ -223,7 +223,7 @@ class PrescriptionCheckoutViewModel
   Future<bool> updateUserShippingAddress() async {
     updateWith(isLoading: true);
 
-    User user = this.userProvider.user;
+    MedicallUser user = this.userProvider.user;
     if (this.useAccountAddress) {
       user.shippingAddress = user.mailingAddress;
       user.shippingCity = user.mailingCity;

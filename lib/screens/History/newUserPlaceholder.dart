@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class NewUserPlaceHolder extends StatelessWidget {
-  final User medicallUser;
+  final MedicallUser medicallUser;
   const NewUserPlaceHolder({Key key, @required this.medicallUser})
       : super(key: key);
 

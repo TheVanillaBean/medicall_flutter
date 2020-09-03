@@ -22,7 +22,7 @@ class Chat extends StatefulWidget {
 }
 
 class _ChatState extends State<Chat> {
-  User _medicallUser;
+  MedicallUser _medicallUser;
   Database _db;
   ExtImageProvider _extImageProvider;
 

@@ -1,6 +1,6 @@
 import 'package:Medicall/models/user_model_base.dart';
 
-class PatientUser extends User {
+class PatientUser extends MedicallUser {
   String govId;
   bool hasMedicalHistory;
 

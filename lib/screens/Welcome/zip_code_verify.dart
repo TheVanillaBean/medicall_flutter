@@ -66,7 +66,7 @@ class _ZipCodeVerifyScreenState extends State<ZipCodeVerifyScreen> {
 
   @override
   Widget build(BuildContext context) {
-    User medicallUser;
+    MedicallUser medicallUser;
     try {
       medicallUser = Provider.of<UserProvider>(context).user;
     } catch (e) {}

@@ -83,7 +83,7 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
   }
 
   Widget _buildChildren({
-    User medicallUser,
+    MedicallUser medicallUser,
     FirebaseStorageService storageService,
     ExtImageProvider extImageProvider,
     UserProvider userProvider,
@@ -156,14 +156,14 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
     );
   }
 
-  Widget _buildEmailCard(User medicallUser) {
+  Widget _buildEmailCard(MedicallUser medicallUser) {
     return ReusableAccountCard(
       leading: 'Email:',
       title: medicallUser.email,
     );
   }
 
-  Widget _buildPhoneCard(User medicallUser) {
+  Widget _buildPhoneCard(MedicallUser medicallUser) {
     return ReusableAccountCard(
       leading: 'Mobile Phone:',
       title: medicallUser.phoneNumber != null &&
@@ -173,7 +173,7 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
     );
   }
 
-  Widget _buildAddressCard(User medicallUser) {
+  Widget _buildAddressCard(MedicallUser medicallUser) {
     return ReusableAccountCard(
       leading: 'Practice \nAddress:',
       title:
@@ -181,35 +181,35 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
     );
   }
 
-  Widget _buildProfessionalTitleCard(User medicallUser) {
+  Widget _buildProfessionalTitleCard(MedicallUser medicallUser) {
     return ReusableAccountCard(
       leading: 'Title:',
       title: (medicallUser as ProviderUser).professionalTitle,
     );
   }
 
-  Widget _buildMedicalLicenseCard(User medicallUser) {
+  Widget _buildMedicalLicenseCard(MedicallUser medicallUser) {
     return ReusableAccountCard(
       leading: 'Medical License:',
       title: '${(medicallUser as ProviderUser).medLicense}',
     );
   }
 
-  Widget _buildMedicalLicenseStateCard(User medicallUser) {
+  Widget _buildMedicalLicenseStateCard(MedicallUser medicallUser) {
     return ReusableAccountCard(
       leading: 'Medical License State:',
       title: '${(medicallUser as ProviderUser).medLicenseState}',
     );
   }
 
-  Widget _buildNpiCard(User medicallUser) {
+  Widget _buildNpiCard(MedicallUser medicallUser) {
     return ReusableAccountCard(
       leading: 'NPI Number:',
       title: '${(medicallUser as ProviderUser).npi}',
     );
   }
 
-  Widget _buildBoardCertifiedCard(User medicallUser) {
+  Widget _buildBoardCertifiedCard(MedicallUser medicallUser) {
     return ReusableAccountCard(
       leading: 'Board Certification:',
       title: '${(medicallUser as ProviderUser).boardCertified}',
@@ -217,7 +217,7 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
   }
 
   Widget _buildAvatarWidget({
-    User medicallUser,
+    MedicallUser medicallUser,
     FirebaseStorageService storageService,
     ExtImageProvider extImageProvider,
     UserProvider userProvider,

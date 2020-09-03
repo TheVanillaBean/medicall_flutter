@@ -16,7 +16,7 @@ class PrescriptionsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Database _db = Provider.of<Database>(context);
-    final User medicallUser = Provider.of<UserProvider>(context).user;
+    final MedicallUser medicallUser = Provider.of<UserProvider>(context).user;
     return Scaffold(
         appBar: AppBar(
           title: Text('Prescriptions'),

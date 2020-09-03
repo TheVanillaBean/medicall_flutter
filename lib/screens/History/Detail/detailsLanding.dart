@@ -15,7 +15,8 @@ class DetailsLandingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    User medicallUser = Provider.of<UserProvider>(context, listen: false).user;
+    MedicallUser medicallUser =
+        Provider.of<UserProvider>(context, listen: false).user;
     Database db = Provider.of<Database>(context, listen: false);
     Map consultSnapshot = db.consultSnapshot.data;
     return SingleChildScrollView(

@@ -36,7 +36,7 @@ class ProviderDashboardViewModel with ChangeNotifier {
           uniquePatientIds.forEach((patientId) {
             database
                 .userStream(USER_TYPE.PATIENT, patientId)
-                .listen((User user) {
+                .listen((MedicallUser user) {
               for (Consult consult in consults) {
                 if (consult.patientId == user.uid) {
                   consult.patientUser = user as PatientUser;

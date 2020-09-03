@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 /// An [AuthWidgetBuilder] ancestor is required for this widget to work.
 
 class LandingPage extends StatelessWidget {
-  final AsyncSnapshot<User> userSnapshot;
+  final AsyncSnapshot<MedicallUser> userSnapshot;
   final WidgetBuilder nonSignedInBuilder;
   final WidgetBuilder signedInBuilder;
   final WidgetBuilder startVisitBuilder;

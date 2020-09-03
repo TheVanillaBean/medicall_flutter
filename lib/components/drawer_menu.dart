@@ -18,7 +18,7 @@ class DrawerMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final User medicallUser =
+    final MedicallUser medicallUser =
         Provider.of<UserProvider>(context, listen: false).user;
     final EdgeInsets listContentPadding = EdgeInsets.fromLTRB(15, 5, 0, 5);
     return Container(
@@ -61,7 +61,7 @@ class DrawerMenu extends StatelessWidget {
   Column _buildNavigationItems(
     EdgeInsets listContentPadding,
     BuildContext context,
-    User medicallUser,
+    MedicallUser medicallUser,
   ) {
     return Column(
       children: <Widget>[
@@ -100,8 +100,8 @@ class DrawerMenu extends StatelessWidget {
     );
   }
 
-  ListTile _buildAccountItem(
-      EdgeInsets listContentPadding, BuildContext context, User medicallUser) {
+  ListTile _buildAccountItem(EdgeInsets listContentPadding,
+      BuildContext context, MedicallUser medicallUser) {
     return ListTile(
         contentPadding: listContentPadding,
         title: Container(
@@ -167,8 +167,8 @@ class DrawerMenu extends StatelessWidget {
         });
   }
 
-  ListTile _buildNewVisitItem(
-      EdgeInsets listContentPadding, BuildContext context, User medicallUser) {
+  ListTile _buildNewVisitItem(EdgeInsets listContentPadding,
+      BuildContext context, MedicallUser medicallUser) {
     return ListTile(
         contentPadding: listContentPadding,
         title: Container(
@@ -188,8 +188,8 @@ class DrawerMenu extends StatelessWidget {
         });
   }
 
-  ListTile _buildHomeButton(
-      EdgeInsets listContentPadding, BuildContext context, User medicallUser) {
+  ListTile _buildHomeButton(EdgeInsets listContentPadding, BuildContext context,
+      MedicallUser medicallUser) {
     return ListTile(
       contentPadding: listContentPadding,
       title: Container(

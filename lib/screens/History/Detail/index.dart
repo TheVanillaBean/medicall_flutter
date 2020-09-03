@@ -13,7 +13,7 @@ class HistoryDetailScreen extends StatefulWidget {
 
   static Widget create(BuildContext context) {
     final Database _db = Provider.of<Database>(context);
-    final User _medicallUser = Provider.of<UserProvider>(context).user;
+    final MedicallUser _medicallUser = Provider.of<UserProvider>(context).user;
 
     return ChangeNotifierProvider<DetailedHistoryState>(
       create: (context) => DetailedHistoryState(

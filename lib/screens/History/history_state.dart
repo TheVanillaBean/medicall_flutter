@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class HistoryState with ChangeNotifier {
-  User medicallUser;
+  MedicallUser medicallUser;
   AsyncSnapshot historySnapshot;
   ExtendedImageProvider extendedImageProvider;
   Database db;
@@ -22,7 +22,8 @@ class HistoryState with ChangeNotifier {
 
   int sortBy = 1;
 
-  getUserHistorySnapshot(User medicallUser, String searchQuery, int sortBy) {
+  getUserHistorySnapshot(
+      MedicallUser medicallUser, String searchQuery, int sortBy) {
     if (medicallUser.uid.length > 0) {
       if (sortBy == 1) {
         return Firestore.instance

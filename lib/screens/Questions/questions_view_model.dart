@@ -85,7 +85,7 @@ class QuestionsViewModel extends PropertyChangeNotifier
       screeningQuestions: questions,
     );
     this.displayMedHistory = false;
-    User user = await auth.currentUser();
+    MedicallUser user = await auth.currentUser();
     (user as PatientUser).hasMedicalHistory = true;
     this.database.setUser(user);
     this.userProvider.user = user;

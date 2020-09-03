@@ -20,7 +20,7 @@ class _ConfirmConsultScreenState extends State<ConfirmConsultScreen>
   bool _isLoading = false;
   bool _hasReviewed = false;
   Database _db;
-  User _medicallUser;
+  MedicallUser _medicallUser;
   ExtImageProvider _extImageProvider;
   StripeProvider _stripeProvider;
   TabController _confirmTabCntrl;

@@ -35,7 +35,7 @@ class _BuildDetailTabState extends State<BuildDetailTab> {
       GlobalKey<FormBuilderState>();
   final _scrollController = ScrollController();
   Database db;
-  User medicallUser;
+  MedicallUser medicallUser;
   @override
   void initState() {
     super.initState();

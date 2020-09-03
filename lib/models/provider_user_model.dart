@@ -1,6 +1,6 @@
 import 'package:Medicall/models/user_model_base.dart';
 
-class ProviderUser extends User {
+class ProviderUser extends MedicallUser {
   String professionalTitle;
   String medLicense;
   String medLicenseState;

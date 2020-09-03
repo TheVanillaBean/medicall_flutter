@@ -20,7 +20,7 @@ class _RouteUserOrderScreenState extends State<RouteUserOrderScreen> {
     return false;
   }
 
-  User medicallUser = PatientUser();
+  MedicallUser medicallUser = PatientUser();
 
   @override
   void initState() {

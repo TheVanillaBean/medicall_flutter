@@ -11,7 +11,7 @@ import 'package:multi_image_picker/multi_image_picker.dart';
 
 class TempUserProvider {
   USER_TYPE _userType;
-  User _user;
+  MedicallUser _user;
   String password;
   GoogleAuthModel googleAuthModel;
   AppleSignInModel appleSignInModel;
@@ -20,12 +20,12 @@ class TempUserProvider {
   Symptom symptom;
   List<dynamic> malpracticeQuestions;
 
-  User get user => _userType == USER_TYPE.PATIENT
+  MedicallUser get user => _userType == USER_TYPE.PATIENT
       ? _user as PatientUser
       : _user as ProviderUser;
   USER_TYPE get userType => _userType;
 
-  void setUser({@required USER_TYPE userType, User user}) {
+  void setUser({@required USER_TYPE userType, MedicallUser user}) {
     this._userType = userType;
     if (_userType == USER_TYPE.PATIENT) {
       this._user = user == null ? PatientUser() : user as PatientUser;

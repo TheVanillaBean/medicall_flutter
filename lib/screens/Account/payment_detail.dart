@@ -17,7 +17,7 @@ class PaymentDetail extends StatelessWidget {
   final dynamic paymentModel; //from consult or prescription payment
   final PaymentDetailViewModel model;
   final FirestoreDatabase firestoreDatabase;
-  final User medicallUser;
+  final MedicallUser medicallUser;
   final StripeProvider stripeProvider;
 
   const PaymentDetail({
@@ -31,7 +31,7 @@ class PaymentDetail extends StatelessWidget {
   static Widget create(BuildContext context, dynamic paymentModel) {
     FirestoreDatabase _db = Provider.of<FirestoreDatabase>(context);
     StripeProvider _stripeProvider = Provider.of<StripeProviderBase>(context);
-    User _medicallUser = Provider.of<UserProvider>(context).user;
+    MedicallUser _medicallUser = Provider.of<UserProvider>(context).user;
     return ChangeNotifierProvider<PaymentDetailViewModel>(
       create: (context) => PaymentDetailViewModel(
         database: _db,

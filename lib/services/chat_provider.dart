@@ -10,7 +10,7 @@ class ChatProvider {
 
   bool userSet = false;
 
-  Future<void> setUser(MedicallUser.User user) async {
+  Future<void> setUser(MedicallUser.MedicallUser user) async {
     if (!userSet) {
       await client.setUser(
         User(

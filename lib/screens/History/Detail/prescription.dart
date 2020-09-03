@@ -20,7 +20,7 @@ class PrescriptionScreen extends StatefulWidget {
 class _PrescriptionScreenState extends State<PrescriptionScreen> {
   final _scrollController = ScrollController();
   Database db;
-  User medicallUser;
+  MedicallUser medicallUser;
   final GlobalKey<FormBuilderState> consultFormKey =
       GlobalKey<FormBuilderState>();
   String buttonTxt = "Send Prescription";

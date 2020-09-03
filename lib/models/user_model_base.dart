@@ -5,7 +5,7 @@ import 'package:enum_to_string/enum_to_string.dart';
 enum USER_TYPE { NOT_SET, PROVIDER, PATIENT }
 
 //This class acts as a baseclass for both types of users: patient and provider
-abstract class User {
+abstract class MedicallUser {
   String uid;
   USER_TYPE type;
   List<dynamic> devTokens; //used for push notifs
@@ -27,7 +27,7 @@ abstract class User {
   String shippingCity;
   String streamChatID;
 
-  User({
+  MedicallUser({
     this.uid = '',
     this.type = USER_TYPE.NOT_SET,
     this.devTokens = const ['', ''],
@@ -75,12 +75,12 @@ abstract class User {
     };
   }
 
-  factory User.fromMap({
+  factory MedicallUser.fromMap({
     USER_TYPE userType,
     String uid,
     Map<String, dynamic> data,
   }) {
-    User user;
+    MedicallUser user;
     if (userType == USER_TYPE.PATIENT) {
       user = PatientUser.fromMap(uid, data);
       user.type = USER_TYPE.PATIENT;

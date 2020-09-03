@@ -33,7 +33,7 @@ class SelectProviderScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final NonAuthDatabase db = Provider.of<NonAuthDatabase>(context);
-    User medicallUser;
+    MedicallUser medicallUser;
     try {
       medicallUser = Provider.of<UserProvider>(context).user;
     } catch (e) {}

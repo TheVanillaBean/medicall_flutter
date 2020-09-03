@@ -80,7 +80,7 @@ class StripeConnect extends StatelessWidget {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               if (snapshot.data['stripe_connect_authorized'] == true) {
-                User provider = User.fromMap(
+                MedicallUser provider = MedicallUser.fromMap(
                     userType: USER_TYPE.PROVIDER,
                     data: snapshot.data.data, //lol
                     uid: user.uid);

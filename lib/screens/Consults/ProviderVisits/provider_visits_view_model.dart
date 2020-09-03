@@ -31,7 +31,9 @@ class ProviderVisitsViewModel with ChangeNotifier {
         consultStream.add([]);
       } else {
         uniquePatientIds.forEach((patientId) {
-          database.userStream(USER_TYPE.PATIENT, patientId).listen((User user) {
+          database
+              .userStream(USER_TYPE.PATIENT, patientId)
+              .listen((MedicallUser user) {
             for (Consult consult in consults) {
               if (consult.patientId == user.uid) {
                 consult.patientUser = user as PatientUser;
