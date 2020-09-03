@@ -1,4 +1,4 @@
-import 'package:Medicall/models/user_model_base.dart';
+import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/screens/Account/patient_account.dart';
 import 'package:Medicall/screens/Account/provider_account.dart';
 import 'package:Medicall/screens/Consults/ProviderVisits/provider_visits.dart';

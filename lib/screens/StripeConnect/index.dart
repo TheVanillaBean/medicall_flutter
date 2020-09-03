@@ -1,6 +1,6 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/form_submit_button.dart';
-import 'package:Medicall/models/user_model_base.dart';
+import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard.dart';
 import 'package:Medicall/screens/StripeConnect/stripe_connect_state_model.dart';

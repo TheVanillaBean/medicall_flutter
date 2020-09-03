@@ -1,5 +1,5 @@
-import 'package:Medicall/models/patient_user_model.dart';
-import 'package:Medicall/models/provider_user_model.dart';
+import 'package:Medicall/models/user/patient_user_model.dart';
+import 'package:Medicall/models/user/provider_user_model.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 
 enum USER_TYPE { NOT_SET, PROVIDER, PATIENT }

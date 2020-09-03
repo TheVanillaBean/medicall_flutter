@@ -1,4 +1,4 @@
-import 'package:Medicall/models/provider_user_model.dart';
+import 'package:Medicall/models/user/provider_user_model.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/util/string_utils.dart';
 import 'package:flutter/foundation.dart';

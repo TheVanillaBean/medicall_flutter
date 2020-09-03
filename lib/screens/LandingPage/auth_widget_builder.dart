@@ -1,4 +1,4 @@
-import 'package:Medicall/models/user_model_base.dart';
+import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/screens/LandingPage/index.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:flutter/material.dart';

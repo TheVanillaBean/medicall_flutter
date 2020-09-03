@@ -1,5 +1,5 @@
 import 'package:Medicall/models/consult_model.dart';
-import 'package:Medicall/models/patient_user_model.dart';
+import 'package:Medicall/models/user/patient_user_model.dart';
 import 'package:Medicall/screens/PhoneAuth/phone_auth_state_model.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/firebase_storage_service.dart';

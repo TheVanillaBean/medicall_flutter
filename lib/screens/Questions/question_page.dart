@@ -1,4 +1,4 @@
-import 'package:Medicall/models/question_model.dart';
+import 'package:Medicall/models/questionnaire/question_model.dart';
 import 'package:Medicall/screens/Questions/question_form.dart';
 import 'package:Medicall/screens/Questions/questions_view_model.dart';
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';

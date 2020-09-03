@@ -1,7 +1,7 @@
-import 'package:Medicall/models/patient_user_model.dart';
-import 'package:Medicall/models/provider_user_model.dart';
 import 'package:Medicall/models/symptom_model.dart';
-import 'package:Medicall/models/user_model_base.dart';
+import 'package:Medicall/models/user/patient_user_model.dart';
+import 'package:Medicall/models/user/provider_user_model.dart';
+import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/models/version.dart';
 import 'package:Medicall/services/firestore_service.dart';
 import 'package:enum_to_string/enum_to_string.dart';

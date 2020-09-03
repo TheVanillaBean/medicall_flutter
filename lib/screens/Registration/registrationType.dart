@@ -1,4 +1,4 @@
-import 'package:Medicall/models/user_model_base.dart';
+import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

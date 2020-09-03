@@ -1,11 +1,11 @@
 import 'dart:async';
 
 import 'package:Medicall/models/consult_model.dart';
-import 'package:Medicall/models/option_model.dart';
-import 'package:Medicall/models/patient_user_model.dart';
-import 'package:Medicall/models/question_model.dart';
-import 'package:Medicall/models/screening_questions_model.dart';
-import 'package:Medicall/models/user_model_base.dart';
+import 'package:Medicall/models/questionnaire/option_model.dart';
+import 'package:Medicall/models/questionnaire/question_model.dart';
+import 'package:Medicall/models/questionnaire/screening_questions_model.dart';
+import 'package:Medicall/models/user/patient_user_model.dart';
+import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/firebase_storage_service.dart';

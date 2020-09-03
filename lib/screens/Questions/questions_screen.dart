@@ -1,7 +1,7 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
 import 'package:Medicall/models/consult_model.dart';
-import 'package:Medicall/models/screening_questions_model.dart';
+import 'package:Medicall/models/questionnaire/screening_questions_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/Questions/ReviewPage/review_page.dart';

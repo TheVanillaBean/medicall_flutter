@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:Medicall/models/consult-review/treatment_options.dart';
 import 'package:Medicall/models/consult-review/visit_review_model.dart';
-import 'package:Medicall/models/user_model_base.dart';
+import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/stripe_provider.dart';
 import 'package:Medicall/services/user_provider.dart';

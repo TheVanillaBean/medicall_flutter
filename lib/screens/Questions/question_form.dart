@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:Medicall/common_widgets/camera/Camera.dart';
 import 'package:Medicall/common_widgets/grouped_buttons/radio_button_group.dart';
-import 'package:Medicall/models/question_model.dart';
+import 'package:Medicall/models/questionnaire/question_model.dart';
 import 'package:Medicall/screens/Questions/questions_view_model.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/firebase_storage_service.dart';

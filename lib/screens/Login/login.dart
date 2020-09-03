@@ -84,7 +84,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _navigateToResetPasswordScreen(BuildContext context) {
-    Navigator.of(context).pushNamed('/reset_password');
+    Navigator.of(context).pushNamed(Routes.reset_password);
   }
 
   void _emailEditingComplete() {

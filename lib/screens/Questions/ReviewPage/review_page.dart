@@ -1,7 +1,7 @@
 import 'package:Medicall/common_widgets/list_items_builder.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
-import 'package:Medicall/models/patient_user_model.dart';
-import 'package:Medicall/models/question_model.dart';
+import 'package:Medicall/models/questionnaire/question_model.dart';
+import 'package:Medicall/models/user/patient_user_model.dart';
 import 'package:Medicall/screens/MakePayment/make_payment.dart';
 import 'package:Medicall/screens/PersonalInfo/personal_info.dart';
 import 'package:Medicall/screens/Questions/ReviewPage/review_page_list_item.dart';

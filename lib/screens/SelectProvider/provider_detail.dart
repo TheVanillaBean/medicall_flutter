@@ -1,9 +1,9 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/consult_model.dart';
-import 'package:Medicall/models/patient_user_model.dart';
-import 'package:Medicall/models/provider_user_model.dart';
 import 'package:Medicall/models/symptom_model.dart';
+import 'package:Medicall/models/user/patient_user_model.dart';
+import 'package:Medicall/models/user/provider_user_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/Registration/registration.dart';

@@ -43,11 +43,11 @@ class PatientDashboardScreen extends StatelessWidget {
   }) async {
     if (pushReplaceNamed) {
       await Navigator.of(context).pushReplacementNamed(
-        Routes.dashboard,
+        Routes.patientDashboard,
       );
     } else {
       await Navigator.of(context).pushNamed(
-        Routes.dashboard,
+        Routes.patientDashboard,
       );
     }
   }

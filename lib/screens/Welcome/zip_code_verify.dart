@@ -2,7 +2,7 @@ import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/symptom_model.dart';
-import 'package:Medicall/models/user_model_base.dart';
+import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/SelectProvider/select_provider.dart';
 import 'package:Medicall/screens/Welcome/zip_code_view_model.dart';

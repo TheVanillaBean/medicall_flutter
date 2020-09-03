@@ -1,6 +1,6 @@
-import 'package:Medicall/models/patient_user_model.dart';
-import 'package:Medicall/models/provider_user_model.dart';
-import 'package:Medicall/models/question_model.dart';
+import 'package:Medicall/models/questionnaire/question_model.dart';
+import 'package:Medicall/models/user/patient_user_model.dart';
+import 'package:Medicall/models/user/provider_user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:intl/intl.dart';

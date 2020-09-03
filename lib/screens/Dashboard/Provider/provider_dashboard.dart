@@ -5,7 +5,7 @@ import 'package:Medicall/common_widgets/list_items_builder.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/components/drawer_menu.dart';
 import 'package:Medicall/models/consult_model.dart';
-import 'package:Medicall/models/provider_user_model.dart';
+import 'package:Medicall/models/user/provider_user_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/ConsultReview/visit_overview.dart';
 import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard_list_item.dart';

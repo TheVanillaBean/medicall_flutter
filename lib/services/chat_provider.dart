@@ -1,4 +1,4 @@
-import 'package:Medicall/models/user_model_base.dart' as MedicallUser;
+import 'package:Medicall/models/user/user_model_base.dart' as MedicallUser;
 import 'package:Medicall/secrets.dart';
 import 'package:stream_chat_flutter/stream_chat_flutter.dart';
 

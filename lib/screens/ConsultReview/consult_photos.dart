@@ -1,6 +1,6 @@
 import 'package:Medicall/models/consult_model.dart';
-import 'package:Medicall/models/question_model.dart';
-import 'package:Medicall/models/screening_questions_model.dart';
+import 'package:Medicall/models/questionnaire/question_model.dart';
+import 'package:Medicall/models/questionnaire/screening_questions_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/ConsultReview/consult_photos_view_model.dart';
 import 'package:Medicall/services/database.dart';

@@ -1,8 +1,8 @@
 import 'package:Medicall/models/consult_model.dart';
-import 'package:Medicall/models/patient_user_model.dart';
-import 'package:Medicall/models/provider_user_model.dart';
 import 'package:Medicall/models/symptom_model.dart';
-import 'package:Medicall/models/user_model_base.dart';
+import 'package:Medicall/models/user/patient_user_model.dart';
+import 'package:Medicall/models/user/provider_user_model.dart';
+import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/screens/Login/apple_sign_in_model.dart';
 import 'package:Medicall/screens/Login/google_auth_model.dart';
 import 'package:flutter/cupertino.dart';

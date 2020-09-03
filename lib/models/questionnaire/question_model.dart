@@ -1,4 +1,4 @@
-import 'package:Medicall/models/option_model.dart';
+import 'package:Medicall/models/questionnaire/option_model.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/services.dart';
 

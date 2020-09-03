@@ -1,7 +1,7 @@
 import 'package:Medicall/common_widgets/reusable_account_card.dart';
 import 'package:Medicall/components/drawer_menu.dart';
-import 'package:Medicall/models/provider_user_model.dart';
-import 'package:Medicall/models/user_model_base.dart';
+import 'package:Medicall/models/user/provider_user_model.dart';
+import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';

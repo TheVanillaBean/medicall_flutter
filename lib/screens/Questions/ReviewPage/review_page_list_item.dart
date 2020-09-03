@@ -1,4 +1,4 @@
-import 'package:Medicall/models/question_model.dart';
+import 'package:Medicall/models/questionnaire/question_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
