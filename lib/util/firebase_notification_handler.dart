@@ -7,10 +7,10 @@ import 'package:flutter/material.dart';
 
 class FirebaseNotifications {
   FirebaseMessaging _firebaseMessaging;
-  FirebaseUser firebaseUser;
-  User medicallUser;
+  User firebaseUser;
+  MedicallUser medicallUser;
 
-  setUpFirebase({@required User medicallUser}) {
+  setUpFirebase({@required MedicallUser medicallUser}) {
     this.medicallUser = medicallUser;
     _firebaseMessaging = FirebaseMessaging();
     firebaseCloudMessagingListeners();
