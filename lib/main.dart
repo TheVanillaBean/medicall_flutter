@@ -18,6 +18,7 @@ import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/theme.dart';
 import 'package:Medicall/util/apple_sign_in_available.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -26,6 +27,7 @@ import 'models/user/user_model_base.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   final appleSignInAvailable = await AppleSignInAvailable.check();
   runApp(MedicallApp(
     appleSignInAvailable: appleSignInAvailable,

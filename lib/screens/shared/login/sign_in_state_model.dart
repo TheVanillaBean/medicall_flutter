@@ -1,12 +1,11 @@
+import 'package:Medicall/screens/shared/login/apple_sign_in_model.dart';
+import 'package:Medicall/screens/shared/login/google_auth_model.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:Medicall/util/validators.dart';
 import 'package:apple_sign_in/scope.dart';
 import 'package:flutter/material.dart';
-
-import 'apple_sign_in_model.dart';
-import 'google_auth_model.dart';
 
 class SignInStateModel with EmailAndPasswordValidators, ChangeNotifier {
   String email;
