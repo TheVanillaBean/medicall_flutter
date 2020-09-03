@@ -18,7 +18,7 @@ abstract class AuthBase {
   Stream<MedicallUser> get onAuthStateChanged;
   Future<MedicallUser> currentUser();
   Future<String> currentUserIdToken();
-  Future<void> addUserToAuthStream({@required FirebaseUser user});
+  Future<void> addUserToAuthStream({@required User user});
   Future<MedicallUser> signInAnonymously();
   Future<MedicallUser> signInWithEmailAndPassword(
       {@required String email, @required String password});
@@ -187,7 +187,7 @@ class Auth implements AuthBase {
     @required String verificationId,
     @required String smsCode,
   }) async {
-    return PhoneAuthProvider.getCredential(
+    return PhoneAuthProvider.credential(
         verificationId: verificationId, smsCode: smsCode);
   }
 
@@ -239,14 +239,13 @@ class Auth implements AuthBase {
   }
 
   @override
-  Future<FirebaseUser> signInWithGoogle(
-      {@required AuthCredential credential}) async {
+  Future<User> signInWithGoogle({@required AuthCredential credential}) async {
     final authResult = await _firebaseAuth.signInWithCredential(credential);
     return authResult.user;
   }
 
   @override
-  Future<FirebaseUser> signInWithApple(
+  Future<User> signInWithApple(
       {@required AuthCredential appleIdCredential}) async {
     final authResult =
         await _firebaseAuth.signInWithCredential(appleIdCredential);

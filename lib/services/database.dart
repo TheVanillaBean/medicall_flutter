@@ -223,12 +223,12 @@ class FirestoreDatabase implements Database {
   Future<void> savePrescriptions(
       {String consultId, List<TreatmentOptions> treatmentOptions}) async {
     for (TreatmentOptions treatmentOptions in treatmentOptions) {
-      String prescriptionId = Firestore.instance
+      String prescriptionId = FirebaseFirestore.instance
           .collection("consults")
-          .document(consultId)
+          .doc(consultId)
           .collection("prescriptions")
-          .document()
-          .documentID;
+          .doc()
+          .id;
 
       await _service.setData(
         path: FirestorePath.prescriptions(consultId, prescriptionId),

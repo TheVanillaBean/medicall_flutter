@@ -206,7 +206,7 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
           throw "The SMS code you entered is invalid. Please try again...";
         }
 
-        FirebaseUser currentFirebaseUser;
+        User currentFirebaseUser;
 
         if (this.tempUserProvider.googleAuthModel != null) {
           currentFirebaseUser = await auth.linkCredentialWithCurrentUser(

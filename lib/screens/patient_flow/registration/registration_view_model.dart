@@ -89,7 +89,7 @@ class RegistrationViewModel with EmailAndPasswordValidators, ChangeNotifier {
         this.auth.triggerAuthStream = false;
         this.verificationStatus.updateStatus(
             'Saving User Details. This may take several seconds...');
-        FirebaseUser user = await auth.createUserWithEmailAndPassword(
+        User user = await auth.createUserWithEmailAndPassword(
             email: this.email, password: this.password);
         tempUserProvider.setUser(userType: USER_TYPE.PATIENT);
         tempUserProvider.user.uid = user.uid;
@@ -116,7 +116,7 @@ class RegistrationViewModel with EmailAndPasswordValidators, ChangeNotifier {
         this.auth.triggerAuthStream = false;
         this.verificationStatus.updateStatus(
             'Saving User Details. This may take several seconds...');
-        FirebaseUser user = await auth.signInWithApple(
+        User user = await auth.signInWithApple(
             appleIdCredential: appleSignInModel.credential);
         tempUserProvider.setUser(userType: USER_TYPE.PATIENT);
         tempUserProvider.user.uid = user.uid;
@@ -145,7 +145,7 @@ class RegistrationViewModel with EmailAndPasswordValidators, ChangeNotifier {
         this.auth.triggerAuthStream = false;
         this.verificationStatus.updateStatus(
             'Saving User Details. This may take several seconds...');
-        FirebaseUser user = await auth.signInWithGoogle(
+        User user = await auth.signInWithGoogle(
           credential: googleAuthModel.credential,
         );
         tempUserProvider.setUser(userType: USER_TYPE.PATIENT);
@@ -163,7 +163,7 @@ class RegistrationViewModel with EmailAndPasswordValidators, ChangeNotifier {
     }
   }
 
-  void saveUserDetails(FirebaseUser user) async {
+  void saveUserDetails(User user) async {
     await this.addNewUserToFirestore();
     this.auth.addUserToAuthStream(user: user);
   }

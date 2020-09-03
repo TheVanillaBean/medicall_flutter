@@ -339,7 +339,7 @@ class ProviderRegistrationViewModel
         this.auth.triggerAuthStream = false;
         this.verificationStatus.updateStatus(
             'Saving User Details. This may take several seconds...');
-        FirebaseUser user = await auth.createUserWithEmailAndPassword(
+        User user = await auth.createUserWithEmailAndPassword(
             email: this.email, password: this.password);
         tempUserProvider.setUser(userType: USER_TYPE.PROVIDER);
         tempUserProvider.user.uid = user.uid;
@@ -371,7 +371,7 @@ class ProviderRegistrationViewModel
     }
   }
 
-  void saveUserDetails(FirebaseUser user) async {
+  void saveUserDetails(User user) async {
     await this.addNewUserToFirestore();
     this.auth.addUserToAuthStream(user: user);
   }
