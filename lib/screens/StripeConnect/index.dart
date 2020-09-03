@@ -73,16 +73,16 @@ class StripeConnect extends StatelessWidget {
         ),
       ),
       body: StreamBuilder<DocumentSnapshot>(
-          stream: Firestore.instance
+          stream: FirebaseFirestore.instance
               .collection('users')
-              .document(user.uid)
+              .doc(user.uid)
               .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              if (snapshot.data['stripe_connect_authorized'] == true) {
+              if (snapshot.data.data()['stripe_connect_authorized'] == true) {
                 MedicallUser provider = MedicallUser.fromMap(
                     userType: USER_TYPE.PROVIDER,
-                    data: snapshot.data.data, //lol
+                    data: snapshot.data.data(), //lol
                     uid: user.uid);
                 this.model.userProvider.user = provider;
                 return _buildStripeAuthenticatedWidget(context);

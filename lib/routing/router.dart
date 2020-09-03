@@ -10,7 +10,6 @@ import 'package:Medicall/screens/Account/payment_detail.dart';
 import 'package:Medicall/screens/Account/provider_account.dart';
 import 'package:Medicall/screens/Account/view_medical_history.dart';
 import 'package:Medicall/screens/Chat/chat_screen.dart';
-import 'package:Medicall/screens/ConfirmConsult/index.dart';
 import 'package:Medicall/screens/Consent/index.dart';
 import 'package:Medicall/screens/ConsultReview/consult_photos.dart';
 import 'package:Medicall/screens/ConsultReview/review_medical_history.dart';
@@ -22,11 +21,8 @@ import 'package:Medicall/screens/Consults/ProviderVisits/provider_visits.dart';
 import 'package:Medicall/screens/Consults/previous_visits.dart';
 import 'package:Medicall/screens/Dashboard/Provider/provider_dashboard.dart';
 import 'package:Medicall/screens/Dashboard/patient_dashboard.dart';
-import 'package:Medicall/screens/History/Detail/index.dart';
-import 'package:Medicall/screens/History/index.dart';
 import 'package:Medicall/screens/Login/login.dart';
 import 'package:Medicall/screens/MakePayment/make_payment.dart';
-import 'package:Medicall/screens/Malpractice/malpractice.dart';
 import 'package:Medicall/screens/OCR/Congrats.dart';
 import 'package:Medicall/screens/OCR/OCRScreen.dart';
 import 'package:Medicall/screens/PasswordReset/index.dart';
@@ -38,7 +34,6 @@ import 'package:Medicall/screens/Privacy/index.dart';
 import 'package:Medicall/screens/Questions/CompleteVisit/complete_visit.dart';
 import 'package:Medicall/screens/Questions/ImmediateMedicalCare/immediate_medical_care.dart';
 import 'package:Medicall/screens/Questions/confirm_consult.dart';
-import 'package:Medicall/screens/Questions/questionsScreen.dart';
 import 'package:Medicall/screens/Questions/questions_screen.dart';
 import 'package:Medicall/screens/Registration/Provider/consult_detail_screen.dart';
 import 'package:Medicall/screens/Registration/Provider/provider_registration.dart';
@@ -433,12 +428,6 @@ class Router {
           settings: settings,
           fullscreenDialog: true,
         );
-      case '/malpractice':
-        return MaterialPageRoute<dynamic>(
-          builder: (context) => MalpracticeScreen.create(context),
-          settings: settings,
-          fullscreenDialog: true,
-        );
       case Routes.symptoms:
         return MaterialPageRoute<dynamic>(
           builder: (context) => SymptomsScreen.create(context),
@@ -474,12 +463,6 @@ class Router {
           settings: settings,
           fullscreenDialog: true,
         );
-      case '/questionsScreen':
-        return MaterialPageRoute<dynamic>(
-          builder: (context) => QuestionsScreenOld(),
-          settings: settings,
-          fullscreenDialog: true,
-        );
       case Routes.selectProvider:
         final Map<String, dynamic> mapArgs = args;
         final Symptom symptom = mapArgs['symptom'];
@@ -506,7 +489,6 @@ class Router {
           settings: settings,
           fullscreenDialog: true,
         );
-
       case Routes.consultDetail:
         final Map<String, dynamic> mapArgs = args;
         final Consult consult = mapArgs['consult'];
@@ -514,13 +496,6 @@ class Router {
           builder: (_) => ConsultDetailScreen(
             consult: consult,
           ),
-          settings: settings,
-          fullscreenDialog: true,
-        );
-
-      case '/consultReview':
-        return MaterialPageRoute<dynamic>(
-          builder: (context) => ConfirmConsultScreen(),
           settings: settings,
           fullscreenDialog: true,
         );
@@ -547,19 +522,6 @@ class Router {
             channel: channel,
             consult: consult,
           ),
-          settings: settings,
-          fullscreenDialog: true,
-        );
-      case '/history':
-        return MaterialPageRoute<dynamic>(
-          builder: (context) => HistoryScreen.create(context, true, ''),
-          settings: settings,
-          fullscreenDialog: true,
-        );
-
-      case '/historyDetail':
-        return MaterialPageRoute<dynamic>(
-          builder: (context) => HistoryDetailScreen.create(context),
           settings: settings,
           fullscreenDialog: true,
         );

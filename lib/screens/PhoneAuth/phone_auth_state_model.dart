@@ -129,7 +129,7 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
     };
 
     final PhoneVerificationFailed verificationFailed =
-        (AuthException authException) {
+        (FirebaseAuthException authException) {
       updateRefreshing(false, mounted);
       updateWith(
         status: AuthStatus.STATE_VERIFY_FAILED,
@@ -166,7 +166,7 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
 
   Future<void> signInWithPhoneAuthCredential(bool mounted) async {
     try {
-      User user;
+      MedicallUser user;
       this.auth.triggerAuthStream = false;
 
       this.phoneAuthCredential = this.phoneAuthCredential ??
@@ -238,7 +238,6 @@ class PhoneAuthStateModel with PhoneValidators, ChangeNotifier {
 
         this.auth.triggerAuthStream = true;
 //        await this.tempUserProvider.addNewUserToFirestore();
-        await this.tempUserProvider.addProviderMalPractice();
         currentFirebaseUser.sendEmailVerification();
 //        this.auth.addUserToAuthStream(user: user);
         // if (successfullySavedImages) {

@@ -108,7 +108,6 @@ class RegistrationTypeScreen extends StatelessWidget {
                   ],
                 ),
                 onPressed: () {
-                  tempUserProvider.getMalpracticeQuestions();
                   tempUserProvider.setUser(userType: USER_TYPE.PROVIDER);
                   Navigator.of(context).pushNamed('/registration');
                 },
