@@ -20,6 +20,7 @@ import 'package:Medicall/theme.dart';
 import 'package:Medicall/util/apple_sign_in_available.dart';
 import 'package:Medicall/util/firebase_notification_handler.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -105,16 +106,19 @@ class MedicallApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             theme: myTheme,
             home: VersionChecker(
-              landingPageBuilder: (context) => LandingPage(
-                userSnapshot: userSnapshot,
-                nonSignedInBuilder: (context) => WelcomeScreen(),
-                signedInBuilder: (context) =>
-                    userSnapshot.data.type == USER_TYPE.PROVIDER
-                        ? ProviderDashboardScreen.create(context)
-                        : PatientDashboardScreen.create(context),
-                providerPhotoBuilder: (context) => ProviderAccountScreen(),
-                startVisitBuilder: (context) => StartVisitScreen(
-                  consult: tempUserProvider.consult,
+              pushNotificationHandler: (context) =>
+                  FirebaseNotificationsHandler(
+                landingPageBuilder: (context) => LandingPage(
+                  userSnapshot: userSnapshot,
+                  nonSignedInBuilder: (context) => WelcomeScreen(),
+                  signedInBuilder: (context) =>
+                      userSnapshot.data.type == USER_TYPE.PROVIDER
+                          ? ProviderDashboardScreen.create(context)
+                          : PatientDashboardScreen.create(context),
+                  providerPhotoBuilder: (context) => ProviderAccountScreen(),
+                  startVisitBuilder: (context) => StartVisitScreen(
+                    consult: tempUserProvider.consult,
+                  ),
                 ),
               ),
             ),
@@ -123,5 +127,66 @@ class MedicallApp extends StatelessWidget {
         },
       ),
     );
+  }
+}
+
+class FirebaseNotificationsHandler extends StatefulWidget {
+  final WidgetBuilder landingPageBuilder;
+
+  const FirebaseNotificationsHandler({@required this.landingPageBuilder});
+
+  @override
+  _FirebaseNotificationsHandlerState createState() =>
+      _FirebaseNotificationsHandlerState();
+}
+
+class _FirebaseNotificationsHandlerState
+    extends State<FirebaseNotificationsHandler> {
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+
+  @override
+  void initState() {
+    super.initState();
+
+    _firebaseMessaging.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        print("onMessage: $message");
+        _serialiseAndNavigate(message);
+      },
+      onLaunch: (Map<String, dynamic> message) async {
+        print("onLaunch: $message");
+        _serialiseAndNavigate(message);
+      },
+      onResume: (Map<String, dynamic> message) async {
+        print("onResume: $message");
+        _serialiseAndNavigate(message);
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.landingPageBuilder(context);
+  }
+
+  Future<void> _serialiseAndNavigate(Map<String, dynamic> message) async {
+    var userTypeRaw = message['user_type'];
+    var screen = message['screen'];
+
+    USER_TYPE userType;
+    if (userTypeRaw != null) {
+      userType = (userTypeRaw as String).toUserTypeEnum();
+    }
+
+    if (screen != null) {
+      if (screen == 'consult') {
+        var consultId = message['consult_id'];
+        if (userType == USER_TYPE.PATIENT) {
+          PatientDashboardScreen.show(context: context);
+        } else {
+          ProviderDashboardScreen.show(context: context);
+        }
+      }
+    }
   }
 }

@@ -7,9 +7,9 @@ import 'package:provider/provider.dart';
 import 'package:version/version.dart';
 
 class VersionChecker extends StatefulWidget {
-  final WidgetBuilder landingPageBuilder;
+  final WidgetBuilder pushNotificationHandler;
 
-  const VersionChecker({@required this.landingPageBuilder});
+  const VersionChecker({@required this.pushNotificationHandler});
 
   @override
   _VersionCheckerState createState() => _VersionCheckerState();
@@ -70,7 +70,7 @@ class _VersionCheckerState extends State<VersionChecker> {
   Widget build(BuildContext context) {
     if (!isLoading) {
       if (versionIsCurrent) {
-        return widget.landingPageBuilder(context);
+        return widget.pushNotificationHandler(context);
       }
     }
     return Scaffold(

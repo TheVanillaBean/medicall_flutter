@@ -29,7 +29,7 @@ class AuthWidgetBuilder extends StatelessWidget {
       builder: (BuildContext context, AsyncSnapshot<MedicallUser> snapshot) {
         final MedicallUser user = snapshot.data;
         if (user != null) {
-          fcm.initFirebaseNotifications(medicallUser: user);
+          fcm.initFirebaseNotifications();
           return MultiProvider(
             providers: userProvidersBuilder != null
                 ? userProvidersBuilder(context, user)

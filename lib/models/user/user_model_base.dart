@@ -4,6 +4,15 @@ import 'package:enum_to_string/enum_to_string.dart';
 
 enum USER_TYPE { NOT_SET, PROVIDER, PATIENT }
 
+extension EnumParser on String {
+  USER_TYPE toUserTypeEnum() {
+    return USER_TYPE.values.firstWhere(
+      (e) => e.toString().toLowerCase() == 'USER_TYPE.$this'.toLowerCase(),
+      orElse: () => null,
+    ); //return null if not found
+  }
+}
+
 //This class acts as a baseclass for both types of users: patient and provider
 abstract class MedicallUser {
   String uid;
