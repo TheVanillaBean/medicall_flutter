@@ -10,12 +10,14 @@ import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/non_auth_firestore_db.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/util/apple_sign_in_available.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Will main build', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     final appleSignInAvailable = await AppleSignInAvailable.check();
+    await Firebase.initializeApp();
 
     await tester.pumpWidget(MedicallApp(
       appleSignInAvailable: appleSignInAvailable,
