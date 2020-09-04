@@ -16,8 +16,8 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   testWidgets('Will main build', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    final appleSignInAvailable = await AppleSignInAvailable.check();
     await Firebase.initializeApp();
+    final appleSignInAvailable = await AppleSignInAvailable.check();
 
     await tester.pumpWidget(MedicallApp(
       appleSignInAvailable: appleSignInAvailable,
