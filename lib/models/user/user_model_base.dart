@@ -27,10 +27,12 @@ abstract class MedicallUser {
   String email;
   String profilePic;
   String mailingAddress;
+  String mailingAddressLine2;
   String mailingState;
   String mailingZipCode;
   String mailingCity;
   String shippingAddress;
+  String shippingAddressLine2;
   String shippingState;
   String shippingZipCode;
   String shippingCity;
@@ -49,10 +51,12 @@ abstract class MedicallUser {
     this.email = '',
     this.profilePic = '',
     this.mailingAddress = '',
+    this.mailingAddressLine2 = '',
     this.mailingState = '',
     this.mailingZipCode = '',
     this.mailingCity = '',
     this.shippingAddress = '',
+    this.shippingAddressLine2 = '',
     this.shippingState = '',
     this.shippingZipCode = '',
     this.shippingCity = '',
@@ -74,10 +78,12 @@ abstract class MedicallUser {
       'profile_pic': profilePic,
       'phone_number': phoneNumber,
       'mailing_address': mailingAddress,
+      'mailing_address_line2': mailingAddressLine2,
       'mailing_state': mailingState,
       'mailing_zip_code': mailingZipCode,
       'mailing_city': mailingCity,
       'shipping_address': shippingAddress,
+      'shipping_address_line2': shippingAddressLine2,
       'shipping_state': shippingState,
       'shipping_zip_code': shippingZipCode,
       'shipping_city': shippingCity,
@@ -108,10 +114,14 @@ abstract class MedicallUser {
     user.email = data['email'] ?? user.email;
     user.phoneNumber = data['phone_number'] ?? user.phoneNumber;
     user.mailingAddress = data['mailing_address'] ?? user.mailingAddress;
+    user.mailingAddressLine2 =
+        data['mailing_address_line2'] ?? user.mailingAddressLine2;
     user.mailingState = data['mailing_state'] ?? user.mailingState;
     user.mailingZipCode = data['mailing_zip_code'] ?? user.mailingZipCode;
     user.mailingCity = data['mailing_city'] ?? user.mailingCity;
     user.shippingAddress = data['shipping_address'] ?? user.shippingAddress;
+    user.shippingAddressLine2 =
+        data['shipping_address_line2'] ?? user.shippingAddressLine2;
     user.shippingState = data['shipping_state'] ?? user.shippingState;
     user.shippingZipCode = data['shipping_zip_code'] ?? user.shippingZipCode;
     user.shippingCity = data['shipping_city'] ?? user.shippingCity;

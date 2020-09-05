@@ -41,6 +41,7 @@ class ProviderRegistrationViewModel
   String phoneNumber;
   DateTime dob = DateTime.now();
   String address;
+  String addressLine2;
   String city;
   String state;
   String zipCode;
@@ -149,6 +150,7 @@ class ProviderRegistrationViewModel
     this.phoneNumber = '',
     this.dob,
     this.address = '',
+    this.addressLine2 = '',
     this.city = '',
     this.state = '',
     this.zipCode = '',
@@ -286,6 +288,8 @@ class ProviderRegistrationViewModel
       updateWith(phoneNumber: phoneNumber);
   void updateDOB(DateTime dob) => updateWith(dob: dob);
   void updateAddress(String address) => updateWith(address: address);
+  void updateAddressLine2(String addressLine2) =>
+      updateWith(addressLine2: addressLine2);
   void updateCity(String city) => updateWith(city: city);
   void updateState(String state) => updateWith(state: state);
   void updateZipCode(String zipCode) => updateWith(zipCode: zipCode);
@@ -392,6 +396,7 @@ class ProviderRegistrationViewModel
     String phoneNumber,
     DateTime dob,
     String address,
+    String addressLine2,
     String city,
     String state,
     String zipCode,
@@ -415,6 +420,7 @@ class ProviderRegistrationViewModel
     this.phoneNumber = phoneNumber ?? this.phoneNumber;
     this.dob = dob ?? this.dob;
     this.address = address ?? this.address;
+    this.addressLine2 = addressLine2 ?? this.addressLine2;
     this.city = city ?? this.city;
     this.state = state ?? this.state;
     this.zipCode = zipCode ?? this.zipCode;
