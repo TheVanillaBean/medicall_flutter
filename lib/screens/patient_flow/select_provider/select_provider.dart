@@ -40,7 +40,7 @@ class SelectProviderScreen extends StatelessWidget {
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
           type: AppBarType.Back,
-          title: "Doctors in your area",
+          title: "Providers in your area",
           theme: Theme.of(context),
           actions: [
             IconButton(

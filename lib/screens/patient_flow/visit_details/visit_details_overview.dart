@@ -106,7 +106,7 @@ class VisitDetailsOverview extends StatelessWidget {
             child: Column(
               children: <Widget>[
                 _buildCardButton(
-                  "Doctor Note",
+                  "Provider Note",
                   MedicallIcons.clipboard_1,
                   () => {
                     VisitDocNote.show(
@@ -149,7 +149,7 @@ class VisitDetailsOverview extends StatelessWidget {
                   },
                 ),
                 _buildCardButton(
-                  "Message Doctor",
+                  "Message Provider",
                   Icons.message,
                   () => navigateToChatScreen(context),
                 ),

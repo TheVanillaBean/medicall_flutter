@@ -43,7 +43,7 @@ class ConfirmConsult extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     ConfirmConsultListItem(
-                      title: "Choose your visit and doctor",
+                      title: "Choose your visit and provider",
                     ),
                     ConfirmConsultListItem(
                       title: "Answer a few questions",
@@ -60,7 +60,7 @@ class ConfirmConsult extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.fromLTRB(10, 20, 10, 30),
                 child: Text(
-                  'You will now be directed to your dashboard, where you can review this visit, message your doctor, get updates, and explore other services.',
+                  'You will now be directed to your dashboard, where you can review this visit, message your provider, get updates, and explore other services.',
                   style: Theme.of(context).textTheme.bodyText1,
                 ),
               ),

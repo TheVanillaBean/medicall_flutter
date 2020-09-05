@@ -94,7 +94,7 @@ class RegistrationTypeScreen extends StatelessWidget {
                       ],
                     ),
                     Text(
-                      'Doctor',
+                      'Provider',
                       style: TextStyle(
                           fontSize: 20.0,
                           color: Theme.of(context).colorScheme.secondary),

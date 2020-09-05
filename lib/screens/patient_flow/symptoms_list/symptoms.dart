@@ -112,7 +112,7 @@ class SymptomsScreen extends StatelessWidget {
           ),
           SizedBox(height: 16),
           Text(
-            'This is the price for the doctor\'s services. Prescriptions or in person follow-up care not included.',
+            'This is the price for the provider\'s services. Prescriptions or in person follow-up care not included.',
             style: Theme.of(context).textTheme.bodyText2,
           ),
         ],

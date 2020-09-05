@@ -31,7 +31,7 @@ class VisitDocNote extends StatelessWidget {
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
         type: AppBarType.Back,
-        title: "Doctor Note",
+        title: "Provider Note",
         theme: Theme.of(context),
         actions: [
           IconButton(
