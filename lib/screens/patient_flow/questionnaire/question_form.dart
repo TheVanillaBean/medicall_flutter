@@ -1,20 +1,14 @@
-import 'dart:typed_data';
-
 import 'package:Medicall/common_widgets/camera/Camera.dart';
 import 'package:Medicall/common_widgets/grouped_buttons/radio_button_group.dart';
 import 'package:Medicall/models/questionnaire/question_model.dart';
 import 'package:Medicall/screens/patient_flow/questionnaire/grouped_checkbox.dart';
 import 'package:Medicall/screens/patient_flow/questionnaire/questions_view_model.dart';
 import 'package:Medicall/services/extimage_provider.dart';
-import 'package:Medicall/services/firebase_storage_service.dart';
-import 'package:Medicall/util/app_util.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_absolute_path/flutter_absolute_path.dart';
-import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
@@ -57,54 +51,6 @@ class _QuestionFormState extends State<QuestionForm> {
   ExtImageProvider get extendedImageProvider => widget.extendedImageProvider;
 
   bool isLoading = false;
-
-  Future<void> _loadProfileImage() async {
-    List<Asset> resultList = List<Asset>();
-
-    try {
-      resultList = await this.extendedImageProvider.pickImages(
-        [],
-        question.maxImages,
-        true,
-        this
-            .extendedImageProvider
-            .pickImagesCupertinoOptions(takePhotoIcon: 'camera'),
-        this.extendedImageProvider.pickImagesMaterialOptions(
-            useDetailsView: true,
-            actionBarColor:
-                '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
-            statusBarColor:
-                '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
-            lightStatusBar: false,
-            autoCloseOnSelectionLimit: true,
-            startInAllView: true,
-            actionBarTitle: 'Select photo(s) for consult',
-            allViewTitle: 'All Photos'),
-        context,
-      );
-    } on PlatformException catch (e) {
-      AppUtil().showFlushBar(e, context);
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    if (!mounted) return;
-    setState(() {
-      isLoading = true;
-    });
-    List<Map<String, ByteData>> resultMap = [];
-    for (Asset asset in resultList) {
-      ByteData byteData =
-          await FirebaseStorageService.getAccurateByteData(asset);
-      String assetPath =
-          await FlutterAbsolutePath.getAbsolutePath(asset.identifier);
-      resultMap.add({assetPath: byteData});
-    }
-    setState(() {
-      isLoading = false;
-    });
-    model.updateQuestionPageWith(questionPhotos: resultMap);
-  }
 
   @override
   Widget build(BuildContext context) {

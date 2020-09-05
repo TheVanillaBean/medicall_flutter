@@ -52,14 +52,14 @@ buildMedicalNote(snapshot, patientDetail, medicalHistory) {
     }
     if (patientDetail != null &&
         snapshot['screening_questions'][11]['answer'] != null) {
-      fullStr += '\n\nPatient has seen doctor for psoriasis ' +
+      fullStr += '\n\nPatient has seen provider for psoriasis ' +
           snapshot['screening_questions'][11]['answer'].toString() +
           ', treatments include ' +
           snapshot['screening_questions'][12]['answer'].toString();
     }
     if (patientDetail != null &&
         snapshot['screening_questions'][13]['answer'] != null) {
-      fullStr += '  Patient has seen doctor for eczema ' +
+      fullStr += '  Patient has seen provider for eczema ' +
           snapshot['screening_questions'][13]['answer'].toString() +
           ', treatments include ' +
           snapshot['screening_questions'][14]['answer'].toString();

@@ -41,7 +41,7 @@ class WelcomeScreen extends StatelessWidget {
               ),
             ),
             Text(
-              'Leading Local Doctors',
+              'Leading Local Providers',
               style: TextStyle(
                   fontSize: 18, color: Theme.of(context).colorScheme.primary),
             ),
@@ -103,7 +103,7 @@ class WelcomeScreen extends StatelessWidget {
                       style: TextStyle(fontSize: 18, color: Colors.white)),
                 ),
                 Text(
-                  'Choose your visit and doctor',
+                  'Choose your visit and provider',
                   style: TextStyle(
                       fontSize: 18, color: Colors.black.withAlpha(140)),
                 )

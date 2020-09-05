@@ -34,25 +34,25 @@ class _VersionCheckerState extends State<VersionChecker> {
 
       VersionInfo version = await db.versionInfoStream();
 
-      Version currentVersion = Version.parse(appVersion);
-      Version latestVersion = Version.parse(version.iosVersionNumber);
+      versionIsCurrent = true;
+      // Version currentVersion = Version.parse(appVersion);
+      // Version latestVersion = Version.parse(version.iosVersionNumber);
+      // if (currentVersion >= latestVersion) {
+      //   versionIsCurrent = true;
+      // } else {
+      //   versionIsCurrent = true;
 
-      if (currentVersion >= latestVersion) {
-        versionIsCurrent = true;
-      } else {
-        versionIsCurrent = true;
-
-//        NativeUpdater.displayUpdateAlert(
-//          context,
-//          forceUpdate: true,
-//          appStoreUrl: version.iosUrl,
-//          playStoreUrl: version.androidUrl,
-//          iOSDescription:
-//              "Major changes have been made since the version you currently have. You will have to upgrade before continuing to use the app.",
-//          iOSUpdateButtonLabel: 'Upgrade',
-//          iOSCloseButtonLabel: 'Exit',
-//        );
-      }
+      //   NativeUpdater.displayUpdateAlert(
+      //     context,
+      //     forceUpdate: true,
+      //     appStoreUrl: version.iosUrl,
+      //     playStoreUrl: version.androidUrl,
+      //     iOSDescription:
+      //         "Major changes have been made since the version you currently have. You will have to upgrade before continuing to use the app.",
+      //     iOSUpdateButtonLabel: 'Upgrade',
+      //     iOSCloseButtonLabel: 'Exit',
+      //   );
+      // }
     } on PlatformException {
       error = true;
     }
