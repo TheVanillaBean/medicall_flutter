@@ -46,7 +46,7 @@ class QuestionPage extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.only(top: 8),
                           child: Text(
-                              "Select up to ${question.maxImages} images."),
+                              "Select up to ${question.maxImages} images.\nClick on the icon below to open the camera."),
                         ),
                     ],
                   ),
