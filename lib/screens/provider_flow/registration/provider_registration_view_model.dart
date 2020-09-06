@@ -353,6 +353,7 @@ class ProviderRegistrationViewModel
         tempUserProvider.user.phoneNumber = this.phoneNumber;
         tempUserProvider.user.dob = this.birthday;
         tempUserProvider.user.mailingAddress = this.address;
+        tempUserProvider.user.mailingAddressLine2 = this.addressLine2;
         tempUserProvider.user.mailingCity = this.city;
         tempUserProvider.user.mailingState = this.state;
         tempUserProvider.user.mailingZipCode = this.zipCode;

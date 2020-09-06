@@ -16,7 +16,8 @@ class ListItemsBuilder<T> extends StatelessWidget {
     this.scrollable = true,
     this.emptyContentWidget,
   }) : assert((snapshot == null && itemsList != null) ||
-            (snapshot != null && itemsList == null));
+            (snapshot != null && itemsList == null) ||
+            (snapshot == null && itemsList == null));
   final AsyncSnapshot<List<T>> snapshot;
   final List<T> itemsList;
   final ItemWidgetBuilder<T> itemBuilder;
