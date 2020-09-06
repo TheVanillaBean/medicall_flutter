@@ -24,6 +24,7 @@ class PrescriptionCheckoutViewModel
   List<TreatmentOptions> alreadyPaidForPrescriptions = [];
   List<TreatmentOptions> selectedTreatmentOptions = [];
   String shippingAddress;
+  String shippingAddressLine2;
   String city;
   String state;
   String zipCode;
@@ -42,6 +43,7 @@ class PrescriptionCheckoutViewModel
     @required this.consultId,
     @required this.stripeProvider,
     this.shippingAddress = "",
+    this.shippingAddressLine2 = "",
     this.city = "",
     this.state = "",
     this.zipCode = "",
@@ -211,6 +213,9 @@ class PrescriptionCheckoutViewModel
   void updateShippingAddress(String shippingAddress) =>
       updateWith(shippingAddress: shippingAddress);
 
+  void updateShippingAddressLine2(String shippingAddressLine2) =>
+      updateWith(shippingAddressLine2: shippingAddressLine2);
+
   void updateCity(String city) => updateWith(city: city);
 
   void updateState(String state) => updateWith(state: state);
@@ -226,11 +231,13 @@ class PrescriptionCheckoutViewModel
     MedicallUser user = this.userProvider.user;
     if (this.useAccountAddress) {
       user.shippingAddress = user.mailingAddress;
+      user.shippingAddressLine2 = user.mailingAddressLine2;
       user.shippingCity = user.mailingCity;
       user.shippingState = user.mailingState;
       user.shippingZipCode = user.mailingZipCode;
     } else {
       user.shippingAddress = this.shippingAddress;
+      user.shippingAddressLine2 = this.shippingAddressLine2;
       user.shippingCity = this.city;
       user.shippingState = this.state;
       user.shippingZipCode = this.zipCode;
@@ -245,6 +252,7 @@ class PrescriptionCheckoutViewModel
         await this.stripeProvider.chargePaymentForPrescription(
               price: this.totalCost,
               paymentMethodId: this.selectedPaymentMethod.id,
+              consultId: this.consultId,
             );
 
     updateWith(isLoading: false);
@@ -299,6 +307,7 @@ class PrescriptionCheckoutViewModel
   void updateWith({
     List<TreatmentOptions> selectedTreatments,
     String shippingAddress,
+    String shippingAddressLine2,
     String city,
     String state,
     String zipCode,
@@ -311,6 +320,8 @@ class PrescriptionCheckoutViewModel
     this.selectedTreatmentOptions =
         selectedTreatments ?? this.selectedTreatmentOptions;
     this.shippingAddress = shippingAddress ?? this.shippingAddress;
+    this.shippingAddressLine2 =
+        shippingAddressLine2 ?? this.shippingAddressLine2;
     this.city = city ?? this.city;
     this.state = state ?? this.state;
     this.zipCode = zipCode ?? this.zipCode;

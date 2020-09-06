@@ -42,7 +42,9 @@ class ProviderListItem extends StatelessWidget {
             style: Theme.of(context).textTheme.bodyText1,
           ),
           subtitle: Text(
-            provider.mailingAddress,
+            provider.mailingAddressLine2 == ''
+                ? '${provider.mailingAddress} \n${provider.mailingCity}, ${provider.mailingState} ${provider.mailingZipCode}'
+                : '${provider.mailingAddress} \n${provider.mailingAddressLine2} \n${provider.mailingCity}, ${provider.mailingState} ${provider.mailingZipCode}',
             style: Theme.of(context).textTheme.caption,
           ),
           trailing: Icon(

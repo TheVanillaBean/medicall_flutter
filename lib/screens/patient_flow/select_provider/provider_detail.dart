@@ -105,18 +105,18 @@ class ProviderDetailScreen extends StatelessWidget {
   ) {
     return <Widget>[
       CircleAvatar(
-        radius: 80.0,
+        radius: 120.0,
         child: ClipOval(
           child: provider.profilePic.length > 0
               ? extImageProvider.returnNetworkImage(
                   provider.profilePic,
-                  width: 150,
-                  height: 150,
+                  width: 250,
+                  height: 250,
                   fit: BoxFit.cover,
                 )
               : Icon(
                   Icons.account_circle,
-                  size: 150,
+                  size: 250,
                   color: Colors.grey,
                 ),
         ),
@@ -138,7 +138,9 @@ class ProviderDetailScreen extends StatelessWidget {
         alignment: Alignment.center,
         width: 250,
         child: Text(
-          '${provider.mailingAddress}\n${provider.mailingCity}, ${provider.mailingState} ${provider.mailingZipCode}',
+          provider.mailingAddressLine2 == ''
+              ? '${provider.mailingAddress} \n${provider.mailingCity}, ${provider.mailingState} ${provider.mailingZipCode}'
+              : '${provider.mailingAddress} \n${provider.mailingAddressLine2} \n${provider.mailingCity}, ${provider.mailingState} ${provider.mailingZipCode}',
           style: Theme.of(context).textTheme.bodyText1,
           textAlign: TextAlign.center,
         ),

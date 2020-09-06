@@ -50,7 +50,7 @@ class PatientDashboardListItem extends StatelessWidget {
           subtitle: '${consult.parsedDate}',
           trailing: Container(
             width: 60,
-            alignment: Alignment.bottomCenter,
+            alignment: Alignment.centerLeft,
             child: Text(EnumToString.parseCamelCase(consult.state) ?? "",
                 style: Theme.of(context).textTheme.caption.copyWith(
                     color: Theme.of(context).colorScheme.primary,
