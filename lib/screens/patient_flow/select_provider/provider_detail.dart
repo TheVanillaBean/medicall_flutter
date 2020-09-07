@@ -110,13 +110,13 @@ class ProviderDetailScreen extends StatelessWidget {
           child: provider.profilePic.length > 0
               ? extImageProvider.returnNetworkImage(
                   provider.profilePic,
-                  width: 250,
-                  height: 250,
+                  width: 200,
+                  height: 200,
                   fit: BoxFit.cover,
                 )
               : Icon(
                   Icons.account_circle,
-                  size: 250,
+                  size: 200,
                   color: Colors.grey,
                 ),
         ),

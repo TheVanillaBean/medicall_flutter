@@ -104,13 +104,17 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
                     userProvider: userProvider,
                   ),
             SizedBox(height: 20),
-            Text(
-              medicallUser.fullName,
-              style: Theme.of(context).textTheme.bodyText1.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontWeight: FontWeight.bold,
-                  ),
-              textAlign: TextAlign.center,
+            Center(
+              child: Text(
+                medicallUser.fullName,
+                style: TextStyle(
+                  fontFamily: 'Inter',
+                  fontSize: 20.0,
+                  color: Theme.of(context).colorScheme.primary,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
             ),
             SizedBox(height: 10),
             Text(
@@ -130,8 +134,10 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
             ),
             _buildEmailCard(medicallUser),
             _buildPhoneCard(medicallUser),
+            _buildBillingAddressCard(medicallUser),
             _buildPaymentMethodsCard(context),
             _buildMedicalHistoryCard(context),
+            SizedBox(height: 50),
           ],
         ),
       ),
@@ -155,6 +161,15 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
       onTap: () {
         PaymentDetail.show(context: context, paymentModel: null);
       },
+    );
+  }
+
+  Widget _buildBillingAddressCard(MedicallUser medicallUser) {
+    return ReusableAccountCard(
+      leading: 'Billing \nAddress:',
+      title: medicallUser.mailingAddressLine2 == ''
+          ? '${medicallUser.mailingAddress} \n${medicallUser.mailingCity}, ${medicallUser.mailingState} ${medicallUser.mailingZipCode}'
+          : '${medicallUser.mailingAddress} \n${medicallUser.mailingAddressLine2} \n${medicallUser.mailingCity}, ${medicallUser.mailingState} ${medicallUser.mailingZipCode}',
     );
   }
 

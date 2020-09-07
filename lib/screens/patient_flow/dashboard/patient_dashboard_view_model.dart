@@ -15,6 +15,10 @@ class PatientDashboardViewModel with ChangeNotifier {
       ? userProvider.user.fullName
       : "Patient";
 
+  String get userFirstName => userProvider.user.firstName != ''
+      ? userProvider.user.firstName
+      : "Patient";
+
   // ignore: close_sinks
   StreamController<List<Consult>> consultStream = StreamController();
 
