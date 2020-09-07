@@ -1,11 +1,19 @@
+import 'dart:io';
+
+import 'package:Medicall/models/consult_model.dart';
+import 'package:Medicall/models/user/patient_user_model.dart';
+import 'package:Medicall/models/user/provider_user_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/landing_page/auth_widget_builder.dart';
 import 'package:Medicall/screens/landing_page/landing_page.dart';
 import 'package:Medicall/screens/landing_page/version_checker.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/patient_flow/start_visit/start_visit.dart';
+import 'package:Medicall/screens/patient_flow/visit_details/visit_details_overview.dart';
 import 'package:Medicall/screens/provider_flow/account/provider_account.dart';
 import 'package:Medicall/screens/provider_flow/dashboard/provider_dashboard.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_overview.dart';
+import 'package:Medicall/screens/shared/chat/chat_screen.dart';
 import 'package:Medicall/screens/shared/welcome.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/chat_provider.dart';
@@ -170,23 +178,71 @@ class _FirebaseNotificationsHandlerState
   }
 
   Future<void> _serialiseAndNavigate(Map<String, dynamic> message) async {
-    var userTypeRaw = message['user_type'];
-    var screen = message['screen'];
+    UserProvider userProvider =
+        Provider.of<UserProvider>(context, listen: false);
+    //keys are derived from cloud functions (push.ts and stream.ts)
+    Map<dynamic, dynamic> data = message;
+    //for android, the data fields are in a separate JSON object inside message
+    //for ios, they are all contained in the same root message object
+    if (Platform.isAndroid) {
+      data = message['data'];
+    }
+    String userTypeRaw = data['user_type'] as String;
+    String screen = data['screen'] as String;
 
     USER_TYPE userType;
     if (userTypeRaw != null) {
-      userType = (userTypeRaw as String).toUserTypeEnum();
+      userType = userTypeRaw.toUserTypeEnum();
     }
 
     if (screen != null) {
-      if (screen == 'consult') {
-        var consultId = message['consult_id'];
-        if (userType == USER_TYPE.PATIENT) {
-          PatientDashboardScreen.show(context: context);
-        } else {
-          ProviderDashboardScreen.show(context: context);
+      String consultId = data['consult_id'] as String;
+      Consult consult = await getConsult(consultId: consultId);
+      if (screen == 'Visit Detail') {
+        // the user type for this screen should always be patient, but just a check
+        if (userType == USER_TYPE.PATIENT &&
+            userProvider.user.type == USER_TYPE.PATIENT) {
+          VisitDetailsOverview.show(context: context, consult: consult);
         }
+      } else if (screen == 'Visit Overview') {
+        // the user type for this screen should always be a provider, but just a check
+        if (userType == USER_TYPE.PROVIDER &&
+            userProvider.user.type == USER_TYPE.PROVIDER) {
+          VisitOverview.show(
+              context: context,
+              consultId: consultId,
+              patientUser: consult.patientUser);
+        }
+      } else if (screen == 'Chat') {
+        navigateToChatScreen(consult: consult);
       }
     }
+  }
+
+  Future<Consult> getConsult({String consultId}) async {
+    FirestoreDatabase database =
+        Provider.of<FirestoreDatabase>(context, listen: false);
+
+    Consult consult = await database.consultStream(consultId: consultId).first;
+    PatientUser patientUser =
+        await database.userStream(USER_TYPE.PATIENT, consult.patientId).first;
+    ProviderUser providerUser =
+        await database.userStream(USER_TYPE.PROVIDER, consult.providerId).first;
+    consult.patientUser = patientUser;
+    consult.providerUser = providerUser;
+    return consult;
+  }
+
+  void navigateToChatScreen({Consult consult}) async {
+    ChatProvider chatProvider =
+        Provider.of<ChatProvider>(context, listen: false);
+
+    final channel = chatProvider.client.channel('messaging', id: consult.uid);
+
+    ChatScreen.show(
+      context: context,
+      channel: channel,
+      consult: consult,
+    );
   }
 }

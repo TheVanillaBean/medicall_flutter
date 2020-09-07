@@ -1,6 +1,8 @@
 import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/non_auth_firestore_db.dart';
 import 'package:Medicall/util/firebase_notification_handler.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
@@ -20,16 +22,26 @@ class AuthWidgetBuilder extends StatelessWidget {
     this.userProvidersBuilder,
   }) : super(key: key);
 
+  Future<void> updateDevTokens(MedicallUser user, NonAuthDatabase db) async {
+    FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+    String token = await _firebaseMessaging.getToken();
+    user.devTokens = [token];
+    await db.setUser(user);
+  }
+
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthBase>(context, listen: false);
     final fcm = Provider.of<FirebaseNotifications>(context, listen: false);
+    final NonAuthDatabase nonAuthDatabase =
+        Provider.of<NonAuthDatabase>(context, listen: false);
     return StreamBuilder<MedicallUser>(
       stream: authService.onAuthStateChanged,
       builder: (BuildContext context, AsyncSnapshot<MedicallUser> snapshot) {
         final MedicallUser user = snapshot.data;
         if (user != null) {
           fcm.initFirebaseNotifications();
+          updateDevTokens(user, nonAuthDatabase);
           return MultiProvider(
             providers: userProvidersBuilder != null
                 ? userProvidersBuilder(context, user)
