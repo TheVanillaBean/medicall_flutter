@@ -240,19 +240,19 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
             child: this.profileImageURL.length > 0
                 ? extImageProvider.returnNetworkImage(
                     this.profileImageURL,
-                    height: (height * 0.2),
-                    width: (height * 0.2),
+                    height: (height * 0.3),
+                    width: (height * 0.3),
                     fit: BoxFit.cover,
                     cache: true,
                   )
                 : Icon(
                     Icons.account_circle,
                     color: Colors.blue.withAlpha(140),
-                    size: height * 0.15,
+                    size: height * 0.20,
                   ),
           ),
           Positioned(
-            bottom: -10,
+            bottom: 15,
             child: CircleAvatar(
               backgroundColor: Colors.red,
               radius: 20.0,

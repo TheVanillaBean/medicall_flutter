@@ -6,12 +6,14 @@ class ProviderUser extends MedicallUser {
   String medLicenseState;
   String npi;
   String boardCertified;
+  String providerBio;
   bool stripeConnectAuthorized;
 
   ProviderUser({
     this.professionalTitle = '',
     this.npi = '',
     this.boardCertified = '',
+    this.providerBio = '',
     this.medLicense = '',
     this.medLicenseState = '',
     this.stripeConnectAuthorized = false,
@@ -27,6 +29,7 @@ class ProviderUser extends MedicallUser {
       'med_license': medLicense,
       'state_issued': medLicenseState,
       'board_certified': boardCertified,
+      'provider_bio': providerBio,
     });
     return userMap;
   }
@@ -39,6 +42,7 @@ class ProviderUser extends MedicallUser {
     provider.npi = data['npi'] ?? provider.npi;
     provider.boardCertified =
         data['board_certified'] ?? provider.boardCertified;
+    provider.providerBio = data['provider_bio'] ?? provider.providerBio;
     provider.medLicenseState = data['state_issued'] ?? provider.medLicenseState;
     provider.stripeConnectAuthorized =
         data['stripe_connect_authorized'] ?? provider.stripeConnectAuthorized;

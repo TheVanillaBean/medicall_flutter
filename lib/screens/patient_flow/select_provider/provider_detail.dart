@@ -55,46 +55,47 @@ class ProviderDetailScreen extends StatelessWidget {
 
     ScreenUtil.init(context);
     return Scaffold(
-      appBar: CustomAppBar.getAppBar(
-        type: AppBarType.Back,
-        title: provider.fullName + ', ' + provider.professionalTitle,
-        theme: Theme.of(context),
-        actions: [
-          IconButton(
-              icon: Icon(
-                Icons.home,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              onPressed: () {
-                if (currentUser != null) {
-                  PatientDashboardScreen.show(
-                    context: context,
-                    pushReplaceNamed: true,
-                  );
-                } else {
-                  WelcomeScreen.show(context: context);
-                }
-              })
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Container(
-          height:
-              ScreenUtil.screenHeightDp - (ScreenUtil.screenHeightDp * 0.11),
-          padding: EdgeInsets.all(40),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: _buildChildren(
-              tempUserProvider,
-              extImageProvider,
-              currentUser,
-              context,
-            ),
-          ),
+        appBar: CustomAppBar.getAppBar(
+          type: AppBarType.Back,
+          title: provider.fullName + ', ' + provider.professionalTitle,
+          theme: Theme.of(context),
+          actions: [
+            IconButton(
+                icon: Icon(
+                  Icons.home,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                onPressed: () {
+                  if (currentUser != null) {
+                    PatientDashboardScreen.show(
+                      context: context,
+                      pushReplaceNamed: true,
+                    );
+                  } else {
+                    WelcomeScreen.show(context: context);
+                  }
+                })
+          ],
         ),
-      ),
-    );
+        body: CustomScrollView(
+          slivers: [
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(30, 12, 30, 12),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: _buildChildren(
+                    tempUserProvider,
+                    extImageProvider,
+                    currentUser,
+                    context,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ));
   }
 
   List<Widget> _buildChildren(
@@ -105,18 +106,18 @@ class ProviderDetailScreen extends StatelessWidget {
   ) {
     return <Widget>[
       CircleAvatar(
-        radius: 120.0,
+        radius: 150.0,
         child: ClipOval(
           child: provider.profilePic.length > 0
               ? extImageProvider.returnNetworkImage(
                   provider.profilePic,
-                  width: 200,
-                  height: 200,
+                  width: 250,
+                  height: 250,
                   fit: BoxFit.cover,
                 )
               : Icon(
                   Icons.account_circle,
-                  size: 200,
+                  size: 250,
                   color: Colors.grey,
                 ),
         ),
@@ -146,40 +147,39 @@ class ProviderDetailScreen extends StatelessWidget {
         ),
       ),
       SizedBox(height: 20),
+      Text(
+        provider.providerBio != '' ? provider.providerBio : symptom.description,
+        style: Theme.of(context).textTheme.bodyText1,
+        textAlign: TextAlign.left,
+      ),
+      SizedBox(height: 30),
       Expanded(
-        flex: 5,
-        child: Container(
-          child: Text(
-            symptom.description,
-            style: Theme.of(context).textTheme.bodyText1,
-            textAlign: TextAlign.left,
+        child: Align(
+          alignment: FractionalOffset.bottomCenter,
+          child: ReusableRaisedButton(
+            title: "Start Visit",
+            onPressed: () {
+              Consult consult = Consult(
+                providerId: provider.uid,
+                providerUser: provider,
+                symptom: symptom.name,
+                date: DateTime.now(),
+                price: 49,
+              );
+              if (currentUser != null) {
+                StartVisitScreen.show(
+                  context: context,
+                  consult: consult,
+                );
+              } else {
+                tempUserProvider.consult = consult;
+                RegistrationScreen.show(context: context);
+              }
+            },
           ),
         ),
       ),
-      Align(
-        alignment: FractionalOffset.bottomCenter,
-        child: ReusableRaisedButton(
-          title: "Start Visit",
-          onPressed: () {
-            Consult consult = Consult(
-              providerId: provider.uid,
-              providerUser: provider,
-              symptom: symptom.name,
-              date: DateTime.now(),
-              price: 49,
-            );
-            if (currentUser != null) {
-              StartVisitScreen.show(
-                context: context,
-                consult: consult,
-              );
-            } else {
-              tempUserProvider.consult = consult;
-              RegistrationScreen.show(context: context);
-            }
-          },
-        ),
-      )
+      SizedBox(height: 20),
     ];
   }
 }

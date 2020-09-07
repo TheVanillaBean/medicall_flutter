@@ -28,6 +28,7 @@ class ProviderRegistrationViewModel
         MedicalLicenseValidators,
         MedicalLicenseStateValidators,
         BoardCertificationValidators,
+        ProviderBioValidators,
         ChangeNotifier {
   final NonAuthDatabase nonAuthDatabase;
   final AuthBase auth;
@@ -50,6 +51,7 @@ class ProviderRegistrationViewModel
   String medLicenseState;
   String npi;
   String boardCertified;
+  String providerBio;
 
   bool checkValue;
   bool isLoading;
@@ -159,6 +161,7 @@ class ProviderRegistrationViewModel
     this.medLicenseState = '',
     this.npi = '',
     this.boardCertified = '',
+    this.providerBio = '',
     this.checkValue = false,
     this.isLoading = false,
     this.submitted = false,
@@ -180,6 +183,7 @@ class ProviderRegistrationViewModel
         cityValidator.isValid(city) &&
         zipCodeValidator.isValid(zipCode) &&
         professionalTitleValidator.isValid(professionalTitle) &&
+        providerBioValidator.isValid(providerBio) &&
         !isLoading;
   }
 
@@ -270,6 +274,12 @@ class ProviderRegistrationViewModel
     return showErrorText ? boardCertifiedErrorText : null;
   }
 
+  String get providerBioErrorText {
+    bool showErrorText =
+        this.submitted && !providerBioValidator.isValid(providerBio);
+    return showErrorText ? bioErrorText : null;
+  }
+
   String get birthday {
     final f = new DateFormat('MM/dd/yyyy');
     return this.dob.year <= DateTime.now().year - 18
@@ -302,6 +312,8 @@ class ProviderRegistrationViewModel
   void updateNpi(String npi) => updateWith(npi: npi);
   void updateBoardCertified(String boardCertified) =>
       updateWith(boardCertified: boardCertified);
+  void updateProviderBio(String providerBio) =>
+      updateWith(providerBio: providerBio);
 
   DateTime get initialDatePickerDate {
     final DateTime currentDate = DateTime.now();
@@ -365,6 +377,7 @@ class ProviderRegistrationViewModel
         (tempUserProvider.user as ProviderUser).npi = this.npi;
         (tempUserProvider.user as ProviderUser).boardCertified =
             this.boardCertified;
+        (tempUserProvider.user as ProviderUser).providerBio = this.providerBio;
         updateWith(submitted: false, isLoading: false);
         saveUserDetails(user);
       } else {
@@ -406,6 +419,7 @@ class ProviderRegistrationViewModel
     String medLicenseState,
     String npi,
     String boardCertified,
+    String providerBio,
     bool checkValue,
     bool isLoading,
     bool submitted,
@@ -428,6 +442,7 @@ class ProviderRegistrationViewModel
     this.professionalTitle = professionalTitle ?? this.professionalTitle;
     this.npi = npi ?? this.npi;
     this.boardCertified = boardCertified ?? this.boardCertified;
+    this.providerBio = providerBio ?? this.providerBio;
     this.medLicense = medLicense ?? this.medLicense;
     this.medLicenseState = medLicenseState ?? this.medLicenseState;
     this.checkValue = checkValue ?? this.checkValue;
