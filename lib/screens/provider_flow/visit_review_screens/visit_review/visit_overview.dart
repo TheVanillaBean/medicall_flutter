@@ -8,10 +8,10 @@ import 'package:Medicall/models/user/patient_user_model.dart';
 import 'package:Medicall/models/user/provider_user_model.dart';
 import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/Shared/visit_information/review_visit_information.dart';
 import 'package:Medicall/screens/provider_flow/dashboard/provider_dashboard_list_item.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_review.dart';
 import 'package:Medicall/screens/shared/chat/chat_screen.dart';
-import 'package:Medicall/screens/Shared/visit_information/review_visit_information.dart';
 import 'package:Medicall/services/chat_provider.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
@@ -135,7 +135,7 @@ class VisitOverview extends StatelessWidget {
         child: Align(
           alignment: FractionalOffset.bottomCenter,
           child: Padding(
-            padding: const EdgeInsets.only(bottom: 32),
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
             child: SignInButton(
               text: getContinueBtnText(consult).toUpperCase(),
               height: 8,

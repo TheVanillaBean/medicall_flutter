@@ -67,7 +67,7 @@ class VisitEducation extends StatelessWidget {
   List<Widget> _buildEduItem(
     BuildContext context,
     String name,
-    String link,
+    String link, //is also just a text value for custom edu options
   ) {
     return [
       Container(
@@ -86,15 +86,18 @@ class VisitEducation extends StatelessWidget {
                 forceSafariVC: true,
                 forceWebView: true,
               );
-            } else {
-              throw 'Could not launch $url';
             }
           },
-          subtitle: "Additional information",
-          trailing: Icon(
-            Icons.launch,
-            color: Theme.of(context).colorScheme.primary,
-          ),
+          subtitle: name != "Other" ? "Additional information" : link,
+          trailing: name != "Other"
+              ? Icon(
+                  Icons.launch,
+                  color: Theme.of(context).colorScheme.primary,
+                )
+              : Icon(
+                  Icons.description,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
         ),
       )
     ];

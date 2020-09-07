@@ -174,16 +174,23 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
         this.treatmentNoteStepState.selectedTreatmentOptions;
     this.visitReviewData.educationalOptions =
         this.educationalStepState.selectedEducationalOptions.map((option) {
-      var link = this
-          .diagnosisOptions
-          .educationalContent
-          .where((e) => e.containsKey(option))
-          .toList()
-          .first
-          .values
-          .first;
+      var link = "";
+      if (option == "Other") {
+        link = this.educationalStepState.otherEducationalOption;
+      } else {
+        link = this
+            .diagnosisOptions
+            .educationalContent
+            .where((e) => e.containsKey(option))
+            .toList()
+            .first
+            .values
+            .first;
+      }
+
       return {option: link};
     }).toList();
+
     this.visitReviewData.followUp = this.followUpStepState.followUpMap;
     this.visitReviewData.patientNote = this.patientNoteStepState.patientNote;
     await firestoreDatabase.saveVisitReview(
@@ -506,23 +513,44 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
 
   void updateEducationalInformation({
     List<String> selectedEducationalOptions,
+    String otherEducationalOption,
   }) {
     this.educationalStepState.selectedEducationalOptions =
         selectedEducationalOptions ??
             this.educationalStepState.selectedEducationalOptions;
+    this.educationalStepState.otherEducationalOption = otherEducationalOption ??
+        this.educationalStepState.otherEducationalOption;
+    if (this
+        .educationalStepState
+        .selectedEducationalOptions
+        .contains("Other")) {
+      this.educationalStepState.otherSelected = true;
+    } else {
+      this.educationalStepState.otherSelected = false;
+      this.educationalStepState.otherEducationalOption = "";
+    }
+
     notifyListeners(VisitReviewVMProperties.educationalContent);
   }
 
   void setEducationalInfoFromPrevData() {
     if (this.visitReviewData.educationalOptions.length > 0) {
+      List<String> educationalOptions = [];
+      String otherEduOption = '';
+      this.visitReviewData.educationalOptions.forEach((element) {
+        String eduOption = element.keys.first;
+        educationalOptions.add(eduOption);
+        if (eduOption == "Other") {
+          otherEduOption = element.values.first;
+        }
+      });
       this.updateEducationalInformation(
-        selectedEducationalOptions: this
-            .visitReviewData
-            .educationalOptions
-            .map((e) => e.keys.first)
-            .toList(),
+        selectedEducationalOptions: educationalOptions,
+        otherEducationalOption: otherEduOption,
       );
+
       if (this.educationalStepState.minimumRequiredFieldsFilledOut) {
+        //insert if it hasn't been inserted already
         int index =
             completedSteps.indexOf(VisitReviewSteps.EducationalContentStep);
         if (index > 0) {

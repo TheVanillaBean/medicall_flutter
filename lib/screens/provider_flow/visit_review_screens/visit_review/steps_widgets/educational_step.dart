@@ -16,50 +16,86 @@ class EducationalContentStep extends StatelessWidget {
     ).value;
     final width = MediaQuery.of(context).size.width;
     if (model.diagnosisOptions != null)
-      return SwipeGestureRecognizer(
-        onSwipeLeft: () => model.incrementIndex(),
-        onSwipeRight: () => model.decrementIndex(),
-        child: CustomScrollView(
-          slivers: <Widget>[
-            SliverFillRemaining(
-              hasScrollBody: false,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(12, 32, 0, 12),
-                    child: Text(
-                      "What educational content would you like to send this patient?",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontWeight: FontWeight.w500,
+      return GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          FocusScope.of(context).requestFocus(FocusNode());
+        },
+        child: SwipeGestureRecognizer(
+          onSwipeLeft: () => model.incrementIndex(),
+          onSwipeRight: () => model.decrementIndex(),
+          child: CustomScrollView(
+            slivers: <Widget>[
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(12, 32, 0, 12),
+                      child: Text(
+                        "What educational content would you like to send this patient?",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 36),
-                    child: CheckboxGroup(
-                      activeColor: Theme.of(context).colorScheme.primary,
-                      labels: model.diagnosisOptions.educationalContent
-                          .map((e) => e.keys.first.toString())
-                          .toList(),
-                      onSelected: (List<String> checked) =>
-                          model.updateEducationalInformation(
-                              selectedEducationalOptions: checked),
-                      checked:
-                          model.educationalStepState.selectedEducationalOptions,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 36),
+                      child: CheckboxGroup(
+                        activeColor: Theme.of(context).colorScheme.primary,
+                        labels: model.diagnosisOptions.educationalContent
+                            .map((e) => e.keys.first.toString())
+                            .toList(),
+                        onSelected: (List<String> checked) =>
+                            model.updateEducationalInformation(
+                                selectedEducationalOptions: checked),
+                        checked: model
+                            .educationalStepState.selectedEducationalOptions,
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    child: ContinueButton(
-                      width: width,
+                    if (model.educationalStepState.otherSelected)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: TextFormField(
+                          textCapitalization: TextCapitalization.sentences,
+                          initialValue:
+                              model.educationalStepState.otherEducationalOption,
+                          autocorrect: true,
+                          keyboardType: TextInputType.text,
+                          onChanged: (String text) =>
+                              model.updateEducationalInformation(
+                                  otherEducationalOption: text),
+                          style: Theme.of(context).textTheme.bodyText2,
+                          decoration: InputDecoration(
+                            labelStyle: TextStyle(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withAlpha(90),
+                            ),
+                            hintStyle: TextStyle(
+                              color: Color.fromRGBO(100, 100, 100, 1),
+                            ),
+                            filled: true,
+                            fillColor: Colors.grey.withAlpha(20),
+                            labelText: "Enter Custom Education Info",
+                            hintText: 'Optional',
+                          ),
+                        ),
+                      ),
+                    Expanded(
+                      child: ContinueButton(
+                        width: width,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       );
     return EmptyDiagnosis(model: model);
