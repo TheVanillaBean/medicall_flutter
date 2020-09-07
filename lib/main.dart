@@ -29,6 +29,7 @@ import 'package:Medicall/util/apple_sign_in_available.dart';
 import 'package:Medicall/util/firebase_notification_handler.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -159,7 +160,7 @@ class _FirebaseNotificationsHandlerState
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
         print("onMessage: $message");
-        _serialiseAndNavigate(message);
+        _serialiseAndNavigate(message, onMessage: true);
       },
       onLaunch: (Map<String, dynamic> message) async {
         print("onLaunch: $message");
@@ -177,7 +178,28 @@ class _FirebaseNotificationsHandlerState
     return widget.landingPageBuilder(context);
   }
 
-  Future<void> _serialiseAndNavigate(Map<String, dynamic> message) async {
+  Future<void> _showFlushBar({String msg, Function onTap}) async {
+    return Flushbar(
+      message: msg,
+      onTap: onTap,
+      flushbarPosition: FlushbarPosition.TOP,
+      flushbarStyle: FlushbarStyle.FLOATING,
+      borderRadius: 8,
+      dismissDirection: FlushbarDismissDirection.HORIZONTAL,
+      routeColor: Colors.black.withAlpha(100),
+      margin: EdgeInsets.all(5),
+      routeBlur: 2.0,
+      icon: Icon(
+        Icons.info_outline,
+        size: 28.0,
+        color: Colors.blue[300],
+      ),
+      duration: Duration(seconds: 3),
+    )..show(context);
+  }
+
+  Future<void> _serialiseAndNavigate(Map<String, dynamic> message,
+      {bool onMessage = false}) async {
     UserProvider userProvider =
         Provider.of<UserProvider>(context, listen: false);
     //keys are derived from cloud functions (push.ts and stream.ts)
@@ -202,19 +224,47 @@ class _FirebaseNotificationsHandlerState
         // the user type for this screen should always be patient, but just a check
         if (userType == USER_TYPE.PATIENT &&
             userProvider.user.type == USER_TYPE.PATIENT) {
-          VisitDetailsOverview.show(context: context, consult: consult);
+          if (onMessage) {
+            String msg = data['message'] as String;
+            _showFlushBar(
+              msg: msg,
+              onTap: (_) =>
+                  VisitDetailsOverview.show(context: context, consult: consult),
+            );
+          } else {
+            VisitDetailsOverview.show(context: context, consult: consult);
+          }
         }
       } else if (screen == 'Visit Overview') {
         // the user type for this screen should always be a provider, but just a check
         if (userType == USER_TYPE.PROVIDER &&
             userProvider.user.type == USER_TYPE.PROVIDER) {
-          VisitOverview.show(
-              context: context,
-              consultId: consultId,
-              patientUser: consult.patientUser);
+          if (onMessage) {
+            String msg = data['message'] as String;
+            _showFlushBar(
+              msg: msg,
+              onTap: (_) => VisitOverview.show(
+                  context: context,
+                  consultId: consultId,
+                  patientUser: consult.patientUser),
+            );
+          } else {
+            VisitOverview.show(
+                context: context,
+                consultId: consultId,
+                patientUser: consult.patientUser);
+          }
         }
       } else if (screen == 'Chat') {
-        navigateToChatScreen(consult: consult);
+        if (onMessage) {
+          String msg = data['message'] as String;
+          _showFlushBar(
+            msg: msg,
+            onTap: (_) => navigateToChatScreen(consult: consult),
+          );
+        } else {
+          navigateToChatScreen(consult: consult);
+        }
       }
     }
   }
