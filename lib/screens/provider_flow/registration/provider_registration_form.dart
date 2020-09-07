@@ -105,6 +105,12 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
             onChanged: model.updateAddress,
           ),
           ProviderCustomTextField(
+            labelText: 'Apartment, building, suite (optional)',
+            hint: 'BLDG E, APT 2',
+            //errorText: model.practiceAddressErrorText,
+            onChanged: model.updateAddressLine2,
+          ),
+          ProviderCustomTextField(
             labelText: 'City',
             hint: 'Anytown',
             errorText: model.practiceCityErrorText,

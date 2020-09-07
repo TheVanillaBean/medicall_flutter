@@ -50,7 +50,7 @@ class ProviderDashboardListItem extends StatelessWidget {
           ),
           subtitle: '${consult.parsedDate}',
           trailing: Container(
-            alignment: Alignment.bottomCenter,
+            alignment: Alignment.centerLeft,
             width: 80,
             height: 100,
             child: Text(

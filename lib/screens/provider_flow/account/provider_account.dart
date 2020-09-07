@@ -176,8 +176,9 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
   Widget _buildAddressCard(MedicallUser medicallUser) {
     return ReusableAccountCard(
       leading: 'Practice \nAddress:',
-      title:
-          '${medicallUser.mailingAddress}, \n${medicallUser.mailingCity}, ${medicallUser.mailingState} ${medicallUser.mailingZipCode}',
+      title: medicallUser.mailingAddressLine2 == ''
+          ? '${medicallUser.mailingAddress} \n${medicallUser.mailingCity}, ${medicallUser.mailingState} ${medicallUser.mailingZipCode}'
+          : '${medicallUser.mailingAddress} \n${medicallUser.mailingAddressLine2} \n${medicallUser.mailingCity}, ${medicallUser.mailingState} ${medicallUser.mailingZipCode}',
     );
   }
 

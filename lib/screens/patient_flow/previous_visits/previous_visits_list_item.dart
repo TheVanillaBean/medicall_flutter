@@ -48,7 +48,7 @@ class PreviousVisitsListItem extends StatelessWidget {
             ),
             subtitle: Text('${consult.parsedDate}'),
             trailing: Container(
-              alignment: Alignment.bottomLeft,
+              alignment: Alignment.centerLeft,
               width: 80,
               child: Text(EnumToString.parseCamelCase(consult.state) ?? "",
                   textAlign: TextAlign.left,

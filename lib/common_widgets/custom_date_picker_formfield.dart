@@ -42,7 +42,7 @@ class CustomDatePickerFormField extends StatelessWidget {
         decoration: InputDecoration(
           hintText: 'MM/DD/YYYY',
           hintStyle: Theme.of(context).textTheme.caption,
-          labelText: 'Date of birth',
+          labelText: 'Date of Birth',
           labelStyle: Theme.of(context).textTheme.bodyText1,
           errorText: errorText,
           enabledBorder: UnderlineInputBorder(

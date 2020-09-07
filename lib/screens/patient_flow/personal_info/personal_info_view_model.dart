@@ -26,6 +26,7 @@ class PersonalInfoViewModel
   String phoneNumber;
   DateTime birthDate = DateTime.now();
   String billingAddress;
+  String billingAddressLine2;
   String city;
   String state;
   String zipCode;
@@ -115,6 +116,7 @@ class PersonalInfoViewModel
     this.phoneNumber = '',
     this.birthDate,
     this.billingAddress = '',
+    this.billingAddressLine2 = '',
     this.city = '',
     this.state = '',
     this.zipCode = '',
@@ -194,6 +196,8 @@ class PersonalInfoViewModel
   void updateBirthDate(DateTime birthDate) => updateWith(birthDate: birthDate);
   void updateBillingAddress(String billingAddress) =>
       updateWith(billingAddress: billingAddress);
+  void updateBillingAddressLine2(String billingAddressLine2) =>
+      updateWith(billingAddressLine2: billingAddressLine2);
   void updateCity(String city) => updateWith(city: city);
   void updateState(String state) => updateWith(state: state);
   void updateZipCode(String zipCode) => updateWith(zipCode: zipCode);
@@ -232,6 +236,7 @@ class PersonalInfoViewModel
     medicallUser.lastName = this.lastName;
     medicallUser.phoneNumber = this.phoneNumber;
     medicallUser.mailingAddress = this.billingAddress;
+    medicallUser.mailingAddressLine2 = this.billingAddressLine2;
     medicallUser.dob = this.birthday;
     medicallUser.mailingState = this.state;
     medicallUser.mailingCity = this.city;
@@ -258,6 +263,7 @@ class PersonalInfoViewModel
     String phoneNumber,
     DateTime birthDate,
     String billingAddress,
+    String billingAddressLine2,
     String city,
     String state,
     String zipCode,
@@ -271,6 +277,7 @@ class PersonalInfoViewModel
     this.phoneNumber = phoneNumber ?? this.phoneNumber;
     this.birthDate = birthDate ?? this.birthDate;
     this.billingAddress = billingAddress ?? this.billingAddress;
+    this.billingAddressLine2 = billingAddressLine2 ?? this.billingAddressLine2;
     this.city = city ?? this.city;
     this.state = state ?? this.state;
     this.zipCode = zipCode ?? this.zipCode;

@@ -89,6 +89,11 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
             onChanged: model.updateBillingAddress,
           ),
           PersonalInfoTextField(
+            labelText: 'Apartment, building, suite (optional)',
+            hint: 'BLDG E, APT 2',
+            onChanged: model.updateBillingAddressLine2,
+          ),
+          PersonalInfoTextField(
             labelText: 'City',
             hint: 'Anytown',
             errorText: model.patientCityErrorText,

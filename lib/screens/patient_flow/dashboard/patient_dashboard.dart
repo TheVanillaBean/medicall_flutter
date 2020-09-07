@@ -87,7 +87,7 @@ class PatientDashboardScreen extends StatelessWidget {
         ),
         centerTitle: true,
         title: Text(
-          'Hello, ${model.userFullName}!',
+          'Hello, ${model.userFirstName}!',
           style: Theme.of(context).appBarTheme.textTheme.headline6,
         ),
       ),

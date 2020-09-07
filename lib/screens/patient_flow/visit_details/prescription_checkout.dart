@@ -68,9 +68,12 @@ class PrescriptionCheckout extends StatefulWidget {
 class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
   final TextEditingController _shippingAddressController =
       TextEditingController();
+  final TextEditingController _shippingAddressLine2Controller =
+      TextEditingController();
   final TextEditingController _cityController = TextEditingController();
   final TextEditingController _zipCodeController = TextEditingController();
   final FocusNode _shippingAddressFocusNode = FocusNode();
+  final FocusNode _shippingAddressLine2FocusNode = FocusNode();
   final FocusNode _cityFocusNode = FocusNode();
   final FocusNode _zipCodeFocusNode = FocusNode();
 
@@ -81,9 +84,11 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
   @override
   void dispose() {
     _shippingAddressController.dispose();
+    _shippingAddressLine2Controller.dispose();
     _cityController.dispose();
     _zipCodeController.dispose();
     _shippingAddressFocusNode.dispose();
+    _shippingAddressLine2FocusNode.dispose();
     _cityFocusNode.dispose();
     _zipCodeFocusNode.dispose();
     super.dispose();
@@ -144,28 +149,30 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
         child: CustomScrollView(
           slivers: [
             SliverFillRemaining(
-              hasScrollBody: false,
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 30),
-                    child: Text(
-                      "Select the prescription(s) you would like to receive",
-                      style: Theme.of(context).textTheme.bodyText2,
+              hasScrollBody: true,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 30),
+                      child: Text(
+                        "Select the prescription(s) you would like to receive",
+                        style: Theme.of(context).textTheme.bodyText2,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 12),
-                  _buildShoppingCart(),
-                  SizedBox(height: 12),
-                  _buildPriceBreakdown(),
-                  _buildAddressCheckbox(),
-                  if (!model.useAccountAddress) _buildAddressInputFields(),
-                  SizedBox(height: 24),
-                  _buildPaymentDetail(),
-                  SizedBox(height: 24),
-                  _buildCheckoutButton(context),
-                  SizedBox(height: 24),
-                ],
+                    SizedBox(height: 12),
+                    _buildShoppingCart(),
+                    SizedBox(height: 12),
+                    _buildPriceBreakdown(),
+                    _buildAddressCheckbox(),
+                    if (!model.useAccountAddress) _buildAddressInputFields(),
+                    SizedBox(height: 24),
+                    _buildPaymentDetail(),
+                    SizedBox(height: 24),
+                    _buildCheckoutButton(context),
+                    SizedBox(height: 80),
+                  ],
+                ),
               ),
             )
           ],
@@ -321,16 +328,16 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Ship to my mailing address",
-                    maxLines: 2,
+                    "Ship to my mailing address:",
                     style: Theme.of(context).textTheme.headline6,
                   ),
                   SizedBox(
                     height: 4,
                   ),
                   Text(
-                    "${model.userProvider.user.mailingAddress} ${model.userProvider.user.mailingCity} ${model.userProvider.user.mailingState} ${model.userProvider.user.mailingZipCode}",
-                    maxLines: 3,
+                    model.userProvider.user.mailingAddressLine2 == ''
+                        ? '${model.userProvider.user.mailingAddress} \n${model.userProvider.user.mailingCity}, ${model.userProvider.user.mailingState} ${model.userProvider.user.mailingZipCode}'
+                        : '${model.userProvider.user.mailingAddress} \n${model.userProvider.user.mailingAddressLine2} \n${model.userProvider.user.mailingCity}, ${model.userProvider.user.mailingState} ${model.userProvider.user.mailingZipCode}',
                     style: Theme.of(context).textTheme.subtitle2,
                   ),
                 ],
@@ -362,7 +369,7 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
-            "Select a payment method. Your default is already selected.",
+            "Select a payment method. \nYour default is already selected.",
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyText1,
           ),
@@ -473,14 +480,15 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
 
   Widget _buildAddressInputFields() {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.fromLTRB(16.0, 5.0, 16.0, 0.0),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8),
+        padding: const EdgeInsets.fromLTRB(12.0, 5.0, 12.0, 16.0),
         decoration: BoxDecoration(
           border: Border.all(
             color: Colors.black26,
             width: 1,
           ),
+          borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
           children: [
@@ -492,6 +500,14 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
               enabled: model.isLoading == false,
               errorText: model.shippingAddressErrorTxt,
               onChanged: model.updateShippingAddress,
+            ),
+            buildShippingAddressTextField(
+              controller: _shippingAddressLine2Controller,
+              focusNode: _shippingAddressLine2FocusNode,
+              labelText: "Apartment, building, suite (optional)",
+              hint: "BLDG E, APT 2",
+              enabled: model.isLoading == false,
+              onChanged: model.updateShippingAddressLine2,
             ),
             buildShippingAddressTextField(
               controller: _cityController,
@@ -579,12 +595,12 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
           ),
         ),
       ),
-      validator: (input) {
-        if (input.isEmpty) {
-          return '$labelText is required';
-        }
-        return null;
-      },
+//      validator: (input) {
+//        if (input.isEmpty) {
+//          return '$labelText is required';
+//        }
+//        return null;
+//      },
     );
   }
 }

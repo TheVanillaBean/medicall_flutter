@@ -27,7 +27,7 @@ class ReusableAccountCard extends StatelessWidget {
         ),
         title: Transform(
           child: Text(
-            title,
+            title ?? '',
             style: Theme.of(context).textTheme.bodyText1,
           ),
           transform: Matrix4.translationValues(-10, 0.0, 0.0),
