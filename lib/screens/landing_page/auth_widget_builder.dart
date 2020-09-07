@@ -1,7 +1,7 @@
 import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/non_auth_firestore_db.dart';
-import 'package:Medicall/util/firebase_notification_handler.dart';
+import 'package:Medicall/util/firebase_notifications_helper.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
