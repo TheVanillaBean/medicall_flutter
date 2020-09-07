@@ -15,6 +15,7 @@ class SignInButton extends CustomRaisedButton {
         super(
           child: Text(
             text,
+            textAlign: TextAlign.center,
             style: TextStyle(
               color: textColor,
               fontSize: 15.0,
