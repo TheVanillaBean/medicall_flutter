@@ -71,7 +71,7 @@ class PaymentDetail extends StatelessWidget {
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
         type: AppBarType.Back,
-        title: "Payment Card",
+        title: "Payment Method",
         theme: Theme.of(context),
       ),
       body: SingleChildScrollView(
@@ -87,7 +87,7 @@ class PaymentDetail extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Text(
-            'Your payment cards on file:',
+            'Your payment methods on file:',
             style: TextStyle(
               fontSize: 16.0,
               color: Colors.black54,
