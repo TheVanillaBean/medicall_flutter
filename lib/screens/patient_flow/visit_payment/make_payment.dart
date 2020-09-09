@@ -107,7 +107,7 @@ class MakePayment extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 30),
                     child: Text(
-                      "Please confirm your payment details and pay below for your consult with ${this.model.consult.providerUser.fullName}, ${this.model.consult.providerUser.professionalTitle}",
+                      "Please confirm your payment details and pay below for your visit with ${this.model.consult.providerUser.fullName}, ${this.model.consult.providerUser.professionalTitle}",
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.bodyText2,
                     ),
@@ -146,7 +146,7 @@ class MakePayment extends StatelessWidget {
           Expanded(
             flex: 9,
             child: Text(
-              "${this.model.consult.symptom} Consult",
+              "${this.model.consult.symptom} Visit",
               maxLines: 1,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.headline6,

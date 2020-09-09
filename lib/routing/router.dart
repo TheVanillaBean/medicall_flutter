@@ -11,6 +11,7 @@ import 'package:Medicall/screens/Shared/visit_information/review_visit_informati
 import 'package:Medicall/screens/patient_flow/account/patient_account.dart';
 import 'package:Medicall/screens/patient_flow/account/payment_detail/payment_detail.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
+import 'package:Medicall/screens/patient_flow/drivers_license/photo_id.dart';
 import 'package:Medicall/screens/patient_flow/patient_prescriptions/patient_prescriptions.dart';
 import 'package:Medicall/screens/patient_flow/personal_info/personal_info.dart';
 import 'package:Medicall/screens/patient_flow/previous_visits/previous_visits.dart';
@@ -66,7 +67,6 @@ class Routes {
   static const photoID = '/photo-ID';
   static const ocr = '/ocr';
   static const personalInfo = '/personal-information';
-  static const driversLicense = '/drivers-license';
   static const confirmConsult = '/confirm-consult';
   static const patientDashboard = '/patient-dashboard';
   static const providerDashboard = '/provider-dashboard';
@@ -314,6 +314,15 @@ class Router {
             displayMedHistory,
             consult,
           ),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      // Screen that asks patient for to upload photo of their ID
+      case Routes.photoID:
+        final Map<String, dynamic> mapArgs = args;
+        final Consult consult = mapArgs['consult'];
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => PhotoIDScreen.create(context, consult),
           settings: settings,
           fullscreenDialog: true,
         );

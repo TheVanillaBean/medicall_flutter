@@ -37,6 +37,7 @@ abstract class MedicallUser {
   String shippingZipCode;
   String shippingCity;
   String streamChatID;
+  String photoID;
 
   MedicallUser({
     this.uid = '',
@@ -61,6 +62,7 @@ abstract class MedicallUser {
     this.shippingZipCode = '',
     this.shippingCity = '',
     this.streamChatID = '',
+    this.photoID = '',
   });
 
   Map<String, dynamic> toMap();
@@ -76,6 +78,7 @@ abstract class MedicallUser {
       'dob': dob,
       'gender': gender,
       'profile_pic': profilePic,
+      'photo_id': photoID,
       'phone_number': phoneNumber,
       'mailing_address': mailingAddress,
       'mailing_address_line2': mailingAddressLine2,
@@ -126,6 +129,7 @@ abstract class MedicallUser {
     user.shippingZipCode = data['shipping_zip_code'] ?? user.shippingZipCode;
     user.shippingCity = data['shipping_city'] ?? user.shippingCity;
     user.streamChatID = data['stream_chat_id'] ?? user.streamChatID;
+    user.photoID = data['photo_id'] ?? user.photoID;
     return user;
   }
 }

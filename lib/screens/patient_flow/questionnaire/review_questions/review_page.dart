@@ -2,6 +2,7 @@ import 'package:Medicall/common_widgets/list_items_builder.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/questionnaire/question_model.dart';
 import 'package:Medicall/models/user/patient_user_model.dart';
+import 'package:Medicall/screens/patient_flow/drivers_license/photo_id.dart';
 import 'package:Medicall/screens/patient_flow/personal_info/personal_info.dart';
 import 'package:Medicall/screens/patient_flow/questionnaire/questions_screen.dart';
 import 'package:Medicall/screens/patient_flow/questionnaire/questions_view_model.dart';
@@ -24,12 +25,30 @@ class ReviewPage extends StatelessWidget {
       }
     } else {
       await model.saveConsultation();
-      if ((model.userProvider.user as PatientUser).fullName.length > 2 &&
-          (model.userProvider.user as PatientUser).profilePic.length > 2 &&
-          (model.userProvider.user as PatientUser).mailingAddress.length > 2) {
-        MakePayment.show(context: context, consult: model.consult);
+      /** the following conditionals are basically saying:
+       * If user has not submitted photo ID - take them to photo ID screen
+       * If user has submitted photo ID, but has not submitted personal info,
+       * take them to personal info screen
+       * If user has submitted photo ID and personal info, take them straight
+       * to MakePayment screen.
+       *
+       * The user only needs to submit photo ID and personal info once.
+       * They have to make a payment every time though.
+      */
+      if ((model.userProvider.user as PatientUser).photoID.length > 0) {
+        //photo ID check
+        if ((model.userProvider.user as PatientUser).fullName.length > 2 &&
+            (model.userProvider.user as PatientUser).profilePic.length > 2 &&
+            (model.userProvider.user as PatientUser).mailingAddress.length >
+                2) {
+          //personal info check
+          MakePayment.show(context: context, consult: model.consult);
+        } else {
+          PersonalInfoScreen.show(context: context, consult: model.consult);
+        }
       } else {
-        PersonalInfoScreen.show(context: context, consult: model.consult);
+        PhotoIDScreen.show(
+            context: context, pushReplaceNamed: true, consult: model.consult);
       }
     }
   }

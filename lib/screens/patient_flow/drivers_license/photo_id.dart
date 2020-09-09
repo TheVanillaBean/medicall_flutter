@@ -1,24 +1,28 @@
 import 'package:Medicall/models/consult_model.dart';
+import 'package:Medicall/models/user/patient_user_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
-import 'package:Medicall/screens/patient_flow/personal_info/personal_info_form.dart';
-import 'package:Medicall/screens/patient_flow/personal_info/personal_info_view_model.dart';
+import 'package:Medicall/screens/patient_flow/drivers_license/photo_id_view_model.dart';
+import 'package:Medicall/screens/patient_flow/personal_info/personal_info.dart';
+import 'package:Medicall/screens/patient_flow/visit_payment/make_payment.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/firebase_storage_service.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
 
-class PersonalInfoScreen extends StatefulWidget {
-  final PersonalInfoViewModel model;
+class PhotoIDScreen extends StatelessWidget {
+  final PhotoIDViewModel model;
   final ExtendedImageProvider extendedImageProvider;
 
-  const PersonalInfoScreen(
-      {@required this.model, @required this.extendedImageProvider});
+  const PhotoIDScreen({
+    @required this.model,
+    @required this.extendedImageProvider,
+  });
 
   static Widget create(BuildContext context, Consult consult) {
     final UserProvider userProvider = Provider.of<UserProvider>(context);
@@ -28,15 +32,15 @@ class PersonalInfoScreen extends StatefulWidget {
         Provider.of<FirestoreDatabase>(context);
     final FirebaseStorageService firestoreStorage =
         Provider.of<FirebaseStorageService>(context);
-    return ChangeNotifierProvider<PersonalInfoViewModel>(
-      create: (context) => PersonalInfoViewModel(
+    return ChangeNotifierProvider<PhotoIDViewModel>(
+      create: (context) => PhotoIDViewModel(
         consult: consult,
         userProvider: userProvider,
         firestoreDatabase: firestoreDatabase,
         firebaseStorageService: firestoreStorage,
       ),
-      child: Consumer<PersonalInfoViewModel>(
-        builder: (_, model, __) => PersonalInfoScreen(
+      child: Consumer<PhotoIDViewModel>(
+        builder: (_, model, __) => PhotoIDScreen(
           model: model,
           extendedImageProvider: extendedImageProvider,
         ),
@@ -46,53 +50,50 @@ class PersonalInfoScreen extends StatefulWidget {
 
   static Future<void> show({
     BuildContext context,
+    bool pushReplaceNamed = true,
     Consult consult,
   }) async {
-    await Navigator.of(context).pushReplacementNamed(
-      Routes.personalInfo,
-      arguments: {
-        'consult': consult,
-      },
-    );
+    if (pushReplaceNamed) {
+      await Navigator.of(context).pushReplacementNamed(
+        Routes.photoID,
+        arguments: {
+          'consult': consult,
+        },
+      );
+    } else {
+      await Navigator.of(context).pushNamed(
+        Routes.photoID,
+        arguments: {
+          'consult': consult,
+        },
+      );
+    }
   }
 
-  @override
-  _PersonalInfoScreenState createState() => _PersonalInfoScreenState();
-}
-
-class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
-  final TextEditingController _firstNameController = TextEditingController();
-  final TextEditingController _lastNameController = TextEditingController();
-  final TextEditingController _billingAddressController =
-      TextEditingController();
-  final TextEditingController _zipCodeController = TextEditingController();
-
-  final FocusNode _firstNameFocusNode = FocusNode();
-  final FocusNode _lastNameFocusNode = FocusNode();
-  final FocusNode _billingAddressFocusNode = FocusNode();
-  final FocusNode _zipCodeFocusNode = FocusNode();
-
-  PersonalInfoViewModel get model => widget.model;
-  ExtImageProvider get extendedImageProvider => widget.extendedImageProvider;
-
-  @override
-  void dispose() {
-    _firstNameController.dispose();
-    _lastNameController.dispose();
-    _billingAddressController.dispose();
-    _zipCodeController.dispose();
-    _firstNameFocusNode.dispose();
-    _lastNameFocusNode.dispose();
-    _billingAddressFocusNode.dispose();
-    _zipCodeFocusNode.dispose();
-    super.dispose();
+  Future<void> _submit(
+    ExtendedImageProvider extendedImageProvider,
+    BuildContext context,
+  ) async {
+    try {
+      await model.submit();
+      extendedImageProvider.clearImageMemory();
+      if ((model.userProvider.user as PatientUser).fullName.length > 2 &&
+          (model.userProvider.user as PatientUser).profilePic.length > 2 &&
+          (model.userProvider.user as PatientUser).mailingAddress.length > 2) {
+        MakePayment.show(context: context, consult: model.consult);
+      } else {
+        PersonalInfoScreen.show(context: context, consult: model.consult);
+      }
+    } catch (e) {
+      AppUtil().showFlushBar(e, context);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Tell us about yourself"),
+        title: Text("Upload Photo ID"),
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
@@ -117,7 +118,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
               padding: const EdgeInsets.fromLTRB(8, 24, 8, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: _buildChildren(),
+                children: _buildChildren(context),
               ),
             ),
           ),
@@ -126,32 +127,56 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     );
   }
 
-  List<Widget> _buildChildren() {
+  List<Widget> _buildChildren(BuildContext context) {
     return <Widget>[
       Center(
-        child: _buildProfilePictureWidget(),
+        child: _buildProfilePictureWidget(context),
       ),
-      SizedBox(height: 36),
-      PersonalInfoForm(),
-      SizedBox(height: 24),
+      SizedBox(height: 30),
+      Align(
+        alignment: FractionalOffset.bottomCenter,
+        child: SizedBox(
+          height: 50,
+          width: 200,
+          child: RoundedLoadingButton(
+            controller: model.btnController,
+            color: Theme.of(context).colorScheme.primary,
+            child: Text(
+              'Submit Photo ID!',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            onPressed: !model.isLoading
+                ? () {
+                    _submit(extendedImageProvider, context);
+                  }
+                : null,
+          ),
+        ),
+      ),
     ];
   }
 
-  Widget _buildProfilePictureWidget() {
+  Widget _buildProfilePictureWidget(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     return Column(
       children: <Widget>[
-        if (model.profileImage.length == 0)
-          ..._buildProfilePlaceholder(height: height),
-        if (model.profileImage.length > 0)
-          _buildProfileImgView(asset: model.profileImage.first, height: height),
+        if (model.idPhoto.length == 0)
+          ..._buildProfilePlaceholder(context: context, height: height),
+        if (model.idPhoto.length > 0)
+          _buildProfileImgView(
+              context: context, asset: model.idPhoto.first, height: height),
       ],
     );
   }
 
-  Widget _buildProfileImgView({Asset asset, double height}) {
+  Widget _buildProfileImgView(
+      {BuildContext context, Asset asset, double height}) {
     return GestureDetector(
-      onTap: _loadProfileImage,
+      onTap: () => _loadProfileImage(context),
       child: Stack(
         alignment: AlignmentDirectional.bottomStart,
         overflow: Overflow.visible,
@@ -180,10 +205,10 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     );
   }
 
-  List<Widget> _buildProfilePlaceholder({double height}) {
+  List<Widget> _buildProfilePlaceholder({BuildContext context, double height}) {
     return [
       Text(
-        "Please add a profile picture\n(Required)",
+        "Please upload a photo ID\nThis is a legal requirement for telemedicine",
         textAlign: TextAlign.center,
         style: Theme.of(context).textTheme.bodyText1,
       ),
@@ -191,7 +216,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
         height: height * 0.15,
         width: MediaQuery.of(context).size.width,
         child: IconButton(
-          onPressed: _loadProfileImage,
+          onPressed: () => _loadProfileImage(context),
           icon: Stack(
             alignment: AlignmentDirectional.bottomStart,
             overflow: Overflow.visible,
@@ -219,12 +244,12 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     ];
   }
 
-  Future<void> _loadProfileImage() async {
+  Future<void> _loadProfileImage(BuildContext context) async {
     List<Asset> resultList = List<Asset>();
 
     try {
       resultList = await this.extendedImageProvider.pickImages(
-            model.profileImage,
+            model.idPhoto,
             1,
             true,
             this
@@ -239,17 +264,14 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                 lightStatusBar: false,
                 autoCloseOnSelectionLimit: true,
                 startInAllView: true,
-                actionBarTitle: 'Select Profile Picture',
+                actionBarTitle: 'Select Photo ID',
                 allViewTitle: 'All Photos'),
             context,
           );
-    } on PlatformException catch (e) {
+    } catch (e) {
       AppUtil().showFlushBar(e, context);
     }
 
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    if (!mounted) return;
-    widget.model.updateWith(profileImage: resultList);
+    model.updateWith(idPhoto: resultList);
   }
 }
