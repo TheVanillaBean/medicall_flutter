@@ -66,7 +66,7 @@ class ConfirmConsult extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: Text('Thank You for choosing Medicall!',
+                child: Text('Thank You for Choosing Medicall!',
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.headline5),
               ),
