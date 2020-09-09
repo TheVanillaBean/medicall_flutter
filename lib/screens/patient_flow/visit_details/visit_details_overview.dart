@@ -3,12 +3,12 @@ import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/presentation/medicall_icons_icons.dart';
 import 'package:Medicall/routing/router.dart';
-import 'package:Medicall/screens/shared/chat/chat_screen.dart';
-import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/Shared/visit_information/review_visit_information.dart';
+import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/patient_flow/visit_details/visit_doc_note.dart';
 import 'package:Medicall/screens/patient_flow/visit_details/visit_education.dart';
-import 'package:Medicall/screens/patient_flow/visit_details/visit_prescriptions.dart';
+import 'package:Medicall/screens/patient_flow/visit_details/visit_treatment_recommendations.dart';
+import 'package:Medicall/screens/shared/chat/chat_screen.dart';
 import 'package:Medicall/services/chat_provider.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:flutter/material.dart';
@@ -117,10 +117,10 @@ class VisitDetailsOverview extends StatelessWidget {
                   },
                 ),
                 _buildCardButton(
-                  "Prescriptions",
+                  "Treatment Recommendations",
                   Icons.local_pharmacy,
                   () => {
-                    VisitPrescriptions.show(
+                    VisitTreatmentRecommendations.show(
                       context: context,
                       consult: this.consult,
                       visitReviewData: snapshot.data,

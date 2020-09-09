@@ -57,12 +57,14 @@ class PrescriptionCheckoutViewModel
     int cost = 0;
     for (TreatmentOptions treatmentOptions
         in this.visitReviewData.treatmentOptions) {
-      if (treatmentOptions.status == TreatmentStatus.PendingPayment) {
-        selectedTreatmentOptions.add(treatmentOptions);
-      } else {
-        this.alreadyPaidForPrescriptions.add(treatmentOptions);
+      if (treatmentOptions.price > 0) {
+        if (treatmentOptions.status == TreatmentStatus.PendingPayment) {
+          selectedTreatmentOptions.add(treatmentOptions);
+        } else {
+          this.alreadyPaidForPrescriptions.add(treatmentOptions);
+        }
+        cost = cost + treatmentOptions.price;
       }
-      cost = cost + treatmentOptions.price;
     }
     this.selectedTreatmentOptions = selectedTreatmentOptions;
     this.totalCost = cost;

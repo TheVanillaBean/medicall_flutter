@@ -12,12 +12,12 @@ class PrescriptionListItem extends StatelessWidget {
     String priceText = "";
 
     if (this.treatment.price > 0) {
-      priceText = "Price \$${this.treatment.price}";
+      priceText = "Price: \$${this.treatment.price}";
     } else if (this.treatment.price == 0) {
       priceText =
-          "Price to be determined because this is a non-standard prescription. You will receive a phone call from our pharmacy with the price.";
+          "Price to be determined because this is a non-standard prescription. We are currently in contact with our pharmacy partner and will notify you of the price within 48 hours.";
     } else {
-      priceText = "This treatment does not have a prescription.";
+      priceText = "";
     }
 
     return Container(
@@ -88,10 +88,10 @@ class PrescriptionListItem extends StatelessWidget {
                 priceText,
                 style: Theme.of(context).textTheme.bodyText1,
                 minFontSize: 10,
-                maxLines: 3,
+                maxLines: 4,
               ),
               SizedBox(
-                height: 4,
+                height: 8,
               ),
               if (this.treatment.price >= 0)
                 Text(

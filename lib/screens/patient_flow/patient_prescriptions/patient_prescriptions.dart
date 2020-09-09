@@ -33,7 +33,11 @@ class PatientPrescriptions extends StatelessWidget {
                     ListItemsBuilder<TreatmentOptions>(
                       scrollable: false,
                       snapshot: null,
-                      itemsList: snapshot.data,
+                      itemsList: (snapshot.data as List<TreatmentOptions>)
+                          .where(
+                            (element) => element.price > -1,
+                          )
+                          .toList(),
                       emptyContentWidget: EmptyContent(
                         title: "You do not have any prescriptions",
                         message: "",

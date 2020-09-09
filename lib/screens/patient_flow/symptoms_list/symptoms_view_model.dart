@@ -30,10 +30,10 @@ class SymptomsViewModel with ChangeNotifier {
           .where((element) => element.category == "cosmetic")
           .toList();
       Symptom cosmeticSymptom = Symptom(
-        name: "Cosmetic",
+        name: "Cosmetic Skin Issues",
         commonMedications: "",
-        description: "Various symptoms related to cosmetics",
-        duration: "Depends on the specific symptom",
+        description: "Various symptoms related to cosmetic skin issues",
+        duration: "Depends on the issue",
         price: 0,
         category: "cosmetic",
       );

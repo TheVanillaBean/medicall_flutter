@@ -30,7 +30,9 @@ import 'package:Medicall/screens/patient_flow/visit_details/prescription_checkou
 import 'package:Medicall/screens/patient_flow/visit_details/visit_details_overview.dart';
 import 'package:Medicall/screens/patient_flow/visit_details/visit_doc_note.dart';
 import 'package:Medicall/screens/patient_flow/visit_details/visit_education.dart';
+import 'package:Medicall/screens/patient_flow/visit_details/visit_non_prescriptions.dart';
 import 'package:Medicall/screens/patient_flow/visit_details/visit_prescriptions.dart';
+import 'package:Medicall/screens/patient_flow/visit_details/visit_treatment_recommendations.dart';
 import 'package:Medicall/screens/patient_flow/visit_payment/make_payment.dart';
 import 'package:Medicall/screens/patient_flow/zip_code_verify/zip_code_verify.dart';
 import 'package:Medicall/screens/provider_flow/account/provider_account.dart';
@@ -94,12 +96,14 @@ class Routes {
   static const patientPrescriptions = '/patient-prescriptions';
   static const visitOverview = '/visit-overview';
   static const visitDetailsOverview = '/visit-details-overview';
+  static const visitTreatments = '/visit-treatments';
   static const visitInformation = '/visit-information';
   static const reviewMedicalHistory = '/review-medical-history';
   static const visitConsultPhotos = '/visit-consult-photos';
   static const visitDocNote = '/visit-doc-note';
   static const visitEducation = '/visit-education';
   static const visitPrescriptions = '/visit-prescriptions';
+  static const visitNonPrescriptions = '/visit-non-prescriptions';
   static const immediateMedicalCare = '/immediate-medical-care';
   static const completeVisit = '/complete-visit';
   static const visitReview = '/visit-review';
@@ -360,6 +364,18 @@ class Router {
           settings: settings,
           fullscreenDialog: true,
         );
+      case Routes.visitTreatments:
+        final Map<String, dynamic> mapArgs = args;
+        final Consult consult = mapArgs['consult'];
+        final VisitReviewData visitReviewData = mapArgs['visitReviewData'];
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => VisitTreatmentRecommendations(
+            consult: consult,
+            visitReviewData: visitReviewData,
+          ),
+          settings: settings,
+          fullscreenDialog: true,
+        );
       case Routes.visitDocNote:
         final Map<String, dynamic> mapArgs = args;
         final Consult consult = mapArgs['consult'];
@@ -390,6 +406,18 @@ class Router {
         final VisitReviewData visitReviewData = mapArgs['visitReviewData'];
         return MaterialPageRoute<dynamic>(
           builder: (context) => VisitPrescriptions(
+            consult: consult,
+            visitReviewData: visitReviewData,
+          ),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case Routes.visitNonPrescriptions:
+        final Map<String, dynamic> mapArgs = args;
+        final Consult consult = mapArgs['consult'];
+        final VisitReviewData visitReviewData = mapArgs['visitReviewData'];
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => VisitNonPrescriptions(
             consult: consult,
             visitReviewData: visitReviewData,
           ),
