@@ -10,6 +10,7 @@ import 'package:Medicall/screens/Shared/visit_information/consult_photos.dart';
 import 'package:Medicall/screens/Shared/visit_information/review_visit_information.dart';
 import 'package:Medicall/screens/patient_flow/account/patient_account.dart';
 import 'package:Medicall/screens/patient_flow/account/payment_detail/payment_detail.dart';
+import 'package:Medicall/screens/patient_flow/account/payment_detail/summary_payment.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/patient_flow/drivers_license/photo_id.dart';
 import 'package:Medicall/screens/patient_flow/patient_prescriptions/patient_prescriptions.dart';
@@ -82,6 +83,7 @@ class Routes {
   static const providerDetail = '/provider-detail';
   static const consultReview = '/consult-review';
   static const makePayment = '/make-payment';
+  static const paymentSummary = '/payment-summary';
   static const history = '/history';
   static const historyDetail = '/history-detail';
   static const patientAccount = '/patient-account';
@@ -341,6 +343,17 @@ class Router {
         final Consult consult = mapArgs['consult'];
         return MaterialPageRoute<dynamic>(
           builder: (context) => MakePayment.create(context, consult),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      // Screen that summarizes the payment.
+      case Routes.paymentSummary:
+        final Map<String, dynamic> mapArgs = args;
+        final Consult consult = mapArgs['consult'];
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => PaymentSummary(
+            consult: consult,
+          ),
           settings: settings,
           fullscreenDialog: true,
         );
