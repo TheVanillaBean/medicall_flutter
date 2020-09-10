@@ -110,6 +110,10 @@ class SymptomsScreen extends StatelessWidget {
             'Visit Fee: \$49',
             style: Theme.of(context).textTheme.headline5,
           ),
+          Text(
+            'No Insurance Needed',
+            style: Theme.of(context).textTheme.subtitle2,
+          ),
           SizedBox(height: 16),
           Text(
             'This is the price for the provider\'s services. Prescriptions or in person follow-up care not included.',
