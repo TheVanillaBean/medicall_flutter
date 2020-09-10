@@ -51,6 +51,7 @@ class VisitDocNote extends StatelessWidget {
           maxLines: null,
           minLines: 5,
           readOnly: true,
+          enableInteractiveSelection: true,
           initialValue: visitReviewData.patientNote,
           autocorrect: false,
           keyboardType: TextInputType.multiline,
