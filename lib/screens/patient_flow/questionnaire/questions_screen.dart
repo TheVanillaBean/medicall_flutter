@@ -15,6 +15,7 @@ import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
+import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
 import 'package:provider/provider.dart';
 
@@ -133,44 +134,47 @@ class _QuestionsScreenState extends State<QuestionsScreen>
           },
         ),
       ),
-      body: FutureBuilder<List<ScreeningQuestions>>(
-          future: model.displayMedHistory
-              ? db.getScreeningQuestions(symptomName: "General Medical History")
-              : db.getScreeningQuestions(
-                  symptomName: this.model.consult.symptom),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              if (snapshot.data.length == 0) {
-                return Scaffold(
-                  body: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Center(
-                        child: Text(
-                          "An error has occurred loading this questionnaire. Please contact customer support.",
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.headline6,
+      body: KeyboardDismisser(
+        child: FutureBuilder<List<ScreeningQuestions>>(
+            future: model.displayMedHistory
+                ? db.getScreeningQuestions(
+                    symptomName: "General Medical History")
+                : db.getScreeningQuestions(
+                    symptomName: this.model.consult.symptom),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                if (snapshot.data.length == 0) {
+                  return Scaffold(
+                    body: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Center(
+                          child: Text(
+                            "An error has occurred loading this questionnaire. Please contact customer support.",
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.headline6,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                );
-              }
+                  );
+                }
 
-              this.model.consult.questions =
-                  snapshot.data.first.screeningQuestions;
-              if (this.model.consult.symptom.length == 0) {
-                // if symptom name is "", then the user is updating their medical history from the account screen, and does not need the first question asking if they have seen this provider before.
-                this.model.consult.questions.removeAt(0);
+                this.model.consult.questions =
+                    snapshot.data.first.screeningQuestions;
+                if (this.model.consult.symptom.length == 0) {
+                  // if symptom name is "", then the user is updating their medical history from the account screen, and does not need the first question asking if they have seen this provider before.
+                  this.model.consult.questions.removeAt(0);
+                }
+                return QuestionsPageView();
               }
-              return QuestionsPageView();
-            }
-            return const Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(),
-              ),
-            );
-          }),
+              return const Scaffold(
+                body: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            }),
+      ),
     );
   }
 
