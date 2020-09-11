@@ -40,7 +40,7 @@ class VisitDocNote extends StatelessWidget {
               color: Theme.of(context).colorScheme.primary,
             ),
             onPressed: () {
-              Provider.of(context).pop();
+              Navigator.of(context).pushNamed(Routes.patientDashboard);
             },
           )
         ],
