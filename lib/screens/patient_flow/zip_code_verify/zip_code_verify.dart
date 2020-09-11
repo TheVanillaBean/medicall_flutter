@@ -10,6 +10,7 @@ import 'package:Medicall/services/non_auth_firestore_db.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:provider/provider.dart';
 
 class ZipCodeVerifyScreen extends StatefulWidget {
@@ -89,17 +90,19 @@ class _ZipCodeVerifyScreenState extends State<ZipCodeVerifyScreen> {
                   }
                 })
           ]),
-      body: Container(
-        color: Colors.white,
-        padding: EdgeInsets.symmetric(vertical: 40, horizontal: 40),
-        child: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: () {
-            FocusScope.of(context).requestFocus(new FocusNode());
-          },
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: _buildChildren(),
+      body: KeyboardDismisser(
+        child: Container(
+          color: Colors.white,
+          padding: EdgeInsets.symmetric(vertical: 40, horizontal: 40),
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () {
+              FocusScope.of(context).requestFocus(new FocusNode());
+            },
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: _buildChildren(),
+            ),
           ),
         ),
       ),

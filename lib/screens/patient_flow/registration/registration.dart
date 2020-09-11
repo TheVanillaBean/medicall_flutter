@@ -13,6 +13,7 @@ import 'package:Medicall/util/apple_sign_in_available.dart';
 import 'package:apple_sign_in/apple_sign_in_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:provider/provider.dart';
 import 'package:super_rich_text/super_rich_text.dart';
 
@@ -132,16 +133,18 @@ class _RegistrationScreenState extends State<RegistrationScreen>
         title: "Protect your information",
         theme: Theme.of(context),
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.fromLTRB(15, 0, 15, 20),
-        child: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: () {
-            FocusScope.of(context).requestFocus(new FocusNode());
-          },
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: _buildChildren(context),
+      body: KeyboardDismisser(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.fromLTRB(15, 0, 15, 20),
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () {
+              FocusScope.of(context).requestFocus(new FocusNode());
+            },
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: _buildChildren(context),
+            ),
           ),
         ),
       ),

@@ -28,6 +28,7 @@ dependencies:
   #stripe
   stripe_payment: ^1.0.7
   #utils
+  keyboard_dismisser: ^1.0.2
   flutter_screenutil: ^1.0.2
   flutter_absolute_path: ^1.0.6
   cupertino_icons: ^0.1.0
