@@ -1,5 +1,5 @@
 class FirestorePath {
-  static String version() => 'version-management /version_info';
+  static String version() => 'version-management/version_info';
   static String users() => 'users/';
   static String user(String uid) => 'users/$uid/';
   static String medicalHistory(String uid) =>
@@ -26,4 +26,5 @@ class FirestorePath {
       'profile/$uid/$assetName.JPG';
   static String consultPhotoQuestion({String consultID, String assetName}) =>
       'consults/$consultID/$assetName.JPG';
+  static String symptomPhoto({String symptom}) => 'symptom-photos/$symptom/';
 }

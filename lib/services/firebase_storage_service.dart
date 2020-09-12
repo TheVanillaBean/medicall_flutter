@@ -61,6 +61,12 @@ class FirebaseStorageService {
     return downloadUrl;
   }
 
+  Future<String> getSymptomPhotoURL({String symptom}) async {
+    final path = FirestorePath.symptomPhoto(symptom: symptom);
+    final storageReference = FirebaseStorage.instance.ref().child(path);
+    return await storageReference.getDownloadURL();
+  }
+
   //helper methods
 
   //The purpose of this function is too ensure the image that gets uploaded

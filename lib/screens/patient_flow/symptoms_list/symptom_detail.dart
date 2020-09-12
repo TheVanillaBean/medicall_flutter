@@ -5,8 +5,10 @@ import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/patient_flow/select_provider/select_provider.dart';
-import 'package:Medicall/screens/shared/welcome.dart';
 import 'package:Medicall/screens/patient_flow/zip_code_verify/zip_code_verify.dart';
+import 'package:Medicall/screens/shared/welcome.dart';
+import 'package:Medicall/services/extimage_provider.dart';
+import 'package:Medicall/services/firebase_storage_service.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/string_utils.dart';
 import 'package:flutter/material.dart';
@@ -71,6 +73,10 @@ class SymptomDetailScreen extends StatelessWidget {
   }
 
   List<Widget> _buildChildren(BuildContext context, MedicallUser medicallUser) {
+    final ExtImageProvider extImageProvider =
+        Provider.of<ExtImageProvider>(context, listen: false);
+    final FirebaseStorageService firebaseStorage =
+        Provider.of<FirebaseStorageService>(context, listen: false);
     return <Widget>[
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -108,7 +114,9 @@ class SymptomDetailScreen extends StatelessWidget {
           alignment: FractionalOffset.bottomCenter,
           child: ReusableRaisedButton(
             title: 'Explore Providers',
-            onPressed: () {
+            onPressed: () async {
+              String url = await firebaseStorage.getSymptomPhotoURL(
+                  symptom: '${this.symptom.name}.jpeg');
               if (medicallUser != null && medicallUser.uid.length > 0) {
                 SelectProviderScreen.show(context: context, symptom: symptom);
               } else {

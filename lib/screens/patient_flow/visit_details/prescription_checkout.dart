@@ -185,19 +185,19 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
   }
 
   Widget _buildShoppingCart() {
+    List<TreatmentOptions> treatmentOptions = [];
+    treatmentOptions = model.visitReviewData.treatmentOptions
+        .where((element) => element.price > 0)
+        .toList();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 30),
       child: CheckboxGroup(
-        labels: model.visitReviewData.treatmentOptions
-            .where((element) => element.price > 0)
-            .map((e) => e.medicationName)
-            .toList(),
+        labels: treatmentOptions.map((e) => e.medicationName).toList(),
         itemBuilder: (Checkbox cb, GestureDetector gd, Text txt, int i) {
           return Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              model.visitReviewData.treatmentOptions[i].status ==
-                      TreatmentStatus.PendingPayment
+              treatmentOptions[i].status == TreatmentStatus.PendingPayment
                   ? SizedBox(
                       width: Checkbox.width,
                       child: cb,
@@ -216,12 +216,10 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
                 ),
               ),
               Expanded(
-                flex: model.visitReviewData.treatmentOptions[i].status ==
-                        TreatmentStatus.Paid
-                    ? 2
-                    : 1,
+                flex:
+                    treatmentOptions[i].status == TreatmentStatus.Paid ? 2 : 1,
                 child: Text(
-                  "\$${model.visitReviewData.treatmentOptions[i].price}",
+                  "\$${treatmentOptions[i].price}",
                   maxLines: 1,
                   textAlign: TextAlign.right,
                   style: Theme.of(context).textTheme.bodyText1.copyWith(
