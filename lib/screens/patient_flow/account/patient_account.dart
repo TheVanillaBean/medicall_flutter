@@ -156,7 +156,7 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
 
   Widget _buildPaymentMethodsCard(BuildContext context) {
     return ReusableAccountCard(
-      leading: 'Payment Cards',
+      leading: 'Payment Methods',
       title: '',
       onTap: () {
         PaymentDetail.show(context: context, paymentModel: null);

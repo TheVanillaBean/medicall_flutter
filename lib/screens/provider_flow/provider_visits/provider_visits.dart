@@ -34,7 +34,7 @@ class ProviderVisits extends StatelessWidget {
                 title: "You do not have any patient visits yet",
                 message: "",
               ),
-              itemBuilder: (context, consult) => ProviderVisitsListItem(
+              itemBuilder: (context, consult) => PreviousVisitsListItem(
                 consult: consult,
                 onTap: () => VisitOverview.show(
                   context: context,

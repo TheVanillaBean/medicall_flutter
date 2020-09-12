@@ -4,6 +4,7 @@ import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:provider/provider.dart';
 
 class PasswordResetScreen extends StatefulWidget {
@@ -60,14 +61,16 @@ class _PasswordResetScreenState extends State<PasswordResetScreen> {
         centerTitle: true,
         title: Text("Reset Password"),
       ),
-      body: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () {
-          FocusScope.of(context).requestFocus(new FocusNode());
-        },
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: _buildChildren(context),
+      body: KeyboardDismisser(
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () {
+            FocusScope.of(context).requestFocus(new FocusNode());
+          },
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: _buildChildren(context),
+          ),
         ),
       ),
     );

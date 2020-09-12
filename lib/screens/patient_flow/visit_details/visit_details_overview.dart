@@ -128,7 +128,7 @@ class VisitDetailsOverview extends StatelessWidget {
                   },
                 ),
                 _buildCardButton(
-                  "Education",
+                  "Further Learning",
                   Icons.school,
                   () => {
                     VisitEducation.show(

@@ -11,6 +11,7 @@ import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
+import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
 import 'package:provider/provider.dart';
 
@@ -55,108 +56,112 @@ class PrescriptionDetails extends StatelessWidget {
           Navigator.of(context).pop();
         },
       ),
-      body: SingleChildScrollView(
-        child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () {
-              FocusScope.of(context).requestFocus(FocusNode());
-            },
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  PrescriptionDetailsTextField(
-                    focusNode: model.medicationNameFocusNode,
-                    labelText: 'Medication Name',
-                    initialValue: this.model.treatmentOptions.medicationName,
-                    onChanged: model.updateMedicationName,
-                    enabled: visitReviewViewModel
-                        .treatmentNoteStepState.currentlySelectedIsOther,
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Container(
-                          child: PrescriptionDetailsTextField(
-                            focusNode: model.quantityFocusNode,
-                            labelText: 'Quantity',
-                            initialValue: this.model.treatmentOptions.quantity,
-                            onChanged: model.updateQuantity,
+      body: KeyboardDismisser(
+        child: SingleChildScrollView(
+          child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () {
+                FocusScope.of(context).requestFocus(FocusNode());
+              },
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    PrescriptionDetailsTextField(
+                      focusNode: model.medicationNameFocusNode,
+                      labelText: 'Medication Name',
+                      initialValue: this.model.treatmentOptions.medicationName,
+                      onChanged: model.updateMedicationName,
+                      enabled: visitReviewViewModel
+                          .treatmentNoteStepState.currentlySelectedIsOther,
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: Container(
+                            child: PrescriptionDetailsTextField(
+                              focusNode: model.quantityFocusNode,
+                              labelText: 'Quantity',
+                              initialValue:
+                                  this.model.treatmentOptions.quantity,
+                              onChanged: model.updateQuantity,
+                            ),
                           ),
                         ),
-                      ),
-                      Expanded(
-                        child: Container(
-                          child: PrescriptionDetailsTextField(
-                            focusNode: model.refillsFocusNode,
-                            labelText: 'Refills',
-                            initialValue: this.model.treatmentOptions.refills,
-                            onChanged: model.updateRefills,
+                        Expanded(
+                          child: Container(
+                            child: PrescriptionDetailsTextField(
+                              focusNode: model.refillsFocusNode,
+                              labelText: 'Refills',
+                              initialValue: this.model.treatmentOptions.refills,
+                              onChanged: model.updateRefills,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    PrescriptionDetailsTextField(
+                      focusNode: model.formFocusNode,
+                      labelText: 'Form',
+                      initialValue: this.model.treatmentOptions.form,
+                      onChanged: model.updateForm,
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: Container(
+                            child: PrescriptionDetailsTextField(
+                              focusNode: model.doseFocusNode,
+                              labelText: 'Dose',
+                              initialValue: this.model.treatmentOptions.dose,
+                              onChanged: model.updateDose,
+                            ),
                           ),
                         ),
-                      )
-                    ],
-                  ),
-                  PrescriptionDetailsTextField(
-                    focusNode: model.formFocusNode,
-                    labelText: 'Form',
-                    initialValue: this.model.treatmentOptions.form,
-                    onChanged: model.updateForm,
-                  ),
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Container(
-                          child: PrescriptionDetailsTextField(
-                            focusNode: model.doseFocusNode,
-                            labelText: 'Dose',
-                            initialValue: this.model.treatmentOptions.dose,
-                            onChanged: model.updateDose,
+                        Expanded(
+                          child: Container(
+                            child: PrescriptionDetailsTextField(
+                              focusNode: model.frequencyFocusNode,
+                              labelText: 'Frequency',
+                              initialValue:
+                                  this.model.treatmentOptions.frequency,
+                              onChanged: model.updateFrequency,
+                            ),
                           ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Container(
-                          child: PrescriptionDetailsTextField(
-                            focusNode: model.frequencyFocusNode,
-                            labelText: 'Frequency',
-                            initialValue: this.model.treatmentOptions.frequency,
-                            onChanged: model.updateFrequency,
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                  PrescriptionDetailsTextField(
-                    keyboardType: TextInputType.multiline,
-                    focusNode: model.instructionsFocusNode,
-                    maxLines: null,
-                    labelText: 'Instructions',
-                    initialValue: this.model.treatmentOptions.instructions,
-                    onChanged: model.updateInstructions,
-                  ),
-                  SizedBox(
-                    height: 30,
-                  ),
-                  ReusableRaisedButton(
-                    title: 'Continue',
-                    onPressed: () {
-                      if (!model.allFieldsValidated) {
-                        AppUtil().showFlushBar(
-                            "Please fill out all fields", context);
-                      } else {
-                        visitReviewViewModel.updateTreatmentStepWith(
-                          selectedTreatment: model.treatmentOptions,
-                        );
-                        Navigator.of(context).pop();
-                      }
-                    },
-                  ),
-                ],
-              ),
-            )),
+                        )
+                      ],
+                    ),
+                    PrescriptionDetailsTextField(
+                      keyboardType: TextInputType.multiline,
+                      focusNode: model.instructionsFocusNode,
+                      maxLines: null,
+                      labelText: 'Instructions',
+                      initialValue: this.model.treatmentOptions.instructions,
+                      onChanged: model.updateInstructions,
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    ReusableRaisedButton(
+                      title: 'Continue',
+                      onPressed: () {
+                        if (!model.allFieldsValidated) {
+                          AppUtil().showFlushBar(
+                              "Please fill out all fields", context);
+                        } else {
+                          visitReviewViewModel.updateTreatmentStepWith(
+                            selectedTreatment: model.treatmentOptions,
+                          );
+                          Navigator.of(context).pop();
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              )),
+        ),
       ),
     );
   }

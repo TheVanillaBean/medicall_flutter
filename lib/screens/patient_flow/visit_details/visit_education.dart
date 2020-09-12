@@ -36,7 +36,7 @@ class VisitEducation extends StatelessWidget {
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
           type: AppBarType.Back,
-          title: "Visit Education",
+          title: "Further Learning",
           theme: Theme.of(context),
           actions: [
             IconButton(

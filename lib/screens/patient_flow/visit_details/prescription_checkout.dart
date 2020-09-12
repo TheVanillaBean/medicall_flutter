@@ -13,6 +13,7 @@ import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_screenutil/screenutil.dart';
+import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:provider/provider.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:stripe_payment/stripe_payment.dart';
@@ -141,41 +142,43 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
         theme: Theme.of(context),
         onPressed: () => Navigator.of(context).pop(),
       ),
-      body: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () {
-          FocusScope.of(context).requestFocus(FocusNode());
-        },
-        child: CustomScrollView(
-          slivers: [
-            SliverFillRemaining(
-              hasScrollBody: true,
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 30),
-                      child: Text(
-                        "Select the prescription(s) you would like to receive",
-                        style: Theme.of(context).textTheme.bodyText2,
+      body: KeyboardDismisser(
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () {
+            FocusScope.of(context).requestFocus(FocusNode());
+          },
+          child: CustomScrollView(
+            slivers: [
+              SliverFillRemaining(
+                hasScrollBody: true,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 30),
+                        child: Text(
+                          "Select the prescription(s) you would like to receive",
+                          style: Theme.of(context).textTheme.bodyText2,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 12),
-                    _buildShoppingCart(),
-                    SizedBox(height: 12),
-                    _buildPriceBreakdown(),
-                    _buildAddressCheckbox(),
-                    if (!model.useAccountAddress) _buildAddressInputFields(),
-                    SizedBox(height: 24),
-                    _buildPaymentDetail(),
-                    SizedBox(height: 24),
-                    _buildCheckoutButton(context),
-                    SizedBox(height: 80),
-                  ],
+                      SizedBox(height: 12),
+                      _buildShoppingCart(),
+                      SizedBox(height: 12),
+                      _buildPriceBreakdown(),
+                      _buildAddressCheckbox(),
+                      if (!model.useAccountAddress) _buildAddressInputFields(),
+                      SizedBox(height: 24),
+                      _buildPaymentDetail(),
+                      SizedBox(height: 24),
+                      _buildCheckoutButton(context),
+                      SizedBox(height: 80),
+                    ],
+                  ),
                 ),
-              ),
-            )
-          ],
+              )
+            ],
+          ),
         ),
       ),
     );

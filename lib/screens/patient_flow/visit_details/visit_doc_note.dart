@@ -40,7 +40,7 @@ class VisitDocNote extends StatelessWidget {
               color: Theme.of(context).colorScheme.primary,
             ),
             onPressed: () {
-              Provider.of(context).pop();
+              Navigator.of(context).pushNamed(Routes.patientDashboard);
             },
           )
         ],
@@ -51,6 +51,7 @@ class VisitDocNote extends StatelessWidget {
           maxLines: null,
           minLines: 5,
           readOnly: true,
+          enableInteractiveSelection: true,
           initialValue: visitReviewData.patientNote,
           autocorrect: false,
           keyboardType: TextInputType.multiline,

@@ -28,7 +28,7 @@ class CardSelect extends StatelessWidget {
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
         type: AppBarType.Back,
-        title: "Select Payment Card",
+        title: "Select Payment Method",
         theme: Theme.of(context),
       ),
       body: SingleChildScrollView(
@@ -40,7 +40,7 @@ class CardSelect extends StatelessWidget {
                 bottom: 28.0,
               ),
               child: Text(
-                'Please select one of your payment cards:',
+                'Please select one of your payment methods:',
                 style: TextStyle(
                   fontSize: 16.0,
                   color: Colors.black54,
