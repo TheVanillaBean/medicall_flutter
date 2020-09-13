@@ -5,6 +5,8 @@ class FirestorePath {
   static String medicalHistory(String uid) =>
       'users/$uid/medical_history/questions/';
   static String symptoms() => 'services/dermatology/symptoms/';
+  static String symptom(String symptom) =>
+      'services/dermatology/symptoms/$symptom';
   static String screeningQuestions(String symptom) =>
       'services/dermatology/symptoms/$symptom/questionaire/';
   static String consults() => 'consults/';

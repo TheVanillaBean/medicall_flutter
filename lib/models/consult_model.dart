@@ -26,13 +26,14 @@ extension EnumParser on String {
 class Consult {
   String uid;
   final String providerId;
-  final String symptom;
+  String symptom;
   final int price;
   final DateTime date;
   String patientId;
   ConsultStatus state;
   List<Question> questions;
-
+  bool providerReclassified;
+  String reclassifiedVisit;
   //not serialized
   PatientUser patientUser;
   ProviderUser providerUser;
@@ -51,6 +52,8 @@ class Consult {
     this.date,
     this.state,
     this.questions = const <Question>[],
+    this.providerReclassified = false,
+    this.reclassifiedVisit = '',
     this.providerUser,
     this.patientUser,
   });
@@ -69,9 +72,9 @@ class Consult {
     final DateTime date = DateTime.parse(dateTimeStamp.toDate().toString());
     final ConsultStatus state =
         (data['state'] as String).toConsultStatus() ?? null;
-//    final List<Question> questions = (data['screening_questions'] as List ?? [])
-//        .map((v) => Question.fromMap(v))
-//        .toList();
+    final bool providerReclassified =
+        data['provider_reclassified'] as bool ?? false;
+    final String reclassifiedVisit = data['reclassified_visit'] as String ?? '';
 
     return Consult(
       uid: documentId,
@@ -81,19 +84,27 @@ class Consult {
       price: price,
       date: date,
       state: state,
+      providerReclassified: providerReclassified,
+      reclassifiedVisit: reclassifiedVisit,
     );
   }
 
   Map<String, dynamic> toMap() {
-    return {
+    Map<String, dynamic> baseToMap = {
       'provider_id': providerId,
       'patient_id': patientId,
       'symptom': symptom,
       'price': price,
       'date': date,
       'state': EnumToString.parse(state),
-//      "screening_questions": questions.map((q) => q.toMap()),
+      'provider_reclassified': providerReclassified,
     };
+    if (providerReclassified) {
+      baseToMap.addAll({
+        'reclassified_visit': reclassifiedVisit,
+      });
+    }
+    return baseToMap;
   }
 
   @override

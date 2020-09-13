@@ -45,6 +45,7 @@ import 'package:Medicall/screens/provider_flow/review_medical_history/review_med
 import 'package:Medicall/screens/provider_flow/visit_review_screens/complete_visit/complete_visit.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/immediate_care/immediate_medical_care.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/prescription_details/prescription_details.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reclassify_visit.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_overview.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_review.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_review_view_model.dart';
@@ -108,6 +109,7 @@ class Routes {
   static const visitNonPrescriptions = '/visit-non-prescriptions';
   static const immediateMedicalCare = '/immediate-medical-care';
   static const completeVisit = '/complete-visit';
+  static const reclassifyVisit = '/reclassify-visit';
   static const visitReview = '/visit-review';
   static const providerVisits = '/provider-visits';
   static const viewMedicalHistory = '/view-medical-history';
@@ -513,6 +515,19 @@ class Router {
         final Consult consult = mapArgs['consult'];
         return MaterialPageRoute<dynamic>(
           builder: (context) => ReviewMedicalHistory(consult: consult),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case Routes.reclassifyVisit:
+        final Map<String, dynamic> mapArgs = args;
+        final Consult consult = mapArgs['consult'];
+        final List<String> totalSymptoms = mapArgs['totalSymptoms'];
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => ReclassifyVisit.create(
+            context,
+            consult,
+            totalSymptoms,
+          ),
           settings: settings,
           fullscreenDialog: true,
         );

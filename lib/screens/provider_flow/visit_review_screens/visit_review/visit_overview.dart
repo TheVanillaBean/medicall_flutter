@@ -1,8 +1,6 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
 import 'package:Medicall/common_widgets/sign_in_button.dart';
-import 'package:Medicall/models/consult-review/consult_review_options_model.dart';
-import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/user/patient_user_model.dart';
 import 'package:Medicall/models/user/provider_user_model.dart';
@@ -10,10 +8,11 @@ import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Shared/visit_information/review_visit_information.dart';
 import 'package:Medicall/screens/provider_flow/dashboard/provider_dashboard_list_item.dart';
-import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_review.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reclassify_visit.dart';
 import 'package:Medicall/screens/shared/chat/chat_screen.dart';
 import 'package:Medicall/services/chat_provider.dart';
 import 'package:Medicall/services/database.dart';
+import 'package:Medicall/services/non_auth_firestore_db.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -154,7 +153,7 @@ class VisitOverview extends StatelessWidget {
     if (consult.state == ConsultStatus.PendingReview) {
       return () => _showBeginReviewDialog(context, consult);
     } else if (consult.state == ConsultStatus.InReview) {
-      return () async => navigateToVisitReviewScreen(context, db, consult);
+      return () async => navigateToReclassifyScreen(context, consult);
     } else if (consult.state == ConsultStatus.Completed) {
       return () async => _showSignReviewDialog(context, consult);
     } else {
@@ -186,21 +185,15 @@ class VisitOverview extends StatelessWidget {
     }
   }
 
-  Future<void> navigateToVisitReviewScreen(
-      BuildContext context, FirestoreDatabase db, Consult consult) async {
-    ConsultReviewOptions options =
-        await db.consultReviewOptions(symptomName: consult.symptom);
-    VisitReviewData visitReviewData =
-        await db.visitReviewStream(consultId: consult.uid).first;
-    if (visitReviewData == null) {
-      visitReviewData = VisitReviewData();
-    }
-    options.diagnosisList.insert(0, "Select a Diagnosis");
-    return VisitReview.show(
+  Future<void> navigateToReclassifyScreen(
+      BuildContext context, Consult consult) async {
+    NonAuthDatabase nonAuthDatabase =
+        Provider.of<NonAuthDatabase>(context, listen: false);
+    List<String> totalSymptoms = await nonAuthDatabase.symptomsListByName();
+    return ReclassifyVisit.show(
       context: context,
       consult: consult,
-      consultReviewOptions: options,
-      visitReviewData: visitReviewData,
+      totalSymptoms: totalSymptoms,
     );
   }
 
@@ -221,7 +214,7 @@ class VisitOverview extends StatelessWidget {
       PatientUser patient =
           await db.userStream(USER_TYPE.PATIENT, consult.patientId).first;
       consult.patientUser = patient;
-      await navigateToVisitReviewScreen(context, db, consult);
+      await navigateToReclassifyScreen(context, consult);
     }
   }
 
@@ -240,7 +233,7 @@ class VisitOverview extends StatelessWidget {
       consult.state = ConsultStatus.Signed;
       await db.saveConsult(consultId: consult.uid, consult: consult);
     } else {
-      navigateToVisitReviewScreen(context, db, consult);
+      navigateToReclassifyScreen(context, consult);
     }
   }
 

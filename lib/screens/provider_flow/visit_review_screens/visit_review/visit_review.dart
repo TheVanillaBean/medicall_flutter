@@ -52,7 +52,7 @@ class VisitReview extends StatefulWidget {
     ConsultReviewOptions consultReviewOptions,
     VisitReviewData visitReviewData,
   }) async {
-    await Navigator.of(context).pushNamed(
+    await Navigator.of(context).pushReplacementNamed(
       Routes.visitReview,
       arguments: {
         'consult': consult,

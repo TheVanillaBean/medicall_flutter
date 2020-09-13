@@ -11,6 +11,7 @@ import 'firestore_path.dart';
 abstract class NonAuthDatabase {
   Future<VersionInfo> versionInfoStream();
   Future<void> setUser(MedicallUser user);
+  Future<List<String>> symptomsListByName();
   Stream<List<Symptom>> symptomsStream();
   Future<List<String>> getAllProviderAddresses();
   Stream<List<ProviderUser>> getAllProviders();
@@ -35,6 +36,14 @@ class NonAuthFirestoreDB implements NonAuthDatabase {
             ? (user as PatientUser).toMap()
             : (user as ProviderUser).toMap(),
       );
+
+  @override
+  Future<List<String>> symptomsListByName() => _service
+      .collectionStream(
+        path: FirestorePath.symptoms(),
+        builder: (data, documentId) => documentId,
+      )
+      .first;
 
   @override
   Stream<List<Symptom>> symptomsStream() => _service.collectionStream(
