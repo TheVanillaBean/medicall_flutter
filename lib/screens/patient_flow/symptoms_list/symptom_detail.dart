@@ -116,7 +116,7 @@ class SymptomDetailScreen extends StatelessWidget {
             title: 'Explore Providers',
             onPressed: () async {
               String url = await firebaseStorage.getSymptomPhotoURL(
-                  symptom: '${this.symptom.name}.jpeg');
+                  symptom: '${this.symptom.name}.jpg');
               if (medicallUser != null && medicallUser.uid.length > 0) {
                 SelectProviderScreen.show(context: context, symptom: symptom);
               } else {
