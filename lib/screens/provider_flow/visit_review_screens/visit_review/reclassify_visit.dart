@@ -63,7 +63,8 @@ class ReclassifyVisit extends StatelessWidget {
     if (model.reclassifyVisit) {
       options = await model.firestoreDatabase
           .consultReviewOptions(symptomName: model.visitClassification);
-      model.consult.symptom = model.visitClassification;
+      model.consult.providerReclassified = true;
+      model.consult.reclassifiedVisit = model.visitClassification;
     } else {
       options = await model.firestoreDatabase
           .consultReviewOptions(symptomName: model.consult.symptom);

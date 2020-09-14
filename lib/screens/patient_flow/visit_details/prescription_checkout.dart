@@ -143,42 +143,37 @@ class _PrescriptionCheckoutState extends State<PrescriptionCheckout> {
         onPressed: () => Navigator.of(context).pop(),
       ),
       body: KeyboardDismisser(
-        child: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: () {
-            FocusScope.of(context).requestFocus(FocusNode());
-          },
-          child: CustomScrollView(
-            slivers: [
-              SliverFillRemaining(
-                hasScrollBody: true,
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 30),
-                        child: Text(
-                          "Select the prescription(s) you would like to receive",
-                          style: Theme.of(context).textTheme.bodyText2,
-                        ),
+        gestures: [GestureType.onTap, GestureType.onVerticalDragDown],
+        child: CustomScrollView(
+          slivers: [
+            SliverFillRemaining(
+              hasScrollBody: true,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 30),
+                      child: Text(
+                        "Select the prescription(s) you would like to receive",
+                        style: Theme.of(context).textTheme.bodyText2,
                       ),
-                      SizedBox(height: 12),
-                      _buildShoppingCart(),
-                      SizedBox(height: 12),
-                      _buildPriceBreakdown(),
-                      _buildAddressCheckbox(),
-                      if (!model.useAccountAddress) _buildAddressInputFields(),
-                      SizedBox(height: 24),
-                      _buildPaymentDetail(),
-                      SizedBox(height: 24),
-                      _buildCheckoutButton(context),
-                      SizedBox(height: 80),
-                    ],
-                  ),
+                    ),
+                    SizedBox(height: 12),
+                    _buildShoppingCart(),
+                    SizedBox(height: 12),
+                    _buildPriceBreakdown(),
+                    _buildAddressCheckbox(),
+                    if (!model.useAccountAddress) _buildAddressInputFields(),
+                    SizedBox(height: 24),
+                    _buildPaymentDetail(),
+                    SizedBox(height: 24),
+                    _buildCheckoutButton(context),
+                    SizedBox(height: 80),
+                  ],
                 ),
-              )
-            ],
-          ),
+              ),
+            )
+          ],
         ),
       ),
     );

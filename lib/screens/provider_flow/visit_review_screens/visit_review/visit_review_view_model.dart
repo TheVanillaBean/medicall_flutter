@@ -278,9 +278,12 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
   Future<void> updateDiagnosis(int selectedItemIndex) async {
     updateDiagnosisStepWith(selectedItemIndex: selectedItemIndex);
     if (this.diagnosisStepState.diagnosis != "Select a Diagnosis") {
+      String symptom = consult.providerReclassified
+          ? consult.reclassifiedVisit
+          : consult.symptom;
       this.diagnosisOptions =
           await firestoreDatabase.consultReviewDiagnosisOptions(
-              symptomName: consult.symptom,
+              symptomName: symptom,
               diagnosis: this.diagnosisStepState.diagnosis);
     } else {
       this.diagnosisOptions = null;
