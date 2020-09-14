@@ -43,6 +43,8 @@ class SymptomsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final NonAuthDatabase nonAuthDatabase =
+        Provider.of<NonAuthDatabase>(context, listen: false);
     MedicallUser medicallUser;
     try {
       medicallUser = Provider.of<UserProvider>(context).user;
@@ -87,10 +89,15 @@ class SymptomsScreen extends StatelessWidget {
                               context: context,
                               symptoms: model.cosmeticSymptoms,
                             )
-                        : () => SymptomDetailScreen.show(
+                        : () async {
+                            symptom.photoUrl =
+                                await nonAuthDatabase.getSymptomPhotoURL(
+                                    symptom: '${symptom.name}.jpg');
+                            return SymptomDetailScreen.show(
                               context: context,
                               symptom: symptom,
-                            ),
+                            );
+                          },
                   ),
                 ),
               ),

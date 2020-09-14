@@ -7,6 +7,7 @@ class Symptom {
   final int price;
   final String category;
   final String commonMedications;
+  String photoUrl; //not serialized
 
   Symptom({
     @required this.name,

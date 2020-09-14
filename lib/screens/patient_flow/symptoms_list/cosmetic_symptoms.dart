@@ -8,6 +8,7 @@ import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/patient_flow/symptoms_list/symptom_detail.dart';
 import 'package:Medicall/screens/patient_flow/symptoms_list/symptom_list_item.dart';
 import 'package:Medicall/screens/shared/welcome.dart';
+import 'package:Medicall/services/non_auth_firestore_db.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -31,6 +32,8 @@ class CosmeticSymptomsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final NonAuthDatabase nonAuthDatabase =
+        Provider.of<NonAuthDatabase>(context, listen: false);
     MedicallUser medicallUser;
     try {
       medicallUser = Provider.of<UserProvider>(context).user;
@@ -68,10 +71,14 @@ class CosmeticSymptomsScreen extends StatelessWidget {
               itemsList: this.symptoms,
               itemBuilder: (context, symptom) => SymptomListItem(
                 symptom: symptom,
-                onTap: () => SymptomDetailScreen.show(
-                  context: context,
-                  symptom: symptom,
-                ),
+                onTap: () async {
+                  symptom.photoUrl = await nonAuthDatabase.getSymptomPhotoURL(
+                      symptom: '${symptom.name}.jpg');
+                  return SymptomDetailScreen.show(
+                    context: context,
+                    symptom: symptom,
+                  );
+                },
               ),
             ),
           ),

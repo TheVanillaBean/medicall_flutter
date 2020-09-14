@@ -1,16 +1,12 @@
-import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
-import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/patient_flow/select_provider/select_provider.dart';
 import 'package:Medicall/screens/patient_flow/zip_code_verify/zip_code_verify.dart';
-import 'package:Medicall/screens/shared/welcome.dart';
-import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
-import 'package:Medicall/util/string_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 
 class SymptomDetailScreen extends StatelessWidget {
@@ -32,36 +28,59 @@ class SymptomDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+      body: CustomScrollView(
+        slivers: <Widget>[
+          SliverAppBar(
+            leading: Builder(
+              builder: (BuildContext context) {
+                return IconButton(
+                  icon: Icon(
+                    Icons.arrow_back,
+                    color: Theme.of(context).appBarTheme.iconTheme.color,
+                  ),
+                  onPressed: () => Navigator.pop(context),
+                );
+              },
+            ),
+            floating: true,
+            expandedHeight: 150.0,
+            flexibleSpace: FlexibleSpaceBar(
+              centerTitle: true,
+              title: Text(
+                "${symptom.name}",
+                style: Theme.of(context).textTheme.headline5.copyWith(
+                      color: Colors.white,
+                    ),
+              ),
+              background: Image.network(
+                symptom.photoUrl,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          SymptomBody(symptom: symptom),
+        ],
+      ),
+    );
+  }
+}
+
+class SymptomBody extends StatelessWidget {
+  final Symptom symptom;
+
+  const SymptomBody({@required this.symptom});
+
+  @override
+  Widget build(BuildContext context) {
     MedicallUser medicallUser;
     try {
       medicallUser = Provider.of<UserProvider>(context, listen: false).user;
     } catch (e) {}
 
-    return Scaffold(
-      appBar: CustomAppBar.getAppBar(
-          type: AppBarType.Back,
-          title: StringUtils.capitalize(symptom.name) + ' visit',
-          theme: Theme.of(context),
-          actions: [
-            IconButton(
-                icon: Icon(
-                  Icons.home,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                onPressed: () {
-                  if (medicallUser != null) {
-                    PatientDashboardScreen.show(
-                      context: context,
-                      pushReplaceNamed: true,
-                    );
-                  } else {
-                    WelcomeScreen.show(
-                      context: context,
-                    );
-                  }
-                })
-          ]),
-      body: Container(
+    return SliverFillRemaining(
+      hasScrollBody: false,
+      child: Container(
         padding: EdgeInsets.fromLTRB(40, 40, 40, 40),
         color: Colors.white,
         child: Column(
@@ -72,8 +91,6 @@ class SymptomDetailScreen extends StatelessWidget {
   }
 
   List<Widget> _buildChildren(BuildContext context, MedicallUser medicallUser) {
-    final ExtImageProvider extImageProvider =
-        Provider.of<ExtImageProvider>(context, listen: false);
     return <Widget>[
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

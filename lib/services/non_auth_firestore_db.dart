@@ -5,6 +5,7 @@ import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/models/version.dart';
 import 'package:Medicall/services/firestore_service.dart';
 import 'package:enum_to_string/enum_to_string.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 import 'firestore_path.dart';
 
@@ -16,6 +17,7 @@ abstract class NonAuthDatabase {
   Future<List<String>> getAllProviderAddresses();
   Stream<List<ProviderUser>> getAllProviders();
   Stream<MedicallUser> providerStream({String uid});
+  Future<String> getSymptomPhotoURL({String symptom});
 }
 
 class NonAuthFirestoreDB implements NonAuthDatabase {
@@ -81,4 +83,11 @@ class NonAuthFirestoreDB implements NonAuthDatabase {
         builder: (data, documentId) => MedicallUser.fromMap(
             userType: USER_TYPE.PROVIDER, data: data, uid: documentId),
       );
+
+  @override
+  Future<String> getSymptomPhotoURL({String symptom}) async {
+    final path = FirestorePath.symptomPhoto(symptom: symptom);
+    final storageReference = FirebaseStorage.instance.ref().child(path);
+    return await storageReference.getDownloadURL();
+  }
 }

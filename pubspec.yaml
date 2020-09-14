@@ -76,6 +76,7 @@ dependencies:
   get_version: ^0.2.2
   native_updater: ^0.0.3
   version: ^1.2.0
+  stretchy_header: ^1.0.8
 
 dependency_overrides:
   intl: ^0.16.1
