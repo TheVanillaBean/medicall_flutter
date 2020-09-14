@@ -1,14 +1,16 @@
-import 'package:Medicall/common_widgets/camera/Camera.dart';
 import 'package:Medicall/common_widgets/grouped_buttons/radio_button_group.dart';
 import 'package:Medicall/models/questionnaire/question_model.dart';
 import 'package:Medicall/screens/patient_flow/questionnaire/grouped_checkbox.dart';
 import 'package:Medicall/screens/patient_flow/questionnaire/questions_view_model.dart';
 import 'package:Medicall/services/extimage_provider.dart';
+import 'package:Medicall/services/firebase_storage_service.dart';
+import 'package:Medicall/util/app_util.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
@@ -51,6 +53,52 @@ class _QuestionFormState extends State<QuestionForm> {
   ExtImageProvider get extendedImageProvider => widget.extendedImageProvider;
 
   bool isLoading = false;
+
+  Future<void> _loadProfileImage() async {
+    List<Asset> resultList = List<Asset>();
+
+    try {
+      resultList = await this.extendedImageProvider.pickImages(
+        [],
+        question.maxImages,
+        true,
+        this
+            .extendedImageProvider
+            .pickImagesCupertinoOptions(takePhotoIcon: 'camera'),
+        this.extendedImageProvider.pickImagesMaterialOptions(
+            useDetailsView: true,
+            actionBarColor:
+                '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
+            statusBarColor:
+                '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
+            lightStatusBar: false,
+            autoCloseOnSelectionLimit: true,
+            startInAllView: true,
+            actionBarTitle: 'Select photo(s) for consult',
+            allViewTitle: 'All Photos'),
+        context,
+      );
+    } on PlatformException catch (e) {
+      AppUtil().showFlushBar(e, context);
+    }
+
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    if (!mounted) return;
+    setState(() {
+      isLoading = true;
+    });
+    List<Map<String, ByteData>> resultMap = [];
+    for (Asset asset in resultList) {
+      ByteData byteData =
+          await FirebaseStorageService.getAccurateByteData(asset);
+      resultMap.add({asset.name: byteData});
+    }
+    setState(() {
+      isLoading = false;
+    });
+    model.updateQuestionPageWith(questionPhotos: resultMap);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -134,7 +182,7 @@ class _QuestionFormState extends State<QuestionForm> {
           focusNode: model.inputFocusNode,
           autocorrect: true,
           keyboardType: TextInputType.multiline,
-          maxLines: 30,
+          maxLines: 10,
           onChanged: model.updateInput,
           style: Theme.of(context).textTheme.bodyText1,
           decoration: InputDecoration(
@@ -164,22 +212,12 @@ class _QuestionFormState extends State<QuestionForm> {
   Widget _buildPhotoOption({double height}) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         Expanded(
           flex: 9,
           child: GestureDetector(
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => CameraScreen.create(context, model, {
-                      'fullscreen': true,
-                      'video': false,
-                      'max_images': question.maxImages
-                    }),
-                  ));
-            },
+            onTap: _loadProfileImage,
             child: ClipRRect(
               child: model.questionPlaceholderURL.length > 0
                   ? this.extendedImageProvider.returnNetworkImage(
@@ -206,17 +244,7 @@ class _QuestionFormState extends State<QuestionForm> {
       children: <Widget>[
         Expanded(
           child: GestureDetector(
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => CameraScreen.create(context, model, {
-                      'fullscreen': true,
-                      'video': false,
-                      'max_images': question.maxImages
-                    }),
-                  ));
-            },
+            onTap: _loadProfileImage,
             child: ClipRRect(
               child: Container(
                 child: PhotoViewGallery.builder(

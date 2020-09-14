@@ -27,7 +27,7 @@ class QuestionPage extends StatelessWidget {
       },
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Scrollbar(
             child: FadingEdgeScrollView.fromSingleChildScrollView(
@@ -46,7 +46,9 @@ class QuestionPage extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.only(top: 8),
                           child: Text(
-                              "Select up to ${question.maxImages} images.\nClick on the icon below to open the camera."),
+                            "Select up to ${question.maxImages} images.\nClick on the icon below to open the camera.",
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                     ],
                   ),

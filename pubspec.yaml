@@ -43,12 +43,12 @@ dependencies:
   flutter_typeahead: ^1.7.0
   fading_edge_scrollview: ^1.1.4
   #camera/images
-  camera: ^0.5.8+2
+  camera: ^0.5.8+5
   video_player: ^0.10.11+1
   dots_indicator: ^1.0.0
   extended_image: ^0.8.0
   #image_picker: ^0.6.3+1
-  multi_image_picker: ^4.7.12
+  multi_image_picker: ^4.7.13
   image_picker: ^0.6.6+1
   #notifications
   flushbar: ^1.10.4
@@ -76,7 +76,6 @@ dependencies:
   get_version: ^0.2.2
   native_updater: ^0.0.3
   version: ^1.2.0
-  stretchy_header: ^1.0.8
 
 dependency_overrides:
   intl: ^0.16.1

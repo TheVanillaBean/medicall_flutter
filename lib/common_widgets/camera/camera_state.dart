@@ -89,15 +89,15 @@ class CameraState with ChangeNotifier {
     takePicture(context).then((String filePath) {
       videoController?.dispose();
       updateWith(imagePath: filePath, videoController: null);
-      if (filePath != null)
-        showInSnackBar('Picture saved to $filePath', context);
+      // if (filePath != null)
+      //   showInSnackBar('Picture saved to $filePath', context);
     });
   }
 
   void onVideoRecordButtonPressed(context) {
     startVideoRecording(context).then((String filePath) {
-      if (filePath != null)
-        showInSnackBar('Saving video to $filePath', context);
+      // if (filePath != null)
+      //   showInSnackBar('Saving video to $filePath', context);
     });
   }
 

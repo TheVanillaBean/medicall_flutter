@@ -139,7 +139,7 @@ class _CameraScreenState extends State<CameraScreen> {
     final deviceRatio = ScreenUtil.screenWidthDp / ScreenUtil.screenHeightDp;
     final xScale = model.controller.value.aspectRatio / deviceRatio;
 
-// Modify the yScale if you are in Landscape
+    // Modify the yScale if you are in Landscape
     if (model.controller == null || !model.controller.value.isInitialized) {
       return Text(
         'Tap a camera',
@@ -305,7 +305,10 @@ class _CameraScreenState extends State<CameraScreen> {
                             if (model.controller.value.isRecordingVideo) {
                               model.controller.stopVideoRecording();
                             }
-                            setState(() {});
+                            model.updateWith(
+                              imagePath: model.imagePath,
+                              imagePathList: model.imagePathList,
+                            );
                           }),
                       SizedBox(
                         height: 10,
