@@ -4,6 +4,7 @@ import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/swipe_gesture_recognizer.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_review_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
 
 class EducationalContentStep extends StatelessWidget {
@@ -16,11 +17,8 @@ class EducationalContentStep extends StatelessWidget {
     ).value;
     final width = MediaQuery.of(context).size.width;
     if (model.diagnosisOptions != null)
-      return GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () {
-          FocusScope.of(context).requestFocus(FocusNode());
-        },
+      return KeyboardDismisser(
+        gestures: [GestureType.onTap, GestureType.onVerticalDragDown],
         child: SwipeGestureRecognizer(
           onSwipeLeft: () => model.incrementIndex(),
           onSwipeRight: () => model.decrementIndex(),

@@ -4,7 +4,6 @@ import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class VisitDocNote extends StatelessWidget {
   final Consult consult;
@@ -47,26 +46,20 @@ class VisitDocNote extends StatelessWidget {
       ),
       body: Container(
         padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
-        child: TextFormField(
-          maxLines: null,
-          minLines: 5,
-          readOnly: true,
-          enableInteractiveSelection: true,
-          initialValue: visitReviewData.patientNote,
-          autocorrect: false,
-          keyboardType: TextInputType.multiline,
-          style: Theme.of(context).textTheme.bodyText2,
-          decoration: InputDecoration(
-            contentPadding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-            labelStyle: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface.withAlpha(90),
-            ),
-            hintStyle: TextStyle(
-              color: Color.fromRGBO(100, 100, 100, 1),
-            ),
-            filled: true,
-            fillColor: Colors.grey.withAlpha(20),
+        child: SelectableText(
+          visitReviewData.patientNote,
+          cursorColor: Theme.of(context).colorScheme.primary,
+          strutStyle:
+              StrutStyle.fromTextStyle(Theme.of(context).textTheme.bodyText1),
+          showCursor: true,
+          toolbarOptions: ToolbarOptions(
+            copy: true,
+            selectAll: true,
+            cut: false,
+            paste: false,
           ),
+          style: Theme.of(context).textTheme.bodyText1,
+          scrollPhysics: ClampingScrollPhysics(),
         ),
       ),
     );

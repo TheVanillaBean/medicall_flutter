@@ -7,6 +7,7 @@ import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review
 import 'package:Medicall/util/app_util.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
 
 class DiagnosisStep extends StatelessWidget {
@@ -20,11 +21,8 @@ class DiagnosisStep extends StatelessWidget {
     final width = MediaQuery.of(context).size.width;
     return LayoutBuilder(
       builder: (context, constraint) {
-        return GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: () {
-            FocusScope.of(context).requestFocus(FocusNode());
-          },
+        return KeyboardDismisser(
+          gestures: [GestureType.onTap, GestureType.onVerticalDragDown],
           child: SwipeGestureRecognizer(
             onSwipeLeft: () => model.incrementIndex(),
             onSwipeRight: () => model.decrementIndex(),

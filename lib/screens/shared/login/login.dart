@@ -99,6 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: KeyboardDismisser(
+        gestures: [GestureType.onTap, GestureType.onVerticalDragDown],
         child: AnnotatedRegion<SystemUiOverlayStyle>(
           value: SystemUiOverlayStyle.dark,
           sized: false,
