@@ -168,6 +168,8 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
         this.diagnosisStepState.selectedDDXOptions;
     this.visitReviewData.ddxOtherOption =
         this.diagnosisStepState.ddxOtherOption;
+    this.visitReviewData.otherDiagnosis =
+        this.diagnosisStepState.otherDiagnosis;
     this.visitReviewData.examLocations =
         this.examStepState.examLocationsForSerialization;
     this.visitReviewData.treatmentOptions =
@@ -257,6 +259,18 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
       this.diagnosisStepState.selectedItemIndex =
           diagnosisIndex > -1 ? diagnosisIndex : 0;
       updateDiagnosis(this.diagnosisStepState.selectedItemIndex);
+      if (this.visitReviewData.diagnosis == "Other") {
+        if (this.visitReviewData.otherDiagnosis.length == 0) {
+          updateDiagnosisStepWith(
+              otherDiagnosis:
+                  null); //if Other is selected, then an other value from textField has to be entered
+        } else {
+          updateDiagnosisStepWith(
+              otherDiagnosis: this.visitReviewData.diagnosis);
+        }
+      } else {
+        updateDiagnosisStepWith(otherDiagnosis: "");
+      }
       if (this.diagnosisStepState.minimumRequiredFieldsFilledOut) {
         int index = completedSteps.indexOf(VisitReviewSteps.DiagnosisStep);
         if (index > 0) {
@@ -324,10 +338,6 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
     if (this.diagnosisStepState.diagnosis == "Other") {
       this.diagnosisStepState.otherDiagnosis =
           otherDiagnosis ?? this.diagnosisStepState.otherDiagnosis;
-      if (this.diagnosisStepState.otherDiagnosis.length < 2) {
-        this.diagnosisOptions =
-            null; //if Other is selected, then an other value from textField has to be entered
-      }
     } else {
       this.diagnosisStepState.otherDiagnosis = "";
     }

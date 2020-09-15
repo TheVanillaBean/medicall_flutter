@@ -10,6 +10,7 @@ import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_widgets/patient_note_step.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_widgets/treatment_step.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_review_view_model.dart';
+import 'package:Medicall/screens/shared/visit_information/consult_photos.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
@@ -95,6 +96,20 @@ class _VisitReviewState extends State<VisitReview> with VisitReviewStatus {
         title: Text(
           widget.model.getCustomStepText(widget.model.currentStep),
         ),
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.photo_library,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            onPressed: () {
+              ConsultPhotos.show(
+                context: context,
+                consult: widget.model.consult,
+              );
+            },
+          )
+        ],
       ),
       body: Column(
         mainAxisSize: MainAxisSize.max,

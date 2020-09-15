@@ -3,6 +3,7 @@ import 'package:Medicall/models/consult-review/treatment_options.dart';
 //Will be used to store the actual provider answers
 class VisitReviewData {
   String diagnosis;
+  String otherDiagnosis;
   bool includeDDX;
   List<String> ddxOptions;
   String ddxOtherOption;
@@ -19,6 +20,7 @@ class VisitReviewData {
 
   VisitReviewData({
     this.diagnosis = "",
+    this.otherDiagnosis = "",
     this.includeDDX = false,
     this.ddxOptions = const [],
     this.ddxOtherOption = "",
@@ -35,6 +37,7 @@ class VisitReviewData {
       return null;
     }
     final String diagnosis = data['diagnosis'] as String;
+    final String otherDiagnosis = data['other_diagnosis'] as String;
     final bool includeDDX = data['include_DDX'] as bool;
     final List<String> ddxOptions =
         (data['ddx_options'] as List).map((e) => e.toString()).toList();
@@ -68,6 +71,7 @@ class VisitReviewData {
 
     return VisitReviewData(
       diagnosis: diagnosis,
+      otherDiagnosis: otherDiagnosis,
       includeDDX: includeDDX,
       ddxOptions: ddxOptions,
       ddxOtherOption: ddxOtherOption,
@@ -82,6 +86,7 @@ class VisitReviewData {
   Map<String, dynamic> toMap() {
     dynamic e = <String, dynamic>{
       'diagnosis': diagnosis,
+      'other_diagnosis': otherDiagnosis,
       'include_DDX': includeDDX,
       'ddx_options': ddxOptions,
       'ddx_other_option': ddxOtherOption,
