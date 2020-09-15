@@ -11,6 +11,7 @@ import 'package:Medicall/screens/patient_flow/visit_details/visit_treatment_reco
 import 'package:Medicall/screens/shared/chat/chat_screen.dart';
 import 'package:Medicall/services/chat_provider.dart';
 import 'package:Medicall/services/database.dart';
+import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -62,18 +63,55 @@ class VisitDetailsOverview extends StatelessWidget {
       ),
       body: this.consult.state == ConsultStatus.Signed
           ? _buildVisitReviewButtons(firestoreDatabase)
-          : Center(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  "This visit has not been reviewed yet.",
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    color: Colors.grey,
-                  ),
-                ),
+          : _buildOptionsForNonReviewed(context),
+    );
+  }
+
+  SingleChildScrollView _buildOptionsForNonReviewed(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        children: <Widget>[
+          _buildCardButton(
+            "Provider Note",
+            MedicallIcons.clipboard_1,
+            () {
+              AppUtil().showFlushBar(
+                  "This visit has not been reviewed yet", context);
+            },
+          ),
+          _buildCardButton(
+            "Treatment Recommendations",
+            Icons.local_pharmacy,
+            () {
+              AppUtil().showFlushBar(
+                  "This visit has not been reviewed yet", context);
+            },
+          ),
+          _buildCardButton(
+            "Further Learning",
+            Icons.school,
+            () {
+              AppUtil().showFlushBar(
+                  "This visit has not been reviewed yet", context);
+            },
+          ),
+          _buildCardButton(
+            "Your Visit Information",
+            Icons.assignment,
+            () => {
+              ReviewVisitInformation.show(
+                context: context,
+                consult: this.consult,
               ),
-            ),
+            },
+          ),
+          _buildCardButton(
+            "Message Provider",
+            Icons.message,
+            () => navigateToChatScreen(context),
+          ),
+        ],
+      ),
     );
   }
 

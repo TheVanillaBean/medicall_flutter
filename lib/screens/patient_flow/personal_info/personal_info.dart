@@ -224,25 +224,25 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
 
     try {
       resultList = await this.extendedImageProvider.pickImages(
-            model.profileImage,
-            1,
-            true,
-            this
-                .extendedImageProvider
-                .pickImagesCupertinoOptions(takePhotoIcon: 'camera'),
-            this.extendedImageProvider.pickImagesMaterialOptions(
-                useDetailsView: true,
-                actionBarColor:
-                    '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
-                statusBarColor:
-                    '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
-                lightStatusBar: false,
-                autoCloseOnSelectionLimit: true,
-                startInAllView: true,
-                actionBarTitle: 'Select Profile Picture',
-                allViewTitle: 'All Photos'),
-            context,
-          );
+        [],
+        1,
+        true,
+        this
+            .extendedImageProvider
+            .pickImagesCupertinoOptions(takePhotoIcon: 'camera'),
+        this.extendedImageProvider.pickImagesMaterialOptions(
+            useDetailsView: true,
+            actionBarColor:
+                '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
+            statusBarColor:
+                '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
+            lightStatusBar: false,
+            autoCloseOnSelectionLimit: true,
+            startInAllView: true,
+            actionBarTitle: 'Select Profile Picture',
+            allViewTitle: 'All Photos'),
+        context,
+      );
     } on PlatformException catch (e) {
       AppUtil().showFlushBar(e, context);
     }
