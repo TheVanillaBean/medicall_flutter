@@ -62,6 +62,18 @@ class PaymentDetail extends StatelessWidget {
     );
   }
 
+  void addCard({StripeProvider stripeProvider}) async {
+    model.updateWith(isLoading: true);
+    PaymentIntent setupIntent = await stripeProvider.addSource();
+    model.updateWith(isLoading: false);
+
+    bool successfullyAddedCard =
+        await stripeProvider.addCard(setupIntent: setupIntent);
+    if (successfullyAddedCard) {
+      model.updateWith(isLoading: true, refreshCards: true);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (model.refreshCards) {
@@ -109,8 +121,8 @@ class PaymentDetail extends StatelessWidget {
                   itemBuilder: (context, paymentMethod) => PaymentListItem(
                     key: UniqueKey(),
                     paymentMethod: paymentMethod,
-                    onDismissed: () => {
-                      print("Card deleted"),
+                    onDismissed: () async => {
+                      await model.deleteCard(paymentMethod.id),
                     },
                     onPressed: this.paymentModel != null
                         ? () {
@@ -135,21 +147,13 @@ class PaymentDetail extends StatelessWidget {
                 : () => addCard(stripeProvider: stripeProvider),
             outlined: true,
           ),
-          if (model.isLoading) CircularProgressIndicator(),
+          if (model.isLoading)
+            Padding(
+              padding: const EdgeInsets.all(32),
+              child: CircularProgressIndicator(),
+            ),
         ],
       ),
     );
-  }
-
-  void addCard({StripeProvider stripeProvider}) async {
-    model.updateWith(isLoading: true);
-    PaymentIntent setupIntent = await stripeProvider.addSource();
-    model.updateWith(isLoading: false);
-
-    bool successfullyAddedCard =
-        await stripeProvider.addCard(setupIntent: setupIntent);
-    if (successfullyAddedCard) {
-      model.updateWith(isLoading: true, refreshCards: true);
-    }
   }
 }

@@ -15,6 +15,33 @@ class PatientPrescriptions extends StatelessWidget {
 
   const PatientPrescriptions({@required this.model});
 
+  static Widget create(BuildContext context) {
+    final FirestoreDatabase database =
+        Provider.of<FirestoreDatabase>(context, listen: false);
+    final UserProvider provider =
+        Provider.of<UserProvider>(context, listen: false);
+
+    return ChangeNotifierProvider<PatientPrescriptionsViewModel>(
+      create: (context) => PatientPrescriptionsViewModel(
+        database: database,
+        userProvider: provider,
+      ),
+      child: Consumer<PatientPrescriptionsViewModel>(
+        builder: (_, model, __) => PatientPrescriptions(
+          model: model,
+        ),
+      ),
+    );
+  }
+
+  static Future<void> show({
+    BuildContext context,
+  }) async {
+    await Navigator.of(context).pushNamed(
+      Routes.patientPrescriptions,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,33 +79,6 @@ class PatientPrescriptions extends StatelessWidget {
               }),
         ),
       ),
-    );
-  }
-
-  static Widget create(BuildContext context) {
-    final FirestoreDatabase database =
-        Provider.of<FirestoreDatabase>(context, listen: false);
-    final UserProvider provider =
-        Provider.of<UserProvider>(context, listen: false);
-
-    return ChangeNotifierProvider<PatientPrescriptionsViewModel>(
-      create: (context) => PatientPrescriptionsViewModel(
-        database: database,
-        userProvider: provider,
-      ),
-      child: Consumer<PatientPrescriptionsViewModel>(
-        builder: (_, model, __) => PatientPrescriptions(
-          model: model,
-        ),
-      ),
-    );
-  }
-
-  static Future<void> show({
-    BuildContext context,
-  }) async {
-    await Navigator.of(context).pushNamed(
-      Routes.patientPrescriptions,
     );
   }
 }
