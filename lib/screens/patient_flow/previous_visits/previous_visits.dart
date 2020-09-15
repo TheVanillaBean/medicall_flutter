@@ -14,6 +14,30 @@ class PreviousVisits extends StatelessWidget {
   final PreviousVisitsViewModel model;
   const PreviousVisits({@required this.model});
 
+  static Widget create(BuildContext context) {
+    final FirestoreDatabase database = Provider.of<FirestoreDatabase>(context);
+    final UserProvider provider = Provider.of<UserProvider>(context);
+    return ChangeNotifierProvider<PreviousVisitsViewModel>(
+      create: (context) => PreviousVisitsViewModel(
+        database: database,
+        userProvider: provider,
+      ),
+      child: Consumer<PreviousVisitsViewModel>(
+        builder: (_, model, __) => PreviousVisits(
+          model: model,
+        ),
+      ),
+    );
+  }
+
+  static Future<void> show({
+    BuildContext context,
+  }) async {
+    await Navigator.of(context).pushNamed(
+      Routes.previousConsults,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,30 +66,6 @@ class PreviousVisits extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-
-  static Widget create(BuildContext context) {
-    final FirestoreDatabase database = Provider.of<FirestoreDatabase>(context);
-    final UserProvider provider = Provider.of<UserProvider>(context);
-    return ChangeNotifierProvider<PreviousVisitsViewModel>(
-      create: (context) => PreviousVisitsViewModel(
-        database: database,
-        userProvider: provider,
-      ),
-      child: Consumer<PreviousVisitsViewModel>(
-        builder: (_, model, __) => PreviousVisits(
-          model: model,
-        ),
-      ),
-    );
-  }
-
-  static Future<void> show({
-    BuildContext context,
-  }) async {
-    await Navigator.of(context).pushNamed(
-      Routes.previousConsults,
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:Medicall/common_widgets/sign_in_button.dart';
+import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/shared/password_reset/reset_password_state_model.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/util/app_util.dart';
@@ -26,6 +27,10 @@ class PasswordResetScreen extends StatefulWidget {
   final ResetPasswordStateModel model;
 
   PasswordResetScreen({@required this.model});
+
+  static Future<void> show({BuildContext context}) async {
+    await Navigator.of(context).pushNamed(Routes.reset_password);
+  }
 
   @override
   _PasswordResetScreenState createState() => _PasswordResetScreenState();
