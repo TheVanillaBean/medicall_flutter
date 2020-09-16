@@ -1,22 +1,8 @@
-buildscript {
-    repositories {
-        maven { url 'https://maven.fabric.io/public' }
-    }
-
-    dependencies {
-        // These docs use an open ended version so that our plugin
-        // can be updated quickly in response to Android tooling updates
-
-        // We recommend changing it to the latest version from our changelog:
-        // https://docs.fabric.io/android/changelog.html#fabric-gradle-plugin
-        classpath 'io.fabric.tools:gradle:1.+'
-    }
-}
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
 if (localPropertiesFile.exists()) {
-    localPropertiesFile.withInputStream { stream ->
-        localProperties.load(stream)
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
     }
 }
 
@@ -25,13 +11,21 @@ if (flutterRoot == null) {
     throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
 }
 
-apply plugin: 'com.android.application'
-apply plugin: 'io.fabric'
-apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
-
-repositories {
-    maven { url 'https://maven.fabric.io/public' }
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+if (flutterVersionCode == null) {
+    flutterVersionCode = '1'
 }
+
+def flutterVersionName = localProperties.getProperty('flutter.versionName')
+if (flutterVersionName == null) {
+    flutterVersionName = '1.0'
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
 
 def keystoreProperties = new Properties()
 def keystorePropertiesFile = rootProject.file('key.properties')
@@ -40,7 +34,11 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
 
     lintOptions {
         disable 'InvalidPackage'
@@ -48,18 +46,17 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.medicall.android"
-        minSdkVersion 21
-        targetSdkVersion 28
-        multiDexEnabled true
+        applicationId "com.medicall.android.dev"
+        minSdkVersion 24
+        targetSdkVersion 29
         //codemagic auto versioning, change main version for major builds
         if (System.getenv("CI")) {
             def buildNumber = System.getenv("BUILD_NUMBER")
             versionName = "1.0." + buildNumber 
             versionCode = Integer.valueOf(buildNumber)
         }else{
-            versionCode 1
-            versionName "1.0"
+            versionCode flutterVersionCode.toInteger()
+            versionName flutterVersionName
         }
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -81,13 +78,9 @@ android {
    buildTypes {
        release {
            signingConfig signingConfigs.release
-           minifyEnabled false
-           useProguard false
        }
        debug{
            signingConfig signingConfigs.debug
-           minifyEnabled false
-           useProguard false
        }
    }
 }
@@ -97,14 +90,14 @@ flutter {
 }
 
 dependencies {
-    implementation 'androidx.annotation:annotation:1.1.0-rc01'
-    implementation 'androidx.test:runner:1.2.0'
-    implementation 'androidx.multidex:multidex:2.0.1'
-    implementation 'androidx.test:rules:1.2.0'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test:runner:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
     implementation 'com.google.firebase:firebase-core:16.0.9'
     implementation 'com.google.firebase:firebase-messaging:18.0.0'
-    implementation('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
-        transitive = true;
-    }
+    // Add the Firebase SDK for Crashlytics.
+    implementation 'com.google.firebase:firebase-crashlytics:17.0.0-beta01'
+    
 }
-apply plugin: 'com.google.gms.google-services'
+

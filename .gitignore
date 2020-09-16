@@ -121,3 +121,5 @@ ios/Flutter/flutter_export_environment.sh
 ios/Flutter/Flutter.podspec
 ios/Runner.xcodeproj/project.pbxproj
 ios/Runner.xcodeproj/project.pbxproj
+android/settings_aar.gradle
+android/app/service-account.json

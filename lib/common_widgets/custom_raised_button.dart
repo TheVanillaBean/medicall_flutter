@@ -9,8 +9,8 @@ class CustomRaisedButton extends StatelessWidget {
 
   const CustomRaisedButton({
     this.height: 50.0,
-    this.borderRadius: 25.0,
-    this.color,
+    this.borderRadius: 14.0,
+    this.color = Colors.blue,
     this.onPressed,
     this.child,
   }) : assert(borderRadius != null);
@@ -22,7 +22,7 @@ class CustomRaisedButton extends StatelessWidget {
       child: RaisedButton(
         child: child,
         color: color,
-        disabledColor: color.withOpacity(.5),
+        disabledColor: Colors.grey[350],
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(
             Radius.circular(borderRadius),

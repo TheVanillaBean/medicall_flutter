@@ -1,0 +1,16 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
+
+class AppleSignInModel {
+  final AuthCredential credential;
+  final String fullName;
+  final String email;
+  final List<String> providers;
+
+  AppleSignInModel({
+    @required this.fullName,
+    @required this.credential,
+    @required this.email,
+    @required this.providers,
+  });
+}

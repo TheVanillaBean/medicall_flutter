@@ -5,19 +5,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class PlatformAlertDialog extends PlatformWidget {
-  final String title;
-  final String content;
-  final String defaultActionText;
-  final String cancelActionText;
-
   PlatformAlertDialog({
     @required this.title,
     @required this.content,
-    @required this.defaultActionText,
     this.cancelActionText,
+    @required this.defaultActionText,
   })  : assert(title != null),
         assert(content != null),
         assert(defaultActionText != null);
+
+  final String title;
+  final String content;
+  final String cancelActionText;
+  final String defaultActionText;
 
   Future<bool> show(BuildContext context) async {
     return Platform.isIOS
@@ -34,10 +34,13 @@ class PlatformAlertDialog extends PlatformWidget {
 
   @override
   Widget buildCupertinoWidget(BuildContext context) {
-    return CupertinoAlertDialog(
-      title: Text(title),
-      content: Text(content),
-      actions: _buildActions(context),
+    return Theme(
+      data: ThemeData.light(),
+      child: CupertinoAlertDialog(
+        title: Text(title),
+        content: Text(content),
+        actions: _buildActions(context),
+      ),
     );
   }
 
@@ -55,27 +58,31 @@ class PlatformAlertDialog extends PlatformWidget {
     if (cancelActionText != null) {
       actions.add(
         PlatformAlertDialogAction(
-          child: Text(cancelActionText),
+          child: Text(
+            cancelActionText,
+            style: Theme.of(context).textTheme.headline6,
+          ),
           onPressed: () => Navigator.of(context).pop(false),
         ),
       );
     }
     actions.add(
       PlatformAlertDialogAction(
-        child: Text(defaultActionText),
+        child: Text(
+          defaultActionText,
+          style: Theme.of(context).textTheme.headline6,
+        ),
         onPressed: () => Navigator.of(context).pop(true),
       ),
     );
-
     return actions;
   }
 }
 
 class PlatformAlertDialogAction extends PlatformWidget {
+  PlatformAlertDialogAction({this.child, this.onPressed});
   final Widget child;
   final VoidCallback onPressed;
-
-  PlatformAlertDialogAction({@required this.child, @required this.onPressed});
 
   @override
   Widget buildCupertinoWidget(BuildContext context) {

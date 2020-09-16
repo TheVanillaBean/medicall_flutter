@@ -8,6 +8,7 @@ import 'package:dots_indicator/dots_indicator.dart';
 import 'package:Medicall/util/introduction_screen/model/page_view_model.dart';
 import 'package:Medicall/util/introduction_screen/ui/intro_button.dart';
 import 'package:Medicall/util/introduction_screen/ui/intro_page.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class IntroductionScreen extends StatefulWidget {
   /// All pages of the onboarding
@@ -30,6 +31,9 @@ class IntroductionScreen extends StatefulWidget {
 
   /// Next button
   final Widget next;
+
+  /// PageViewController
+  final PageController pageController;
 
   /// Is the Skip button should be display
   ///
@@ -96,6 +100,7 @@ class IntroductionScreen extends StatefulWidget {
     this.onChange,
     this.skip,
     this.next,
+    this.pageController,
     this.showSkipButton = false,
     this.showNextButton = true,
     this.isProgress = true,
@@ -124,7 +129,6 @@ class IntroductionScreen extends StatefulWidget {
 }
 
 class _IntroductionScreenState extends State<IntroductionScreen> {
-  PageController pageController;
   double _currentPage = 0.0;
   bool _isSkipPressed = false;
   bool _isScrolling = false;
@@ -134,7 +138,6 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
     super.initState();
     int initialPage = min(widget.initialPage, widget.pages.length - 1);
     _currentPage = initialPage.toDouble();
-    pageController = PageController(initialPage: initialPage);
   }
 
   void _onNext() {
@@ -151,7 +154,7 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
 
   Future<void> animateScroll(int page) async {
     setState(() => _isScrolling = true);
-    await pageController.animateToPage(
+    await widget.pageController.animateToPage(
       page,
       duration: Duration(milliseconds: widget.animationDuration),
       curve: widget.curve,
@@ -191,60 +194,85 @@ class _IntroductionScreenState extends State<IntroductionScreen> {
       onPressed: widget.onDone,
     );
 
-    return Scaffold(
-      backgroundColor: widget.globalBackgroundColor,
-      body: Stack(
-        children: [
-          NotificationListener<ScrollNotification>(
-            onNotification: _onScroll,
-            child: PageView(
-              controller: pageController,
-              physics: widget.freeze
-                  ? const NeverScrollableScrollPhysics()
-                  : const BouncingScrollPhysics(),
-              children: widget.pages.map((p) => IntroPage(page: p)).toList(),
-              onPageChanged: widget.onChange,
-            ),
+    return Stack(
+      children: [
+        NotificationListener<ScrollNotification>(
+          onNotification: _onScroll,
+          child: PageView(
+            controller: widget.pageController,
+            physics: widget.freeze
+                ? const NeverScrollableScrollPhysics()
+                : const BouncingScrollPhysics(),
+            children: widget.pages.map((p) => IntroPage(page: p)).toList(),
+            onPageChanged: widget.onChange,
           ),
-          Positioned(
-            bottom: 16.0,
-            left: 0.0,
-            right: 0.0,
-            child: SafeArea(
-              child: Row(
+        ),
+        Positioned(
+          bottom: 0.0,
+          left: 0.0,
+          right: 0.0,
+          child: SafeArea(
+            child: Container(
+              padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment(0.0, -1.0),
+                  end: Alignment(0.0, 0.6),
+                  colors: <Color>[
+                    Theme.of(context).canvasColor.withAlpha(0),
+                    Theme.of(context).canvasColor.withAlpha(230),
+                    Theme.of(context).canvasColor
+                  ],
+                ),
+              ),
+              child: Stack(
+                alignment: Alignment.bottomCenter,
                 children: [
-                  Expanded(
-                    flex: widget.skipFlex,
-                    child: isSkipBtn
-                        ? skipBtn
-                        : Opacity(opacity: 0.0, child: skipBtn),
+                  Row(
+                    children: <Widget>[
+                      isSkipBtn
+                          ? skipBtn
+                          : Opacity(opacity: 0.0, child: skipBtn),
+                    ],
                   ),
-                  Expanded(
-                    flex: widget.dotsFlex,
-                    child: Center(
-                      child: widget.isProgress
-                          ? DotsIndicator(
-                              dotsCount: widget.pages.length,
-                              position: _currentPage,
-                              decorator: widget.dotsDecorator,
-                            )
-                          : const SizedBox(),
-                    ),
+                  Positioned(
+                    bottom: 17,
+                    child: widget.isProgress
+                        ? ClipRRect(
+                            clipBehavior: Clip.antiAlias,
+                            borderRadius: BorderRadius.horizontal(
+                                left: Radius.circular(20),
+                                right: Radius.circular(20)),
+                            child: Container(
+                              alignment: Alignment.center,
+                              width: ScreenUtil.screenWidthDp - 120,
+                              height: 12,
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: DotsIndicator(
+                                  dotsCount: widget.pages.length,
+                                  position: _currentPage,
+                                  decorator: widget.dotsDecorator,
+                                ),
+                              ),
+                            ),
+                          )
+                        : const SizedBox(),
                   ),
-                  Expanded(
-                    flex: widget.nextFlex,
+                  Positioned(
+                    right: 0,
                     child: isLastPage
                         ? doneBtn
                         : widget.showNextButton
                             ? nextBtn
                             : Opacity(opacity: 0.0, child: nextBtn),
-                  ),
+                  )
                 ],
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

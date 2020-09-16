@@ -10,6 +10,7 @@ class SocialSignInButton extends CustomRaisedButton {
     @required String text,
     Color color,
     Color textColor,
+    BuildContext context,
     VoidCallback onPressed,
   })  : assert(imgPath != null),
         assert(text != null),
@@ -22,10 +23,7 @@ class SocialSignInButton extends CustomRaisedButton {
                 Image.asset(imgPath),
                 Text(
                   text,
-                  style: TextStyle(
-                    color: textColor,
-                    fontSize: 15.0,
-                  ),
+                  style: Theme.of(context).textTheme.bodyText2,
                 ),
                 Opacity(
                   opacity: 0,
@@ -36,5 +34,6 @@ class SocialSignInButton extends CustomRaisedButton {
           ),
           color: color,
           onPressed: onPressed,
+          height: 40,
         );
 }
