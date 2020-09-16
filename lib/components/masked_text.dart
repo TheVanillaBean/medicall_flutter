@@ -1,6 +1,7 @@
 library masked_text;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 // Adapted from https://pub.dartlang.org/packages/masked_text
 
@@ -17,24 +18,33 @@ class MaskedTextField extends StatefulWidget {
   final TextAlign textAlign;
   final TextStyle style;
 
-  const MaskedTextField(
-      {Key key,
-      this.mask,
-      this.style,
-      this.textAlign,
-      this.maskedTextFieldController,
-      this.onSubmitted,
-      this.escapeCharacter: 'x',
-      this.maxLength: 100,
-      this.keyboardType: TextInputType.text,
-      this.inputDecoration: const InputDecoration()})
-      : super(key: key);
+  final ValueSetter<String> onChanged;
+
+  const MaskedTextField({
+    Key key,
+    this.mask,
+    this.style,
+    this.textAlign,
+    this.maskedTextFieldController,
+    this.onSubmitted,
+    this.escapeCharacter: 'x',
+    this.maxLength: 100,
+    this.keyboardType: TextInputType.text,
+    this.inputDecoration: const InputDecoration(),
+    this.onChanged,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => MaskedTextFieldState();
 }
 
 class MaskedTextFieldState extends State<MaskedTextField> {
+  @override
+  void dispose() {
+    super.dispose();
+    widget.maskedTextFieldController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     var lastTextSize = 0;
@@ -44,16 +54,24 @@ class MaskedTextFieldState extends State<MaskedTextField> {
       maxLength: widget.maxLength,
       keyboardType: widget.keyboardType,
       decoration: widget.inputDecoration,
+      inputFormatters: [
+        FilteringTextInputFormatter.allow(
+            RegExp(r"^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$"))
+      ],
       textAlign: widget.textAlign ?? TextAlign.start,
-      style: widget.style ?? Theme.of(context).textTheme.subhead,
-      onSubmitted: (String text) => widget?.onSubmitted(text),
+      style: widget.style ?? Theme.of(context).textTheme.subtitle1,
+      onSubmitted: (String text) => widget?.onSubmitted(unmaskedText),
       onChanged: (String text) {
+        widget.onChanged(unmaskedText);
+
         // Deleting/removing
         if (text.length < lastTextSize) {
           if (widget.mask[text.length] != widget.escapeCharacter) {
             widget.maskedTextFieldController.selection =
-                TextSelection.fromPosition(TextPosition(
-                    offset: widget.maskedTextFieldController.text.length));
+                TextSelection.fromPosition(
+              TextPosition(
+                  offset: widget.maskedTextFieldController.text.length),
+            );
           }
         } else {
           // Typing
@@ -65,10 +83,15 @@ class MaskedTextFieldState extends State<MaskedTextField> {
               widget.maskedTextFieldController.text = _buildText(text);
             }
 
-            if (widget.mask[position] != widget.escapeCharacter)
-              widget.maskedTextFieldController.text =
-                  '${widget.maskedTextFieldController.text}${widget
-                  .mask[position]}';
+            if (widget.mask[position] != widget.escapeCharacter) {
+              if (position == 8 || position == 4 || position == 0) {
+                widget.maskedTextFieldController.text =
+                    '${widget.maskedTextFieldController.text}';
+              } else {
+                widget.maskedTextFieldController.text =
+                    '${widget.maskedTextFieldController.text}${widget.mask[position]}';
+              }
+            }
           }
 
           // Android's onChange resets cursor position (cursor goes to 0)

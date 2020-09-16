@@ -11,14 +11,14 @@
 ///      fonts:
 ///       - asset: fonts/MedicallApp.ttf
 ///
-/// 
+///
 ///
 import 'package:flutter/widgets.dart';
 
 class MedicallApp {
   MedicallApp._();
 
-  static const _kFontFam = 'MedicallApp';
+  static const _kFontFam = 'Inter';
 
   static const IconData logo = const IconData(0xe800, fontFamily: _kFontFam);
   static const IconData logo_m = const IconData(0xe802, fontFamily: _kFontFam);
