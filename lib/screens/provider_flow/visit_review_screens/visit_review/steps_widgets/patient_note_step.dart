@@ -22,76 +22,74 @@ class _PatientNoteStepState extends State<PatientNoteStep> {
     final width = MediaQuery.of(context).size.width;
     if (model.diagnosisOptions != null) {
       return KeyboardDismisser(
-        gestures: [GestureType.onTap, GestureType.onVerticalDragDown],
-        child: KeyboardDismisser(
-          gestures: [GestureType.onTap, GestureType.onPanUpdateDownDirection],
-          child: SwipeGestureRecognizer(
-            onSwipeLeft: () => model.incrementIndex(),
-            onSwipeRight: () => model.decrementIndex(),
-            child: CustomScrollView(
-              slivers: <Widget>[
-                SliverFillRemaining(
-                  hasScrollBody: false,
-                  fillOverscroll: true,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Expanded(
-                        child: Text(
-                          "Message",
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontWeight: FontWeight.w500,
-                          ),
+        gestures: [
+          GestureType.onTap
+        ], //onVerticalDrag not set because of weird behavior
+        child: SwipeGestureRecognizer(
+          onSwipeLeft: () => model.incrementIndex(),
+          onSwipeRight: () => model.decrementIndex(),
+          child: CustomScrollView(
+            slivers: <Widget>[
+              SliverFillRemaining(
+                hasScrollBody: false,
+                fillOverscroll: true,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Expanded(
+                      child: Text(
+                        "Message",
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 24),
-                        child: TextFormField(
-                          textCapitalization: TextCapitalization.sentences,
-                          maxLines: null,
-                          scrollPhysics: NeverScrollableScrollPhysics(),
-                          initialValue:
-                              model.patientNoteStepState.getPatientNoteTemplate(
-                            model.consult.patientUser.fullName,
-                            "${model.consult.providerUser.fullName}, ${model.consult.providerUser.professionalTitle}",
-                            model.diagnosisOptions.patientNoteTemplate,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: TextFormField(
+                        textCapitalization: TextCapitalization.sentences,
+                        maxLines: null,
+                        scrollPhysics: NeverScrollableScrollPhysics(),
+                        initialValue:
+                            model.patientNoteStepState.getPatientNoteTemplate(
+                          model.consult.patientUser.fullName,
+                          "${model.consult.providerUser.fullName}, ${model.consult.providerUser.professionalTitle}",
+                          model.diagnosisOptions.patientNoteTemplate,
+                        ),
+                        autocorrect: true,
+                        keyboardType: TextInputType.multiline,
+                        onChanged: (String text) =>
+                            model.updatePatientNoteStepWith(patientNote: text),
+                        style: TextStyle(color: Color.fromRGBO(80, 80, 80, 1)),
+                        decoration: InputDecoration(
+                          labelStyle: TextStyle(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withAlpha(90),
                           ),
-                          autocorrect: true,
-                          keyboardType: TextInputType.multiline,
-                          onChanged: (String text) => model
-                              .updatePatientNoteStepWith(patientNote: text),
-                          style:
-                              TextStyle(color: Color.fromRGBO(80, 80, 80, 1)),
-                          decoration: InputDecoration(
-                            labelStyle: TextStyle(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurface
-                                  .withAlpha(90),
-                            ),
-                            hintStyle: TextStyle(
-                              color: Color.fromRGBO(100, 100, 100, 1),
-                            ),
-                            filled: true,
-                            fillColor: Colors.grey.withAlpha(20),
-                            labelText: "Patient Note",
+                          hintStyle: TextStyle(
+                            color: Color.fromRGBO(100, 100, 100, 1),
                           ),
+                          filled: true,
+                          fillColor: Colors.grey.withAlpha(20),
+                          labelText: "Patient Note",
                         ),
                       ),
-                      SizedBox(
-                        height: 8,
+                    ),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    Expanded(
+                      child: ContinueButton(
+                        width: width,
                       ),
-                      Expanded(
-                        child: ContinueButton(
-                          width: width,
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       );

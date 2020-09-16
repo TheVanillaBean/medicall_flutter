@@ -3,6 +3,7 @@ import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/patient_flow/account/payment_detail/payment_detail.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
+import 'package:Medicall/screens/patient_flow/visit_confirmed/confirm_consult.dart';
 import 'package:Medicall/screens/patient_flow/visit_payment/make_payment_view_model.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/stripe_provider.dart';
@@ -54,15 +55,7 @@ class MakePayment extends StatelessWidget {
     if (await model.processPayment()) {
       AppUtil().showFlushBar(
           "Your payment has been successfully processed!", context);
-      Navigator.of(context).pushNamed(
-        Routes.paymentSummary,
-        arguments: {
-          'consult': this.model.consult,
-        },
-      );
-      //This screen confirm where it has the checkboxes on stuff you answered
-      //should go somewhere else,
-      //ConfirmConsult.show(context: context);
+      ConfirmConsult.show(context: context);
     } else {
       AppUtil()
           .showFlushBar("There was an error processing your payment.", context);

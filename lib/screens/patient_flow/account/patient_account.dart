@@ -249,7 +249,7 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
 
     try {
       resultList = await extImageProvider.pickImages(
-        [],
+        List<Asset>(),
         1,
         true,
         extImageProvider.pickImagesCupertinoOptions(takePhotoIcon: 'camera'),

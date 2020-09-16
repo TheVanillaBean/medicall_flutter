@@ -44,15 +44,9 @@ class SymptomDetailScreen extends StatelessWidget {
               },
             ),
             floating: true,
-            expandedHeight: 150.0,
+            expandedHeight: 250.0,
             flexibleSpace: FlexibleSpaceBar(
               centerTitle: true,
-              title: Text(
-                "${symptom.name}",
-                style: Theme.of(context).textTheme.headline5.copyWith(
-                      color: Colors.white,
-                    ),
-              ),
               background: Image.network(
                 symptom.photoUrl,
                 fit: BoxFit.cover,
@@ -92,6 +86,22 @@ class SymptomBody extends StatelessWidget {
 
   List<Widget> _buildChildren(BuildContext context, MedicallUser medicallUser) {
     return <Widget>[
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Container(
+            child: Text(
+              "${symptom.name}",
+              style: Theme.of(context).textTheme.headline6.copyWith(
+                    fontSize: 24,
+                  ),
+            ),
+          ),
+        ],
+      ),
+      SizedBox(
+        height: 16,
+      ),
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[

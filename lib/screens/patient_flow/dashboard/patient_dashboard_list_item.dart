@@ -51,7 +51,7 @@ class PatientDashboardListItem extends StatelessWidget {
           trailing: Container(
             width: 60,
             alignment: Alignment.centerLeft,
-            child: Text(EnumToString.parseCamelCase(consult.state) ?? "",
+            child: Text(getStatus(),
                 style: Theme.of(context).textTheme.caption.copyWith(
                     color: Theme.of(context).colorScheme.primary,
                     fontWeight: FontWeight.bold)),
@@ -63,6 +63,16 @@ class PatientDashboardListItem extends StatelessWidget {
     return Center(
       child: CircularProgressIndicator(),
     );
+  }
+
+  String getStatus() {
+    if (consult.state == ConsultStatus.Completed) {
+      return EnumToString.parseCamelCase(ConsultStatus.InReview) ?? "";
+    } else if (consult.state == ConsultStatus.Signed) {
+      return "Reviewed by your provider";
+    } else {
+      return EnumToString.parseCamelCase(consult.state) ?? "";
+    }
   }
 
   Widget displayProfilePicture(

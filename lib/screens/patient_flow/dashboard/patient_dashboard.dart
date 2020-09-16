@@ -69,7 +69,7 @@ class PatientDashboardScreen extends StatelessWidget {
     PreviousVisits.show(context: context);
   }
 
-  void _navigateToSpecificVisit(BuildContext context, Consult consult) {
+  void _navigateToVisitPayment(BuildContext context, Consult consult) {
     if ((model.userProvider.user as PatientUser).photoID.length > 0) {
       //photo ID check
       if ((model.userProvider.user as PatientUser).fullName.length > 2 &&
@@ -221,7 +221,7 @@ class PatientDashboardScreen extends StatelessWidget {
                     itemBuilder: (context, consult) => PatientDashboardListItem(
                       consult: consult,
                       onTap: () => consult.state == ConsultStatus.PendingPayment
-                          ? _navigateToSpecificVisit(context, consult)
+                          ? _navigateToVisitPayment(context, consult)
                           : VisitDetailsOverview.show(
                               context: context,
                               consult: consult,

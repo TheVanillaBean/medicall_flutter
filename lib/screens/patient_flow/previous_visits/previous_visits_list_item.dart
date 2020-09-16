@@ -50,7 +50,7 @@ class PreviousVisitsListItem extends StatelessWidget {
             trailing: Container(
               alignment: Alignment.centerLeft,
               width: 80,
-              child: Text(EnumToString.parseCamelCase(consult.state) ?? "",
+              child: Text(getStatus(),
                   textAlign: TextAlign.left,
                   style: Theme.of(context).textTheme.caption.copyWith(
                       color: Theme.of(context).colorScheme.primary,
@@ -64,6 +64,16 @@ class PreviousVisitsListItem extends StatelessWidget {
     return Center(
       child: CircularProgressIndicator(),
     );
+  }
+
+  String getStatus() {
+    if (consult.state == ConsultStatus.Completed) {
+      return EnumToString.parseCamelCase(ConsultStatus.InReview) ?? "";
+    } else if (consult.state == ConsultStatus.Signed) {
+      return "Reviewed";
+    } else {
+      return EnumToString.parseCamelCase(consult.state) ?? "";
+    }
   }
 
   Widget displayProfilePicture(
