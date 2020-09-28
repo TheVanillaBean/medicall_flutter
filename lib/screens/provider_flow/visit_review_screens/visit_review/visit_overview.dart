@@ -10,6 +10,7 @@ import 'package:Medicall/screens/Shared/visit_information/review_visit_informati
 import 'package:Medicall/screens/provider_flow/dashboard/provider_dashboard_list_item.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reclassify_visit.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/view_patient_id.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/view_patient_info.dart';
 import 'package:Medicall/screens/shared/chat/chat_screen.dart';
 import 'package:Medicall/services/chat_provider.dart';
 import 'package:Medicall/services/database.dart';
@@ -123,6 +124,31 @@ class VisitOverview extends StatelessWidget {
                       style: Theme.of(context).textTheme.headline6,
                     ),
                     onPressed: () => ViewPatientID.show(
+                      context: context,
+                      consult: consult,
+                    ),
+                    padding: EdgeInsets.fromLTRB(25, 20, 25, 20),
+                  ),
+                )
+              ],
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: RaisedButton(
+                    color: Colors.white,
+                    disabledColor: Colors.grey.withAlpha(40),
+                    elevation: 3,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                    child: Text(
+                      "VIEW PATIENT INFORMATION",
+                      style: Theme.of(context).textTheme.headline6,
+                    ),
+                    onPressed: () => ViewPatientInfo.show(
                       context: context,
                       consult: consult,
                     ),

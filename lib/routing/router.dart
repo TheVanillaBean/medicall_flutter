@@ -48,6 +48,7 @@ import 'package:Medicall/screens/provider_flow/visit_review_screens/immediate_ca
 import 'package:Medicall/screens/provider_flow/visit_review_screens/prescription_details/prescription_details.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reclassify_visit.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/view_patient_id.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/view_patient_info.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_overview.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_review.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_review_view_model.dart';
@@ -101,6 +102,7 @@ class Routes {
   static const patientPrescriptions = '/patient-prescriptions';
   static const visitOverview = '/visit-overview';
   static const viewPatientID = '/view-patient-id';
+  static const viewPatientInfo = '/view-patient-info';
   static const visitDetailsOverview = '/visit-details-overview';
   static const visitTreatments = '/visit-treatments';
   static const visitInformation = '/visit-information';
@@ -538,6 +540,14 @@ class Router {
         final Consult consult = mapArgs['consult'];
         return MaterialPageRoute<dynamic>(
           builder: (context) => ViewPatientID(consult: consult),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case Routes.viewPatientInfo:
+        final Map<String, dynamic> mapArgs = args;
+        final Consult consult = mapArgs['consult'];
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => ViewPatientInfo(consult: consult),
           settings: settings,
           fullscreenDialog: true,
         );
