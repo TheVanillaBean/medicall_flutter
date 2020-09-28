@@ -4,6 +4,7 @@ import 'package:Medicall/models/user/patient_user_model.dart';
 import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/patient_flow/account/payment_detail/payment_detail.dart';
+import 'package:Medicall/screens/patient_flow/account/update_photo_id.dart';
 import 'package:Medicall/screens/patient_flow/update_medical_history/view_medical_history.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
@@ -137,10 +138,21 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
             _buildBillingAddressCard(medicallUser),
             _buildPaymentMethodsCard(context),
             _buildMedicalHistoryCard(context),
+            _buildPhotoID(context, userProvider.user),
             SizedBox(height: 50),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildPhotoID(BuildContext context, PatientUser user) {
+    return ReusableAccountCard(
+      leading: 'View Photo ID',
+      title: '',
+      onTap: () {
+        UpdatePhotoID.show(context: context, user: user);
+      },
     );
   }
 
