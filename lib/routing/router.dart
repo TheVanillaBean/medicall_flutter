@@ -46,6 +46,7 @@ import 'package:Medicall/screens/provider_flow/visit_review_screens/complete_vis
 import 'package:Medicall/screens/provider_flow/visit_review_screens/immediate_care/immediate_medical_care.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/prescription_details/prescription_details.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reclassify_visit.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/view_patient_id.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_overview.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_review.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_review_view_model.dart';
@@ -69,7 +70,6 @@ class Routes {
   static const providerRegistration = '/provider-registration';
   static const reset_password = '/reset-password';
   static const photoID = '/photo-ID';
-  static const ocr = '/ocr';
   static const personalInfo = '/personal-information';
   static const confirmConsult = '/confirm-consult';
   static const patientDashboard = '/patient-dashboard';
@@ -98,6 +98,7 @@ class Routes {
   static const prescriptionDetails = '/prescription-details';
   static const patientPrescriptions = '/patient-prescriptions';
   static const visitOverview = '/visit-overview';
+  static const viewPatientID = '/view-patient-id';
   static const visitDetailsOverview = '/visit-details-overview';
   static const visitTreatments = '/visit-treatments';
   static const visitInformation = '/visit-information';
@@ -284,8 +285,12 @@ class Router {
       case Routes.selectProvider:
         final Map<String, dynamic> mapArgs = args;
         final Symptom symptom = mapArgs['symptom'];
+        final String state = mapArgs['state'];
         return MaterialPageRoute<dynamic>(
-          builder: (context) => SelectProviderScreen(symptom: symptom),
+          builder: (context) => SelectProviderScreen(
+            symptom: symptom,
+            state: state,
+          ),
           settings: settings,
           fullscreenDialog: true,
         );
@@ -515,6 +520,14 @@ class Router {
         final Consult consult = mapArgs['consult'];
         return MaterialPageRoute<dynamic>(
           builder: (context) => ReviewMedicalHistory(consult: consult),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case Routes.viewPatientID:
+        final Map<String, dynamic> mapArgs = args;
+        final Consult consult = mapArgs['consult'];
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => ViewPatientID(consult: consult),
           settings: settings,
           fullscreenDialog: true,
         );

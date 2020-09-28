@@ -127,20 +127,16 @@ class ZipCodeViewModel with ChangeNotifier {
     return st;
   }
 
-  Future<bool> areProvidersInArea(String zipCode) async {
-    List<String> addresses = await nonAuthDatabase.getAllProviderAddresses();
+  Future<String> areProvidersInArea(String zipCode) async {
+    List<String> states = await nonAuthDatabase.getAllProviderStates();
 
-    for (var address in addresses) {
-      String state = '';
-      try {
-        state = address.split(',')[2].split(' ')[1];
-      } catch (e) {}
+    for (var state in states) {
       String enteredState = getState(zipCode);
       if (state == enteredState) {
-        return true;
+        return state;
       }
     }
 
-    return true;
+    return null;
   }
 }

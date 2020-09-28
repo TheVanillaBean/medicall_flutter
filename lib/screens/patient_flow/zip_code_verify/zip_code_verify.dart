@@ -57,9 +57,13 @@ class _ZipCodeVerifyScreenState extends State<ZipCodeVerifyScreen> {
   final GlobalKey<FormBuilderState> formKey = GlobalKey<FormBuilderState>();
 
   Future<void> _submit() async {
-    bool providersInArea = await model.areProvidersInArea(zipCode);
-    if (providersInArea) {
-      SelectProviderScreen.show(context: context, symptom: symptom);
+    String state = await model.areProvidersInArea(zipCode);
+    if (state != null) {
+      SelectProviderScreen.show(
+        context: context,
+        symptom: symptom,
+        state: state,
+      );
     } else {
       _showDialog(context);
     }
