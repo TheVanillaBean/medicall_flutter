@@ -6,6 +6,7 @@ class ChatProvider {
   final Client client = Client(
     streamChatAPIKey,
     logLevel: Level.INFO,
+    persistenceEnabled: false,
   );
 
   bool userSet = false;
