@@ -1,16 +1,72 @@
 import 'package:Medicall/models/symptom_model.dart';
+import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/non_auth_firestore_db.dart';
+import 'package:Medicall/util/validators.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 
-class ZipCodeViewModel with ChangeNotifier {
+class ZipCodeViewModel with EmailAndPasswordValidators, ChangeNotifier {
+  final AuthBase auth;
   final NonAuthDatabase nonAuthDatabase;
   final Symptom symptom;
 
-  ZipCodeViewModel({@required this.nonAuthDatabase, @required this.symptom});
+  bool showEmailField;
+  String email;
+  String zipcode;
+  bool isLoading;
 
-  String getState(zipCode) {
+  ZipCodeViewModel({
+    @required this.nonAuthDatabase,
+    @required this.symptom,
+    @required this.auth,
+    this.showEmailField = false,
+    this.email = '',
+    this.zipcode = '',
+    this.isLoading = false,
+  });
+
+  String get emailErrorText {
+    bool showErrorText = isLoading && !emailValidator.isValid(email);
+    return showErrorText ? invalidEmailErrorText : "";
+  }
+
+  void updateEmail(String email) => updateWith(email: email);
+  void updateZipcode(String zipcode) => updateWith(zipcode: zipcode);
+
+  Future<void> submit() async {
+    updateWith(isLoading: true);
+
+    try {
+      String state = getState();
+      if (state == null || state == "none") {
+        throw PlatformException(
+            code: 'ERROR', message: 'Please enter a valid zipcode');
+      }
+      String alreadyInArea = await this.areProvidersInArea(zipcode);
+      if (alreadyInArea != null) {
+        throw PlatformException(
+            code: 'ERROR', message: 'We are already in your area :)');
+      }
+      bool emailAlreadyUsed = await auth.emailAlreadyUsed(email: this.email);
+      if (!emailAlreadyUsed) {
+        await nonAuthDatabase.addEmailToWaitList(email: email, state: state);
+        updateWith(isLoading: false);
+      } else {
+        throw PlatformException(
+            code: 'AUTH_ERROR',
+            message: 'This email address has already been used.');
+      }
+    } catch (e) {
+      updateWith(isLoading: false);
+      rethrow;
+    }
+  }
+
+  String getState() {
     // Ensure we don't parse strings starting with 0 as octal values
-    int thisZip = int.parse(zipCode);
+    int thisZip = int.tryParse(this.zipcode);
+
+    if (thisZip == null) return null;
 
     String st;
 
@@ -131,12 +187,25 @@ class ZipCodeViewModel with ChangeNotifier {
     List<String> states = await nonAuthDatabase.getAllProviderStates();
 
     for (var state in states) {
-      String enteredState = getState(zipCode);
+      String enteredState = getState();
       if (state == enteredState) {
         return state;
       }
     }
 
     return null;
+  }
+
+  void updateWith({
+    bool showEmailField,
+    String email,
+    String zipcode,
+    bool isLoading,
+  }) {
+    this.showEmailField = showEmailField ?? this.showEmailField;
+    this.email = email ?? this.email;
+    this.zipcode = zipcode ?? this.zipcode;
+    this.isLoading = isLoading ?? this.isLoading;
+    notifyListeners();
   }
 }

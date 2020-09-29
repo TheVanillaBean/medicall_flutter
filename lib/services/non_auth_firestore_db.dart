@@ -18,6 +18,7 @@ abstract class NonAuthDatabase {
   Stream<List<ProviderUser>> getAllProviders({String state});
   Stream<MedicallUser> providerStream({String uid});
   Future<String> getSymptomPhotoURL({String symptom});
+  Future<void> addEmailToWaitList({String email, String state});
 }
 
 class NonAuthFirestoreDB implements NonAuthDatabase {
@@ -91,5 +92,14 @@ class NonAuthFirestoreDB implements NonAuthDatabase {
     final path = FirestorePath.symptomPhoto(symptom: symptom);
     final storageReference = FirebaseStorage.instance.ref().child(path);
     return await storageReference.getDownloadURL();
+  }
+
+  @override
+  Future<void> addEmailToWaitList({String email, String state}) async {
+    final waitListObj = {"email": email, "state": state};
+    _service.setData(
+      path: FirestorePath.waitList(email),
+      data: waitListObj,
+    );
   }
 }

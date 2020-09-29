@@ -1,13 +1,16 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
-import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/patient_flow/select_provider/select_provider.dart';
 import 'package:Medicall/screens/patient_flow/zip_code_verify/zip_code_view_model.dart';
+import 'package:Medicall/screens/shared/welcome.dart';
+import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/non_auth_firestore_db.dart';
 import 'package:Medicall/services/user_provider.dart';
+import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
@@ -22,9 +25,10 @@ class ZipCodeVerifyScreen extends StatefulWidget {
   static Widget create(BuildContext context, Symptom symptom) {
     final NonAuthDatabase nonAuthDatabase =
         Provider.of<NonAuthDatabase>(context);
+    final AuthBase auth = Provider.of<AuthBase>(context);
     return ChangeNotifierProvider<ZipCodeViewModel>(
-      create: (context) =>
-          ZipCodeViewModel(nonAuthDatabase: nonAuthDatabase, symptom: symptom),
+      create: (context) => ZipCodeViewModel(
+          nonAuthDatabase: nonAuthDatabase, symptom: symptom, auth: auth),
       child: Consumer<ZipCodeViewModel>(
         builder: (_, model, __) => ZipCodeVerifyScreen(
           model: model,
@@ -56,8 +60,19 @@ class _ZipCodeVerifyScreenState extends State<ZipCodeVerifyScreen> {
 
   final GlobalKey<FormBuilderState> formKey = GlobalKey<FormBuilderState>();
 
+  Future<void> _addEmailToWaitList() async {
+    try {
+      await model.submit();
+      AppUtil().showFlushBar(
+          "You have been added to our waitlist. We will notify you once we are in your area!",
+          context);
+    } catch (e) {
+      AppUtil().showFlushBar(e, context);
+    }
+  }
+
   Future<void> _submit() async {
-    String state = await model.areProvidersInArea(zipCode);
+    String state = await model.areProvidersInArea(model.zipcode);
     if (state != null) {
       SelectProviderScreen.show(
         context: context,
@@ -65,7 +80,7 @@ class _ZipCodeVerifyScreenState extends State<ZipCodeVerifyScreen> {
         state: state,
       );
     } else {
-      _showDialog(context);
+      model.updateWith(showEmailField: true);
     }
   }
 
@@ -88,24 +103,27 @@ class _ZipCodeVerifyScreenState extends State<ZipCodeVerifyScreen> {
                 ),
                 onPressed: () {
                   if (medicallUser != null) {
-                    Navigator.of(context).pushNamed('/dashboard');
+                    PatientDashboardScreen.show(
+                        context: context, pushReplaceNamed: true);
                   } else {
-                    Navigator.of(context).pushNamed('/welcome');
+                    WelcomeScreen.show(context: context);
                   }
                 })
           ]),
       body: KeyboardDismisser(
-        child: Container(
-          color: Colors.white,
-          padding: EdgeInsets.symmetric(vertical: 40, horizontal: 40),
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () {
-              FocusScope.of(context).requestFocus(new FocusNode());
-            },
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: _buildChildren(),
+        child: SingleChildScrollView(
+          child: Container(
+            color: Colors.white,
+            padding: EdgeInsets.symmetric(vertical: 40, horizontal: 40),
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () {
+                FocusScope.of(context).requestFocus(new FocusNode());
+              },
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: _buildChildren(),
+              ),
             ),
           ),
         ),
@@ -131,37 +149,26 @@ class _ZipCodeVerifyScreenState extends State<ZipCodeVerifyScreen> {
         ],
       ),
       SizedBox(
-        height: 10,
+        height: 24,
       ),
       buildVerifyButton(),
+      if (model.showEmailField) ...buildNotifyTextField(),
     ];
   }
 
   Widget buildZipCodeForm() {
-    return FormBuilder(
-      key: formKey,
-      child: Column(
-        children: <Widget>[
-          FormBuilderTextField(
-            attribute: 'zipcode',
-            minLines: 1,
-            maxLength: 5,
-            keyboardType: TextInputType.number,
-            readOnly: false,
-            decoration: InputDecoration(
-              counterText: "",
-              filled: true,
-              fillColor: Colors.grey.withAlpha(20),
-              labelText: 'Zip Code',
-              labelStyle: TextStyle(color: Colors.black45),
-            ),
-            validators: [
-              FormBuilderValidators.required(
-                errorText: "Required field.",
-              ),
-            ],
-          )
-        ],
+    return TextField(
+      minLines: 1,
+      maxLength: 5,
+      keyboardType: TextInputType.number,
+      readOnly: false,
+      onChanged: model.updateZipcode,
+      decoration: InputDecoration(
+        counterText: "",
+        filled: true,
+        fillColor: Colors.grey.withAlpha(20),
+        labelText: 'Zip Code',
+        labelStyle: TextStyle(color: Colors.black45),
       ),
     );
   }
@@ -173,21 +180,50 @@ class _ZipCodeVerifyScreenState extends State<ZipCodeVerifyScreen> {
     );
   }
 
-  Future<void> _showDialog(BuildContext context) async {
-    bool didPressNotify = await PlatformAlertDialog(
-      title: "We are not in your area yet",
-      content:
-          "We will be in your area soon, sign up below to be the first to get notified when we do.",
-      defaultActionText: "Notify me",
-      cancelActionText: "No, thank you",
-    ).show(context);
-
-    if (didPressNotify) {
-      Navigator.of(context).pop();
-    }
-  }
-
-  String get zipCode {
-    return formKey.currentState.fields['zipcode'].currentState.value;
+  List<Widget> buildNotifyTextField() {
+    return [
+      SizedBox(height: 32),
+      Center(
+        child: Text(
+          "We are not in your area yet :(",
+          style: Theme.of(context).textTheme.headline6,
+        ),
+      ),
+      SizedBox(height: 8),
+      Center(
+        child: Text(
+          "Sign up below to be the first to get notified when we are.\nYou will receive a 20% off coupon for your first visit by joining the waitlist.",
+          style: Theme.of(context).textTheme.bodyText2,
+        ),
+      ),
+      SizedBox(height: 16),
+      TextField(
+        autocorrect: false,
+        style: Theme.of(context).textTheme.bodyText1,
+        keyboardType: TextInputType.emailAddress,
+        onChanged: model.updateEmail,
+        decoration: InputDecoration(
+          labelText: 'Email',
+          hintText: 'jane@doe.com',
+          fillColor: Colors.grey.withAlpha(40),
+          filled: true,
+          prefixIcon: Icon(
+            Icons.email,
+            color: Theme.of(context).colorScheme.onSurface.withAlpha(150),
+          ),
+          disabledBorder: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          border: InputBorder.none,
+          errorText: model.emailErrorText,
+          enabled: model.isLoading == false,
+        ),
+      ),
+      SizedBox(height: 8),
+      ReusableRaisedButton(
+        color: Theme.of(context).colorScheme.primary,
+        title: "Enter your email",
+        onPressed: _addEmailToWaitList,
+      ),
+    ];
   }
 }
