@@ -41,6 +41,8 @@ import 'package:Medicall/screens/provider_flow/account/stripe_connect/stripe_con
 import 'package:Medicall/screens/provider_flow/dashboard/provider_dashboard.dart';
 import 'package:Medicall/screens/provider_flow/provider_visits/provider_visits.dart';
 import 'package:Medicall/screens/provider_flow/registration/provider_registration.dart';
+import 'package:Medicall/screens/provider_flow/registration/update_provider_info/update_provider_info_form.dart';
+import 'package:Medicall/screens/provider_flow/registration/update_provider_info/update_provider_info_screen.dart';
 import 'package:Medicall/screens/provider_flow/review_medical_history/review_medical_history.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/complete_visit/complete_visit.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/immediate_care/immediate_medical_care.dart';
@@ -67,6 +69,7 @@ class Routes {
   static const zipCodeVerify = '/zip-code-verify';
   static const registration = '/registration';
   static const providerRegistration = '/provider-registration';
+  static const updateProviderInfo = '/update-provider-info';
   static const reset_password = '/reset-password';
   static const photoID = '/photo-ID';
   static const ocr = '/ocr';
@@ -469,6 +472,17 @@ class Router {
           settings: settings,
           fullscreenDialog: true,
         );
+
+      case Routes.updateProviderInfo:
+        final Map<String, dynamic> mapArgs = args;
+        final ProfileInputType inputType = mapArgs['inputType'];
+        return MaterialPageRoute<dynamic>(
+          builder: (context) =>
+              UpdateProviderInfoScreen.create(context, inputType),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+
       // Screen that asks the provider to connect their account with Stripe to receive payouts
       case Routes.stripeConnect:
         return MaterialPageRoute<dynamic>(

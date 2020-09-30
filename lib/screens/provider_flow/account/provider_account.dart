@@ -1,8 +1,12 @@
+import 'package:Medicall/common_widgets/provider_bio_card.dart';
 import 'package:Medicall/common_widgets/reusable_account_card.dart';
 import 'package:Medicall/components/drawer_menu.dart';
 import 'package:Medicall/models/user/provider_user_model.dart';
 import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/provider_flow/registration/provider_registration_form.dart';
+import 'package:Medicall/screens/provider_flow/registration/update_provider_info/update_provider_info_form.dart';
+import 'package:Medicall/screens/provider_flow/registration/update_provider_info/update_provider_info_screen.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/firebase_storage_service.dart';
@@ -92,7 +96,7 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
   }) {
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 30),
+        padding: const EdgeInsets.symmetric(horizontal: 36),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
@@ -142,13 +146,26 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
               ),
             ),
             _buildEmailCard(medicallUser),
+            Divider(height: 0.5, thickness: 1),
             _buildPhoneCard(medicallUser),
+            Divider(height: 0.5, thickness: 1),
             _buildAddressCard(medicallUser),
+            Divider(height: 0.5, thickness: 1),
             _buildProfessionalTitleCard(medicallUser),
+            Divider(height: 0.5, thickness: 1),
             _buildMedicalLicenseCard(medicallUser),
+            Divider(height: 0.5, thickness: 1),
             _buildMedicalLicenseStateCard(medicallUser),
+            Divider(height: 0.5, thickness: 1),
             _buildNpiCard(medicallUser),
+            Divider(height: 0.5, thickness: 1),
             _buildBoardCertifiedCard(medicallUser),
+            Divider(height: 0.5, thickness: 1),
+            _buildMedicalSchoolCard(medicallUser),
+            Divider(height: 0.5, thickness: 1),
+            _buildMedicalResidencyCard(medicallUser),
+            Divider(height: 0.5, thickness: 1),
+            _buildProviderBioCard(medicallUser),
             SizedBox(height: 50),
           ],
         ),
@@ -170,6 +187,13 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
               medicallUser.phoneNumber.length > 0
           ? medicallUser.phoneNumber
           : '(xxx)xxx-xxxx',
+      trailing: IconButton(
+        icon: Icon(Icons.create, size: 20),
+        onPressed: () {
+          UpdateProviderInfoScreen.show(
+              context: context, inputType: ProfileInputType.PHONE);
+        },
+      ),
     );
   }
 
@@ -179,6 +203,11 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
       title: medicallUser.mailingAddressLine2 == ''
           ? '${medicallUser.mailingAddress} \n${medicallUser.mailingCity}, ${medicallUser.mailingState} ${medicallUser.mailingZipCode}'
           : '${medicallUser.mailingAddress} \n${medicallUser.mailingAddressLine2} \n${medicallUser.mailingCity}, ${medicallUser.mailingState} ${medicallUser.mailingZipCode}',
+      trailing: IconButton(
+        icon: Icon(Icons.create, size: 20),
+        onPressed: () => UpdateProviderInfoScreen.show(
+            context: context, inputType: ProfileInputType.ADDRESS),
+      ),
     );
   }
 
@@ -186,6 +215,11 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
     return ReusableAccountCard(
       leading: 'Title:',
       title: (medicallUser as ProviderUser).professionalTitle,
+      trailing: IconButton(
+        icon: Icon(Icons.create, size: 20),
+        onPressed: () => UpdateProviderInfoScreen.show(
+            context: context, inputType: ProfileInputType.PROFESSIONAL_TITLE),
+      ),
     );
   }
 
@@ -193,6 +227,7 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
     return ReusableAccountCard(
       leading: 'Medical License:',
       title: '${(medicallUser as ProviderUser).medLicense}',
+      trailing: IconButton(icon: Icon(Icons.create, size: 20), onPressed: null),
     );
   }
 
@@ -200,6 +235,7 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
     return ReusableAccountCard(
       leading: 'Medical License State:',
       title: '${(medicallUser as ProviderUser).medLicenseState}',
+      trailing: IconButton(icon: Icon(Icons.create, size: 20), onPressed: null),
     );
   }
 
@@ -207,6 +243,10 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
     return ReusableAccountCard(
       leading: 'NPI Number:',
       title: '${(medicallUser as ProviderUser).npi}',
+      trailing: IconButton(
+          icon: Icon(Icons.create, size: 20),
+          onPressed: () => UpdateProviderInfoScreen.show(
+              context: context, inputType: ProfileInputType.NPI)),
     );
   }
 
@@ -214,6 +254,31 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
     return ReusableAccountCard(
       leading: 'Board Certification:',
       title: '${(medicallUser as ProviderUser).boardCertified}',
+      trailing: IconButton(icon: Icon(Icons.create, size: 20), onPressed: null),
+    );
+  }
+
+  Widget _buildMedicalSchoolCard(MedicallUser medicallUser) {
+    return ReusableAccountCard(
+      leading: 'Medical \nSchool:',
+      title: '${(medicallUser as ProviderUser).medSchool}',
+      trailing: IconButton(icon: Icon(Icons.create, size: 20), onPressed: null),
+    );
+  }
+
+  Widget _buildMedicalResidencyCard(MedicallUser medicallUser) {
+    return ReusableAccountCard(
+      leading: 'Medical \nResidency:',
+      title: '${(medicallUser as ProviderUser).medResidency}',
+      trailing: IconButton(icon: Icon(Icons.create, size: 20), onPressed: null),
+    );
+  }
+
+  Widget _buildProviderBioCard(MedicallUser medicallUser) {
+    return ProviderBioCard(
+      leading: 'Bio:',
+      trailing: IconButton(icon: Icon(Icons.create, size: 20), onPressed: null),
+      bioText: '${(medicallUser as ProviderUser).providerBio}',
     );
   }
 

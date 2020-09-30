@@ -42,6 +42,7 @@ dependencies:
   flutter_form_builder: '3.6.0'
   flutter_typeahead: ^1.7.0
   fading_edge_scrollview: ^1.1.4
+  rflutter_alert: ^1.1.0
   #camera/images
   camera: ^0.5.8+5
   video_player: ^0.10.11+1

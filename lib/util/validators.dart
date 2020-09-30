@@ -231,6 +231,16 @@ class MedicalLicenseStateValidators {
       'Please select your medical license state';
 }
 
+class MedicalSchoolValidators {
+  final StringValidator medicalSchoolValidator = NonEmptyStringValidator();
+  final String medSchoolErrorText = 'Please enter your medical school';
+}
+
+class MedicalResidencyValidators {
+  final StringValidator medicalResidencyValidator = NonEmptyStringValidator();
+  final String medResidencyErrorText = 'Please enter your medical residency';
+}
+
 class BoardCertificationValidators {
   final StringValidator boardCertificationValidator =
       BoardCertificationValidator();

@@ -27,6 +27,8 @@ class ProviderRegistrationViewModel
         NpiValidators,
         MedicalLicenseValidators,
         MedicalLicenseStateValidators,
+        MedicalSchoolValidators,
+        MedicalResidencyValidators,
         BoardCertificationValidators,
         ProviderBioValidators,
         ChangeNotifier {
@@ -49,6 +51,8 @@ class ProviderRegistrationViewModel
   String professionalTitle;
   String medLicense;
   String medLicenseState;
+  String medSchool;
+  String medResidency;
   String npi;
   String boardCertified;
   String providerBio;
@@ -159,6 +163,8 @@ class ProviderRegistrationViewModel
     this.professionalTitle = '',
     this.medLicense = '',
     this.medLicenseState = '',
+    this.medSchool = '',
+    this.medResidency = '',
     this.npi = '',
     this.boardCertified = '',
     this.providerBio = '',
@@ -184,6 +190,8 @@ class ProviderRegistrationViewModel
         zipCodeValidator.isValid(zipCode) &&
         professionalTitleValidator.isValid(professionalTitle) &&
         providerBioValidator.isValid(providerBio) &&
+        medicalSchoolValidator.isValid(medSchool) &&
+        medicalResidencyValidator.isValid(medResidency) &&
         !isLoading;
   }
 
@@ -268,6 +276,18 @@ class ProviderRegistrationViewModel
     return showErrorText ? medicalLicenseStateErrorText : null;
   }
 
+  String get medicalSchoolErrorText {
+    bool showErrorText =
+        this.submitted && !medicalSchoolValidator.isValid(medSchool);
+    return showErrorText ? medSchoolErrorText : null;
+  }
+
+  String get medicalResidencyErrorText {
+    bool showErrorText =
+        this.submitted && !medicalResidencyValidator.isValid(medResidency);
+    return showErrorText ? medResidencyErrorText : null;
+  }
+
   String get boardCertificationErrorText {
     bool showErrorText =
         this.submitted && !boardCertificationValidator.isValid(boardCertified);
@@ -314,6 +334,9 @@ class ProviderRegistrationViewModel
       updateWith(boardCertified: boardCertified);
   void updateProviderBio(String providerBio) =>
       updateWith(providerBio: providerBio);
+  void updateMedSchool(String medSchool) => updateWith(medSchool: medSchool);
+  void updateMedResidency(String medResidency) =>
+      updateWith(medResidency: medResidency);
 
   DateTime get initialDatePickerDate {
     final DateTime currentDate = DateTime.now();
@@ -417,6 +440,8 @@ class ProviderRegistrationViewModel
     String professionalTitle,
     String medLicense,
     String medLicenseState,
+    String medSchool,
+    String medResidency,
     String npi,
     String boardCertified,
     String providerBio,
@@ -445,6 +470,8 @@ class ProviderRegistrationViewModel
     this.providerBio = providerBio ?? this.providerBio;
     this.medLicense = medLicense ?? this.medLicense;
     this.medLicenseState = medLicenseState ?? this.medLicenseState;
+    this.medSchool = medSchool ?? this.medSchool;
+    this.medResidency = medResidency ?? this.medResidency;
     this.checkValue = checkValue ?? this.checkValue;
     this.isLoading = isLoading ?? this.isLoading;
     this.submitted = submitted ?? this.submitted;

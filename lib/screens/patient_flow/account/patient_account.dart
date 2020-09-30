@@ -133,9 +133,13 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
               ),
             ),
             _buildEmailCard(medicallUser),
+            Divider(height: 0.5, thickness: 1),
             _buildPhoneCard(medicallUser),
+            Divider(height: 0.5, thickness: 1),
             _buildBillingAddressCard(medicallUser),
+            Divider(height: 0.5, thickness: 1),
             _buildPaymentMethodsCard(context),
+            Divider(height: 0.5, thickness: 1),
             _buildMedicalHistoryCard(context),
             SizedBox(height: 50),
           ],
@@ -148,9 +152,12 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
     return ReusableAccountCard(
       leading: 'Update Medical History',
       title: '',
-      onTap: () {
-        ViewMedicalHistory.show(context: context);
-      },
+      trailing: IconButton(
+        icon: Icon(Icons.create, size: 20),
+        onPressed: () {
+          ViewMedicalHistory.show(context: context);
+        },
+      ),
     );
   }
 
@@ -158,9 +165,12 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
     return ReusableAccountCard(
       leading: 'Payment Methods',
       title: '',
-      onTap: () {
-        PaymentDetail.show(context: context, paymentModel: null);
-      },
+      trailing: IconButton(
+        icon: Icon(Icons.create, size: 20),
+        onPressed: () {
+          PaymentDetail.show(context: context, paymentModel: null);
+        },
+      ),
     );
   }
 
@@ -170,6 +180,7 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
       title: medicallUser.mailingAddressLine2 == ''
           ? '${medicallUser.mailingAddress} \n${medicallUser.mailingCity}, ${medicallUser.mailingState} ${medicallUser.mailingZipCode}'
           : '${medicallUser.mailingAddress} \n${medicallUser.mailingAddressLine2} \n${medicallUser.mailingCity}, ${medicallUser.mailingState} ${medicallUser.mailingZipCode}',
+      trailing: IconButton(icon: Icon(Icons.create, size: 20), onPressed: null),
     );
   }
 
@@ -180,6 +191,7 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
               medicallUser.phoneNumber.length > 0
           ? medicallUser.phoneNumber
           : '(xxx)xxx-xxxx',
+      trailing: IconButton(icon: Icon(Icons.create, size: 20), onPressed: null),
     );
   }
 
