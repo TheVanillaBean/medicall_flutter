@@ -6,8 +6,10 @@ import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/models/user/provider_user_model.dart';
 import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/patient_flow/select_provider/provider_detail.dart';
 import 'package:Medicall/screens/patient_flow/select_provider/provider_list_item.dart';
+import 'package:Medicall/screens/shared/welcome.dart';
 import 'package:Medicall/services/non_auth_firestore_db.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
@@ -15,17 +17,20 @@ import 'package:provider/provider.dart';
 
 class SelectProviderScreen extends StatelessWidget {
   final Symptom symptom;
+  final String state;
 
-  const SelectProviderScreen({@required this.symptom});
+  const SelectProviderScreen({@required this.symptom, @required this.state});
 
   static Future<void> show({
     BuildContext context,
     Symptom symptom,
+    String state,
   }) async {
     await Navigator.of(context).pushNamed(
       Routes.selectProvider,
       arguments: {
         'symptom': symptom,
+        'state': state,
       },
     );
   }
@@ -50,14 +55,15 @@ class SelectProviderScreen extends StatelessWidget {
                 ),
                 onPressed: () {
                   if (medicallUser != null) {
-                    Navigator.of(context).pushNamed('/dashboard');
+                    PatientDashboardScreen.show(
+                        context: context, pushReplaceNamed: true);
                   } else {
-                    Navigator.of(context).pushNamed('/welcome');
+                    WelcomeScreen.show(context: context);
                   }
                 })
           ]),
       body: StreamBuilder(
-        stream: db.getAllProviders(),
+        stream: db.getAllProviders(state: state),
         builder:
             (BuildContext context, AsyncSnapshot<List<ProviderUser>> snapshot) {
           return Stack(

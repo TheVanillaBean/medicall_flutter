@@ -14,10 +14,11 @@ abstract class NonAuthDatabase {
   Future<void> setUser(MedicallUser user);
   Future<List<String>> symptomsListByName();
   Stream<List<Symptom>> symptomsStream();
-  Future<List<String>> getAllProviderAddresses();
-  Stream<List<ProviderUser>> getAllProviders();
+  Future<List<String>> getAllProviderStates();
+  Stream<List<ProviderUser>> getAllProviders({String state});
   Stream<MedicallUser> providerStream({String uid});
   Future<String> getSymptomPhotoURL({String symptom});
+  Future<void> addEmailToWaitList({String email, String state});
 }
 
 class NonAuthFirestoreDB implements NonAuthDatabase {
@@ -53,26 +54,28 @@ class NonAuthFirestoreDB implements NonAuthDatabase {
         builder: (data, documentId) => Symptom.fromMap(data, documentId),
       );
   @override
-  Future<List<String>> getAllProviderAddresses() => _service
+  Future<List<String>> getAllProviderStates() => _service
       .collectionStream(
         path: FirestorePath.users(),
         queryBuilder: (query) => query.where(
           'type',
           isEqualTo: EnumToString.parse(USER_TYPE.PROVIDER),
         ),
-        builder: (data, documentId) => data["address"].toString(),
+        builder: (data, documentId) => data["mailing_state"].toString(),
       )
       .first;
 
   @override
-  Stream<List<ProviderUser>> getAllProviders() => _service.collectionStream(
+  Stream<List<ProviderUser>> getAllProviders({String state}) =>
+      _service.collectionStream(
         path: FirestorePath.users(),
         queryBuilder: (query) => query
             .where(
               'type',
               isEqualTo: EnumToString.parse(USER_TYPE.PROVIDER),
             )
-            .where("stripe_connect_authorized", isEqualTo: true),
+            .where("stripe_connect_authorized", isEqualTo: true)
+            .where("mailing_state", isEqualTo: state),
         builder: (data, documentId) => MedicallUser.fromMap(
             userType: USER_TYPE.PROVIDER, data: data, uid: documentId),
       );
@@ -89,5 +92,14 @@ class NonAuthFirestoreDB implements NonAuthDatabase {
     final path = FirestorePath.symptomPhoto(symptom: symptom);
     final storageReference = FirebaseStorage.instance.ref().child(path);
     return await storageReference.getDownloadURL();
+  }
+
+  @override
+  Future<void> addEmailToWaitList({String email, String state}) async {
+    final waitListObj = {"email": email, "state": state};
+    _service.setData(
+      path: FirestorePath.waitList(email),
+      data: waitListObj,
+    );
   }
 }

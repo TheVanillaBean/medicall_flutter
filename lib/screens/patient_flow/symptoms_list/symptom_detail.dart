@@ -140,7 +140,11 @@ class SymptomBody extends StatelessWidget {
             title: 'Explore Providers',
             onPressed: () async {
               if (medicallUser != null && medicallUser.uid.length > 0) {
-                SelectProviderScreen.show(context: context, symptom: symptom);
+                SelectProviderScreen.show(
+                  context: context,
+                  symptom: symptom,
+                  state: medicallUser.mailingState,
+                );
               } else {
                 ZipCodeVerifyScreen.show(context: context, symptom: symptom);
               }

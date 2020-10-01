@@ -11,6 +11,7 @@ import 'package:Medicall/screens/Shared/visit_information/review_visit_informati
 import 'package:Medicall/screens/patient_flow/account/patient_account.dart';
 import 'package:Medicall/screens/patient_flow/account/payment_detail/payment_detail.dart';
 import 'package:Medicall/screens/patient_flow/account/payment_detail/summary_payment.dart';
+import 'package:Medicall/screens/patient_flow/account/update_photo_id.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/patient_flow/drivers_license/photo_id.dart';
 import 'package:Medicall/screens/patient_flow/patient_prescriptions/patient_prescriptions.dart';
@@ -48,6 +49,8 @@ import 'package:Medicall/screens/provider_flow/visit_review_screens/complete_vis
 import 'package:Medicall/screens/provider_flow/visit_review_screens/immediate_care/immediate_medical_care.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/prescription_details/prescription_details.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reclassify_visit.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/view_patient_id.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/view_patient_info.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_overview.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_review.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_review_view_model.dart';
@@ -72,7 +75,6 @@ class Routes {
   static const updateProviderInfo = '/update-provider-info';
   static const reset_password = '/reset-password';
   static const photoID = '/photo-ID';
-  static const ocr = '/ocr';
   static const personalInfo = '/personal-information';
   static const confirmConsult = '/confirm-consult';
   static const patientDashboard = '/patient-dashboard';
@@ -93,6 +95,7 @@ class Routes {
   static const history = '/history';
   static const historyDetail = '/history-detail';
   static const patientAccount = '/patient-account';
+  static const updatePatientID = '/update-patient-id';
   static const providerAccount = '/provider-account';
   static const paymentDetail = '/payment-detail';
   static const stripeConnect = '/stripe-connect';
@@ -101,6 +104,8 @@ class Routes {
   static const prescriptionDetails = '/prescription-details';
   static const patientPrescriptions = '/patient-prescriptions';
   static const visitOverview = '/visit-overview';
+  static const viewPatientID = '/view-patient-id';
+  static const viewPatientInfo = '/view-patient-info';
   static const visitDetailsOverview = '/visit-details-overview';
   static const visitTreatments = '/visit-treatments';
   static const visitInformation = '/visit-information';
@@ -219,6 +224,14 @@ class Router {
           settings: settings,
           fullscreenDialog: true,
         );
+      case Routes.updatePatientID:
+        final Map<String, dynamic> mapArgs = args;
+        final PatientUser user = mapArgs['user'];
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => UpdatePhotoID(user: user),
+          settings: settings,
+          fullscreenDialog: true,
+        );
       // Screen that shows all the cards for the patient's profile
       case Routes.paymentDetail:
         final Map<String, dynamic> mapArgs = args;
@@ -287,8 +300,12 @@ class Router {
       case Routes.selectProvider:
         final Map<String, dynamic> mapArgs = args;
         final Symptom symptom = mapArgs['symptom'];
+        final String state = mapArgs['state'];
         return MaterialPageRoute<dynamic>(
-          builder: (context) => SelectProviderScreen(symptom: symptom),
+          builder: (context) => SelectProviderScreen(
+            symptom: symptom,
+            state: state,
+          ),
           settings: settings,
           fullscreenDialog: true,
         );
@@ -529,6 +546,22 @@ class Router {
         final Consult consult = mapArgs['consult'];
         return MaterialPageRoute<dynamic>(
           builder: (context) => ReviewMedicalHistory(consult: consult),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case Routes.viewPatientID:
+        final Map<String, dynamic> mapArgs = args;
+        final Consult consult = mapArgs['consult'];
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => ViewPatientID(consult: consult),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case Routes.viewPatientInfo:
+        final Map<String, dynamic> mapArgs = args;
+        final Consult consult = mapArgs['consult'];
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => ViewPatientInfo(consult: consult),
           settings: settings,
           fullscreenDialog: true,
         );
