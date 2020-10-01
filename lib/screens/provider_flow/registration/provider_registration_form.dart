@@ -2,6 +2,7 @@ import 'package:Medicall/common_widgets/custom_dropdown_formfield.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/screens/provider_flow/registration/provider_bio_text_field.dart';
 import 'package:Medicall/screens/provider_flow/registration/provider_custom_text_field.dart';
+import 'package:Medicall/screens/provider_flow/registration/provider_profile_view_model_base.dart';
 import 'package:Medicall/screens/provider_flow/registration/provider_registration_view_model.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
 import 'package:super_rich_text/super_rich_text.dart';
+
 import '../../../common_widgets/custom_date_picker_formfield.dart';
 
 class ProviderRegistrationForm extends StatefulWidget {
