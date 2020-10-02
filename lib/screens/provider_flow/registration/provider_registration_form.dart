@@ -1,6 +1,5 @@
 import 'package:Medicall/common_widgets/custom_dropdown_formfield.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
-import 'package:Medicall/screens/provider_flow/registration/provider_bio_text_field.dart';
 import 'package:Medicall/screens/provider_flow/registration/provider_custom_text_field.dart';
 import 'package:Medicall/screens/provider_flow/registration/provider_profile_view_model_base.dart';
 import 'package:Medicall/screens/provider_flow/registration/provider_registration_view_model.dart';
@@ -10,7 +9,6 @@ import 'package:flutter/services.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
 import 'package:super_rich_text/super_rich_text.dart';
-
 import '../../../common_widgets/custom_date_picker_formfield.dart';
 
 class ProviderRegistrationForm extends StatefulWidget {
@@ -168,25 +166,6 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
             items: model.boardCertification,
             selectedItem: model.boardCertified,
             errorText: model.boardCertificationErrorText,
-          ),
-          ProviderBioTextField(
-            keyboardType: TextInputType.multiline,
-            minLines: 1,
-            maxLines: 20,
-            maxLength: 1000,
-            labelText: 'Short Bio',
-            hint:
-                'Dr. Jane Doe is a board-certified dermatologist specializing '
-                'in general and cosmetic dermatology. She earned her medical '
-                'degree from the University of Nevada School of Medicine followed '
-                'by dermatology residency at Mayo Clinic in Scottsdale, AZ. She is '
-                'a member of the Phoenix Dermatology Society, Fellow of the American '
-                'Academy of Dermatologic Surgery and serves as an organizer for the '
-                'Phoenix Dermatology Journal Club. Outside dermatology, Dr. Doe loves '
-                'reading, traveling, and playing piano. She speaks English, Spanish '
-                'and Portuguese.',
-            errorText: model.providerBioErrorText,
-            onChanged: model.updateProviderBio,
           ),
           SizedBox(height: 20),
           Container(

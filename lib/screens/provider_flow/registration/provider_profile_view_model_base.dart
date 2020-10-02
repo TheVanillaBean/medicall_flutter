@@ -27,6 +27,7 @@ abstract class ProviderProfileViewModelBase
         MedicalResidencyValidators,
         BoardCertificationValidators,
         ProviderBioValidators,
+        OptionInputValidator,
         ChangeNotifier {
   final NonAuthDatabase nonAuthDatabase;
   final AuthBase auth;
@@ -52,6 +53,7 @@ abstract class ProviderProfileViewModelBase
   String npi;
   String boardCertified;
   String providerBio;
+  String input;
 
   bool checkValue;
   bool isLoading;
@@ -258,6 +260,11 @@ abstract class ProviderProfileViewModelBase
     bool showErrorText =
         this.submitted && !medicalSchoolValidator.isValid(medSchool);
     return showErrorText ? medSchoolErrorText : null;
+  }
+
+  String get invalidOptionInputErrorText {
+    bool showErrorText = this.submitted && !inputValidator.isValid(input);
+    return showErrorText ? invalidInputErrorText : null;
   }
 
   String get medicalResidencyErrorText {

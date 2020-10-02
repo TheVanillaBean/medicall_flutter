@@ -4,9 +4,8 @@ import 'package:Medicall/components/drawer_menu.dart';
 import 'package:Medicall/models/user/provider_user_model.dart';
 import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
-import 'package:Medicall/screens/provider_flow/registration/provider_registration_form.dart';
-import 'package:Medicall/screens/provider_flow/registration/update_provider_info/update_provider_info_form.dart';
-import 'package:Medicall/screens/provider_flow/registration/update_provider_info/update_provider_info_screen.dart';
+import 'package:Medicall/screens/provider_flow/account/update_provider_info/update_provider_info_form.dart';
+import 'package:Medicall/screens/provider_flow/account/update_provider_info/update_provider_info_screen.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/firebase_storage_service.dart';
@@ -48,6 +47,11 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
         Provider.of<FirebaseStorageService>(context, listen: false);
 
     final ProviderUser medicallUser = _userProvider.user;
+
+    String name;
+    String age;
+    DateTime dob;
+    String bio;
 
     this.profileImageURL = _userProvider.user.profilePic;
 
@@ -227,7 +231,11 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
     return ReusableAccountCard(
       leading: 'Medical License:',
       title: '${(medicallUser as ProviderUser).medLicense}',
-      trailing: IconButton(icon: Icon(Icons.create, size: 20), onPressed: null),
+      trailing: IconButton(
+        icon: Icon(Icons.create, size: 20),
+        onPressed: () => UpdateProviderInfoScreen.show(
+            context: context, inputType: ProfileInputType.MEDICAL_LICENSE),
+      ),
     );
   }
 
@@ -235,7 +243,12 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
     return ReusableAccountCard(
       leading: 'Medical License State:',
       title: '${(medicallUser as ProviderUser).medLicenseState}',
-      trailing: IconButton(icon: Icon(Icons.create, size: 20), onPressed: null),
+      trailing: IconButton(
+        icon: Icon(Icons.create, size: 20),
+        onPressed: () => UpdateProviderInfoScreen.show(
+            context: context,
+            inputType: ProfileInputType.MEDICAL_LICENSE_STATE),
+      ),
     );
   }
 
@@ -254,31 +267,47 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
     return ReusableAccountCard(
       leading: 'Board Certification:',
       title: '${(medicallUser as ProviderUser).boardCertified}',
-      trailing: IconButton(icon: Icon(Icons.create, size: 20), onPressed: null),
+      trailing: IconButton(
+        icon: Icon(Icons.create, size: 20),
+        onPressed: () => UpdateProviderInfoScreen.show(
+            context: context, inputType: ProfileInputType.BOARD_CERTIFIED),
+      ),
     );
   }
 
   Widget _buildMedicalSchoolCard(MedicallUser medicallUser) {
     return ReusableAccountCard(
       leading: 'Medical \nSchool:',
-      title: '${(medicallUser as ProviderUser).medSchool}',
-      trailing: IconButton(icon: Icon(Icons.create, size: 20), onPressed: null),
+      title: '${(medicallUser as ProviderUser).medSchool}' ?? '',
+      trailing: IconButton(
+        icon: Icon(Icons.create, size: 20),
+        onPressed: () => UpdateProviderInfoScreen.show(
+            context: context, inputType: ProfileInputType.MEDICAL_SCHOOL),
+      ),
     );
   }
 
   Widget _buildMedicalResidencyCard(MedicallUser medicallUser) {
     return ReusableAccountCard(
       leading: 'Medical \nResidency:',
-      title: '${(medicallUser as ProviderUser).medResidency}',
-      trailing: IconButton(icon: Icon(Icons.create, size: 20), onPressed: null),
+      title: '${(medicallUser as ProviderUser).medResidency}' ?? '',
+      trailing: IconButton(
+        icon: Icon(Icons.create, size: 20),
+        onPressed: () => UpdateProviderInfoScreen.show(
+            context: context, inputType: ProfileInputType.MEDICAL_RESIDENCY),
+      ),
     );
   }
 
   Widget _buildProviderBioCard(MedicallUser medicallUser) {
     return ProviderBioCard(
       leading: 'Bio:',
-      trailing: IconButton(icon: Icon(Icons.create, size: 20), onPressed: null),
-      bioText: '${(medicallUser as ProviderUser).providerBio}',
+      trailing: IconButton(
+        icon: Icon(Icons.create, size: 20),
+        onPressed: () => UpdateProviderInfoScreen.show(
+            context: context, inputType: ProfileInputType.BIO),
+      ),
+      bioText: '${(medicallUser as ProviderUser).providerBio}' ?? '',
     );
   }
 
