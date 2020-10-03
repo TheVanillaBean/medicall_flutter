@@ -49,7 +49,7 @@ class PatientDashboardListItem extends StatelessWidget {
           ),
           subtitle: '${consult.parsedDate}',
           trailing: Container(
-            width: 60,
+            width: 75,
             alignment: Alignment.centerLeft,
             child: Text(getStatus(),
                 style: Theme.of(context).textTheme.caption.copyWith(

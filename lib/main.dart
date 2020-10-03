@@ -1,4 +1,4 @@
-import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/routing/router.dart' as Router;
 import 'package:Medicall/screens/landing_page/auth_widget_builder.dart';
 import 'package:Medicall/screens/landing_page/firebase_notifications_handler.dart';
 import 'package:Medicall/screens/landing_page/landing_page.dart';
@@ -21,6 +21,7 @@ import 'package:Medicall/theme.dart';
 import 'package:Medicall/util/apple_sign_in_available.dart';
 import 'package:Medicall/util/firebase_notifications_helper.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -29,6 +30,7 @@ import 'models/user/user_model_base.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  GestureBinding.instance.resamplingEnabled = true;
   await Firebase.initializeApp();
   final appleSignInAvailable = await AppleSignInAvailable.check();
   runApp(MedicallApp(
@@ -122,7 +124,7 @@ class MedicallApp extends StatelessWidget {
                 ),
               ),
             ),
-            onGenerateRoute: Router.onGenerateRoute,
+            onGenerateRoute: Router.Router.onGenerateRoute,
           );
         },
       ),

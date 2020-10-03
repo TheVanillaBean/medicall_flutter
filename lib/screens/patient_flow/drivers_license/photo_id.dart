@@ -1,6 +1,7 @@
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/user/patient_user_model.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/patient_flow/account/patient_account.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/patient_flow/drivers_license/photo_id_view_model.dart';
 import 'package:Medicall/screens/patient_flow/personal_info/personal_info.dart';
@@ -48,6 +49,8 @@ class PhotoIDScreen extends StatelessWidget {
     );
   }
 
+  ///consult is only null if the patient is updating their photo id from the account screen
+  ///See [PatientAccountScreen] for more info
   static Future<void> show({
     BuildContext context,
     bool pushReplaceNamed = true,
@@ -77,12 +80,17 @@ class PhotoIDScreen extends StatelessWidget {
     try {
       await model.submit();
       extendedImageProvider.clearImageMemory();
-      if ((model.userProvider.user as PatientUser).fullName.length > 2 &&
-          (model.userProvider.user as PatientUser).profilePic.length > 2 &&
-          (model.userProvider.user as PatientUser).mailingAddress.length > 2) {
-        MakePayment.show(context: context, consult: model.consult);
+      if (model.consult == null) {
+        Navigator.of(context).pop();
       } else {
-        PersonalInfoScreen.show(context: context, consult: model.consult);
+        if ((model.userProvider.user as PatientUser).fullName.length > 2 &&
+            (model.userProvider.user as PatientUser).profilePic.length > 2 &&
+            (model.userProvider.user as PatientUser).mailingAddress.length >
+                2) {
+          MakePayment.show(context: context, consult: model.consult);
+        } else {
+          PersonalInfoScreen.show(context: context, consult: model.consult);
+        }
       }
     } catch (e) {
       AppUtil().showFlushBar(e, context);
@@ -98,8 +106,12 @@ class PhotoIDScreen extends StatelessWidget {
           builder: (BuildContext context) {
             return IconButton(
               onPressed: () {
-                PatientDashboardScreen.show(
-                    context: context, pushReplaceNamed: true);
+                if (model.consult == null) {
+                  Navigator.of(context).pop();
+                } else {
+                  PatientDashboardScreen.show(
+                      context: context, pushReplaceNamed: true);
+                }
               },
               icon: Icon(Icons.close),
             );
