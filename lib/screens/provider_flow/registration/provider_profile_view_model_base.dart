@@ -29,10 +29,6 @@ abstract class ProviderProfileViewModelBase
         ProviderBioValidators,
         OptionInputValidator,
         ChangeNotifier {
-  final NonAuthDatabase nonAuthDatabase;
-  final AuthBase auth;
-  final TempUserProvider tempUserProvider;
-
   String email;
   String password;
   String confirmPassword;
@@ -40,11 +36,11 @@ abstract class ProviderProfileViewModelBase
   String lastName;
   String phoneNumber;
   DateTime dob = DateTime.now();
-  String address;
-  String addressLine2;
-  String city;
-  String state;
-  String zipCode;
+  String mailingAddress;
+  String mailingAddressLine2;
+  String mailingCity;
+  String mailingState;
+  String mailingZipCode;
   String professionalTitle;
   String medLicense;
   String medLicenseState;
@@ -143,9 +139,6 @@ abstract class ProviderProfileViewModelBase
   ];
 
   ProviderProfileViewModelBase({
-    @required this.nonAuthDatabase,
-    @required this.auth,
-    @required this.tempUserProvider,
     this.email = '',
     this.password = '',
     this.confirmPassword = '',
@@ -153,11 +146,11 @@ abstract class ProviderProfileViewModelBase
     this.lastName = '',
     this.phoneNumber = '',
     this.dob,
-    this.address = '',
-    this.addressLine2 = '',
-    this.city = '',
-    this.state = '',
-    this.zipCode = '',
+    this.mailingAddress = '',
+    this.mailingAddressLine2 = '',
+    this.mailingCity = '',
+    this.mailingState = '',
+    this.mailingZipCode = '',
     this.professionalTitle = '',
     this.medLicense = '',
     this.medLicenseState = '',
@@ -214,22 +207,24 @@ abstract class ProviderProfileViewModelBase
 
   String get practiceAddressErrorText {
     bool showErrorText =
-        this.submitted && !practiceAddressValidator.isValid(address);
+        this.submitted && !practiceAddressValidator.isValid(mailingAddress);
     return showErrorText ? addressErrorText : null;
   }
 
   String get practiceCityErrorText {
-    bool showErrorText = this.submitted && !cityValidator.isValid(city);
+    bool showErrorText = this.submitted && !cityValidator.isValid(mailingCity);
     return showErrorText ? cityErrorText : null;
   }
 
   String get practiceStateErrorText {
-    bool showErrorText = this.submitted && !stateValidator.isValid(state);
+    bool showErrorText =
+        this.submitted && !stateValidator.isValid(mailingState);
     return showErrorText ? stateErrorText : null;
   }
 
   String get practiceZipCodeErrorText {
-    bool showErrorText = this.submitted && !zipCodeValidator.isValid(zipCode);
+    bool showErrorText =
+        this.submitted && !zipCodeValidator.isValid(mailingZipCode);
     return showErrorText ? zipCodeErrorText : null;
   }
 
@@ -302,18 +297,22 @@ abstract class ProviderProfileViewModelBase
   void updatePhoneNumber(String phoneNumber) =>
       updateWith(phoneNumber: phoneNumber);
   void updateDOB(DateTime dob) => updateWith(dob: dob);
-  void updateAddress(String address) => updateWith(address: address);
-  void updateAddressLine2(String addressLine2) =>
-      updateWith(addressLine2: addressLine2);
-  void updateCity(String city) => updateWith(city: city);
-  void updateState(String state) => updateWith(state: state);
-  void updateZipCode(String zipCode) => updateWith(zipCode: zipCode);
+  void updateMailingAddress(String mailingAddress) =>
+      updateWith(mailingAddress: mailingAddress);
+  void updateMailingAddressLine2(String mailingAddressLine2) =>
+      updateWith(mailingAddressLine2: mailingAddressLine2);
+  void updateMailingCity(String mailingCity) =>
+      updateWith(mailingCity: mailingCity);
+  void updateMailingState(String mailingState) =>
+      updateWith(mailingState: mailingState);
+  void updateMailingZipCode(String mailingZipCode) =>
+      updateWith(mailingZipCode: mailingZipCode);
   void updateProfessionalTitle(String professionalTitle) =>
       updateWith(professionalTitle: professionalTitle);
   void updateMedLicense(String medLicense) =>
       updateWith(medLicense: medLicense);
-  void updateMedLicenseState(String state) =>
-      updateWith(medLicenseState: state);
+  void updateMedLicenseState(String medLicenseState) =>
+      updateWith(medLicenseState: medLicenseState);
   void updateNpi(String npi) => updateWith(npi: npi);
   void updateBoardCertified(String boardCertified) =>
       updateWith(boardCertified: boardCertified);
@@ -347,11 +346,11 @@ abstract class ProviderProfileViewModelBase
     String lastName,
     String phoneNumber,
     DateTime dob,
-    String address,
-    String addressLine2,
-    String city,
-    String state,
-    String zipCode,
+    String mailingAddress,
+    String mailingAddressLine2,
+    String mailingCity,
+    String mailingState,
+    String mailingZipCode,
     String professionalTitle,
     String medLicense,
     String medLicenseState,
@@ -374,11 +373,11 @@ abstract class ProviderProfileViewModelBase
     this.lastName = lastName ?? this.lastName;
     this.phoneNumber = phoneNumber ?? this.phoneNumber;
     this.dob = dob ?? this.dob;
-    this.address = address ?? this.address;
-    this.addressLine2 = addressLine2 ?? this.addressLine2;
-    this.city = city ?? this.city;
-    this.state = state ?? this.state;
-    this.zipCode = zipCode ?? this.zipCode;
+    this.mailingAddress = mailingAddress ?? this.mailingAddress;
+    this.mailingAddressLine2 = mailingAddressLine2 ?? this.mailingAddressLine2;
+    this.mailingCity = mailingCity ?? this.mailingCity;
+    this.mailingState = mailingState ?? this.mailingState;
+    this.mailingZipCode = mailingZipCode ?? this.mailingZipCode;
     this.professionalTitle = professionalTitle ?? this.professionalTitle;
     this.npi = npi ?? this.npi;
     this.boardCertified = boardCertified ?? this.boardCertified;

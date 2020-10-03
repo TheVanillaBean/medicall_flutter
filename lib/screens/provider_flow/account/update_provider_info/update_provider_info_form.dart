@@ -58,7 +58,7 @@ class _UpdateProviderInfoFormState extends State<UpdateProviderInfoForm>
     if (widget.inputType == ProfileInputType.PHONE) {
       return model.updatePhoneNumber;
     } else if (widget.inputType == ProfileInputType.ADDRESS) {
-      return model.updateAddress;
+      return model.updateMailingAddress;
     } else if (widget.inputType == ProfileInputType.PROFESSIONAL_TITLE) {
       return model.updateProfessionalTitle;
     } else if (widget.inputType == ProfileInputType.MEDICAL_LICENSE) {
@@ -124,25 +124,25 @@ class _UpdateProviderInfoFormState extends State<UpdateProviderInfoForm>
               labelText: 'Practice Address',
               hint: '123 Main St',
               errorText: model.practiceAddressErrorText,
-              onChanged: model.updateAddress,
+              onChanged: model.updateMailingAddress,
             ),
             ProviderCustomTextField(
               labelText: 'Apartment, building, suite (optional)',
               hint: 'BLDG E, APT 2',
               //errorText: model.practiceAddressErrorText,
-              onChanged: model.updateAddressLine2,
+              onChanged: model.updateMailingAddressLine2,
             ),
             ProviderCustomTextField(
               labelText: 'City',
               hint: 'Anytown',
               errorText: model.practiceCityErrorText,
-              onChanged: model.updateCity,
+              onChanged: model.updateMailingCity,
             ),
             CustomDropdownFormField(
               labelText: 'State',
-              onChanged: model.updateState,
+              onChanged: model.updateMailingState,
               items: model.states,
-              selectedItem: model.state,
+              selectedItem: model.mailingState,
               errorText: model.practiceStateErrorText,
             ),
             ProviderCustomTextField(
@@ -151,7 +151,7 @@ class _UpdateProviderInfoFormState extends State<UpdateProviderInfoForm>
               hint: '12345',
               keyboardType: TextInputType.number,
               errorText: model.practiceZipCodeErrorText,
-              onChanged: model.updateZipCode,
+              onChanged: model.updateMailingZipCode,
             ),
             SizedBox(height: 30),
             ReusableRaisedButton(
@@ -161,7 +161,6 @@ class _UpdateProviderInfoFormState extends State<UpdateProviderInfoForm>
                       if (_formKey.currentState.validate()) {
                         _submit(model);
                       }
-                      Navigator.pop(context);
                     }
                   : null,
             ),
@@ -255,7 +254,6 @@ class _UpdateProviderInfoFormState extends State<UpdateProviderInfoForm>
                       if (_formKey.currentState.validate()) {
                         _submit(model);
                       }
-                      Navigator.pop(context);
                     }
                   : null,
             ),
@@ -288,7 +286,6 @@ class _UpdateProviderInfoFormState extends State<UpdateProviderInfoForm>
                       if (_formKey.currentState.validate()) {
                         _submit(model);
                       }
-                      Navigator.pop(context);
                     }
                   : null,
             ),
@@ -321,7 +318,6 @@ class _UpdateProviderInfoFormState extends State<UpdateProviderInfoForm>
                       if (_formKey.currentState.validate()) {
                         _submit(model);
                       }
-                      Navigator.pop(context);
                     }
                   : null,
             ),
@@ -354,7 +350,6 @@ class _UpdateProviderInfoFormState extends State<UpdateProviderInfoForm>
                       if (_formKey.currentState.validate()) {
                         _submit(model);
                       }
-                      Navigator.pop(context);
                     }
                   : null,
             ),
@@ -389,7 +384,6 @@ class _UpdateProviderInfoFormState extends State<UpdateProviderInfoForm>
                       if (_formKey.currentState.validate()) {
                         _submit(model);
                       }
-                      Navigator.pop(context);
                     }
                   : null,
             ),
@@ -425,7 +419,6 @@ class _UpdateProviderInfoFormState extends State<UpdateProviderInfoForm>
                       if (_formKey.currentState.validate()) {
                         _submit(model);
                       }
-                      Navigator.pop(context);
                     }
                   : null,
             ),
@@ -470,7 +463,40 @@ class _UpdateProviderInfoFormState extends State<UpdateProviderInfoForm>
                       if (_formKey.currentState.validate()) {
                         _submit(model);
                       }
-                      Navigator.pop(context);
+                    }
+                  : null,
+            ),
+            SizedBox(height: 70),
+            if (model.isLoading)
+              Container(
+                  margin: EdgeInsets.symmetric(vertical: 24),
+                  child: CircularProgressIndicator()),
+          ],
+        ),
+      );
+    } else {
+      return Form(
+        key: _formKey,
+        autovalidate: false,
+        child: Column(
+          children: [
+            ProviderBioTextField(
+              keyboardType: TextInputType.multiline,
+              minLines: 1,
+              maxLines: 5,
+              labelText: '',
+              hint: '',
+              errorText: model.invalidInputErrorText,
+              onChanged: model.updateProviderBio,
+            ),
+            SizedBox(height: 30),
+            ReusableRaisedButton(
+              title: 'Save',
+              onPressed: !model.isLoading
+                  ? () {
+                      if (_formKey.currentState.validate()) {
+                        _submit(model);
+                      }
                     }
                   : null,
             ),

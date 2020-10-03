@@ -48,11 +48,6 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
 
     final ProviderUser medicallUser = _userProvider.user;
 
-    String name;
-    String age;
-    DateTime dob;
-    String bio;
-
     this.profileImageURL = _userProvider.user.profilePic;
 
     return Scaffold(

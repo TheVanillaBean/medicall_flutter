@@ -20,11 +20,11 @@ class ProviderRegistrationViewModel extends ProviderProfileViewModelBase {
   String lastName;
   String phoneNumber;
   DateTime dob = DateTime.now();
-  String address;
-  String addressLine2;
-  String city;
-  String state;
-  String zipCode;
+  String mailingAddress;
+  String mailingAddressLine2;
+  String mailingCity;
+  String mailingState;
+  String mailingZipCode;
   String professionalTitle;
   String medLicense;
   String medLicenseState;
@@ -49,11 +49,11 @@ class ProviderRegistrationViewModel extends ProviderProfileViewModelBase {
     this.lastName = '',
     this.phoneNumber = '',
     this.dob,
-    this.address = '',
-    this.addressLine2 = '',
-    this.city = '',
-    this.state = '',
-    this.zipCode = '',
+    this.mailingAddress = '',
+    this.mailingAddressLine2 = '',
+    this.mailingCity = '',
+    this.mailingState = '',
+    this.mailingZipCode = '',
     this.professionalTitle = '',
     this.medLicense = '',
     this.medLicenseState = '',
@@ -75,9 +75,9 @@ class ProviderRegistrationViewModel extends ProviderProfileViewModelBase {
         lastNameValidator.isValid(lastName) &&
         dobValidator.isValid(dob) &&
         mobilePhoneValidator.isValid(phoneNumber) &&
-        practiceAddressValidator.isValid(address) &&
-        cityValidator.isValid(city) &&
-        zipCodeValidator.isValid(zipCode) &&
+        practiceAddressValidator.isValid(mailingAddress) &&
+        cityValidator.isValid(mailingCity) &&
+        zipCodeValidator.isValid(mailingZipCode) &&
         professionalTitleValidator.isValid(professionalTitle) &&
         providerBioValidator.isValid(providerBio) &&
         medicalSchoolValidator.isValid(medSchool) &&
@@ -120,11 +120,11 @@ class ProviderRegistrationViewModel extends ProviderProfileViewModelBase {
         tempUserProvider.user.lastName = this.lastName;
         tempUserProvider.user.phoneNumber = this.phoneNumber;
         tempUserProvider.user.dob = this.birthday;
-        tempUserProvider.user.mailingAddress = this.address;
-        tempUserProvider.user.mailingAddressLine2 = this.addressLine2;
-        tempUserProvider.user.mailingCity = this.city;
-        tempUserProvider.user.mailingState = this.state;
-        tempUserProvider.user.mailingZipCode = this.zipCode;
+        tempUserProvider.user.mailingAddress = this.mailingAddress;
+        tempUserProvider.user.mailingAddressLine2 = this.mailingAddressLine2;
+        tempUserProvider.user.mailingCity = this.mailingCity;
+        tempUserProvider.user.mailingState = this.mailingState;
+        tempUserProvider.user.mailingZipCode = this.mailingZipCode;
         (tempUserProvider.user as ProviderUser).professionalTitle =
             this.professionalTitle;
         (tempUserProvider.user as ProviderUser).medLicense = this.medLicense;
