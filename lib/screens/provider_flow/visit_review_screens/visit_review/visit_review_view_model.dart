@@ -46,7 +46,7 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
   VisitReviewData visitReviewData;
   VisitReviewStatus visitReviewStatus;
 
-  int currentStep = VisitReviewSteps.DiagnosisStep;
+  int currentStep = VisitReviewSteps.PatientNote;
 
   List<int> completedSteps = [];
 
