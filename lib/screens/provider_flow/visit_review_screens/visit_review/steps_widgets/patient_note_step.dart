@@ -1,5 +1,4 @@
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/continue_button.dart';
-import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/empty_diagnosis_widget.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/swipe_gesture_recognizer.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_review_view_model.dart';
 import 'package:flutter/material.dart';
@@ -20,67 +19,43 @@ class _PatientNoteStepState extends State<PatientNoteStep> {
       properties: [VisitReviewVMProperties.patientNote],
     ).value;
     final width = MediaQuery.of(context).size.width;
-    if (model.diagnosisOptions != null) {
-      return KeyboardDismisser(
-        gestures: [
-          GestureType.onTap
-        ], //onVerticalDrag not set because of weird behavior
-        child: SwipeGestureRecognizer(
-          onSwipeLeft: () => model.incrementIndex(),
-          onSwipeRight: () => model.decrementIndex(),
-          child: CustomScrollView(
-            slivers: <Widget>[
-              SliverFillRemaining(
-                hasScrollBody: false,
-                fillOverscroll: true,
+    final height = MediaQuery.of(context).size.height;
+    return KeyboardDismisser(
+      gestures: [
+        GestureType.onTap
+      ], //onVerticalDrag not set because of weird behavior
+      child: SwipeGestureRecognizer(
+        onSwipeLeft: () => model.incrementIndex(),
+        onSwipeRight: () => model.decrementIndex(),
+        child: CustomScrollView(
+          slivers: <Widget>[
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Expanded(
-                      child: Text(
-                        "Message",
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
-                      child: TextFormField(
-                        textCapitalization: TextCapitalization.sentences,
-                        maxLines: null,
-                        scrollPhysics: NeverScrollableScrollPhysics(),
-                        initialValue:
-                            model.patientNoteStepState.getPatientNoteTemplate(
-                          model.consult.patientUser.fullName,
-                          "${model.consult.providerUser.fullName}, ${model.consult.providerUser.professionalTitle}",
-                          model.diagnosisOptions.patientNoteTemplate,
-                        ),
-                        autocorrect: true,
-                        keyboardType: TextInputType.multiline,
-                        onChanged: (String text) =>
-                            model.updatePatientNoteStepWith(patientNote: text),
-                        style: TextStyle(color: Color.fromRGBO(80, 80, 80, 1)),
-                        decoration: InputDecoration(
-                          labelStyle: TextStyle(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurface
-                                .withAlpha(90),
-                          ),
-                          hintStyle: TextStyle(
-                            color: Color.fromRGBO(100, 100, 100, 1),
-                          ),
-                          filled: true,
-                          fillColor: Colors.grey.withAlpha(20),
-                          labelText: "Patient Note",
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 8,
-                    ),
+                    ..._buildSection(
+                        title: "Introduction:", width: width, height: height),
+                    ..._buildSection(
+                        title: "Understanding the diagnosis:",
+                        width: width,
+                        height: height),
+                    ..._buildSection(
+                        title: "Counseling:", width: width, height: height),
+                    ..._buildSection(
+                        title: "Treatment:", width: width, height: height),
+                    ..._buildSection(
+                        title: "Further Testing (optional):",
+                        width: width,
+                        height: height),
+                    ..._buildSection(
+                        title: "Other:", width: width, height: height),
+                    ..._buildSection(
+                        title: "Conclusion:", width: width, height: height),
+                    SizedBox(height: 16),
                     Expanded(
                       child: ContinueButton(
                         width: width,
@@ -89,11 +64,66 @@ class _PatientNoteStepState extends State<PatientNoteStep> {
                   ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-      );
-    }
-    return EmptyDiagnosis(model: model);
+      ),
+    );
+  }
+
+  List<Widget> _buildSection({String title, double width, double height}) {
+    return [
+      Row(
+        children: [
+          SizedBox(
+            width: 18,
+            child: Checkbox(
+              value: true,
+              onChanged: (newValue) {},
+            ),
+          ),
+          SizedBox(width: 12),
+          Text(
+            title,
+            style: Theme.of(context).textTheme.bodyText1,
+          ),
+        ],
+      ),
+      SizedBox(height: 12),
+      Text(
+        "Thank you for requesting a consultation and entrusting me with your care. It was a pleasure to review your information and provide recommendations that I hope will help. After reviewing your information and photographs, if feel you acne. As you know, acne is an incredibly common problem with lots of effective treatments. There is no reason to suffer with acne and, worse, potentially develop scaring that can last a lifetime. So I’m really glad you reached out so we can this under control!",
+        style: Theme.of(context).textTheme.bodyText2,
+      ),
+      SizedBox(height: 12),
+      _buildSectionBtn(width: width, height: height, title: "Edit Section"),
+    ];
+  }
+
+  Widget _buildSectionBtn({double width, double height, String title}) {
+    return Container(
+      width: width * .35,
+      child: SizedBox(
+        height: 30,
+        child: RaisedButton(
+          elevation: 0,
+          color: Theme.of(context).colorScheme.primary,
+          disabledColor: Theme.of(context).disabledColor.withOpacity(.3),
+          child: Text(
+            title,
+            style: Theme.of(context)
+                .textTheme
+                .bodyText2
+                .copyWith(color: Colors.white),
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(
+              Radius.circular(14),
+            ),
+            side: BorderSide(color: Theme.of(context).colorScheme.primary),
+          ),
+          onPressed: () {},
+        ),
+      ),
+    );
   }
 }

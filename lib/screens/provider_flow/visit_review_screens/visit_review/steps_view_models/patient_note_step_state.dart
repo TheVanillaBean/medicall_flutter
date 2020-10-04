@@ -1,7 +1,14 @@
-import 'package:Medicall/models/consult-review/patient_note_template_model.dart';
+import 'package:Medicall/models/consult-review/patient_note/patient_note_template_model.dart';
 
 class PatientNoteStepState {
   String patientNote = '';
+
+  Map<String, String> introduction = {};
+  Map<String, String> understandingDiagnosis = {};
+  Map<String, String> counseling = {};
+  Map<String, String> treatments = {};
+  Map<String, String> furtherTesting = {};
+  Map<String, String> closing = {};
 
   String getPatientNoteTemplate(String patientName, String providerName,
       PatientTemplateNote patientTemplateNote) {
@@ -11,11 +18,11 @@ class PatientNoteStepState {
       String note = "Dear $patientName,";
       note += "\n";
       note += "\n";
-      note += patientTemplateNote.intro;
+      note += patientTemplateNote.introductionTemplate.toString();
       note += "\n";
-      note += patientTemplateNote.body["FINASTERIDE"] ?? "";
+      note += patientTemplateNote.introductionTemplate.toString();
       note += "\n";
-      note += patientTemplateNote.conclusion;
+      note += patientTemplateNote.introductionTemplate.toString();
       note += "\n";
       note += "\n";
       note += "Regards,";

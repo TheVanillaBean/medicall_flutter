@@ -1,4 +1,4 @@
-import 'package:Medicall/models/consult-review/patient_note_template_model.dart';
+import 'package:Medicall/models/consult-review/patient_note/patient_note_template_model.dart';
 import 'package:Medicall/models/consult-review/treatment_options.dart';
 import 'package:flutter/foundation.dart';
 
