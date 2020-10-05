@@ -5,13 +5,13 @@ class IntroductionTemplate {
     this.template = const {},
   });
 
-  factory IntroductionTemplate.fromMap(String data) {
+  factory IntroductionTemplate.fromMap(Map<String, dynamic> data) {
     if (data == null) {
       return null;
     }
 
     Map<String, String> template = {};
-    template["template"] = data;
+    template["Template"] = data["Template"];
 
     return IntroductionTemplate(
       template: template,
@@ -19,9 +19,6 @@ class IntroductionTemplate {
   }
 
   Map<String, dynamic> toMap() {
-    dynamic e = <String, dynamic>{
-      'template': template,
-    };
-    return e;
+    return template;
   }
 }

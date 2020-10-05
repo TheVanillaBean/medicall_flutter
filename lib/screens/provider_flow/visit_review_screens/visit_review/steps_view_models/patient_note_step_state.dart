@@ -6,6 +6,7 @@ enum PatientNoteSection {
   Counseling,
   Treatments,
   FurtherTesting,
+  Other,
   Conclusion,
 }
 
@@ -26,6 +27,22 @@ class PatientNoteStepState {
         0;
   }
 
+  void setCurrentStep(String title) {
+    if (title == "Introduction") {
+      currentSection = PatientNoteSection.Introduction;
+    } else if (title == "Understanding_The_Diagnosis") {
+      currentSection = PatientNoteSection.UnderstandingDiagnosis;
+    } else if (title == "Counseling") {
+      currentSection = PatientNoteSection.Counseling;
+    } else if (title == "Treatment_Recommendations") {
+      currentSection = PatientNoteSection.Treatments;
+    } else if (title == "Further_Testing") {
+      currentSection = PatientNoteSection.FurtherTesting;
+    } else if (title == "Conclusion") {
+      currentSection = PatientNoteSection.Conclusion;
+    }
+  }
+
   String get title {
     if (currentSection == PatientNoteSection.Introduction) {
       return "Introduction";
@@ -37,6 +54,8 @@ class PatientNoteStepState {
       return "Treatments";
     } else if (currentSection == PatientNoteSection.FurtherTesting) {
       return "Further Testing";
+    } else if (currentSection == PatientNoteSection.Other) {
+      return "Other";
     } else if (currentSection == PatientNoteSection.Conclusion) {
       return "Conclusion";
     } else {
@@ -57,6 +76,8 @@ class PatientNoteStepState {
           .treatmentRecommendationsTemplate.template.values.first;
     } else if (currentSection == PatientNoteSection.FurtherTesting) {
       return patientTemplateNote.furtherTestingTemplate.template.values.first;
+    } else if (currentSection == PatientNoteSection.Other) {
+      return patientTemplateNote.other.values.first;
     } else if (currentSection == PatientNoteSection.Conclusion) {
       return patientTemplateNote.conclusionTemplate.template.values.first;
     } else {

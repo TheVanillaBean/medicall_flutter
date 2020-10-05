@@ -596,72 +596,82 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
     this.patientNoteStepState.patientTemplateNote =
         patientTemplateNote ?? this.patientNoteStepState.patientTemplateNote;
 
-    this
-            .patientNoteStepState
-            .patientTemplateNote
-            .introductionTemplate
-            .template =
-        introduction ??
-            this
-                .patientNoteStepState
-                .patientTemplateNote
-                .introductionTemplate
-                .template;
+    if (this.patientNoteStepState.patientTemplateNote != null) {
+      this
+              .patientNoteStepState
+              .patientTemplateNote
+              .introductionTemplate
+              .template =
+          introduction ??
+              this
+                  .patientNoteStepState
+                  .patientTemplateNote
+                  .introductionTemplate
+                  .template;
 
-    this
-            .patientNoteStepState
-            .patientTemplateNote
-            .understandingDiagnosisTemplate
-            .template =
-        understandingDiagnosis ??
-            this
-                .patientNoteStepState
-                .patientTemplateNote
-                .understandingDiagnosisTemplate
-                .template;
+      this
+              .patientNoteStepState
+              .patientTemplateNote
+              .understandingDiagnosisTemplate
+              .template =
+          understandingDiagnosis ??
+              this
+                  .patientNoteStepState
+                  .patientTemplateNote
+                  .understandingDiagnosisTemplate
+                  .template;
 
-    this.patientNoteStepState.patientTemplateNote.counselingTemplate.template =
-        counseling ??
-            this
-                .patientNoteStepState
-                .patientTemplateNote
-                .counselingTemplate
-                .template;
+      this
+              .patientNoteStepState
+              .patientTemplateNote
+              .counselingTemplate
+              .template =
+          counseling ??
+              this
+                  .patientNoteStepState
+                  .patientTemplateNote
+                  .counselingTemplate
+                  .template;
 
-    this
-            .patientNoteStepState
-            .patientTemplateNote
-            .treatmentRecommendationsTemplate
-            .template =
-        treatments ??
-            this
-                .patientNoteStepState
-                .patientTemplateNote
-                .treatmentRecommendationsTemplate
-                .template;
+      this
+              .patientNoteStepState
+              .patientTemplateNote
+              .treatmentRecommendationsTemplate
+              .template =
+          treatments ??
+              this
+                  .patientNoteStepState
+                  .patientTemplateNote
+                  .treatmentRecommendationsTemplate
+                  .template;
 
-    this
-            .patientNoteStepState
-            .patientTemplateNote
-            .furtherTestingTemplate
-            .template =
-        furtherTesting ??
-            this
-                .patientNoteStepState
-                .patientTemplateNote
-                .furtherTestingTemplate
-                .template;
+      this
+              .patientNoteStepState
+              .patientTemplateNote
+              .furtherTestingTemplate
+              .template =
+          furtherTesting ??
+              this
+                  .patientNoteStepState
+                  .patientTemplateNote
+                  .furtherTestingTemplate
+                  .template;
 
-    this.patientNoteStepState.patientTemplateNote.other =
-        other ?? this.patientNoteStepState.patientTemplateNote.other;
+      this.patientNoteStepState.patientTemplateNote.other =
+          other ?? this.patientNoteStepState.patientTemplateNote.other;
 
-    this.patientNoteStepState.patientTemplateNote.conclusionTemplate.template =
-        conclusion ??
-            this
-                .patientNoteStepState
-                .patientTemplateNote
-                .conclusionTemplate
-                .template;
+      this
+              .patientNoteStepState
+              .patientTemplateNote
+              .conclusionTemplate
+              .template =
+          conclusion ??
+              this
+                  .patientNoteStepState
+                  .patientTemplateNote
+                  .conclusionTemplate
+                  .template;
+    }
 
     notifyListeners(VisitReviewVMProperties.patientNote);
   }

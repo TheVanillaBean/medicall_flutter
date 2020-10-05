@@ -1,4 +1,5 @@
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/continue_button.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/empty_diagnosis_widget.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/swipe_gesture_recognizer.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_review_view_model.dart';
 import 'package:flutter/material.dart';
@@ -20,30 +21,33 @@ class _PatientNoteStepState extends State<PatientNoteStep> {
     ).value;
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
-    return KeyboardDismisser(
-      gestures: [
-        GestureType.onTap
-      ], //onVerticalDrag not set because of weird behavior
-      child: SwipeGestureRecognizer(
-        onSwipeLeft: () => model.incrementIndex(),
-        onSwipeRight: () => model.decrementIndex(),
-        child: CustomScrollView(
-          slivers: <Widget>[
-            SliverFillRemaining(
-              hasScrollBody: false,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    ..._buildSection(
+    if (model.diagnosisOptions != null)
+      return KeyboardDismisser(
+        gestures: [
+          GestureType.onTap
+        ], //onVerticalDrag not set because of weird behavior
+        child: SwipeGestureRecognizer(
+          onSwipeLeft: () => model.incrementIndex(),
+          onSwipeRight: () => model.decrementIndex(),
+          child: CustomScrollView(
+            slivers: <Widget>[
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      ..._buildSection(
                         title: "Introduction:",
                         body: model.patientNoteStepState.patientTemplateNote
                             .introductionTemplate.template.values.first,
                         width: width,
-                        height: height),
-                    ..._buildSection(
+                        height: height,
+                        model: model,
+                      ),
+                      ..._buildSection(
                         title: "Understanding the diagnosis:",
                         body: model
                             .patientNoteStepState
@@ -53,63 +57,76 @@ class _PatientNoteStepState extends State<PatientNoteStep> {
                             .values
                             .first,
                         width: width,
-                        height: height),
-                    ..._buildSection(
-                      title: "Counseling:",
-                      body: model.patientNoteStepState.patientTemplateNote
-                          .counselingTemplate.template.values.first,
-                      width: width,
-                      height: height,
-                    ),
-                    ..._buildSection(
-                      title: "Treatment:",
-                      body: model
-                          .patientNoteStepState
-                          .patientTemplateNote
-                          .treatmentRecommendationsTemplate
-                          .template
-                          .values
-                          .first,
-                      width: width,
-                      height: height,
-                    ),
-                    ..._buildSection(
+                        height: height,
+                        model: model,
+                      ),
+                      ..._buildSection(
+                        title: "Counseling:",
+                        body: model.patientNoteStepState.patientTemplateNote
+                            .counselingTemplate.template.values.first,
+                        width: width,
+                        height: height,
+                        model: model,
+                      ),
+                      ..._buildSection(
+                        title: "Treatment:",
+                        body: model
+                            .patientNoteStepState
+                            .patientTemplateNote
+                            .treatmentRecommendationsTemplate
+                            .template
+                            .values
+                            .first,
+                        width: width,
+                        height: height,
+                        model: model,
+                      ),
+                      ..._buildSection(
                         title: "Further Testing (optional):",
                         body: model.patientNoteStepState.patientTemplateNote
                             .furtherTestingTemplate.template.values.first,
                         width: width,
-                        height: height),
-                    ..._buildSection(
-                      title: "Other:",
-                      body: "",
-                      width: width,
-                      height: height,
-                    ),
-                    ..._buildSection(
-                      title: "Conclusion:",
-                      body: model.patientNoteStepState.patientTemplateNote
-                          .conclusionTemplate.template.values.first,
-                      width: width,
-                      height: height,
-                    ),
-                    SizedBox(height: 16),
-                    Expanded(
-                      child: ContinueButton(
-                        width: width,
+                        height: height,
+                        model: model,
                       ),
-                    ),
-                  ],
+                      ..._buildSection(
+                        title: "Other:",
+                        body: "",
+                        width: width,
+                        height: height,
+                        model: model,
+                      ),
+                      ..._buildSection(
+                        title: "Conclusion:",
+                        body: model.patientNoteStepState.patientTemplateNote
+                            .conclusionTemplate.template.values.first,
+                        width: width,
+                        height: height,
+                        model: model,
+                      ),
+                      SizedBox(height: 16),
+                      Expanded(
+                        child: ContinueButton(
+                          width: width,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    return EmptyDiagnosis(model: model);
   }
 
   List<Widget> _buildSection(
-      {String title, String body, double width, double height}) {
+      {String title,
+      String body,
+      double width,
+      double height,
+      VisitReviewViewModel model}) {
     return [
       Row(
         children: [
@@ -133,11 +150,13 @@ class _PatientNoteStepState extends State<PatientNoteStep> {
         style: Theme.of(context).textTheme.bodyText2,
       ),
       SizedBox(height: 12),
-      _buildSectionBtn(width: width, height: height, title: "Edit Section"),
+      _buildSectionBtn(
+          width: width, height: height, title: "Edit Section", model: model),
     ];
   }
 
-  Widget _buildSectionBtn({double width, double height, String title}) {
+  Widget _buildSectionBtn(
+      {double width, double height, String title, VisitReviewViewModel model}) {
     return Container(
       width: width * .35,
       child: SizedBox(

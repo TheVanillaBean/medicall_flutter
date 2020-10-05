@@ -16,15 +16,7 @@ class PatientTemplateNote {
   Map<String, String> other = {};
   ConclusionTemplate conclusionTemplate = ConclusionTemplate();
 
-  PatientTemplateNote({
-    this.introductionTemplate,
-    this.understandingDiagnosisTemplate,
-    this.counselingTemplate,
-    this.treatmentRecommendationsTemplate,
-    this.furtherTestingTemplate,
-    this.conclusionTemplate,
-    this.other = const {},
-  });
+  PatientTemplateNote();
 
   factory PatientTemplateNote.fromMap(Map<String, dynamic> data) {
     if (data == null) {
@@ -51,16 +43,17 @@ class PatientTemplateNote {
     ConclusionTemplate conclusionTemplate =
         ConclusionTemplate.fromMap(data['Conclusion']);
 
-    Map<String, String> other = data["Other"] ?? {};
+    PatientTemplateNote patientTemplateNote = PatientTemplateNote();
+    patientTemplateNote.introductionTemplate = introductionTemplate;
+    patientTemplateNote.understandingDiagnosisTemplate =
+        understandingDiagnosisTemplate;
+    patientTemplateNote.counselingTemplate = counselingTemplate;
+    patientTemplateNote.treatmentRecommendationsTemplate =
+        treatmentRecommendationsTemplate;
+    patientTemplateNote.furtherTestingTemplate = furtherTestingTemplate;
+    patientTemplateNote.conclusionTemplate = conclusionTemplate;
 
-    return PatientTemplateNote(
-      introductionTemplate: introductionTemplate,
-      understandingDiagnosisTemplate: understandingDiagnosisTemplate,
-      counselingTemplate: counselingTemplate,
-      treatmentRecommendationsTemplate: treatmentRecommendationsTemplate,
-      furtherTestingTemplate: furtherTestingTemplate,
-      conclusionTemplate: conclusionTemplate,
-    );
+    return patientTemplateNote;
   }
 
   Map<String, dynamic> toMap() {
