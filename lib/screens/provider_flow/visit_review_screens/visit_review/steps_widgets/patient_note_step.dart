@@ -38,23 +38,60 @@ class _PatientNoteStepState extends State<PatientNoteStep> {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     ..._buildSection(
-                        title: "Introduction:", width: width, height: height),
+                        title: "Introduction:",
+                        body: model.patientNoteStepState.patientTemplateNote
+                            .introductionTemplate.template.values.first,
+                        width: width,
+                        height: height),
                     ..._buildSection(
                         title: "Understanding the diagnosis:",
+                        body: model
+                            .patientNoteStepState
+                            .patientTemplateNote
+                            .understandingDiagnosisTemplate
+                            .template
+                            .values
+                            .first,
                         width: width,
                         height: height),
                     ..._buildSection(
-                        title: "Counseling:", width: width, height: height),
+                      title: "Counseling:",
+                      body: model.patientNoteStepState.patientTemplateNote
+                          .counselingTemplate.template.values.first,
+                      width: width,
+                      height: height,
+                    ),
                     ..._buildSection(
-                        title: "Treatment:", width: width, height: height),
+                      title: "Treatment:",
+                      body: model
+                          .patientNoteStepState
+                          .patientTemplateNote
+                          .treatmentRecommendationsTemplate
+                          .template
+                          .values
+                          .first,
+                      width: width,
+                      height: height,
+                    ),
                     ..._buildSection(
                         title: "Further Testing (optional):",
+                        body: model.patientNoteStepState.patientTemplateNote
+                            .furtherTestingTemplate.template.values.first,
                         width: width,
                         height: height),
                     ..._buildSection(
-                        title: "Other:", width: width, height: height),
+                      title: "Other:",
+                      body: "",
+                      width: width,
+                      height: height,
+                    ),
                     ..._buildSection(
-                        title: "Conclusion:", width: width, height: height),
+                      title: "Conclusion:",
+                      body: model.patientNoteStepState.patientTemplateNote
+                          .conclusionTemplate.template.values.first,
+                      width: width,
+                      height: height,
+                    ),
                     SizedBox(height: 16),
                     Expanded(
                       child: ContinueButton(
@@ -71,7 +108,8 @@ class _PatientNoteStepState extends State<PatientNoteStep> {
     );
   }
 
-  List<Widget> _buildSection({String title, double width, double height}) {
+  List<Widget> _buildSection(
+      {String title, String body, double width, double height}) {
     return [
       Row(
         children: [
@@ -91,7 +129,7 @@ class _PatientNoteStepState extends State<PatientNoteStep> {
       ),
       SizedBox(height: 12),
       Text(
-        "Thank you for requesting a consultation and entrusting me with your care. It was a pleasure to review your information and provide recommendations that I hope will help. After reviewing your information and photographs, if feel you acne. As you know, acne is an incredibly common problem with lots of effective treatments. There is no reason to suffer with acne and, worse, potentially develop scaring that can last a lifetime. So I’m really glad you reached out so we can this under control!",
+        body,
         style: Theme.of(context).textTheme.bodyText2,
       ),
       SizedBox(height: 12),

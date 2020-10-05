@@ -1,39 +1,66 @@
 import 'package:Medicall/models/consult-review/patient_note/patient_note_template_model.dart';
 
+enum PatientNoteSection {
+  Introduction,
+  UnderstandingDiagnosis,
+  Counseling,
+  Treatments,
+  FurtherTesting,
+  Conclusion,
+}
+
 class PatientNoteStepState {
-  String patientNote = '';
+  PatientNoteSection currentSection = PatientNoteSection.Introduction;
 
-  Map<String, String> introduction = {};
-  Map<String, String> understandingDiagnosis = {};
-  Map<String, String> counseling = {};
-  Map<String, String> treatments = {};
-  Map<String, String> furtherTesting = {};
-  Map<String, String> closing = {};
+  PatientTemplateNote patientTemplateNote = PatientTemplateNote();
 
-  String getPatientNoteTemplate(String patientName, String providerName,
-      PatientTemplateNote patientTemplateNote) {
-    if (patientNote.length > 0) {
-      return patientNote;
+  //Does intro have a value
+  bool get minimumRequiredFieldsFilledOut {
+    return this
+            .patientTemplateNote
+            .introductionTemplate
+            .template
+            .values
+            .first
+            .length >
+        0;
+  }
+
+  String get title {
+    if (currentSection == PatientNoteSection.Introduction) {
+      return "Introduction";
+    } else if (currentSection == PatientNoteSection.UnderstandingDiagnosis) {
+      return "Understanding The Diagnosis";
+    } else if (currentSection == PatientNoteSection.Counseling) {
+      return "Counseling";
+    } else if (currentSection == PatientNoteSection.Treatments) {
+      return "Treatments";
+    } else if (currentSection == PatientNoteSection.FurtherTesting) {
+      return "Further Testing";
+    } else if (currentSection == PatientNoteSection.Conclusion) {
+      return "Conclusion";
     } else {
-      String note = "Dear $patientName,";
-      note += "\n";
-      note += "\n";
-      note += patientTemplateNote.introductionTemplate.toString();
-      note += "\n";
-      note += patientTemplateNote.introductionTemplate.toString();
-      note += "\n";
-      note += patientTemplateNote.introductionTemplate.toString();
-      note += "\n";
-      note += "\n";
-      note += "Regards,";
-      note += "\n";
-      note += providerName;
-      patientNote = note;
-      return note;
+      return "Error";
     }
   }
 
-  bool get minimumRequiredFieldsFilledOut {
-    return this.patientNote.length > 0;
+  String get body {
+    if (currentSection == PatientNoteSection.Introduction) {
+      return patientTemplateNote.introductionTemplate.template.values.first;
+    } else if (currentSection == PatientNoteSection.UnderstandingDiagnosis) {
+      return patientTemplateNote
+          .understandingDiagnosisTemplate.template.values.first;
+    } else if (currentSection == PatientNoteSection.Counseling) {
+      return patientTemplateNote.counselingTemplate.template.values.first;
+    } else if (currentSection == PatientNoteSection.Treatments) {
+      return patientTemplateNote
+          .treatmentRecommendationsTemplate.template.values.first;
+    } else if (currentSection == PatientNoteSection.FurtherTesting) {
+      return patientTemplateNote.furtherTestingTemplate.template.values.first;
+    } else if (currentSection == PatientNoteSection.Conclusion) {
+      return patientTemplateNote.conclusionTemplate.template.values.first;
+    } else {
+      return "Error";
+    }
   }
 }

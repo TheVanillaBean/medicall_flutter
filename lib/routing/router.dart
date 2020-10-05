@@ -44,11 +44,11 @@ import 'package:Medicall/screens/provider_flow/account/update_provider_info/upda
 import 'package:Medicall/screens/provider_flow/dashboard/provider_dashboard.dart';
 import 'package:Medicall/screens/provider_flow/provider_visits/provider_visits.dart';
 import 'package:Medicall/screens/provider_flow/registration/provider_registration.dart';
-
 import 'package:Medicall/screens/provider_flow/review_medical_history/review_medical_history.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/complete_visit/complete_visit.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/immediate_care/immediate_medical_care.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/prescription_details/prescription_details.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/edit_note_section.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reclassify_visit.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/view_patient_id.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/view_patient_info.dart';
@@ -120,6 +120,7 @@ class Routes {
   static const completeVisit = '/complete-visit';
   static const reclassifyVisit = '/reclassify-visit';
   static const visitReview = '/visit-review';
+  static const editNoteSection = '/edit-note-section';
   static const providerVisits = '/provider-visits';
   static const viewMedicalHistory = '/view-medical-history';
   static const chatScreen = '/chat-screen';
@@ -421,6 +422,16 @@ class Router {
             consult: consult,
             visitReviewData: visitReviewData,
           ),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case Routes.visitDocNote:
+        final Map<String, dynamic> mapArgs = args;
+        final VisitReviewViewModel visitReviewViewModel =
+            mapArgs['visitReviewViewModel'];
+        return MaterialPageRoute<dynamic>(
+          builder: (context) =>
+              EditNoteSection.create(context, visitReviewViewModel),
           settings: settings,
           fullscreenDialog: true,
         );

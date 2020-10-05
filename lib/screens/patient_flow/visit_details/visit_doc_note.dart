@@ -47,7 +47,8 @@ class VisitDocNote extends StatelessWidget {
       body: Container(
         padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
         child: SelectableText(
-          visitReviewData.patientNote,
+          visitReviewData
+              .patientNote.introductionTemplate.template.values.first,
           cursorColor: Theme.of(context).colorScheme.primary,
           strutStyle:
               StrutStyle.fromTextStyle(Theme.of(context).textTheme.bodyText1),

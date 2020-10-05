@@ -4,23 +4,26 @@ import 'package:Medicall/models/consult-review/patient_note/further_testing_temp
 import 'package:Medicall/models/consult-review/patient_note/introduction_template.dart';
 import 'package:Medicall/models/consult-review/patient_note/treatment_recommendations_template.dart';
 import 'package:Medicall/models/consult-review/patient_note/understanding_diagnosis_template.dart';
-import 'package:flutter/foundation.dart';
 
 class PatientTemplateNote {
-  IntroductionTemplate introductionTemplate;
-  UnderstandingDiagnosisTemplate understandingDiagnosisTemplate;
-  CounselingTemplate counselingTemplate;
-  TreatmentRecommendationsTemplate treatmentRecommendationsTemplate;
-  FurtherTestingTemplate furtherTestingTemplate;
-  ConclusionTemplate conclusionTemplate;
+  IntroductionTemplate introductionTemplate = IntroductionTemplate();
+  UnderstandingDiagnosisTemplate understandingDiagnosisTemplate =
+      UnderstandingDiagnosisTemplate();
+  CounselingTemplate counselingTemplate = CounselingTemplate();
+  TreatmentRecommendationsTemplate treatmentRecommendationsTemplate =
+      TreatmentRecommendationsTemplate();
+  FurtherTestingTemplate furtherTestingTemplate = FurtherTestingTemplate();
+  Map<String, String> other = {};
+  ConclusionTemplate conclusionTemplate = ConclusionTemplate();
 
   PatientTemplateNote({
-    @required this.introductionTemplate,
-    @required this.understandingDiagnosisTemplate,
-    @required this.counselingTemplate,
-    @required this.treatmentRecommendationsTemplate,
-    @required this.furtherTestingTemplate,
-    @required this.conclusionTemplate,
+    this.introductionTemplate,
+    this.understandingDiagnosisTemplate,
+    this.counselingTemplate,
+    this.treatmentRecommendationsTemplate,
+    this.furtherTestingTemplate,
+    this.conclusionTemplate,
+    this.other = const {},
   });
 
   factory PatientTemplateNote.fromMap(Map<String, dynamic> data) {
@@ -48,6 +51,8 @@ class PatientTemplateNote {
     ConclusionTemplate conclusionTemplate =
         ConclusionTemplate.fromMap(data['Conclusion']);
 
+    Map<String, String> other = data["Other"] ?? {};
+
     return PatientTemplateNote(
       introductionTemplate: introductionTemplate,
       understandingDiagnosisTemplate: understandingDiagnosisTemplate,
@@ -56,5 +61,18 @@ class PatientTemplateNote {
       furtherTestingTemplate: furtherTestingTemplate,
       conclusionTemplate: conclusionTemplate,
     );
+  }
+
+  Map<String, dynamic> toMap() {
+    dynamic e = <String, dynamic>{
+      'Introduction': introductionTemplate.toMap(),
+      'Understanding_The_Diagnosis': understandingDiagnosisTemplate.toMap(),
+      'Counseling': counselingTemplate.toMap(),
+      'Treatment_Recommendations': treatmentRecommendationsTemplate.toMap(),
+      'Further_Testing': furtherTestingTemplate.toMap(),
+      'Other': other,
+      'Conclusion': conclusionTemplate.toMap(),
+    };
+    return e;
   }
 }

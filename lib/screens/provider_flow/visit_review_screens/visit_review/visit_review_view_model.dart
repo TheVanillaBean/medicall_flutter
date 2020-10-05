@@ -1,5 +1,6 @@
 import 'package:Medicall/models/consult-review/consult_review_options_model.dart';
 import 'package:Medicall/models/consult-review/diagnosis_options_model.dart';
+import 'package:Medicall/models/consult-review/patient_note/patient_note_template_model.dart';
 import 'package:Medicall/models/consult-review/treatment_options.dart';
 import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:Medicall/models/consult_model.dart';
@@ -46,7 +47,7 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
   VisitReviewData visitReviewData;
   VisitReviewStatus visitReviewStatus;
 
-  int currentStep = VisitReviewSteps.PatientNote;
+  int currentStep = VisitReviewSteps.DiagnosisStep;
 
   List<int> completedSteps = [];
 
@@ -194,7 +195,8 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
     }).toList();
 
     this.visitReviewData.followUp = this.followUpStepState.followUpMap;
-    this.visitReviewData.patientNote = this.patientNoteStepState.patientNote;
+    this.visitReviewData.patientNote =
+        this.patientNoteStepState.patientTemplateNote;
     await firestoreDatabase.saveVisitReview(
         consultId: this.consult.uid, visitReviewData: this.visitReviewData);
 
@@ -299,6 +301,8 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
           await firestoreDatabase.consultReviewDiagnosisOptions(
               symptomName: symptom,
               diagnosis: this.diagnosisStepState.diagnosis);
+      this.updatePatientNoteStepWith(
+          patientTemplateNote: diagnosisOptions.patientNoteTemplate);
     } else {
       this.diagnosisOptions = null;
     }
@@ -580,16 +584,136 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
   /////PATIENT NOTE////
 
   void updatePatientNoteStepWith({
-    String patientNote,
+    PatientTemplateNote patientTemplateNote,
+    Map<String, String> introduction,
+    Map<String, String> understandingDiagnosis,
+    Map<String, String> counseling,
+    Map<String, String> treatments,
+    Map<String, String> furtherTesting,
+    Map<String, String> other,
+    Map<String, String> conclusion,
   }) {
-    this.patientNoteStepState.patientNote =
-        patientNote ?? this.patientNoteStepState.patientNote;
+    this.patientNoteStepState.patientTemplateNote =
+        patientTemplateNote ?? this.patientNoteStepState.patientTemplateNote;
+
+    this
+            .patientNoteStepState
+            .patientTemplateNote
+            .introductionTemplate
+            .template =
+        introduction ??
+            this
+                .patientNoteStepState
+                .patientTemplateNote
+                .introductionTemplate
+                .template;
+
+    this
+            .patientNoteStepState
+            .patientTemplateNote
+            .understandingDiagnosisTemplate
+            .template =
+        understandingDiagnosis ??
+            this
+                .patientNoteStepState
+                .patientTemplateNote
+                .understandingDiagnosisTemplate
+                .template;
+
+    this.patientNoteStepState.patientTemplateNote.counselingTemplate.template =
+        counseling ??
+            this
+                .patientNoteStepState
+                .patientTemplateNote
+                .counselingTemplate
+                .template;
+
+    this
+            .patientNoteStepState
+            .patientTemplateNote
+            .treatmentRecommendationsTemplate
+            .template =
+        treatments ??
+            this
+                .patientNoteStepState
+                .patientTemplateNote
+                .treatmentRecommendationsTemplate
+                .template;
+
+    this
+            .patientNoteStepState
+            .patientTemplateNote
+            .furtherTestingTemplate
+            .template =
+        furtherTesting ??
+            this
+                .patientNoteStepState
+                .patientTemplateNote
+                .furtherTestingTemplate
+                .template;
+
+    this.patientNoteStepState.patientTemplateNote.other =
+        other ?? this.patientNoteStepState.patientTemplateNote.other;
+
+    this.patientNoteStepState.patientTemplateNote.conclusionTemplate.template =
+        conclusion ??
+            this
+                .patientNoteStepState
+                .patientTemplateNote
+                .conclusionTemplate
+                .template;
+
     notifyListeners(VisitReviewVMProperties.patientNote);
   }
 
   void setPatientNoteFromPrevData() {
-    if (this.visitReviewData.patientNote.length > 0) {
-      updatePatientNoteStepWith(patientNote: this.visitReviewData.patientNote);
+    if (visitReviewData.patientNote != null) {
+      if (visitReviewData.patientNote.introductionTemplate.template.length >
+          0) {
+        this.updatePatientNoteStepWith(
+            introduction:
+                visitReviewData.patientNote.introductionTemplate.template);
+      }
+
+      if (visitReviewData
+              .patientNote.understandingDiagnosisTemplate.template.length >
+          0) {
+        this.updatePatientNoteStepWith(
+            understandingDiagnosis: visitReviewData
+                .patientNote.understandingDiagnosisTemplate.template);
+      }
+
+      if (visitReviewData.patientNote.counselingTemplate.template.length > 0) {
+        this.updatePatientNoteStepWith(
+            counseling:
+                visitReviewData.patientNote.counselingTemplate.template);
+      }
+
+      if (visitReviewData
+              .patientNote.treatmentRecommendationsTemplate.template.length >
+          0) {
+        this.updatePatientNoteStepWith(
+            treatments: visitReviewData
+                .patientNote.treatmentRecommendationsTemplate.template);
+      }
+
+      if (visitReviewData.patientNote.furtherTestingTemplate.template.length >
+          0) {
+        this.updatePatientNoteStepWith(
+            furtherTesting:
+                visitReviewData.patientNote.furtherTestingTemplate.template);
+      }
+
+      if (visitReviewData.patientNote.other.length > 0) {
+        this.updatePatientNoteStepWith(
+            other: visitReviewData.patientNote.other);
+      }
+
+      if (visitReviewData.patientNote.conclusionTemplate.template.length > 0) {
+        this.updatePatientNoteStepWith(
+            conclusion:
+                visitReviewData.patientNote.conclusionTemplate.template);
+      }
     }
   }
 

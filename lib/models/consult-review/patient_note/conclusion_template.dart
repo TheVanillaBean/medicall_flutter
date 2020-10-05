@@ -1,10 +1,8 @@
-import 'package:flutter/foundation.dart';
-
 class ConclusionTemplate {
   Map<String, String> template;
 
   ConclusionTemplate({
-    @required this.template,
+    this.template = const {},
   });
 
   factory ConclusionTemplate.fromMap(String data) {
@@ -18,5 +16,12 @@ class ConclusionTemplate {
     return ConclusionTemplate(
       template: template,
     );
+  }
+
+  Map<String, dynamic> toMap() {
+    dynamic e = <String, dynamic>{
+      'template': template,
+    };
+    return e;
   }
 }
