@@ -192,6 +192,9 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
           UpdatePhotoID.show(context: context, user: user);
         },
       ),
+      onTap: () {
+        UpdatePhotoID.show(context: context, user: user);
+      },
     );
   }
 
@@ -247,14 +250,15 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
           ? medicallUser.phoneNumber
           : '(xxx)xxx-xxxx',
       trailing: IconButton(
-          icon: Icon(Icons.create, size: 20),
-          onPressed: () {
-            model.patientProfileInputType = PatientProfileInputType.PHONE;
-            UpdatePatientInfoScreen.show(
-              context: context,
-              model: model,
-            );
-          }),
+        icon: Icon(Icons.create, size: 20),
+        onPressed: () {
+          model.patientProfileInputType = PatientProfileInputType.PHONE;
+          UpdatePatientInfoScreen.show(
+            context: context,
+            model: model,
+          );
+        },
+      ),
     );
   }
 
