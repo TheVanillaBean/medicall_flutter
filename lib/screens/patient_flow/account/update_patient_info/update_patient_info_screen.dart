@@ -13,7 +13,10 @@ class UpdatePatientInfoScreen extends StatefulWidget {
     @required this.model,
   });
 
-  static Widget create(BuildContext context, UpdatePatientInfoViewModel model) {
+  static Widget create(
+    BuildContext context,
+    UpdatePatientInfoViewModel model,
+  ) {
     return ChangeNotifierProvider.value(
       value: model,
       child: Consumer<UpdatePatientInfoViewModel>(
@@ -60,9 +63,7 @@ class _UpdatePatientInfoScreenState extends State<UpdatePatientInfoScreen> {
               onTap: () {
                 FocusScope.of(context).requestFocus(new FocusNode());
               },
-              child: UpdatePatientInfoForm(
-                model: widget.model,
-              ),
+              child: UpdatePatientInfoForm(),
             ),
           ),
         ),

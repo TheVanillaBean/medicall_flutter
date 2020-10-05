@@ -119,21 +119,21 @@ class UpdatePatientInfoViewModel
 
   bool get canSubmit {
     if (this.patientProfileInputType == PatientProfileInputType.PHONE) {
-      return phoneNumberEmptyValidator.isValid(phoneNumber) && !isLoading;
+      return phoneNumberLengthValidator.isValid(phoneNumber) && submitted;
     } else if (this.patientProfileInputType ==
         PatientProfileInputType.ADDRESS) {
       return mailingAddressValidator.isValid(billingAddress) &&
           cityValidator.isValid(city) &&
           stateValidator.isValid(state) &&
           zipCodeValidator.isValid(zipCode) &&
-          !isLoading;
+          submitted;
     }
     return false;
   }
 
   String get phoneNumberErrorText {
     bool showErrorText =
-        submitted && !phoneNumberEmptyValidator.isValid(phoneNumber);
+        submitted && !phoneNumberLengthValidator.isValid(phoneNumber);
     return showErrorText ? phoneErrorText : null;
   }
 
@@ -174,10 +174,7 @@ class UpdatePatientInfoViewModel
       throw "Please correct the errors below...";
     }
 
-    updateWith(isLoading: true);
-
     PatientUser medicallUser = userProvider.user;
-    //set user uid
     if (this.patientProfileInputType == PatientProfileInputType.PHONE) {
       medicallUser.phoneNumber = this.phoneNumber;
     } else if (this.patientProfileInputType ==
@@ -188,6 +185,14 @@ class UpdatePatientInfoViewModel
       medicallUser.mailingState = this.state;
       medicallUser.mailingZipCode = this.zipCode;
     }
+    await updateUserDetails(medicallUser);
+
+    updateWith(submitted: false);
+  }
+
+  Future<void> updateUserDetails(PatientUser user) async {
+    await firestoreDatabase.setUser(user);
+    userProvider.user = user;
   }
 
   void updateWith({

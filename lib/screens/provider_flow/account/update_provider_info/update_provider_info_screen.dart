@@ -63,9 +63,7 @@ class _UpdateProviderInfoScreenState extends State<UpdateProviderInfoScreen> {
               onTap: () {
                 FocusScope.of(context).requestFocus(new FocusNode());
               },
-              child: UpdateProviderInfoForm(
-                model: widget.model,
-              ),
+              child: UpdateProviderInfoForm(),
             ),
           ),
         ),

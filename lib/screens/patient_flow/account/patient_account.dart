@@ -249,7 +249,7 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
       trailing: IconButton(
           icon: Icon(Icons.create, size: 20),
           onPressed: () {
-            //model.patientProfileInputType = PatientProfileInputType.PHONE;
+            model.patientProfileInputType = PatientProfileInputType.PHONE;
             UpdatePatientInfoScreen.show(
               context: context,
               model: model,

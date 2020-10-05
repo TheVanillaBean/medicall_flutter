@@ -61,32 +61,30 @@ class UpdateProviderInfoViewModel extends ProviderProfileViewModelBase {
 
   bool get canSubmit {
     if (this.profileInputType == ProfileInputType.PHONE) {
-      return mobilePhoneValidator.isValid(phoneNumber) && !isLoading;
+      return mobilePhoneValidator.isValid(phoneNumber) && submitted;
     } else if (this.profileInputType == ProfileInputType.ADDRESS) {
       return mailingAddressValidator.isValid(mailingAddress) &&
           cityValidator.isValid(mailingCity) &&
           stateValidator.isValid(mailingState) &&
           zipCodeValidator.isValid(mailingZipCode) &&
-          !isLoading;
+          submitted;
     } else if (this.profileInputType == ProfileInputType.PROFESSIONAL_TITLE) {
-      return professionalTitleValidator.isValid(professionalTitle) &&
-          !isLoading;
+      return professionalTitleValidator.isValid(professionalTitle) && submitted;
     } else if (this.profileInputType == ProfileInputType.MEDICAL_LICENSE) {
-      return medicalLicenseValidator.isValid(medLicense) && !isLoading;
+      return medicalLicenseValidator.isValid(medLicense) && submitted;
     } else if (this.profileInputType ==
         ProfileInputType.MEDICAL_LICENSE_STATE) {
-      return medicalLicenseStateValidator.isValid(medLicenseState) &&
-          !isLoading;
+      return medicalLicenseStateValidator.isValid(medLicenseState) && submitted;
     } else if (this.profileInputType == ProfileInputType.NPI) {
-      return npiValidator.isValid(npi) && !isLoading;
+      return npiValidator.isValid(npi) && submitted;
     } else if (this.profileInputType == ProfileInputType.BOARD_CERTIFIED) {
-      return boardCertificationValidator.isValid(boardCertified) && !isLoading;
+      return boardCertificationValidator.isValid(boardCertified) && submitted;
     } else if (this.profileInputType == ProfileInputType.MEDICAL_SCHOOL) {
-      return medicalSchoolValidator.isValid(medSchool) && !isLoading;
+      return medicalSchoolValidator.isValid(medSchool) && submitted;
     } else if (this.profileInputType == ProfileInputType.MEDICAL_RESIDENCY) {
-      return medicalResidencyValidator.isValid(medResidency) && !isLoading;
+      return medicalResidencyValidator.isValid(medResidency) && submitted;
     } else if (this.profileInputType == ProfileInputType.BIO) {
-      return providerBioValidator.isValid(providerBio) && !isLoading;
+      return providerBioValidator.isValid(providerBio) && submitted;
     }
     return false;
   }

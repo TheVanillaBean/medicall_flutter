@@ -5,6 +5,7 @@ import 'package:Medicall/screens/patient_flow/personal_info/personal_info_text_f
 import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:provider/provider.dart';
 
 enum PatientProfileInputType {
   PHONE,
@@ -12,17 +13,11 @@ enum PatientProfileInputType {
 }
 
 class UpdatePatientInfoForm extends StatefulWidget {
-  final UpdatePatientInfoViewModel model;
-
-  const UpdatePatientInfoForm({@required this.model});
-
   @override
   _UpdatePatientInfoFormState createState() => _UpdatePatientInfoFormState();
 }
 
 class _UpdatePatientInfoFormState extends State<UpdatePatientInfoForm> {
-  UpdatePatientInfoViewModel get model => widget.model;
-
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   MaskTextInputFormatter phoneTextInputFormatter = MaskTextInputFormatter(
@@ -47,6 +42,11 @@ class _UpdatePatientInfoFormState extends State<UpdatePatientInfoForm> {
 
   @override
   Widget build(BuildContext context) {
+    UpdatePatientInfoViewModel model = Provider.of<UpdatePatientInfoViewModel>(
+      context,
+      listen: false,
+    );
+
     if (model.patientProfileInputType == PatientProfileInputType.PHONE) {
       return Form(
           key: _formKey,
@@ -60,6 +60,7 @@ class _UpdatePatientInfoFormState extends State<UpdatePatientInfoForm> {
                 errorText: model.phoneNumberErrorText,
                 onChanged: model.updatePhoneNumber,
               ),
+              SizedBox(height: 30),
               ReusableRaisedButton(
                 title: 'Save',
                 onPressed: !model.isLoading

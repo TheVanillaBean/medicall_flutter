@@ -214,6 +214,7 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
         icon: Icon(Icons.create, size: 20),
         onPressed: () {
           model.profileInputType = ProfileInputType.PHONE;
+          model.phoneNumber = model.userProvider.user.phoneNumber;
           UpdateProviderInfoScreen.show(
             context: context,
             model: model,

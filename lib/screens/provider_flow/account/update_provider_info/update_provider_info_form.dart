@@ -8,6 +8,7 @@ import 'package:Medicall/screens/provider_flow/registration/provider_profile_vie
 import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:provider/provider.dart';
 
 enum ProfileInputType {
   PHONE,
@@ -23,18 +24,12 @@ enum ProfileInputType {
 }
 
 class UpdateProviderInfoForm extends StatefulWidget {
-  final UpdateProviderInfoViewModel model;
-
-  const UpdateProviderInfoForm({@required this.model});
-
   @override
   _UpdateProviderInfoFormState createState() => _UpdateProviderInfoFormState();
 }
 
 class _UpdateProviderInfoFormState extends State<UpdateProviderInfoForm>
     with VerificationStatus {
-  UpdateProviderInfoViewModel get model => widget.model;
-
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   MaskTextInputFormatter phoneTextInputFormatter = MaskTextInputFormatter(
@@ -57,6 +52,12 @@ class _UpdateProviderInfoFormState extends State<UpdateProviderInfoForm>
 
   @override
   Widget build(BuildContext context) {
+    UpdateProviderInfoViewModel model =
+        Provider.of<UpdateProviderInfoViewModel>(
+      context,
+      listen: false,
+    );
+
     model.setVerificationStatus(this);
 
     if (model.profileInputType == ProfileInputType.ADDRESS) {
@@ -73,7 +74,7 @@ class _UpdateProviderInfoFormState extends State<UpdateProviderInfoForm>
             ProviderCustomTextField(
               labelText: 'Apartment, building, suite (optional)',
               hint: 'BLDG E, APT 2',
-              //errorText: model.practiceAddressErrorText,
+              errorText: model.practiceAddressErrorText,
               onChanged: model.updateMailingAddressLine2,
             ),
             ProviderCustomTextField(
