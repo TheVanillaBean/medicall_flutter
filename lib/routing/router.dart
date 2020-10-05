@@ -425,7 +425,7 @@ class Router {
           settings: settings,
           fullscreenDialog: true,
         );
-      case Routes.visitDocNote:
+      case Routes.editNoteSection:
         final Map<String, dynamic> mapArgs = args;
         final VisitReviewViewModel visitReviewViewModel =
             mapArgs['visitReviewViewModel'];

@@ -4,7 +4,6 @@ import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review
 import 'package:flutter/material.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
-import 'package:provider/provider.dart';
 
 class EditNoteSection extends StatelessWidget {
   static Widget create(
@@ -13,9 +12,7 @@ class EditNoteSection extends StatelessWidget {
   ) {
     return PropertyChangeProvider(
       value: visitReviewViewModel,
-      child: Consumer<VisitReviewViewModel>(
-        builder: (_, model, __) => EditNoteSection(),
-      ),
+      child: EditNoteSection(),
     );
   }
 
@@ -38,6 +35,7 @@ class EditNoteSection extends StatelessWidget {
       context,
       properties: [VisitReviewVMProperties.patientNote],
     ).value;
+
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
@@ -72,9 +70,9 @@ class EditNoteSection extends StatelessWidget {
                   ),
                   SizedBox(height: 12),
                   Container(
-                    width: width * .35,
+                    width: width * .5,
                     child: SizedBox(
-                      height: 30,
+                      height: 40,
                       child: RaisedButton(
                         elevation: 0,
                         color: Theme.of(context).colorScheme.primary,

@@ -27,16 +27,16 @@ class PatientNoteStepState {
         0;
   }
 
-  void setCurrentStep(String title) {
-    if (title == "Introduction") {
+  void setCurrentSection(String title) {
+    if (title == "Introduction:") {
       currentSection = PatientNoteSection.Introduction;
-    } else if (title == "Understanding_The_Diagnosis") {
+    } else if (title == "Understanding the diagnosis:") {
       currentSection = PatientNoteSection.UnderstandingDiagnosis;
-    } else if (title == "Counseling") {
+    } else if (title == "Counseling:") {
       currentSection = PatientNoteSection.Counseling;
-    } else if (title == "Treatment_Recommendations") {
+    } else if (title == "Treatments:") {
       currentSection = PatientNoteSection.Treatments;
-    } else if (title == "Further_Testing") {
+    } else if (title == "Further Testing (optional):") {
       currentSection = PatientNoteSection.FurtherTesting;
     } else if (title == "Conclusion") {
       currentSection = PatientNoteSection.Conclusion;

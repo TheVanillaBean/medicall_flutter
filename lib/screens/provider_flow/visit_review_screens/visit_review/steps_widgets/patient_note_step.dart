@@ -1,3 +1,4 @@
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/edit_note_section.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/continue_button.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/empty_diagnosis_widget.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/swipe_gesture_recognizer.dart';
@@ -69,7 +70,7 @@ class _PatientNoteStepState extends State<PatientNoteStep> {
                         model: model,
                       ),
                       ..._buildSection(
-                        title: "Treatment:",
+                        title: "Treatments:",
                         body: model
                             .patientNoteStepState
                             .patientTemplateNote
@@ -121,12 +122,13 @@ class _PatientNoteStepState extends State<PatientNoteStep> {
     return EmptyDiagnosis(model: model);
   }
 
-  List<Widget> _buildSection(
-      {String title,
-      String body,
-      double width,
-      double height,
-      VisitReviewViewModel model}) {
+  List<Widget> _buildSection({
+    String title,
+    String body,
+    double width,
+    double height,
+    VisitReviewViewModel model,
+  }) {
     return [
       Row(
         children: [
@@ -151,12 +153,22 @@ class _PatientNoteStepState extends State<PatientNoteStep> {
       ),
       SizedBox(height: 12),
       _buildSectionBtn(
-          width: width, height: height, title: "Edit Section", model: model),
+        width: width,
+        height: height,
+        title: "Edit Section",
+        section: title,
+        model: model,
+      ),
     ];
   }
 
-  Widget _buildSectionBtn(
-      {double width, double height, String title, VisitReviewViewModel model}) {
+  Widget _buildSectionBtn({
+    double width,
+    double height,
+    String title,
+    String section,
+    VisitReviewViewModel model,
+  }) {
     return Container(
       width: width * .35,
       child: SizedBox(
@@ -178,7 +190,13 @@ class _PatientNoteStepState extends State<PatientNoteStep> {
             ),
             side: BorderSide(color: Theme.of(context).colorScheme.primary),
           ),
-          onPressed: () {},
+          onPressed: () {
+            model.patientNoteStepState.setCurrentSection(section);
+            EditNoteSection.show(
+              context: context,
+              visitReviewViewModel: model,
+            );
+          },
         ),
       ),
     );
