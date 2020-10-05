@@ -36,9 +36,9 @@ class UpdateProviderInfoViewModel extends ProviderProfileViewModelBase {
 
   UpdateProviderInfoViewModel({
     @required this.auth,
-    @required this.profileInputType,
     @required this.firestoreDatabase,
     @required this.userProvider,
+    this.profileInputType = ProfileInputType.PHONE,
     this.phoneNumber = '',
     this.dob,
     this.mailingAddress = '',
@@ -97,7 +97,6 @@ class UpdateProviderInfoViewModel extends ProviderProfileViewModelBase {
       throw "Please correct the errors below...";
     }
     ProviderUser user = userProvider.user;
-    //set user uid
     if (this.profileInputType == ProfileInputType.PHONE) {
       user.phoneNumber = this.phoneNumber;
     } else if (this.profileInputType == ProfileInputType.ADDRESS) {
@@ -106,9 +105,28 @@ class UpdateProviderInfoViewModel extends ProviderProfileViewModelBase {
       user.mailingCity = this.mailingCity;
       user.mailingState = this.mailingState;
       user.mailingZipCode = this.mailingZipCode;
+    } else if (this.profileInputType == ProfileInputType.PROFESSIONAL_TITLE) {
+      user.professionalTitle = this.professionalTitle;
+    } else if (this.profileInputType == ProfileInputType.MEDICAL_LICENSE) {
+      user.medLicense = this.medLicense;
+    } else if (this.profileInputType ==
+        ProfileInputType.MEDICAL_LICENSE_STATE) {
+      user.medLicenseState = this.medLicenseState;
+    } else if (this.profileInputType == ProfileInputType.NPI) {
+      user.npi = this.npi;
+    } else if (this.profileInputType == ProfileInputType.BOARD_CERTIFIED) {
+      user.boardCertified = this.boardCertified;
+    } else if (this.profileInputType == ProfileInputType.MEDICAL_SCHOOL) {
+      user.medSchool = this.medSchool;
+    } else if (this.profileInputType == ProfileInputType.MEDICAL_RESIDENCY) {
+      user.medResidency = this.medResidency;
+    } else if (this.profileInputType == ProfileInputType.BIO) {
+      user.providerBio = this.providerBio;
     }
 
     await updateUserDetails(user);
+
+    updateWith(submitted: false);
   }
 
   Future<void> updateUserDetails(ProviderUser user) async {

@@ -8,7 +8,6 @@ import 'package:Medicall/screens/provider_flow/registration/provider_profile_vie
 import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:provider/provider.dart';
 
 enum ProfileInputType {
   PHONE,
@@ -24,9 +23,9 @@ enum ProfileInputType {
 }
 
 class UpdateProviderInfoForm extends StatefulWidget {
-  final ProfileInputType inputType;
+  final UpdateProviderInfoViewModel model;
 
-  const UpdateProviderInfoForm({@required this.inputType});
+  const UpdateProviderInfoForm({@required this.model});
 
   @override
   _UpdateProviderInfoFormState createState() => _UpdateProviderInfoFormState();
@@ -34,6 +33,8 @@ class UpdateProviderInfoForm extends StatefulWidget {
 
 class _UpdateProviderInfoFormState extends State<UpdateProviderInfoForm>
     with VerificationStatus {
+  UpdateProviderInfoViewModel get model => widget.model;
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   MaskTextInputFormatter phoneTextInputFormatter = MaskTextInputFormatter(
@@ -54,70 +55,13 @@ class _UpdateProviderInfoFormState extends State<UpdateProviderInfoForm>
     }
   }
 
-  Function updateFunction(UpdateProviderInfoViewModel model) {
-    if (widget.inputType == ProfileInputType.PHONE) {
-      return model.updatePhoneNumber;
-    } else if (widget.inputType == ProfileInputType.ADDRESS) {
-      return model.updateMailingAddress;
-    } else if (widget.inputType == ProfileInputType.PROFESSIONAL_TITLE) {
-      return model.updateProfessionalTitle;
-    } else if (widget.inputType == ProfileInputType.MEDICAL_LICENSE) {
-      return model.updateMedLicense;
-    } else if (widget.inputType == ProfileInputType.MEDICAL_LICENSE_STATE) {
-      return model.updateMedLicenseState;
-    } else if (widget.inputType == ProfileInputType.NPI) {
-      return model.updateNpi;
-    } else if (widget.inputType == ProfileInputType.BOARD_CERTIFIED) {
-      return model.updateBoardCertified;
-    } else if (widget.inputType == ProfileInputType.MEDICAL_SCHOOL) {
-      return model.updateMedSchool;
-    } else if (widget.inputType == ProfileInputType.MEDICAL_RESIDENCY) {
-      return model.updateMedResidency;
-    } else if (widget.inputType == ProfileInputType.PROFESSIONAL_TITLE) {
-      return model.updateProfessionalTitle;
-    } else if (widget.inputType == ProfileInputType.PROFESSIONAL_TITLE) {
-      return model.updateProfessionalTitle;
-    } else if (widget.inputType == ProfileInputType.NPI) {
-      return model.updateNpi;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final UpdateProviderInfoViewModel model =
-        Provider.of<UpdateProviderInfoViewModel>(context);
     model.setVerificationStatus(this);
 
-    String title = "";
-    String hint = "";
-
-    if (widget.inputType == ProfileInputType.PHONE) {
-      title = "Mobile Phone";
-      hint = "(123)456-7890";
-    } else if (widget.inputType == ProfileInputType.ADDRESS) {
-      title = "Address";
-    } else if (widget.inputType == ProfileInputType.PROFESSIONAL_TITLE) {
-      title = "Professional Title";
-    } else if (widget.inputType == ProfileInputType.MEDICAL_LICENSE) {
-      title = "Medical License Number";
-    } else if (widget.inputType == ProfileInputType.MEDICAL_LICENSE_STATE) {
-      title = "Medical License State";
-    } else if (widget.inputType == ProfileInputType.NPI) {
-      title = "NPI Number";
-    } else if (widget.inputType == ProfileInputType.BOARD_CERTIFIED) {
-      title = "Board Certification";
-    } else if (widget.inputType == ProfileInputType.MEDICAL_SCHOOL) {
-      title = "Medical School";
-    } else if (widget.inputType == ProfileInputType.MEDICAL_RESIDENCY) {
-      title = "Medical Residency";
-    } else if (widget.inputType == ProfileInputType.BIO) {
-      title = "Bio";
-    }
-
-    if (widget.inputType == ProfileInputType.ADDRESS) {
+    if (model.profileInputType == ProfileInputType.ADDRESS) {
       return Form(
         key: _formKey,
-        autovalidate: false,
         child: Column(
           children: [
             ProviderCustomTextField(
@@ -172,10 +116,9 @@ class _UpdateProviderInfoFormState extends State<UpdateProviderInfoForm>
           ],
         ),
       );
-    } else if (widget.inputType == ProfileInputType.PHONE) {
+    } else if (model.profileInputType == ProfileInputType.PHONE) {
       return Form(
         key: _formKey,
-        autovalidate: false,
         child: Column(
           children: [
             ProviderCustomTextField(
@@ -203,10 +146,9 @@ class _UpdateProviderInfoFormState extends State<UpdateProviderInfoForm>
           ],
         ),
       );
-    } else if (widget.inputType == ProfileInputType.PROFESSIONAL_TITLE) {
+    } else if (model.profileInputType == ProfileInputType.PROFESSIONAL_TITLE) {
       return Form(
         key: _formKey,
-        autovalidate: false,
         child: Column(
           children: [
             CustomDropdownFormField(
@@ -234,10 +176,9 @@ class _UpdateProviderInfoFormState extends State<UpdateProviderInfoForm>
           ],
         ),
       );
-    } else if (widget.inputType == ProfileInputType.MEDICAL_LICENSE) {
+    } else if (model.profileInputType == ProfileInputType.MEDICAL_LICENSE) {
       return Form(
         key: _formKey,
-        autovalidate: false,
         child: Column(
           children: [
             ProviderCustomTextField(
@@ -265,10 +206,10 @@ class _UpdateProviderInfoFormState extends State<UpdateProviderInfoForm>
           ],
         ),
       );
-    } else if (widget.inputType == ProfileInputType.MEDICAL_LICENSE_STATE) {
+    } else if (model.profileInputType ==
+        ProfileInputType.MEDICAL_LICENSE_STATE) {
       return Form(
         key: _formKey,
-        autovalidate: false,
         child: Column(
           children: [
             CustomDropdownFormField(
@@ -297,7 +238,7 @@ class _UpdateProviderInfoFormState extends State<UpdateProviderInfoForm>
           ],
         ),
       );
-    } else if (widget.inputType == ProfileInputType.NPI) {
+    } else if (model.profileInputType == ProfileInputType.NPI) {
       return Form(
         key: _formKey,
         autovalidate: false,
@@ -329,10 +270,9 @@ class _UpdateProviderInfoFormState extends State<UpdateProviderInfoForm>
           ],
         ),
       );
-    } else if (widget.inputType == ProfileInputType.BOARD_CERTIFIED) {
+    } else if (model.profileInputType == ProfileInputType.BOARD_CERTIFIED) {
       return Form(
         key: _formKey,
-        autovalidate: false,
         child: Column(
           children: [
             CustomDropdownFormField(
@@ -361,10 +301,9 @@ class _UpdateProviderInfoFormState extends State<UpdateProviderInfoForm>
           ],
         ),
       );
-    } else if (widget.inputType == ProfileInputType.MEDICAL_SCHOOL) {
+    } else if (model.profileInputType == ProfileInputType.MEDICAL_SCHOOL) {
       return Form(
         key: _formKey,
-        autovalidate: false,
         child: Column(
           children: [
             ProviderBioTextField(
@@ -395,10 +334,9 @@ class _UpdateProviderInfoFormState extends State<UpdateProviderInfoForm>
           ],
         ),
       );
-    } else if (widget.inputType == ProfileInputType.MEDICAL_RESIDENCY) {
+    } else if (model.profileInputType == ProfileInputType.MEDICAL_RESIDENCY) {
       return Form(
         key: _formKey,
-        autovalidate: false,
         child: Column(
           children: [
             ProviderBioTextField(
@@ -430,10 +368,9 @@ class _UpdateProviderInfoFormState extends State<UpdateProviderInfoForm>
           ],
         ),
       );
-    } else if (widget.inputType == ProfileInputType.BIO) {
+    } else if (model.profileInputType == ProfileInputType.BIO) {
       return Form(
         key: _formKey,
-        autovalidate: false,
         child: Column(
           children: [
             ProviderBioTextField(
@@ -477,7 +414,6 @@ class _UpdateProviderInfoFormState extends State<UpdateProviderInfoForm>
     } else {
       return Form(
         key: _formKey,
-        autovalidate: false,
         child: Column(
           children: [
             ProviderBioTextField(

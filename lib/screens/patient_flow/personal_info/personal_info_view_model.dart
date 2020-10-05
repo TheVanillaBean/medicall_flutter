@@ -1,6 +1,7 @@
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/user/patient_user_model.dart';
 import 'package:Medicall/screens/PhoneAuth/phone_auth_state_model.dart';
+import 'package:Medicall/screens/patient_flow/registration/registration_view_model.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/firebase_storage_service.dart';
 import 'package:Medicall/services/user_provider.dart';
@@ -37,6 +38,7 @@ class PersonalInfoViewModel
   bool submitted;
   bool checkValue;
   PersonalFormStatus personalFormStatus;
+  VerificationStatus verificationStatus;
 
   final RoundedLoadingButtonController btnController =
       RoundedLoadingButtonController();
@@ -125,6 +127,10 @@ class PersonalInfoViewModel
     this.checkValue,
     this.profileImage = const [],
   });
+
+  void setVerificationStatus(VerificationStatus verificationStatus) {
+    this.verificationStatus = verificationStatus;
+  }
 
   bool get canSubmit {
     return firstNameValidator.isValid(firstName) &&

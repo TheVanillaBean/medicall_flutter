@@ -6,6 +6,8 @@ import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/provider_flow/account/update_provider_info/update_provider_info_form.dart';
 import 'package:Medicall/screens/provider_flow/account/update_provider_info/update_provider_info_screen.dart';
+import 'package:Medicall/screens/provider_flow/account/update_provider_info/update_provider_info_view_model.dart';
+import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/firebase_storage_service.dart';
@@ -18,6 +20,31 @@ import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:provider/provider.dart';
 
 class ProviderAccountScreen extends StatefulWidget {
+  final UpdateProviderInfoViewModel model;
+
+  const ProviderAccountScreen({Key key, this.model}) : super(key: key);
+
+  static Widget create(BuildContext context) {
+    final AuthBase auth = Provider.of<AuthBase>(context, listen: false);
+    final FirestoreDatabase firestoreDatabase =
+        Provider.of<FirestoreDatabase>(context, listen: false);
+    UserProvider userProvider =
+        Provider.of<UserProvider>(context, listen: false);
+
+    return ChangeNotifierProvider<UpdateProviderInfoViewModel>(
+      create: (context) => UpdateProviderInfoViewModel(
+        auth: auth,
+        firestoreDatabase: firestoreDatabase,
+        userProvider: userProvider,
+      ),
+      child: Consumer<UpdateProviderInfoViewModel>(
+        builder: (_, model, __) => ProviderAccountScreen(
+          model: model,
+        ),
+      ),
+    );
+  }
+
   static Future<void> show({
     BuildContext context,
   }) async {
@@ -34,21 +61,18 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
   String profileImageURL = "";
   bool imageLoading = false;
 
+  UpdateProviderInfoViewModel get model => widget.model;
+
   @override
   Widget build(BuildContext context) {
-    UserProvider _userProvider =
-        Provider.of<UserProvider>(context, listen: false);
-    FirestoreDatabase _firestoreDB =
-        Provider.of<FirestoreDatabase>(context, listen: false);
-
     ExtImageProvider _extImageProvider =
         Provider.of<ExtImageProvider>(context, listen: false);
     FirebaseStorageService _storageService =
         Provider.of<FirebaseStorageService>(context, listen: false);
 
-    final ProviderUser medicallUser = _userProvider.user;
+    final ProviderUser medicallUser = model.userProvider.user;
 
-    this.profileImageURL = _userProvider.user.profilePic;
+    this.profileImageURL = model.userProvider.user.profilePic;
 
     return Scaffold(
       appBar: AppBar(
@@ -77,8 +101,8 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
           medicallUser: medicallUser,
           storageService: _storageService,
           extImageProvider: _extImageProvider,
-          userProvider: _userProvider,
-          firestoreDatabase: _firestoreDB,
+          userProvider: model.userProvider,
+          firestoreDatabase: model.firestoreDatabase,
           context: context,
         ),
       ),
@@ -189,8 +213,11 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
       trailing: IconButton(
         icon: Icon(Icons.create, size: 20),
         onPressed: () {
+          model.profileInputType = ProfileInputType.PHONE;
           UpdateProviderInfoScreen.show(
-              context: context, inputType: ProfileInputType.PHONE);
+            context: context,
+            model: model,
+          );
         },
       ),
     );
@@ -204,8 +231,13 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
           : '${medicallUser.mailingAddress} \n${medicallUser.mailingAddressLine2} \n${medicallUser.mailingCity}, ${medicallUser.mailingState} ${medicallUser.mailingZipCode}',
       trailing: IconButton(
         icon: Icon(Icons.create, size: 20),
-        onPressed: () => UpdateProviderInfoScreen.show(
-            context: context, inputType: ProfileInputType.ADDRESS),
+        onPressed: () {
+          model.profileInputType = ProfileInputType.ADDRESS;
+          UpdateProviderInfoScreen.show(
+            context: context,
+            model: model,
+          );
+        },
       ),
     );
   }
@@ -216,8 +248,13 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
       title: (medicallUser as ProviderUser).professionalTitle,
       trailing: IconButton(
         icon: Icon(Icons.create, size: 20),
-        onPressed: () => UpdateProviderInfoScreen.show(
-            context: context, inputType: ProfileInputType.PROFESSIONAL_TITLE),
+        onPressed: () {
+          model.profileInputType = ProfileInputType.PROFESSIONAL_TITLE;
+          UpdateProviderInfoScreen.show(
+            context: context,
+            model: model,
+          );
+        },
       ),
     );
   }
@@ -228,8 +265,13 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
       title: '${(medicallUser as ProviderUser).medLicense}',
       trailing: IconButton(
         icon: Icon(Icons.create, size: 20),
-        onPressed: () => UpdateProviderInfoScreen.show(
-            context: context, inputType: ProfileInputType.MEDICAL_LICENSE),
+        onPressed: () {
+          model.profileInputType = ProfileInputType.MEDICAL_LICENSE;
+          UpdateProviderInfoScreen.show(
+            context: context,
+            model: model,
+          );
+        },
       ),
     );
   }
@@ -240,9 +282,13 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
       title: '${(medicallUser as ProviderUser).medLicenseState}',
       trailing: IconButton(
         icon: Icon(Icons.create, size: 20),
-        onPressed: () => UpdateProviderInfoScreen.show(
+        onPressed: () {
+          model.profileInputType = ProfileInputType.MEDICAL_LICENSE_STATE;
+          UpdateProviderInfoScreen.show(
             context: context,
-            inputType: ProfileInputType.MEDICAL_LICENSE_STATE),
+            model: model,
+          );
+        },
       ),
     );
   }
@@ -252,9 +298,15 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
       leading: 'NPI Number:',
       title: '${(medicallUser as ProviderUser).npi}',
       trailing: IconButton(
-          icon: Icon(Icons.create, size: 20),
-          onPressed: () => UpdateProviderInfoScreen.show(
-              context: context, inputType: ProfileInputType.NPI)),
+        icon: Icon(Icons.create, size: 20),
+        onPressed: () {
+          model.profileInputType = ProfileInputType.NPI;
+          UpdateProviderInfoScreen.show(
+            context: context,
+            model: model,
+          );
+        },
+      ),
     );
   }
 
@@ -264,8 +316,13 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
       title: '${(medicallUser as ProviderUser).boardCertified}',
       trailing: IconButton(
         icon: Icon(Icons.create, size: 20),
-        onPressed: () => UpdateProviderInfoScreen.show(
-            context: context, inputType: ProfileInputType.BOARD_CERTIFIED),
+        onPressed: () {
+          model.profileInputType = ProfileInputType.BOARD_CERTIFIED;
+          UpdateProviderInfoScreen.show(
+            context: context,
+            model: model,
+          );
+        },
       ),
     );
   }
@@ -276,8 +333,13 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
       title: '${(medicallUser as ProviderUser).medSchool}' ?? '',
       trailing: IconButton(
         icon: Icon(Icons.create, size: 20),
-        onPressed: () => UpdateProviderInfoScreen.show(
-            context: context, inputType: ProfileInputType.MEDICAL_SCHOOL),
+        onPressed: () {
+          model.profileInputType = ProfileInputType.MEDICAL_SCHOOL;
+          UpdateProviderInfoScreen.show(
+            context: context,
+            model: model,
+          );
+        },
       ),
     );
   }
@@ -288,8 +350,13 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
       title: '${(medicallUser as ProviderUser).medResidency}' ?? '',
       trailing: IconButton(
         icon: Icon(Icons.create, size: 20),
-        onPressed: () => UpdateProviderInfoScreen.show(
-            context: context, inputType: ProfileInputType.MEDICAL_RESIDENCY),
+        onPressed: () {
+          model.profileInputType = ProfileInputType.MEDICAL_RESIDENCY;
+          UpdateProviderInfoScreen.show(
+            context: context,
+            model: model,
+          );
+        },
       ),
     );
   }
@@ -299,8 +366,13 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
       leading: 'Bio:',
       trailing: IconButton(
         icon: Icon(Icons.create, size: 20),
-        onPressed: () => UpdateProviderInfoScreen.show(
-            context: context, inputType: ProfileInputType.BIO),
+        onPressed: () {
+          model.profileInputType = ProfileInputType.BIO;
+          UpdateProviderInfoScreen.show(
+            context: context,
+            model: model,
+          );
+        },
       ),
       bioText: '${(medicallUser as ProviderUser).providerBio}' ?? '',
     );
