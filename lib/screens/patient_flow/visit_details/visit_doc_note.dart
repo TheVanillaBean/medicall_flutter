@@ -47,8 +47,7 @@ class VisitDocNote extends StatelessWidget {
       body: Container(
         padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
         child: SelectableText(
-          visitReviewData
-              .patientNote.introductionTemplate.template.values.first,
+          patientNote,
           cursorColor: Theme.of(context).colorScheme.primary,
           strutStyle:
               StrutStyle.fromTextStyle(Theme.of(context).textTheme.bodyText1),
@@ -64,5 +63,48 @@ class VisitDocNote extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String get patientNote {
+    String note = "";
+
+    if (visitReviewData.patientNote.introductionTemplate.template.length > 0) {
+      note += visitReviewData
+          .patientNote.introductionTemplate.template.values.first;
+    }
+
+    if (visitReviewData
+            .patientNote.understandingDiagnosisTemplate.template.length >
+        0) {
+      note += visitReviewData
+          .patientNote.understandingDiagnosisTemplate.template.values.first;
+    }
+
+    if (visitReviewData.patientNote.counselingTemplate.template.length > 0) {
+      note +=
+          visitReviewData.patientNote.counselingTemplate.template.values.first;
+    }
+
+    if (visitReviewData
+            .patientNote.treatmentRecommendationsTemplate.template.length >
+        0) {
+      for (String value in visitReviewData
+          .patientNote.treatmentRecommendationsTemplate.template.values) {
+        note += value;
+      }
+    }
+
+    if (visitReviewData.patientNote.furtherTestingTemplate.template.length >
+        0) {
+      note += visitReviewData
+          .patientNote.furtherTestingTemplate.template.values.first;
+    }
+
+    if (visitReviewData.patientNote.conclusionTemplate.template.length > 0) {
+      note +=
+          visitReviewData.patientNote.conclusionTemplate.template.values.first;
+    }
+
+    return note;
   }
 }
