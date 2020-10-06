@@ -61,7 +61,7 @@ class WelcomeScreen extends StatelessWidget {
             outlined: true,
           ),
           ReusableRaisedButton(
-            title: "Providers",
+            title: "For Providers",
             onPressed: () => ProviderRegistrationScreen.show(context: context),
             width: 140,
             color: Theme.of(context).disabledColor.withAlpha(70),
@@ -96,7 +96,7 @@ class WelcomeScreen extends StatelessWidget {
                   padding: EdgeInsets.all(10),
                   margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary.withAlpha(140),
+                    color: Theme.of(context).colorScheme.primary,
                     shape: BoxShape.circle,
                   ),
                   child: Text("1",
@@ -125,7 +125,7 @@ class WelcomeScreen extends StatelessWidget {
                   padding: EdgeInsets.all(10),
                   margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary.withAlpha(160),
+                    color: Theme.of(context).colorScheme.primary,
                     shape: BoxShape.circle,
                   ),
                   child: Text("2",
@@ -154,7 +154,7 @@ class WelcomeScreen extends StatelessWidget {
                   padding: EdgeInsets.all(10),
                   margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary.withAlpha(180),
+                    color: Theme.of(context).colorScheme.primary,
                     shape: BoxShape.circle,
                   ),
                   child: Text("3",
