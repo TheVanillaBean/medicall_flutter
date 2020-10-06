@@ -1,6 +1,5 @@
 import 'package:Medicall/models/consult-review/consult_review_options_model.dart';
 import 'package:Medicall/models/consult-review/diagnosis_options_model.dart';
-import 'package:Medicall/models/consult-review/patient_note/patient_note_template_model.dart';
 import 'package:Medicall/models/consult-review/treatment_options.dart';
 import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:Medicall/models/consult_model.dart';
@@ -195,8 +194,10 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
     }).toList();
 
     this.visitReviewData.followUp = this.followUpStepState.followUpMap;
+
     this.visitReviewData.patientNote =
         this.patientNoteStepState.patientTemplateNote;
+
     await firestoreDatabase.saveVisitReview(
         consultId: this.consult.uid, visitReviewData: this.visitReviewData);
 
@@ -301,8 +302,6 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
           await firestoreDatabase.consultReviewDiagnosisOptions(
               symptomName: symptom,
               diagnosis: this.diagnosisStepState.diagnosis);
-      this.updatePatientNoteStepWith(
-          patientTemplateNote: diagnosisOptions.patientNoteTemplate);
     } else {
       this.diagnosisOptions = null;
     }
@@ -584,7 +583,6 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
   /////PATIENT NOTE////
 
   void updatePatientNoteStepWith({
-    PatientTemplateNote patientTemplateNote,
     Map<String, String> introduction,
     Map<String, String> understandingDiagnosis,
     Map<String, String> counseling,
@@ -592,87 +590,67 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
     Map<String, String> furtherTesting,
     Map<String, String> other,
     Map<String, String> conclusion,
+    bool introductionCheckbox,
+    bool understandingCheckbox,
+    bool counselingCheckbox,
+    bool treatmentsCheckbox,
+    bool furtherTestingCheckbox,
+    bool conclusionCheckbox,
   }) {
-    this.patientNoteStepState.patientTemplateNote =
-        patientTemplateNote ?? this.patientNoteStepState.patientTemplateNote;
+    this.patientNoteStepState.introductionCheckbox =
+        introductionCheckbox ?? this.patientNoteStepState.introductionCheckbox;
+    this.patientNoteStepState.understandingCheckbox = understandingCheckbox ??
+        this.patientNoteStepState.understandingCheckbox;
+    this.patientNoteStepState.counselingCheckbox =
+        counselingCheckbox ?? this.patientNoteStepState.counselingCheckbox;
+    this.patientNoteStepState.treatmentsCheckbox =
+        treatmentsCheckbox ?? this.patientNoteStepState.treatmentsCheckbox;
+    this.patientNoteStepState.furtherTestingCheckbox = furtherTestingCheckbox ??
+        this.patientNoteStepState.furtherTestingCheckbox;
+    this.patientNoteStepState.conclusionCheckbox =
+        conclusionCheckbox ?? this.patientNoteStepState.conclusionCheckbox;
 
-    if (this.patientNoteStepState.patientTemplateNote != null) {
-      this
-              .patientNoteStepState
-              .patientTemplateNote
-              .introductionTemplate
-              .template =
-          introduction ??
-              this
+    if (this.diagnosisOptions != null) {
+      if (this.patientNoteStepState.introductionCheckbox) {
+        if (this
+                .patientNoteStepState
+                .patientTemplateNote
+                .introductionTemplate
+                .template
+                .length ==
+            0) {
+          this
                   .patientNoteStepState
                   .patientTemplateNote
                   .introductionTemplate
-                  .template;
-
-      this
-              .patientNoteStepState
-              .patientTemplateNote
-              .understandingDiagnosisTemplate
-              .template =
-          understandingDiagnosis ??
+                  .template =
               this
+                  .diagnosisOptions
+                  .patientNoteTemplate
+                  .introductionTemplate
+                  .template;
+        } else {
+          this
                   .patientNoteStepState
                   .patientTemplateNote
-                  .understandingDiagnosisTemplate
-                  .template;
-
-      this
-              .patientNoteStepState
-              .patientTemplateNote
-              .counselingTemplate
-              .template =
-          counseling ??
-              this
-                  .patientNoteStepState
-                  .patientTemplateNote
-                  .counselingTemplate
-                  .template;
-
-      this
-              .patientNoteStepState
-              .patientTemplateNote
-              .treatmentRecommendationsTemplate
-              .template =
-          treatments ??
-              this
-                  .patientNoteStepState
-                  .patientTemplateNote
-                  .treatmentRecommendationsTemplate
-                  .template;
-
-      this
-              .patientNoteStepState
-              .patientTemplateNote
-              .furtherTestingTemplate
-              .template =
-          furtherTesting ??
-              this
-                  .patientNoteStepState
-                  .patientTemplateNote
-                  .furtherTestingTemplate
-                  .template;
-
-      this.patientNoteStepState.patientTemplateNote.other =
-          other ?? this.patientNoteStepState.patientTemplateNote.other;
-
-      this
-              .patientNoteStepState
-              .patientTemplateNote
-              .conclusionTemplate
-              .template =
-          conclusion ??
-              this
-                  .patientNoteStepState
-                  .patientTemplateNote
-                  .conclusionTemplate
-                  .template;
+                  .introductionTemplate
+                  .template =
+              introduction ??
+                  this
+                      .patientNoteStepState
+                      .patientTemplateNote
+                      .introductionTemplate
+                      .template;
+        }
+      } else {
+        this
+            .patientNoteStepState
+            .patientTemplateNote
+            .introductionTemplate
+            .template = {};
+      }
+      //replicate for others
     }
-
     notifyListeners(VisitReviewVMProperties.patientNote);
   }
 
@@ -681,37 +659,46 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
       if (visitReviewData.patientNote.introductionTemplate.template.length >
           0) {
         this.updatePatientNoteStepWith(
-            introduction:
-                visitReviewData.patientNote.introductionTemplate.template);
+          introduction:
+              visitReviewData.patientNote.introductionTemplate.template,
+          introductionCheckbox: true,
+        );
       }
 
       if (visitReviewData
               .patientNote.understandingDiagnosisTemplate.template.length >
           0) {
         this.updatePatientNoteStepWith(
-            understandingDiagnosis: visitReviewData
-                .patientNote.understandingDiagnosisTemplate.template);
+          understandingDiagnosis: visitReviewData
+              .patientNote.understandingDiagnosisTemplate.template,
+          understandingCheckbox: true,
+        );
       }
 
       if (visitReviewData.patientNote.counselingTemplate.template.length > 0) {
         this.updatePatientNoteStepWith(
-            counseling:
-                visitReviewData.patientNote.counselingTemplate.template);
+          counseling: visitReviewData.patientNote.counselingTemplate.template,
+          counselingCheckbox: true,
+        );
       }
 
       if (visitReviewData
               .patientNote.treatmentRecommendationsTemplate.template.length >
           0) {
         this.updatePatientNoteStepWith(
-            treatments: visitReviewData
-                .patientNote.treatmentRecommendationsTemplate.template);
+          treatments: visitReviewData
+              .patientNote.treatmentRecommendationsTemplate.template,
+          treatmentsCheckbox: true,
+        );
       }
 
       if (visitReviewData.patientNote.furtherTestingTemplate.template.length >
           0) {
         this.updatePatientNoteStepWith(
-            furtherTesting:
-                visitReviewData.patientNote.furtherTestingTemplate.template);
+          furtherTesting:
+              visitReviewData.patientNote.furtherTestingTemplate.template,
+          furtherTestingCheckbox: true,
+        );
       }
 
       if (visitReviewData.patientNote.other.length > 0) {
@@ -721,8 +708,9 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
 
       if (visitReviewData.patientNote.conclusionTemplate.template.length > 0) {
         this.updatePatientNoteStepWith(
-            conclusion:
-                visitReviewData.patientNote.conclusionTemplate.template);
+          conclusion: visitReviewData.patientNote.conclusionTemplate.template,
+          counselingCheckbox: true,
+        );
       }
     }
   }

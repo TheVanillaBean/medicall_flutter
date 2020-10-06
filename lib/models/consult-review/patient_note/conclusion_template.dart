@@ -11,7 +11,9 @@ class ConclusionTemplate {
     }
 
     Map<String, String> template = {};
-    template["Template"] = data["Template"];
+    if (data.isNotEmpty) {
+      template["Template"] = data["Template"];
+    }
 
     return ConclusionTemplate(
       template: template,

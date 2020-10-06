@@ -11,7 +11,9 @@ class UnderstandingDiagnosisTemplate {
     }
 
     Map<String, String> template = {};
-    template["Template"] = data["Template"];
+    if (data.isNotEmpty) {
+      template["Template"] = data["Template"];
+    }
 
     return UnderstandingDiagnosisTemplate(
       template: template,

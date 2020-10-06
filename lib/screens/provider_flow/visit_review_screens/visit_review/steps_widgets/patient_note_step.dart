@@ -42,53 +42,93 @@ class _PatientNoteStepState extends State<PatientNoteStep> {
                     children: <Widget>[
                       ..._buildSection(
                         title: "Introduction:",
-                        body: model.patientNoteStepState.patientTemplateNote
-                            .introductionTemplate.template.values.first,
+                        body: model.patientNoteStepState.sectionBody(
+                          "Introduction:",
+                          model.diagnosisOptions,
+                        ),
                         width: width,
                         height: height,
                         model: model,
+                        checked:
+                            model.patientNoteStepState.introductionCheckbox ??
+                                false,
+                        onChanged: (newValue) => {
+                          model.updatePatientNoteStepWith(
+                            introductionCheckbox: newValue,
+                          ),
+                        },
                       ),
                       ..._buildSection(
                         title: "Understanding the diagnosis:",
-                        body: model
-                            .patientNoteStepState
-                            .patientTemplateNote
-                            .understandingDiagnosisTemplate
-                            .template
-                            .values
-                            .first,
+                        body: model.patientNoteStepState.sectionBody(
+                          "Understanding the diagnosis:",
+                          model.diagnosisOptions,
+                        ),
                         width: width,
                         height: height,
                         model: model,
+                        checked:
+                            model.patientNoteStepState.understandingCheckbox ??
+                                false,
+                        onChanged: (newValue) => {
+                          model.updatePatientNoteStepWith(
+                            understandingCheckbox: newValue,
+                          ),
+                        },
                       ),
                       ..._buildSection(
                         title: "Counseling:",
-                        body: model.patientNoteStepState.patientTemplateNote
-                            .counselingTemplate.template.values.first,
+                        body: model.patientNoteStepState.sectionBody(
+                          "Counseling:",
+                          model.diagnosisOptions,
+                        ),
                         width: width,
                         height: height,
                         model: model,
+                        checked:
+                            model.patientNoteStepState.counselingCheckbox ??
+                                false,
+                        onChanged: (newValue) => {
+                          model.updatePatientNoteStepWith(
+                            counselingCheckbox: newValue,
+                          ),
+                        },
                       ),
                       ..._buildSection(
                         title: "Treatments:",
-                        body: model
-                            .patientNoteStepState
-                            .patientTemplateNote
-                            .treatmentRecommendationsTemplate
-                            .template
-                            .values
-                            .first,
+                        body: model.patientNoteStepState.sectionBody(
+                          "Treatments:",
+                          model.diagnosisOptions,
+                        ),
                         width: width,
                         height: height,
                         model: model,
+                        checked:
+                            model.patientNoteStepState.treatmentsCheckbox ??
+                                false,
+                        onChanged: (newValue) => {
+                          model.updatePatientNoteStepWith(
+                            treatmentsCheckbox: newValue,
+                          ),
+                        },
                       ),
                       ..._buildSection(
                         title: "Further Testing (optional):",
-                        body: model.patientNoteStepState.patientTemplateNote
-                            .furtherTestingTemplate.template.values.first,
+                        body: model.patientNoteStepState.sectionBody(
+                          "Further Testing (optional):",
+                          model.diagnosisOptions,
+                        ),
                         width: width,
                         height: height,
                         model: model,
+                        checked:
+                            model.patientNoteStepState.furtherTestingCheckbox ??
+                                false,
+                        onChanged: (newValue) => {
+                          model.updatePatientNoteStepWith(
+                            furtherTestingCheckbox: newValue,
+                          ),
+                        },
                       ),
                       ..._buildSection(
                         title: "Other:",
@@ -99,11 +139,21 @@ class _PatientNoteStepState extends State<PatientNoteStep> {
                       ),
                       ..._buildSection(
                         title: "Conclusion:",
-                        body: model.patientNoteStepState.patientTemplateNote
-                            .conclusionTemplate.template.values.first,
+                        body: model.patientNoteStepState.sectionBody(
+                          "Conclusion:",
+                          model.diagnosisOptions,
+                        ),
                         width: width,
                         height: height,
                         model: model,
+                        checked:
+                            model.patientNoteStepState.conclusionCheckbox ??
+                                false,
+                        onChanged: (newValue) => {
+                          model.updatePatientNoteStepWith(
+                            conclusionCheckbox: newValue,
+                          ),
+                        },
                       ),
                       SizedBox(height: 16),
                       Expanded(
@@ -124,9 +174,11 @@ class _PatientNoteStepState extends State<PatientNoteStep> {
 
   List<Widget> _buildSection({
     String title,
+    bool checked = false,
     String body,
     double width,
     double height,
+    ValueChanged<bool> onChanged,
     VisitReviewViewModel model,
   }) {
     return [
@@ -135,8 +187,8 @@ class _PatientNoteStepState extends State<PatientNoteStep> {
           SizedBox(
             width: 18,
             child: Checkbox(
-              value: true,
-              onChanged: (newValue) {},
+              value: checked,
+              onChanged: onChanged,
             ),
           ),
           SizedBox(width: 12),
@@ -191,7 +243,10 @@ class _PatientNoteStepState extends State<PatientNoteStep> {
             side: BorderSide(color: Theme.of(context).colorScheme.primary),
           ),
           onPressed: () {
-            model.patientNoteStepState.setCurrentSection(section);
+            model.patientNoteStepState.setEditSectionNoteBody(
+              section,
+              model.diagnosisOptions,
+            );
             EditNoteSection.show(
               context: context,
               visitReviewViewModel: model,

@@ -1,3 +1,4 @@
+import 'package:Medicall/models/consult-review/diagnosis_options_model.dart';
 import 'package:Medicall/models/consult-review/patient_note/patient_note_template_model.dart';
 
 enum PatientNoteSection {
@@ -11,77 +12,116 @@ enum PatientNoteSection {
 }
 
 class PatientNoteStepState {
+  bool introductionCheckbox = false;
+  bool understandingCheckbox = false;
+  bool counselingCheckbox = false;
+  bool treatmentsCheckbox = false;
+  bool furtherTestingCheckbox = false;
+  bool conclusionCheckbox = false;
+
   PatientNoteSection currentSection = PatientNoteSection.Introduction;
 
   PatientTemplateNote patientTemplateNote = PatientTemplateNote();
 
+  String editNoteTitle = "";
+  String editNoteBody = "";
+
+  void setEditSectionNoteBody(String title, DiagnosisOptions diagnosisOptions) {
+    editNoteTitle = title;
+    editNoteBody = sectionBody(editNoteTitle, diagnosisOptions);
+  }
+
   //Does intro have a value
   bool get minimumRequiredFieldsFilledOut {
-    return this
+    return patientTemplateNote.introductionTemplate.template.length > 0;
+  }
+
+  //return body from diagnosis from patient note or patient step state patient note
+  String sectionBody(String section, DiagnosisOptions diagnosisOptions) {
+    if (section == "Introduction:") {
+      if (this.patientTemplateNote.introductionTemplate.template.length == 0) {
+        return diagnosisOptions
+            .patientNoteTemplate.introductionTemplate.template.values.first;
+      } else {
+        return this
             .patientTemplateNote
             .introductionTemplate
             .template
             .values
-            .first
-            .length >
-        0;
-  }
-
-  void setCurrentSection(String title) {
-    if (title == "Introduction:") {
-      currentSection = PatientNoteSection.Introduction;
-    } else if (title == "Understanding the diagnosis:") {
-      currentSection = PatientNoteSection.UnderstandingDiagnosis;
-    } else if (title == "Counseling:") {
-      currentSection = PatientNoteSection.Counseling;
-    } else if (title == "Treatments:") {
-      currentSection = PatientNoteSection.Treatments;
-    } else if (title == "Further Testing (optional):") {
-      currentSection = PatientNoteSection.FurtherTesting;
-    } else if (title == "Conclusion") {
-      currentSection = PatientNoteSection.Conclusion;
+            .first;
+      }
+    } else if (section == "Understanding the diagnosis:") {
+      if (this
+              .patientTemplateNote
+              .understandingDiagnosisTemplate
+              .template
+              .length ==
+          0) {
+        return diagnosisOptions.patientNoteTemplate
+            .understandingDiagnosisTemplate.template.values.first;
+      } else {
+        return this
+            .patientTemplateNote
+            .understandingDiagnosisTemplate
+            .template
+            .values
+            .first;
+      }
+    } else if (section == "Counseling:") {
+      if (this.patientTemplateNote.counselingTemplate.template.length == 0) {
+        return diagnosisOptions
+            .patientNoteTemplate.counselingTemplate.template.values.first;
+      } else {
+        return this
+            .patientTemplateNote
+            .counselingTemplate
+            .template
+            .values
+            .first;
+      }
+    } else if (section == "Treatments:") {
+      if (this
+              .patientTemplateNote
+              .treatmentRecommendationsTemplate
+              .template
+              .length ==
+          0) {
+        return diagnosisOptions.patientNoteTemplate
+            .treatmentRecommendationsTemplate.template.values.first;
+      } else {
+        return this
+            .patientTemplateNote
+            .treatmentRecommendationsTemplate
+            .template
+            .values
+            .first;
+      }
+    } else if (section == "Further Testing (optional):") {
+      if (this.patientTemplateNote.furtherTestingTemplate.template.length ==
+          0) {
+        return diagnosisOptions
+            .patientNoteTemplate.furtherTestingTemplate.template.values.first;
+      } else {
+        return this
+            .patientTemplateNote
+            .furtherTestingTemplate
+            .template
+            .values
+            .first;
+      }
+    } else if (section == "Conclusion:") {
+      if (this.patientTemplateNote.conclusionTemplate.template.length == 0) {
+        return diagnosisOptions
+            .patientNoteTemplate.conclusionTemplate.template.values.first;
+      } else {
+        return this
+            .patientTemplateNote
+            .conclusionTemplate
+            .template
+            .values
+            .first;
+      }
     }
-  }
-
-  String get title {
-    if (currentSection == PatientNoteSection.Introduction) {
-      return "Introduction";
-    } else if (currentSection == PatientNoteSection.UnderstandingDiagnosis) {
-      return "Understanding The Diagnosis";
-    } else if (currentSection == PatientNoteSection.Counseling) {
-      return "Counseling";
-    } else if (currentSection == PatientNoteSection.Treatments) {
-      return "Treatments";
-    } else if (currentSection == PatientNoteSection.FurtherTesting) {
-      return "Further Testing";
-    } else if (currentSection == PatientNoteSection.Other) {
-      return "Other";
-    } else if (currentSection == PatientNoteSection.Conclusion) {
-      return "Conclusion";
-    } else {
-      return "Error";
-    }
-  }
-
-  String get body {
-    if (currentSection == PatientNoteSection.Introduction) {
-      return patientTemplateNote.introductionTemplate.template.values.first;
-    } else if (currentSection == PatientNoteSection.UnderstandingDiagnosis) {
-      return patientTemplateNote
-          .understandingDiagnosisTemplate.template.values.first;
-    } else if (currentSection == PatientNoteSection.Counseling) {
-      return patientTemplateNote.counselingTemplate.template.values.first;
-    } else if (currentSection == PatientNoteSection.Treatments) {
-      return patientTemplateNote
-          .treatmentRecommendationsTemplate.template.values.first;
-    } else if (currentSection == PatientNoteSection.FurtherTesting) {
-      return patientTemplateNote.furtherTestingTemplate.template.values.first;
-    } else if (currentSection == PatientNoteSection.Other) {
-      return patientTemplateNote.other.values.first;
-    } else if (currentSection == PatientNoteSection.Conclusion) {
-      return patientTemplateNote.conclusionTemplate.template.values.first;
-    } else {
-      return "Error";
-    }
+    return "";
   }
 }

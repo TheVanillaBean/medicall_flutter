@@ -60,12 +60,12 @@ class EditNoteSection extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    model.patientNoteStepState.title,
+                    model.patientNoteStepState.editNoteTitle,
                     style: Theme.of(context).textTheme.bodyText1,
                   ),
                   SizedBox(height: 12),
                   Text(
-                    model.patientNoteStepState.body,
+                    model.patientNoteStepState.editNoteBody,
                     style: Theme.of(context).textTheme.bodyText2,
                   ),
                   SizedBox(height: 12),

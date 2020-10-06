@@ -11,8 +11,9 @@ class IntroductionTemplate {
     }
 
     Map<String, String> template = {};
-    template["Template"] = data["Template"];
-
+    if (data.isNotEmpty) {
+      template["Template"] = data["Template"];
+    }
     return IntroductionTemplate(
       template: template,
     );
