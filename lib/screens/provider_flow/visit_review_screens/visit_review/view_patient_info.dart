@@ -43,7 +43,7 @@ class ViewPatientInfo extends StatelessWidget {
       ),
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.all(10),
+          padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
           child: FutureBuilder<MedicallUser>(
               future: db.userStream(USER_TYPE.PATIENT, consult.patientId).first,
               builder: (context, snapshot) {
@@ -72,8 +72,11 @@ class ViewPatientInfo extends StatelessWidget {
   List<Widget> _buildChildren(MedicallUser medicallUser) {
     return [
       _buildNameCard(medicallUser),
+      Divider(),
       _buildDOBCard(medicallUser),
-      _buildAddressCard(medicallUser)
+      Divider(),
+      _buildAddressCard(medicallUser),
+      Divider(),
     ];
   }
 
