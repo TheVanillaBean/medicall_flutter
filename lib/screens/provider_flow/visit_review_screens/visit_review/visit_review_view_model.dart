@@ -302,6 +302,7 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
           await firestoreDatabase.consultReviewDiagnosisOptions(
               symptomName: symptom,
               diagnosis: this.diagnosisStepState.diagnosis);
+      print("");
     } else {
       this.diagnosisOptions = null;
     }
@@ -582,6 +583,20 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
 
   /////PATIENT NOTE////
 
+  void updateEditSectionCheckboxesWith(String key, bool isChecked) {
+    if (isChecked) {
+      this.patientNoteStepState.editedSection[key] =
+          this.patientNoteStepState.templateSection[key];
+    } else {
+      this.patientNoteStepState.editedSection[key] = {};
+    }
+  }
+
+  void updateEditSectionWith(String key, String value) {
+    this.patientNoteStepState.editedSection[key] = value;
+    notifyListeners(VisitReviewVMProperties.patientNote);
+  }
+
   void updatePatientNoteStepWith({
     Map<String, String> introduction,
     Map<String, String> understandingDiagnosis,
@@ -612,105 +627,158 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
 
     if (this.diagnosisOptions != null) {
       if (this.patientNoteStepState.introductionCheckbox) {
-        if (this
-                .patientNoteStepState
-                .patientTemplateNote
-                .introductionTemplate
-                .template
-                .length ==
+        if (patientNoteStepState
+                .patientTemplateNote.introductionTemplate.template.length ==
             0) {
-          this
-                  .patientNoteStepState
-                  .patientTemplateNote
-                  .introductionTemplate
-                  .template =
-              this
-                  .diagnosisOptions
-                  .patientNoteTemplate
-                  .introductionTemplate
-                  .template;
+          patientNoteStepState
+                  .patientTemplateNote.introductionTemplate.template =
+              diagnosisOptions
+                  .patientNoteTemplate.introductionTemplate.template;
         } else {
-          this
-                  .patientNoteStepState
-                  .patientTemplateNote
-                  .introductionTemplate
-                  .template =
+          patientNoteStepState
+                  .patientTemplateNote.introductionTemplate.template =
               introduction ??
-                  this
-                      .patientNoteStepState
-                      .patientTemplateNote
-                      .introductionTemplate
-                      .template;
+                  patientNoteStepState
+                      .patientTemplateNote.introductionTemplate.template;
         }
       } else {
-        this
-            .patientNoteStepState
-            .patientTemplateNote
-            .introductionTemplate
-            .template = {};
+        patientNoteStepState.patientTemplateNote.introductionTemplate.template =
+            {};
       }
-      //replicate for others
+
+      if (this.patientNoteStepState.understandingCheckbox) {
+        if (patientNoteStepState.patientTemplateNote
+                .understandingDiagnosisTemplate.template.length ==
+            0) {
+          patientNoteStepState
+                  .patientTemplateNote.understandingDiagnosisTemplate.template =
+              diagnosisOptions
+                  .patientNoteTemplate.understandingDiagnosisTemplate.template;
+        } else {
+          patientNoteStepState
+                  .patientTemplateNote.understandingDiagnosisTemplate.template =
+              understandingDiagnosis ??
+                  patientNoteStepState.patientTemplateNote
+                      .understandingDiagnosisTemplate.template;
+        }
+      } else {
+        patientNoteStepState
+            .patientTemplateNote.understandingDiagnosisTemplate.template = {};
+      }
+
+      if (this.patientNoteStepState.counselingCheckbox) {
+        if (patientNoteStepState
+                .patientTemplateNote.counselingTemplate.template.length ==
+            0) {
+          patientNoteStepState.patientTemplateNote.counselingTemplate.template =
+              diagnosisOptions.patientNoteTemplate.counselingTemplate.template;
+        } else {
+          patientNoteStepState.patientTemplateNote.counselingTemplate.template =
+              introduction ??
+                  patientNoteStepState
+                      .patientTemplateNote.counselingTemplate.template;
+        }
+      } else {
+        patientNoteStepState.patientTemplateNote.counselingTemplate.template =
+            {};
+      }
+
+      if (this.patientNoteStepState.treatmentsCheckbox) {
+        if (patientNoteStepState.patientTemplateNote
+                .treatmentRecommendationsTemplate.template.length ==
+            0) {
+          patientNoteStepState.patientTemplateNote
+                  .treatmentRecommendationsTemplate.template =
+              diagnosisOptions.patientNoteTemplate
+                  .treatmentRecommendationsTemplate.template;
+        } else {
+          patientNoteStepState.patientTemplateNote
+                  .treatmentRecommendationsTemplate.template =
+              introduction ??
+                  patientNoteStepState.patientTemplateNote
+                      .treatmentRecommendationsTemplate.template;
+        }
+      } else {
+        patientNoteStepState
+            .patientTemplateNote.treatmentRecommendationsTemplate.template = {};
+      }
+
+      if (this.patientNoteStepState.furtherTestingCheckbox) {
+        if (patientNoteStepState
+                .patientTemplateNote.furtherTestingTemplate.template.length ==
+            0) {
+          patientNoteStepState
+                  .patientTemplateNote.furtherTestingTemplate.template =
+              diagnosisOptions
+                  .patientNoteTemplate.furtherTestingTemplate.template;
+        } else {
+          patientNoteStepState
+                  .patientTemplateNote.furtherTestingTemplate.template =
+              introduction ??
+                  patientNoteStepState
+                      .patientTemplateNote.furtherTestingTemplate.template;
+        }
+      } else {
+        patientNoteStepState
+            .patientTemplateNote.furtherTestingTemplate.template = {};
+      }
+
+      if (this.patientNoteStepState.conclusionCheckbox) {
+        if (patientNoteStepState
+                .patientTemplateNote.conclusionTemplate.template.length ==
+            0) {
+          patientNoteStepState.patientTemplateNote.conclusionTemplate.template =
+              diagnosisOptions.patientNoteTemplate.conclusionTemplate.template;
+        } else {
+          patientNoteStepState.patientTemplateNote.conclusionTemplate.template =
+              introduction ??
+                  patientNoteStepState
+                      .patientTemplateNote.conclusionTemplate.template;
+        }
+      } else {
+        patientNoteStepState.patientTemplateNote.conclusionTemplate.template =
+            {};
+      }
     }
+
     notifyListeners(VisitReviewVMProperties.patientNote);
   }
 
   void setPatientNoteFromPrevData() {
-    if (visitReviewData.patientNote != null) {
-      if (visitReviewData.patientNote.introductionTemplate.template.length >
-          0) {
-        this.updatePatientNoteStepWith(
-          introduction:
-              visitReviewData.patientNote.introductionTemplate.template,
-          introductionCheckbox: true,
-        );
-      }
-
-      if (visitReviewData
-              .patientNote.understandingDiagnosisTemplate.template.length >
-          0) {
-        this.updatePatientNoteStepWith(
-          understandingDiagnosis: visitReviewData
-              .patientNote.understandingDiagnosisTemplate.template,
-          understandingCheckbox: true,
-        );
-      }
-
-      if (visitReviewData.patientNote.counselingTemplate.template.length > 0) {
-        this.updatePatientNoteStepWith(
-          counseling: visitReviewData.patientNote.counselingTemplate.template,
-          counselingCheckbox: true,
-        );
-      }
-
-      if (visitReviewData
-              .patientNote.treatmentRecommendationsTemplate.template.length >
-          0) {
-        this.updatePatientNoteStepWith(
-          treatments: visitReviewData
-              .patientNote.treatmentRecommendationsTemplate.template,
-          treatmentsCheckbox: true,
-        );
-      }
-
-      if (visitReviewData.patientNote.furtherTestingTemplate.template.length >
-          0) {
-        this.updatePatientNoteStepWith(
-          furtherTesting:
-              visitReviewData.patientNote.furtherTestingTemplate.template,
-          furtherTestingCheckbox: true,
-        );
-      }
-
-      if (visitReviewData.patientNote.other.length > 0) {
-        this.updatePatientNoteStepWith(
-            other: visitReviewData.patientNote.other);
-      }
-
-      if (visitReviewData.patientNote.conclusionTemplate.template.length > 0) {
-        this.updatePatientNoteStepWith(
-          conclusion: visitReviewData.patientNote.conclusionTemplate.template,
-          counselingCheckbox: true,
-        );
+    if (this.visitReviewData != null) {
+      if (this.visitReviewData.patientNote != null) {
+        this.patientNoteStepState.patientTemplateNote =
+            this.visitReviewData.patientNote;
+        if (patientNoteStepState
+                .patientTemplateNote.introductionTemplate.template.length >
+            0) {
+          this.patientNoteStepState.introductionCheckbox = true;
+        }
+        if (patientNoteStepState.patientTemplateNote
+                .understandingDiagnosisTemplate.template.length >
+            0) {
+          this.patientNoteStepState.understandingCheckbox = true;
+        }
+        if (patientNoteStepState
+                .patientTemplateNote.counselingTemplate.template.length >
+            0) {
+          this.patientNoteStepState.counselingCheckbox = true;
+        }
+        if (patientNoteStepState.patientTemplateNote
+                .treatmentRecommendationsTemplate.template.length >
+            0) {
+          this.patientNoteStepState.treatmentsCheckbox = true;
+        }
+        if (patientNoteStepState
+                .patientTemplateNote.furtherTestingTemplate.template.length >
+            0) {
+          this.patientNoteStepState.furtherTestingCheckbox = true;
+        }
+        if (patientNoteStepState
+                .patientTemplateNote.conclusionTemplate.template.length >
+            0) {
+          this.patientNoteStepState.conclusionCheckbox = true;
+        }
       }
     }
   }

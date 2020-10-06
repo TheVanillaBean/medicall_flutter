@@ -19,16 +19,44 @@ class PatientNoteStepState {
   bool furtherTestingCheckbox = false;
   bool conclusionCheckbox = false;
 
-  PatientNoteSection currentSection = PatientNoteSection.Introduction;
-
   PatientTemplateNote patientTemplateNote = PatientTemplateNote();
 
   String editNoteTitle = "";
-  String editNoteBody = "";
+  Map<String, dynamic> templateSection = {};
+  Map<String, dynamic> editedSection = {};
 
-  void setEditSectionNoteBody(String title, DiagnosisOptions diagnosisOptions) {
-    editNoteTitle = title;
-    editNoteBody = sectionBody(editNoteTitle, diagnosisOptions);
+  void setEditSectionNoteBody(
+    String section,
+    DiagnosisOptions diagnosisOptions,
+  ) {
+    editNoteTitle = section;
+    if (section == "Introduction:") {
+      templateSection =
+          diagnosisOptions.patientNoteTemplate.introductionTemplate.template;
+      editedSection = patientTemplateNote.introductionTemplate.template;
+    } else if (section == "Understanding the diagnosis:") {
+      templateSection = diagnosisOptions
+          .patientNoteTemplate.understandingDiagnosisTemplate.template;
+      editedSection =
+          patientTemplateNote.understandingDiagnosisTemplate.template;
+    } else if (section == "Counseling:") {
+      templateSection =
+          diagnosisOptions.patientNoteTemplate.counselingTemplate.template;
+      editedSection = patientTemplateNote.counselingTemplate.template;
+    } else if (section == "Treatments:") {
+      templateSection = diagnosisOptions
+          .patientNoteTemplate.treatmentRecommendationsTemplate.template;
+      editedSection =
+          patientTemplateNote.treatmentRecommendationsTemplate.template;
+    } else if (section == "Further Testing (optional):") {
+      templateSection =
+          diagnosisOptions.patientNoteTemplate.furtherTestingTemplate.template;
+      editedSection = patientTemplateNote.furtherTestingTemplate.template;
+    } else if (section == "Conclusion:") {
+      templateSection =
+          diagnosisOptions.patientNoteTemplate.conclusionTemplate.template;
+      editedSection = patientTemplateNote.conclusionTemplate.template;
+    }
   }
 
   //Does intro have a value

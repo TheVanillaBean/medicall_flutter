@@ -1,5 +1,7 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
+import 'package:Medicall/common_widgets/grouped_buttons/checkbox_group.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/provider_flow/registration/provider_bio_text_field.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_review_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
@@ -59,16 +61,17 @@ class EditNoteSection extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
+                  if (model.patientNoteStepState.templateSection.keys.length >
+                      1)
+                    ..._buildCheckboxes(context, model),
                   Text(
                     model.patientNoteStepState.editNoteTitle,
                     style: Theme.of(context).textTheme.bodyText1,
                   ),
                   SizedBox(height: 12),
-                  Text(
-                    model.patientNoteStepState.editNoteBody,
-                    style: Theme.of(context).textTheme.bodyText2,
-                  ),
-                  SizedBox(height: 12),
+                  for (String key
+                      in model.patientNoteStepState.editedSection.keys)
+                    ..._buildTextField(key, model),
                   Container(
                     width: width * .5,
                     child: SizedBox(
@@ -103,5 +106,39 @@ class EditNoteSection extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  List<Widget> _buildCheckboxes(
+      BuildContext context, VisitReviewViewModel model) {
+    return [
+      CheckboxGroup(
+        labels: model.patientNoteStepState.templateSection.keys,
+        onChange: (isChecked, label, index) =>
+            model.updateEditSectionCheckboxesWith(label, isChecked),
+        checked: model.patientNoteStepState.editedSection.keys,
+      ),
+      SizedBox(height: 48),
+    ];
+  }
+
+  List<Widget> _buildTextField(String key, VisitReviewViewModel model) {
+    String initialText = "";
+    if (model.patientNoteStepState.editedSection.containsKey(key)) {
+      initialText = model.patientNoteStepState.editedSection[key];
+    } else {
+      initialText = model.patientNoteStepState.templateSection[key];
+    }
+    return [
+      ProviderBioTextField(
+        keyboardType: TextInputType.multiline,
+        minLines: 1,
+        maxLines: null,
+        controller: TextEditingController()..text = initialText,
+        labelText: 'Edit Section Note',
+        hint: '',
+        onChanged: (newText) => model.updateEditSectionWith(key, newText),
+      ),
+      SizedBox(height: 12),
+    ];
   }
 }
