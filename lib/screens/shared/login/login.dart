@@ -1,3 +1,4 @@
+import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/common_widgets/sign_in_button.dart';
 import 'package:Medicall/common_widgets/social_sign_in_button.dart';
@@ -98,6 +99,11 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: CustomAppBar.getAppBar(
+        type: AppBarType.Back,
+        title: "",
+        theme: Theme.of(context),
+      ),
       body: KeyboardDismisser(
         gestures: [GestureType.onTap, GestureType.onVerticalDragDown],
         child: AnnotatedRegion<SystemUiOverlayStyle>(
@@ -187,11 +193,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     color: Theme.of(context).disabledColor.withAlpha(80),
                     onPressed: () => _navigateToResetPasswordScreen(context)),
                 SizedBox(height: height * 0.01),
-                ReusableRaisedButton(
+                /*ReusableRaisedButton(
                     title: "First time here?",
                     outlined: true,
                     color: Theme.of(context).disabledColor.withAlpha(80),
-                    onPressed: () => WelcomeScreen.show(context: context)),
+                    onPressed: () => WelcomeScreen.show(context: context)),*/
               ],
             )),
       ),

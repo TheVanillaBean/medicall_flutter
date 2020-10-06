@@ -4,8 +4,12 @@ import 'package:Medicall/models/user/patient_user_model.dart';
 import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/patient_flow/account/payment_detail/payment_detail.dart';
+import 'package:Medicall/screens/patient_flow/account/update_patient_info/update_patient_info_form.dart';
+import 'package:Medicall/screens/patient_flow/account/update_patient_info/update_patient_info_screen.dart';
+import 'package:Medicall/screens/patient_flow/account/update_patient_info/update_patient_info_view_model.dart';
 import 'package:Medicall/screens/patient_flow/account/update_photo_id.dart';
 import 'package:Medicall/screens/patient_flow/update_medical_history/view_medical_history.dart';
+import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/firebase_storage_service.dart';
@@ -18,6 +22,31 @@ import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:provider/provider.dart';
 
 class PatientAccountScreen extends StatefulWidget {
+  final UpdatePatientInfoViewModel model;
+
+  const PatientAccountScreen({this.model});
+
+  static Widget create(BuildContext context) {
+    final AuthBase auth = Provider.of<AuthBase>(context, listen: false);
+    final FirestoreDatabase firestoreDatabase =
+        Provider.of<FirestoreDatabase>(context, listen: false);
+    final UserProvider userProvider =
+        Provider.of<UserProvider>(context, listen: false);
+
+    return ChangeNotifierProvider<UpdatePatientInfoViewModel>(
+      create: (context) => UpdatePatientInfoViewModel(
+        auth: auth,
+        firestoreDatabase: firestoreDatabase,
+        userProvider: userProvider,
+      ),
+      child: Consumer<UpdatePatientInfoViewModel>(
+        builder: (_, model, __) => PatientAccountScreen(
+          model: model,
+        ),
+      ),
+    );
+  }
+
   static Future<void> show({
     BuildContext context,
   }) async {
@@ -33,6 +62,7 @@ class PatientAccountScreen extends StatefulWidget {
 class _PatientAccountScreenState extends State<PatientAccountScreen> {
   String profileImageURL = "";
   bool imageLoading = false;
+  UpdatePatientInfoViewModel get model => widget.model;
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +149,8 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
             ),
             SizedBox(height: 10),
             Text(
-              EnumToString.parse(userProvider.user.type).toUpperCase(),
+              EnumToString.convertToString(userProvider.user.type)
+                  .toUpperCase(),
               style: Theme.of(context).textTheme.bodyText1.copyWith(
                     color: Colors.black54,
                     fontWeight: FontWeight.bold,
@@ -142,6 +173,7 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
             _buildPaymentMethodsCard(context),
             Divider(height: 0.5, thickness: 1),
             _buildMedicalHistoryCard(context),
+            Divider(height: 0.5, thickness: 1),
             _buildPhotoID(context, userProvider.user),
             SizedBox(height: 50),
           ],
@@ -154,6 +186,12 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
     return ReusableAccountCard(
       leading: 'View Photo ID',
       title: '',
+      trailing: IconButton(
+        icon: Icon(Icons.create, size: 20),
+        onPressed: () {
+          UpdatePhotoID.show(context: context, user: user);
+        },
+      ),
       onTap: () {
         UpdatePhotoID.show(context: context, user: user);
       },
@@ -192,7 +230,15 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
       title: medicallUser.mailingAddressLine2 == ''
           ? '${medicallUser.mailingAddress} \n${medicallUser.mailingCity}, ${medicallUser.mailingState} ${medicallUser.mailingZipCode}'
           : '${medicallUser.mailingAddress} \n${medicallUser.mailingAddressLine2} \n${medicallUser.mailingCity}, ${medicallUser.mailingState} ${medicallUser.mailingZipCode}',
-      trailing: IconButton(icon: Icon(Icons.create, size: 20), onPressed: null),
+      trailing: IconButton(
+          icon: Icon(Icons.create, size: 20),
+          onPressed: () {
+            model.patientProfileInputType = PatientProfileInputType.ADDRESS;
+            UpdatePatientInfoScreen.show(
+              context: context,
+              model: model,
+            );
+          }),
     );
   }
 
@@ -203,7 +249,16 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
               medicallUser.phoneNumber.length > 0
           ? medicallUser.phoneNumber
           : '(xxx)xxx-xxxx',
-      trailing: IconButton(icon: Icon(Icons.create, size: 20), onPressed: null),
+      trailing: IconButton(
+        icon: Icon(Icons.create, size: 20),
+        onPressed: () {
+          model.patientProfileInputType = PatientProfileInputType.PHONE;
+          UpdatePatientInfoScreen.show(
+            context: context,
+            model: model,
+          );
+        },
+      ),
     );
   }
 

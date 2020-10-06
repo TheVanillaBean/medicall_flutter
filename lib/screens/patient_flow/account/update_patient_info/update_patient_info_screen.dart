@@ -1,26 +1,26 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/routing/router.dart';
-import 'package:Medicall/screens/provider_flow/account/update_provider_info/update_provider_info_form.dart';
-import 'package:Medicall/screens/provider_flow/account/update_provider_info/update_provider_info_view_model.dart';
+import 'package:Medicall/screens/patient_flow/account/update_patient_info/update_patient_info_form.dart';
+import 'package:Medicall/screens/patient_flow/account/update_patient_info/update_patient_info_view_model.dart';
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class UpdateProviderInfoScreen extends StatefulWidget {
-  final UpdateProviderInfoViewModel model;
+class UpdatePatientInfoScreen extends StatefulWidget {
+  final UpdatePatientInfoViewModel model;
 
-  UpdateProviderInfoScreen({
+  UpdatePatientInfoScreen({
     @required this.model,
   });
 
   static Widget create(
     BuildContext context,
-    UpdateProviderInfoViewModel model,
+    UpdatePatientInfoViewModel model,
   ) {
     return ChangeNotifierProvider.value(
       value: model,
-      child: Consumer<UpdateProviderInfoViewModel>(
-        builder: (_, model, __) => UpdateProviderInfoScreen(
+      child: Consumer<UpdatePatientInfoViewModel>(
+        builder: (_, model, __) => UpdatePatientInfoScreen(
           model: model,
         ),
       ),
@@ -29,10 +29,10 @@ class UpdateProviderInfoScreen extends StatefulWidget {
 
   static Future<void> show({
     BuildContext context,
-    UpdateProviderInfoViewModel model,
+    UpdatePatientInfoViewModel model,
   }) async {
     await Navigator.of(context).pushNamed(
-      Routes.updateProviderInfo,
+      Routes.updatePatientInfo,
       arguments: {
         "model": model,
       },
@@ -40,11 +40,11 @@ class UpdateProviderInfoScreen extends StatefulWidget {
   }
 
   @override
-  _UpdateProviderInfoScreenState createState() =>
-      _UpdateProviderInfoScreenState();
+  _UpdatePatientInfoScreenState createState() =>
+      _UpdatePatientInfoScreenState();
 }
 
-class _UpdateProviderInfoScreenState extends State<UpdateProviderInfoScreen> {
+class _UpdatePatientInfoScreenState extends State<UpdatePatientInfoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,7 +63,7 @@ class _UpdateProviderInfoScreenState extends State<UpdateProviderInfoScreen> {
               onTap: () {
                 FocusScope.of(context).requestFocus(new FocusNode());
               },
-              child: UpdateProviderInfoForm(),
+              child: UpdatePatientInfoForm(),
             ),
           ),
         ),

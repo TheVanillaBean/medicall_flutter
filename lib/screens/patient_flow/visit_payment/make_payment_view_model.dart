@@ -20,6 +20,7 @@ class MakePaymentViewModel with ChangeNotifier {
   bool userHasCards;
   PaymentMethod selectedPaymentMethod;
   List<PaymentMethod> paymentMethods;
+  String couponCode;
 
   MakePaymentViewModel({
     @required this.userProvider,
@@ -30,6 +31,7 @@ class MakePaymentViewModel with ChangeNotifier {
     this.refreshCards = true,
     this.userHasCards = false,
     this.consultPaid = false,
+    this.couponCode = "",
   });
 
   bool get canSubmit {
@@ -72,16 +74,21 @@ class MakePaymentViewModel with ChangeNotifier {
     }
   }
 
+  void updateCouponCode(String couponCode) =>
+      updateWith(couponCode: couponCode);
+
   void updateWith({
     PaymentMethod paymentMethod,
     bool consultPaid,
     bool isLoading,
     bool refreshCards,
+    String couponCode,
   }) {
     this.isLoading = isLoading ?? this.isLoading;
     this.refreshCards = refreshCards ?? this.refreshCards;
     this.selectedPaymentMethod = paymentMethod ?? this.selectedPaymentMethod;
     this.consultPaid = consultPaid ?? this.consultPaid;
+    this.couponCode = couponCode ?? this.couponCode;
     notifyListeners();
   }
 }

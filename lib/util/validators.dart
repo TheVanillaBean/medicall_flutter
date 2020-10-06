@@ -168,7 +168,7 @@ class DobValidators {
 }
 
 class MobilePhoneValidators {
-  final StringValidator mobilePhoneValidator = NonEmptyStringValidator();
+  final StringValidator mobilePhoneValidator = PhoneNumberStringValidator();
   final String mPhoneErrorText = 'Please enter a valid mobile phone number';
 }
 
@@ -277,7 +277,7 @@ class PrescriptionCheckoutValidator {
 class PhoneNumberStringValidator implements StringValidator {
   @override
   bool isValid(String value) {
-    return value.length >= 15;
+    return value.length >= 13;
   }
 }
 

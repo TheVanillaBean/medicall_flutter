@@ -17,6 +17,7 @@ class ProviderBioCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ListTile(
             contentPadding: EdgeInsets.fromLTRB(0, 5, 0, 5),

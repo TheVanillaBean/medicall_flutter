@@ -11,6 +11,8 @@ import 'package:Medicall/screens/Shared/visit_information/review_visit_informati
 import 'package:Medicall/screens/patient_flow/account/patient_account.dart';
 import 'package:Medicall/screens/patient_flow/account/payment_detail/payment_detail.dart';
 import 'package:Medicall/screens/patient_flow/account/payment_detail/summary_payment.dart';
+import 'package:Medicall/screens/patient_flow/account/update_patient_info/update_patient_info_screen.dart';
+import 'package:Medicall/screens/patient_flow/account/update_patient_info/update_patient_info_view_model.dart';
 import 'package:Medicall/screens/patient_flow/account/update_photo_id.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/patient_flow/drivers_license/photo_id.dart';
@@ -41,6 +43,7 @@ import 'package:Medicall/screens/provider_flow/account/provider_account.dart';
 import 'package:Medicall/screens/provider_flow/account/stripe_connect/stripe_connect.dart';
 import 'package:Medicall/screens/provider_flow/account/update_provider_info/update_provider_info_form.dart';
 import 'package:Medicall/screens/provider_flow/account/update_provider_info/update_provider_info_screen.dart';
+import 'package:Medicall/screens/provider_flow/account/update_provider_info/update_provider_info_view_model.dart';
 import 'package:Medicall/screens/provider_flow/dashboard/provider_dashboard.dart';
 import 'package:Medicall/screens/provider_flow/provider_visits/provider_visits.dart';
 import 'package:Medicall/screens/provider_flow/registration/provider_registration.dart';
@@ -96,6 +99,7 @@ class Routes {
   static const history = '/history';
   static const historyDetail = '/history-detail';
   static const patientAccount = '/patient-account';
+  static const updatePatientInfo = '/update-patient-info';
   static const updatePatientID = '/update-patient-id';
   static const providerAccount = '/provider-account';
   static const paymentDetail = '/payment-detail';
@@ -222,7 +226,7 @@ class Router {
         );
       case Routes.patientAccount:
         return MaterialPageRoute<dynamic>(
-          builder: (context) => PatientAccountScreen(),
+          builder: (context) => PatientAccountScreen.create(context),
           settings: settings,
           fullscreenDialog: true,
         );
@@ -231,6 +235,14 @@ class Router {
         final PatientUser user = mapArgs['user'];
         return MaterialPageRoute<dynamic>(
           builder: (context) => UpdatePhotoID(user: user),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case Routes.updatePatientInfo:
+        final Map<String, dynamic> mapArgs = args;
+        final UpdatePatientInfoViewModel model = mapArgs['model'];
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => UpdatePatientInfoScreen.create(context, model),
           settings: settings,
           fullscreenDialog: true,
         );
@@ -504,10 +516,9 @@ class Router {
 
       case Routes.updateProviderInfo:
         final Map<String, dynamic> mapArgs = args;
-        final ProfileInputType inputType = mapArgs['inputType'];
+        final UpdateProviderInfoViewModel model = mapArgs['model'];
         return MaterialPageRoute<dynamic>(
-          builder: (context) =>
-              UpdateProviderInfoScreen.create(context, inputType),
+          builder: (context) => UpdateProviderInfoScreen.create(context, model),
           settings: settings,
           fullscreenDialog: true,
         );
@@ -521,7 +532,7 @@ class Router {
         );
       case Routes.providerAccount:
         return MaterialPageRoute<dynamic>(
-          builder: (context) => ProviderAccountScreen(),
+          builder: (context) => ProviderAccountScreen.create(context),
           settings: settings,
           fullscreenDialog: true,
         );

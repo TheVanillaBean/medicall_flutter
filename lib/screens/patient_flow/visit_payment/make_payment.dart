@@ -116,7 +116,9 @@ class MakePayment extends StatelessWidget {
                   _buildShoppingCart(context: context),
                   SizedBox(height: 12),
                   _buildPriceBreakdown(context: context),
-                  SizedBox(height: 24),
+                  //SizedBox(height: 12),
+                  _buildCoupon(context: context),
+                  SizedBox(height: 18),
                   _buildPaymentDetail(context: context),
                   SizedBox(height: 24),
                   _buildCheckoutButton(context),
@@ -225,6 +227,64 @@ class MakePayment extends StatelessWidget {
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildCoupon({BuildContext context}) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(120, 0, 10, 0),
+      child: ListTile(
+        title: TextFormField(
+          onChanged: model.updateCouponCode,
+          style: Theme.of(context).textTheme.bodyText1,
+          decoration: new InputDecoration(
+            labelText: 'Coupon Code',
+            labelStyle: Theme.of(context).textTheme.subtitle2,
+            hintText: '',
+            hintStyle: Theme.of(context).textTheme.subtitle2,
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.black26,
+                width: 0.5,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.black26,
+                width: 0.5,
+              ),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.black26,
+                width: 0.5,
+              ),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.black26,
+                width: 0.5,
+              ),
+            ),
+            contentPadding: EdgeInsets.all(8),
+            isDense: true,
+            border:
+                OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+          ),
+        ),
+        trailing: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: OutlinedButton(
+              child: Text(
+                'Apply',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyText1.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+              ),
+              onPressed: null),
+        ),
       ),
     );
   }
