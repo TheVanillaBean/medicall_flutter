@@ -209,6 +209,7 @@ class _PatientNoteStepState extends State<PatientNoteStep> {
         height: height,
         title: "Edit Section",
         section: title,
+        enabled: checked,
         model: model,
       ),
     ];
@@ -219,6 +220,7 @@ class _PatientNoteStepState extends State<PatientNoteStep> {
     double height,
     String title,
     String section,
+    bool enabled,
     VisitReviewViewModel model,
   }) {
     return Container(
@@ -242,16 +244,18 @@ class _PatientNoteStepState extends State<PatientNoteStep> {
             ),
             side: BorderSide(color: Theme.of(context).colorScheme.primary),
           ),
-          onPressed: () {
-            model.patientNoteStepState.setEditSectionNoteBody(
-              section,
-              model.diagnosisOptions,
-            );
-            EditNoteSection.show(
-              context: context,
-              visitReviewViewModel: model,
-            );
-          },
+          onPressed: !enabled
+              ? null
+              : () {
+                  model.patientNoteStepState.setEditSectionNoteBody(
+                    section,
+                    model.diagnosisOptions,
+                  );
+                  EditNoteSection.show(
+                    context: context,
+                    visitReviewViewModel: model,
+                  );
+                },
         ),
       ),
     );

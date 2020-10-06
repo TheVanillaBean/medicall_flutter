@@ -1,7 +1,7 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/grouped_buttons/checkbox_group.dart';
 import 'package:Medicall/routing/router.dart';
-import 'package:Medicall/screens/provider_flow/registration/provider_bio_text_field.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/edit_section_text_field.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_review_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
@@ -56,7 +56,7 @@ class EditNoteSection extends StatelessWidget {
               FocusScope.of(context).requestFocus(FocusNode());
             },
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+              padding: const EdgeInsets.fromLTRB(8, 10, 8, 10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -71,7 +71,7 @@ class EditNoteSection extends StatelessWidget {
                   SizedBox(height: 12),
                   for (String key
                       in model.patientNoteStepState.editedSection.keys)
-                    ..._buildTextField(key, model),
+                    ..._buildTextField(context, key, model),
                   Container(
                     width: width * .5,
                     child: SizedBox(
@@ -95,7 +95,10 @@ class EditNoteSection extends StatelessWidget {
                           side: BorderSide(
                               color: Theme.of(context).colorScheme.primary),
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          model.savedSectionUpdate();
+                          Navigator.of(context).pop();
+                        },
                       ),
                     ),
                   ),
@@ -112,16 +115,17 @@ class EditNoteSection extends StatelessWidget {
       BuildContext context, VisitReviewViewModel model) {
     return [
       CheckboxGroup(
-        labels: model.patientNoteStepState.templateSection.keys,
+        labels: model.patientNoteStepState.templateSection.keys.toList(),
         onChange: (isChecked, label, index) =>
             model.updateEditSectionCheckboxesWith(label, isChecked),
-        checked: model.patientNoteStepState.editedSection.keys,
+        checked: model.patientNoteStepState.editedSection.keys.toList(),
       ),
       SizedBox(height: 48),
     ];
   }
 
-  List<Widget> _buildTextField(String key, VisitReviewViewModel model) {
+  List<Widget> _buildTextField(
+      BuildContext context, String key, VisitReviewViewModel model) {
     String initialText = "";
     if (model.patientNoteStepState.editedSection.containsKey(key)) {
       initialText = model.patientNoteStepState.editedSection[key];
@@ -129,11 +133,17 @@ class EditNoteSection extends StatelessWidget {
       initialText = model.patientNoteStepState.templateSection[key];
     }
     return [
-      ProviderBioTextField(
+      if (key != "Template")
+        Text(
+          key,
+          style: Theme.of(context).textTheme.bodyText2,
+        ),
+      SizedBox(height: 12),
+      EditSectionTextField(
         keyboardType: TextInputType.multiline,
         minLines: 1,
         maxLines: null,
-        controller: TextEditingController()..text = initialText,
+        initialText: initialText,
         labelText: 'Edit Section Note',
         hint: '',
         onChanged: (newText) => model.updateEditSectionWith(key, newText),

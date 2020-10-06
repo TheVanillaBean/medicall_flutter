@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class ProviderBioTextField extends StatelessWidget {
-  const ProviderBioTextField({
+class EditSectionTextField extends StatefulWidget {
+  const EditSectionTextField({
+    this.initialText,
     this.onChanged,
     this.icon,
     this.labelText,
@@ -18,6 +19,7 @@ class ProviderBioTextField extends StatelessWidget {
     this.minLines,
     this.maxLength,
   });
+  final String initialText;
   final ValueChanged<String> onChanged;
   final Icon icon;
   final String labelText;
@@ -34,29 +36,51 @@ class ProviderBioTextField extends StatelessWidget {
   final maxLength;
 
   @override
+  _EditSectionTextFieldState createState() => _EditSectionTextFieldState();
+}
+
+class _EditSectionTextFieldState extends State<EditSectionTextField> {
+  TextEditingController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = new TextEditingController();
+    if (widget.initialText != null) {
+      controller.text = widget.initialText;
+    }
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(
-        left: 30,
-        right: 30,
+        left: 8,
+        right: 8,
       ),
       child: TextFormField(
-        maxLength: maxLength,
-        minLines: minLines,
-        maxLines: maxLines,
+        maxLength: widget.maxLength,
+        minLines: widget.minLines,
+        maxLines: widget.maxLines,
         textCapitalization: TextCapitalization.sentences,
         autocorrect: false,
         controller: controller,
-        inputFormatters: inputFormatters,
-        onChanged: onChanged,
+        inputFormatters: widget.inputFormatters,
+        onChanged: widget.onChanged,
         autofocus: true,
         style: Theme.of(context).textTheme.bodyText1,
-        onTap: onTapped,
+        onTap: widget.onTapped,
         decoration: InputDecoration(
-          labelText: labelText,
-          errorText: errorText,
+          labelText: widget.labelText,
+          errorText: widget.errorText,
           labelStyle: Theme.of(context).textTheme.bodyText1,
-          hintText: hint,
+          hintText: widget.hint,
           hintStyle: Theme.of(context).textTheme.caption,
           enabledBorder: UnderlineInputBorder(
             borderSide: BorderSide(
@@ -83,7 +107,7 @@ class ProviderBioTextField extends StatelessWidget {
             ),
           ),
         ),
-        keyboardType: keyboardType,
+        keyboardType: widget.keyboardType,
 //        validator: (input) {
 //          if (input.isEmpty) {
 //            return '$labelText is required';

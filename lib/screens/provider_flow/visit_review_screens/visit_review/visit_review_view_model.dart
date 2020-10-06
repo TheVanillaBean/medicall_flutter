@@ -586,15 +586,41 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
   void updateEditSectionCheckboxesWith(String key, bool isChecked) {
     if (isChecked) {
       this.patientNoteStepState.editedSection[key] =
-          this.patientNoteStepState.templateSection[key];
+          "${this.patientNoteStepState.templateSection[key]}";
     } else {
-      this.patientNoteStepState.editedSection[key] = {};
+      this.patientNoteStepState.editedSection.remove(key);
     }
+    notifyListeners(VisitReviewVMProperties.patientNote);
   }
 
   void updateEditSectionWith(String key, String value) {
     this.patientNoteStepState.editedSection[key] = value;
     notifyListeners(VisitReviewVMProperties.patientNote);
+  }
+
+  void savedSectionUpdate() {
+    if (patientNoteStepState.editNoteTitle == "Introduction:") {
+      this.updatePatientNoteStepWith(
+          introduction: this.patientNoteStepState.editedSection);
+    } else if (patientNoteStepState.editNoteTitle ==
+        "Understanding the diagnosis:") {
+      this.updatePatientNoteStepWith(
+          understandingDiagnosis: this.patientNoteStepState.editedSection);
+    } else if (patientNoteStepState.editNoteTitle == "Counseling:") {
+      this.updatePatientNoteStepWith(
+          counseling: this.patientNoteStepState.editedSection);
+    } else if (patientNoteStepState.editNoteTitle == "Treatments:") {
+      this.updatePatientNoteStepWith(
+          treatments: this.patientNoteStepState.editedSection);
+    } else if (patientNoteStepState.editNoteTitle ==
+        "Further Testing (optional):") {
+      this.updatePatientNoteStepWith(
+          furtherTesting: this.patientNoteStepState.editedSection);
+    } else if (patientNoteStepState.editNoteTitle == "Conclusion:") {
+      this.updatePatientNoteStepWith(
+          conclusion: this.patientNoteStepState.editedSection);
+    }
+    print("");
   }
 
   void updatePatientNoteStepWith({
@@ -674,7 +700,7 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
               diagnosisOptions.patientNoteTemplate.counselingTemplate.template;
         } else {
           patientNoteStepState.patientTemplateNote.counselingTemplate.template =
-              introduction ??
+              counseling ??
                   patientNoteStepState
                       .patientTemplateNote.counselingTemplate.template;
         }
@@ -694,7 +720,7 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
         } else {
           patientNoteStepState.patientTemplateNote
                   .treatmentRecommendationsTemplate.template =
-              introduction ??
+              treatments ??
                   patientNoteStepState.patientTemplateNote
                       .treatmentRecommendationsTemplate.template;
         }
@@ -714,7 +740,7 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
         } else {
           patientNoteStepState
                   .patientTemplateNote.furtherTestingTemplate.template =
-              introduction ??
+              furtherTesting ??
                   patientNoteStepState
                       .patientTemplateNote.furtherTestingTemplate.template;
         }
@@ -731,7 +757,7 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
               diagnosisOptions.patientNoteTemplate.conclusionTemplate.template;
         } else {
           patientNoteStepState.patientTemplateNote.conclusionTemplate.template =
-              introduction ??
+              conclusion ??
                   patientNoteStepState
                       .patientTemplateNote.conclusionTemplate.template;
         }
