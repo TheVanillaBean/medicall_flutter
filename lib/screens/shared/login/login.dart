@@ -1,3 +1,4 @@
+import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/common_widgets/sign_in_button.dart';
 import 'package:Medicall/common_widgets/social_sign_in_button.dart';
@@ -8,7 +9,7 @@ import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:Medicall/util/apple_sign_in_available.dart';
-import 'package:apple_sign_in/apple_sign_in_button.dart';
+import 'package:apple_sign_in/apple_sign_in_button.dart' as AppleSignInButton;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -98,6 +99,11 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: CustomAppBar.getAppBar(
+        type: AppBarType.Back,
+        title: "",
+        theme: Theme.of(context),
+      ),
       body: KeyboardDismisser(
         gestures: [GestureType.onTap, GestureType.onVerticalDragDown],
         child: AnnotatedRegion<SystemUiOverlayStyle>(
@@ -171,9 +177,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 if (appleSignInAvailable.isAvailable)
                   SizedBox(
                     height: 40,
-                    child: AppleSignInButton(
-                      style: ButtonStyle.whiteOutline,
-                      type: ButtonType.signIn,
+                    child: AppleSignInButton.AppleSignInButton(
+                      style: AppleSignInButton.ButtonStyle.whiteOutline,
+                      type: AppleSignInButton
+                          .ButtonType.signIn, // style as needed
                       onPressed: model.isLoading
                           ? null
                           : () => _signInWithApple(context),
@@ -186,11 +193,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     color: Theme.of(context).disabledColor.withAlpha(80),
                     onPressed: () => _navigateToResetPasswordScreen(context)),
                 SizedBox(height: height * 0.01),
-                ReusableRaisedButton(
+                /*ReusableRaisedButton(
                     title: "First time here?",
                     outlined: true,
                     color: Theme.of(context).disabledColor.withAlpha(80),
-                    onPressed: () => WelcomeScreen.show(context: context)),
+                    onPressed: () => WelcomeScreen.show(context: context)),*/
               ],
             )),
       ),

@@ -60,11 +60,4 @@ class ReclassifyVisitViewModel with ChangeNotifier {
     this.visitClassification = visitClassification ?? this.visitClassification;
     notifyListeners();
   }
-
-  Future<void> updateConsult() async {
-    this.consult.providerReclassified = true;
-    this.consult.reclassifiedVisit = this.visitClassification;
-    await firestoreDatabase.saveConsult(
-        consultId: consult.uid, consult: consult);
-  }
 }

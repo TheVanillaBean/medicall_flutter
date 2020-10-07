@@ -3,6 +3,7 @@ import 'package:Medicall/models/consult-review/diagnosis_options_model.dart';
 import 'package:Medicall/models/consult-review/treatment_options.dart';
 import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:Medicall/models/consult_model.dart';
+import 'package:Medicall/models/coupon.dart';
 import 'package:Medicall/models/questionnaire/screening_questions_model.dart';
 import 'package:Medicall/models/user/patient_user_model.dart';
 import 'package:Medicall/models/user/provider_user_model.dart';
@@ -40,6 +41,7 @@ abstract class Database {
   Stream<VisitReviewData> visitReviewStream({String consultId});
   Future<List<ScreeningQuestions>> getScreeningQuestions({String symptomName});
   Future<List<PaymentMethod>> getUserCardSources(String uid);
+  Future<Coupon> getCoupon(String code);
 }
 
 class FirestoreDatabase implements Database {
@@ -277,4 +279,11 @@ class FirestoreDatabase implements Database {
 
     return Future<List<PaymentMethod>>.value(paymentList);
   }
+
+  @override
+  Future<Coupon> getCoupon(String code) => _service
+      .documentStream(
+          path: FirestorePath.coupon(code),
+          builder: (data, documentId) => Coupon.fromMap(data, documentId))
+      .first;
 }

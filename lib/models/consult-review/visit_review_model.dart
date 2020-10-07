@@ -1,3 +1,4 @@
+import 'package:Medicall/models/consult-review/patient_note/patient_note_template_model.dart';
 import 'package:Medicall/models/consult-review/treatment_options.dart';
 
 //Will be used to store the actual provider answers
@@ -16,7 +17,7 @@ class VisitReviewData {
 
   Map<String, String> followUp;
 
-  String patientNote;
+  PatientTemplateNote patientNote;
 
   VisitReviewData({
     this.diagnosis = "",
@@ -28,7 +29,7 @@ class VisitReviewData {
     this.treatmentOptions = const [],
     this.educationalOptions = const [],
     this.followUp = const {"": ""},
-    this.patientNote = "",
+    this.patientNote,
   });
 
   factory VisitReviewData.fromMap(
@@ -67,7 +68,11 @@ class VisitReviewData {
     final Map<String, String> followUp = (data['follow_up'] as Map).map(
       (key, value) => MapEntry(key as String, value as String),
     );
-    final String patientNote = data['patient_note'] as String;
+
+    PatientTemplateNote patientNote = PatientTemplateNote();
+    if (data['patient_note'] != null && data['patient_note'] is Map) {
+      patientNote = PatientTemplateNote.fromMap(data['patient_note'] as Map);
+    }
 
     return VisitReviewData(
       diagnosis: diagnosis,
@@ -94,7 +99,7 @@ class VisitReviewData {
       'treatment_options': treatmentOptions.map((e) => e.toMap()).toList(),
       'selected_educational_options': educationalOptions,
       'follow_up': followUp,
-      'patient_note': patientNote,
+      'patient_note': patientNote.toMap(),
     };
     return e;
   }

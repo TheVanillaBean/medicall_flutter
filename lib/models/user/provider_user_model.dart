@@ -2,6 +2,8 @@ import 'package:Medicall/models/user/user_model_base.dart';
 
 class ProviderUser extends MedicallUser {
   String professionalTitle;
+  String medSchool;
+  String medResidency;
   String medLicense;
   String medLicenseState;
   String npi;
@@ -11,11 +13,13 @@ class ProviderUser extends MedicallUser {
 
   ProviderUser({
     this.professionalTitle = '',
+    this.medSchool = '',
+    this.medResidency = '',
+    this.medLicense = '',
+    this.medLicenseState = '',
     this.npi = '',
     this.boardCertified = '',
     this.providerBio = '',
-    this.medLicense = '',
-    this.medLicenseState = '',
     this.stripeConnectAuthorized = false,
   });
 
@@ -23,13 +27,15 @@ class ProviderUser extends MedicallUser {
   Map<String, dynamic> toMap() {
     Map<String, dynamic> userMap = super.baseToMap();
     userMap.addAll({
-      'stripe_connect_authorized': stripeConnectAuthorized,
       'professional_title': professionalTitle,
-      'npi': npi,
+      'med_school': medSchool,
+      'med_residency': medResidency,
       'med_license': medLicense,
       'state_issued': medLicenseState,
+      'npi': npi,
       'board_certified': boardCertified,
       'provider_bio': providerBio,
+      'stripe_connect_authorized': stripeConnectAuthorized,
     });
     return userMap;
   }
@@ -38,6 +44,8 @@ class ProviderUser extends MedicallUser {
     ProviderUser provider = ProviderUser();
     provider.professionalTitle =
         data['professional_title'] ?? provider.professionalTitle;
+    provider.medSchool = data['med_school'] ?? provider.medSchool;
+    provider.medResidency = data['med_residency'] ?? provider.medResidency;
     provider.medLicense = data['med_license'] ?? provider.medLicense;
     provider.npi = data['npi'] ?? provider.npi;
     provider.boardCertified =

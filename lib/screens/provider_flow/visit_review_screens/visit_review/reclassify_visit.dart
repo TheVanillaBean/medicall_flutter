@@ -54,7 +54,6 @@ class ReclassifyVisit extends StatelessWidget {
   }
 
   Future<void> _btnPressed(BuildContext context) async {
-    await model.updateConsult();
     await navigateToVisitReviewScreen(context);
   }
 
@@ -68,6 +67,8 @@ class ReclassifyVisit extends StatelessWidget {
     } else {
       options = await model.firestoreDatabase
           .consultReviewOptions(symptomName: model.consult.symptom);
+      model.consult.providerReclassified = false;
+      model.consult.reclassifiedVisit = "";
     }
     VisitReviewData visitReviewData = await model.firestoreDatabase
         .visitReviewStream(consultId: model.consult.uid)
@@ -76,6 +77,9 @@ class ReclassifyVisit extends StatelessWidget {
       visitReviewData = VisitReviewData();
     }
     options.diagnosisList.insert(0, "Select a Diagnosis");
+    await model.firestoreDatabase
+        .saveConsult(consultId: model.consult.uid, consult: model.consult);
+
     return VisitReview.show(
       context: context,
       consult: model.consult,

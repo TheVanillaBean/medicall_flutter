@@ -10,7 +10,7 @@ import 'package:Medicall/services/non_auth_firestore_db.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:Medicall/util/apple_sign_in_available.dart';
-import 'package:apple_sign_in/apple_sign_in_button.dart';
+import 'package:apple_sign_in/apple_sign_in_button.dart' as AppleSignInButton;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
@@ -203,9 +203,9 @@ class _RegistrationScreenState extends State<RegistrationScreen>
       if (appleSignInAvailable.isAvailable)
         Container(
           width: MediaQuery.of(context).size.width * .75,
-          child: AppleSignInButton(
-            style: ButtonStyle.black, // style as needed
-            type: ButtonType.signIn, // style as needed
+          child: AppleSignInButton.AppleSignInButton(
+            style: AppleSignInButton.ButtonStyle.black,
+            type: AppleSignInButton.ButtonType.signIn, // style as needed
             onPressed: model.isLoading ? null : () => _signInWithApple(context),
           ),
         ),

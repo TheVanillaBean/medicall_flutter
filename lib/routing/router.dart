@@ -11,6 +11,8 @@ import 'package:Medicall/screens/Shared/visit_information/review_visit_informati
 import 'package:Medicall/screens/patient_flow/account/patient_account.dart';
 import 'package:Medicall/screens/patient_flow/account/payment_detail/payment_detail.dart';
 import 'package:Medicall/screens/patient_flow/account/payment_detail/summary_payment.dart';
+import 'package:Medicall/screens/patient_flow/account/update_patient_info/update_patient_info_screen.dart';
+import 'package:Medicall/screens/patient_flow/account/update_patient_info/update_patient_info_view_model.dart';
 import 'package:Medicall/screens/patient_flow/account/update_photo_id.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/patient_flow/drivers_license/photo_id.dart';
@@ -39,6 +41,9 @@ import 'package:Medicall/screens/patient_flow/visit_payment/make_payment.dart';
 import 'package:Medicall/screens/patient_flow/zip_code_verify/zip_code_verify.dart';
 import 'package:Medicall/screens/provider_flow/account/provider_account.dart';
 import 'package:Medicall/screens/provider_flow/account/stripe_connect/stripe_connect.dart';
+import 'package:Medicall/screens/provider_flow/account/update_provider_info/update_provider_info_form.dart';
+import 'package:Medicall/screens/provider_flow/account/update_provider_info/update_provider_info_screen.dart';
+import 'package:Medicall/screens/provider_flow/account/update_provider_info/update_provider_info_view_model.dart';
 import 'package:Medicall/screens/provider_flow/dashboard/provider_dashboard.dart';
 import 'package:Medicall/screens/provider_flow/provider_visits/provider_visits.dart';
 import 'package:Medicall/screens/provider_flow/registration/provider_registration.dart';
@@ -46,6 +51,7 @@ import 'package:Medicall/screens/provider_flow/review_medical_history/review_med
 import 'package:Medicall/screens/provider_flow/visit_review_screens/complete_visit/complete_visit.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/immediate_care/immediate_medical_care.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/prescription_details/prescription_details.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/edit_note_section.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reclassify_visit.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/view_patient_id.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/view_patient_info.dart';
@@ -70,6 +76,7 @@ class Routes {
   static const zipCodeVerify = '/zip-code-verify';
   static const registration = '/registration';
   static const providerRegistration = '/provider-registration';
+  static const updateProviderInfo = '/update-provider-info';
   static const reset_password = '/reset-password';
   static const photoID = '/photo-ID';
   static const personalInfo = '/personal-information';
@@ -92,6 +99,7 @@ class Routes {
   static const history = '/history';
   static const historyDetail = '/history-detail';
   static const patientAccount = '/patient-account';
+  static const updatePatientInfo = '/update-patient-info';
   static const updatePatientID = '/update-patient-id';
   static const providerAccount = '/provider-account';
   static const paymentDetail = '/payment-detail';
@@ -116,6 +124,7 @@ class Routes {
   static const completeVisit = '/complete-visit';
   static const reclassifyVisit = '/reclassify-visit';
   static const visitReview = '/visit-review';
+  static const editNoteSection = '/edit-note-section';
   static const providerVisits = '/provider-visits';
   static const viewMedicalHistory = '/view-medical-history';
   static const chatScreen = '/chat-screen';
@@ -217,7 +226,7 @@ class Router {
         );
       case Routes.patientAccount:
         return MaterialPageRoute<dynamic>(
-          builder: (context) => PatientAccountScreen(),
+          builder: (context) => PatientAccountScreen.create(context),
           settings: settings,
           fullscreenDialog: true,
         );
@@ -226,6 +235,14 @@ class Router {
         final PatientUser user = mapArgs['user'];
         return MaterialPageRoute<dynamic>(
           builder: (context) => UpdatePhotoID(user: user),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case Routes.updatePatientInfo:
+        final Map<String, dynamic> mapArgs = args;
+        final UpdatePatientInfoViewModel model = mapArgs['model'];
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => UpdatePatientInfoScreen.create(context, model),
           settings: settings,
           fullscreenDialog: true,
         );
@@ -420,6 +437,16 @@ class Router {
           settings: settings,
           fullscreenDialog: true,
         );
+      case Routes.editNoteSection:
+        final Map<String, dynamic> mapArgs = args;
+        final VisitReviewViewModel visitReviewViewModel =
+            mapArgs['visitReviewViewModel'];
+        return MaterialPageRoute<dynamic>(
+          builder: (context) =>
+              EditNoteSection.create(context, visitReviewViewModel),
+          settings: settings,
+          fullscreenDialog: true,
+        );
       case Routes.visitEducation:
         final Map<String, dynamic> mapArgs = args;
         final Consult consult = mapArgs['consult'];
@@ -486,6 +513,16 @@ class Router {
           settings: settings,
           fullscreenDialog: true,
         );
+
+      case Routes.updateProviderInfo:
+        final Map<String, dynamic> mapArgs = args;
+        final UpdateProviderInfoViewModel model = mapArgs['model'];
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => UpdateProviderInfoScreen.create(context, model),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+
       // Screen that asks the provider to connect their account with Stripe to receive payouts
       case Routes.stripeConnect:
         return MaterialPageRoute<dynamic>(
@@ -495,7 +532,7 @@ class Router {
         );
       case Routes.providerAccount:
         return MaterialPageRoute<dynamic>(
-          builder: (context) => ProviderAccountScreen(),
+          builder: (context) => ProviderAccountScreen.create(context),
           settings: settings,
           fullscreenDialog: true,
         );

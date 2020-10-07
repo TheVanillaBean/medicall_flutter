@@ -34,6 +34,8 @@ class Consult {
   List<Question> questions;
   bool providerReclassified;
   String reclassifiedVisit;
+  String coupon;
+
   //not serialized
   PatientUser patientUser;
   ProviderUser providerUser;
@@ -56,6 +58,7 @@ class Consult {
     this.reclassifiedVisit = '',
     this.providerUser,
     this.patientUser,
+    this.coupon,
   });
 
   factory Consult.fromMap(Map<String, dynamic> data, String documentId) {
@@ -75,6 +78,7 @@ class Consult {
     final bool providerReclassified =
         data['provider_reclassified'] as bool ?? false;
     final String reclassifiedVisit = data['reclassified_visit'] as String ?? '';
+    final String coupon = data['coupon_code'] ?? null;
 
     return Consult(
       uid: documentId,
@@ -86,6 +90,7 @@ class Consult {
       state: state,
       providerReclassified: providerReclassified,
       reclassifiedVisit: reclassifiedVisit,
+      coupon: coupon,
     );
   }
 
@@ -104,6 +109,12 @@ class Consult {
         'reclassified_visit': reclassifiedVisit,
       });
     }
+    if (coupon != null) {
+      baseToMap.addAll({
+        'coupon_code': coupon,
+      });
+    }
+
     return baseToMap;
   }
 

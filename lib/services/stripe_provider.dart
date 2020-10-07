@@ -57,18 +57,33 @@ class StripeProvider implements StripeProviderBase {
     @required int price,
     @required String paymentMethodId,
     @required String consultId,
+    bool applyCoupon = false,
+    String couponCode,
   }) async {
     final HttpsCallable callable = CloudFunctions.instance.getHttpsCallable(
         functionName: 'createPaymentIntentAndChargeForConsultV2')
       ..timeout = const Duration(seconds: 30);
 
-    final HttpsCallableResult result = await callable.call(
-      <String, dynamic>{
+    Map<String, dynamic> parameters = {};
+
+    if (applyCoupon) {
+      parameters = <String, dynamic>{
         'amount': price * 100,
         'payment_method': paymentMethodId,
         'consult_id': consultId,
-      },
-    );
+        'apply_coupon': applyCoupon,
+        'coupon_code': couponCode,
+      };
+    } else {
+      parameters = <String, dynamic>{
+        'amount': price * 100,
+        'payment_method': paymentMethodId,
+        'consult_id': consultId,
+        'apply_coupon': applyCoupon,
+      };
+    }
+
+    final HttpsCallableResult result = await callable.call(parameters);
 
     final PaymentIntentResult paymentIntentResult =
         PaymentIntentResult.fromJson(result.data);

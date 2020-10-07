@@ -168,7 +168,7 @@ class DobValidators {
 }
 
 class MobilePhoneValidators {
-  final StringValidator mobilePhoneValidator = NonEmptyStringValidator();
+  final StringValidator mobilePhoneValidator = PhoneNumberStringValidator();
   final String mPhoneErrorText = 'Please enter a valid mobile phone number';
 }
 
@@ -231,6 +231,16 @@ class MedicalLicenseStateValidators {
       'Please select your medical license state';
 }
 
+class MedicalSchoolValidators {
+  final StringValidator medicalSchoolValidator = NonEmptyStringValidator();
+  final String medSchoolErrorText = 'Please enter your medical school';
+}
+
+class MedicalResidencyValidators {
+  final StringValidator medicalResidencyValidator = NonEmptyStringValidator();
+  final String medResidencyErrorText = 'Please enter your medical residency';
+}
+
 class BoardCertificationValidators {
   final StringValidator boardCertificationValidator =
       BoardCertificationValidator();
@@ -267,7 +277,7 @@ class PrescriptionCheckoutValidator {
 class PhoneNumberStringValidator implements StringValidator {
   @override
   bool isValid(String value) {
-    return value.length >= 15;
+    return value.length >= 13;
   }
 }
 

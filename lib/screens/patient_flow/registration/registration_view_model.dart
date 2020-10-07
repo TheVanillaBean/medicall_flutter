@@ -91,7 +91,6 @@ class RegistrationViewModel with EmailAndPasswordValidators, ChangeNotifier {
             'Saving User Details. This may take several seconds...');
         User user = await auth.createUserWithEmailAndPassword(
             email: this.email, password: this.password);
-        tempUserProvider.setUser(userType: USER_TYPE.PATIENT);
         tempUserProvider.user.uid = user.uid;
         tempUserProvider.user.email = this.email;
         updateWith(submitted: false, isLoading: false);
