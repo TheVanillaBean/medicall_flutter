@@ -54,8 +54,10 @@ class MakePayment extends StatelessWidget {
 
   Future<void> _payPressed(BuildContext context) async {
     if (await model.processPayment()) {
-      AppUtil().showFlushBar(
-          "Your payment has been successfully processed!", context);
+      if (!model.skipCheckout) {
+        AppUtil().showFlushBar(
+            "Your payment has been successfully processed!", context);
+      }
       ConfirmConsult.show(context: context);
     } else {
       AppUtil()
@@ -375,12 +377,18 @@ class MakePayment extends StatelessWidget {
 
   Widget _buildCardItem({BuildContext context}) {
     double width = ScreenUtil.screenWidthDp;
+    String title = "";
+    if (!model.skipCheckout) {
+      title = "Select a payment method. Your default is already selected.";
+    } else {
+      title = "No need to select a payment method. This is a free visit.";
+    }
     return Column(
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
-            "Select a payment method. Your default is already selected.",
+            title,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyText1,
           ),
@@ -388,52 +396,59 @@ class MakePayment extends StatelessWidget {
         SizedBox(
           height: 16,
         ),
-        ListTile(
-          contentPadding: EdgeInsets.only(
-            left: width * 0.25,
-            right: width * 0.08,
-          ),
-          dense: false,
-          leading: ClipRRect(
-            borderRadius: BorderRadius.all(Radius.circular(6.0)),
-            child: Image.asset(
-              'assets/icon/cards/${this.model.selectedPaymentMethod.card.brand}.png',
-              height: 32.0,
+        if (!model.skipCheckout)
+          ListTile(
+            contentPadding: EdgeInsets.only(
+              left: width * 0.25,
+              right: width * 0.08,
             ),
-          ),
-          title: Text(
-            this.model.selectedPaymentMethod.card.brand.toUpperCase() +
-                ' **** ' +
-                this.model.selectedPaymentMethod.card.last4,
-            style: Theme.of(context).textTheme.bodyText1,
-          ),
-          trailing: !model.consultPaid
-              ? IconButton(
-                  icon: Icon(Icons.edit),
-                  onPressed: () => PaymentDetail.show(
-                    context: context,
-                    paymentModel: this.model,
-                  ),
-                )
-              : null,
-          onTap: !model.consultPaid
-              ? () => PaymentDetail.show(
-                    context: context,
-                    paymentModel: this.model,
+            dense: false,
+            leading: ClipRRect(
+              borderRadius: BorderRadius.all(Radius.circular(6.0)),
+              child: Image.asset(
+                'assets/icon/cards/${this.model.selectedPaymentMethod.card.brand}.png',
+                height: 32.0,
+              ),
+            ),
+            title: Text(
+              this.model.selectedPaymentMethod.card.brand.toUpperCase() +
+                  ' **** ' +
+                  this.model.selectedPaymentMethod.card.last4,
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
+            trailing: !model.consultPaid && !model.skipCheckout
+                ? IconButton(
+                    icon: Icon(Icons.edit),
+                    onPressed: () => PaymentDetail.show(
+                      context: context,
+                      paymentModel: this.model,
+                    ),
                   )
-              : null,
-        ),
+                : null,
+            onTap: !model.consultPaid && !model.skipCheckout
+                ? () => PaymentDetail.show(
+                      context: context,
+                      paymentModel: this.model,
+                    )
+                : null,
+          ),
       ],
     );
   }
 
   Widget _buildAddCardBtn({BuildContext context}) {
+    String title = "";
+    if (!model.skipCheckout) {
+      title = "Please add a payment method";
+    } else {
+      title = "No need to add a payment method. This is a free visit.";
+    }
     return Column(
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
-            "Please add a payment method",
+            title,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyText1,
           ),
@@ -441,30 +456,31 @@ class MakePayment extends StatelessWidget {
         SizedBox(
           height: 16,
         ),
-        FlatButton(
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Icon(
-                Icons.add,
-                color: Colors.black,
-              ),
-              SizedBox(
-                width: 8,
-              ),
-              Text(
-                'Add Card',
-                style: TextStyle(
-                  fontSize: 12.0,
+        if (!model.skipCheckout)
+          FlatButton(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Icon(
+                  Icons.add,
                   color: Colors.black,
                 ),
-              ),
-            ],
+                SizedBox(
+                  width: 8,
+                ),
+                Text(
+                  'Add Card',
+                  style: TextStyle(
+                    fontSize: 12.0,
+                    color: Colors.black,
+                  ),
+                ),
+              ],
+            ),
+            onPressed: model.isLoading || model.skipCheckout
+                ? null
+                : () => addCard(stripeProvider: model.stripeProvider),
           ),
-          onPressed: model.isLoading
-              ? null
-              : () => addCard(stripeProvider: model.stripeProvider),
-        ),
       ],
     );
   }

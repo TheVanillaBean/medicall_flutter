@@ -23,6 +23,7 @@ class MakePaymentViewModel with ChangeNotifier {
   List<PaymentMethod> paymentMethods;
   String couponCode;
   Coupon coupon;
+  bool skipCheckout;
 
   MakePaymentViewModel({
     @required this.userProvider,
@@ -35,10 +36,12 @@ class MakePaymentViewModel with ChangeNotifier {
     this.consultPaid = false,
     this.couponCode = "",
     this.coupon,
+    this.skipCheckout = false,
   });
 
   bool get canSubmit {
-    return this.selectedPaymentMethod != null && !isLoading;
+    return (this.selectedPaymentMethod != null || this.skipCheckout) &&
+        !isLoading;
   }
 
   Future<Coupon> processCouponCode() async {
@@ -49,6 +52,9 @@ class MakePaymentViewModel with ChangeNotifier {
         updateWith(isLoading: false);
         throw "This coupon has expired";
       }
+      if (coupon.discountPercentage == 100) {
+        updateWith(skipCheckout: true);
+      }
       updateWith(isLoading: false, coupon: coupon);
       return coupon;
     } else {
@@ -58,27 +64,50 @@ class MakePaymentViewModel with ChangeNotifier {
   }
 
   Future<bool> processPayment({Coupon coupon}) async {
-    PaymentIntentResult paymentIntentResult =
-        await this.stripeProvider.chargePaymentForConsult(
-              price: this.consult.price,
-              paymentMethodId: this.selectedPaymentMethod.id,
-              consultId: this.consult.uid,
-            );
+    if (this.skipCheckout) {
+      this.updateConsultStatus();
+      return true;
+    }
+
+    PaymentIntentResult paymentIntentResult;
+
+    if (coupon == null) {
+      paymentIntentResult = await this.stripeProvider.chargePaymentForConsult(
+            price: this.consult.price,
+            paymentMethodId: this.selectedPaymentMethod.id,
+            consultId: this.consult.uid,
+          );
+    } else {
+      paymentIntentResult = await this.stripeProvider.chargePaymentForConsult(
+            price: this.consult.price,
+            paymentMethodId: this.selectedPaymentMethod.id,
+            consultId: this.consult.uid,
+            applyCoupon: true,
+            couponCode: coupon.code,
+          );
+    }
 
     updateWith(isLoading: false);
     if (paymentIntentResult.status == "succeeded") {
-      this.consult.state = ConsultStatus.PendingReview;
-      await this.db.saveConsult(
-            consult: this.consult,
-            consultId: this.consult.uid,
-          );
-      updateWith(consultPaid: true);
-      this.btnController.success();
+      this.updateConsultStatus();
       return true;
     } else {
       this.btnController.reset();
       return false;
     }
+  }
+
+  Future<void> updateConsultStatus() async {
+    this.consult.state = ConsultStatus.PendingReview;
+    if (this.coupon != null) {
+      this.consult.coupon = coupon.code;
+    }
+    await this.db.saveConsult(
+          consult: this.consult,
+          consultId: this.consult.uid,
+        );
+    updateWith(consultPaid: true);
+    this.btnController.success();
   }
 
   Future<void> retrieveCards() async {
@@ -103,6 +132,7 @@ class MakePaymentViewModel with ChangeNotifier {
     bool refreshCards,
     String couponCode,
     Coupon coupon,
+    bool skipCheckout,
   }) {
     this.isLoading = isLoading ?? this.isLoading;
     this.refreshCards = refreshCards ?? this.refreshCards;
@@ -110,6 +140,7 @@ class MakePaymentViewModel with ChangeNotifier {
     this.consultPaid = consultPaid ?? this.consultPaid;
     this.couponCode = couponCode ?? this.couponCode;
     this.coupon = coupon ?? this.coupon;
+    this.skipCheckout = skipCheckout ?? this.skipCheckout;
     notifyListeners();
   }
 }
