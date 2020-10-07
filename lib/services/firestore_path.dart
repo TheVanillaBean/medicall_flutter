@@ -3,6 +3,7 @@ class FirestorePath {
   static String users() => 'users/';
   static String user(String uid) => 'users/$uid/';
   static String waitList(String email) => 'waitlist/$email/';
+  static String coupon(String code) => 'coupons/$code/';
   static String medicalHistory(String uid) =>
       'users/$uid/medical_history/questions/';
   static String symptoms() => 'services/dermatology/symptoms/';

@@ -1,4 +1,5 @@
 import 'package:Medicall/models/consult_model.dart';
+import 'package:Medicall/models/coupon.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/stripe_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
@@ -21,6 +22,7 @@ class MakePaymentViewModel with ChangeNotifier {
   PaymentMethod selectedPaymentMethod;
   List<PaymentMethod> paymentMethods;
   String couponCode;
+  Coupon coupon;
 
   MakePaymentViewModel({
     @required this.userProvider,
@@ -32,13 +34,29 @@ class MakePaymentViewModel with ChangeNotifier {
     this.userHasCards = false,
     this.consultPaid = false,
     this.couponCode = "",
+    this.coupon,
   });
 
   bool get canSubmit {
     return this.selectedPaymentMethod != null && !isLoading;
   }
 
-  Future<bool> processPayment() async {
+  Future<Coupon> processCouponCode() async {
+    updateWith(isLoading: true);
+    Coupon coupon = await this.db.getCoupon(this.couponCode);
+    if (coupon != null) {
+      if (!coupon.enabled || coupon.remainingUses == 0) {
+        throw "This coupon has expired";
+      }
+      updateWith(isLoading: false, coupon: coupon);
+      return coupon;
+    } else {
+      updateWith(isLoading: false);
+      throw "A coupon with that code does not exist";
+    }
+  }
+
+  Future<bool> processPayment({Coupon coupon}) async {
     PaymentIntentResult paymentIntentResult =
         await this.stripeProvider.chargePaymentForConsult(
               price: this.consult.price,
@@ -83,12 +101,14 @@ class MakePaymentViewModel with ChangeNotifier {
     bool isLoading,
     bool refreshCards,
     String couponCode,
+    Coupon coupon,
   }) {
     this.isLoading = isLoading ?? this.isLoading;
     this.refreshCards = refreshCards ?? this.refreshCards;
     this.selectedPaymentMethod = paymentMethod ?? this.selectedPaymentMethod;
     this.consultPaid = consultPaid ?? this.consultPaid;
     this.couponCode = couponCode ?? this.couponCode;
+    this.coupon = coupon ?? this.coupon;
     notifyListeners();
   }
 }

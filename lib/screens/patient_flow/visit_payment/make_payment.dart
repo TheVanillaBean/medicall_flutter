@@ -1,5 +1,6 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/models/consult_model.dart';
+import 'package:Medicall/models/coupon.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/patient_flow/account/payment_detail/payment_detail.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
@@ -62,6 +63,14 @@ class MakePayment extends StatelessWidget {
     }
   }
 
+  Future<void> _applyCoupon(BuildContext context) async {
+    try {
+      Coupon coupon = await model.processCouponCode();
+    } catch (e) {
+      AppUtil().showFlushBar(e, context);
+    }
+  }
+
   void addCard({StripeProvider stripeProvider, BuildContext context}) async {
     this.model.updateWith(isLoading: true);
     PaymentIntent setupIntent = await stripeProvider.addSource();
@@ -116,7 +125,6 @@ class MakePayment extends StatelessWidget {
                   _buildShoppingCart(context: context),
                   SizedBox(height: 12),
                   _buildPriceBreakdown(context: context),
-                  //SizedBox(height: 12),
                   _buildCoupon(context: context),
                   SizedBox(height: 18),
                   _buildPaymentDetail(context: context),
@@ -156,18 +164,43 @@ class MakePayment extends StatelessWidget {
           ),
           Expanded(
             flex: this.model.consultPaid ? 2 : 1,
-            child: Text(
-              "\$${this.model.consult.price}",
+            child: RichText(
+              text: TextSpan(
+                children: [
+                  if (this.model.consult == null)
+                    TextSpan(
+                      text: "\$${this.model.consult.price}",
+                    ),
+                  if (this.model.consult != null)
+                    ..._buildDiscountedTextField(context),
+                ],
+                style: Theme.of(context).textTheme.bodyText1.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+              ),
               maxLines: 1,
               textAlign: TextAlign.right,
-              style: Theme.of(context).textTheme.bodyText1.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
             ),
           ),
         ],
       ),
     );
+  }
+
+  List<TextSpan> _buildDiscountedTextField(BuildContext context) {
+    return [
+      TextSpan(
+        text: "\$${this.model.consult.price}  ",
+        style: Theme.of(context).textTheme.bodyText1.copyWith(
+              color: Theme.of(context).colorScheme.primary,
+              decoration: TextDecoration.lineThrough,
+            ),
+      ),
+      TextSpan(
+        text:
+            "\$${this.model.consult.price * this.model.coupon.discountMultiplier}",
+      ),
+    ];
   }
 
   Widget _buildPriceBreakdown({BuildContext context}) {
@@ -182,11 +215,22 @@ class MakePayment extends StatelessWidget {
                 'Consult Cost:',
                 style: Theme.of(context).textTheme.headline5,
               ),
-              Text(
-                '\$${this.model.consult.price}',
-                style: Theme.of(context).textTheme.headline5.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
+              RichText(
+                text: TextSpan(
+                  children: [
+                    if (this.model.consult == null)
+                      TextSpan(
+                        text: "\$${this.model.consult.price}",
+                      ),
+                    if (this.model.consult != null)
+                      ..._buildDiscountedTextField(context),
+                  ],
+                  style: Theme.of(context).textTheme.bodyText1.copyWith(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                ),
+                maxLines: 1,
+                textAlign: TextAlign.right,
               ),
             ],
           ),
@@ -217,15 +261,41 @@ class MakePayment extends StatelessWidget {
                     .headline5
                     .copyWith(fontWeight: FontWeight.w600),
               ),
-              Text(
-                '\$${model.consult.price}',
-                style: Theme.of(context).textTheme.headline5.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.w600,
-                    ),
+              RichText(
+                text: TextSpan(
+                  children: [
+                    if (this.model.consult == null)
+                      TextSpan(
+                        text: "\$${this.model.consult.price}",
+                      ),
+                    if (this.model.consult != null)
+                      ..._buildDiscountedTextField(context),
+                  ],
+                  style: Theme.of(context).textTheme.bodyText1.copyWith(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                ),
+                maxLines: 1,
+                textAlign: TextAlign.right,
               ),
             ],
           ),
+          if (this.model.coupon != null)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
+                  'Coupon Discount:',
+                  style: Theme.of(context).textTheme.headline5,
+                ),
+                Text(
+                  '\$${model.coupon.discountPercentage}%',
+                  style: Theme.of(context).textTheme.headline5.copyWith(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                ),
+              ],
+            ),
         ],
       ),
     );
@@ -283,7 +353,9 @@ class MakePayment extends StatelessWidget {
                       color: Theme.of(context).colorScheme.primary,
                     ),
               ),
-              onPressed: null),
+              onPressed: model.couponCode.isNotEmpty
+                  ? () => _applyCoupon(context)
+                  : null),
         ),
       ),
     );
