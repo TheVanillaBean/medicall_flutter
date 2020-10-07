@@ -9,6 +9,7 @@ import 'package:Medicall/screens/patient_flow/zip_code_verify/zip_code_view_mode
 import 'package:Medicall/screens/shared/welcome.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/non_auth_firestore_db.dart';
+import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
@@ -26,9 +27,15 @@ class ZipCodeVerifyScreen extends StatefulWidget {
     final NonAuthDatabase nonAuthDatabase =
         Provider.of<NonAuthDatabase>(context);
     final AuthBase auth = Provider.of<AuthBase>(context);
+    final TempUserProvider tempUserProvider =
+        Provider.of<TempUserProvider>(context, listen: false);
     return ChangeNotifierProvider<ZipCodeViewModel>(
       create: (context) => ZipCodeViewModel(
-          nonAuthDatabase: nonAuthDatabase, symptom: symptom, auth: auth),
+        nonAuthDatabase: nonAuthDatabase,
+        symptom: symptom,
+        auth: auth,
+        tempUserProvider: tempUserProvider,
+      ),
       child: Consumer<ZipCodeViewModel>(
         builder: (_, model, __) => ZipCodeVerifyScreen(
           model: model,
@@ -74,6 +81,9 @@ class _ZipCodeVerifyScreenState extends State<ZipCodeVerifyScreen> {
   Future<void> _submit() async {
     String state = await model.areProvidersInArea(model.zipcode);
     if (state != null) {
+      model.tempUserProvider.setUser(userType: USER_TYPE.PATIENT);
+      model.tempUserProvider.user.mailingZipCode = model.zipcode;
+      model.tempUserProvider.user.mailingState = state;
       SelectProviderScreen.show(
         context: context,
         symptom: symptom,

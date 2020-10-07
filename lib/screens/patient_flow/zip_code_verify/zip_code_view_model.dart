@@ -1,6 +1,7 @@
 import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/non_auth_firestore_db.dart';
+import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/util/validators.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
@@ -9,6 +10,7 @@ class ZipCodeViewModel with EmailAndPasswordValidators, ChangeNotifier {
   final AuthBase auth;
   final NonAuthDatabase nonAuthDatabase;
   final Symptom symptom;
+  final TempUserProvider tempUserProvider;
 
   bool showEmailField;
   String email;
@@ -19,6 +21,7 @@ class ZipCodeViewModel with EmailAndPasswordValidators, ChangeNotifier {
     @required this.nonAuthDatabase,
     @required this.symptom,
     @required this.auth,
+    @required this.tempUserProvider,
     this.showEmailField = false,
     this.email = '',
     this.zipcode = '',

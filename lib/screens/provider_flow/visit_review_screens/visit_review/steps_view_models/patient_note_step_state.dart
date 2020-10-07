@@ -47,7 +47,8 @@ class PatientNoteStepState {
       templateSection = diagnosisOptions
           .patientNoteTemplate.treatmentRecommendationsTemplate.template;
       editedSection =
-          patientTemplateNote.treatmentRecommendationsTemplate.template;
+          Map.of(patientTemplateNote.treatmentRecommendationsTemplate.template)
+              as Map<String, String>;
     } else if (section == "Further Testing (optional):") {
       templateSection =
           diagnosisOptions.patientNoteTemplate.furtherTestingTemplate.template;

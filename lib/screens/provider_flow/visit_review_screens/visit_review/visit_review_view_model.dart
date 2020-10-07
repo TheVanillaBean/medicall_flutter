@@ -611,14 +611,16 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
           counseling: this.patientNoteStepState.editedSection);
     } else if (patientNoteStepState.editNoteTitle == "Treatments:") {
       this.updatePatientNoteStepWith(
-          treatments: this.patientNoteStepState.editedSection);
+          treatments:
+              this.patientNoteStepState.editedSection as Map<String, String>);
     } else if (patientNoteStepState.editNoteTitle ==
         "Further Testing (optional):") {
       this.updatePatientNoteStepWith(
           furtherTesting: this.patientNoteStepState.editedSection);
     } else if (patientNoteStepState.editNoteTitle == "Conclusion:") {
       this.updatePatientNoteStepWith(
-          conclusion: this.patientNoteStepState.editedSection);
+          conclusion:
+              this.patientNoteStepState.editedSection as Map<String, String>);
     }
     print("");
   }

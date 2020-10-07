@@ -88,6 +88,8 @@ class VisitDocNote extends StatelessWidget {
     if (visitReviewData
             .patientNote.treatmentRecommendationsTemplate.template.length >
         0) {
+      note +=
+          "\nIn your particular case, I recommend the following treatment recommendations:\n\n";
       for (String value in visitReviewData
           .patientNote.treatmentRecommendationsTemplate.template.values) {
         note += value;
