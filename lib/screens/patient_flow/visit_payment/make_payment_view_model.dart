@@ -46,6 +46,7 @@ class MakePaymentViewModel with ChangeNotifier {
     Coupon coupon = await this.db.getCoupon(this.couponCode);
     if (coupon != null) {
       if (!coupon.enabled || coupon.remainingUses == 0) {
+        updateWith(isLoading: false);
         throw "This coupon has expired";
       }
       updateWith(isLoading: false, coupon: coupon);

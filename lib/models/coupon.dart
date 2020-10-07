@@ -36,6 +36,6 @@ class Coupon {
   }
 
   double get discountMultiplier {
-    return this.discountPercentage * .1;
+    return (100 - this.discountPercentage) * 0.01;
   }
 }

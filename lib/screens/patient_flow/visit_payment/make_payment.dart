@@ -66,6 +66,7 @@ class MakePayment extends StatelessWidget {
   Future<void> _applyCoupon(BuildContext context) async {
     try {
       Coupon coupon = await model.processCouponCode();
+      FocusScope.of(context).unfocus();
     } catch (e) {
       AppUtil().showFlushBar(e, context);
     }
@@ -154,7 +155,7 @@ class MakePayment extends StatelessWidget {
               style: Theme.of(context).textTheme.headline6,
             ),
           Expanded(
-            flex: 9,
+            flex: 8,
             child: Text(
               "${this.model.consult.symptom} Visit",
               maxLines: 1,
@@ -167,18 +168,15 @@ class MakePayment extends StatelessWidget {
             child: RichText(
               text: TextSpan(
                 children: [
-                  if (this.model.consult == null)
-                    TextSpan(
-                      text: "\$${this.model.consult.price}",
-                    ),
-                  if (this.model.consult != null)
-                    ..._buildDiscountedTextField(context),
+                  TextSpan(
+                    text: "\$${this.model.consult.price}",
+                  ),
                 ],
-                style: Theme.of(context).textTheme.bodyText1.copyWith(
+                style: Theme.of(context).textTheme.headline6.copyWith(
                       color: Theme.of(context).colorScheme.primary,
                     ),
               ),
-              maxLines: 1,
+              maxLines: 2,
               textAlign: TextAlign.right,
             ),
           ),
@@ -190,15 +188,15 @@ class MakePayment extends StatelessWidget {
   List<TextSpan> _buildDiscountedTextField(BuildContext context) {
     return [
       TextSpan(
-        text: "\$${this.model.consult.price}  ",
-        style: Theme.of(context).textTheme.bodyText1.copyWith(
+        text: "\$${this.model.consult.price}",
+        style: Theme.of(context).textTheme.headline5.copyWith(
               color: Theme.of(context).colorScheme.primary,
               decoration: TextDecoration.lineThrough,
             ),
       ),
       TextSpan(
         text:
-            "\$${this.model.consult.price * this.model.coupon.discountMultiplier}",
+            "  \$${this.model.consult.price * this.model.coupon.discountMultiplier}",
       ),
     ];
   }
@@ -218,14 +216,14 @@ class MakePayment extends StatelessWidget {
               RichText(
                 text: TextSpan(
                   children: [
-                    if (this.model.consult == null)
+                    if (this.model.coupon == null)
                       TextSpan(
                         text: "\$${this.model.consult.price}",
                       ),
-                    if (this.model.consult != null)
+                    if (this.model.coupon != null)
                       ..._buildDiscountedTextField(context),
                   ],
-                  style: Theme.of(context).textTheme.bodyText1.copyWith(
+                  style: Theme.of(context).textTheme.headline5.copyWith(
                         color: Theme.of(context).colorScheme.primary,
                       ),
                 ),
@@ -264,14 +262,14 @@ class MakePayment extends StatelessWidget {
               RichText(
                 text: TextSpan(
                   children: [
-                    if (this.model.consult == null)
+                    if (this.model.coupon == null)
                       TextSpan(
                         text: "\$${this.model.consult.price}",
                       ),
-                    if (this.model.consult != null)
+                    if (this.model.coupon != null)
                       ..._buildDiscountedTextField(context),
                   ],
-                  style: Theme.of(context).textTheme.bodyText1.copyWith(
+                  style: Theme.of(context).textTheme.headline5.copyWith(
                         color: Theme.of(context).colorScheme.primary,
                       ),
                 ),
@@ -280,13 +278,17 @@ class MakePayment extends StatelessWidget {
               ),
             ],
           ),
+          SizedBox(height: 12.0),
           if (this.model.coupon != null)
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
                   'Coupon Discount:',
-                  style: Theme.of(context).textTheme.headline5,
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline5
+                      .copyWith(fontWeight: FontWeight.w600),
                 ),
                 Text(
                   '\$${model.coupon.discountPercentage}%',
