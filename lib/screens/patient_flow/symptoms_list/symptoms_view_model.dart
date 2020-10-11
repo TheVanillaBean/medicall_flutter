@@ -23,6 +23,7 @@ class SymptomsViewModel with ChangeNotifier {
                 element.category == "hairloss" ||
                 element.category == "spots" ||
                 element.category == "rosacea" ||
+                element.category == "rash" ||
                 element.category == "acne",
           )
           .toList();
