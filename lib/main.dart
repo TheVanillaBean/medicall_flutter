@@ -117,7 +117,8 @@ class MedicallApp extends StatelessWidget {
                       userSnapshot.data.type == USER_TYPE.PROVIDER
                           ? ProviderDashboardScreen.create(context)
                           : PatientDashboardScreen.create(context),
-                  providerPhotoBuilder: (context) => ProviderAccountScreen(),
+                  providerPhotoBuilder: (context) =>
+                      ProviderAccountScreen.create(context),
                   startVisitBuilder: (context) => StartVisitScreen(
                     consult: tempUserProvider.consult,
                   ),

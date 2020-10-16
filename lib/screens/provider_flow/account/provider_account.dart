@@ -151,7 +151,8 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
             SizedBox(height: 10),
             Center(
               child: Text(
-                EnumToString.parse(userProvider.user.type).toUpperCase(),
+                EnumToString.convertToString(userProvider.user.type)
+                    .toUpperCase(),
                 style: TextStyle(
                   fontFamily: 'Inter',
                   fontSize: 14.0,

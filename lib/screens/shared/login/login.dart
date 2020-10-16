@@ -179,6 +179,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: 40,
                     child: AppleSignInButton.AppleSignInButton(
                       style: AppleSignInButton.ButtonStyle.whiteOutline,
+
                       type: AppleSignInButton
                           .ButtonType.signIn, // style as needed
                       onPressed: model.isLoading
@@ -193,11 +194,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     color: Theme.of(context).disabledColor.withAlpha(80),
                     onPressed: () => _navigateToResetPasswordScreen(context)),
                 SizedBox(height: height * 0.01),
-                /*ReusableRaisedButton(
-                    title: "First time here?",
-                    outlined: true,
-                    color: Theme.of(context).disabledColor.withAlpha(80),
-                    onPressed: () => WelcomeScreen.show(context: context)),*/
               ],
             )),
       ),
