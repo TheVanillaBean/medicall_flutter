@@ -1,3 +1,5 @@
+import 'package:Medicall/common_widgets/camera_picker/delegates/camera_picker_text_delegate.dart';
+import 'package:Medicall/common_widgets/camera_picker/widget/camera_picker.dart';
 import 'package:Medicall/common_widgets/reusable_account_card.dart';
 import 'package:Medicall/components/drawer_menu.dart';
 import 'package:Medicall/models/user/patient_user_model.dart';
@@ -14,12 +16,11 @@ import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/firebase_storage_service.dart';
 import 'package:Medicall/services/user_provider.dart';
-import 'package:Medicall/util/app_util.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
 class PatientAccountScreen extends StatefulWidget {
   final UpdatePatientInfoViewModel model;
@@ -318,6 +319,46 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
     );
   }
 
+  ThemeData themeData(Color themeColor) => ThemeData.dark().copyWith(
+        buttonColor: themeColor,
+        brightness: Brightness.dark,
+        primaryColor: Colors.grey[900],
+        primaryColorBrightness: Brightness.dark,
+        primaryColorLight: Colors.grey[900],
+        primaryColorDark: Colors.grey[900],
+        accentColor: themeColor,
+        accentColorBrightness: Brightness.dark,
+        canvasColor: Colors.grey[850],
+        scaffoldBackgroundColor: Colors.grey[900],
+        bottomAppBarColor: Colors.grey[900],
+        cardColor: Colors.grey[900],
+        highlightColor: Colors.transparent,
+        toggleableActiveColor: themeColor,
+        cursorColor: themeColor,
+        textSelectionColor: themeColor.withAlpha(100),
+        textSelectionHandleColor: themeColor,
+        indicatorColor: themeColor,
+        appBarTheme: const AppBarTheme(
+          brightness: Brightness.dark,
+          elevation: 0,
+        ),
+        colorScheme: ColorScheme(
+          primary: Colors.grey[900],
+          primaryVariant: Colors.grey[900],
+          secondary: themeColor,
+          secondaryVariant: themeColor,
+          background: Colors.grey[900],
+          surface: Colors.grey[900],
+          brightness: Brightness.dark,
+          error: const Color(0xffcf6679),
+          onPrimary: Colors.black,
+          onSecondary: Colors.black,
+          onSurface: Colors.white,
+          onBackground: Colors.white,
+          onError: Colors.black,
+        ),
+      );
+
   Future<void> _loadProfileImage({
     FirebaseStorageService storageService,
     FirestoreDatabase firestoreDatabase,
@@ -326,44 +367,139 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
   }) async {
     List<Asset> resultList = List<Asset>();
 
-    try {
-      resultList = await extImageProvider.pickImages(
-        List<Asset>(),
-        1,
-        true,
-        extImageProvider.pickImagesCupertinoOptions(takePhotoIcon: 'camera'),
-        extImageProvider.pickImagesMaterialOptions(
-            useDetailsView: true,
-            actionBarColor:
-                '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
-            statusBarColor:
-                '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
-            lightStatusBar: false,
-            autoCloseOnSelectionLimit: true,
-            startInAllView: true,
-            actionBarTitle: 'Select Profile Picture',
-            allViewTitle: 'All Photos'),
-        context,
-      );
-    } on PlatformException catch (e) {
-      AppUtil().showFlushBar(e, context);
-    }
+    final AssetEntity result = await CameraPicker.pickFromCamera(
+      context,
+      isAllowRecording: false,
+      textDelegate: EnglishCameraPickerTextDelegate(),
+    );
+    if (result != null) {}
 
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    if (!mounted) return;
-    if (resultList.length > 0) {
-      this.setState(() {
-        this.imageLoading = true;
-      });
-      String url =
-          await storageService.uploadProfileImage(asset: resultList.first);
-      userProvider.user.profilePic = url;
-      this.setState(() {
-        this.imageLoading = false;
-        this.profileImageURL = url;
-      });
-      await firestoreDatabase.setUser(userProvider.user);
-    }
+    // PickMethodModel pickMethodModel = PickMethodModel(
+    //   icon: '🔲',
+    //   name: '3 items grid',
+    //   description:
+    //       'Picker will served as 3 items on cross axis. (pageSize must be a multiple of gridCount)',
+    //   method: (
+    //     BuildContext context,
+    //     List<AssetEntity> assets,
+    //   ) async {
+    //     return await AssetPicker.pickAssets(
+    //       context,
+    //       gridCount: 3,
+    //       pageSize: 120,
+    //       maxAssets: 5,
+    //       selectedAssets: assets,
+    //       requestType: RequestType.image,
+    //       textDelegate: EnglishTextDelegate(),
+    //       pickerTheme: themeData(Theme.of(context).colorScheme.primary),
+    //       customItemPosition: CustomItemPosition.prepend,
+    //       customItemBuilder: (BuildContext context) {
+    //         return GestureDetector(
+    //           behavior: HitTestBehavior.opaque,
+    //           onTap: () async {
+    //             final AssetEntity result = await CameraPicker.pickFromCamera(
+    //               context,
+    //               isAllowRecording: false,
+    //               textDelegate: EnglishCameraPickerTextDelegate(),
+    //             );
+    //             if (result != null) {}
+    //           },
+    //           child: const Center(
+    //             child: Icon(Icons.camera_enhance, size: 42.0),
+    //           ),
+    //         );
+    //       },
+    //     );
+    //   },
+    // );
+    //
+    // List<AssetEntity> assets = <AssetEntity>[];
+    // bool isDisplayingDetail = true;
+    //
+    // final List<AssetEntity> result =
+    //     await pickMethodModel.method(context, assets);
+    // if (result != null && result != assets) {
+    //   assets = List<AssetEntity>.from(result);
+    //   if (mounted) {
+    //     setState(() {});
+    //   }
+    // }
+
+    print("");
+
+    // try {
+    //   resultList = await extImageProvider.pickImages(
+    //     List<Asset>(),
+    //     1,
+    //     true,
+    //     extImageProvider.pickImagesCupertinoOptions(takePhotoIcon: 'camera'),
+    //     extImageProvider.pickImagesMaterialOptions(
+    //         useDetailsView: true,
+    //         actionBarColor:
+    //             '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
+    //         statusBarColor:
+    //             '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
+    //         lightStatusBar: false,
+    //         autoCloseOnSelectionLimit: true,
+    //         startInAllView: true,
+    //         actionBarTitle: 'Select Profile Picture',
+    //         allViewTitle: 'All Photos'),
+    //     context,
+    //   );
+    // } on PlatformException catch (e) {
+    //   AppUtil().showFlushBar(e, context);
+    // }
+    //
+    // // If the widget was removed from the tree while the asynchronous platform
+    // // message was in flight, we want to discard the reply rather than calling
+    // if (!mounted) return;
+    // if (resultList.length > 0) {
+    //   this.setState(() {
+    //     this.imageLoading = true;
+    //   });
+    //   String url =
+    //       await storageService.uploadProfileImage(asset: resultList.first);
+    //   userProvider.user.profilePic = url;
+    //   this.setState(() {
+    //     this.imageLoading = false;
+    //     this.profileImageURL = url;
+    //   });
+    //   await firestoreDatabase.setUser(userProvider.user);
+    // }
   }
+}
+
+class PickMethodModel {
+  const PickMethodModel({
+    this.icon,
+    this.name,
+    this.description,
+    this.method,
+  });
+
+  final String icon;
+  final String name;
+  final String description;
+  final Future<List<AssetEntity>> Function(BuildContext, List<AssetEntity>)
+      method;
+
+  static PickMethodModel common = PickMethodModel(
+    icon: '🖼️',
+    name: 'Image picker',
+    description: 'Simply pick image from device.',
+    method: (
+      BuildContext context,
+      List<AssetEntity> assets,
+    ) async {
+      return await AssetPicker.pickAssets(
+        context,
+        maxAssets: 9,
+        pathThumbSize: 84,
+        gridCount: 4,
+        selectedAssets: assets,
+        themeColor: Theme.of(context).colorScheme.primary,
+        requestType: RequestType.image,
+      );
+    },
+  );
 }

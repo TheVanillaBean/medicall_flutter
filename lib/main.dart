@@ -25,6 +25,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
 import 'models/user/user_model_base.dart';
 
@@ -39,6 +40,7 @@ void main() async {
     databaseBuilder: (_) => NonAuthFirestoreDB(),
     tempUserProvider: (_) => TempUserProvider(),
   ));
+  AssetPicker.registerObserve();
 }
 
 class MedicallApp extends StatelessWidget {
