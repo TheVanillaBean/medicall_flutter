@@ -25,7 +25,7 @@ class CameraPicker extends StatefulWidget {
     this.isOnlyAllowRecording = false,
     this.maximumRecordingDuration = const Duration(seconds: 15),
     this.theme,
-    this.resolutionPreset = ResolutionPreset.max,
+    this.resolutionPreset = ResolutionPreset.medium,
     this.cameraQuarterTurns = 0,
     CameraPickerTextDelegate textDelegate,
   })  : assert(
@@ -473,7 +473,8 @@ class CameraPickerState extends State<CameraPicker> {
       child: Row(
         children: <Widget>[
           const Spacer(),
-          // TODO(Alex): There's an issue tracking NPE of the camera plugin, so switching is temporary disabled .
+
+          /// There's an issue tracking NPE of the camera plugin, so switching is temporary disabled .
           if ((cameras?.length ?? 0) > 1) switchCamerasButton,
         ],
       ),
@@ -628,7 +629,7 @@ class CameraPickerState extends State<CameraPicker> {
               const SizedBox.shrink(),
             SafeArea(
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20.0),
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
                 child: Column(
                   children: <Widget>[
                     settingsAction,

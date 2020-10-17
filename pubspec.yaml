@@ -76,7 +76,6 @@ dependencies:
   get_version: ^0.2.2
   native_updater: ^0.0.3
   version: ^1.2.0
-  wechat_assets_picker: ^4.2.2
   device_info: ^0.4.2+9
   path_provider: ^1.6.21
   photo_manager: ">=0.5.8 <2.0.0"
