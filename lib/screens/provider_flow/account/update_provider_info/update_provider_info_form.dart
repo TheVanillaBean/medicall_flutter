@@ -1,10 +1,13 @@
 import 'package:Medicall/common_widgets/custom_dropdown_formfield.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
+import 'package:Medicall/models/user/provider_user_model.dart';
 import 'package:Medicall/screens/provider_flow/account/update_provider_info/update_provider_info_view_model.dart';
 import 'package:Medicall/screens/provider_flow/registration/provider_bio_text_field.dart';
 import 'package:Medicall/screens/provider_flow/registration/provider_custom_text_field.dart';
 import 'package:Medicall/screens/provider_flow/registration/provider_profile_view_model_base.dart';
-
+import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/database.dart';
+import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
@@ -41,7 +44,9 @@ class _UpdateProviderInfoFormState extends State<UpdateProviderInfoForm>
   MaskTextInputFormatter zipCodeTextInputFormatter =
       MaskTextInputFormatter(mask: "#####", filter: {"#": RegExp(r'[0-9]')});
 
-  Future<void> _submit(UpdateProviderInfoViewModel model) async {
+  Future<void> _submit(
+    UpdateProviderInfoViewModel model,
+  ) async {
     try {
       await model.submit();
       Navigator.pop(context);
@@ -52,6 +57,11 @@ class _UpdateProviderInfoFormState extends State<UpdateProviderInfoForm>
 
   @override
   Widget build(BuildContext context) {
+    final AuthBase auth = Provider.of<AuthBase>(context, listen: false);
+    final FirestoreDatabase firestoreDatabase =
+        Provider.of<FirestoreDatabase>(context, listen: false);
+    final UserProvider userProvider =
+        Provider.of<UserProvider>(context, listen: false);
     UpdateProviderInfoViewModel model =
         Provider.of<UpdateProviderInfoViewModel>(
       context,
@@ -66,18 +76,21 @@ class _UpdateProviderInfoFormState extends State<UpdateProviderInfoForm>
         child: Column(
           children: [
             ProviderCustomTextField(
+              initialText: userProvider.user.mailingAddress,
               labelText: 'Practice Address',
               hint: '123 Main St',
               errorText: model.practiceAddressErrorText,
               onChanged: model.updateMailingAddress,
             ),
             ProviderCustomTextField(
+              initialText: userProvider.user.mailingAddressLine2,
               labelText: 'Apartment, building, suite (optional)',
               hint: 'BLDG E, APT 2',
               errorText: model.practiceAddressErrorText,
               onChanged: model.updateMailingAddressLine2,
             ),
             ProviderCustomTextField(
+              initialText: userProvider.user.mailingCity,
               labelText: 'City',
               hint: 'Anytown',
               errorText: model.practiceCityErrorText,
@@ -87,10 +100,11 @@ class _UpdateProviderInfoFormState extends State<UpdateProviderInfoForm>
               labelText: 'State',
               onChanged: model.updateMailingState,
               items: model.states,
-              selectedItem: model.mailingState,
+              selectedItem: userProvider.user.mailingState,
               errorText: model.practiceStateErrorText,
             ),
             ProviderCustomTextField(
+              initialText: userProvider.user.mailingZipCode,
               labelText: 'Zip Code',
               inputFormatters: [zipCodeTextInputFormatter],
               hint: '12345',
@@ -123,6 +137,7 @@ class _UpdateProviderInfoFormState extends State<UpdateProviderInfoForm>
         child: Column(
           children: [
             ProviderCustomTextField(
+              initialText: userProvider.user.phoneNumber,
               inputFormatters: [phoneTextInputFormatter],
               labelText: 'Mobile Phone',
               hint: '(123)456-7890',
@@ -156,7 +171,8 @@ class _UpdateProviderInfoFormState extends State<UpdateProviderInfoForm>
               labelText: 'Select Your Title',
               hint: 'Select your title',
               items: model.professionalTitles,
-              selectedItem: model.professionalTitle,
+              selectedItem:
+                  (userProvider.user as ProviderUser).professionalTitle,
               errorText: model.professionalTitleErrorText,
               onChanged: model.updateProfessionalTitle,
             ),
@@ -183,6 +199,7 @@ class _UpdateProviderInfoFormState extends State<UpdateProviderInfoForm>
         child: Column(
           children: [
             ProviderCustomTextField(
+              initialText: (userProvider.user as ProviderUser).medLicense,
               labelText: 'Medical License Number',
               hint: '12345',
               errorText: model.medicalLicenseErrorText,
@@ -217,7 +234,7 @@ class _UpdateProviderInfoFormState extends State<UpdateProviderInfoForm>
               labelText: 'Medical License State',
               onChanged: model.updateMedLicenseState,
               items: model.states,
-              selectedItem: model.medLicenseState,
+              selectedItem: (userProvider.user as ProviderUser).medLicenseState,
               errorText: model.medicalStateErrorText,
             ),
             SizedBox(height: 30),
@@ -242,10 +259,10 @@ class _UpdateProviderInfoFormState extends State<UpdateProviderInfoForm>
     } else if (model.profileInputType == ProfileInputType.NPI) {
       return Form(
         key: _formKey,
-        autovalidate: false,
         child: Column(
           children: [
             ProviderCustomTextField(
+              initialText: (userProvider.user as ProviderUser).npi,
               labelText: 'NPI Number',
               hint: '1234567890',
               keyboardType: TextInputType.number,
@@ -280,7 +297,7 @@ class _UpdateProviderInfoFormState extends State<UpdateProviderInfoForm>
               labelText: 'Board Certification',
               onChanged: model.updateBoardCertified,
               items: model.boardCertification,
-              selectedItem: model.boardCertified,
+              selectedItem: (userProvider.user as ProviderUser).boardCertified,
               errorText: model.boardCertificationErrorText,
             ),
             SizedBox(height: 30),
@@ -308,6 +325,7 @@ class _UpdateProviderInfoFormState extends State<UpdateProviderInfoForm>
         child: Column(
           children: [
             ProviderBioTextField(
+              initialText: (userProvider.user as ProviderUser).medSchool,
               keyboardType: TextInputType.multiline,
               minLines: 1,
               maxLines: 3,
@@ -341,6 +359,7 @@ class _UpdateProviderInfoFormState extends State<UpdateProviderInfoForm>
         child: Column(
           children: [
             ProviderBioTextField(
+              initialText: (userProvider.user as ProviderUser).medResidency,
               keyboardType: TextInputType.multiline,
               minLines: 1,
               maxLines: 3,
@@ -375,6 +394,7 @@ class _UpdateProviderInfoFormState extends State<UpdateProviderInfoForm>
         child: Column(
           children: [
             ProviderBioTextField(
+              initialText: (userProvider.user as ProviderUser).providerBio,
               keyboardType: TextInputType.multiline,
               minLines: 1,
               maxLines: 20,

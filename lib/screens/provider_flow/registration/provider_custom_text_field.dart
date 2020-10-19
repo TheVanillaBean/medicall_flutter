@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class ProviderCustomTextField extends StatelessWidget {
+class ProviderCustomTextField extends StatefulWidget {
   const ProviderCustomTextField({
     this.onChanged,
     this.icon,
@@ -9,12 +9,12 @@ class ProviderCustomTextField extends StatelessWidget {
     this.hint,
     this.keyboardType,
     this.validator,
-    this.controller,
     this.enabled,
     this.errorText,
     this.obscureText,
     this.inputFormatters,
     this.onTapped,
+    this.initialText = '',
   });
   final ValueChanged<String> onChanged;
   final Icon icon;
@@ -25,9 +25,32 @@ class ProviderCustomTextField extends StatelessWidget {
   final String errorText;
   final bool obscureText;
   final FormFieldValidator<String> validator;
-  final TextEditingController controller;
   final List<TextInputFormatter> inputFormatters;
   final GestureTapCallback onTapped;
+  final String initialText;
+
+  @override
+  _ProviderCustomTextFieldState createState() =>
+      _ProviderCustomTextFieldState();
+}
+
+class _ProviderCustomTextFieldState extends State<ProviderCustomTextField> {
+  TextEditingController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = new TextEditingController();
+    if (widget.initialText != null) {
+      controller.text = widget.initialText;
+    }
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,18 +62,18 @@ class ProviderCustomTextField extends StatelessWidget {
       child: TextFormField(
         textCapitalization: TextCapitalization.words,
         autocorrect: false,
-        obscureText: obscureText ?? false,
+        obscureText: widget.obscureText ?? false,
         controller: controller,
-        inputFormatters: inputFormatters,
-        onChanged: onChanged,
+        inputFormatters: widget.inputFormatters,
+        onChanged: widget.onChanged,
         autofocus: true,
         style: Theme.of(context).textTheme.bodyText1,
-        onTap: onTapped,
+        onTap: widget.onTapped,
         decoration: InputDecoration(
-          labelText: labelText,
-          errorText: errorText,
+          labelText: widget.labelText,
+          errorText: widget.errorText,
           labelStyle: Theme.of(context).textTheme.bodyText1,
-          hintText: hint,
+          hintText: widget.hint,
           hintStyle: Theme.of(context).textTheme.caption,
           enabledBorder: UnderlineInputBorder(
             borderSide: BorderSide(
@@ -77,13 +100,7 @@ class ProviderCustomTextField extends StatelessWidget {
             ),
           ),
         ),
-        keyboardType: keyboardType,
-//        validator: (input) {
-//          if (input.isEmpty) {
-//            return '$labelText is required';
-//          }
-//          return null;
-//        },
+        keyboardType: widget.keyboardType,
       ),
     );
   }

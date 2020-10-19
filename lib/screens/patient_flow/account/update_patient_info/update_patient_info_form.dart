@@ -1,6 +1,5 @@
 import 'package:Medicall/common_widgets/custom_dropdown_formfield.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
-import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/screens/patient_flow/account/update_patient_info/update_patient_info_view_model.dart';
 import 'package:Medicall/screens/patient_flow/personal_info/personal_info_text_field.dart';
 import 'package:Medicall/services/auth.dart';

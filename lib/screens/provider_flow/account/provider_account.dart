@@ -215,7 +215,7 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
         icon: Icon(Icons.create, size: 20),
         onPressed: () {
           model.profileInputType = ProfileInputType.PHONE;
-          model.phoneNumber = model.userProvider.user.phoneNumber;
+          model.initPhoneNumber();
           UpdateProviderInfoScreen.show(
             context: context,
             model: model,
@@ -235,6 +235,7 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
         icon: Icon(Icons.create, size: 20),
         onPressed: () {
           model.profileInputType = ProfileInputType.ADDRESS;
+          model.initAddress();
           UpdateProviderInfoScreen.show(
             context: context,
             model: model,
@@ -252,6 +253,7 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
         icon: Icon(Icons.create, size: 20),
         onPressed: () {
           model.profileInputType = ProfileInputType.PROFESSIONAL_TITLE;
+          model.initProfessionalTitle();
           UpdateProviderInfoScreen.show(
             context: context,
             model: model,
@@ -269,6 +271,7 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
         icon: Icon(Icons.create, size: 20),
         onPressed: () {
           model.profileInputType = ProfileInputType.MEDICAL_LICENSE;
+          model.initMedicalLicense();
           UpdateProviderInfoScreen.show(
             context: context,
             model: model,
@@ -286,6 +289,7 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
         icon: Icon(Icons.create, size: 20),
         onPressed: () {
           model.profileInputType = ProfileInputType.MEDICAL_LICENSE_STATE;
+          model.initMedicalLicenseState();
           UpdateProviderInfoScreen.show(
             context: context,
             model: model,
@@ -303,6 +307,7 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
         icon: Icon(Icons.create, size: 20),
         onPressed: () {
           model.profileInputType = ProfileInputType.NPI;
+          model.initNpi();
           UpdateProviderInfoScreen.show(
             context: context,
             model: model,
@@ -320,6 +325,7 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
         icon: Icon(Icons.create, size: 20),
         onPressed: () {
           model.profileInputType = ProfileInputType.BOARD_CERTIFIED;
+          model.initBoardCertified();
           UpdateProviderInfoScreen.show(
             context: context,
             model: model,
@@ -337,6 +343,7 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
         icon: Icon(Icons.create, size: 20),
         onPressed: () {
           model.profileInputType = ProfileInputType.MEDICAL_SCHOOL;
+          model.initMedicalSchool();
           UpdateProviderInfoScreen.show(
             context: context,
             model: model,
@@ -354,6 +361,7 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
         icon: Icon(Icons.create, size: 20),
         onPressed: () {
           model.profileInputType = ProfileInputType.MEDICAL_RESIDENCY;
+          model.initMedicalResidency();
           UpdateProviderInfoScreen.show(
             context: context,
             model: model,
@@ -370,6 +378,7 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
         icon: Icon(Icons.create, size: 20),
         onPressed: () {
           model.profileInputType = ProfileInputType.BIO;
+          model.initProviderBio();
           UpdateProviderInfoScreen.show(
             context: context,
             model: model,
