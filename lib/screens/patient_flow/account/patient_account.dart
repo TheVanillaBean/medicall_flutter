@@ -234,6 +234,7 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
           icon: Icon(Icons.create, size: 20),
           onPressed: () {
             model.patientProfileInputType = PatientProfileInputType.ADDRESS;
+            model.initAddress();
             UpdatePatientInfoScreen.show(
               context: context,
               model: model,
@@ -253,6 +254,7 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
         icon: Icon(Icons.create, size: 20),
         onPressed: () {
           model.patientProfileInputType = PatientProfileInputType.PHONE;
+          model.initPhoneNumber();
           UpdatePatientInfoScreen.show(
             context: context,
             model: model,

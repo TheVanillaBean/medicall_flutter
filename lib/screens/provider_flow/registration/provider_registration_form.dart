@@ -46,7 +46,6 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
 
     return Form(
       key: _formKey,
-      autovalidate: false,
       child: Column(
         children: <Widget>[
           SizedBox(height: 20),

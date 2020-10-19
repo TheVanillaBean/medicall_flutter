@@ -1,6 +1,4 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
-import 'package:Medicall/common_widgets/provider_bio_card.dart';
-import 'package:Medicall/common_widgets/reusable_account_card.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/symptom_model.dart';
@@ -138,19 +136,6 @@ class ProviderDetailScreen extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
       ),
-      // SizedBox(height: 10),
-      // Center(
-      //   child: Text(
-      //     'DERMATOLOGIST',
-      //     style: TextStyle(
-      //       fontFamily: 'Inter',
-      //       fontSize: 14.0,
-      //       color: Colors.black54,
-      //       fontWeight: FontWeight.bold,
-      //     ),
-      //     textAlign: TextAlign.center,
-      //   ),
-      // ),
       SizedBox(
         height: 30,
         width: 120,
