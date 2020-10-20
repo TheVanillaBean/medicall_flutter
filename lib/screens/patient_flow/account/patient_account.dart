@@ -404,6 +404,7 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
                   context,
                   isAllowRecording: false,
                   textDelegate: EnglishCameraPickerTextDelegate(),
+                  maxAssets: 4,
                 );
                 if (result != null) {}
               },

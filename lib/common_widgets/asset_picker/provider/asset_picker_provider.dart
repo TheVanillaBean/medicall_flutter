@@ -1,8 +1,4 @@
-///
-/// [Author] Alex (https://github.com/Alex525)
-/// [Date] 2020/3/31 15:28
-///
-import 'dart:math' as math;
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:Medicall/common_widgets/asset_picker/constants/constants.dart';
@@ -10,23 +6,33 @@ import 'package:Medicall/common_widgets/asset_picker/delegates/sort_path_delegat
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 
+import 'asset_picker_provider_base.dart';
+
 /// [ChangeNotifier] for assets picker.
 /// 资源选择器的 provider model
-class AssetPickerProvider extends ChangeNotifier {
+class AssetPickerProvider extends AssetPickerProviderBase {
   /// Call [getAssetList] with route duration when constructing.
   /// 构造时根据路由时长延时获取资源
   AssetPickerProvider({
-    this.maxAssets = 9,
-    this.pageSize = 320,
-    this.pathThumbSize = 80,
-    this.requestType = RequestType.image,
-    this.sortPathDelegate = SortPathDelegate.common,
-    this.filterOptions,
+    maxAssets = 9,
+    pageSize = 320,
+    pathThumbSize = 80,
+    requestType = RequestType.image,
+    sortPathDelegate = SortPathDelegate.common,
+    filterOptions,
     List<AssetEntity> selectedAssets,
     Duration routeDuration,
-  }) {
+  }) : super(
+          maxAssets: maxAssets,
+          pageSize: pageSize,
+          pathThumbSize: pathThumbSize,
+          requestType: requestType,
+          sortPathDelegate: sortPathDelegate,
+          filterOptions: filterOptions,
+          selectedAssets: selectedAssets,
+        ) {
     if (selectedAssets?.isNotEmpty ?? false) {
-      _selectedAssets = List<AssetEntity>.from(selectedAssets);
+      selectedAssets = List<AssetEntity>.from(selectedAssets);
     }
     Constants.sortPathDelegate = sortPathDelegate ?? SortPathDelegate.common;
     Future<void>.delayed(routeDuration).then(
@@ -35,99 +41,6 @@ class AssetPickerProvider extends ChangeNotifier {
         await getAssetList();
       },
     );
-  }
-
-  /// Maximum count for asset selection.
-  /// 资源选择的最大数量
-  final int maxAssets;
-
-  /// Assets should be loaded per page.
-  /// 资源选择的最大数量
-  final int pageSize;
-
-  /// Thumb size for path selector.
-  /// 路径选择器中缩略图的大小
-  final int pathThumbSize;
-
-  /// Request assets type.
-  /// 请求的资源类型
-  final RequestType requestType;
-
-  /// Delegate to sort asset path entities.
-  /// 资源路径排序的实现
-  final SortPathDelegate sortPathDelegate;
-
-  /// Filter options for the picker.
-  /// 选择器的筛选条件
-  ///
-  /// Will be merged into the base configuration.
-  /// 将会与基础条件进行合并。
-  final FilterOptionGroup filterOptions;
-
-  /// Clear all fields when dispose.
-  /// 销毁时重置所有内容
-  @override
-  void dispose() {
-    _isAssetsEmpty = false;
-    _isSwitchingPath = false;
-    _pathEntityList.clear();
-    _currentPathEntity = null;
-    _currentAssets = null;
-    _selectedAssets.clear();
-    super.dispose();
-  }
-
-  /// Whether there're any assets on the devices.
-  /// 设备上是否有资源文件
-  bool _isAssetsEmpty = false;
-
-  bool get isAssetsEmpty => _isAssetsEmpty;
-
-  set isAssetsEmpty(bool value) {
-    if (value == null || value == _isAssetsEmpty) {
-      return;
-    }
-    _isAssetsEmpty = value;
-    notifyListeners();
-  }
-
-  /// Whether there're any assets that can be displayed.
-  /// 是否有资源可供显示
-  bool _hasAssetsToDisplay = false;
-
-  bool get hasAssetsToDisplay => _hasAssetsToDisplay;
-
-  set hasAssetsToDisplay(bool value) {
-    assert(value != null);
-    if (value == _hasAssetsToDisplay) {
-      return;
-    }
-    _hasAssetsToDisplay = value;
-    notifyListeners();
-  }
-
-  /// Whether there're more assets waiting for load.
-  /// 是否还有更多资源可以加载
-  bool get hasMoreToLoad => _currentAssets.length < _totalAssetsCount;
-
-  /// The current page for assets list.
-  /// 当前加载的资源列表分页数
-  int get currentAssetsListPage =>
-      (math.max(1, _currentAssets.length) / pageSize).ceil();
-
-  /// Total count for assets.
-  /// 资源总数
-  int _totalAssetsCount = 0;
-
-  int get totalAssetsCount => _totalAssetsCount;
-
-  set totalAssetsCount(int value) {
-    assert(value != null);
-    if (value == _totalAssetsCount) {
-      return;
-    }
-    _totalAssetsCount = value;
-    notifyListeners();
   }
 
   /// If path switcher opened.
@@ -169,39 +82,6 @@ class AssetPickerProvider extends ChangeNotifier {
     _currentPathEntity = value;
     notifyListeners();
   }
-
-  /// Assets under current path entity.
-  /// 正在查看的资源路径下的所有资源
-  List<AssetEntity> _currentAssets;
-
-  List<AssetEntity> get currentAssets => _currentAssets;
-
-  set currentAssets(List<AssetEntity> value) {
-    assert(value != null);
-    if (value == _currentAssets) {
-      return;
-    }
-    _currentAssets = List<AssetEntity>.from(value);
-    notifyListeners();
-  }
-
-  /// Selected assets.
-  /// 已选中的资源
-  List<AssetEntity> _selectedAssets = <AssetEntity>[];
-
-  List<AssetEntity> get selectedAssets => _selectedAssets;
-
-  set selectedAssets(List<AssetEntity> value) {
-    assert(value != null);
-    if (value == _selectedAssets) {
-      return;
-    }
-    _selectedAssets = List<AssetEntity>.from(value);
-    notifyListeners();
-  }
-
-  /// 选中资源是否为空
-  bool get isSelectedNotEmpty => selectedAssets.isNotEmpty;
 
   /// Get assets path entities.
   /// 获取所有的资源路径
@@ -277,10 +157,10 @@ class AssetPickerProvider extends ChangeNotifier {
   /// Get assets under the specific path entity.
   /// 获取指定路径下的资源
   Future<void> getAssetsFromEntity(int page, AssetPathEntity pathEntity) async {
-    _currentAssets = (await pathEntity.getAssetListPaged(
+    currentAssets = (await pathEntity.getAssetListPaged(
             page, pageSize ?? pathEntity.assetCount))
         .toList();
-    _hasAssetsToDisplay = currentAssets?.isNotEmpty ?? false;
+    hasAssetsToDisplay = currentAssets?.isNotEmpty ?? false;
     notifyListeners();
   }
 
@@ -296,29 +176,10 @@ class AssetPickerProvider extends ChangeNotifier {
       return;
     } else {
       final List<AssetEntity> tempList = <AssetEntity>[];
-      tempList.addAll(_currentAssets);
+      tempList.addAll(currentAssets);
       tempList.addAll(assets);
       currentAssets = tempList;
     }
-  }
-
-  /// Select asset.
-  /// 选中资源
-  void selectAsset(AssetEntity item) {
-    if (selectedAssets.length == maxAssets || selectedAssets.contains(item)) {
-      return;
-    }
-    final List<AssetEntity> _set = List<AssetEntity>.from(selectedAssets);
-    _set.add(item);
-    selectedAssets = _set;
-  }
-
-  /// Un-select asset.
-  /// 取消选中资源
-  void unSelectAsset(AssetEntity item) {
-    final List<AssetEntity> _set = List<AssetEntity>.from(selectedAssets);
-    _set.remove(item);
-    selectedAssets = _set;
   }
 
   /// Switch path entity.
@@ -326,7 +187,7 @@ class AssetPickerProvider extends ChangeNotifier {
   void switchPath(AssetPathEntity pathEntity) {
     _isSwitchingPath = false;
     _currentPathEntity = pathEntity;
-    _totalAssetsCount = pathEntity.assetCount;
+    totalAssetsCount = pathEntity.assetCount;
     notifyListeners();
     getAssetsFromEntity(0, currentPathEntity);
   }

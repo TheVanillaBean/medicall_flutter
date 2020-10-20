@@ -794,6 +794,7 @@ class AssetPicker extends StatelessWidget {
                 assets: provider.currentAssets,
                 themeData: theme,
                 previewThumbSize: previewThumbSize,
+                selectorProvider: provider,
                 specialPickerType:
                     asset.type == AssetType.video ? specialPickerType : null,
               );

@@ -1,14 +1,21 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:Medicall/common_widgets/asset_picker/constants/enums.dart';
+import 'package:Medicall/common_widgets/asset_picker/delegates/sort_path_delegate.dart';
+import 'package:Medicall/common_widgets/asset_picker/provider/asset_picker_provider_base.dart';
+import 'package:Medicall/common_widgets/asset_picker/provider/bottom_bar_provider.dart';
+import 'package:Medicall/common_widgets/asset_picker/widget/asset_picker_bottom.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 
 import '../constants/constants.dart';
 import '../delegates/camera_picker_text_delegate.dart';
+import '../provider/camera_picker_provider.dart';
 import '../widget/circular_progress_bar.dart';
 import 'builder/slide_page_transition_builder.dart';
 import 'camera_picker_viewer.dart';
@@ -19,6 +26,11 @@ import 'camera_picker_viewer.dart';
 /// However, this might failed (high probability) if there're any steps
 /// went wrong during the process.
 class CameraPicker extends StatefulWidget {
+  final AssetPickerProviderBase selectorProvider;
+  final List<int> previewThumbSize;
+  final SpecialPickerType specialPickerType;
+  final CameraPickerProvider cameraPickerProvider;
+
   CameraPicker({
     Key key,
     this.isAllowRecording = false,
@@ -27,7 +39,11 @@ class CameraPicker extends StatefulWidget {
     this.theme,
     this.resolutionPreset = ResolutionPreset.medium,
     this.cameraQuarterTurns = 0,
+    this.previewThumbSize,
+    this.selectorProvider,
+    this.specialPickerType,
     CameraPickerTextDelegate textDelegate,
+    this.cameraPickerProvider,
   })  : assert(
           isAllowRecording == true || isOnlyAllowRecording != true,
           'Recording mode error.',
@@ -73,6 +89,22 @@ class CameraPicker extends StatefulWidget {
     int cameraQuarterTurns = 0,
     CameraPickerTextDelegate textDelegate,
     ResolutionPreset resolutionPreset = ResolutionPreset.max,
+    int maxAssets = 9,
+    int pageSize = 320,
+    int pathThumbSize = 200,
+    int gridCount = 4,
+    List<int> previewThumbSize,
+    RequestType requestType,
+    SpecialPickerType specialPickerType,
+    List<AssetEntity> selectedAssets,
+    Color themeColor,
+    ThemeData pickerTheme,
+    SortPathDelegate sortPathDelegate,
+    FilterOptionGroup filterOptions,
+    WidgetBuilder customItemBuilder,
+    CustomItemPosition customItemPosition = CustomItemPosition.none,
+    Curve routeCurve = Curves.easeIn,
+    Duration routeDuration = const Duration(milliseconds: 300),
   }) async {
     if (isAllowRecording != true && isOnlyAllowRecording == true) {
       throw ArgumentError('Recording mode error.');
@@ -80,19 +112,37 @@ class CameraPicker extends StatefulWidget {
     if (resolutionPreset == null) {
       throw ArgumentError('Resolution preset must not be null.');
     }
+    //add selected assets to provioder and make that the propertychangenotifer
+    final AssetPickerProviderBase provider = BottomBarProvider(
+      maxAssets: maxAssets,
+      pageSize: pageSize,
+      pathThumbSize: pathThumbSize,
+      selectedAssets: [],
+      requestType: requestType,
+      sortPathDelegate: sortPathDelegate,
+      filterOptions: filterOptions,
+    );
     final AssetEntity result = await Navigator.of(
       context,
       rootNavigator: true,
     ).push<AssetEntity>(
       SlidePageTransitionBuilder<AssetEntity>(
-        builder: CameraPicker(
-          isAllowRecording: isAllowRecording,
-          isOnlyAllowRecording: isOnlyAllowRecording,
-          maximumRecordingDuration: maximumRecordingDuration,
-          theme: theme,
-          cameraQuarterTurns: cameraQuarterTurns,
-          textDelegate: textDelegate,
-          resolutionPreset: resolutionPreset,
+        builder: ChangeNotifierProvider<CameraPickerProvider>(
+          create: (context) => CameraPickerProvider(),
+          child: Consumer<CameraPickerProvider>(
+            builder: (_, model, __) => CameraPicker(
+              previewThumbSize: previewThumbSize,
+              selectorProvider: provider,
+              isAllowRecording: isAllowRecording,
+              isOnlyAllowRecording: isOnlyAllowRecording,
+              maximumRecordingDuration: maximumRecordingDuration,
+              theme: theme,
+              cameraQuarterTurns: cameraQuarterTurns,
+              textDelegate: textDelegate,
+              resolutionPreset: resolutionPreset,
+              cameraPickerProvider: model,
+            ),
+          ),
         ),
         transitionCurve: Curves.easeIn,
         transitionDuration: const Duration(milliseconds: 300),
@@ -228,6 +278,16 @@ class CameraPickerState extends State<CameraPicker> {
   @override
   void initState() {
     super.initState();
+
+    if (widget.selectorProvider.selectedAssets != null) {
+      widget.cameraPickerProvider.selectedAssets =
+          widget.selectorProvider.selectedAssets;
+    }
+
+    widget.selectorProvider.currentIndex = 0;
+    widget.selectorProvider.pageController =
+        PageController(initialPage: widget.selectorProvider.currentIndex);
+
     _theme = widget.theme ?? CameraPicker.themeData(C.themeColor);
 
     /// TODO: Currently hide status bar will cause the viewport shaking on Android.
@@ -360,7 +420,11 @@ class CameraPickerState extends State<CameraPicker> {
           theme: theme,
         );
         if (entity != null) {
-          Navigator.of(context).pop(entity);
+          List<AssetEntity> selectedAssets =
+              widget.cameraPickerProvider.selectedAssets;
+          selectedAssets.add(entity);
+          widget.cameraPickerProvider.updateSelectedAssetsWith(selectedAssets);
+          widget.selectorProvider.selectedAssets = selectedAssets;
         } else {
           takenPictureFilePath = null;
           if (mounted) {
@@ -435,6 +499,7 @@ class CameraPickerState extends State<CameraPicker> {
     }
   }
 
+  // TODO: Add video thumbnail support to bottom bar
   /// Stop the recording process.
   Future<void> stopRecordingVideo() async {
     if (cameraController.value.isRecordingVideo) {
@@ -627,9 +692,19 @@ class CameraPickerState extends State<CameraPicker> {
               )
             else
               const SizedBox.shrink(),
+            if (widget.cameraPickerProvider.selectedAssets.length > 0)
+              BottomBar(
+                assets: widget.cameraPickerProvider.selectedAssets,
+                selectedAssets: widget.cameraPickerProvider.selectedAssets,
+                selectorProvider: widget.selectorProvider,
+                previewThumbSize: widget.previewThumbSize,
+                specialPickerType: widget.specialPickerType,
+                themeData: _theme,
+                displayOnTop: true,
+              ),
             SafeArea(
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: Column(
                   children: <Widget>[
                     settingsAction,

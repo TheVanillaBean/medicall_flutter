@@ -5,9 +5,10 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:Medicall/common_widgets/asset_picker/provider/asset_entity_image_provider.dart';
 import 'package:Medicall/common_widgets/asset_picker/provider/asset_picker_provider.dart';
+import 'package:Medicall/common_widgets/asset_picker/provider/asset_picker_provider_base.dart';
 import 'package:Medicall/common_widgets/asset_picker/provider/asset_picker_viewer_provider.dart';
+import 'package:Medicall/common_widgets/asset_picker/widget/asset_picker_bottom.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -49,7 +50,7 @@ class AssetPickerViewer extends StatefulWidget {
 
   /// Provider for [AssetPicker].
   /// 资源选择器的状态保持
-  final AssetPickerProvider selectorProvider;
+  final AssetPickerProviderBase selectorProvider;
 
   /// Theme for the viewer.
   /// 主题
@@ -78,7 +79,7 @@ class AssetPickerViewer extends StatefulWidget {
     @required ThemeData themeData,
     List<int> previewThumbSize,
     List<AssetEntity> selectedAssets,
-    AssetPickerProvider selectorProvider,
+    AssetPickerProviderBase selectorProvider,
     SpecialPickerType specialPickerType,
   }) async {
     try {
@@ -121,16 +122,6 @@ class AssetPickerViewer extends StatefulWidget {
 
 class AssetPickerViewerState extends State<AssetPickerViewer>
     with TickerProviderStateMixin {
-  /// [StreamController] for viewing page index update.
-  /// 用于更新当前正在浏览的资源页码的流控制器
-  ///
-  /// The main purpose is narrow down build parts when page index is changing, prevent
-  /// widely [setState] and causing other widgets rebuild.
-  /// 使用 [StreamController] 的主要目的是缩小页码变化时构建组件的范围，
-  /// 防止滥用 [setState] 导致其他部件重新构建。
-  final StreamController<int> pageStreamController =
-      StreamController<int>.broadcast();
-
   /// [AnimationController] for double tap animation.
   /// 双击缩放的动画控制器
   AnimationController _doubleTapAnimationController;
@@ -151,21 +142,14 @@ class AssetPickerViewerState extends State<AssetPickerViewer>
   /// 资源预览器的状态保持
   AssetPickerViewerProvider provider;
 
-  /// [PageController] for assets preview [PageView].
-  /// 查看图片资源的页面控制器
-  PageController pageController;
-
-  /// Current previewing index.
-  /// 当前正在预览的资源索引
-  int currentIndex;
-
   /// Whether detail widgets displayed.
   /// 详情部件是否显示
   bool isDisplayingDetail = true;
 
   /// Getter for the current asset.
   /// 当前资源的Getter
-  AssetEntity get currentAsset => widget.assets.elementAt(currentIndex);
+  AssetEntity get currentAsset =>
+      widget.assets.elementAt(widget.selectorProvider.currentIndex);
 
   /// Height for bottom detail widget.
   /// 底部详情部件的高度
@@ -187,8 +171,9 @@ class AssetPickerViewerState extends State<AssetPickerViewer>
       parent: _doubleTapAnimationController,
       curve: Curves.easeInOut,
     );
-    currentIndex = widget.currentIndex;
-    pageController = PageController(initialPage: currentIndex);
+    widget.selectorProvider.currentIndex = widget.currentIndex;
+    widget.selectorProvider.pageController =
+        PageController(initialPage: widget.selectorProvider.currentIndex);
     if (widget.selectedAssets != null) {
       provider = AssetPickerViewerProvider(widget.selectedAssets);
     }
@@ -197,7 +182,6 @@ class AssetPickerViewerState extends State<AssetPickerViewer>
   @override
   void dispose() {
     _doubleTapAnimationController?.dispose();
-    pageStreamController?.close();
     super.dispose();
   }
 
@@ -310,8 +294,8 @@ class AssetPickerViewerState extends State<AssetPickerViewer>
               const BackButton(),
               if (!isAppleOS && widget.specialPickerType == null)
                 StreamBuilder<int>(
-                  initialData: currentIndex,
-                  stream: pageStreamController.stream,
+                  initialData: widget.selectorProvider.currentIndex,
+                  stream: widget.selectorProvider.pageStreamController.stream,
                   builder: (BuildContext _, AsyncSnapshot<int> snapshot) {
                     return Text(
                       '${snapshot.data + 1}/${widget.assets.length}',
@@ -414,128 +398,6 @@ class AssetPickerViewerState extends State<AssetPickerViewer>
         ),
       );
 
-  /// Thumb item widgets in bottom detail.
-  /// 底部信息栏单个资源缩略部件
-  Widget _bottomDetailItem(BuildContext _, int index) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
-      child: AspectRatio(
-        aspectRatio: 1.0,
-        child: StreamBuilder<int>(
-          initialData: currentIndex,
-          stream: pageStreamController.stream,
-          builder: (BuildContext _, AsyncSnapshot<int> snapshot) {
-            final AssetEntity asset = widget.selectedAssets.elementAt(index);
-            final bool isViewing = asset == currentAsset;
-            return GestureDetector(
-              onTap: () {
-                if (widget.assets == widget.selectedAssets) {
-                  pageController.jumpToPage(index);
-                }
-              },
-              child: Selector<AssetPickerViewerProvider, List<AssetEntity>>(
-                selector: (
-                  BuildContext _,
-                  AssetPickerViewerProvider provider,
-                ) =>
-                    provider.currentlySelectedAssets,
-                builder: (
-                  BuildContext _,
-                  List<AssetEntity> currentlySelectedAssets,
-                  Widget __,
-                ) {
-                  final bool isSelected =
-                      currentlySelectedAssets.contains(asset);
-                  return Stack(
-                    children: <Widget>[
-                      () {
-                        Widget item;
-                        switch (asset.type) {
-                          case AssetType.other:
-                            item = const SizedBox.shrink();
-                            break;
-                          case AssetType.image:
-                            item = _imagePreviewItem(asset);
-                            break;
-                          case AssetType.video:
-                            item = _videoPreviewItem(asset);
-                            break;
-                          case AssetType.audio:
-                            item = _audioPreviewItem(asset);
-                            break;
-                        }
-                        return item;
-                      }(),
-                      AnimatedContainer(
-                        duration: kThemeAnimationDuration,
-                        curve: Curves.easeInOut,
-                        decoration: BoxDecoration(
-                          border: isViewing
-                              ? Border.all(
-                                  color: widget.themeData.colorScheme.secondary,
-                                  width: 2.0,
-                                )
-                              : null,
-                          color: isSelected
-                              ? null
-                              : widget.themeData.colorScheme.surface
-                                  .withOpacity(0.54),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            );
-          },
-        ),
-      ),
-    );
-  }
-
-  /// Preview item widgets for audios.
-  /// 音频的底部预览部件
-  Widget _audioPreviewItem(AssetEntity asset) {
-    return ColoredBox(
-      color: context.themeData.dividerColor,
-      child: const Center(child: Icon(Icons.audiotrack)),
-    );
-  }
-
-  /// Preview item widgets for images.
-  /// 音频的底部预览部件
-  Widget _imagePreviewItem(AssetEntity asset) {
-    return Positioned.fill(
-      child: RepaintBoundary(
-        child: ExtendedImage(
-          image: AssetEntityImageProvider(
-            asset,
-            isOriginal: false,
-          ),
-          fit: BoxFit.cover,
-        ),
-      ),
-    );
-  }
-
-  /// Preview item widgets for video.
-  /// 音频的底部预览部件
-  Widget _videoPreviewItem(AssetEntity asset) {
-    return Positioned.fill(
-      child: Stack(
-        children: <Widget>[
-          _imagePreviewItem(asset),
-          Center(
-            child: Icon(
-              Icons.video_library,
-              color: widget.themeData.colorScheme.surface.withOpacity(0.54),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   /// Edit button. (No usage currently)
   /// 编辑按钮 (目前没有使用)
   Widget get editButton => Text(
@@ -548,8 +410,8 @@ class AssetPickerViewerState extends State<AssetPickerViewer>
   Widget get selectButton => Row(
         children: <Widget>[
           StreamBuilder<int>(
-            initialData: currentIndex,
-            stream: pageStreamController.stream,
+            initialData: widget.selectorProvider.currentIndex,
+            stream: widget.selectorProvider.pageStreamController.stream,
             builder: (BuildContext _, AsyncSnapshot<int> snapshot) {
               return ChangeNotifierProvider<AssetPickerViewerProvider>.value(
                 value: provider,
@@ -615,7 +477,7 @@ class AssetPickerViewerState extends State<AssetPickerViewer>
           child: Center(
             child: isSelected
                 ? Text(
-                    (currentIndex + 1).toString(),
+                    (widget.selectorProvider.currentIndex + 1).toString(),
                     style: const TextStyle(
                       fontSize: 16.0,
                       fontWeight: FontWeight.bold,
@@ -644,61 +506,6 @@ class AssetPickerViewerState extends State<AssetPickerViewer>
     );
   }
 
-  /// Detail widget aligned to bottom.
-  /// 底部信息部件
-  Widget get bottomDetail => AnimatedPositioned(
-        duration: kThemeAnimationDuration,
-        curve: Curves.easeInOut,
-        bottom: isDisplayingDetail
-            ? 0.0
-            : -(Screens.bottomSafeHeight + bottomDetailHeight),
-        left: 0.0,
-        right: 0.0,
-        height: Screens.bottomSafeHeight + bottomDetailHeight,
-        child: Container(
-          padding: EdgeInsets.only(bottom: Screens.bottomSafeHeight),
-          color: widget.themeData.canvasColor.withOpacity(0.85),
-          child: Column(
-            children: <Widget>[
-              ChangeNotifierProvider<AssetPickerViewerProvider>.value(
-                value: provider,
-                child: SizedBox(
-                  height: 90.0,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                    itemCount: widget.selectedAssets.length,
-                    itemBuilder: _bottomDetailItem,
-                  ),
-                ),
-              ),
-              Container(
-                height: 1.0,
-                color: widget.themeData.dividerColor,
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      const Spacer(),
-                      if (isAppleOS && provider != null)
-                        ChangeNotifierProvider<AssetPickerViewerProvider>.value(
-                          value: provider,
-                          child: confirmButton(context),
-                        )
-                      else
-                        selectButton,
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-
   /// The item widget when [AssetEntity.thumbData] load failed.
   /// 资源缩略数据加载失败时使用的部件
   Widget get _failedItem => Center(
@@ -726,18 +533,27 @@ class AssetPickerViewerState extends State<AssetPickerViewer>
                 Positioned.fill(
                   child: ExtendedImageGesturePageView.builder(
                     physics: const CustomScrollPhysics(),
-                    controller: pageController,
+                    controller: widget.selectorProvider.pageController,
                     itemCount: widget.assets.length,
                     itemBuilder: assetPageBuilder,
                     onPageChanged: (int index) {
-                      currentIndex = index;
-                      pageStreamController.add(index);
+                      widget.selectorProvider.currentIndex = index;
+                      widget.selectorProvider.pageStreamController.add(index);
                     },
                     scrollDirection: Axis.horizontal,
                   ),
                 ),
                 appBar(context),
-                if (widget.selectedAssets != null) bottomDetail,
+                if (widget.selectedAssets != null)
+                  BottomBar(
+                    assets: widget.assets,
+                    selectedAssets: widget.selectedAssets,
+                    selectorProvider: widget.selectorProvider,
+                    previewThumbSize: widget.previewThumbSize,
+                    specialPickerType: widget.specialPickerType,
+                    themeData: widget.themeData,
+                    displayOnTop: false,
+                  ),
               ],
             ),
           ),
