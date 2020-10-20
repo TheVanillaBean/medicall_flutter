@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class ProviderBioTextField extends StatelessWidget {
+class ProviderBioTextField extends StatefulWidget {
   const ProviderBioTextField({
     this.onChanged,
     this.icon,
@@ -9,7 +9,6 @@ class ProviderBioTextField extends StatelessWidget {
     this.hint,
     this.keyboardType,
     this.validator,
-    this.controller,
     this.enabled,
     this.errorText,
     this.inputFormatters,
@@ -17,6 +16,7 @@ class ProviderBioTextField extends StatelessWidget {
     this.maxLines,
     this.minLines,
     this.maxLength,
+    this.initialText,
   });
   final ValueChanged<String> onChanged;
   final Icon icon;
@@ -26,12 +26,34 @@ class ProviderBioTextField extends StatelessWidget {
   final bool enabled;
   final String errorText;
   final FormFieldValidator<String> validator;
-  final TextEditingController controller;
   final List<TextInputFormatter> inputFormatters;
   final GestureTapCallback onTapped;
   final maxLines;
   final minLines;
   final maxLength;
+  final String initialText;
+
+  @override
+  _ProviderBioTextFieldState createState() => _ProviderBioTextFieldState();
+}
+
+class _ProviderBioTextFieldState extends State<ProviderBioTextField> {
+  TextEditingController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = new TextEditingController();
+    if (widget.initialText != null) {
+      controller.text = widget.initialText;
+    }
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,22 +63,22 @@ class ProviderBioTextField extends StatelessWidget {
         right: 30,
       ),
       child: TextFormField(
-        maxLength: maxLength,
-        minLines: minLines,
-        maxLines: maxLines,
+        maxLength: widget.maxLength,
+        minLines: widget.minLines,
+        maxLines: widget.maxLines,
         textCapitalization: TextCapitalization.sentences,
         autocorrect: false,
         controller: controller,
-        inputFormatters: inputFormatters,
-        onChanged: onChanged,
+        inputFormatters: widget.inputFormatters,
+        onChanged: widget.onChanged,
         autofocus: true,
         style: Theme.of(context).textTheme.bodyText1,
-        onTap: onTapped,
+        onTap: widget.onTapped,
         decoration: InputDecoration(
-          labelText: labelText,
-          errorText: errorText,
+          labelText: widget.labelText,
+          errorText: widget.errorText,
           labelStyle: Theme.of(context).textTheme.bodyText1,
-          hintText: hint,
+          hintText: widget.hint,
           hintStyle: Theme.of(context).textTheme.caption,
           enabledBorder: UnderlineInputBorder(
             borderSide: BorderSide(
@@ -83,7 +105,7 @@ class ProviderBioTextField extends StatelessWidget {
             ),
           ),
         ),
-        keyboardType: keyboardType,
+        keyboardType: widget.keyboardType,
 //        validator: (input) {
 //          if (input.isEmpty) {
 //            return '$labelText is required';

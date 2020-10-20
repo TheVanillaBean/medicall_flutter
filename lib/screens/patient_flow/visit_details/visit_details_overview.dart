@@ -5,6 +5,7 @@ import 'package:Medicall/presentation/medicall_icons_icons.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Shared/visit_information/review_visit_information.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
+import 'package:Medicall/screens/patient_flow/select_provider/provider_detail.dart';
 import 'package:Medicall/screens/patient_flow/visit_details/visit_doc_note.dart';
 import 'package:Medicall/screens/patient_flow/visit_details/visit_education.dart';
 import 'package:Medicall/screens/patient_flow/visit_details/visit_treatment_recommendations.dart';
@@ -71,6 +72,13 @@ class VisitDetailsOverview extends StatelessWidget {
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
+          _buildCardButton(
+            "About the Provider",
+            Icons.medical_services,
+            () => {
+              ProviderDetailScreen.show(),
+            },
+          ),
           _buildCardButton(
             "Provider Note",
             MedicallIcons.clipboard_1,
@@ -143,6 +151,13 @@ class VisitDetailsOverview extends StatelessWidget {
           return SingleChildScrollView(
             child: Column(
               children: <Widget>[
+                _buildCardButton(
+                  "About the Provider",
+                  Icons.medical_services,
+                  () => {
+                    ProviderDetailScreen.show(),
+                  },
+                ),
                 _buildCardButton(
                   "Provider Note",
                   MedicallIcons.clipboard_1,

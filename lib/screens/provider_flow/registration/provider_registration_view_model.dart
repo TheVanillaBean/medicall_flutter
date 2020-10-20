@@ -79,9 +79,6 @@ class ProviderRegistrationViewModel extends ProviderProfileViewModelBase {
         cityValidator.isValid(mailingCity) &&
         zipCodeValidator.isValid(mailingZipCode) &&
         professionalTitleValidator.isValid(professionalTitle) &&
-        providerBioValidator.isValid(providerBio) &&
-        medicalSchoolValidator.isValid(medSchool) &&
-        medicalResidencyValidator.isValid(medResidency) &&
         !isLoading;
   }
 
@@ -133,7 +130,6 @@ class ProviderRegistrationViewModel extends ProviderProfileViewModelBase {
         (tempUserProvider.user as ProviderUser).npi = this.npi;
         (tempUserProvider.user as ProviderUser).boardCertified =
             this.boardCertified;
-        (tempUserProvider.user as ProviderUser).providerBio = this.providerBio;
         updateWith(submitted: false, isLoading: false);
         saveUserDetails(user);
       } else {

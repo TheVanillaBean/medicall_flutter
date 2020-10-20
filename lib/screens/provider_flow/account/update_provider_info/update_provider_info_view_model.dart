@@ -59,6 +59,52 @@ class UpdateProviderInfoViewModel extends ProviderProfileViewModelBase {
     this.submitted = false,
   });
 
+  ///Set initial values
+  void initAddress() {
+    this.mailingAddress = userProvider.user.mailingAddress;
+    this.mailingAddressLine2 = userProvider.user.mailingAddressLine2;
+    this.mailingCity = userProvider.user.mailingCity;
+    this.mailingState = userProvider.user.mailingState;
+    this.mailingZipCode = userProvider.user.mailingZipCode;
+  }
+
+  void initPhoneNumber() {
+    this.phoneNumber = userProvider.user.phoneNumber;
+  }
+
+  void initProfessionalTitle() {
+    this.professionalTitle =
+        (userProvider.user as ProviderUser).professionalTitle;
+  }
+
+  void initMedicalLicense() {
+    this.medLicense = (userProvider.user as ProviderUser).medLicense;
+  }
+
+  void initMedicalLicenseState() {
+    this.medLicenseState = (userProvider.user as ProviderUser).medLicenseState;
+  }
+
+  void initNpi() {
+    this.npi = (userProvider.user as ProviderUser).npi;
+  }
+
+  void initBoardCertified() {
+    this.boardCertified = (userProvider.user as ProviderUser).boardCertified;
+  }
+
+  void initMedicalSchool() {
+    this.medSchool = (userProvider.user as ProviderUser).medSchool;
+  }
+
+  void initMedicalResidency() {
+    this.medResidency = (userProvider.user as ProviderUser).medResidency;
+  }
+
+  void initProviderBio() {
+    this.providerBio = (userProvider.user as ProviderUser).providerBio;
+  }
+
   bool get canSubmit {
     if (this.profileInputType == ProfileInputType.PHONE) {
       return mobilePhoneValidator.isValid(phoneNumber) && submitted;
