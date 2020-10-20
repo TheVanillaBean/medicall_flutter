@@ -57,7 +57,7 @@ class ProviderDetailScreen extends StatelessWidget {
     return Scaffold(
         appBar: CustomAppBar.getAppBar(
           type: AppBarType.Back,
-          title: provider.fullName + ', ' + provider.professionalTitle,
+          title: 'Provider Information',
           theme: Theme.of(context),
           actions: [
             IconButton(
@@ -124,62 +124,136 @@ class ProviderDetailScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
       ),
       SizedBox(height: 10),
-      Text(
-        'Dermatologist',
-        style: Theme.of(context).textTheme.bodyText1,
-      ),
-      SizedBox(
-        height: 20,
-        width: 80,
-        child: Divider(
-          color: Theme.of(context).colorScheme.primary,
-        ),
-      ),
-      Container(
-        alignment: Alignment.center,
-        width: 250,
+      Center(
         child: Text(
-          provider.mailingAddressLine2 == ''
-              ? '${provider.mailingAddress} \n${provider.mailingCity}, ${provider.mailingState} ${provider.mailingZipCode}'
-              : '${provider.mailingAddress} \n${provider.mailingAddressLine2} \n${provider.mailingCity}, ${provider.mailingState} ${provider.mailingZipCode}',
-          style: Theme.of(context).textTheme.bodyText1,
+          provider.fullName + ', ' + provider.professionalTitle,
+          style: TextStyle(
+            fontFamily: 'Inter',
+            fontSize: 20.0,
+            color: Theme.of(context).colorScheme.primary,
+            fontWeight: FontWeight.bold,
+          ),
           textAlign: TextAlign.center,
         ),
       ),
-      SizedBox(height: 20),
-      Text(
-        provider.providerBio != '' ? provider.providerBio : symptom.description,
-        style: Theme.of(context).textTheme.bodyText1,
-        textAlign: TextAlign.left,
+      SizedBox(
+        height: 30,
+        width: 120,
+        child: Divider(
+          color: Colors.black38,
+        ),
       ),
+      provider.medSchool != '' ? _medSchoolInfo(context) : SizedBox(),
+      provider.medSchool != '' ? Divider(height: 5) : SizedBox(),
+      provider.medResidency != '' ? _medResidencyInfo(context) : SizedBox(),
+      provider.medResidency != '' ? Divider() : SizedBox(),
+      provider.mailingAddress != ''
+          ? _practiceAddressInfo(context)
+          : SizedBox(),
+      provider.mailingAddress != '' ? Divider() : SizedBox(),
+      provider.providerBio != '' ? _providerBioInfo(context) : SizedBox(),
       SizedBox(height: 30),
       Expanded(
         child: Align(
           alignment: FractionalOffset.bottomCenter,
-          child: ReusableRaisedButton(
-            title: "Start Visit",
-            onPressed: () {
-              Consult consult = Consult(
-                providerId: provider.uid,
-                providerUser: provider,
-                symptom: symptom.name,
-                date: DateTime.now(),
-                price: 49,
-              );
-              if (currentUser != null) {
-                StartVisitScreen.show(
-                  context: context,
-                  consult: consult,
+          child: SizedBox(
+            height: 60,
+            width: 200,
+            child: ReusableRaisedButton(
+              title: "Start Visit",
+              onPressed: () {
+                Consult consult = Consult(
+                  providerId: provider.uid,
+                  providerUser: provider,
+                  symptom: symptom.name,
+                  date: DateTime.now(),
+                  price: 49,
                 );
-              } else {
-                tempUserProvider.consult = consult;
-                RegistrationScreen.show(context: context);
-              }
-            },
+                if (currentUser != null) {
+                  StartVisitScreen.show(
+                    context: context,
+                    consult: consult,
+                  );
+                } else {
+                  tempUserProvider.consult = consult;
+                  RegistrationScreen.show(context: context);
+                }
+              },
+            ),
           ),
         ),
       ),
-      SizedBox(height: 20),
+      SizedBox(height: 30),
     ];
+  }
+
+  Widget _providerBioInfo(BuildContext context) {
+    return ListTile(
+      contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+      dense: true,
+      title: Text(
+        'Bio:',
+        style: Theme.of(context).textTheme.caption.copyWith(
+              color: Theme.of(context).colorScheme.primary,
+            ),
+      ),
+      subtitle: Text(
+        provider.providerBio ?? '',
+        style: Theme.of(context).textTheme.bodyText1,
+      ),
+    );
+  }
+
+  Widget _practiceAddressInfo(BuildContext context) {
+    return ListTile(
+      contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+      dense: true,
+      title: Text(
+        'Practice Address:',
+        style: Theme.of(context).textTheme.caption.copyWith(
+              color: Theme.of(context).colorScheme.primary,
+            ),
+      ),
+      subtitle: Text(
+        provider.mailingAddressLine2 == ''
+            ? '${provider.mailingAddress} \n${provider.mailingCity}, ${provider.mailingState} ${provider.mailingZipCode}'
+            : '${provider.mailingAddress} \n${provider.mailingAddressLine2} \n${provider.mailingCity}, ${provider.mailingState} ${provider.mailingZipCode}',
+        style: Theme.of(context).textTheme.bodyText1,
+      ),
+    );
+  }
+
+  Widget _medResidencyInfo(BuildContext context) {
+    return ListTile(
+      contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+      dense: true,
+      title: Text(
+        'Medical Residency:',
+        style: Theme.of(context).textTheme.caption.copyWith(
+              color: Theme.of(context).colorScheme.primary,
+            ),
+      ),
+      subtitle: Text(
+        provider.medResidency ?? '',
+        style: Theme.of(context).textTheme.bodyText1,
+      ),
+    );
+  }
+
+  Widget _medSchoolInfo(BuildContext context) {
+    return ListTile(
+      contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+      dense: true,
+      title: Text(
+        'Medical School:',
+        style: Theme.of(context).textTheme.caption.copyWith(
+              color: Theme.of(context).colorScheme.primary,
+            ),
+      ),
+      subtitle: Text(
+        provider.medSchool ?? '',
+        style: Theme.of(context).textTheme.bodyText1,
+      ),
+    );
   }
 }

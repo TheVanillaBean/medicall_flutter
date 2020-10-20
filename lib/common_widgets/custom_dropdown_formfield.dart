@@ -14,6 +14,7 @@ class CustomDropdownFormField extends StatelessWidget {
     this.items,
     this.selectedItem,
     this.addPadding = true,
+    this.initialValue = '',
   });
   final ValueChanged<String> onChanged;
   final String labelText;
@@ -27,6 +28,7 @@ class CustomDropdownFormField extends StatelessWidget {
   final List<String> items;
   final String selectedItem;
   final bool addPadding;
+  final String initialValue;
 
   @override
   Widget build(BuildContext context) {

@@ -26,9 +26,9 @@ class UpdatePatientInfoViewModel
   String phoneNumber;
   String billingAddress;
   String billingAddressLine2;
-  String city;
-  String state;
-  String zipCode;
+  String mailingCity;
+  String mailingState;
+  String mailingZipCode;
 
   bool isLoading;
   bool submitted;
@@ -106,9 +106,9 @@ class UpdatePatientInfoViewModel
     this.phoneNumber = '',
     this.billingAddress = '',
     this.billingAddressLine2 = '',
-    this.city = '',
-    this.state = '',
-    this.zipCode = '',
+    this.mailingCity = '',
+    this.mailingState = '',
+    this.mailingZipCode = '',
     this.isLoading = false,
     this.submitted = false,
   });
@@ -117,15 +117,28 @@ class UpdatePatientInfoViewModel
     this.verificationStatus = verificationStatus;
   }
 
+  ///Set initial values
+  void initAddress() {
+    this.billingAddress = userProvider.user.mailingAddress;
+    this.billingAddressLine2 = userProvider.user.mailingAddressLine2;
+    this.mailingCity = userProvider.user.mailingCity;
+    this.mailingState = userProvider.user.mailingState;
+    this.mailingZipCode = userProvider.user.mailingZipCode;
+  }
+
+  void initPhoneNumber() {
+    this.phoneNumber = userProvider.user.phoneNumber;
+  }
+
   bool get canSubmit {
     if (this.patientProfileInputType == PatientProfileInputType.PHONE) {
       return phoneNumberLengthValidator.isValid(phoneNumber) && submitted;
     } else if (this.patientProfileInputType ==
         PatientProfileInputType.ADDRESS) {
       return mailingAddressValidator.isValid(billingAddress) &&
-          cityValidator.isValid(city) &&
-          stateValidator.isValid(state) &&
-          zipCodeValidator.isValid(zipCode) &&
+          cityValidator.isValid(mailingCity) &&
+          stateValidator.isValid(mailingState) &&
+          zipCodeValidator.isValid(mailingZipCode) &&
           submitted;
     }
     return false;
@@ -144,17 +157,17 @@ class UpdatePatientInfoViewModel
   }
 
   String get patientCityErrorText {
-    bool showErrorText = submitted && !cityValidator.isValid(city);
+    bool showErrorText = submitted && !cityValidator.isValid(mailingCity);
     return showErrorText ? cityErrorText : null;
   }
 
   String get patientStateErrorText {
-    bool showErrorText = submitted && !stateValidator.isValid(state);
+    bool showErrorText = submitted && !stateValidator.isValid(mailingState);
     return showErrorText ? stateErrorText : null;
   }
 
   String get patientZipCodeErrorText {
-    bool showErrorText = submitted && !zipCodeValidator.isValid(zipCode);
+    bool showErrorText = submitted && !zipCodeValidator.isValid(mailingZipCode);
     return showErrorText ? zipCodeErrorText : null;
   }
 
@@ -164,9 +177,12 @@ class UpdatePatientInfoViewModel
       updateWith(billingAddress: billingAddress);
   void updateBillingAddressLine2(String billingAddressLine2) =>
       updateWith(billingAddressLine2: billingAddressLine2);
-  void updateCity(String city) => updateWith(city: city);
-  void updateState(String state) => updateWith(state: state);
-  void updateZipCode(String zipCode) => updateWith(zipCode: zipCode);
+  void updateMailingCity(String mailingCity) =>
+      updateWith(mailingCity: mailingCity);
+  void updateMailingState(String mailingState) =>
+      updateWith(mailingState: mailingState);
+  void updateMailingZipCode(String mailingZipCode) =>
+      updateWith(mailingZipCode: mailingZipCode);
 
   Future<void> submit() async {
     updateWith(submitted: true);
@@ -181,9 +197,9 @@ class UpdatePatientInfoViewModel
         PatientProfileInputType.ADDRESS) {
       medicallUser.mailingAddress = this.billingAddress;
       medicallUser.mailingAddressLine2 = this.billingAddressLine2;
-      medicallUser.mailingCity = this.city;
-      medicallUser.mailingState = this.state;
-      medicallUser.mailingZipCode = this.zipCode;
+      medicallUser.mailingCity = this.mailingCity;
+      medicallUser.mailingState = this.mailingState;
+      medicallUser.mailingZipCode = this.mailingZipCode;
     }
     await updateUserDetails(medicallUser);
 
@@ -199,9 +215,9 @@ class UpdatePatientInfoViewModel
     String phoneNumber,
     String billingAddress,
     String billingAddressLine2,
-    String city,
-    String state,
-    String zipCode,
+    String mailingCity,
+    String mailingState,
+    String mailingZipCode,
     bool isLoading,
     bool submitted,
     bool checkValue,
@@ -209,9 +225,9 @@ class UpdatePatientInfoViewModel
     this.phoneNumber = phoneNumber ?? this.phoneNumber;
     this.billingAddress = billingAddress ?? this.billingAddress;
     this.billingAddressLine2 = billingAddressLine2 ?? this.billingAddressLine2;
-    this.city = city ?? this.city;
-    this.state = state ?? this.state;
-    this.zipCode = zipCode ?? this.zipCode;
+    this.mailingCity = mailingCity ?? this.mailingCity;
+    this.mailingState = mailingState ?? this.mailingState;
+    this.mailingZipCode = mailingZipCode ?? this.mailingZipCode;
     this.isLoading = isLoading ?? this.isLoading;
     this.submitted = submitted ?? this.submitted;
     notifyListeners();
