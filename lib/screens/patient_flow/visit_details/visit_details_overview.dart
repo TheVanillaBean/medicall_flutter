@@ -16,8 +16,9 @@ import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:badges/badges.dart';
 
-class VisitDetailsOverview extends StatelessWidget {
+class VisitDetailsOverview extends StatefulWidget {
   final Consult consult;
 
   const VisitDetailsOverview({@required this.consult});
@@ -35,19 +36,26 @@ class VisitDetailsOverview extends StatelessWidget {
   }
 
   @override
+  _VisitDetailsOverviewState createState() => _VisitDetailsOverviewState();
+}
+
+class _VisitDetailsOverviewState extends State<VisitDetailsOverview> {
+  @override
   Widget build(BuildContext context) {
     FirestoreDatabase firestoreDatabase =
         Provider.of<FirestoreDatabase>(context, listen: false);
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
         type: AppBarType.Back,
-        title: this.consult.symptom + ' visit',
+        title: this.widget.consult.symptom + ' visit',
         subtitle: 'with ' +
-            this.consult.providerUser.fullName +
+            this.widget.consult.providerUser.fullName +
             ', ' +
-            this.consult.providerUser.professionalTitle +
+            this.widget.consult.providerUser.professionalTitle +
             ' on ' +
-            DateFormat('MM-dd-yyyy').format(this.consult.date).toString(),
+            DateFormat('MM-dd-yyyy')
+                .format(this.widget.consult.date)
+                .toString(),
         theme: Theme.of(context),
         actions: [
           IconButton(
@@ -62,7 +70,7 @@ class VisitDetailsOverview extends StatelessWidget {
           )
         ],
       ),
-      body: this.consult.state == ConsultStatus.Signed
+      body: this.widget.consult.state == ConsultStatus.Signed
           ? _buildVisitReviewButtons(firestoreDatabase)
           : _buildOptionsForNonReviewed(context),
     );
@@ -72,13 +80,13 @@ class VisitDetailsOverview extends StatelessWidget {
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
-          _buildCardButton(
-            "About the Provider",
-            Icons.medical_services,
-            () => {
-              ProviderDetailScreen.show(),
-            },
-          ),
+          // _buildCardButton(
+          //   "About the Provider",
+          //   Icons.medical_services,
+          //   () => {
+          //     ProviderDetailScreen.show(context: context),
+          //   },
+          // ),
           _buildCardButton(
             "Provider Note",
             MedicallIcons.clipboard_1,
@@ -86,6 +94,7 @@ class VisitDetailsOverview extends StatelessWidget {
               AppUtil().showFlushBar(
                   "This visit has not been reviewed yet", context);
             },
+            0,
           ),
           _buildCardButton(
             "Treatment Recommendations",
@@ -94,6 +103,7 @@ class VisitDetailsOverview extends StatelessWidget {
               AppUtil().showFlushBar(
                   "This visit has not been reviewed yet", context);
             },
+            0,
           ),
           _buildCardButton(
             "Further Learning",
@@ -102,6 +112,7 @@ class VisitDetailsOverview extends StatelessWidget {
               AppUtil().showFlushBar(
                   "This visit has not been reviewed yet", context);
             },
+            0,
           ),
           _buildCardButton(
             "Your Visit Information",
@@ -109,14 +120,16 @@ class VisitDetailsOverview extends StatelessWidget {
             () => {
               ReviewVisitInformation.show(
                 context: context,
-                consult: this.consult,
+                consult: this.widget.consult,
               ),
             },
+            0,
           ),
           _buildCardButton(
             "Message Provider",
             Icons.message,
             () => navigateToChatScreen(context),
+            1,
           ),
         ],
       ),
@@ -126,8 +139,8 @@ class VisitDetailsOverview extends StatelessWidget {
   StreamBuilder<VisitReviewData> _buildVisitReviewButtons(
       FirestoreDatabase firestoreDatabase) {
     return StreamBuilder<VisitReviewData>(
-        stream:
-            firestoreDatabase.visitReviewStream(consultId: this.consult.uid),
+        stream: firestoreDatabase.visitReviewStream(
+            consultId: this.widget.consult.uid),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
@@ -151,23 +164,24 @@ class VisitDetailsOverview extends StatelessWidget {
           return SingleChildScrollView(
             child: Column(
               children: <Widget>[
-                _buildCardButton(
-                  "About the Provider",
-                  Icons.medical_services,
-                  () => {
-                    ProviderDetailScreen.show(),
-                  },
-                ),
+                // _buildCardButton(
+                //   "About the Provider",
+                //   Icons.medical_services,
+                //   () => {
+                //     ProviderDetailScreen.show(context: context),
+                //   },
+                // ),
                 _buildCardButton(
                   "Provider Note",
                   MedicallIcons.clipboard_1,
                   () => {
                     VisitDocNote.show(
                       context: context,
-                      consult: this.consult,
+                      consult: this.widget.consult,
                       visitReviewData: snapshot.data,
                     ),
                   },
+                  0,
                 ),
                 _buildCardButton(
                   "Treatment Recommendations",
@@ -175,10 +189,11 @@ class VisitDetailsOverview extends StatelessWidget {
                   () => {
                     VisitTreatmentRecommendations.show(
                       context: context,
-                      consult: this.consult,
+                      consult: this.widget.consult,
                       visitReviewData: snapshot.data,
                     ),
                   },
+                  0,
                 ),
                 _buildCardButton(
                   "Further Learning",
@@ -186,10 +201,11 @@ class VisitDetailsOverview extends StatelessWidget {
                   () => {
                     VisitEducation.show(
                       context: context,
-                      consult: this.consult,
+                      consult: this.widget.consult,
                       visitReviewData: snapshot.data,
                     ),
                   },
+                  0,
                 ),
                 _buildCardButton(
                   "Your Visit Information",
@@ -197,14 +213,16 @@ class VisitDetailsOverview extends StatelessWidget {
                   () => {
                     ReviewVisitInformation.show(
                       context: context,
-                      consult: this.consult,
+                      consult: this.widget.consult,
                     ),
                   },
+                  0,
                 ),
                 _buildCardButton(
                   "Message Provider",
                   Icons.message,
                   () => navigateToChatScreen(context),
+                  0,
                 ),
               ],
             ),
@@ -216,38 +234,56 @@ class VisitDetailsOverview extends StatelessWidget {
     ChatProvider chatProvider =
         Provider.of<ChatProvider>(context, listen: false);
     final channel =
-        chatProvider.client.channel('messaging', id: this.consult.uid);
+        chatProvider.client.channel('messaging', id: this.widget.consult.uid);
 
     ChatScreen.show(
       context: context,
       channel: channel,
-      consult: consult,
+      consult: widget.consult,
     );
   }
 
-  Widget _buildCardButton(String title, IconData icon, Function onTap) {
+  Widget _buildCardButton(
+      String title, IconData icon, Function onTap, int value) {
     return Container(
       padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
-      child: Card(
-        elevation: 3,
-        shadowColor: Colors.grey.withAlpha(120),
-        borderOnForeground: false,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        clipBehavior: Clip.antiAlias,
-        child: ListTile(
-          contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-          dense: true,
-          leading: Icon(
-            icon,
-            size: 25,
-            color: Colors.grey,
+      child: Badge(
+        padding: EdgeInsets.all(8),
+        showBadge: value != 0 ? true : false,
+        shape: BadgeShape.circle,
+        position: BadgePosition.topEnd(top: -4, end: -2),
+        badgeColor: Theme.of(context).colorScheme.primary,
+        badgeContent: Text(
+          '$value',
+          style: Theme.of(context).textTheme.bodyText1.copyWith(
+                fontSize: 16,
+                color: Colors.white,
+              ),
+        ),
+        animationType: BadgeAnimationType.scale,
+        animationDuration: Duration(milliseconds: 300),
+        child: Card(
+          elevation: 3,
+          shadowColor: Colors.grey.withAlpha(120),
+          borderOnForeground: false,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          clipBehavior: Clip.antiAlias,
+          child: ListTile(
+            contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+            dense: true,
+            leading: Icon(
+              icon,
+              size: 25,
+              color: Colors.grey,
+            ),
+            title: Text(title),
+            trailing: Icon(
+              Icons.chevron_right,
+              color: Colors.grey,
+            ),
+            onTap: onTap,
           ),
-          title: Text(title),
-          trailing: Icon(
-            Icons.chevron_right,
-            color: Colors.grey,
-          ),
-          onTap: onTap,
         ),
       ),
     );

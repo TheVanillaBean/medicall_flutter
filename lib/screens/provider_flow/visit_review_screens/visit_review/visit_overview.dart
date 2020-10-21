@@ -16,6 +16,7 @@ import 'package:Medicall/services/chat_provider.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/non_auth_firestore_db.dart';
 import 'package:Medicall/services/user_provider.dart';
+import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -75,7 +76,7 @@ class VisitOverview extends StatelessWidget {
       BuildContext context, FirestoreDatabase db, Consult consult) {
     return <Widget>[
       Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
         child: ProviderDashboardListItem(
           consult: consult,
           onTap: null,
