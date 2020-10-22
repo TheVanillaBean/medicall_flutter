@@ -18,7 +18,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:badges/badges.dart';
 
-class VisitDetailsOverview extends StatefulWidget {
+class VisitDetailsOverview extends StatelessWidget {
   final Consult consult;
 
   const VisitDetailsOverview({@required this.consult});
@@ -36,26 +36,19 @@ class VisitDetailsOverview extends StatefulWidget {
   }
 
   @override
-  _VisitDetailsOverviewState createState() => _VisitDetailsOverviewState();
-}
-
-class _VisitDetailsOverviewState extends State<VisitDetailsOverview> {
-  @override
   Widget build(BuildContext context) {
     FirestoreDatabase firestoreDatabase =
         Provider.of<FirestoreDatabase>(context, listen: false);
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
         type: AppBarType.Back,
-        title: this.widget.consult.symptom + ' visit',
+        title: this.consult.symptom + ' visit',
         subtitle: 'with ' +
-            this.widget.consult.providerUser.fullName +
+            this.consult.providerUser.fullName +
             ', ' +
-            this.widget.consult.providerUser.professionalTitle +
+            this.consult.providerUser.professionalTitle +
             ' on ' +
-            DateFormat('MM-dd-yyyy')
-                .format(this.widget.consult.date)
-                .toString(),
+            DateFormat('MM-dd-yyyy').format(this.consult.date).toString(),
         theme: Theme.of(context),
         actions: [
           IconButton(
@@ -70,7 +63,7 @@ class _VisitDetailsOverviewState extends State<VisitDetailsOverview> {
           )
         ],
       ),
-      body: this.widget.consult.state == ConsultStatus.Signed
+      body: this.consult.state == ConsultStatus.Signed
           ? _buildVisitReviewButtons(firestoreDatabase)
           : _buildOptionsForNonReviewed(context),
     );
@@ -124,7 +117,7 @@ class _VisitDetailsOverviewState extends State<VisitDetailsOverview> {
             () => {
               ReviewVisitInformation.show(
                 context: context,
-                consult: this.widget.consult,
+                consult: this.consult,
               ),
             },
             0,
@@ -144,8 +137,8 @@ class _VisitDetailsOverviewState extends State<VisitDetailsOverview> {
   StreamBuilder<VisitReviewData> _buildVisitReviewButtons(
       FirestoreDatabase firestoreDatabase) {
     return StreamBuilder<VisitReviewData>(
-        stream: firestoreDatabase.visitReviewStream(
-            consultId: this.widget.consult.uid),
+        stream:
+            firestoreDatabase.visitReviewStream(consultId: this.consult.uid),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
@@ -183,7 +176,7 @@ class _VisitDetailsOverviewState extends State<VisitDetailsOverview> {
                   () => {
                     VisitDocNote.show(
                       context: context,
-                      consult: this.widget.consult,
+                      consult: this.consult,
                       visitReviewData: snapshot.data,
                     ),
                   },
@@ -196,7 +189,7 @@ class _VisitDetailsOverviewState extends State<VisitDetailsOverview> {
                   () => {
                     VisitTreatmentRecommendations.show(
                       context: context,
-                      consult: this.widget.consult,
+                      consult: this.consult,
                       visitReviewData: snapshot.data,
                     ),
                   },
@@ -209,7 +202,7 @@ class _VisitDetailsOverviewState extends State<VisitDetailsOverview> {
                   () => {
                     VisitEducation.show(
                       context: context,
-                      consult: this.widget.consult,
+                      consult: this.consult,
                       visitReviewData: snapshot.data,
                     ),
                   },
@@ -222,7 +215,7 @@ class _VisitDetailsOverviewState extends State<VisitDetailsOverview> {
                   () => {
                     ReviewVisitInformation.show(
                       context: context,
-                      consult: this.widget.consult,
+                      consult: this.consult,
                     ),
                   },
                   0,
@@ -244,12 +237,12 @@ class _VisitDetailsOverviewState extends State<VisitDetailsOverview> {
     ChatProvider chatProvider =
         Provider.of<ChatProvider>(context, listen: false);
     final channel =
-        chatProvider.client.channel('messaging', id: this.widget.consult.uid);
+        chatProvider.client.channel('messaging', id: this.consult.uid);
 
     ChatScreen.show(
       context: context,
       channel: channel,
-      consult: widget.consult,
+      consult: this.consult,
     );
   }
 
