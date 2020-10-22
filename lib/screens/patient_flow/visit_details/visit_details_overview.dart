@@ -16,6 +16,7 @@ import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:badges/badges.dart';
 
 class VisitDetailsOverview extends StatelessWidget {
   final Consult consult;
@@ -72,38 +73,45 @@ class VisitDetailsOverview extends StatelessWidget {
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
+          // _buildCardButton(
+          //   "About the Provider",
+          //   Icons.medical_services,
+          //   () => {
+          //     ProviderDetailScreen.show(context: context),
+          //   },
+          // ),
           _buildCardButton(
-            "About the Provider",
-            Icons.medical_services,
-            () => {
-              ProviderDetailScreen.show(),
-            },
-          ),
-          _buildCardButton(
+            context,
             "Provider Note",
             MedicallIcons.clipboard_1,
             () {
               AppUtil().showFlushBar(
                   "This visit has not been reviewed yet", context);
             },
+            0,
           ),
           _buildCardButton(
+            context,
             "Treatment Recommendations",
             Icons.local_pharmacy,
             () {
               AppUtil().showFlushBar(
                   "This visit has not been reviewed yet", context);
             },
+            0,
           ),
           _buildCardButton(
+            context,
             "Further Learning",
             Icons.school,
             () {
               AppUtil().showFlushBar(
                   "This visit has not been reviewed yet", context);
             },
+            0,
           ),
           _buildCardButton(
+            context,
             "Your Visit Information",
             Icons.assignment,
             () => {
@@ -112,11 +120,14 @@ class VisitDetailsOverview extends StatelessWidget {
                 consult: this.consult,
               ),
             },
+            0,
           ),
           _buildCardButton(
+            context,
             "Message Provider",
             Icons.message,
             () => navigateToChatScreen(context),
+            1,
           ),
         ],
       ),
@@ -151,14 +162,15 @@ class VisitDetailsOverview extends StatelessWidget {
           return SingleChildScrollView(
             child: Column(
               children: <Widget>[
+                // _buildCardButton(
+                //   "About the Provider",
+                //   Icons.medical_services,
+                //   () => {
+                //     ProviderDetailScreen.show(context: context),
+                //   },
+                // ),
                 _buildCardButton(
-                  "About the Provider",
-                  Icons.medical_services,
-                  () => {
-                    ProviderDetailScreen.show(),
-                  },
-                ),
-                _buildCardButton(
+                  context,
                   "Provider Note",
                   MedicallIcons.clipboard_1,
                   () => {
@@ -168,8 +180,10 @@ class VisitDetailsOverview extends StatelessWidget {
                       visitReviewData: snapshot.data,
                     ),
                   },
+                  0,
                 ),
                 _buildCardButton(
+                  context,
                   "Treatment Recommendations",
                   Icons.local_pharmacy,
                   () => {
@@ -179,8 +193,10 @@ class VisitDetailsOverview extends StatelessWidget {
                       visitReviewData: snapshot.data,
                     ),
                   },
+                  0,
                 ),
                 _buildCardButton(
+                  context,
                   "Further Learning",
                   Icons.school,
                   () => {
@@ -190,8 +206,10 @@ class VisitDetailsOverview extends StatelessWidget {
                       visitReviewData: snapshot.data,
                     ),
                   },
+                  0,
                 ),
                 _buildCardButton(
+                  context,
                   "Your Visit Information",
                   Icons.assignment,
                   () => {
@@ -200,11 +218,14 @@ class VisitDetailsOverview extends StatelessWidget {
                       consult: this.consult,
                     ),
                   },
+                  0,
                 ),
                 _buildCardButton(
+                  context,
                   "Message Provider",
                   Icons.message,
                   () => navigateToChatScreen(context),
+                  0,
                 ),
               ],
             ),
@@ -221,33 +242,51 @@ class VisitDetailsOverview extends StatelessWidget {
     ChatScreen.show(
       context: context,
       channel: channel,
-      consult: consult,
+      consult: this.consult,
     );
   }
 
-  Widget _buildCardButton(String title, IconData icon, Function onTap) {
+  Widget _buildCardButton(BuildContext context, String title, IconData icon,
+      Function onTap, int value) {
     return Container(
       padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
-      child: Card(
-        elevation: 3,
-        shadowColor: Colors.grey.withAlpha(120),
-        borderOnForeground: false,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        clipBehavior: Clip.antiAlias,
-        child: ListTile(
-          contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-          dense: true,
-          leading: Icon(
-            icon,
-            size: 25,
-            color: Colors.grey,
+      child: Badge(
+        padding: EdgeInsets.all(8),
+        showBadge: value != 0 ? true : false,
+        shape: BadgeShape.circle,
+        position: BadgePosition.topEnd(top: -4, end: -2),
+        badgeColor: Theme.of(context).colorScheme.primary,
+        badgeContent: Text(
+          '$value',
+          style: Theme.of(context).textTheme.bodyText1.copyWith(
+                fontSize: 16,
+                color: Colors.white,
+              ),
+        ),
+        animationType: BadgeAnimationType.scale,
+        animationDuration: Duration(milliseconds: 300),
+        child: Card(
+          elevation: 3,
+          shadowColor: Colors.grey.withAlpha(120),
+          borderOnForeground: false,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          clipBehavior: Clip.antiAlias,
+          child: ListTile(
+            contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+            dense: true,
+            leading: Icon(
+              icon,
+              size: 25,
+              color: Colors.grey,
+            ),
+            title: Text(title),
+            trailing: Icon(
+              Icons.chevron_right,
+              color: Colors.grey,
+            ),
+            onTap: onTap,
           ),
-          title: Text(title),
-          trailing: Icon(
-            Icons.chevron_right,
-            color: Colors.grey,
-          ),
-          onTap: onTap,
         ),
       ),
     );

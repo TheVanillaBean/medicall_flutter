@@ -16,6 +16,7 @@ import 'package:Medicall/services/chat_provider.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/non_auth_firestore_db.dart';
 import 'package:Medicall/services/user_provider.dart';
+import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -75,112 +76,41 @@ class VisitOverview extends StatelessWidget {
       BuildContext context, FirestoreDatabase db, Consult consult) {
     return <Widget>[
       Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
         child: ProviderDashboardListItem(
           consult: consult,
           onTap: null,
         ),
       ),
-      Container(
-        padding: EdgeInsets.fromLTRB(25, 0, 25, 0),
-        child: Column(
-          children: <Widget>[
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: RaisedButton(
-                    color: Colors.white,
-                    disabledColor: Colors.grey.withAlpha(40),
-                    elevation: 3,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                    child: Text(
-                      "VISIT INFORMATION",
-                      style: Theme.of(context).textTheme.headline6,
-                    ),
-                    onPressed: () => ReviewVisitInformation.show(
-                      context: context,
-                      consult: consult,
-                    ),
-                    padding: EdgeInsets.fromLTRB(25, 20, 25, 20),
-                  ),
-                )
-              ],
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: RaisedButton(
-                    color: Colors.white,
-                    disabledColor: Colors.grey.withAlpha(40),
-                    elevation: 3,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                    child: Text(
-                      "VIEW PATIENT IDENTIFICATION",
-                      style: Theme.of(context).textTheme.headline6,
-                    ),
-                    onPressed: () => ViewPatientID.show(
-                      context: context,
-                      consult: consult,
-                    ),
-                    padding: EdgeInsets.fromLTRB(25, 20, 25, 20),
-                  ),
-                )
-              ],
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: RaisedButton(
-                    color: Colors.white,
-                    disabledColor: Colors.grey.withAlpha(40),
-                    elevation: 3,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                    child: Text(
-                      "VIEW PATIENT INFORMATION",
-                      style: Theme.of(context).textTheme.headline6,
-                    ),
-                    onPressed: () => ViewPatientInfo.show(
-                      context: context,
-                      consult: consult,
-                    ),
-                    padding: EdgeInsets.fromLTRB(25, 20, 25, 20),
-                  ),
-                )
-              ],
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: RaisedButton(
-                    color: Colors.white,
-                    disabledColor: Colors.grey.withAlpha(40),
-                    elevation: 3,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                    child: Text(
-                      "MESSAGE PATIENT",
-                      style: Theme.of(context).textTheme.headline6,
-                    ),
-                    onPressed: () => navigateToChatScreen(context, consult),
-                    padding: EdgeInsets.fromLTRB(25, 20, 25, 20),
-                  ),
-                ),
-              ],
-            )
-          ],
-        ),
+      _buildProviderCardButton(
+          context,
+          "VISIT INFORMATION",
+          () => ReviewVisitInformation.show(
+                context: context,
+                consult: consult,
+              ),
+          0),
+      _buildProviderCardButton(
+          context,
+          "VIEW PATIENT IDENTIFICATION",
+          () => ViewPatientID.show(
+                context: context,
+                consult: consult,
+              ),
+          0),
+      _buildProviderCardButton(
+          context,
+          "VIEW PATIENT INFORMATION",
+          () => ViewPatientInfo.show(
+                context: context,
+                consult: consult,
+              ),
+          0),
+      _buildProviderCardButton(
+        context,
+        'MESSAGE PATIENT',
+        () => navigateToChatScreen(context, consult),
+        1,
       ),
       Expanded(
         child: Align(
@@ -198,6 +128,47 @@ class VisitOverview extends StatelessWidget {
         ),
       )
     ];
+  }
+
+  Widget _buildProviderCardButton(
+      BuildContext context, String title, Function onTap, int value) {
+    return Container(
+      padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
+      child: Badge(
+        padding: EdgeInsets.all(8),
+        showBadge: value != 0 ? true : false,
+        shape: BadgeShape.circle,
+        position: BadgePosition.topEnd(top: -6, end: -2),
+        badgeColor: Theme.of(context).colorScheme.primary,
+        badgeContent: Text(
+          '$value',
+          style: Theme.of(context).textTheme.bodyText1.copyWith(
+                fontSize: 16,
+                color: Colors.white,
+              ),
+        ),
+        animationType: BadgeAnimationType.scale,
+        animationDuration: Duration(milliseconds: 300),
+        child: Card(
+          elevation: 2,
+          borderOnForeground: false,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          clipBehavior: Clip.antiAlias,
+          child: ListTile(
+            contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+            dense: true,
+            title: Center(
+              child: Text(
+                title,
+                style: Theme.of(context).textTheme.headline6,
+              ),
+            ),
+            onTap: onTap,
+          ),
+        ),
+      ),
+    );
   }
 
   Function onContinueBtnPressed(

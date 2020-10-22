@@ -4,6 +4,7 @@ import 'package:Medicall/screens/provider_flow/registration/provider_custom_text
 import 'package:Medicall/screens/provider_flow/registration/provider_profile_view_model_base.dart';
 import 'package:Medicall/screens/provider_flow/registration/provider_registration_view_model.dart';
 import 'package:Medicall/util/app_util.dart';
+import 'package:dash_chat/dash_chat.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';

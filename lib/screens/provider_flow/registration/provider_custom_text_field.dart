@@ -60,6 +60,7 @@ class _ProviderCustomTextFieldState extends State<ProviderCustomTextField> {
         right: 30,
       ),
       child: TextFormField(
+        enableInteractiveSelection: true,
         textCapitalization: TextCapitalization.words,
         autocorrect: false,
         obscureText: widget.obscureText ?? false,

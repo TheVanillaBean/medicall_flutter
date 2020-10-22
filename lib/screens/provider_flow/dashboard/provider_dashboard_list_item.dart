@@ -49,9 +49,11 @@ class ProviderDashboardListItem extends StatelessWidget {
           ),
           subtitle: '${consult.parsedDate}',
           trailing: Container(
-            width: 60,
+            width: 80,
             alignment: Alignment.centerLeft,
-            child: Text(EnumToString.parseCamelCase(consult.state) ?? "",
+            child: Text(
+                EnumToString.convertToString(consult.state, camelCase: true) ??
+                    "",
                 style: Theme.of(context).textTheme.caption.copyWith(
                     color: Theme.of(context).colorScheme.primary,
                     fontWeight: FontWeight.bold)),

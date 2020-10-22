@@ -50,7 +50,10 @@ class PreviousVisitsListItem extends StatelessWidget {
             trailing: Container(
               alignment: Alignment.centerLeft,
               width: 80,
-              child: Text(EnumToString.parseCamelCase(consult.state) ?? "",
+              child: Text(
+                  EnumToString.convertToString(consult.state,
+                          camelCase: true) ??
+                      "",
                   textAlign: TextAlign.left,
                   style: Theme.of(context).textTheme.caption.copyWith(
                       color: Theme.of(context).colorScheme.primary,
