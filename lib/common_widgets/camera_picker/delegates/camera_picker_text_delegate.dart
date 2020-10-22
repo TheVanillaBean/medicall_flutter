@@ -13,6 +13,10 @@ abstract class CameraPickerTextDelegate {
   /// Tips string above the shooting button before shooting.
   /// 拍摄前确认按钮上方的提示文字
   String shootingTips;
+
+  /// Select string for select button.
+  /// 选择按钮的字段
+  String select;
 }
 
 /// Default text delegate implements with Chinese.
@@ -30,6 +34,9 @@ class DefaultCameraPickerTextDelegate implements CameraPickerTextDelegate {
 
   @override
   String shootingTips = '轻触拍照';
+
+  @override
+  String select = '选择';
 }
 
 /// Default text delegate including recording implements with Chinese.
@@ -48,6 +55,9 @@ class DefaultCameraPickerTextDelegateWithRecording
 
   @override
   String shootingTips = '轻触拍照，长按摄像';
+
+  @override
+  String select = '选择';
 }
 
 /// Default text delegate implements with English.
@@ -65,6 +75,9 @@ class EnglishCameraPickerTextDelegate implements CameraPickerTextDelegate {
 
   @override
   String shootingTips = 'Tap to take photo.';
+
+  @override
+  String select = 'Select';
 }
 
 /// Default text delegate including recording implements with English.
@@ -83,4 +96,7 @@ class EnglishCameraPickerTextDelegateWithRecording
 
   @override
   String shootingTips = 'Tap to take photo. Long press to record video.';
+
+  @override
+  String select = 'Select';
 }

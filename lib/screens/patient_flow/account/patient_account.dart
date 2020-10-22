@@ -1,6 +1,3 @@
-import 'package:Medicall/common_widgets/asset_picker/constants/enums.dart';
-import 'package:Medicall/common_widgets/asset_picker/delegates/assets_picker_text_delegate.dart';
-import 'package:Medicall/common_widgets/asset_picker/widget/asset_picker.dart';
 import 'package:Medicall/common_widgets/camera_picker/delegates/camera_picker_text_delegate.dart';
 import 'package:Medicall/common_widgets/camera_picker/widget/camera_picker.dart';
 import 'package:Medicall/common_widgets/reusable_account_card.dart';
@@ -370,64 +367,67 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
   }) async {
     List<Asset> resultList = List<Asset>();
 
-    // final AssetEntity result = await CameraPicker.pickFromCamera(
-    //   context,
-    //   isAllowRecording: false,
-    //   textDelegate: EnglishCameraPickerTextDelegate(),
-    // );
-    // if (result != null) {}
-
-    PickMethodModel pickMethodModel = PickMethodModel(
-      icon: '🔲',
-      name: '3 items grid',
-      description:
-          'Picker will served as 3 items on cross axis. (pageSize must be a multiple of gridCount)',
-      method: (
-        BuildContext context,
-        List<AssetEntity> assets,
-      ) async {
-        return await AssetPicker.pickAssets(
-          context,
-          gridCount: 3,
-          pageSize: 120,
-          maxAssets: 5,
-          selectedAssets: assets,
-          requestType: RequestType.image,
-          textDelegate: EnglishTextDelegate(),
-          pickerTheme: themeData(Theme.of(context).colorScheme.primary),
-          customItemPosition: CustomItemPosition.prepend,
-          customItemBuilder: (BuildContext context) {
-            return GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () async {
-                final AssetEntity result = await CameraPicker.pickFromCamera(
-                  context,
-                  isAllowRecording: false,
-                  textDelegate: EnglishCameraPickerTextDelegate(),
-                  maxAssets: 4,
-                );
-                if (result != null) {}
-              },
-              child: const Center(
-                child: Icon(Icons.camera_enhance, size: 42.0),
-              ),
-            );
-          },
-        );
-      },
+    final List<AssetEntity> result = await CameraPicker.pickFromCamera(
+      context,
+      isAllowRecording: false,
+      cameraTextDelegate: EnglishCameraPickerTextDelegate(),
+      maxAssets: 4,
     );
+    if (result != null) {
+      print("");
+    }
+
+    // PickMethodModel pickMethodModel = PickMethodModel(
+    //   icon: '🔲',
+    //   name: '3 items grid',
+    //   description:
+    //       'Picker will served as 3 items on cross axis. (pageSize must be a multiple of gridCount)',
+    //   method: (
+    //     BuildContext context,
+    //     List<AssetEntity> assets,
+    //   ) async {
+    //     return await AssetPicker.pickAssets(
+    //       context,
+    //       gridCount: 3,
+    //       pageSize: 120,
+    //       maxAssets: 5,
+    //       selectedAssets: assets,
+    //       requestType: RequestType.image,
+    //       textDelegate: EnglishTextDelegate(),
+    //       pickerTheme: themeData(Theme.of(context).colorScheme.primary),
+    //       customItemPosition: CustomItemPosition.prepend,
+    //       customItemBuilder: (BuildContext context) {
+    //         return GestureDetector(
+    //           behavior: HitTestBehavior.opaque,
+    //           onTap: () async {
+    //             final AssetEntity result = await CameraPicker.pickFromCamera(
+    //               context,
+    //               isAllowRecording: false,
+    //               textDelegate: EnglishCameraPickerTextDelegate(),
+    //               maxAssets: 4,
+    //             );
+    //             if (result != null) {}
+    //           },
+    //           child: const Center(
+    //             child: Icon(Icons.camera_enhance, size: 42.0),
+    //           ),
+    //         );
+    //       },
+    //     );
+    //   },
+    // );
 
     List<AssetEntity> assets = <AssetEntity>[];
     bool isDisplayingDetail = true;
 
-    final List<AssetEntity> result =
-        await pickMethodModel.method(context, assets);
-    if (result != null && result != assets) {
-      assets = List<AssetEntity>.from(result);
-      if (mounted) {
-        setState(() {});
-      }
-    }
+    // final List<AssetEntity> result =
+    //     await pickMethodModel.method(context, assets);
+    // if (result != null && result != assets) {
+    //   assets = List<AssetEntity>.from(result);
+    //   if (mounted) {
+    //     setState(() {});
+    //   }
+    // }
 
     print("");
 
@@ -472,38 +472,38 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
     // }
   }
 }
-
-class PickMethodModel {
-  const PickMethodModel({
-    this.icon,
-    this.name,
-    this.description,
-    this.method,
-  });
-
-  final String icon;
-  final String name;
-  final String description;
-  final Future<List<AssetEntity>> Function(BuildContext, List<AssetEntity>)
-      method;
-
-  static PickMethodModel common = PickMethodModel(
-    icon: '🖼️',
-    name: 'Image picker',
-    description: 'Simply pick image from device.',
-    method: (
-      BuildContext context,
-      List<AssetEntity> assets,
-    ) async {
-      return await AssetPicker.pickAssets(
-        context,
-        maxAssets: 9,
-        pathThumbSize: 84,
-        gridCount: 4,
-        selectedAssets: assets,
-        themeColor: Theme.of(context).colorScheme.primary,
-        requestType: RequestType.image,
-      );
-    },
-  );
-}
+//
+// class PickMethodModel {
+//   const PickMethodModel({
+//     this.icon,
+//     this.name,
+//     this.description,
+//     this.method,
+//   });
+//
+//   final String icon;
+//   final String name;
+//   final String description;
+//   final Future<List<AssetEntity>> Function(BuildContext, List<AssetEntity>)
+//       method;
+//
+//   static PickMethodModel common = PickMethodModel(
+//     icon: '🖼️',
+//     name: 'Image picker',
+//     description: 'Simply pick image from device.',
+//     method: (
+//       BuildContext context,
+//       List<AssetEntity> assets,
+//     ) async {
+//       return await AssetPicker.pickAssets(
+//         context,
+//         maxAssets: 9,
+//         pathThumbSize: 84,
+//         gridCount: 4,
+//         selectedAssets: assets,
+//         themeColor: Theme.of(context).colorScheme.primary,
+//         requestType: RequestType.image,
+//       );
+//     },
+//   );
+// }

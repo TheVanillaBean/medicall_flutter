@@ -4,8 +4,8 @@
 ///
 import 'dart:async';
 
-import 'package:Medicall/common_widgets/asset_picker/constants/constants.dart';
-import 'package:Medicall/common_widgets/asset_picker/widget/asset_picker_viewer.dart';
+import 'package:Medicall/common_widgets/assets_picker/constants/constants.dart';
+import 'package:Medicall/common_widgets/assets_picker/widget/asset_picker_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:video_player/video_player.dart';

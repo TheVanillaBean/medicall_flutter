@@ -7,8 +7,9 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
-import 'package:Medicall/common_widgets/asset_picker/provider/asset_entity_image_provider.dart';
-import 'package:Medicall/common_widgets/asset_picker/provider/asset_picker_provider.dart';
+import 'package:Medicall/common_widgets/assets_picker/provider/asset_entity_image_provider.dart';
+import 'package:Medicall/common_widgets/assets_picker/provider/asset_picker_provider.dart';
+import 'package:Medicall/common_widgets/assets_picker/widget/asset_picker_viewer.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +18,6 @@ import 'package:photo_manager/photo_manager.dart';
 import 'package:provider/provider.dart';
 
 import '../constants/constants.dart';
-import 'asset_picker_viewer.dart';
 import 'builder/fade_image_builder.dart';
 import 'builder/slide_page_transition_builder.dart';
 import 'fixed_appbar.dart';
@@ -46,7 +46,7 @@ class AssetPicker extends StatelessWidget {
         themeColor =
             pickerTheme?.colorScheme?.secondary ?? themeColor ?? C.themeColor,
         super(key: key) {
-    Constants.textDelegate = textDelegate ?? DefaultAssetsPickerTextDelegate();
+    Constants.textDelegate = textDelegate ?? EnglishTextDelegate();
   }
 
   /// [ChangeNotifier] for asset picker.
@@ -170,6 +170,7 @@ class AssetPicker extends StatelessWidget {
           filterOptions: filterOptions,
           routeDuration: routeDuration,
         );
+        await provider.getAssets(routeDuration);
         final Widget picker = AssetPicker(
           key: Constants.pickerKey,
           provider: provider,
@@ -794,7 +795,6 @@ class AssetPicker extends StatelessWidget {
                 assets: provider.currentAssets,
                 themeData: theme,
                 previewThumbSize: previewThumbSize,
-                selectorProvider: provider,
                 specialPickerType:
                     asset.type == AssetType.video ? specialPickerType : null,
               );

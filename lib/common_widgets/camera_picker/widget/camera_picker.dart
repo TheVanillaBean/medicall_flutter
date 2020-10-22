@@ -1,12 +1,20 @@
+///
+/// [Author] Alex (https://github.com/AlexV525)
+/// [Date] 2020/7/13 11:08
+///
 import 'dart:async';
 import 'dart:io';
 
-import 'package:Medicall/common_widgets/asset_picker/constants/enums.dart';
-import 'package:Medicall/common_widgets/asset_picker/delegates/sort_path_delegate.dart';
-import 'package:Medicall/common_widgets/asset_picker/provider/asset_picker_provider_base.dart';
-import 'package:Medicall/common_widgets/asset_picker/provider/bottom_bar_provider.dart';
-import 'package:Medicall/common_widgets/asset_picker/widget/asset_picker_bottom.dart';
+import 'package:Medicall/common_widgets/assets_picker/constants/enums.dart';
+import 'package:Medicall/common_widgets/assets_picker/delegates/assets_picker_text_delegate.dart';
+import 'package:Medicall/common_widgets/assets_picker/delegates/sort_path_delegate.dart';
+import 'package:Medicall/common_widgets/assets_picker/provider/asset_entity_image_provider.dart';
+import 'package:Medicall/common_widgets/assets_picker/provider/asset_picker_provider.dart';
+import 'package:Medicall/common_widgets/assets_picker/provider/asset_picker_viewer_provider.dart';
+import 'package:Medicall/common_widgets/assets_picker/widget/asset_picker.dart';
+import 'package:Medicall/common_widgets/assets_picker/widget/asset_picker_viewer.dart';
 import 'package:camera/camera.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -14,36 +22,34 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../constants/constants.dart';
-import '../delegates/camera_picker_text_delegate.dart';
-import '../provider/camera_picker_provider.dart';
-import '../widget/circular_progress_bar.dart';
 import 'builder/slide_page_transition_builder.dart';
 import 'camera_picker_viewer.dart';
+import 'circular_progress_bar.dart';
 
 /// Create a camera picker integrate with [CameraDescription].
+/// 通过 [CameraDescription] 整合的拍照选择
 ///
 /// The picker provides create an [AssetEntity] through the camera.
 /// However, this might failed (high probability) if there're any steps
 /// went wrong during the process.
+///
+/// 该选择器可以通过拍照创建 [AssetEntity] ，但由于过程中有的步骤随时会出现问题，
+/// 使用时有较高的概率会遇到失败。
 class CameraPicker extends StatefulWidget {
-  final AssetPickerProviderBase selectorProvider;
-  final List<int> previewThumbSize;
-  final SpecialPickerType specialPickerType;
-  final CameraPickerProvider cameraPickerProvider;
-
   CameraPicker({
     Key key,
     this.isAllowRecording = false,
     this.isOnlyAllowRecording = false,
+    this.enableAudio = true,
     this.maximumRecordingDuration = const Duration(seconds: 15),
     this.theme,
-    this.resolutionPreset = ResolutionPreset.medium,
+    this.resolutionPreset = ResolutionPreset.max,
     this.cameraQuarterTurns = 0,
+    this.maxAssets = 4,
+    this.assetPickerProvider,
+    this.gridCount,
     this.previewThumbSize,
-    this.selectorProvider,
-    this.specialPickerType,
     CameraPickerTextDelegate textDelegate,
-    this.cameraPickerProvider,
   })  : assert(
           isAllowRecording == true || isOnlyAllowRecording != true,
           'Recording mode error.',
@@ -59,47 +65,65 @@ class CameraPicker extends StatefulWidget {
             : DefaultCameraPickerTextDelegate());
   }
 
+  final AssetPickerProvider assetPickerProvider;
+
   /// The number of clockwise quarter turns the camera view should be rotated.
+  /// 摄像机视图顺时针旋转次数，每次90度
   final int cameraQuarterTurns;
 
   /// Whether the picker can record video.
+  /// 选择器是否可以录像
   final bool isAllowRecording;
 
   /// Whether the picker can record video.
+  /// 选择器是否可以录像
   final bool isOnlyAllowRecording;
 
+  /// Whether the picker should record audio.
+  /// 选择器录像时是否需要录制声音
+  final bool enableAudio;
+
   /// The maximum duration of the video recording process.
+  /// 录制视频最长时长
+  ///
   /// This is 15 seconds by default.
   /// Also allow `null` for unrestricted video recording.
   final Duration maximumRecordingDuration;
 
   /// Theme data for the picker.
+  /// 选择器的主题
   final ThemeData theme;
 
   /// Present resolution for the camera.
+  /// 相机的分辨率预设
   final ResolutionPreset resolutionPreset;
 
+  final int maxAssets;
+
+  final List<int> previewThumbSize;
+
+  final int gridCount;
+
   /// Static method to create [AssetEntity] through camera.
-  static Future<AssetEntity> pickFromCamera(
+  /// 通过相机创建 [AssetEntity] 的静态方法
+  static Future<List<AssetEntity>> pickFromCamera(
     BuildContext context, {
     bool isAllowRecording = false,
     bool isOnlyAllowRecording = false,
+    bool enableAudio = true,
     Duration maximumRecordingDuration = const Duration(seconds: 15),
     ThemeData theme,
     int cameraQuarterTurns = 0,
-    CameraPickerTextDelegate textDelegate,
+    CameraPickerTextDelegate cameraTextDelegate,
     ResolutionPreset resolutionPreset = ResolutionPreset.max,
-    int maxAssets = 9,
+    int maxAssets = 4,
     int pageSize = 320,
     int pathThumbSize = 200,
     int gridCount = 4,
     List<int> previewThumbSize,
     RequestType requestType,
-    SpecialPickerType specialPickerType,
-    List<AssetEntity> selectedAssets,
-    Color themeColor,
-    ThemeData pickerTheme,
     SortPathDelegate sortPathDelegate,
+    AssetsPickerTextDelegate assetTextDelegate,
     FilterOptionGroup filterOptions,
     WidgetBuilder customItemBuilder,
     CustomItemPosition customItemPosition = CustomItemPosition.none,
@@ -112,8 +136,7 @@ class CameraPicker extends StatefulWidget {
     if (resolutionPreset == null) {
       throw ArgumentError('Resolution preset must not be null.');
     }
-    //add selected assets to provioder and make that the propertychangenotifer
-    final AssetPickerProviderBase provider = BottomBarProvider(
+    final AssetPickerProvider provider = AssetPickerProvider(
       maxAssets: maxAssets,
       pageSize: pageSize,
       pathThumbSize: pathThumbSize,
@@ -121,28 +144,26 @@ class CameraPicker extends StatefulWidget {
       requestType: requestType,
       sortPathDelegate: sortPathDelegate,
       filterOptions: filterOptions,
+      routeDuration: routeDuration,
     );
-    final AssetEntity result = await Navigator.of(
+    final List<AssetEntity> result = await Navigator.of(
       context,
       rootNavigator: true,
-    ).push<AssetEntity>(
-      SlidePageTransitionBuilder<AssetEntity>(
-        builder: ChangeNotifierProvider<CameraPickerProvider>(
-          create: (context) => CameraPickerProvider(),
-          child: Consumer<CameraPickerProvider>(
-            builder: (_, model, __) => CameraPicker(
-              previewThumbSize: previewThumbSize,
-              selectorProvider: provider,
-              isAllowRecording: isAllowRecording,
-              isOnlyAllowRecording: isOnlyAllowRecording,
-              maximumRecordingDuration: maximumRecordingDuration,
-              theme: theme,
-              cameraQuarterTurns: cameraQuarterTurns,
-              textDelegate: textDelegate,
-              resolutionPreset: resolutionPreset,
-              cameraPickerProvider: model,
-            ),
-          ),
+    ).push<List<AssetEntity>>(
+      SlidePageTransitionBuilder<List<AssetEntity>>(
+        builder: CameraPicker(
+          isAllowRecording: isAllowRecording,
+          isOnlyAllowRecording: isOnlyAllowRecording,
+          enableAudio: enableAudio,
+          maximumRecordingDuration: maximumRecordingDuration,
+          theme: theme,
+          cameraQuarterTurns: cameraQuarterTurns,
+          textDelegate: cameraTextDelegate,
+          resolutionPreset: resolutionPreset,
+          maxAssets: maxAssets,
+          assetPickerProvider: provider,
+          gridCount: gridCount,
+          previewThumbSize: previewThumbSize,
         ),
         transitionCurve: Curves.easeIn,
         transitionDuration: const Duration(milliseconds: 300),
@@ -152,6 +173,7 @@ class CameraPicker extends StatefulWidget {
   }
 
   /// Build a dark theme according to the theme color.
+  /// 通过主题色构建一个默认的暗黑主题
   static ThemeData themeData(Color themeColor) => ThemeData.dark().copyWith(
         buttonColor: themeColor,
         brightness: Brightness.dark,
@@ -198,100 +220,152 @@ class CameraPicker extends StatefulWidget {
 
 class CameraPickerState extends State<CameraPicker> {
   /// The [Duration] for record detection. (200ms)
+  /// 检测是否开始录制的时长 (200毫秒)
   final Duration recordDetectDuration = const Duration(milliseconds: 200);
 
   /// Available cameras.
+  /// 可用的相机实例
   List<CameraDescription> cameras;
 
   /// The controller for the current camera.
+  /// 当前相机实例的控制器
   CameraController cameraController;
 
   /// The index of the current cameras. Defaults to `0`.
+  /// 当前相机的索引。默认为0
   int currentCameraIndex = 0;
 
   /// The path which the temporary file will be stored.
+  /// 临时文件会存放的目录
   String cacheFilePath;
 
   /// Whether the [shootingButton] should animate according to the gesture.
+  /// 拍照按钮是否需要执行动画
   ///
   /// This happens when the [shootingButton] is being long pressed. It will animate
   /// for video recording state.
+  ///
+  /// 当长按拍照按钮时，会进入准备录制视频的状态，此时需要执行动画。
   bool isShootingButtonAnimate = false;
 
   /// Whether the recording progress started.
+  /// 是否已开始录制视频
   ///
   /// After [shootingButton] animated, the [CircleProgressBar] will become visible.
+  ///
+  /// 当拍照按钮动画执行结束后，进度将变为可见状态并开始更新其状态。
   bool get isRecording => cameraController?.value?.isRecordingVideo ?? false;
 
   /// The [Timer] for record start detection.
+  /// 用于检测是否开始录制的定时器
   ///
   /// When the [shootingButton] started animate, this [Timer] will start at the same
   /// time. When the time is more than [recordDetectDuration], which means we should
   /// start recoding, the timer finished.
+  ///
+  /// 当拍摄按钮开始执行动画时，定时器会同时启动。时长超过检测时长时，定时器完成。
   Timer recordDetectTimer;
 
   /// The [Timer] for record countdown.
+  /// 用于录制视频倒计时的计时器
   ///
   /// When the record time reached the [maximumRecordingDuration], stop the recording.
   /// However, if there's no limitation on record time, this will be useless.
+  ///
+  /// 当录像时间达到了最大时长，将通过定时器停止录像。
+  /// 但如果录像时间没有限制，定时器将不会起作用。
   Timer recordCountdownTimer;
 
   /// Whether the current [CameraDescription] initialized.
+  /// 当前的相机实例是否已完成初始化
   bool get isInitialized => cameraController?.value?.isInitialized ?? false;
 
   /// Whether the picker can record video. (A non-null wrapper)
+  /// 选择器是否可以录像（非空包装）
   bool get isAllowRecording => widget.isAllowRecording ?? false;
 
   /// Whether the picker can only record video. (A non-null wrapper)
+  /// 选择器是否仅可以录像（非空包装）
   bool get isOnlyAllowRecording => widget.isOnlyAllowRecording ?? false;
+
+  /// Whether the picker should record audio. (A non-null wrapper)
+  /// 选择器录制视频时，是否需要录制音频（非空包装）
+  ///
+  /// No audio integration required when it's only for camera.
+  /// 在仅允许拍照时不需要启用音频
+  bool get enableAudio => isAllowRecording && (widget.enableAudio ?? true);
 
   /// Getter for `widget.maximumRecordingDuration` .
   Duration get maximumRecordingDuration => widget.maximumRecordingDuration;
 
   /// Whether the recording restricted to a specific duration.
+  /// 录像是否有限制的时长
   ///
   /// It's **NON-GUARANTEE** for stability if there's no limitation on the record duration.
   /// This is still an experimental control.
+  ///
+  /// 如果拍摄时长没有限制，不保证稳定性。它仍然是一项实验性的控制。
   bool get isRecordingRestricted => maximumRecordingDuration != null;
 
   /// The path of the taken picture file.
+  /// 拍照文件的路径
   String takenPictureFilePath;
 
   /// The path of the taken video file.
+  /// 录制文件的路径
   String takenVideoFilePath;
 
   /// The [File] instance of the taken picture.
+  /// 拍照文件的 [File] 实例
   File get takenPictureFile => File(takenPictureFilePath);
 
   /// The [File] instance of the taken video.
+  /// 录制文件的 [File] 实例
   File get takenVideoFile => File(takenVideoFilePath);
 
   /// A getter to the current [CameraDescription].
+  /// 获取当前相机实例
   CameraDescription get currentCamera => cameras?.elementAt(currentCameraIndex);
 
   /// If there's no theme provided from the user, use [CameraPicker.themeData] .
+  /// 如果用户未提供主题，
   ThemeData _theme;
 
   /// Get [ThemeData] of the [AssetPicker] through [Constants.pickerKey].
+  /// 通过常量全局 Key 获取当前选择器的主题
   ThemeData get theme => _theme;
+
+  /// [ChangeNotifier] for photo selector viewer.
+  /// 资源预览器的状态保持
+  AssetPickerViewerProvider provider;
+
+  /// [PageController] for assets preview [PageView].
+  /// 查看图片资源的页面控制器
+  PageController pageController;
+
+  /// Whether detail widgets displayed.
+  /// 详情部件是否显示
+  bool isDisplayingDetail = true;
+
+  /// Height for bottom detail widget.
+  /// 底部详情部件的高度
+  double get bottomDetailHeight => 160.0;
+
+  /// Whether the current platform is Apple OS.
+  /// 当前平台是否为苹果系列系统
+  bool get isAppleOS => Platform.isIOS || Platform.isMacOS;
+
+  final StreamController<int> pageStreamController =
+      StreamController<int>.broadcast();
 
   @override
   void initState() {
     super.initState();
-
-    if (widget.selectorProvider.selectedAssets != null) {
-      widget.cameraPickerProvider.selectedAssets =
-          widget.selectorProvider.selectedAssets;
-    }
-
-    widget.selectorProvider.currentIndex = 0;
-    widget.selectorProvider.pageController =
-        PageController(initialPage: widget.selectorProvider.currentIndex);
-
     _theme = widget.theme ?? CameraPicker.themeData(C.themeColor);
 
-    /// TODO: Currently hide status bar will cause the viewport shaking on Android.
+    // TODO(Alex): Currently hide status bar will cause the viewport shaking on Android.
     /// Hide system status bar automatically on iOS.
+    /// 在iOS设备上自动隐藏状态栏
     if (Platform.isIOS) {
       SystemChrome.setEnabledSystemUIOverlays(<SystemUiOverlay>[]);
     }
@@ -309,11 +383,14 @@ class CameraPickerState extends State<CameraPicker> {
         Navigator.of(context).pop();
       }
     }
+
+    provider = AssetPickerViewerProvider([]);
   }
 
   @override
   void dispose() {
     SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+    pageStreamController?.close();
     cameraController?.dispose();
     recordDetectTimer?.cancel();
     recordCountdownTimer?.cancel();
@@ -321,6 +398,7 @@ class CameraPickerState extends State<CameraPicker> {
   }
 
   /// Defined the path with platforms specification.
+  /// 根据平台存储规范及特性确定存储路径。
   ///
   /// * When the platform is not Android, use [getApplicationDocumentsDirectory] .
   /// * When [Platform.isAndroid] :
@@ -344,7 +422,7 @@ class CameraPickerState extends State<CameraPicker> {
       if (cacheFilePath != null) {
         cacheFilePath += '/cameraPicker';
 
-        /// Check if the directory exists.
+        /// Check if the directory is exist.
         final Directory directory = Directory(cacheFilePath);
         if (!directory.existsSync()) {
           /// Create the directory recursively.
@@ -359,6 +437,7 @@ class CameraPickerState extends State<CameraPicker> {
   }
 
   /// Initialize cameras instances.
+  /// 初始化相机实例
   Future<void> initCameras({CameraDescription cameraDescription}) async {
     await cameraController?.dispose();
 
@@ -380,6 +459,7 @@ class CameraPickerState extends State<CameraPicker> {
     cameraController = CameraController(
       cameraDescription ?? cameras[0],
       widget.resolutionPreset,
+      enableAudio: enableAudio,
     );
     cameraController.initialize().then((dynamic _) {
       if (mounted) {
@@ -389,9 +469,12 @@ class CameraPickerState extends State<CameraPicker> {
   }
 
   /// The method to switch cameras.
+  /// 切换相机的方法
   ///
   /// Switch cameras in order. When the [currentCameraIndex] reached the length
   /// of cameras, start from the beginning.
+  ///
+  /// 按顺序切换相机。当达到相机数量时从头开始。
   void switchCameras() {
     ++currentCameraIndex;
     if (currentCameraIndex == cameras.length) {
@@ -401,9 +484,12 @@ class CameraPickerState extends State<CameraPicker> {
   }
 
   /// The method to take a picture.
+  /// 拍照方法
   ///
   /// The picture will only taken when [isInitialized], and the camera is not
   /// taking pictures.
+  ///
+  /// 仅当初始化成功且相机未在拍照时拍照。
   Future<void> takePicture() async {
     if (isInitialized && !cameraController.value.isTakingPicture) {
       try {
@@ -420,11 +506,8 @@ class CameraPickerState extends State<CameraPicker> {
           theme: theme,
         );
         if (entity != null) {
-          List<AssetEntity> selectedAssets =
-              widget.cameraPickerProvider.selectedAssets;
-          selectedAssets.add(entity);
-          widget.cameraPickerProvider.updateSelectedAssetsWith(selectedAssets);
-          widget.selectorProvider.selectedAssets = selectedAssets;
+          this.widget.assetPickerProvider.selectAsset(entity);
+          this.provider.selectAssetEntity(entity);
         } else {
           takenPictureFilePath = null;
           if (mounted) {
@@ -442,6 +525,9 @@ class CameraPickerState extends State<CameraPicker> {
   /// will be initialized to achieve press time detection. If the duration
   /// reached to same as [recordDetectDuration], and the timer still active,
   /// start recording video.
+  ///
+  /// 当 [shootingButton] 触发了长按，初始化一个定时器来实现时间检测。如果长按时间
+  /// 达到了 [recordDetectDuration] 且定时器未被销毁，则开始录制视频。
   void recordDetection() {
     recordDetectTimer = Timer(recordDetectDuration, () {
       startRecordingVideo();
@@ -457,6 +543,9 @@ class CameraPickerState extends State<CameraPicker> {
   /// This will be given to the [Listener] in the [shootingButton]. When it's
   /// called, which means no more pressing on the button, cancel the timer and
   /// reset the status.
+  ///
+  /// 这个方法会赋值给 [shootingButton] 中的 [Listener]。当按钮释放了点击后，定时器
+  /// 将被取消，并且状态会重置。
   void recordDetectionCancel(PointerUpEvent event) {
     recordDetectTimer?.cancel();
     if (isRecording) {
@@ -474,6 +563,7 @@ class CameraPickerState extends State<CameraPicker> {
   }
 
   /// Set record file path and start recording.
+  /// 设置拍摄文件路径并开始录制视频
   void startRecordingVideo() {
     final String filePath = '${cacheFilePath}_$currentTimeStamp.mp4';
     takenVideoFilePath = filePath;
@@ -499,8 +589,8 @@ class CameraPickerState extends State<CameraPicker> {
     }
   }
 
-  // TODO: Add video thumbnail support to bottom bar
   /// Stop the recording process.
+  /// 停止录制视频
   Future<void> stopRecordingVideo() async {
     if (cameraController.value.isRecordingVideo) {
       cameraController.stopVideoRecording().then((dynamic result) async {
@@ -530,16 +620,16 @@ class CameraPickerState extends State<CameraPicker> {
   }
 
   /// Settings action section widget.
+  /// 设置操作区
   ///
   /// This displayed at the top of the screen.
+  /// 该区域显示在屏幕上方。
   Widget get settingsAction {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12.0),
       child: Row(
         children: <Widget>[
-          const Spacer(),
-
-          /// There's an issue tracking NPE of the camera plugin, so switching is temporary disabled .
+          // TODO(Alex): There's an issue tracking NPE of the camera plugin, so switching is temporary disabled .
           if ((cameras?.length ?? 0) > 1) switchCamerasButton,
         ],
       ),
@@ -547,6 +637,7 @@ class CameraPickerState extends State<CameraPicker> {
   }
 
   /// The button to switch between cameras.
+  /// 切换相机的按钮
   Widget get switchCamerasButton {
     return InkWell(
       onTap: switchCameras,
@@ -562,6 +653,7 @@ class CameraPickerState extends State<CameraPicker> {
   }
 
   /// Text widget for shooting tips.
+  /// 拍摄的提示文字
   Widget get tipsTextWidget {
     return AnimatedOpacity(
       duration: recordDetectDuration,
@@ -579,8 +671,10 @@ class CameraPickerState extends State<CameraPicker> {
   }
 
   /// Shooting action section widget.
+  /// 拍照操作区
   ///
   /// This displayed at the top of the screen.
+  /// 该区域显示在屏幕下方。
   Widget get shootingActions {
     return SizedBox(
       height: Screens.width / 3.5,
@@ -592,13 +686,14 @@ class CameraPickerState extends State<CameraPicker> {
                 : const SizedBox.shrink(),
           ),
           Expanded(child: Center(child: shootingButton)),
-          const Spacer(),
+          Expanded(child: Center(child: galleryButton)),
         ],
       ),
     );
   }
 
   /// The back button near to the [shootingButton].
+  /// 靠近拍照键的返回键
   Widget get backButton {
     return InkWell(
       borderRadius: maxBorderRadius,
@@ -621,7 +716,41 @@ class CameraPickerState extends State<CameraPicker> {
     );
   }
 
+  Widget get galleryButton {
+    return InkWell(
+      borderRadius: maxBorderRadius,
+      onTap: () async {
+        final List<AssetEntity> result = await AssetPicker.pickAssets(context,
+            maxAssets: widget.maxAssets,
+            requestType: RequestType.image,
+            gridCount: 3,
+            pageSize: 120,
+            selectedAssets: provider.currentlySelectedAssets);
+        if (result != null) {
+          Navigator.of(context).pop(result.toList());
+        }
+      },
+      child: Container(
+        margin: const EdgeInsets.all(10.0),
+        width: Screens.width / 15,
+        height: Screens.width / 15,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          shape: BoxShape.circle,
+        ),
+        child: const Center(
+          child: Icon(
+            Icons.image,
+            color: Colors.black,
+          ),
+        ),
+      ),
+    );
+  }
+
   /// The shooting button.
+  /// 拍照按钮
+  // TODO(Alex): Need further integration with video recording.
   Widget get shootingButton {
     final Size outerSize = Size.square(Screens.width / 3.5);
     return Listener(
@@ -672,6 +801,236 @@ class CameraPickerState extends State<CameraPicker> {
     );
   }
 
+  ///Preview Bar
+
+  Widget get bottomDetail => AnimatedPositioned(
+        duration: kThemeAnimationDuration,
+        curve: Curves.easeInOut,
+        top: isDisplayingDetail
+            ? 0.0
+            : -(Screens.bottomSafeHeight + bottomDetailHeight),
+        left: 0.0,
+        right: 0.0,
+        height: Screens.bottomSafeHeight + bottomDetailHeight + 12,
+        child: Container(
+          padding: EdgeInsets.only(bottom: Screens.bottomSafeHeight),
+          color: this.theme.canvasColor.withOpacity(0.85),
+          child: Column(
+            children: <Widget>[
+              SizedBox(
+                height: 120.0,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.fromLTRB(5, 30, 5, 0),
+                  itemCount: provider.currentlySelectedAssets.length,
+                  itemBuilder: _bottomDetailItem,
+                ),
+              ),
+              Container(
+                height: 1.0,
+                color: this.theme.dividerColor,
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 4, 20, 4),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Expanded(
+                        child: settingsAction,
+                      ),
+                      const Spacer(),
+                      if (isAppleOS && provider != null) confirmButton(context)
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+
+  Widget _bottomDetailItem(BuildContext _, int index) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
+      child: AspectRatio(
+        aspectRatio: 1.0,
+        child: StreamBuilder<int>(
+          initialData: index,
+          stream: pageStreamController.stream,
+          builder: (BuildContext _, AsyncSnapshot<int> snapshot) {
+            final AssetEntity asset =
+                provider.currentlySelectedAssets.elementAt(index);
+            return GestureDetector(
+              onTap: () async {
+                final List<AssetEntity> result =
+                    await AssetPickerViewer.pushToViewer(
+                  context,
+                  currentIndex: 0,
+                  assets: provider.currentlySelectedAssets,
+                  selectedAssets: provider.currentlySelectedAssets,
+                  selectorProvider: widget.assetPickerProvider,
+                  themeData: theme,
+                );
+                if (result != null) {
+                  this.provider.currentlySelectedAssets = result;
+                }
+              },
+              child: Selector<AssetPickerViewerProvider, List<AssetEntity>>(
+                selector: (
+                  BuildContext _,
+                  AssetPickerViewerProvider provider,
+                ) =>
+                    provider.currentlySelectedAssets,
+                builder: (
+                  BuildContext _,
+                  List<AssetEntity> currentlySelectedAssets,
+                  Widget __,
+                ) {
+                  return Stack(
+                    children: <Widget>[
+                      () {
+                        Widget item;
+                        switch (asset.type) {
+                          case AssetType.other:
+                            item = const SizedBox.shrink();
+                            break;
+                          case AssetType.image:
+                            item = _imagePreviewItem(asset);
+                            break;
+                          case AssetType.video:
+                            item = _videoPreviewItem(asset);
+                            break;
+                          case AssetType.audio:
+                            item = _audioPreviewItem(asset);
+                            break;
+                        }
+                        return item;
+                      }(),
+                      AnimatedContainer(
+                        duration: kThemeAnimationDuration,
+                        curve: Curves.easeInOut,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                              color: this.theme.colorScheme.secondary,
+                              width: 2.0),
+                          color:
+                              this.theme.colorScheme.surface.withOpacity(0.54),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  /// Confirm button.
+  /// 确认按钮
+  ///
+  /// It'll pop with [AssetPickerProvider.selectedAssets] when there're any assets chosen.
+  /// The [PhotoSelector] will recognize and pop too.
+  /// 当有资源已选时，点击按钮将把已选资源通过路由返回。
+  /// 资源选择器将识别并一同返回。
+  Widget confirmButton(BuildContext context) =>
+      Consumer<AssetPickerViewerProvider>(
+        builder: (
+          BuildContext _,
+          AssetPickerViewerProvider provider,
+          Widget __,
+        ) {
+          return MaterialButton(
+            minWidth: () {
+              return provider.isSelectedNotEmpty ? 48.0 : 20.0;
+            }(),
+            height: 32.0,
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            color: () {
+              return provider.isSelectedNotEmpty
+                  ? this.theme.colorScheme.secondary
+                  : this.theme.dividerColor;
+            }(),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(3.0),
+            ),
+            child: Text(
+              () {
+                if (provider.isSelectedNotEmpty) {
+                  return '${Constants.textDelegate.confirm}'
+                      '(${provider.currentlySelectedAssets.length}'
+                      '/'
+                      '${widget.maxAssets})';
+                }
+                return Constants.textDelegate.confirm;
+              }(),
+              style: TextStyle(
+                color: () {
+                  return provider.isSelectedNotEmpty
+                      ? this.theme.textTheme.bodyText1.color
+                      : this.theme.textTheme.caption.color;
+                }(),
+                fontSize: 17.0,
+                fontWeight: FontWeight.normal,
+              ),
+            ),
+            onPressed: () {
+              if (provider.isSelectedNotEmpty) {
+                Navigator.of(context)
+                    .pop(provider.currentlySelectedAssets.toList());
+              }
+            },
+            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          );
+        },
+      );
+
+  /// Preview item widgets for audios.
+  /// 音频的底部预览部件
+  Widget _audioPreviewItem(AssetEntity asset) {
+    return ColoredBox(
+      color: this.theme.dividerColor,
+      child: const Center(child: Icon(Icons.audiotrack)),
+    );
+  }
+
+  /// Preview item widgets for images.
+  /// 音频的底部预览部件
+  Widget _imagePreviewItem(AssetEntity asset) {
+    return Positioned.fill(
+      child: RepaintBoundary(
+        child: ExtendedImage(
+          image: AssetEntityImageProvider(
+            asset,
+            isOriginal: false,
+          ),
+          fit: BoxFit.cover,
+        ),
+      ),
+    );
+  }
+
+  /// Preview item widgets for video.
+  /// 音频的底部预览部件
+  Widget _videoPreviewItem(AssetEntity asset) {
+    return Positioned.fill(
+      child: Stack(
+        children: <Widget>[
+          _imagePreviewItem(asset),
+          Center(
+            child: Icon(
+              Icons.video_library,
+              color: this.theme.colorScheme.surface.withOpacity(0.54),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Theme(
@@ -692,22 +1051,18 @@ class CameraPickerState extends State<CameraPicker> {
               )
             else
               const SizedBox.shrink(),
-            if (widget.cameraPickerProvider.selectedAssets.length > 0)
-              BottomBar(
-                assets: widget.cameraPickerProvider.selectedAssets,
-                selectedAssets: widget.cameraPickerProvider.selectedAssets,
-                selectorProvider: widget.selectorProvider,
-                previewThumbSize: widget.previewThumbSize,
-                specialPickerType: widget.specialPickerType,
-                themeData: _theme,
-                displayOnTop: true,
+            if (provider.currentlySelectedAssets != null)
+              ChangeNotifierProvider<AssetPickerViewerProvider>.value(
+                value: provider,
+                child: Consumer<AssetPickerViewerProvider>(
+                  builder: (_, model, __) => bottomDetail,
+                ),
               ),
             SafeArea(
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                padding: const EdgeInsets.symmetric(vertical: 20.0),
                 child: Column(
                   children: <Widget>[
-                    settingsAction,
                     const Spacer(),
                     tipsTextWidget,
                     shootingActions,

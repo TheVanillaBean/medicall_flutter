@@ -12,7 +12,6 @@ import 'constants.dart';
 export '../delegates/assets_picker_text_delegate.dart';
 export '../delegates/sort_path_delegate.dart';
 export '../widget/platform_progress_indicator.dart';
-
 export 'colors.dart';
 export 'custom_scroll_physics.dart';
 export 'enums.dart';
@@ -24,8 +23,7 @@ class Constants {
 
   static GlobalKey pickerKey = GlobalKey();
 
-  static AssetsPickerTextDelegate textDelegate =
-      DefaultAssetsPickerTextDelegate();
+  static AssetsPickerTextDelegate textDelegate = EnglishTextDelegate();
   static SortPathDelegate sortPathDelegate = SortPathDelegate.common;
 
   static const List<int> defaultPreviewThumbSize = <int>[200, 200];

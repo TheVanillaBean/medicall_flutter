@@ -5,7 +5,7 @@
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
-import 'package:Medicall/common_widgets/asset_picker/constants/constants.dart';
+import 'package:Medicall/common_widgets/assets_picker/constants/constants.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';

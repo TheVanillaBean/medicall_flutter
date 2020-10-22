@@ -1,4 +1,5 @@
-import 'package:Medicall/common_widgets/asset_picker/provider/asset_entity_image_provider.dart';
+import 'package:Medicall/common_widgets/assets_picker/provider/asset_entity_image_provider.dart';
+import 'package:Medicall/common_widgets/assets_picker/widget/asset_picker_viewer.dart';
 import 'package:extended_image/extended_image.dart';
 
 ///
@@ -7,8 +8,6 @@ import 'package:extended_image/extended_image.dart';
 ///
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
-
-import '../asset_picker_viewer.dart';
 
 class ImagePageBuilder extends StatelessWidget {
   const ImagePageBuilder({

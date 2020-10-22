@@ -1,4 +1,4 @@
-import 'package:Medicall/common_widgets/asset_picker/widget/asset_picker.dart';
+import 'package:Medicall/common_widgets/assets_picker/widget/asset_picker.dart';
 import 'package:Medicall/routing/router.dart' as Router;
 import 'package:Medicall/screens/landing_page/auth_widget_builder.dart';
 import 'package:Medicall/screens/landing_page/firebase_notifications_handler.dart';
@@ -119,7 +119,8 @@ class MedicallApp extends StatelessWidget {
                       userSnapshot.data.type == USER_TYPE.PROVIDER
                           ? ProviderDashboardScreen.create(context)
                           : PatientDashboardScreen.create(context),
-                  providerPhotoBuilder: (context) => ProviderAccountScreen(),
+                  providerPhotoBuilder: (context) =>
+                      ProviderAccountScreen.create(context),
                   startVisitBuilder: (context) => StartVisitScreen(
                     consult: tempUserProvider.consult,
                   ),

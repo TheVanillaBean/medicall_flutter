@@ -1,4 +1,5 @@
-import 'package:Medicall/common_widgets/asset_picker/constants/constants.dart';
+import 'package:Medicall/common_widgets/assets_picker/constants/constants.dart';
+import 'package:Medicall/common_widgets/assets_picker/widget/asset_picker_viewer.dart';
 
 ///
 /// [Author] Alex (https://github.com/Alex525)
@@ -7,8 +8,6 @@ import 'package:Medicall/common_widgets/asset_picker/constants/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:video_player/video_player.dart';
-
-import '../asset_picker_viewer.dart';
 
 class VideoPageBuilder extends StatefulWidget {
   const VideoPageBuilder({Key key, this.asset, this.state}) : super(key: key);
