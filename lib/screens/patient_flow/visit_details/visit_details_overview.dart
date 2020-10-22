@@ -88,6 +88,7 @@ class _VisitDetailsOverviewState extends State<VisitDetailsOverview> {
           //   },
           // ),
           _buildCardButton(
+            context,
             "Provider Note",
             MedicallIcons.clipboard_1,
             () {
@@ -97,6 +98,7 @@ class _VisitDetailsOverviewState extends State<VisitDetailsOverview> {
             0,
           ),
           _buildCardButton(
+            context,
             "Treatment Recommendations",
             Icons.local_pharmacy,
             () {
@@ -106,6 +108,7 @@ class _VisitDetailsOverviewState extends State<VisitDetailsOverview> {
             0,
           ),
           _buildCardButton(
+            context,
             "Further Learning",
             Icons.school,
             () {
@@ -115,6 +118,7 @@ class _VisitDetailsOverviewState extends State<VisitDetailsOverview> {
             0,
           ),
           _buildCardButton(
+            context,
             "Your Visit Information",
             Icons.assignment,
             () => {
@@ -126,6 +130,7 @@ class _VisitDetailsOverviewState extends State<VisitDetailsOverview> {
             0,
           ),
           _buildCardButton(
+            context,
             "Message Provider",
             Icons.message,
             () => navigateToChatScreen(context),
@@ -172,6 +177,7 @@ class _VisitDetailsOverviewState extends State<VisitDetailsOverview> {
                 //   },
                 // ),
                 _buildCardButton(
+                  context,
                   "Provider Note",
                   MedicallIcons.clipboard_1,
                   () => {
@@ -184,6 +190,7 @@ class _VisitDetailsOverviewState extends State<VisitDetailsOverview> {
                   0,
                 ),
                 _buildCardButton(
+                  context,
                   "Treatment Recommendations",
                   Icons.local_pharmacy,
                   () => {
@@ -196,6 +203,7 @@ class _VisitDetailsOverviewState extends State<VisitDetailsOverview> {
                   0,
                 ),
                 _buildCardButton(
+                  context,
                   "Further Learning",
                   Icons.school,
                   () => {
@@ -208,6 +216,7 @@ class _VisitDetailsOverviewState extends State<VisitDetailsOverview> {
                   0,
                 ),
                 _buildCardButton(
+                  context,
                   "Your Visit Information",
                   Icons.assignment,
                   () => {
@@ -219,6 +228,7 @@ class _VisitDetailsOverviewState extends State<VisitDetailsOverview> {
                   0,
                 ),
                 _buildCardButton(
+                  context,
                   "Message Provider",
                   Icons.message,
                   () => navigateToChatScreen(context),
@@ -243,8 +253,8 @@ class _VisitDetailsOverviewState extends State<VisitDetailsOverview> {
     );
   }
 
-  Widget _buildCardButton(
-      String title, IconData icon, Function onTap, int value) {
+  Widget _buildCardButton(BuildContext context, String title, IconData icon,
+      Function onTap, int value) {
     return Container(
       padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
       child: Badge(
