@@ -11,8 +11,9 @@ import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/firebase_storage_service.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
+import 'package:Medicall/util/image_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:photo_manager/photo_manager.dart';
 import 'package:provider/provider.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
@@ -174,32 +175,36 @@ class PhotoIDScreen extends StatelessWidget {
 
   Widget _buildProfilePictureWidget(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
     return Column(
       children: <Widget>[
-        if (model.idPhoto.length == 0)
-          ..._buildProfilePlaceholder(context: context, height: height),
-        if (model.idPhoto.length > 0)
+        if (model.idPhoto == null)
+          ..._buildProfilePlaceholder(context: context, height: height)
+        else
           _buildProfileImgView(
-              context: context, asset: model.idPhoto.first, height: height),
+            context: context,
+            asset: model.idPhoto,
+            height: height,
+            width: width,
+          ),
       ],
     );
   }
 
   Widget _buildProfileImgView(
-      {BuildContext context, Asset asset, double height}) {
+      {BuildContext context, AssetEntity asset, double height, double width}) {
     return GestureDetector(
       onTap: () => _loadProfileImage(context),
       child: Stack(
         alignment: AlignmentDirectional.bottomStart,
         overflow: Overflow.visible,
         children: <Widget>[
-          ClipRRect(
-            borderRadius: BorderRadius.circular(300),
-            child: this.extendedImageProvider.returnAssetThumb(
-                  asset: asset,
-                  height: (height * 0.2).toInt(),
-                  width: (height * 0.2).toInt(),
-                ),
+          ClipOval(
+            child: AssetEntityImage(
+              asset: asset,
+              height: height,
+              width: width,
+            ),
           ),
           Positioned(
             bottom: -10,
@@ -257,33 +262,14 @@ class PhotoIDScreen extends StatelessWidget {
   }
 
   Future<void> _loadProfileImage(BuildContext context) async {
-    List<Asset> resultList = List<Asset>();
+    AssetEntity assetEntity = AssetEntity();
 
     try {
-      resultList = await this.extendedImageProvider.pickImages(
-            model.idPhoto,
-            1,
-            true,
-            this
-                .extendedImageProvider
-                .pickImagesCupertinoOptions(takePhotoIcon: 'camera'),
-            this.extendedImageProvider.pickImagesMaterialOptions(
-                useDetailsView: true,
-                actionBarColor:
-                    '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
-                statusBarColor:
-                    '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
-                lightStatusBar: false,
-                autoCloseOnSelectionLimit: true,
-                startInAllView: true,
-                actionBarTitle: 'Select Photo ID',
-                allViewTitle: 'All Photos'),
-            context,
-          );
+      assetEntity = await ImagePicker.pickSingleImage(context: context);
     } catch (e) {
       AppUtil().showFlushBar(e, context);
     }
 
-    model.updateWith(idPhoto: resultList);
+    model.updateWith(idPhoto: assetEntity);
   }
 }

@@ -4,7 +4,7 @@ import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/firebase_storage_service.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:photo_manager/photo_manager.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 class PhotoIDViewModel with ChangeNotifier {
@@ -13,7 +13,7 @@ class PhotoIDViewModel with ChangeNotifier {
   final FirestoreDatabase firestoreDatabase;
   final FirebaseStorageService firebaseStorageService;
 
-  List<Asset> idPhoto;
+  AssetEntity idPhoto;
   bool isLoading;
 
   final RoundedLoadingButtonController btnController =
@@ -25,11 +25,11 @@ class PhotoIDViewModel with ChangeNotifier {
     @required this.firestoreDatabase,
     @required this.firebaseStorageService,
     this.isLoading = false,
-    this.idPhoto = const [],
+    this.idPhoto,
   });
 
   Future<void> submit() async {
-    if (this.idPhoto.length == 0) {
+    if (this.idPhoto == null) {
       btnController.reset();
       throw "Please add a photo ID image...";
     }
@@ -37,8 +37,8 @@ class PhotoIDViewModel with ChangeNotifier {
     updateWith(isLoading: true);
     PatientUser medicallUser = userProvider.user;
     try {
-      medicallUser.photoID = await firebaseStorageService.uploadProfileImage(
-          asset: this.idPhoto.first);
+      medicallUser.photoID = await firebaseStorageService
+          .uploadProfileImageWith(asset: this.idPhoto);
     } catch (e) {
       updateWith(isLoading: false);
       btnController.reset();
@@ -53,7 +53,7 @@ class PhotoIDViewModel with ChangeNotifier {
 
   void updateWith({
     bool isLoading,
-    List<Asset> idPhoto,
+    AssetEntity idPhoto,
   }) {
     this.isLoading = isLoading ?? this.isLoading;
     this.idPhoto = idPhoto ?? this.idPhoto;

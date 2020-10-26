@@ -506,8 +506,12 @@ class CameraPickerState extends State<CameraPicker> {
           theme: theme,
         );
         if (entity != null) {
-          this.widget.assetPickerProvider.selectAsset(entity);
-          this.provider.selectAssetEntity(entity);
+          if (this.widget.assetPickerProvider.maxAssets == 1) {
+            Navigator.of(context).pop([entity]);
+          } else {
+            this.widget.assetPickerProvider.selectAsset(entity);
+            this.provider.selectAssetEntity(entity);
+          }
         } else {
           takenPictureFilePath = null;
           if (mounted) {
