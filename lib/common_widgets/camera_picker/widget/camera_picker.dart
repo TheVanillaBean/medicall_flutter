@@ -1051,13 +1051,15 @@ class CameraPickerState extends State<CameraPicker> {
               )
             else
               const SizedBox.shrink(),
-            if (provider.currentlySelectedAssets != null)
-              ChangeNotifierProvider<AssetPickerViewerProvider>.value(
-                value: provider,
-                child: Consumer<AssetPickerViewerProvider>(
-                  builder: (_, model, __) => bottomDetail,
-                ),
+            ChangeNotifierProvider<AssetPickerViewerProvider>.value(
+              value: provider,
+              child: Consumer<AssetPickerViewerProvider>(
+                builder: (_, model, __) =>
+                    provider.currentlySelectedAssets.length > 0
+                        ? bottomDetail
+                        : SizedBox.shrink(),
               ),
+            ),
             SafeArea(
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20.0),

@@ -1,3 +1,4 @@
+import 'package:Medicall/common_widgets/camera_picker/constants/constants.dart';
 import 'package:Medicall/common_widgets/provider_bio_card.dart';
 import 'package:Medicall/common_widgets/reusable_account_card.dart';
 import 'package:Medicall/components/drawer_menu.dart';
@@ -13,10 +14,9 @@ import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/firebase_storage_service.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
+import 'package:Medicall/util/image_picker.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:provider/provider.dart';
 
 class ProviderAccountScreen extends StatefulWidget {
@@ -445,46 +445,27 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
     ExtendedImageProvider extImageProvider,
     UserProvider userProvider,
   }) async {
-    List<Asset> resultList = List<Asset>();
+    AssetEntity assetEntity = AssetEntity();
 
     try {
-      resultList = await extImageProvider.pickImages(
-        [],
-        1,
-        true,
-        extImageProvider.pickImagesCupertinoOptions(takePhotoIcon: 'camera'),
-        extImageProvider.pickImagesMaterialOptions(
-            useDetailsView: true,
-            actionBarColor:
-                '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
-            statusBarColor:
-                '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
-            lightStatusBar: false,
-            autoCloseOnSelectionLimit: true,
-            startInAllView: true,
-            actionBarTitle: 'Select Profile Picture',
-            allViewTitle: 'All Photos'),
-        context,
-      );
-    } on PlatformException catch (e) {
+      assetEntity = await ImagePicker.pickSingleImage(context: context);
+    } catch (e) {
       AppUtil().showFlushBar(e, context);
     }
 
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
     if (!mounted) return;
-    if (resultList.length > 0) {
-      this.setState(() {
-        this.imageLoading = true;
-      });
-      String url =
-          await storageService.uploadProfileImage(asset: resultList.first);
-      userProvider.user.profilePic = url;
-      this.setState(() {
-        this.imageLoading = false;
-        this.profileImageURL = url;
-      });
-      await firestoreDatabase.setUser(userProvider.user);
-    }
+    this.setState(() {
+      this.imageLoading = true;
+    });
+    String url =
+        await storageService.uploadProfileImageWith(asset: assetEntity);
+    userProvider.user.profilePic = url;
+    this.setState(() {
+      this.imageLoading = false;
+      this.profileImageURL = url;
+    });
+    await firestoreDatabase.setUser(userProvider.user);
   }
 }
