@@ -645,12 +645,12 @@ class CameraPickerState extends State<CameraPicker> {
   Widget get switchCamerasButton {
     return InkWell(
       onTap: switchCameras,
-      child: const Padding(
+      child: Padding(
         padding: EdgeInsets.all(8.0),
-        child: Icon(
-          Icons.switch_camera,
+        child: Image.asset(
+          'assets/icon/switch_camera.png',
+          height: 30,
           color: Colors.white,
-          size: 30.0,
         ),
       ),
     );
@@ -1064,15 +1064,23 @@ class CameraPickerState extends State<CameraPicker> {
                         : SizedBox.shrink(),
               ),
             ),
-            SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20.0),
-                child: Column(
-                  children: <Widget>[
-                    const Spacer(),
-                    tipsTextWidget,
-                    shootingActions,
-                  ],
+            ChangeNotifierProvider<AssetPickerViewerProvider>.value(
+              value: provider,
+              child: Consumer<AssetPickerViewerProvider>(
+                builder: (_, model, __) => SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20.0),
+                    child: Column(
+                      children: <Widget>[
+                        provider.currentlySelectedAssets.length == 0
+                            ? settingsAction
+                            : SizedBox.shrink(),
+                        const Spacer(),
+                        tipsTextWidget,
+                        shootingActions,
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),

@@ -456,16 +456,18 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
     if (!mounted) return;
-    this.setState(() {
-      this.imageLoading = true;
-    });
-    String url =
-        await storageService.uploadProfileImageWith(asset: assetEntity);
-    userProvider.user.profilePic = url;
-    this.setState(() {
-      this.imageLoading = false;
-      this.profileImageURL = url;
-    });
-    await firestoreDatabase.setUser(userProvider.user);
+    if (assetEntity.id != null) {
+      this.setState(() {
+        this.imageLoading = true;
+      });
+      String url =
+          await storageService.uploadProfileImageWith(asset: assetEntity);
+      userProvider.user.profilePic = url;
+      this.setState(() {
+        this.imageLoading = false;
+        this.profileImageURL = url;
+      });
+      await firestoreDatabase.setUser(userProvider.user);
+    }
   }
 }
