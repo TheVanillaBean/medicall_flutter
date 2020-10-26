@@ -2,8 +2,10 @@ import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/services/database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class VisitDocNote extends StatelessWidget {
   final Consult consult;
@@ -16,6 +18,10 @@ class VisitDocNote extends StatelessWidget {
     Consult consult,
     VisitReviewData visitReviewData,
   }) async {
+    FirestoreDatabase database =
+        Provider.of<FirestoreDatabase>(context, listen: false);
+    consult.patientReviewNotifications = 0;
+    await database.saveConsult(consult: consult, consultId: consult.uid);
     await Navigator.of(context).pushNamed(
       Routes.visitDocNote,
       arguments: {
