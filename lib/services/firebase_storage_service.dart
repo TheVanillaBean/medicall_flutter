@@ -40,10 +40,8 @@ class FirebaseStorageService {
   Future<String> uploadConsultPhoto({
     @required String consultId,
     @required String name,
-    @required ByteData byteData,
+    @required Uint8List imageData,
   }) async {
-//    ByteData byteData = await getAccurateByteData(asset);
-    Uint8List imageData = byteData.buffer.asUint8List();
     String assetName = getImageName(name);
     return await upload(
       data: imageData,

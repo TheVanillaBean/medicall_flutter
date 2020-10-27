@@ -26,7 +26,7 @@ class ImagePicker {
       context,
       isAllowRecording: false,
       cameraTextDelegate: EnglishCameraPickerTextDelegate(),
-      maxAssets: 1,
+      maxAssets: 4,
     );
     if (result == null || result.length == 0) {
       throw "Error retrieving images";

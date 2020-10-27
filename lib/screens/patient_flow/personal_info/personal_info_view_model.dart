@@ -1,3 +1,4 @@
+import 'package:Medicall/common_widgets/camera_picker/constants/constants.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/user/patient_user_model.dart';
 import 'package:Medicall/screens/PhoneAuth/phone_auth_state_model.dart';
@@ -8,10 +9,15 @@ import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/validators.dart';
 import 'package:dash_chat/dash_chat.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:property_change_notifier/property_change_notifier.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
-class PersonalInfoViewModel
+abstract class PersonalInfoVMProperties {
+  static String get profilePhoto => 'profile_photo';
+  static String get form => 'form';
+}
+
+class PersonalInfoViewModel extends PropertyChangeNotifier
     with
         FirstNameValidators,
         LastNameValidators,
@@ -20,8 +26,7 @@ class PersonalInfoViewModel
         AddressValidators,
         CityValidators,
         StateValidators,
-        ZipCodeValidators,
-        ChangeNotifier {
+        ZipCodeValidators {
   String firstName;
   String lastName;
   String phoneNumber;
@@ -32,7 +37,7 @@ class PersonalInfoViewModel
   String state;
   String zipCode;
 
-  List<Asset> profileImage;
+  AssetEntity profileImage;
 
   bool isLoading;
   bool submitted;
@@ -125,7 +130,7 @@ class PersonalInfoViewModel
     this.isLoading = false,
     this.submitted = false,
     this.checkValue,
-    this.profileImage = const [],
+    this.profileImage,
   });
 
   void setVerificationStatus(VerificationStatus verificationStatus) {
@@ -141,7 +146,7 @@ class PersonalInfoViewModel
         stateValidator.isValid(state) &&
         zipCodeValidator.isValid(zipCode) &&
         dobValidator.isValid(birthDate) &&
-        this.profileImage.length > 0 &&
+        this.profileImage != null &&
         !isLoading;
   }
 
@@ -226,7 +231,7 @@ class PersonalInfoViewModel
   Future<void> submit() async {
     updateWith(submitted: true);
 
-    if (this.profileImage.length == 0) {
+    if (this.profileImage == null) {
       btnController.reset();
       throw "Please add a profile image...";
     }
@@ -249,8 +254,8 @@ class PersonalInfoViewModel
     medicallUser.mailingZipCode = this.zipCode;
 
     try {
-      medicallUser.profilePic = await firebaseStorageService.uploadProfileImage(
-          asset: this.profileImage.first);
+      medicallUser.profilePic = await firebaseStorageService
+          .uploadProfileImageWith(asset: this.profileImage);
     } catch (e) {
       updateWith(submitted: false, isLoading: false);
       btnController.reset();
@@ -276,7 +281,7 @@ class PersonalInfoViewModel
     bool isLoading,
     bool submitted,
     bool checkValue,
-    List<Asset> profileImage,
+    AssetEntity profileImage,
   }) {
     this.firstName = firstName ?? this.firstName;
     this.lastName = lastName ?? this.lastName;
@@ -289,7 +294,15 @@ class PersonalInfoViewModel
     this.zipCode = zipCode ?? this.zipCode;
     this.isLoading = isLoading ?? this.isLoading;
     this.submitted = submitted ?? this.submitted;
+
+    notifyListeners(PersonalInfoVMProperties.form);
+
     this.profileImage = profileImage ?? this.profileImage;
+
+    if (profileImage != null) {
+      notifyListeners(PersonalInfoVMProperties.profilePhoto);
+    }
+
     notifyListeners();
   }
 }

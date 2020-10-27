@@ -8,6 +8,7 @@ import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:property_change_notifier/property_change_notifier.dart';
 import 'package:provider/provider.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 
@@ -46,7 +47,10 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
     final ExtendedImageProvider extendedImageProvider =
         Provider.of<ExtImageProvider>(context);
     final PersonalInfoViewModel model =
-        Provider.of<PersonalInfoViewModel>(context);
+        PropertyChangeProvider.of<PersonalInfoViewModel>(
+      context,
+      properties: [PersonalInfoVMProperties.form],
+    ).value;
 
     return Form(
       key: _formKey,
