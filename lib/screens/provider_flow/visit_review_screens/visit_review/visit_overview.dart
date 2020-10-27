@@ -79,6 +79,7 @@ class VisitOverview extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
         child: ProviderDashboardListItem(
           consult: consult,
+          showBadge: false,
           onTap: null,
         ),
       ),
@@ -89,7 +90,7 @@ class VisitOverview extends StatelessWidget {
           context: context,
           consult: consult,
         ),
-        0,
+        consult.providerReviewNotifications,
       ),
       _buildProviderCardButton(
           context,

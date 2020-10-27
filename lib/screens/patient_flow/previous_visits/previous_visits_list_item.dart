@@ -1,5 +1,6 @@
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/services/extimage_provider.dart';
+import 'package:badges/badges.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -17,46 +18,65 @@ class PreviousVisitsListItem extends StatelessWidget {
     if (consult.providerUser != null) {
       return Container(
         padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
-        child: Card(
-          elevation: 2,
-          borderOnForeground: false,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          clipBehavior: Clip.antiAlias,
-          child: ListTile(
-            contentPadding: EdgeInsets.fromLTRB(15, 5, 15, 5),
-            dense: true,
-            leading: consult.providerUser.profilePic.length > 0
-                ? displayProfilePicture(
-                    extImageProvider, consult.providerUser.profilePic)
-                : Icon(
-                    Icons.account_circle,
-                    size: 40,
-                    color: Colors.grey,
-                  ),
-            title: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  '${consult.providerUser.fullName}, ${consult.providerUser.professionalTitle}',
-                  style: Theme.of(context).textTheme.bodyText1,
+        child: Badge(
+          padding: EdgeInsets.all(8),
+          showBadge: consult.patientReviewNotifications != 0 ||
+                  consult.patientMessageNotifications != 0
+              ? true
+              : false,
+          shape: BadgeShape.circle,
+          position: BadgePosition.topEnd(top: -6, end: -2),
+          badgeColor: Theme.of(context).colorScheme.primary,
+          badgeContent: Text(
+            '${consult.patientReviewNotifications + consult.patientMessageNotifications}',
+            style: Theme.of(context).textTheme.bodyText1.copyWith(
+                  fontSize: 16,
+                  color: Colors.white,
                 ),
-                SizedBox(height: 2),
-                Text('${consult.symptom} visit',
-                    style: Theme.of(context).textTheme.caption),
-              ],
+          ),
+          animationType: BadgeAnimationType.scale,
+          animationDuration: Duration(milliseconds: 300),
+          child: Card(
+            elevation: 2,
+            borderOnForeground: false,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            clipBehavior: Clip.antiAlias,
+            child: ListTile(
+              contentPadding: EdgeInsets.fromLTRB(15, 5, 15, 5),
+              dense: true,
+              leading: consult.providerUser.profilePic.length > 0
+                  ? displayProfilePicture(
+                      extImageProvider, consult.providerUser.profilePic)
+                  : Icon(
+                      Icons.account_circle,
+                      size: 40,
+                      color: Colors.grey,
+                    ),
+              title: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    '${consult.providerUser.fullName}, ${consult.providerUser.professionalTitle}',
+                    style: Theme.of(context).textTheme.bodyText1,
+                  ),
+                  SizedBox(height: 2),
+                  Text('${consult.symptom} visit',
+                      style: Theme.of(context).textTheme.caption),
+                ],
+              ),
+              subtitle: Text('${consult.parsedDate}'),
+              trailing: Container(
+                alignment: Alignment.centerLeft,
+                width: 80,
+                child: Text(getStatus(),
+                    textAlign: TextAlign.left,
+                    style: Theme.of(context).textTheme.caption.copyWith(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontWeight: FontWeight.bold)),
+              ),
+              onTap: onTap,
             ),
-            subtitle: Text('${consult.parsedDate}'),
-            trailing: Container(
-              alignment: Alignment.centerLeft,
-              width: 80,
-              child: Text(getStatus(),
-                  textAlign: TextAlign.left,
-                  style: Theme.of(context).textTheme.caption.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.bold)),
-            ),
-            onTap: onTap,
           ),
         ),
       );
