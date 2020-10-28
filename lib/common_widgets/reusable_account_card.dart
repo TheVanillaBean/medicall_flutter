@@ -27,7 +27,6 @@ class ReusableAccountCard extends StatelessWidget {
           child: Text(
             title ?? '',
             style: Theme.of(context).textTheme.bodyText1.copyWith(
-                  fontSize: 14,
                   color: Theme.of(context).colorScheme.primary,
                 ),
           ),

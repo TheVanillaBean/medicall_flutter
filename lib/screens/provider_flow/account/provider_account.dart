@@ -173,6 +173,8 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
             Divider(height: 0.5, thickness: 1),
             _buildPhoneCard(medicallUser),
             Divider(height: 0.5, thickness: 1),
+            _buildPracticeNameCard(medicallUser),
+            Divider(height: 0.5, thickness: 1),
             _buildAddressCard(medicallUser),
             Divider(height: 0.5, thickness: 1),
             _buildProfessionalTitleCard(medicallUser),
@@ -216,6 +218,26 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
         onPressed: () {
           model.profileInputType = ProfileInputType.PHONE;
           model.initPhoneNumber();
+          UpdateProviderInfoScreen.show(
+            context: context,
+            model: model,
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildPracticeNameCard(MedicallUser medicallUser) {
+    return ReusableAccountCard(
+      leading: 'Practice \nName:',
+      title: (medicallUser as ProviderUser).practiceName != null
+          ? '${(medicallUser as ProviderUser).practiceName}'
+          : '',
+      trailing: IconButton(
+        icon: Icon(Icons.create, size: 20),
+        onPressed: () {
+          model.profileInputType = ProfileInputType.PRACTICE_NAME;
+          model.initPracticeName();
           UpdateProviderInfoScreen.show(
             context: context,
             model: model,

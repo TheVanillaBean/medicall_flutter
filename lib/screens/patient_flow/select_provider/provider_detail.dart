@@ -144,13 +144,15 @@ class ProviderDetailScreen extends StatelessWidget {
         ),
       ),
       provider.medSchool != '' ? _medSchoolInfo(context) : SizedBox(),
-      provider.medSchool != '' ? Divider(height: 5) : SizedBox(),
+      provider.medSchool != '' ? Divider(height: 0) : SizedBox(),
       provider.medResidency != '' ? _medResidencyInfo(context) : SizedBox(),
-      provider.medResidency != '' ? Divider() : SizedBox(),
+      provider.medResidency != '' ? Divider(height: 0) : SizedBox(),
+      provider.practiceName != '' ? _practiceNameInfo(context) : SizedBox(),
+      provider.practiceName != '' ? Divider(height: 0) : SizedBox(),
       provider.mailingAddress != ''
           ? _practiceAddressInfo(context)
           : SizedBox(),
-      provider.mailingAddress != '' ? Divider() : SizedBox(),
+      provider.mailingAddress != '' ? Divider(height: 0) : SizedBox(),
       provider.providerBio != '' ? _providerBioInfo(context) : SizedBox(),
       SizedBox(height: 30),
       Expanded(
@@ -189,7 +191,7 @@ class ProviderDetailScreen extends StatelessWidget {
 
   Widget _providerBioInfo(BuildContext context) {
     return ListTile(
-      contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+      contentPadding: EdgeInsets.fromLTRB(0, 10, 0, 0),
       dense: true,
       title: Text(
         'Bio:',
@@ -206,7 +208,7 @@ class ProviderDetailScreen extends StatelessWidget {
 
   Widget _practiceAddressInfo(BuildContext context) {
     return ListTile(
-      contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+      contentPadding: EdgeInsets.fromLTRB(0, 10, 0, 8),
       dense: true,
       title: Text(
         'Practice Address:',
@@ -252,6 +254,23 @@ class ProviderDetailScreen extends StatelessWidget {
       ),
       subtitle: Text(
         provider.medSchool ?? '',
+        style: Theme.of(context).textTheme.bodyText1,
+      ),
+    );
+  }
+
+  Widget _practiceNameInfo(BuildContext context) {
+    return ListTile(
+      contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+      dense: true,
+      title: Text(
+        'Practice Name:',
+        style: Theme.of(context).textTheme.caption.copyWith(
+              color: Theme.of(context).colorScheme.primary,
+            ),
+      ),
+      subtitle: Text(
+        provider.practiceName ?? '',
         style: Theme.of(context).textTheme.bodyText1,
       ),
     );
