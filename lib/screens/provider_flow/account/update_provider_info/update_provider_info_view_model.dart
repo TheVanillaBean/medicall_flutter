@@ -29,6 +29,7 @@ class UpdateProviderInfoViewModel extends ProviderProfileViewModelBase {
   String npi;
   String boardCertified;
   String providerBio;
+  String practiceName;
 
   bool checkValue;
   bool isLoading;
@@ -54,12 +55,17 @@ class UpdateProviderInfoViewModel extends ProviderProfileViewModelBase {
     this.npi = '',
     this.boardCertified = '',
     this.providerBio = '',
+    this.practiceName = '',
     this.checkValue = false,
     this.isLoading = false,
     this.submitted = false,
   });
 
   ///Set initial values
+  void initPracticeName() {
+    this.practiceName = (userProvider.user as ProviderUser).practiceName;
+  }
+
   void initAddress() {
     this.mailingAddress = userProvider.user.mailingAddress;
     this.mailingAddressLine2 = userProvider.user.mailingAddressLine2;
@@ -131,6 +137,8 @@ class UpdateProviderInfoViewModel extends ProviderProfileViewModelBase {
       return medicalResidencyValidator.isValid(medResidency) && submitted;
     } else if (this.profileInputType == ProfileInputType.BIO) {
       return providerBioValidator.isValid(providerBio) && submitted;
+    } else if (this.profileInputType == ProfileInputType.PRACTICE_NAME) {
+      return practiceNameValidator.isValid(practiceName) && submitted;
     }
     return false;
   }
@@ -166,6 +174,8 @@ class UpdateProviderInfoViewModel extends ProviderProfileViewModelBase {
       user.medResidency = this.medResidency;
     } else if (this.profileInputType == ProfileInputType.BIO) {
       user.providerBio = this.providerBio;
+    } else if (this.profileInputType == ProfileInputType.PRACTICE_NAME) {
+      user.practiceName = this.practiceName;
     }
 
     await updateUserDetails(user);
