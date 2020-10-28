@@ -73,7 +73,7 @@ class _EditSectionTextFieldState extends State<EditSectionTextField> {
         controller: controller,
         inputFormatters: widget.inputFormatters,
         onChanged: widget.onChanged,
-        autofocus: true,
+        autofocus: false,
         style: Theme.of(context).textTheme.bodyText1,
         onTap: widget.onTapped,
         decoration: InputDecoration(

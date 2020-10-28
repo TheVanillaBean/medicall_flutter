@@ -12,7 +12,7 @@ enum PatientNoteSection {
 }
 
 class PatientNoteStepState {
-  bool introductionCheckbox = false;
+  bool introductionCheckbox = true;
   bool understandingCheckbox = false;
   bool counselingCheckbox = false;
   bool treatmentsCheckbox = false;
@@ -46,9 +46,12 @@ class PatientNoteStepState {
     } else if (section == "Treatments:") {
       templateSection = diagnosisOptions
           .patientNoteTemplate.treatmentRecommendationsTemplate.template;
-      editedSection =
-          Map.of(patientTemplateNote.treatmentRecommendationsTemplate.template)
-              as Map<String, String>;
+      editedSection = {
+        patientTemplateNote
+                .treatmentRecommendationsTemplate.template.keys.first:
+            patientTemplateNote
+                .treatmentRecommendationsTemplate.template.values.first
+      } as Map<String, String>;
     } else if (section == "Further Testing (optional):") {
       templateSection =
           diagnosisOptions.patientNoteTemplate.furtherTestingTemplate.template;

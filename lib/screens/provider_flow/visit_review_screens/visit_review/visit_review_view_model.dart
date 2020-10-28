@@ -302,6 +302,8 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
           await firestoreDatabase.consultReviewDiagnosisOptions(
               symptomName: symptom,
               diagnosis: this.diagnosisStepState.diagnosis);
+      patientNoteStepState.patientTemplateNote.introductionTemplate.template =
+          diagnosisOptions.patientNoteTemplate.introductionTemplate.template;
       print("");
     } else {
       this.diagnosisOptions = null;
