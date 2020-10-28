@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:stream_chat_flutter/stream_chat_flutter.dart';
 
 import 'chat_app_bar.dart';
+import 'chat_message_input.dart';
 
 class ChatScreen extends StatefulWidget {
   final Channel channel;
@@ -97,7 +98,7 @@ class ChannelPage extends StatelessWidget {
           Expanded(
             child: MessageListView(),
           ),
-          MessageInput(),
+          ChatMessageInput(),
         ],
       ),
     );
