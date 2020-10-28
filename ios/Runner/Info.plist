@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Medicall</string>
+	<string>Medicall-Dev</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -64,6 +64,8 @@
 	<string>This app needs access to location in the background.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>This app needs access to your microphone when recording videos in the chat screen.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>This app needs to be able to add photos your gallery if you take a new photo</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app needs access to the photo library to upload profile data and to complete consultations.</string>
 	<key>UIBackgroundModes</key>

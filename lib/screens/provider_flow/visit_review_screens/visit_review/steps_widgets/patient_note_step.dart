@@ -41,7 +41,7 @@ class _PatientNoteStepState extends State<PatientNoteStep> {
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       ..._buildSection(
-                        title: "Introduction:",
+                        title: "Introduction: (Required)",
                         body: model.patientNoteStepState.sectionBody(
                           "Introduction:",
                           model.diagnosisOptions,

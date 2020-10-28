@@ -24,6 +24,7 @@ enum ProfileInputType {
   MEDICAL_SCHOOL,
   MEDICAL_RESIDENCY,
   BIO,
+  PRACTICE_NAME,
 }
 
 class UpdateProviderInfoForm extends StatefulWidget {
@@ -70,7 +71,41 @@ class _UpdateProviderInfoFormState extends State<UpdateProviderInfoForm>
 
     model.setVerificationStatus(this);
 
-    if (model.profileInputType == ProfileInputType.ADDRESS) {
+    if (model.profileInputType == ProfileInputType.PRACTICE_NAME) {
+      return Form(
+        key: _formKey,
+        child: Column(
+          children: [
+            ProviderBioTextField(
+              initialText: (userProvider.user as ProviderUser).practiceName,
+              keyboardType: TextInputType.multiline,
+              minLines: 1,
+              maxLines: 3,
+              labelText: 'Practice Name',
+              hint: 'East Valley Dermatology Clinic',
+              errorText: model.providerPracticeNameErrorText,
+              onChanged: model.updatePracticeName,
+            ),
+            SizedBox(height: 30),
+            ReusableRaisedButton(
+              title: 'Save',
+              onPressed: !model.isLoading
+                  ? () {
+                      if (_formKey.currentState.validate()) {
+                        _submit(model);
+                      }
+                    }
+                  : null,
+            ),
+            SizedBox(height: 70),
+            if (model.isLoading)
+              Container(
+                  margin: EdgeInsets.symmetric(vertical: 24),
+                  child: CircularProgressIndicator()),
+          ],
+        ),
+      );
+    } else if (model.profileInputType == ProfileInputType.ADDRESS) {
       return Form(
         key: _formKey,
         child: Column(

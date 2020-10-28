@@ -71,7 +71,7 @@ class MakePaymentViewModel with ChangeNotifier {
 
     PaymentIntentResult paymentIntentResult;
 
-    if (coupon == null) {
+    if (this.coupon == null) {
       paymentIntentResult = await this.stripeProvider.chargePaymentForConsult(
             price: this.consult.price,
             paymentMethodId: this.selectedPaymentMethod.id,
@@ -83,7 +83,7 @@ class MakePaymentViewModel with ChangeNotifier {
             paymentMethodId: this.selectedPaymentMethod.id,
             consultId: this.consult.uid,
             applyCoupon: true,
-            couponCode: coupon.code,
+            couponCode: this.coupon.code,
           );
     }
 

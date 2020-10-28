@@ -5,7 +5,6 @@ import 'package:Medicall/presentation/medicall_icons_icons.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Shared/visit_information/review_visit_information.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
-import 'package:Medicall/screens/patient_flow/select_provider/provider_detail.dart';
 import 'package:Medicall/screens/patient_flow/visit_details/visit_doc_note.dart';
 import 'package:Medicall/screens/patient_flow/visit_details/visit_education.dart';
 import 'package:Medicall/screens/patient_flow/visit_details/visit_treatment_recommendations.dart';
@@ -13,6 +12,7 @@ import 'package:Medicall/screens/shared/chat/chat_screen.dart';
 import 'package:Medicall/services/chat_provider.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/util/app_util.dart';
+import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -72,38 +72,45 @@ class VisitDetailsOverview extends StatelessWidget {
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
+          // _buildCardButton(
+          //   "About the Provider",
+          //   Icons.medical_services,
+          //   () => {
+          //     ProviderDetailScreen.show(context: context),
+          //   },
+          // ),
           _buildCardButton(
-            "About the Provider",
-            Icons.medical_services,
-            () => {
-              ProviderDetailScreen.show(),
-            },
-          ),
-          _buildCardButton(
+            context,
             "Provider Note",
             MedicallIcons.clipboard_1,
             () {
               AppUtil().showFlushBar(
                   "This visit has not been reviewed yet", context);
             },
+            consult.patientReviewNotifications,
           ),
           _buildCardButton(
+            context,
             "Treatment Recommendations",
             Icons.local_pharmacy,
             () {
               AppUtil().showFlushBar(
                   "This visit has not been reviewed yet", context);
             },
+            consult.patientReviewNotifications,
           ),
           _buildCardButton(
+            context,
             "Further Learning",
             Icons.school,
             () {
               AppUtil().showFlushBar(
                   "This visit has not been reviewed yet", context);
             },
+            consult.patientReviewNotifications,
           ),
           _buildCardButton(
+            context,
             "Your Visit Information",
             Icons.assignment,
             () => {
@@ -112,11 +119,14 @@ class VisitDetailsOverview extends StatelessWidget {
                 consult: this.consult,
               ),
             },
+            0,
           ),
           _buildCardButton(
+            context,
             "Message Provider",
             Icons.message,
             () => navigateToChatScreen(context),
+            consult.patientMessageNotifications,
           ),
         ],
       ),
@@ -126,90 +136,93 @@ class VisitDetailsOverview extends StatelessWidget {
   StreamBuilder<VisitReviewData> _buildVisitReviewButtons(
       FirestoreDatabase firestoreDatabase) {
     return StreamBuilder<VisitReviewData>(
-        stream:
-            firestoreDatabase.visitReviewStream(consultId: this.consult.uid),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          if (!snapshot.hasData) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  "Error retrieving visit information.",
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    color: Colors.grey,
-                  ),
+      stream: firestoreDatabase.visitReviewStream(consultId: this.consult.uid),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        if (!snapshot.hasData) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                "Error retrieving visit information.",
+                style: TextStyle(
+                  fontSize: 20.0,
+                  color: Colors.grey,
                 ),
               ),
-            );
-          }
-          return SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                _buildCardButton(
-                  "About the Provider",
-                  Icons.medical_services,
-                  () => {
-                    ProviderDetailScreen.show(),
-                  },
-                ),
-                _buildCardButton(
-                  "Provider Note",
-                  MedicallIcons.clipboard_1,
-                  () => {
-                    VisitDocNote.show(
-                      context: context,
-                      consult: this.consult,
-                      visitReviewData: snapshot.data,
-                    ),
-                  },
-                ),
-                _buildCardButton(
-                  "Treatment Recommendations",
-                  Icons.local_pharmacy,
-                  () => {
-                    VisitTreatmentRecommendations.show(
-                      context: context,
-                      consult: this.consult,
-                      visitReviewData: snapshot.data,
-                    ),
-                  },
-                ),
-                _buildCardButton(
-                  "Further Learning",
-                  Icons.school,
-                  () => {
-                    VisitEducation.show(
-                      context: context,
-                      consult: this.consult,
-                      visitReviewData: snapshot.data,
-                    ),
-                  },
-                ),
-                _buildCardButton(
-                  "Your Visit Information",
-                  Icons.assignment,
-                  () => {
-                    ReviewVisitInformation.show(
-                      context: context,
-                      consult: this.consult,
-                    ),
-                  },
-                ),
-                _buildCardButton(
-                  "Message Provider",
-                  Icons.message,
-                  () => navigateToChatScreen(context),
-                ),
-              ],
             ),
           );
-        });
+        }
+        return SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              _buildCardButton(
+                context,
+                "Provider Note",
+                MedicallIcons.clipboard_1,
+                () => {
+                  VisitDocNote.show(
+                    context: context,
+                    consult: this.consult,
+                    visitReviewData: snapshot.data,
+                  ),
+                },
+                consult.patientReviewNotifications,
+              ),
+              _buildCardButton(
+                context,
+                "Treatment Recommendations",
+                Icons.local_pharmacy,
+                () => {
+                  VisitTreatmentRecommendations.show(
+                    context: context,
+                    consult: this.consult,
+                    visitReviewData: snapshot.data,
+                  ),
+                },
+                consult.patientReviewNotifications,
+              ),
+              _buildCardButton(
+                context,
+                "Further Learning",
+                Icons.school,
+                () => {
+                  VisitEducation.show(
+                    context: context,
+                    consult: this.consult,
+                    visitReviewData: snapshot.data,
+                  ),
+                },
+                consult.patientReviewNotifications,
+              ),
+              _buildCardButton(
+                context,
+                "Your Visit Information",
+                Icons.assignment,
+                () => {
+                  ReviewVisitInformation.show(
+                    context: context,
+                    consult: this.consult,
+                  ),
+                },
+                0,
+              ),
+              _buildCardButton(
+                context,
+                "Message Provider",
+                Icons.message,
+                () => navigateToChatScreen(context),
+                consult.patientMessageNotifications,
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   void navigateToChatScreen(BuildContext context) async {
@@ -217,37 +230,58 @@ class VisitDetailsOverview extends StatelessWidget {
         Provider.of<ChatProvider>(context, listen: false);
     final channel =
         chatProvider.client.channel('messaging', id: this.consult.uid);
-
+    FirestoreDatabase database =
+        Provider.of<FirestoreDatabase>(context, listen: false);
+    consult.patientMessageNotifications = 0;
+    await database.saveConsult(consult: consult, consultId: consult.uid);
     ChatScreen.show(
       context: context,
       channel: channel,
-      consult: consult,
+      consult: this.consult,
     );
   }
 
-  Widget _buildCardButton(String title, IconData icon, Function onTap) {
+  Widget _buildCardButton(BuildContext context, String title, IconData icon,
+      Function onTap, int value) {
     return Container(
       padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
-      child: Card(
-        elevation: 3,
-        shadowColor: Colors.grey.withAlpha(120),
-        borderOnForeground: false,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        clipBehavior: Clip.antiAlias,
-        child: ListTile(
-          contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-          dense: true,
-          leading: Icon(
-            icon,
-            size: 25,
-            color: Colors.grey,
+      child: Badge(
+        padding: EdgeInsets.all(8),
+        showBadge: value != 0 ? true : false,
+        shape: BadgeShape.circle,
+        position: BadgePosition.topEnd(top: -4, end: -2),
+        badgeColor: Theme.of(context).colorScheme.primary,
+        badgeContent: Text(
+          '$value',
+          style: Theme.of(context).textTheme.bodyText1.copyWith(
+                fontSize: 16,
+                color: Colors.white,
+              ),
+        ),
+        animationType: BadgeAnimationType.scale,
+        animationDuration: Duration(milliseconds: 300),
+        child: Card(
+          elevation: 3,
+          shadowColor: Colors.grey.withAlpha(120),
+          borderOnForeground: false,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          clipBehavior: Clip.antiAlias,
+          child: ListTile(
+            contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+            dense: true,
+            leading: Icon(
+              icon,
+              size: 25,
+              color: Colors.grey,
+            ),
+            title: Text(title),
+            trailing: Icon(
+              Icons.chevron_right,
+              color: Colors.grey,
+            ),
+            onTap: onTap,
           ),
-          title: Text(title),
-          trailing: Icon(
-            Icons.chevron_right,
-            color: Colors.grey,
-          ),
-          onTap: onTap,
         ),
       ),
     );

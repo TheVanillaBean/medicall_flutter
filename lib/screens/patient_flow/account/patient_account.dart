@@ -15,10 +15,10 @@ import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/firebase_storage_service.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
+import 'package:Medicall/util/image_picker.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:photo_manager/photo_manager.dart';
 import 'package:provider/provider.dart';
 
 class PatientAccountScreen extends StatefulWidget {
@@ -320,46 +320,69 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
     );
   }
 
+  ThemeData themeData(Color themeColor) => ThemeData.dark().copyWith(
+        buttonColor: themeColor,
+        brightness: Brightness.dark,
+        primaryColor: Colors.grey[900],
+        primaryColorBrightness: Brightness.dark,
+        primaryColorLight: Colors.grey[900],
+        primaryColorDark: Colors.grey[900],
+        accentColor: themeColor,
+        accentColorBrightness: Brightness.dark,
+        canvasColor: Colors.grey[850],
+        scaffoldBackgroundColor: Colors.grey[900],
+        bottomAppBarColor: Colors.grey[900],
+        cardColor: Colors.grey[900],
+        highlightColor: Colors.transparent,
+        toggleableActiveColor: themeColor,
+        cursorColor: themeColor,
+        textSelectionColor: themeColor.withAlpha(100),
+        textSelectionHandleColor: themeColor,
+        indicatorColor: themeColor,
+        appBarTheme: const AppBarTheme(
+          brightness: Brightness.dark,
+          elevation: 0,
+        ),
+        colorScheme: ColorScheme(
+          primary: Colors.grey[900],
+          primaryVariant: Colors.grey[900],
+          secondary: themeColor,
+          secondaryVariant: themeColor,
+          background: Colors.grey[900],
+          surface: Colors.grey[900],
+          brightness: Brightness.dark,
+          error: const Color(0xffcf6679),
+          onPrimary: Colors.black,
+          onSecondary: Colors.black,
+          onSurface: Colors.white,
+          onBackground: Colors.white,
+          onError: Colors.black,
+        ),
+      );
+
   Future<void> _loadProfileImage({
     FirebaseStorageService storageService,
     FirestoreDatabase firestoreDatabase,
     ExtendedImageProvider extImageProvider,
     UserProvider userProvider,
   }) async {
-    List<Asset> resultList = List<Asset>();
+    AssetEntity assetEntity = AssetEntity();
 
     try {
-      resultList = await extImageProvider.pickImages(
-        List<Asset>(),
-        1,
-        true,
-        extImageProvider.pickImagesCupertinoOptions(takePhotoIcon: 'camera'),
-        extImageProvider.pickImagesMaterialOptions(
-            useDetailsView: true,
-            actionBarColor:
-                '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
-            statusBarColor:
-                '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
-            lightStatusBar: false,
-            autoCloseOnSelectionLimit: true,
-            startInAllView: true,
-            actionBarTitle: 'Select Profile Picture',
-            allViewTitle: 'All Photos'),
-        context,
-      );
-    } on PlatformException catch (e) {
+      assetEntity = await ImagePicker.pickSingleImage(context: context);
+    } catch (e) {
       AppUtil().showFlushBar(e, context);
     }
 
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
     if (!mounted) return;
-    if (resultList.length > 0) {
+    if (assetEntity.id != null) {
       this.setState(() {
         this.imageLoading = true;
       });
       String url =
-          await storageService.uploadProfileImage(asset: resultList.first);
+      await storageService.uploadProfileImageWith(asset: assetEntity);
       userProvider.user.profilePic = url;
       this.setState(() {
         this.imageLoading = false;

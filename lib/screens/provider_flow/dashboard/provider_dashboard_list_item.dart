@@ -1,14 +1,19 @@
 import 'package:Medicall/common_widgets/reusable_card.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/services/extimage_provider.dart';
+import 'package:badges/badges.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ProviderDashboardListItem extends StatelessWidget {
-  const ProviderDashboardListItem({Key key, @required this.consult, this.onTap})
-      : super(key: key);
+  const ProviderDashboardListItem({
+    @required this.consult,
+    this.onTap,
+    this.showBadge = true,
+  });
+  final bool showBadge;
   final Consult consult;
   final VoidCallback onTap;
 
@@ -25,38 +30,61 @@ class ProviderDashboardListItem extends StatelessWidget {
             width: 0.5,
           ),
         ),
-        child: ReusableCard(
-          leading: consult.patientUser.profilePic.length > 0
-              ? displayProfilePicture(
-                  extImageProvider, consult.patientUser.profilePic)
-              : Icon(
-                  Icons.account_circle,
-                  size: 40,
-                  color: Colors.grey,
+        child: Badge(
+          padding: EdgeInsets.all(8),
+          showBadge: showBadge &&
+                  (consult.providerReviewNotifications != 0 ||
+                      consult.providerMessageNotifications != 0)
+              ? true
+              : false,
+          shape: BadgeShape.circle,
+          position: BadgePosition.topEnd(top: -6, end: -2),
+          badgeColor: Theme.of(context).colorScheme.primary,
+          badgeContent: Text(
+            '${consult.providerReviewNotifications + consult.providerMessageNotifications}',
+            style: Theme.of(context).textTheme.bodyText1.copyWith(
+                  fontSize: 16,
+                  color: Colors.white,
                 ),
-          title: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                '${consult.patientUser.fullName}',
-                style: Theme.of(context).textTheme.bodyText1,
-              ),
-              SizedBox(height: 2),
-              Text('${consult.symptom} visit',
-                  style: Theme.of(context).textTheme.caption),
-              SizedBox(height: 2),
-            ],
           ),
-          subtitle: '${consult.parsedDate}',
-          trailing: Container(
-            width: 60,
-            alignment: Alignment.centerLeft,
-            child: Text(EnumToString.parseCamelCase(consult.state) ?? "",
-                style: Theme.of(context).textTheme.caption.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontWeight: FontWeight.bold)),
+          animationType: BadgeAnimationType.scale,
+          animationDuration: Duration(milliseconds: 300),
+          child: ReusableCard(
+            leading: consult.patientUser.profilePic.length > 0
+                ? displayProfilePicture(
+                    extImageProvider, consult.patientUser.profilePic)
+                : Icon(
+                    Icons.account_circle,
+                    size: 40,
+                    color: Colors.grey,
+                  ),
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  '${consult.patientUser.fullName}',
+                  style: Theme.of(context).textTheme.bodyText1,
+                ),
+                SizedBox(height: 2),
+                Text('${consult.symptom} visit',
+                    style: Theme.of(context).textTheme.caption),
+                SizedBox(height: 2),
+              ],
+            ),
+            subtitle: '${consult.parsedDate}',
+            trailing: Container(
+              width: 80,
+              alignment: Alignment.centerLeft,
+              child: Text(
+                  EnumToString.convertToString(consult.state,
+                          camelCase: true) ??
+                      "",
+                  style: Theme.of(context).textTheme.caption.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontWeight: FontWeight.bold)),
+            ),
+            onTap: onTap,
           ),
-          onTap: onTap,
         ),
       );
     }
