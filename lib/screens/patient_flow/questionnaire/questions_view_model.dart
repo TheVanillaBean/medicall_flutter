@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/questionnaire/option_model.dart';
@@ -43,7 +44,7 @@ class QuestionsViewModel extends PropertyChangeNotifier
   String input;
   List<String> optionsList = [];
   List<String> selectedOptionsList = [];
-  List<Map<String, ByteData>> questionPhotos = [];
+  List<Map<String, Uint8List>> questionPhotos = [];
   String questionPlaceholderURL = "";
   final TextEditingController inputController = TextEditingController();
   final FocusNode inputFocusNode = FocusNode();
@@ -114,11 +115,11 @@ class QuestionsViewModel extends PropertyChangeNotifier
     for (Question question in questions.screeningQuestions) {
       if (question.type == Q_TYPE.PHOTO) {
         question.answer.answer = [];
-        for (Map<String, ByteData> byteDataMap in question.answer.images) {
+        for (Map<String, Uint8List> uInt8ListMap in question.answer.images) {
           String downloadURL = await storageService.uploadConsultPhoto(
             consultId: consultId,
-            byteData: byteDataMap.values.first,
-            name: FirebaseStorageService.getImageName(byteDataMap.keys.first),
+            imageData: uInt8ListMap.values.first,
+            name: FirebaseStorageService.getImageName(uInt8ListMap.keys.first),
           );
           question.answer.answer.add(downloadURL);
         }
@@ -250,7 +251,7 @@ class QuestionsViewModel extends PropertyChangeNotifier
     List<String> optionsList,
     List<String> selectedOptionsList,
     String input,
-    List<Map<String, ByteData>> questionPhotos,
+    List<Map<String, Uint8List>> questionPhotos,
   }) {
     this.optionsList = optionsList ?? this.optionsList;
     this.input = input ?? this.input;

@@ -8,9 +8,10 @@ import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/firebase_storage_service.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
+import 'package:Medicall/util/image_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:photo_manager/photo_manager.dart';
+import 'package:property_change_notifier/property_change_notifier.dart';
 import 'package:provider/provider.dart';
 
 class PersonalInfoScreen extends StatefulWidget {
@@ -28,14 +29,15 @@ class PersonalInfoScreen extends StatefulWidget {
         Provider.of<FirestoreDatabase>(context);
     final FirebaseStorageService firestoreStorage =
         Provider.of<FirebaseStorageService>(context);
-    return ChangeNotifierProvider<PersonalInfoViewModel>(
-      create: (context) => PersonalInfoViewModel(
+    return PropertyChangeProvider<PersonalInfoViewModel>(
+      value: PersonalInfoViewModel(
         consult: consult,
         userProvider: userProvider,
         firestoreDatabase: firestoreDatabase,
         firebaseStorageService: firestoreStorage,
       ),
-      child: Consumer<PersonalInfoViewModel>(
+      child: PropertyChangeConsumer<PersonalInfoViewModel>(
+        properties: [PersonalInfoVMProperties.profilePhoto],
         builder: (_, model, __) => PersonalInfoScreen(
           model: model,
           extendedImageProvider: extendedImageProvider,
@@ -139,17 +141,20 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
 
   Widget _buildProfilePictureWidget() {
     double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
     return Column(
       children: <Widget>[
-        if (model.profileImage.length == 0)
-          ..._buildProfilePlaceholder(height: height),
-        if (model.profileImage.length > 0)
-          _buildProfileImgView(asset: model.profileImage.first, height: height),
+        if (model.profileImage == null)
+          ..._buildProfilePlaceholder(height: height)
+        else
+          _buildProfileImgView(
+              asset: model.profileImage, height: height, width: width),
       ],
     );
   }
 
-  Widget _buildProfileImgView({Asset asset, double height}) {
+  Widget _buildProfileImgView(
+      {AssetEntity asset, double height, double width}) {
     return GestureDetector(
       onTap: _loadProfileImage,
       child: Stack(
@@ -158,11 +163,11 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
         children: <Widget>[
           ClipRRect(
             borderRadius: BorderRadius.circular(300),
-            child: this.extendedImageProvider.returnAssetThumb(
-                  asset: asset,
-                  height: (height * 0.2).toInt(),
-                  width: (height * 0.2).toInt(),
-                ),
+            child: AssetEntityImage(
+              asset: asset,
+              height: height,
+              width: width,
+            ),
           ),
           Positioned(
             bottom: -10,
@@ -220,36 +225,17 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   }
 
   Future<void> _loadProfileImage() async {
-    List<Asset> resultList = List<Asset>();
+    AssetEntity assetEntity = AssetEntity();
 
     try {
-      resultList = await this.extendedImageProvider.pickImages(
-        [],
-        1,
-        true,
-        this
-            .extendedImageProvider
-            .pickImagesCupertinoOptions(takePhotoIcon: 'camera'),
-        this.extendedImageProvider.pickImagesMaterialOptions(
-            useDetailsView: true,
-            actionBarColor:
-                '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
-            statusBarColor:
-                '#${Theme.of(context).colorScheme.primary.value.toRadixString(16).toUpperCase().substring(2)}',
-            lightStatusBar: false,
-            autoCloseOnSelectionLimit: true,
-            startInAllView: true,
-            actionBarTitle: 'Select Profile Picture',
-            allViewTitle: 'All Photos'),
-        context,
-      );
-    } on PlatformException catch (e) {
+      assetEntity = await ImagePicker.pickSingleImage(context: context);
+    } catch (e) {
       AppUtil().showFlushBar(e, context);
     }
 
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
     if (!mounted) return;
-    widget.model.updateWith(profileImage: resultList);
+    widget.model.updateWith(profileImage: assetEntity);
   }
 }

@@ -79,17 +79,19 @@ class VisitOverview extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
         child: ProviderDashboardListItem(
           consult: consult,
+          showBadge: false,
           onTap: null,
         ),
       ),
       _buildProviderCardButton(
-          context,
-          "VISIT INFORMATION",
-          () => ReviewVisitInformation.show(
-                context: context,
-                consult: consult,
-              ),
-          0),
+        context,
+        "VISIT INFORMATION",
+        () => ReviewVisitInformation.show(
+          context: context,
+          consult: consult,
+        ),
+        consult.providerReviewNotifications,
+      ),
       _buildProviderCardButton(
           context,
           "VIEW PATIENT IDENTIFICATION",
@@ -110,7 +112,7 @@ class VisitOverview extends StatelessWidget {
         context,
         'MESSAGE PATIENT',
         () => navigateToChatScreen(context, consult),
-        1,
+        consult.providerMessageNotifications,
       ),
       Expanded(
         child: Align(
@@ -264,6 +266,10 @@ class VisitOverview extends StatelessWidget {
     ChatProvider chatProvider =
         Provider.of<ChatProvider>(context, listen: false);
     final channel = chatProvider.client.channel('messaging', id: consult.uid);
+    FirestoreDatabase database =
+        Provider.of<FirestoreDatabase>(context, listen: false);
+    consult.providerMessageNotifications = 0;
+    await database.saveConsult(consult: consult, consultId: consult.uid);
     ChatScreen.show(
       context: context,
       channel: channel,

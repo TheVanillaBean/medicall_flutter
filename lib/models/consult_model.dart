@@ -35,6 +35,10 @@ class Consult {
   bool providerReclassified;
   String reclassifiedVisit;
   String coupon;
+  int providerReviewNotifications;
+  int providerMessageNotifications;
+  int patientReviewNotifications;
+  int patientMessageNotifications;
 
   //not serialized
   PatientUser patientUser;
@@ -59,6 +63,10 @@ class Consult {
     this.providerUser,
     this.patientUser,
     this.coupon,
+    this.patientMessageNotifications = 0,
+    this.patientReviewNotifications = 0,
+    this.providerMessageNotifications = 0,
+    this.providerReviewNotifications = 0,
   });
 
   factory Consult.fromMap(Map<String, dynamic> data, String documentId) {
@@ -80,6 +88,15 @@ class Consult {
     final String reclassifiedVisit = data['reclassified_visit'] as String ?? '';
     final String coupon = data['coupon_code'] ?? null;
 
+    final int patientMessageNotifications =
+        data['patient_message_notifications'] ?? 0;
+    final int patientReviewNotifications =
+        data['patient_review_notifications'] ?? 0;
+    final int providerReviewNotifications =
+        data['provider_review_notifications'] ?? 0;
+    final int providersMessageNotifications =
+        data['provider_message_notifications'] ?? 0;
+
     return Consult(
       uid: documentId,
       providerId: providerId,
@@ -91,6 +108,10 @@ class Consult {
       providerReclassified: providerReclassified,
       reclassifiedVisit: reclassifiedVisit,
       coupon: coupon,
+      patientMessageNotifications: patientMessageNotifications,
+      patientReviewNotifications: patientReviewNotifications,
+      providerMessageNotifications: providersMessageNotifications,
+      providerReviewNotifications: providerReviewNotifications,
     );
   }
 
@@ -103,6 +124,10 @@ class Consult {
       'date': date,
       'state': EnumToString.parse(state),
       'provider_reclassified': providerReclassified,
+      'patient_message_notifications': patientMessageNotifications,
+      'patient_review_notifications': patientReviewNotifications,
+      'provider_review_notifications': providerReviewNotifications,
+      'provider_message_notifications': providerMessageNotifications,
     };
     if (providerReclassified) {
       baseToMap.addAll({

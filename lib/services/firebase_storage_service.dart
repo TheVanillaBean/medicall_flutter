@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:Medicall/common_widgets/camera_picker/constants/constants.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
@@ -10,6 +11,18 @@ import 'firestore_path.dart';
 class FirebaseStorageService {
   FirebaseStorageService({@required this.uid}) : assert(uid != null);
   final String uid;
+
+  Future<String> uploadProfileImageWith({
+    @required AssetEntity asset,
+  }) async {
+    Uint8List imageData = await getAccurateUint8List(asset);
+    String assetName = getImageName(asset.title);
+    return await upload(
+      data: imageData,
+      path: FirestorePath.userProfileImage(uid: uid, assetName: assetName),
+      contentType: 'image/jpg',
+    );
+  }
 
   Future<String> uploadProfileImage({
     @required Asset asset,
@@ -27,10 +40,8 @@ class FirebaseStorageService {
   Future<String> uploadConsultPhoto({
     @required String consultId,
     @required String name,
-    @required ByteData byteData,
+    @required Uint8List imageData,
   }) async {
-//    ByteData byteData = await getAccurateByteData(asset);
-    Uint8List imageData = byteData.buffer.asUint8List();
     String assetName = getImageName(name);
     return await upload(
       data: imageData,
@@ -85,5 +96,21 @@ class FirebaseStorageService {
     Uuid uuid = Uuid();
     return assetName.split(".").first +
         uuid.v1(); //image name without extension
+  }
+
+  static Future<Uint8List> getAccurateUint8List(AssetEntity assetEntity) async {
+    Uint8List uint8list;
+    int size = 0; // represents the size of the image in bytes
+    int quality = 100;
+
+    do {
+      uint8list = await assetEntity.thumbDataWithSize(
+          assetEntity.width, assetEntity.height,
+          quality: quality);
+      size = uint8list.lengthInBytes;
+      quality = quality - 10;
+    } while (size > 500000 && quality > 40);
+
+    return uint8list;
   }
 }

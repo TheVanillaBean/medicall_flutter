@@ -253,6 +253,12 @@ class ProviderBioValidators {
   final String bioErrorText = 'Please enter your bio';
 }
 
+class PracticeNameValidators {
+  final StringValidator practiceNameValidator = NonEmptyStringValidator();
+  final String providerPracticeNameErrorText =
+      'Please enter your practice name';
+}
+
 class OptionInputValidator {
   final StringValidator inputValidator = NonEmptyStringValidator();
   final String invalidInputErrorText = 'Your response can\'t be empty';

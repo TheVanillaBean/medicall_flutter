@@ -1,6 +1,7 @@
 import 'package:Medicall/common_widgets/reusable_card.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/services/extimage_provider.dart';
+import 'package:badges/badges.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -25,38 +26,57 @@ class PatientDashboardListItem extends StatelessWidget {
             width: 0.5,
           ),
         ),
-        child: ReusableCard(
-          leading: consult.providerUser.profilePic.length > 0
-              ? displayProfilePicture(
-                  extImageProvider, consult.providerUser.profilePic)
-              : Icon(
-                  Icons.account_circle,
-                  size: 40,
-                  color: Colors.grey,
+        child: Badge(
+          padding: EdgeInsets.all(8),
+          showBadge: consult.patientReviewNotifications != 0 ||
+                  consult.patientMessageNotifications != 0
+              ? true
+              : false,
+          shape: BadgeShape.circle,
+          position: BadgePosition.topEnd(top: -6, end: -2),
+          badgeColor: Theme.of(context).colorScheme.primary,
+          badgeContent: Text(
+            '${consult.patientReviewNotifications + consult.patientMessageNotifications}',
+            style: Theme.of(context).textTheme.bodyText1.copyWith(
+                  fontSize: 16,
+                  color: Colors.white,
                 ),
-          title: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                '${consult.providerUser.fullName}, ${consult.providerUser.professionalTitle}',
-                style: Theme.of(context).textTheme.bodyText1,
-              ),
-              SizedBox(height: 2),
-              Text('${consult.symptom} visit',
-                  style: Theme.of(context).textTheme.caption),
-              SizedBox(height: 2),
-            ],
           ),
-          subtitle: '${consult.parsedDate}',
-          trailing: Container(
-            width: 75,
-            alignment: Alignment.centerLeft,
-            child: Text(getStatus(),
-                style: Theme.of(context).textTheme.caption.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontWeight: FontWeight.bold)),
+          animationType: BadgeAnimationType.scale,
+          animationDuration: Duration(milliseconds: 300),
+          child: ReusableCard(
+            leading: consult.providerUser.profilePic.length > 0
+                ? displayProfilePicture(
+                    extImageProvider, consult.providerUser.profilePic)
+                : Icon(
+                    Icons.account_circle,
+                    size: 40,
+                    color: Colors.grey,
+                  ),
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  '${consult.providerUser.fullName}, ${consult.providerUser.professionalTitle}',
+                  style: Theme.of(context).textTheme.bodyText1,
+                ),
+                SizedBox(height: 2),
+                Text('${consult.symptom} visit',
+                    style: Theme.of(context).textTheme.caption),
+                SizedBox(height: 2),
+              ],
+            ),
+            subtitle: '${consult.parsedDate}',
+            trailing: Container(
+              width: 75,
+              alignment: Alignment.centerLeft,
+              child: Text(getStatus(),
+                  style: Theme.of(context).textTheme.caption.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontWeight: FontWeight.bold)),
+            ),
+            onTap: onTap,
           ),
-          onTap: onTap,
         ),
       );
     }

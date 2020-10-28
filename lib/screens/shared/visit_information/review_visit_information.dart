@@ -7,8 +7,8 @@ import 'package:Medicall/models/questionnaire/question_model.dart';
 import 'package:Medicall/models/questionnaire/screening_questions_model.dart';
 import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
-import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/Shared/visit_information/consult_photos.dart';
+import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/provider_flow/dashboard/provider_dashboard.dart';
 import 'package:Medicall/screens/provider_flow/review_medical_history/review_medical_history.dart';
 import 'package:Medicall/screens/shared/visit_information/screening_question_list_item.dart';
@@ -30,6 +30,10 @@ class ReviewVisitInformation extends StatelessWidget {
     BuildContext context,
     Consult consult,
   }) async {
+    FirestoreDatabase database =
+        Provider.of<FirestoreDatabase>(context, listen: false);
+    consult.providerReviewNotifications = 0;
+    await database.saveConsult(consult: consult, consultId: consult.uid);
     await Navigator.of(context).pushNamed(
       Routes.visitInformation,
       arguments: {

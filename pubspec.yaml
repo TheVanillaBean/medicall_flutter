@@ -72,9 +72,7 @@ dependencies:
   auto_size_text: ^2.1.0
   rounded_loading_button: ^1.0.0
   cached_network_image: ^2.2.0+1
-  stream_chat_flutter:
-    git:
-      url: https://github.com/cyberian-coder/stream-chat-flutter.git
+  stream_chat_flutter: ^0.2.11
   get_version: ^0.2.2
   native_updater: ^0.0.3
   version: ^1.2.0
@@ -82,6 +80,7 @@ dependencies:
   path_provider: ^1.6.21
   photo_manager: ">=0.5.8 <2.0.0"
   video_player: ">=0.11.0 <2.0.0"
+  video_compress: ^2.1.0
 
 dependency_overrides:
   intl: ^0.16.1

@@ -27,6 +27,7 @@ abstract class ProviderProfileViewModelBase
         MedicalResidencyValidators,
         BoardCertificationValidators,
         ProviderBioValidators,
+        PracticeNameValidators,
         OptionInputValidator,
         ChangeNotifier {
   String email;
@@ -49,6 +50,7 @@ abstract class ProviderProfileViewModelBase
   String npi;
   String boardCertified;
   String providerBio;
+  String practiceName;
   String input;
 
   bool checkValue;
@@ -159,6 +161,7 @@ abstract class ProviderProfileViewModelBase
     this.npi = '',
     this.boardCertified = '',
     this.providerBio = '',
+    this.practiceName = '',
     this.checkValue = false,
     this.isLoading = false,
     this.submitted = false,
@@ -280,6 +283,12 @@ abstract class ProviderProfileViewModelBase
     return showErrorText ? bioErrorText : null;
   }
 
+  String get providerPracticeNameErrorText {
+    bool showErrorText =
+        this.submitted && !practiceNameValidator.isValid(practiceName);
+    return showErrorText ? providerPracticeNameErrorText : null;
+  }
+
   String get birthday {
     final f = new DateFormat('MM/dd/yyyy');
     return this.dob.year <= DateTime.now().year - 18
@@ -318,6 +327,8 @@ abstract class ProviderProfileViewModelBase
       updateWith(boardCertified: boardCertified);
   void updateProviderBio(String providerBio) =>
       updateWith(providerBio: providerBio);
+  void updatePracticeName(String practiceName) =>
+      updateWith(practiceName: practiceName);
   void updateMedSchool(String medSchool) => updateWith(medSchool: medSchool);
   void updateMedResidency(String medResidency) =>
       updateWith(medResidency: medResidency);
@@ -359,6 +370,7 @@ abstract class ProviderProfileViewModelBase
     String npi,
     String boardCertified,
     String providerBio,
+    String practiceName,
     bool checkValue,
     bool isLoading,
     bool submitted,
@@ -386,6 +398,7 @@ abstract class ProviderProfileViewModelBase
     this.medLicenseState = medLicenseState ?? this.medLicenseState;
     this.medSchool = medSchool ?? this.medSchool;
     this.medResidency = medResidency ?? this.medResidency;
+    this.practiceName = practiceName ?? this.practiceName;
     this.checkValue = checkValue ?? this.checkValue;
     this.isLoading = isLoading ?? this.isLoading;
     this.submitted = submitted ?? this.submitted;

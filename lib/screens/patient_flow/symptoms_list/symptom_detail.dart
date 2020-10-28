@@ -130,8 +130,6 @@ class SymptomBody extends StatelessWidget {
           style: Theme.of(context).textTheme.bodyText1,
         ),
       ),
-      SizedBox(height: 40),
-      _buildMedicationsDialog(context),
       SizedBox(height: 80),
       Expanded(
         child: Align(
@@ -153,42 +151,5 @@ class SymptomBody extends StatelessWidget {
         ),
       ),
     ];
-  }
-
-  Widget _buildMedicationsDialog(BuildContext context) {
-    return ReusableRaisedButton(
-      title: "Common Medications",
-      outlined: true,
-      onPressed: () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.0),
-              ),
-              title: Text(
-                "Common Medications",
-                style: Theme.of(context).textTheme.headline6,
-              ),
-              content: Text(
-                symptom.commonMedications,
-                style: Theme.of(context).textTheme.caption,
-              ),
-              actions: <Widget>[
-                ReusableRaisedButton(
-                  outlined: true,
-                  width: 120,
-                  title: "Close",
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
   }
 }
