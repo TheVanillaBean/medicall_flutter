@@ -25,19 +25,18 @@ class WelcomeScreen extends StatelessWidget {
               title: "Online Visit",
               body:
                   "Medicall's network of local providers can help you today. No picking up the phone. No more waiting room. Your doctor will reply with a written response within 24 hours.",
-              image: Center(
-                  child: Column(
+              image: Column(
                 children: [
                   SizedBox(
-                    width: 180,
-                    height: 140,
+                    width: 160,
+                    height: 100,
                     child: Image.asset(
                       'assets/icon/letter_mark.png',
                     ),
                   ),
-                  Image.asset("assets/images/doctors.jpg", height: 175.0)
+                  Image.asset("assets/images/doctors.png", height: 200.0)
                 ],
-              )),
+              ),
               // footer: ReusableRaisedButton(
               //   title: "Login",
               //   onPressed: () => LoginScreen.show(context: context),
@@ -55,7 +54,7 @@ class WelcomeScreen extends StatelessWidget {
                   "Low cost visit fee. No insurance headaches. Just transparent pricing.",
               image: Center(
                   child: Image.asset("assets/images/insurance.png",
-                      height: 175.0)),
+                      height: 250.0)),
               decoration: PageDecoration(
                 pageColor: Colors.white,
               ),
@@ -66,7 +65,7 @@ class WelcomeScreen extends StatelessWidget {
                   "If you need a prescription, we offer them at wholesale price and ship them to your door for free.",
               image: Center(
                   child:
-                      Image.asset("assets/images/shipping.png", height: 175.0)),
+                      Image.asset("assets/images/shipping.png", height: 250.0)),
               decoration: PageDecoration(
                 pageColor: Colors.white,
               ),
