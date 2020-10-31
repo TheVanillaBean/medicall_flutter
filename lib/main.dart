@@ -1,4 +1,3 @@
-import 'package:Medicall/common_widgets/assets_picker/widget/asset_picker.dart';
 import 'package:Medicall/routing/router.dart' as Router;
 import 'package:Medicall/screens/landing_page/auth_widget_builder.dart';
 import 'package:Medicall/screens/landing_page/firebase_notifications_handler.dart';
@@ -40,7 +39,6 @@ void main() async {
     databaseBuilder: (_) => NonAuthFirestoreDB(),
     tempUserProvider: (_) => TempUserProvider(),
   ));
-  AssetPicker.registerObserve();
 }
 
 class MedicallApp extends StatelessWidget {

@@ -1,3 +1,4 @@
+import 'package:Medicall/common_widgets/assets_picker/widget/asset_picker.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
@@ -225,6 +226,8 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   }
 
   Future<void> _loadProfileImage() async {
+    AssetPicker.registerObserve();
+
     AssetEntity assetEntity = AssetEntity();
 
     try {
@@ -237,5 +240,6 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     // message was in flight, we want to discard the reply rather than calling
     if (!mounted) return;
     widget.model.updateWith(profileImage: assetEntity);
+    AssetPicker.unregisterObserve();
   }
 }

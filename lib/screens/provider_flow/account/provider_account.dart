@@ -1,3 +1,4 @@
+import 'package:Medicall/common_widgets/assets_picker/widget/asset_picker.dart';
 import 'package:Medicall/common_widgets/camera_picker/constants/constants.dart';
 import 'package:Medicall/common_widgets/provider_bio_card.dart';
 import 'package:Medicall/common_widgets/reusable_account_card.dart';
@@ -467,6 +468,8 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
     ExtendedImageProvider extImageProvider,
     UserProvider userProvider,
   }) async {
+    AssetPicker.registerObserve();
+
     AssetEntity assetEntity = AssetEntity();
 
     try {
@@ -491,5 +494,6 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
       });
       await firestoreDatabase.setUser(userProvider.user);
     }
+    AssetPicker.unregisterObserve();
   }
 }

@@ -30,7 +30,7 @@ class PatientNoteStepState {
     DiagnosisOptions diagnosisOptions,
   ) {
     editNoteTitle = section;
-    if (section == "Introduction:") {
+    if (section == "Introduction: (Required)") {
       templateSection =
           diagnosisOptions.patientNoteTemplate.introductionTemplate.template;
       editedSection = patientTemplateNote.introductionTemplate.template;

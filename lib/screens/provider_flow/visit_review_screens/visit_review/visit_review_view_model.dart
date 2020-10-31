@@ -303,7 +303,8 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
               symptomName: symptom,
               diagnosis: this.diagnosisStepState.diagnosis);
       patientNoteStepState.patientTemplateNote.introductionTemplate.template =
-          diagnosisOptions.patientNoteTemplate.introductionTemplate.template;
+          Map.of(diagnosisOptions
+              .patientNoteTemplate.introductionTemplate.template);
       print("");
     } else {
       this.diagnosisOptions = null;

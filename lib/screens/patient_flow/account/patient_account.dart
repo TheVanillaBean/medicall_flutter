@@ -1,3 +1,4 @@
+import 'package:Medicall/common_widgets/assets_picker/widget/asset_picker.dart';
 import 'package:Medicall/common_widgets/reusable_account_card.dart';
 import 'package:Medicall/components/drawer_menu.dart';
 import 'package:Medicall/models/user/patient_user_model.dart';
@@ -366,6 +367,8 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
     ExtendedImageProvider extImageProvider,
     UserProvider userProvider,
   }) async {
+    AssetPicker.registerObserve();
+
     AssetEntity assetEntity = AssetEntity();
 
     try {
@@ -382,7 +385,7 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
         this.imageLoading = true;
       });
       String url =
-      await storageService.uploadProfileImageWith(asset: assetEntity);
+          await storageService.uploadProfileImageWith(asset: assetEntity);
       userProvider.user.profilePic = url;
       this.setState(() {
         this.imageLoading = false;
@@ -390,5 +393,6 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
       });
       await firestoreDatabase.setUser(userProvider.user);
     }
+    AssetPicker.unregisterObserve();
   }
 }

@@ -1,3 +1,4 @@
+import 'package:Medicall/common_widgets/assets_picker/widget/asset_picker.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/user/patient_user_model.dart';
 import 'package:Medicall/routing/router.dart';
@@ -262,6 +263,8 @@ class PhotoIDScreen extends StatelessWidget {
   }
 
   Future<void> _loadProfileImage(BuildContext context) async {
+    AssetPicker.registerObserve();
+
     AssetEntity assetEntity = AssetEntity();
 
     try {
@@ -271,5 +274,6 @@ class PhotoIDScreen extends StatelessWidget {
     }
 
     model.updateWith(idPhoto: assetEntity);
+    AssetPicker.unregisterObserve();
   }
 }
