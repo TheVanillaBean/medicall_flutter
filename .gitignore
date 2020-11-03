@@ -100,7 +100,8 @@ unlinked_spec.ds
 !**/ios/**/default.perspectivev3
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 
-ios/Runner/GoogleService-Info.plist
+ios/config/dev/GoogleService-Info.plist
+ios/config/prod/GoogleService-Info.plist
 android/app/google-services.json
 android/app/src/main/res/values/secrets.xml
 ios/Runner/Constants.swift

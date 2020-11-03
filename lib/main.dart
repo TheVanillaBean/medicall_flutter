@@ -1,3 +1,4 @@
+import 'package:Medicall/flavor_settings.dart';
 import 'package:Medicall/routing/router.dart' as Router;
 import 'package:Medicall/screens/landing_page/auth_widget_builder.dart';
 import 'package:Medicall/screens/landing_page/firebase_notifications_handler.dart';
@@ -28,17 +29,34 @@ import 'package:provider/provider.dart';
 
 import 'models/user/user_model_base.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   GestureBinding.instance.resamplingEnabled = true;
   await Firebase.initializeApp();
   final appleSignInAvailable = await AppleSignInAvailable.check();
+  final settings = await _getFlavorSettings();
+  print('API URL ${settings.apiBaseUrl}');
   runApp(MedicallApp(
     appleSignInAvailable: appleSignInAvailable,
     authServiceBuilder: (_) => Auth(),
     databaseBuilder: (_) => NonAuthFirestoreDB(),
     tempUserProvider: (_) => TempUserProvider(),
   ));
+}
+
+Future<FlavorSettings> _getFlavorSettings() async {
+  String flavor =
+      await const MethodChannel('flavor').invokeMethod<String>('getFlavor');
+
+  print('STARTED WITH FLAVOR $flavor');
+
+  if (flavor == 'dev') {
+    return FlavorSettings.dev();
+  } else if (flavor == 'prod') {
+    return FlavorSettings.live();
+  } else {
+    throw Exception("Unknown flavor: $flavor");
+  }
 }
 
 class MedicallApp extends StatelessWidget {
