@@ -170,7 +170,7 @@ class _VisitReviewState extends State<VisitReview> with VisitReviewStatus {
               index: widget.model.currentStep,
               children: <Widget>[
                 DiagnosisStep.create(context),
-                ExamStep(),
+                ExamStep.create(context),
                 TreatmentStep(),
                 FollowUpStep(),
                 EducationalContentStep(),

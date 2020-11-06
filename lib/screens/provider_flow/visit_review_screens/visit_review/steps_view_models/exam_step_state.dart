@@ -1,6 +1,17 @@
-class ExamStepState {
+import 'package:flutter/foundation.dart';
+
+import '../visit_review_view_model.dart';
+
+class ExamStepState with ChangeNotifier {
+  VisitReviewViewModel visitReviewViewModel;
   List<String> selectedExamOptions = [];
   List<Map<String, String>> examLocations = [];
+
+  ExamStepState({
+    @required this.visitReviewViewModel,
+    this.selectedExamOptions,
+    this.examLocations,
+  });
 
   bool get minimumRequiredFieldsFilledOut {
     return this.selectedExamOptions.length > 0;
@@ -14,6 +25,8 @@ class ExamStepState {
     }
   }
 
+  //the value the provider enters in the text field
+  //key is the exam and value is the location of the exam
   String getExamLocation(String exam) {
     List<Map<String, String>> locations =
         examLocations.where((element) => element.keys.first == exam).toList();
@@ -21,5 +34,32 @@ class ExamStepState {
       return locations.first.values.first;
     }
     return "";
+  }
+
+  String locationQuestion(String examOption) {
+    return examOption.toLowerCase() == "other"
+        ? "Enter custom location entry for \"Other\""
+        : "What is the location of the $examOption? (Optional)";
+  }
+
+  void updateExamStepWith({
+    List<String> selectedExamOptions,
+    Map<String, String> locationMap,
+  }) {
+    this.selectedExamOptions = selectedExamOptions ?? this.selectedExamOptions;
+    if (locationMap != null) {
+      int index = this
+          .examLocations
+          .indexWhere((element) => element.containsKey(locationMap.keys.first));
+      if (index > -1) {
+        this.examLocations[index] = locationMap;
+      } else {
+        if (locationMap != null) {
+          this.examLocations.add(locationMap);
+        }
+      }
+    }
+
+    notifyListeners();
   }
 }
