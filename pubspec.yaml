@@ -42,6 +42,7 @@ dependencies:
   flutter_typeahead: ^1.8.8
   fading_edge_scrollview: ^1.1.4
   rflutter_alert: ^1.1.0
+  introduction_screen: ^1.0.9
   #camera/images
   camera: ^0.5.8+9
   dots_indicator: ^1.0.0
