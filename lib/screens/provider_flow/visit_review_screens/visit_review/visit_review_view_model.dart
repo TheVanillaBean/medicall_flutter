@@ -80,6 +80,8 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
     this.setEducationalInfoFromPrevData();
   }
 
+  bool diagnosisFilledOut = false;
+
   void setVisitReviewStatus(VisitReviewStatus visitReviewStatus) {
     this.visitReviewStatus = visitReviewStatus;
   }

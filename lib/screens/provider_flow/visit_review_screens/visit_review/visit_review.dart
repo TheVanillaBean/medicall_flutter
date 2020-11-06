@@ -14,9 +14,9 @@ import 'package:Medicall/screens/shared/visit_information/consult_photos.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
+import 'package:progress_timeline/progress_timeline.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
 import 'package:provider/provider.dart';
-import 'package:step_progress_indicator/step_progress_indicator.dart';
 
 class VisitReview extends StatefulWidget {
   final VisitReviewViewModel model;
@@ -68,10 +68,54 @@ class VisitReview extends StatefulWidget {
 }
 
 class _VisitReviewState extends State<VisitReview> with VisitReviewStatus {
+  ProgressTimeline screenProgress;
+
+  List<SingleState> allStages = [
+    SingleState(stateTitle: "Diagnosis"),
+    SingleState(stateTitle: "Exam"),
+    SingleState(stateTitle: "Treatment"),
+    SingleState(stateTitle: "Follow Up"),
+    SingleState(stateTitle: "Educational"),
+    SingleState(stateTitle: "Textual Note"),
+    SingleState(stateTitle: "Video Note"),
+  ];
+
+  @override
+  void initState() {
+    screenProgress = new ProgressTimeline(
+      states: allStages,
+      connectorColor: Color(0xff90024C), //no access to context, so manual
+      iconSize: 35,
+      connectorWidth: 2.0,
+      checkedIcon: Icon(
+        Icons.check_circle,
+        color: Color(0xff90024C),
+        size: 35,
+      ),
+      currentIcon: Icon(
+        Icons.adjust,
+        color: Color(0xff90024C),
+        size: 35,
+      ),
+      failedIcon: Icon(
+        Icons.highlight_off,
+        color: Colors.redAccent,
+        size: 35,
+      ),
+      uncheckedIcon: Icon(
+        Icons.radio_button_unchecked,
+        color: Color(0xff90024C),
+        size: 35,
+      ),
+    );
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     widget.model.setVisitReviewStatus(this);
     final width = MediaQuery.of(context).size.width;
+
     return Scaffold(
       appBar: AppBar(
         leading: Builder(
@@ -112,14 +156,20 @@ class _VisitReviewState extends State<VisitReview> with VisitReviewStatus {
         ],
       ),
       body: Column(
-        mainAxisSize: MainAxisSize.max,
+        mainAxisSize: MainAxisSize.min,
         children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            child: screenProgress,
+          ),
+          Divider(
+            height: 2,
+          ),
           Expanded(
-            flex: 8,
             child: IndexedStack(
               index: widget.model.currentStep,
               children: <Widget>[
-                DiagnosisStep(),
+                DiagnosisStep.create(context),
                 ExamStep(),
                 TreatmentStep(),
                 FollowUpStep(),
@@ -128,58 +178,9 @@ class _VisitReviewState extends State<VisitReview> with VisitReviewStatus {
               ],
             ),
           ),
-          Divider(
-            height: 2,
-          ),
-          Expanded(
-            flex: 1,
-            child: SingleChildScrollView(
-              controller: widget.model.scrollController,
-              scrollDirection: Axis.horizontal,
-              child: SizedBox(
-                width: width * 1.5,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-                  child: StepProgressIndicator(
-                    direction: Axis.horizontal,
-                    totalSteps: VisitReviewSteps.TotalSteps,
-                    currentStep: widget.model.currentStep,
-                    size: 48,
-                    roundedEdges: Radius.circular(25),
-                    customStep: (index, color, size) => buildCustomStep(index),
-                    onTap: (index) => () => widget.model.updateIndex(index),
-                  ),
-                ),
-              ),
-            ),
-          )
         ],
       ),
     );
-  }
-
-  Widget buildCustomStep(int stepIndex) {
-    return Container(
-      color: getColorForStep(stepIndex),
-      child: Center(
-        child: Text(
-          widget.model.getCustomStepText(stepIndex),
-          style: TextStyle(fontSize: 12, color: Colors.white),
-        ),
-      ),
-    );
-  }
-
-  Color getColorForStep(int stepIndex) {
-    if (widget.model.completedSteps.contains(stepIndex) &&
-        widget.model.currentStep != stepIndex) {
-      return Theme.of(context).primaryColorDark;
-    }
-    if (widget.model.currentStep == stepIndex) {
-      return Theme.of(context).colorScheme.primary;
-    } else {
-      return Theme.of(context).colorScheme.secondaryVariant;
-    }
   }
 
   @override
