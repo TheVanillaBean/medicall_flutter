@@ -39,8 +39,8 @@ class ExamStep extends StatelessWidget {
       return KeyboardDismisser(
         gestures: [GestureType.onTap, GestureType.onVerticalDragDown],
         child: SwipeGestureRecognizer(
-          onSwipeLeft: () {},
-          onSwipeRight: () {},
+          onSwipeLeft: () => model.visitReviewViewModel.incrementIndex(),
+          onSwipeRight: () => model.visitReviewViewModel.decrementIndex(),
           child: CustomScrollView(
             slivers: <Widget>[
               SliverFillRemaining(
@@ -87,6 +87,7 @@ class ExamStep extends StatelessWidget {
                         width: width,
                         onTap: this.model.minimumRequiredFieldsFilledOut
                             ? () async {
+                                model.visitReviewViewModel.incrementIndex();
                                 print("");
                                 // model.visitReviewViewModel.updateContinueBtnPressed(true);
                                 // model.visitReviewViewModel.incrementIndex();

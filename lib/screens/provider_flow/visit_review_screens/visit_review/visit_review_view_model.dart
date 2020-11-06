@@ -12,6 +12,8 @@ import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review
 import 'package:Medicall/services/database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:progress_timeline/progress_timeline.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
 
 // Properties
@@ -65,6 +67,47 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
   final PatientNoteStepState patientNoteStepState = PatientNoteStepState();
   final TreatmentNoteStepState treatmentNoteStepState =
       TreatmentNoteStepState();
+
+  ProgressTimeline screenProgress;
+
+  List<SingleState> allStages = [
+    SingleState(stateTitle: "Diagnosis"),
+    SingleState(stateTitle: "Exam"),
+    SingleState(stateTitle: "Treatment"),
+    SingleState(stateTitle: "Follow Up"),
+    SingleState(stateTitle: "Educational"),
+    SingleState(stateTitle: "Textual Note"),
+    SingleState(stateTitle: "Video Note"),
+  ];
+
+  void setProgressTimeline() {
+    screenProgress = new ProgressTimeline(
+      states: allStages,
+      connectorColor: Color(0xff90024C), //no access to context, so manual
+      iconSize: 35,
+      connectorWidth: 2.0,
+      checkedIcon: Icon(
+        Icons.check_circle,
+        color: Color(0xff90024C),
+        size: 35,
+      ),
+      currentIcon: Icon(
+        Icons.adjust,
+        color: Color(0xff90024C),
+        size: 35,
+      ),
+      failedIcon: Icon(
+        Icons.highlight_off,
+        color: Colors.redAccent,
+        size: 35,
+      ),
+      uncheckedIcon: Icon(
+        Icons.radio_button_unchecked,
+        color: Color(0xff90024C),
+        size: 35,
+      ),
+    );
+  }
 
   VisitReviewViewModel({
     @required this.firestoreDatabase,
@@ -217,31 +260,19 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
   }
 
   void incrementIndex() {
-    checkIfWorkSaved();
-    updateCompletedStepsList();
     this.currentStep = this.currentStep == VisitReviewSteps.TotalSteps - 1
         ? this.currentStep
         : this.currentStep + 1;
+    this.screenProgress.gotoNextStage();
     updateContinueBtnPressed(false);
-    this.scrollController.animateTo(
-          this.scrollController.offset + 50,
-          duration: Duration(milliseconds: 500),
-          curve: Curves.easeIn,
-        );
     notifyListeners(VisitReviewVMProperties.visitReview);
   }
 
   void decrementIndex() {
-    checkIfWorkSaved();
-    updateCompletedStepsList();
     this.currentStep = this.currentStep == VisitReviewSteps.DiagnosisStep
         ? this.currentStep
         : this.currentStep - 1;
-    this.scrollController.animateTo(
-          this.scrollController.offset - 50,
-          duration: Duration(milliseconds: 500),
-          curve: Curves.easeIn,
-        );
+    this.screenProgress.gotoPreviousStage();
     notifyListeners(VisitReviewVMProperties.visitReview);
   }
 

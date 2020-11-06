@@ -81,7 +81,7 @@ class DiagnosisStep extends StatelessWidget {
           width: width,
           onTap: this.model.canContinue
               ? () async {
-                  model.includeDDX = false;
+                  model.visitReviewViewModel.incrementIndex();
                   print("");
                   // model.visitReviewViewModel.updateContinueBtnPressed(true);
                   // model.visitReviewViewModel.incrementIndex();

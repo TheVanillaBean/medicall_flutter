@@ -21,7 +21,7 @@ class ContinueButton extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.only(bottom: 16),
           child: ReusableRaisedButton(
-            title: title,
+            title: title ?? "Save and Continue",
             onPressed: onTap,
           ),
         ),

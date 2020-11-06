@@ -9,8 +9,6 @@ class ExamStepState with ChangeNotifier {
 
   ExamStepState({
     @required this.visitReviewViewModel,
-    this.selectedExamOptions,
-    this.examLocations,
   });
 
   bool get minimumRequiredFieldsFilledOut {

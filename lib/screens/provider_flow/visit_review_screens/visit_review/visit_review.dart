@@ -14,7 +14,6 @@ import 'package:Medicall/screens/shared/visit_information/consult_photos.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
-import 'package:progress_timeline/progress_timeline.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
 import 'package:provider/provider.dart';
 
@@ -68,53 +67,15 @@ class VisitReview extends StatefulWidget {
 }
 
 class _VisitReviewState extends State<VisitReview> with VisitReviewStatus {
-  ProgressTimeline screenProgress;
-
-  List<SingleState> allStages = [
-    SingleState(stateTitle: "Diagnosis"),
-    SingleState(stateTitle: "Exam"),
-    SingleState(stateTitle: "Treatment"),
-    SingleState(stateTitle: "Follow Up"),
-    SingleState(stateTitle: "Educational"),
-    SingleState(stateTitle: "Textual Note"),
-    SingleState(stateTitle: "Video Note"),
-  ];
-
   @override
   void initState() {
-    screenProgress = new ProgressTimeline(
-      states: allStages,
-      connectorColor: Color(0xff90024C), //no access to context, so manual
-      iconSize: 35,
-      connectorWidth: 2.0,
-      checkedIcon: Icon(
-        Icons.check_circle,
-        color: Color(0xff90024C),
-        size: 35,
-      ),
-      currentIcon: Icon(
-        Icons.adjust,
-        color: Color(0xff90024C),
-        size: 35,
-      ),
-      failedIcon: Icon(
-        Icons.highlight_off,
-        color: Colors.redAccent,
-        size: 35,
-      ),
-      uncheckedIcon: Icon(
-        Icons.radio_button_unchecked,
-        color: Color(0xff90024C),
-        size: 35,
-      ),
-    );
+    widget.model.setProgressTimeline();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     widget.model.setVisitReviewStatus(this);
-    final width = MediaQuery.of(context).size.width;
 
     return Scaffold(
       appBar: AppBar(
@@ -160,7 +121,7 @@ class _VisitReviewState extends State<VisitReview> with VisitReviewStatus {
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12.0),
-            child: screenProgress,
+            child: widget.model.screenProgress,
           ),
           Divider(
             height: 2,
