@@ -123,6 +123,13 @@ class VisitDetailsOverview extends StatelessWidget {
           ),
           _buildCardButton(
             context,
+            "Provider Video Note",
+            Icons.message,
+            null,
+            0,
+          ),
+          _buildCardButton(
+            context,
             "Message Provider",
             Icons.message,
             () => navigateToChatScreen(context),
@@ -210,6 +217,13 @@ class VisitDetailsOverview extends StatelessWidget {
                   ),
                 },
                 0,
+              ),
+              _buildCardButton(
+                context,
+                "Provider Video Note",
+                Icons.personal_video_rounded,
+                null,
+                consult.patientReviewNotifications,
               ),
               _buildCardButton(
                 context,

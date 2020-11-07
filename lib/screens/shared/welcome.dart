@@ -3,10 +3,12 @@ import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Shared/Login/login.dart';
 import 'package:Medicall/screens/patient_flow/symptoms_list/symptoms.dart';
 import 'package:Medicall/screens/provider_flow/registration/provider_registration.dart';
+import 'package:Medicall/util/introduction_screen/introduction_screen.dart';
+import 'package:Medicall/util/introduction_screen/model/page_decoration.dart';
+import 'package:Medicall/util/introduction_screen/model/page_view_model.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:introduction_screen/introduction_screen.dart';
 
 class WelcomeScreen extends StatelessWidget {
   static Future<void> show({BuildContext context}) async {

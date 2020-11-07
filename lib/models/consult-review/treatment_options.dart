@@ -89,7 +89,7 @@ class TreatmentOptions {
       'refills': refills,
       'date': date,
       'price': price,
-      'state': EnumToString.parse(status),
+      'state': EnumToString.convertToString(status),
     };
   }
 }

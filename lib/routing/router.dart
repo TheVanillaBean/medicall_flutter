@@ -41,7 +41,6 @@ import 'package:Medicall/screens/patient_flow/visit_payment/make_payment.dart';
 import 'package:Medicall/screens/patient_flow/zip_code_verify/zip_code_verify.dart';
 import 'package:Medicall/screens/provider_flow/account/provider_account.dart';
 import 'package:Medicall/screens/provider_flow/account/stripe_connect/stripe_connect.dart';
-import 'package:Medicall/screens/provider_flow/account/update_provider_info/update_provider_info_form.dart';
 import 'package:Medicall/screens/provider_flow/account/update_provider_info/update_provider_info_screen.dart';
 import 'package:Medicall/screens/provider_flow/account/update_provider_info/update_provider_info_view_model.dart';
 import 'package:Medicall/screens/provider_flow/dashboard/provider_dashboard.dart';
@@ -53,6 +52,8 @@ import 'package:Medicall/screens/provider_flow/visit_review_screens/immediate_ca
 import 'package:Medicall/screens/provider_flow/visit_review_screens/prescription_details/prescription_details.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/edit_note_section.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reclassify_visit.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/video_note/patient_video_note.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/video_note/patient_video_note_view_model.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/view_patient_id.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/view_patient_info.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_overview.dart';
@@ -117,6 +118,7 @@ class Routes {
   static const reviewMedicalHistory = '/review-medical-history';
   static const visitConsultPhotos = '/visit-consult-photos';
   static const visitDocNote = '/visit-doc-note';
+  static const patientVideoNote = '/patient-video-note';
   static const visitEducation = '/visit-education';
   static const visitPrescriptions = '/visit-prescriptions';
   static const visitNonPrescriptions = '/visit-non-prescriptions';
@@ -588,6 +590,7 @@ class Router {
           settings: settings,
           fullscreenDialog: true,
         );
+
       case Routes.reclassifyVisit:
         final Map<String, dynamic> mapArgs = args;
         final Consult consult = mapArgs['consult'];
@@ -647,12 +650,27 @@ class Router {
           settings: settings,
           fullscreenDialog: true,
         );
+
+      case Routes.patientVideoNote:
+        final Map<String, dynamic> mapArgs = args;
+        final VisitReviewViewModel visitReviewViewModel =
+            mapArgs['visitReviewViewModel'];
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => PatientVideoNote.create(
+            context,
+            visitReviewViewModel,
+          ),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+
       case Routes.completeVisit:
         return MaterialPageRoute<dynamic>(
           builder: (context) => CompleteVisit.create(context),
           settings: settings,
           fullscreenDialog: true,
         );
+
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(
