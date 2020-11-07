@@ -5,26 +5,45 @@ import 'package:Medicall/screens/provider_flow/visit_review_screens/prescription
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/continue_button.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/empty_diagnosis_widget.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/swipe_gesture_recognizer.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_view_models/treatment_note_step_state.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_review_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
+import 'package:provider/provider.dart';
 
 class TreatmentStep extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final VisitReviewViewModel model =
+  final TreatmentNoteStepState model;
+
+  const TreatmentStep({@required this.model});
+
+  static Widget create(BuildContext context) {
+    final VisitReviewViewModel visitReviewViewModel =
         PropertyChangeProvider.of<VisitReviewViewModel>(
       context,
-      properties: [VisitReviewVMProperties.treatmentStep],
+      properties: [VisitReviewVMProperties.diagnosisStep],
     ).value;
+    return ChangeNotifierProvider<TreatmentNoteStepState>(
+      create: (context) => TreatmentNoteStepState(
+        visitReviewViewModel: visitReviewViewModel,
+      ),
+      child: Consumer<TreatmentNoteStepState>(
+        builder: (_, model, __) => TreatmentStep(
+          model: model,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    if (model.diagnosisOptions != null) {
+    if (model.visitReviewViewModel.diagnosisOptions != null) {
       return KeyboardDismisser(
         gestures: [GestureType.onTap, GestureType.onVerticalDragDown],
         child: SwipeGestureRecognizer(
-          onSwipeLeft: () => model.incrementIndex(),
-          onSwipeRight: () => model.decrementIndex(),
+          onSwipeLeft: () => model.visitReviewViewModel.incrementIndex(),
+          onSwipeRight: () => model.visitReviewViewModel.decrementIndex(),
           child: CustomScrollView(
             slivers: <Widget>[
               SliverFillRemaining(
@@ -45,17 +64,19 @@ class TreatmentStep extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 36),
                       child: CheckboxGroup(
-                        labels: model.diagnosisOptions.treatments
+                        labels: model
+                            .visitReviewViewModel.diagnosisOptions.treatments
                             .map((t) => t.medicationName)
                             .toList(),
-                        checked: model
-                            .treatmentNoteStepState.selectedTreatmentOptions
+                        checked: model.selectedTreatmentOptions
                             .map((e) => e.medicationName)
                             .toList(),
                         onChange: (isChecked, label, index) async {
                           if (isChecked) {
                             TreatmentOptions treatmentOptions = model
-                                .diagnosisOptions.treatments
+                                .visitReviewViewModel
+                                .diagnosisOptions
+                                .treatments
                                 .where((element) =>
                                     element.medicationName == label)
                                 .toList()
@@ -64,24 +85,27 @@ class TreatmentStep extends StatelessWidget {
                                 selectedTreatment: treatmentOptions);
 
                             if (index ==
-                                model.diagnosisOptions.treatments.length - 1) {
-                              model.treatmentNoteStepState
-                                  .currentlySelectedIsOther = true;
+                                model.visitReviewViewModel.diagnosisOptions
+                                        .treatments.length -
+                                    1) {
+                              model.currentlySelectedIsOther = true;
                             } else {
-                              model.treatmentNoteStepState
-                                  .currentlySelectedIsOther = false;
+                              model.currentlySelectedIsOther = false;
                             }
 
                             if (!treatmentOptions.notAPrescription) {
                               PrescriptionDetails.show(
                                 context: context,
                                 treatmentOptions: treatmentOptions,
-                                visitReviewViewModel: model,
+                                visitReviewViewModel:
+                                    model.visitReviewViewModel,
                               );
                             }
                           } else {
                             TreatmentOptions treatmentOptions = model
-                                .diagnosisOptions.treatments
+                                .visitReviewViewModel
+                                .diagnosisOptions
+                                .treatments
                                 .where((element) =>
                                     element.medicationName == label)
                                 .toList()
@@ -103,20 +127,18 @@ class TreatmentStep extends StatelessWidget {
                               model.deselectTreatmentStep(treatmentOptions);
                             } else {
                               TreatmentOptions treatmentOptions = model
-                                  .treatmentNoteStepState
                                   .selectedTreatmentOptions
                                   .where((element) =>
                                       element.medicationName == label)
                                   .toList()
                                   .first;
                               if (index ==
-                                  model.diagnosisOptions.treatments.length -
+                                  model.visitReviewViewModel.diagnosisOptions
+                                          .treatments.length -
                                       1) {
-                                model.treatmentNoteStepState
-                                    .currentlySelectedIsOther = true;
+                                model.currentlySelectedIsOther = true;
                               } else {
-                                model.treatmentNoteStepState
-                                    .currentlySelectedIsOther = false;
+                                model.currentlySelectedIsOther = false;
                               }
                               model.updateTreatmentStepWith(
                                   selectedTreatment: treatmentOptions);
@@ -124,7 +146,8 @@ class TreatmentStep extends StatelessWidget {
                                 PrescriptionDetails.show(
                                   context: context,
                                   treatmentOptions: treatmentOptions,
-                                  visitReviewViewModel: model,
+                                  visitReviewViewModel:
+                                      model.visitReviewViewModel,
                                 );
                               }
                             }
@@ -134,7 +157,17 @@ class TreatmentStep extends StatelessWidget {
                     ),
                     Expanded(
                       child: ContinueButton(
+                        title: "Save and Continue",
                         width: width,
+                        onTap: this.model.minimumRequiredFieldsFilledOut
+                            ? () async {
+                                model.visitReviewViewModel.incrementIndex();
+                                print("");
+                                // model.visitReviewViewModel.updateContinueBtnPressed(true);
+                                // model.visitReviewViewModel.incrementIndex();
+                                // await model.visitReviewViewModel.saveVisitReviewToFirestore();
+                              }
+                            : null,
                       ),
                     ),
                   ],
@@ -145,6 +178,6 @@ class TreatmentStep extends StatelessWidget {
         ),
       );
     }
-    return EmptyDiagnosis(model: model);
+    return EmptyDiagnosis(model: model.visitReviewViewModel);
   }
 }

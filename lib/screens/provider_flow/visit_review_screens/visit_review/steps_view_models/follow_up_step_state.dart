@@ -1,3 +1,6 @@
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_review_view_model.dart';
+import 'package:flutter/foundation.dart';
+
 abstract class FollowUpSteps {
   static const String ViaMedicall = 'Follow-up via Medicall';
   static const String InPerson = 'Follow-up in person';
@@ -14,10 +17,19 @@ abstract class FollowUpSteps {
       ];
 }
 
-class FollowUpStepState {
-  String followUp = "";
-  String documentation = ""; //if immediate care option
-  String duration = "";
+class FollowUpStepState with ChangeNotifier {
+  VisitReviewViewModel visitReviewViewModel;
+
+  String followUp;
+  String documentation; //if immediate care option
+  String duration;
+
+  FollowUpStepState({
+    @required this.visitReviewViewModel,
+    this.followUp = "",
+    this.documentation = "",
+    this.duration = "",
+  });
 
   bool get minimumRequiredFieldsFilledOut {
     return this.followUp.length > 0;
@@ -43,5 +55,16 @@ class FollowUpStepState {
     } else {
       return "";
     }
+  }
+
+  void updateFollowUpStepWith({
+    String followUp,
+    String documentation,
+    String duration,
+  }) {
+    this.followUp = followUp ?? this.followUp;
+    this.documentation = documentation ?? this.documentation;
+    this.duration = duration ?? this.duration;
+    notifyListeners();
   }
 }

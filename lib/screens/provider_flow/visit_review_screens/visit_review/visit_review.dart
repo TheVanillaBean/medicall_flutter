@@ -132,8 +132,8 @@ class _VisitReviewState extends State<VisitReview> with VisitReviewStatus {
               children: <Widget>[
                 DiagnosisStep.create(context),
                 ExamStep.create(context),
-                TreatmentStep(),
-                FollowUpStep(),
+                TreatmentStep.create(context),
+                FollowUpStep.create(context),
                 EducationalContentStep(),
                 PatientNoteStep(),
               ],
