@@ -632,13 +632,12 @@ class Router {
       case Routes.immediateMedicalCare:
         final Map<String, dynamic> mapArgs = args;
         final String documentation = mapArgs['documentation'];
-        final VisitReviewViewModel visitReviewViewModel =
-            mapArgs['visitReviewViewModel'];
-        return MaterialPageRoute<dynamic>(
+        final PatientUser patientUser = mapArgs['patientUser'];
+        return MaterialPageRoute<String>(
           builder: (context) => ImmediateMedicalCare.create(
             context,
             documentation,
-            visitReviewViewModel,
+            patientUser,
           ),
           settings: settings,
           fullscreenDialog: true,

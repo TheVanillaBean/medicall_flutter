@@ -26,7 +26,7 @@ class DocumentationTextField extends StatelessWidget {
         focusNode: focusNode,
         autocorrect: false,
         onChanged: onChanged,
-        autofocus: true,
+        autofocus: false,
         maxLines: maxLines,
         style: TextStyle(
           height: 1.5,

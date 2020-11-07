@@ -66,14 +66,16 @@ class FollowUpStep extends StatelessWidget {
                         labelStyle: Theme.of(context).textTheme.bodyText1,
                         labels: FollowUpSteps.followUpSteps,
                         picked: model.followUp,
-                        onSelected: (String selected) {
+                        onSelected: (String selected) async {
                           model.updateFollowUpStepWith(followUp: selected);
                           if (selected == FollowUpSteps.Emergency) {
-                            ImmediateMedicalCare.show(
+                            String result = await ImmediateMedicalCare.show(
                               context: context,
-                              visitReviewViewModel: model.visitReviewViewModel,
                               documentation: model.documentation,
+                              patientUser: model
+                                  .visitReviewViewModel.consult.patientUser,
                             );
+                            model.updateFollowUpStepWith(documentation: result);
                           }
                         },
                       ),
@@ -85,16 +87,20 @@ class FollowUpStep extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.fromLTRB(25, 12, 24, 0),
                         child: SignInButton(
-                          text: "Edit Immediate Care Documentation",
-                          color: Colors.blue,
-                          textColor: Colors.white,
-                          height: 24,
-                          onPressed: () => ImmediateMedicalCare.show(
-                            context: context,
-                            visitReviewViewModel: model.visitReviewViewModel,
-                            documentation: model.documentation,
-                          ),
-                        ),
+                            text: "Edit Immediate Care Documentation",
+                            color: Colors.blue,
+                            textColor: Colors.white,
+                            height: 24,
+                            onPressed: () async {
+                              String result = await ImmediateMedicalCare.show(
+                                context: context,
+                                documentation: model.documentation,
+                                patientUser: model
+                                    .visitReviewViewModel.consult.patientUser,
+                              );
+                              model.updateFollowUpStepWith(
+                                  documentation: result);
+                            }),
                       ),
                     SizedBox(
                       height: 8,
