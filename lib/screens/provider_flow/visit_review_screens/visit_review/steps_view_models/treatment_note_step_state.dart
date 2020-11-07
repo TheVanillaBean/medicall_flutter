@@ -16,50 +16,47 @@ class TreatmentNoteStepState with ChangeNotifier {
     return this.selectedTreatmentOptions.length > 0;
   }
 
-  void removeTreatmentOption({TreatmentOptions selectedTreatment}) {
-    this.selectedTreatmentOptions.remove(selectedTreatment);
-    notifyListeners();
-  }
-
-  void updateTreatmentStepWith({TreatmentOptions selectedTreatment}) {
-    if (this
-            .selectedTreatmentOptions
-            .where((element) =>
-                element.medicationName == selectedTreatment.medicationName)
-            .toList()
-            .length ==
-        0) {
-      this.selectedTreatmentOptions.add(selectedTreatment);
-    } else {
-      int index = this.selectedTreatmentOptions.indexWhere((element) =>
-          element.medicationName == selectedTreatment.medicationName);
-      if (index > -1) {
-        this.selectedTreatmentOptions[index] = selectedTreatment;
-      }
-    }
-
-    //this determines if the diagnosis list already has this medication
-    int index = this
+  List<String> get medicationNames {
+    return this
         .visitReviewViewModel
         .diagnosisOptions
         .treatments
-        .indexWhere((element) =>
-            element.medicationName == selectedTreatment.medicationName);
+        .map((t) => t.medicationName)
+        .toList();
+  }
 
-    if (index == -1) {
-      //this is the "other" option
-      this.visitReviewViewModel.diagnosisOptions.treatments.last =
-          selectedTreatment;
+  List<String> get selectedMedicationNames {
+    return this.selectedTreatmentOptions.map((e) => e.medicationName).toList();
+  }
+
+  bool isSelectedPrescription(int index, String medicationName) {
+    //check if selected treatments contain this treatment
+    int selectedIndex = this
+        .selectedTreatmentOptions
+        .indexWhere((element) => element.medicationName == medicationName);
+    if (selectedIndex > -1) {
+      TreatmentOptions treatmentOptions =
+          this.selectedTreatmentOptions[selectedIndex];
+      return !treatmentOptions.notAPrescription;
     }
+    return false;
+  }
 
+  void updateTreatment({TreatmentOptions treatmentOptions}) {
+    int index = this.selectedTreatmentOptions.indexWhere(
+        (element) => element.medicationName == treatmentOptions.medicationName);
+    if (index > -1) {
+      this.selectedTreatmentOptions[index] = treatmentOptions;
+    }
+  }
+
+  void addTreatment({TreatmentOptions treatmentOptions}) {
+    this.selectedTreatmentOptions.add(treatmentOptions);
     notifyListeners();
   }
 
-  void deselectTreatmentStep(TreatmentOptions selectedTreatment) {
-    this.selectedTreatmentOptions.removeWhere(
-          (element) =>
-              element.medicationName == selectedTreatment.medicationName,
-        );
+  void removeTreatment({TreatmentOptions treatmentOptions}) {
+    this.selectedTreatmentOptions.remove(treatmentOptions);
     notifyListeners();
   }
 }

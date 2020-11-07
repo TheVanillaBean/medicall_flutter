@@ -41,7 +41,6 @@ import 'package:Medicall/screens/patient_flow/visit_payment/make_payment.dart';
 import 'package:Medicall/screens/patient_flow/zip_code_verify/zip_code_verify.dart';
 import 'package:Medicall/screens/provider_flow/account/provider_account.dart';
 import 'package:Medicall/screens/provider_flow/account/stripe_connect/stripe_connect.dart';
-import 'package:Medicall/screens/provider_flow/account/update_provider_info/update_provider_info_form.dart';
 import 'package:Medicall/screens/provider_flow/account/update_provider_info/update_provider_info_screen.dart';
 import 'package:Medicall/screens/provider_flow/account/update_provider_info/update_provider_info_view_model.dart';
 import 'package:Medicall/screens/provider_flow/dashboard/provider_dashboard.dart';
@@ -622,13 +621,10 @@ class Router {
       case Routes.prescriptionDetails:
         final Map<String, dynamic> mapArgs = args;
         final TreatmentOptions treatmentOptions = mapArgs['treatmentOptions'];
-        final VisitReviewViewModel visitReviewViewModel =
-            mapArgs['visitReviewViewModel'];
-        return MaterialPageRoute<dynamic>(
+        return MaterialPageRoute<TreatmentOptions>(
           builder: (context) => PrescriptionDetails.create(
             context,
             treatmentOptions,
-            visitReviewViewModel,
           ),
           settings: settings,
           fullscreenDialog: true,

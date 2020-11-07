@@ -39,7 +39,7 @@ class PrescriptionDetailsTextField extends StatelessWidget {
         autocorrect: false,
         controller: controller,
         onChanged: onChanged,
-        autofocus: true,
+        autofocus: false,
         style: TextStyle(
           fontSize: 16,
           color: Colors.black87,

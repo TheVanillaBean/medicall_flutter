@@ -139,7 +139,9 @@ class FirestoreDatabase implements Database {
   Stream<List<Consult>> getConsultsForProvider(String uid) =>
       _service.collectionStream(
         path: FirestorePath.consults(),
-        queryBuilder: (query) => query.where('provider_id', isEqualTo: uid),
+        queryBuilder: (query) => query
+            .where('provider_id', isEqualTo: uid)
+            .orderBy("date", descending: true),
         builder: (data, documentId) => Consult.fromMap(data, documentId),
       );
 

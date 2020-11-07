@@ -62,6 +62,11 @@ class PrescriptionDetailsViewModel with ChangeNotifier, PrescriptionValidator {
         inputValidator.isValid(this.treatmentOptions.instructions);
   }
 
+  //if current treatment is a custom selected treatment
+  bool get isCurrentTreatmentOther {
+    return treatmentOptions.medicationName.toLowerCase() == "other";
+  }
+
   void updateWith({
     String medicationName,
     String quantity,

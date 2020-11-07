@@ -114,10 +114,6 @@ class _CheckboxGroupState extends State<CheckboxGroup> {
             widget.activeColor ?? Theme.of(context).toggleableActiveColor,
         tristate: widget.tristate,
       );
-      //why are we setting this here when grouped is immutable class
-      // if (widget.labelStyle == null) {
-      //   widget.labelStyle = Theme.of(context).textTheme.bodyText2;
-      // }
 
       Text t = Text(widget.labels.elementAt(i),
           maxLines: 3,
@@ -132,7 +128,8 @@ class _CheckboxGroupState extends State<CheckboxGroup> {
           onTap: () => (widget.disabled != null &&
                   widget.disabled.contains(widget.labels.elementAt(i)))
               ? null
-              : onChanged(cb.value, i),
+              : onChanged(!cb.value,
+                  i), //! because the value updates afterwards unlike checkbox list tile
           child: t,
         );
         content.add(widget.itemBuilder(cb, gd, t, i));

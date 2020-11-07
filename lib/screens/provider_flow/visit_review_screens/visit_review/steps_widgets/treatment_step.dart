@@ -1,7 +1,7 @@
 import 'package:Medicall/common_widgets/grouped_buttons/checkbox_group.dart';
 import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
 import 'package:Medicall/models/consult-review/treatment_options.dart';
-import 'package:Medicall/screens/provider_flow/visit_review_screens/prescription_details/prescription_details.dart';
+import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/continue_button.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/empty_diagnosis_widget.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/swipe_gesture_recognizer.dart';
@@ -64,92 +64,68 @@ class TreatmentStep extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 36),
                       child: CheckboxGroup(
-                        labels: model
-                            .visitReviewViewModel.diagnosisOptions.treatments
-                            .map((t) => t.medicationName)
-                            .toList(),
-                        checked: model.selectedTreatmentOptions
-                            .map((e) => e.medicationName)
-                            .toList(),
+                        labels: model.medicationNames,
+                        checked: model.selectedMedicationNames,
+                        itemBuilder: (Checkbox cb, GestureDetector gd,
+                            Text medicationName, int i) {
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              cb,
+                              Expanded(child: gd),
+                              if (model.isSelectedPrescription(
+                                  i, medicationName.data))
+                                IconButton(
+                                  icon: Icon(Icons.edit),
+                                  onPressed: () async {
+                                    final TreatmentOptions
+                                        returnedTreatmentOptions =
+                                        await Navigator.of(context).pushNamed(
+                                      Routes.prescriptionDetails,
+                                      arguments: {
+                                        'treatmentOptions': model
+                                            .visitReviewViewModel
+                                            .diagnosisOptions
+                                            .treatments[i],
+                                      },
+                                    );
+
+                                    if (returnedTreatmentOptions != null) {
+                                      this.model.updateTreatment(
+                                          treatmentOptions:
+                                              returnedTreatmentOptions);
+                                    }
+                                  },
+                                ),
+                            ],
+                          );
+                        },
                         onChange: (isChecked, label, index) async {
+                          TreatmentOptions treatmentOptions = model
+                              .visitReviewViewModel
+                              .diagnosisOptions
+                              .treatments[index];
+
                           if (isChecked) {
-                            TreatmentOptions treatmentOptions = model
-                                .visitReviewViewModel
-                                .diagnosisOptions
-                                .treatments
-                                .where((element) =>
-                                    element.medicationName == label)
-                                .toList()
-                                .first;
-                            model.updateTreatmentStepWith(
-                                selectedTreatment: treatmentOptions);
-
-                            if (index ==
-                                model.visitReviewViewModel.diagnosisOptions
-                                        .treatments.length -
-                                    1) {
-                              model.currentlySelectedIsOther = true;
-                            } else {
-                              model.currentlySelectedIsOther = false;
-                            }
-
-                            if (!treatmentOptions.notAPrescription) {
-                              PrescriptionDetails.show(
-                                context: context,
-                                treatmentOptions: treatmentOptions,
-                                visitReviewViewModel:
-                                    model.visitReviewViewModel,
-                              );
-                            }
+                            this.model.addTreatment(
+                                treatmentOptions: treatmentOptions);
                           } else {
-                            TreatmentOptions treatmentOptions = model
-                                .visitReviewViewModel
-                                .diagnosisOptions
-                                .treatments
-                                .where((element) =>
-                                    element.medicationName == label)
-                                .toList()
-                                .first;
-                            String dialogText = treatmentOptions
-                                    .notAPrescription
-                                ? "Are you sure you want to deselect this treatment?"
-                                : "Do you want to deselect this treatment option or do you want to edit it?";
-                            final didPressEdit = await PlatformAlertDialog(
-                              title: "Deselect Treatment?",
-                              content: dialogText,
-                              defaultActionText:
-                                  treatmentOptions.notAPrescription
-                                      ? "No"
-                                      : "Edit",
-                              cancelActionText: "Deselect",
-                            ).show(context);
-                            if (!didPressEdit) {
-                              model.deselectTreatmentStep(treatmentOptions);
+                            if (!treatmentOptions.notAPrescription) {
+                              //is a prescription
+                              final didPressYes = await PlatformAlertDialog(
+                                title: "Deselect Treatment?",
+                                content:
+                                    "Are you sure you want to deselect this treatment?",
+                                defaultActionText: "No",
+                                cancelActionText: "Deselect",
+                              ).show(context);
+                              if (!didPressYes) {
+                                model.removeTreatment(
+                                    treatmentOptions: treatmentOptions);
+                              }
                             } else {
-                              TreatmentOptions treatmentOptions = model
-                                  .selectedTreatmentOptions
-                                  .where((element) =>
-                                      element.medicationName == label)
-                                  .toList()
-                                  .first;
-                              if (index ==
-                                  model.visitReviewViewModel.diagnosisOptions
-                                          .treatments.length -
-                                      1) {
-                                model.currentlySelectedIsOther = true;
-                              } else {
-                                model.currentlySelectedIsOther = false;
-                              }
-                              model.updateTreatmentStepWith(
-                                  selectedTreatment: treatmentOptions);
-                              if (!treatmentOptions.notAPrescription) {
-                                PrescriptionDetails.show(
-                                  context: context,
-                                  treatmentOptions: treatmentOptions,
-                                  visitReviewViewModel:
-                                      model.visitReviewViewModel,
-                                );
-                              }
+                              model.removeTreatment(
+                                  treatmentOptions: treatmentOptions);
                             }
                           }
                         },
