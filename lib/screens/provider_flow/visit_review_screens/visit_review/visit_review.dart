@@ -14,7 +14,6 @@ import 'package:Medicall/screens/shared/visit_information/consult_photos.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
-import 'package:property_change_notifier/property_change_notifier.dart';
 import 'package:provider/provider.dart';
 
 class VisitReview extends StatefulWidget {
@@ -30,15 +29,14 @@ class VisitReview extends StatefulWidget {
   ) {
     final FirestoreDatabase firestoreDatabase =
         Provider.of<FirestoreDatabase>(context);
-    return PropertyChangeProvider<VisitReviewViewModel>(
-      value: VisitReviewViewModel(
+    return ChangeNotifierProvider<VisitReviewViewModel>(
+      create: (context) => VisitReviewViewModel(
         firestoreDatabase: firestoreDatabase,
         consult: consult,
         consultReviewOptions: consultReviewOptions,
         visitReviewData: visitReviewData,
       ),
-      child: PropertyChangeConsumer<VisitReviewViewModel>(
-        properties: [VisitReviewVMProperties.visitReview],
+      child: Consumer<VisitReviewViewModel>(
         builder: (_, model, __) => VisitReview(
           model: model,
         ),

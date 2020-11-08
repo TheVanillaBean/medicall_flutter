@@ -8,19 +8,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:progress_timeline/progress_timeline.dart';
-import 'package:property_change_notifier/property_change_notifier.dart';
-
-// Properties
-abstract class VisitReviewVMProperties {
-  static String get continueBtn => 'continue_btn';
-  static String get diagnosisStep => 'diagnosis_step';
-  static String get examStep => 'exam_step';
-  static String get treatmentStep => 'treatment_step';
-  static String get followUpStep => 'follow_up_step';
-  static String get educationalContent => 'educational_content';
-  static String get patientNote => 'patient_note';
-  static String get visitReview => 'root_screen'; //i.e root
-}
 
 // Properties
 abstract class VisitReviewSteps {
@@ -33,7 +20,7 @@ abstract class VisitReviewSteps {
   static const EducationalContentStep = 4;
 }
 
-class VisitReviewViewModel extends PropertyChangeNotifier {
+class VisitReviewViewModel extends ChangeNotifier {
   final FirestoreDatabase firestoreDatabase;
   final ConsultReviewOptions consultReviewOptions;
   final Consult consult;
@@ -216,18 +203,12 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
   //   }
   // }
 
-  void updateContinueBtnPressed(bool pressed) {
-    this.continueBtnPressed = pressed;
-    notifyListeners(VisitReviewVMProperties.continueBtn);
-  }
-
   void incrementIndex() {
     this.currentStep = this.currentStep == VisitReviewSteps.TotalSteps - 1
         ? this.currentStep
         : this.currentStep + 1;
     this.screenProgress.gotoNextStage();
-    updateContinueBtnPressed(false);
-    notifyListeners(VisitReviewVMProperties.visitReview);
+    notifyListeners();
   }
 
   void decrementIndex() {
@@ -235,12 +216,12 @@ class VisitReviewViewModel extends PropertyChangeNotifier {
         ? this.currentStep
         : this.currentStep - 1;
     this.screenProgress.gotoPreviousStage();
-    notifyListeners(VisitReviewVMProperties.visitReview);
+    notifyListeners();
   }
 
   void updateIndex(int index) {
     this.currentStep = index;
-    notifyListeners(VisitReviewVMProperties.visitReview);
+    notifyListeners();
   }
 }
 

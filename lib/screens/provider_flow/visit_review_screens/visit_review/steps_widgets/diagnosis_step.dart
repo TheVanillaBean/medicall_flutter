@@ -9,7 +9,6 @@ import 'package:Medicall/util/app_util.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
-import 'package:property_change_notifier/property_change_notifier.dart';
 import 'package:provider/provider.dart';
 
 class DiagnosisStep extends StatelessWidget {
@@ -19,10 +18,7 @@ class DiagnosisStep extends StatelessWidget {
 
   static Widget create(BuildContext context) {
     final VisitReviewViewModel visitReviewViewModel =
-        PropertyChangeProvider.of<VisitReviewViewModel>(
-      context,
-      properties: [VisitReviewVMProperties.diagnosisStep],
-    ).value;
+        Provider.of<VisitReviewViewModel>(context);
     return ChangeNotifierProvider<DiagnosisStepState>(
       create: (context) => DiagnosisStepState(
         visitReviewViewModel: visitReviewViewModel,
