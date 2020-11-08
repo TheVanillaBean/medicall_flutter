@@ -134,8 +134,7 @@ class FollowUpStep extends StatelessWidget {
   }
 
   List<Widget> _buildDurationItem(BuildContext context) {
-    String question = model.visitReviewViewModel.followUpStepState.followUp ==
-            FollowUpSteps.ViaMedicall
+    String question = model.followUp == FollowUpSteps.ViaMedicall
         ? "What should be the estimated duration for the follow-up Medicall visit?"
         : "What should be the estimated duration for the follow-up in-person visit?";
     return [
@@ -154,8 +153,7 @@ class FollowUpStep extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 24),
         child: TextFormField(
           textCapitalization: TextCapitalization.sentences,
-          initialValue: model.visitReviewViewModel.followUpStepState
-              .getInitialValueForFollowUp,
+          initialValue: model.getInitialValueForFollowUp,
           autocorrect: true,
           keyboardType: TextInputType.text,
           onChanged: (String text) =>

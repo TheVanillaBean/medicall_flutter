@@ -52,11 +52,7 @@ class _PatientNoteStepState extends State<PatientNoteStep> {
                         checked:
                             model.patientNoteStepState.introductionCheckbox ??
                                 false,
-                        onChanged: (newValue) => {
-                          model.updatePatientNoteStepWith(
-                            introductionCheckbox: newValue,
-                          ),
-                        },
+                        onChanged: (newValue) => {},
                       ),
                       ..._buildSection(
                         title: "Understanding the diagnosis:",
@@ -70,11 +66,7 @@ class _PatientNoteStepState extends State<PatientNoteStep> {
                         checked:
                             model.patientNoteStepState.understandingCheckbox ??
                                 false,
-                        onChanged: (newValue) => {
-                          model.updatePatientNoteStepWith(
-                            understandingCheckbox: newValue,
-                          ),
-                        },
+                        onChanged: (newValue) => {},
                       ),
                       ..._buildSection(
                         title: "Counseling:",
@@ -88,11 +80,7 @@ class _PatientNoteStepState extends State<PatientNoteStep> {
                         checked:
                             model.patientNoteStepState.counselingCheckbox ??
                                 false,
-                        onChanged: (newValue) => {
-                          model.updatePatientNoteStepWith(
-                            counselingCheckbox: newValue,
-                          ),
-                        },
+                        onChanged: (newValue) => {},
                       ),
                       ..._buildSection(
                         title: "Treatments:",
@@ -106,11 +94,7 @@ class _PatientNoteStepState extends State<PatientNoteStep> {
                         checked:
                             model.patientNoteStepState.treatmentsCheckbox ??
                                 false,
-                        onChanged: (newValue) => {
-                          model.updatePatientNoteStepWith(
-                            treatmentsCheckbox: newValue,
-                          ),
-                        },
+                        onChanged: (newValue) => {},
                       ),
                       ..._buildSection(
                         title: "Further Testing (optional):",
@@ -124,11 +108,7 @@ class _PatientNoteStepState extends State<PatientNoteStep> {
                         checked:
                             model.patientNoteStepState.furtherTestingCheckbox ??
                                 false,
-                        onChanged: (newValue) => {
-                          model.updatePatientNoteStepWith(
-                            furtherTestingCheckbox: newValue,
-                          ),
-                        },
+                        onChanged: (newValue) => {},
                       ),
                       ..._buildSection(
                         title: "Other:",
@@ -149,11 +129,7 @@ class _PatientNoteStepState extends State<PatientNoteStep> {
                         checked:
                             model.patientNoteStepState.conclusionCheckbox ??
                                 false,
-                        onChanged: (newValue) => {
-                          model.updatePatientNoteStepWith(
-                            conclusionCheckbox: newValue,
-                          ),
-                        },
+                        onChanged: (newValue) => {},
                       ),
                       SizedBox(height: 16),
                       Expanded(

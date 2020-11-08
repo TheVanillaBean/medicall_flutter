@@ -96,7 +96,6 @@ class EditNoteSection extends StatelessWidget {
                               color: Theme.of(context).colorScheme.primary),
                         ),
                         onPressed: () {
-                          model.savedSectionUpdate();
                           Navigator.of(context).pop();
                         },
                       ),
@@ -116,8 +115,7 @@ class EditNoteSection extends StatelessWidget {
     return [
       CheckboxGroup(
         labels: model.patientNoteStepState.templateSection.keys.toList(),
-        onChange: (isChecked, label, index) =>
-            model.updateEditSectionCheckboxesWith(label, isChecked),
+        onChange: (isChecked, label, index) => {},
         checked: model.patientNoteStepState.editedSection.keys.toList(),
       ),
       SizedBox(height: 48),
@@ -146,7 +144,7 @@ class EditNoteSection extends StatelessWidget {
         initialText: initialText,
         labelText: 'Edit Section Note',
         hint: '',
-        onChanged: (newText) => model.updateEditSectionWith(key, newText),
+        onChanged: (newText) => {},
       ),
       SizedBox(height: 12),
     ];

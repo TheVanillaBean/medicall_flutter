@@ -49,7 +49,19 @@ class ImmediateMedicalCare extends StatelessWidget {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        Navigator.of(context).pop(model.documentationText);
+        if (model.documentationUpdated) {
+          final didPressYes = await PlatformAlertDialog(
+            title: "Update Documentation?",
+            content:
+                "Would you like to save the changes you made to the documentation?",
+            defaultActionText: "Yes",
+            cancelActionText: "No, don't save",
+          ).show(context);
+          if (didPressYes) {
+            Navigator.of(context).pop(model.documentationText);
+            return false;
+          }
+        }
         return false;
       },
       child: Scaffold(
@@ -57,21 +69,7 @@ class ImmediateMedicalCare extends StatelessWidget {
           type: AppBarType.Back,
           title: "Immediate Medical Care",
           theme: Theme.of(context),
-          onPressed: () async {
-            if (model.documentationUpdated) {
-              final didPressYes = await PlatformAlertDialog(
-                title: "Update Documentation?",
-                content:
-                    "Would you like to save the changes you made to the documentation?",
-                defaultActionText: "Yes",
-                cancelActionText: "No, don't save",
-              ).show(context);
-              if (didPressYes) {
-                Navigator.of(context).pop(model.documentationText);
-              }
-            }
-            Navigator.of(context).pop();
-          },
+          onPressed: () => Navigator.of(context).maybePop(),
         ),
         body: SingleChildScrollView(
           child: GestureDetector(

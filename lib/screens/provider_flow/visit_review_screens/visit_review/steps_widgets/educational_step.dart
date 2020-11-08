@@ -2,26 +2,45 @@ import 'package:Medicall/common_widgets/grouped_buttons/checkbox_group.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/continue_button.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/empty_diagnosis_widget.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/swipe_gesture_recognizer.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_view_models/educational_step_state.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_review_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
+import 'package:provider/provider.dart';
 
 class EducationalContentStep extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final VisitReviewViewModel model =
+  final EducationalStepState model;
+
+  const EducationalContentStep({@required this.model});
+
+  static Widget create(BuildContext context) {
+    final VisitReviewViewModel visitReviewViewModel =
         PropertyChangeProvider.of<VisitReviewViewModel>(
       context,
-      properties: [VisitReviewVMProperties.educationalContent],
+      properties: [VisitReviewVMProperties.diagnosisStep],
     ).value;
+    return ChangeNotifierProvider<EducationalStepState>(
+      create: (context) => EducationalStepState(
+        visitReviewViewModel: visitReviewViewModel,
+      ),
+      child: Consumer<EducationalStepState>(
+        builder: (_, model, __) => EducationalContentStep(
+          model: model,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    if (model.diagnosisOptions != null)
+    if (model.visitReviewViewModel.diagnosisOptions != null)
       return KeyboardDismisser(
         gestures: [GestureType.onTap, GestureType.onVerticalDragDown],
         child: SwipeGestureRecognizer(
-          onSwipeLeft: () => model.incrementIndex(),
-          onSwipeRight: () => model.decrementIndex(),
+          onSwipeLeft: () => model.visitReviewViewModel.incrementIndex(),
+          onSwipeRight: () => model.visitReviewViewModel.decrementIndex(),
           child: CustomScrollView(
             slivers: <Widget>[
               SliverFillRemaining(
@@ -44,23 +63,22 @@ class EducationalContentStep extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 36),
                       child: CheckboxGroup(
                         activeColor: Theme.of(context).colorScheme.primary,
-                        labels: model.diagnosisOptions.educationalContent
+                        labels: model.visitReviewViewModel.diagnosisOptions
+                            .educationalContent
                             .map((e) => e.keys.first.toString())
                             .toList(),
                         onSelected: (List<String> checked) =>
                             model.updateEducationalInformation(
                                 selectedEducationalOptions: checked),
-                        checked: model
-                            .educationalStepState.selectedEducationalOptions,
+                        checked: model.selectedEducationalOptions,
                       ),
                     ),
-                    if (model.educationalStepState.otherSelected)
+                    if (model.otherSelected)
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 24),
                         child: TextFormField(
                           textCapitalization: TextCapitalization.sentences,
-                          initialValue:
-                              model.educationalStepState.otherEducationalOption,
+                          initialValue: model.otherEducationalOption,
                           autocorrect: true,
                           keyboardType: TextInputType.text,
                           onChanged: (String text) =>
@@ -86,7 +104,17 @@ class EducationalContentStep extends StatelessWidget {
                       ),
                     Expanded(
                       child: ContinueButton(
+                        title: "Save and Continue",
                         width: width,
+                        onTap: this.model.minimumRequiredFieldsFilledOut
+                            ? () async {
+                                model.visitReviewViewModel.incrementIndex();
+                                print("");
+                                // model.visitReviewViewModel.updateContinueBtnPressed(true);
+                                // model.visitReviewViewModel.incrementIndex();
+                                // await model.visitReviewViewModel.saveVisitReviewToFirestore();
+                              }
+                            : null,
                       ),
                     ),
                   ],
@@ -96,6 +124,6 @@ class EducationalContentStep extends StatelessWidget {
           ),
         ),
       );
-    return EmptyDiagnosis(model: model);
+    return EmptyDiagnosis(model: model.visitReviewViewModel);
   }
 }

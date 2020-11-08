@@ -46,20 +46,24 @@ class PrescriptionDetailsViewModel with ChangeNotifier, PrescriptionValidator {
     @required this.userProvider,
     @required this.auth,
     @required this.treatmentOptions,
-  });
+  }) {
+    this.medicationName = this.treatmentOptions.medicationName;
+    this.quantity = this.treatmentOptions.quantity;
+    this.refills = this.treatmentOptions.refills;
+    this.form = this.treatmentOptions.form;
+    this.dose = this.treatmentOptions.dose;
+    this.frequency = this.treatmentOptions.frequency;
+    this.instructions = this.treatmentOptions.instructions;
+  }
 
   bool get allFieldsValidated {
-    if (this.treatmentOptions.quantity.length == 0 &&
-        this.treatmentOptions.dose.length == 0) {
-      return true;
-    }
-    return inputValidator.isValid(this.treatmentOptions.medicationName) &&
-        inputValidator.isValid(this.treatmentOptions.quantity) &&
-        inputValidator.isValid(this.treatmentOptions.refills) &&
-        inputValidator.isValid(this.treatmentOptions.form) &&
-        inputValidator.isValid(this.treatmentOptions.dose) &&
-        inputValidator.isValid(this.treatmentOptions.frequency) &&
-        inputValidator.isValid(this.treatmentOptions.instructions);
+    return inputValidator.isValid(this.medicationName) &&
+        inputValidator.isValid(this.quantity) &&
+        inputValidator.isValid(this.refills) &&
+        inputValidator.isValid(this.form) &&
+        inputValidator.isValid(this.dose) &&
+        inputValidator.isValid(this.frequency) &&
+        inputValidator.isValid(this.instructions);
   }
 
   //if current treatment is a custom selected treatment
@@ -76,16 +80,13 @@ class PrescriptionDetailsViewModel with ChangeNotifier, PrescriptionValidator {
     String frequency,
     String instructions,
   }) {
-    this.treatmentOptions.medicationName =
-        medicationName ?? this.treatmentOptions.medicationName;
-    this.treatmentOptions.quantity = quantity ?? this.treatmentOptions.quantity;
-    this.treatmentOptions.refills = refills ?? this.treatmentOptions.refills;
-    this.treatmentOptions.form = form ?? this.treatmentOptions.form;
-    this.treatmentOptions.dose = dose ?? this.treatmentOptions.dose;
-    this.treatmentOptions.frequency =
-        frequency ?? this.treatmentOptions.frequency;
-    this.treatmentOptions.instructions =
-        instructions ?? this.treatmentOptions.instructions;
+    this.medicationName = medicationName ?? this.medicationName;
+    this.quantity = quantity ?? this.quantity;
+    this.refills = refills ?? this.refills;
+    this.form = form ?? this.form;
+    this.dose = dose ?? this.dose;
+    this.frequency = frequency ?? this.frequency;
+    this.instructions = instructions ?? this.instructions;
     treatmentUpdated = true;
     notifyListeners();
   }

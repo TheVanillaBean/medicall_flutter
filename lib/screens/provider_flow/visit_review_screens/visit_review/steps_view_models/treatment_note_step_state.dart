@@ -29,6 +29,15 @@ class TreatmentNoteStepState with ChangeNotifier {
     return this.selectedTreatmentOptions.map((e) => e.medicationName).toList();
   }
 
+  TreatmentOptions selectedTreatment(int index) {
+    TreatmentOptions treatmentOptions =
+        this.visitReviewViewModel.diagnosisOptions.treatments[index];
+    return selectedTreatmentOptions
+        .where((element) =>
+            element.medicationName == treatmentOptions.medicationName)
+        .single;
+  }
+
   bool isSelectedPrescription(int index, String medicationName) {
     //check if selected treatments contain this treatment
     int selectedIndex = this
@@ -47,6 +56,7 @@ class TreatmentNoteStepState with ChangeNotifier {
         (element) => element.medicationName == treatmentOptions.medicationName);
     if (index > -1) {
       this.selectedTreatmentOptions[index] = treatmentOptions;
+      notifyListeners();
     }
   }
 

@@ -1,3 +1,4 @@
+import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
 import 'package:Medicall/models/consult-review/consult_review_options_model.dart';
 import 'package:Medicall/models/consult-review/visit_review_model.dart';
@@ -7,7 +8,6 @@ import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_widgets/educational_step.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_widgets/exam_step.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_widgets/follow_up_step.dart';
-import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_widgets/patient_note_step.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_widgets/treatment_step.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_review_view_model.dart';
 import 'package:Medicall/screens/shared/visit_information/consult_photos.dart';
@@ -73,73 +73,72 @@ class _VisitReviewState extends State<VisitReview> with VisitReviewStatus {
     super.initState();
   }
 
+  Future<bool> _onWillPop() async {
+    final didPressYes = await PlatformAlertDialog(
+      title: "Cancel Review?",
+      content: "Are you sure you want to cancel?",
+      defaultActionText: "Yes, cancel",
+      cancelActionText: "No",
+    ).show(context);
+    if (didPressYes) {
+      Navigator.of(context).pop();
+      return false;
+    } else {
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     widget.model.setVisitReviewStatus(this);
 
-    return Scaffold(
-      appBar: AppBar(
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              onPressed: () async {
-                final didPressYes = await PlatformAlertDialog(
-                  title: "Cancel Review?",
-                  content: "Are you sure you want to cancel?",
-                  defaultActionText: "Yes, cancel",
-                  cancelActionText: "No",
-                ).show(context);
-                if (didPressYes) {
-                  Navigator.pop(context);
-                }
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        appBar: CustomAppBar.getAppBar(
+          type: AppBarType.Back,
+          title: widget.model.getCustomStepText(widget.model.currentStep),
+          theme: Theme.of(context),
+          onPressed: () => Navigator.maybePop(context),
+          actions: [
+            IconButton(
+              icon: Icon(
+                Icons.photo_library,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              onPressed: () {
+                ConsultPhotos.show(
+                  context: context,
+                  consult: widget.model.consult,
+                );
               },
-              icon: Icon(Icons.arrow_back),
-            );
-          },
+            )
+          ],
         ),
-        centerTitle: true,
-        title: Text(
-          widget.model.getCustomStepText(widget.model.currentStep),
+        body: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              child: widget.model.screenProgress,
+            ),
+            Divider(
+              height: 2,
+            ),
+            Expanded(
+              child: IndexedStack(
+                index: widget.model.currentStep,
+                children: <Widget>[
+                  DiagnosisStep.create(context),
+                  ExamStep.create(context),
+                  TreatmentStep.create(context),
+                  FollowUpStep.create(context),
+                  EducationalContentStep.create(context),
+                ],
+              ),
+            ),
+          ],
         ),
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.photo_library,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            onPressed: () {
-              ConsultPhotos.show(
-                context: context,
-                consult: widget.model.consult,
-              );
-            },
-          )
-        ],
-      ),
-      body: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0),
-            child: widget.model.screenProgress,
-          ),
-          Divider(
-            height: 2,
-          ),
-          Expanded(
-            child: IndexedStack(
-              index: widget.model.currentStep,
-              children: <Widget>[
-                DiagnosisStep.create(context),
-                ExamStep.create(context),
-                TreatmentStep.create(context),
-                FollowUpStep.create(context),
-                EducationalContentStep(),
-                PatientNoteStep(),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }

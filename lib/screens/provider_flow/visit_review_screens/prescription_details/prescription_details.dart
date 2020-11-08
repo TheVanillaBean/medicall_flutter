@@ -40,7 +40,20 @@ class PrescriptionDetails extends StatelessWidget {
               Navigator.of(context).pop(null);
               return false;
             } else {
-              Navigator.of(context).pop(model.treatmentOptions);
+              TreatmentOptions treatmentOptions = TreatmentOptions(
+                medicationName: model.medicationName,
+                dose: model.dose,
+                form: model.form,
+                frequency: model.frequency,
+                instructions: model.instructions,
+                quantity: model.quantity,
+                refills: model.refills,
+                date: model.treatmentOptions.date,
+                status: model.treatmentOptions.status,
+                price: model.treatmentOptions.price,
+                notAPrescription: model.treatmentOptions.price == -1,
+              );
+              Navigator.of(context).pop(treatmentOptions);
               return false;
             }
           } else {
@@ -54,6 +67,7 @@ class PrescriptionDetails extends StatelessWidget {
           type: AppBarType.Back,
           title: "Prescription Details",
           theme: Theme.of(context),
+          onPressed: () => Navigator.maybePop(context),
         ),
         body: KeyboardDismisser(
           child: SingleChildScrollView(
@@ -71,8 +85,7 @@ class PrescriptionDetails extends StatelessWidget {
                       PrescriptionDetailsTextField(
                         focusNode: model.medicationNameFocusNode,
                         labelText: 'Medication Name',
-                        initialValue:
-                            this.model.treatmentOptions.medicationName,
+                        initialValue: this.model.medicationName,
                         onChanged: model.updateMedicationName,
                         enabled: this.model.isCurrentTreatmentOther,
                       ),
@@ -83,8 +96,7 @@ class PrescriptionDetails extends StatelessWidget {
                               child: PrescriptionDetailsTextField(
                                 focusNode: model.quantityFocusNode,
                                 labelText: 'Quantity',
-                                initialValue:
-                                    this.model.treatmentOptions.quantity,
+                                initialValue: this.model.quantity,
                                 onChanged: model.updateQuantity,
                               ),
                             ),
@@ -94,8 +106,7 @@ class PrescriptionDetails extends StatelessWidget {
                               child: PrescriptionDetailsTextField(
                                 focusNode: model.refillsFocusNode,
                                 labelText: 'Refills',
-                                initialValue:
-                                    this.model.treatmentOptions.refills,
+                                initialValue: this.model.refills,
                                 onChanged: model.updateRefills,
                               ),
                             ),
@@ -105,7 +116,7 @@ class PrescriptionDetails extends StatelessWidget {
                       PrescriptionDetailsTextField(
                         focusNode: model.formFocusNode,
                         labelText: 'Form',
-                        initialValue: this.model.treatmentOptions.form,
+                        initialValue: this.model.form,
                         onChanged: model.updateForm,
                       ),
                       Row(
@@ -115,7 +126,7 @@ class PrescriptionDetails extends StatelessWidget {
                               child: PrescriptionDetailsTextField(
                                 focusNode: model.doseFocusNode,
                                 labelText: 'Dose',
-                                initialValue: this.model.treatmentOptions.dose,
+                                initialValue: this.model.dose,
                                 onChanged: model.updateDose,
                               ),
                             ),
@@ -125,8 +136,7 @@ class PrescriptionDetails extends StatelessWidget {
                               child: PrescriptionDetailsTextField(
                                 focusNode: model.frequencyFocusNode,
                                 labelText: 'Frequency',
-                                initialValue:
-                                    this.model.treatmentOptions.frequency,
+                                initialValue: this.model.frequency,
                                 onChanged: model.updateFrequency,
                               ),
                             ),
@@ -138,7 +148,7 @@ class PrescriptionDetails extends StatelessWidget {
                         focusNode: model.instructionsFocusNode,
                         maxLines: null,
                         labelText: 'Instructions',
-                        initialValue: this.model.treatmentOptions.instructions,
+                        initialValue: this.model.instructions,
                         onChanged: model.updateInstructions,
                       ),
                       SizedBox(
@@ -151,7 +161,22 @@ class PrescriptionDetails extends StatelessWidget {
                             AppUtil().showFlushBar(
                                 "Please fill out all fields", context);
                           } else {
-                            Navigator.of(context).pop(model.treatmentOptions);
+                            TreatmentOptions treatmentOptions =
+                                TreatmentOptions(
+                              medicationName: model.medicationName,
+                              dose: model.dose,
+                              form: model.form,
+                              frequency: model.frequency,
+                              instructions: model.instructions,
+                              quantity: model.quantity,
+                              refills: model.refills,
+                              date: model.treatmentOptions.date,
+                              status: model.treatmentOptions.status,
+                              price: model.treatmentOptions.price,
+                              notAPrescription:
+                                  model.treatmentOptions.price == -1,
+                            );
+                            Navigator.of(context).pop(treatmentOptions);
                           }
                         },
                       ),
