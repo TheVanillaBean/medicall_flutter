@@ -1,15 +1,15 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/routing/router.dart';
-import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/video_note/patient_video_note_view_model.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/video_note/video_notes_to_patient_view_model.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../visit_review_view_model.dart';
 
-class PatientVideoNote extends StatefulWidget {
-  final PatientVideoNoteViewModel model;
-  const PatientVideoNote({@required this.model});
+class VideoNotesToPatient extends StatefulWidget {
+  final VideoNotesToPatientViewModel model;
+  const VideoNotesToPatient({@required this.model});
 
   static Widget create(
     BuildContext context,
@@ -17,19 +17,19 @@ class PatientVideoNote extends StatefulWidget {
   ) {
     final FirestoreDatabase database = Provider.of<FirestoreDatabase>(context);
     final UserProvider provider = Provider.of<UserProvider>(context);
-    return ChangeNotifierProvider<PatientVideoNoteViewModel>(
-      create: (context) => PatientVideoNoteViewModel(
+    return ChangeNotifierProvider<VideoNotesToPatientViewModel>(
+      create: (context) => VideoNotesToPatientViewModel(
         database: database,
         userProvider: provider,
       ),
-      child: Consumer<PatientVideoNoteViewModel>(
-        builder: (_, model, __) => PatientVideoNote(model: model),
+      child: Consumer<VideoNotesToPatientViewModel>(
+        builder: (_, model, __) => VideoNotesToPatient(model: model),
       ),
     );
   }
 
   @override
-  _PatientVideoNoteState createState() => _PatientVideoNoteState();
+  _VideoNotesToPatientState createState() => _VideoNotesToPatientState();
 
   static Future<void> show({
     BuildContext context,
@@ -44,7 +44,7 @@ class PatientVideoNote extends StatefulWidget {
   }
 }
 
-class _PatientVideoNoteState extends State<PatientVideoNote> {
+class _VideoNotesToPatientState extends State<VideoNotesToPatient> {
   bool _isRecording = false;
   @override
   Widget build(BuildContext context) {

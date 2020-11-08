@@ -9,7 +9,7 @@ import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Shared/visit_information/review_visit_information.dart';
 import 'package:Medicall/screens/provider_flow/dashboard/provider_dashboard_list_item.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reclassify_visit.dart';
-import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/video_note/patient_video_note.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/video_note/video_notes_to_patient.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/view_patient_id.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/view_patient_info.dart';
 import 'package:Medicall/screens/shared/chat/chat_screen.dart';
@@ -112,7 +112,7 @@ class VisitOverview extends StatelessWidget {
       _buildProviderCardButton(
         context,
         "SEND A VIDEO NOTE (OPTIONAL)",
-        () => PatientVideoNote.show(
+        () => VideoNotesToPatient.show(
           context: context,
           //consult: consult,
         ),

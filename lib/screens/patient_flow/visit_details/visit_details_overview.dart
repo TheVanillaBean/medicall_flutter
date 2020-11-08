@@ -5,6 +5,7 @@ import 'package:Medicall/presentation/medicall_icons_icons.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Shared/visit_information/review_visit_information.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
+import 'package:Medicall/screens/patient_flow/video_notes_from_provider/video_notes_from_provider.dart';
 import 'package:Medicall/screens/patient_flow/visit_details/visit_doc_note.dart';
 import 'package:Medicall/screens/patient_flow/visit_details/visit_education.dart';
 import 'package:Medicall/screens/patient_flow/visit_details/visit_treatment_recommendations.dart';
@@ -123,9 +124,13 @@ class VisitDetailsOverview extends StatelessWidget {
           ),
           _buildCardButton(
             context,
-            "Provider Video Note",
-            Icons.message,
-            null,
+            "Provider Video Notes",
+            Icons.personal_video_rounded,
+            () => {
+              VideoNotesFromProvider.show(
+                context: context,
+              ),
+            },
             0,
           ),
           _buildCardButton(

@@ -3,12 +3,12 @@ import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 
-class PatientVideoNoteViewModel with ChangeNotifier {
+class VideoNotesToPatientViewModel with ChangeNotifier {
   AssetEntity assetEntity;
   final FirestoreDatabase database;
   final UserProvider userProvider;
 
-  PatientVideoNoteViewModel(
+  VideoNotesToPatientViewModel(
       {this.database, this.userProvider, this.assetEntity});
 
   void updateWith({
