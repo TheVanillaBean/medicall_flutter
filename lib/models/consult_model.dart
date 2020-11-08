@@ -122,7 +122,7 @@ class Consult {
       'symptom': symptom,
       'price': price,
       'date': date,
-      'state': EnumToString.parse(state),
+      'state': EnumToString.convertToString(state),
       'provider_reclassified': providerReclassified,
       'patient_message_notifications': patientMessageNotifications,
       'patient_review_notifications': patientReviewNotifications,

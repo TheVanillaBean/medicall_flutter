@@ -59,7 +59,7 @@ class NonAuthFirestoreDB implements NonAuthDatabase {
         path: FirestorePath.users(),
         queryBuilder: (query) => query.where(
           'type',
-          isEqualTo: EnumToString.parse(USER_TYPE.PROVIDER),
+          isEqualTo: EnumToString.convertToString(USER_TYPE.PROVIDER),
         ),
         builder: (data, documentId) => data["mailing_state"].toString(),
       )
@@ -72,7 +72,7 @@ class NonAuthFirestoreDB implements NonAuthDatabase {
         queryBuilder: (query) => query
             .where(
               'type',
-              isEqualTo: EnumToString.parse(USER_TYPE.PROVIDER),
+              isEqualTo: EnumToString.convertToString(USER_TYPE.PROVIDER),
             )
             .where("stripe_connect_authorized", isEqualTo: true)
             .where("mailing_state", isEqualTo: state),

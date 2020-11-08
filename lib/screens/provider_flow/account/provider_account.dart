@@ -231,9 +231,7 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
   Widget _buildPracticeNameCard(MedicallUser medicallUser) {
     return ReusableAccountCard(
       leading: 'Practice \nName:',
-      title: (medicallUser as ProviderUser).practiceName != null
-          ? '${(medicallUser as ProviderUser).practiceName}'
-          : '',
+      title: '${(medicallUser as ProviderUser).practiceName}' ?? '',
       trailing: IconButton(
         icon: Icon(Icons.create, size: 20),
         onPressed: () {

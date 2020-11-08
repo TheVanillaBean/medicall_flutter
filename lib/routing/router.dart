@@ -28,6 +28,7 @@ import 'package:Medicall/screens/patient_flow/symptoms_list/cosmetic_symptoms.da
 import 'package:Medicall/screens/patient_flow/symptoms_list/symptom_detail.dart';
 import 'package:Medicall/screens/patient_flow/symptoms_list/symptoms.dart';
 import 'package:Medicall/screens/patient_flow/update_medical_history/view_medical_history.dart';
+import 'package:Medicall/screens/patient_flow/video_notes_from_provider/video_notes_from_provider.dart';
 import 'package:Medicall/screens/patient_flow/visit_confirmed/confirm_consult.dart';
 import 'package:Medicall/screens/patient_flow/visit_details/card_select.dart';
 import 'package:Medicall/screens/patient_flow/visit_details/prescription_checkout.dart';
@@ -52,6 +53,7 @@ import 'package:Medicall/screens/provider_flow/visit_review_screens/immediate_ca
 import 'package:Medicall/screens/provider_flow/visit_review_screens/prescription_details/prescription_details.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/edit_note_section.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reclassify_visit.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/video_note/video_notes_to_patient.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/view_patient_id.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/view_patient_info.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_overview.dart';
@@ -105,6 +107,7 @@ class Routes {
   static const stripeConnect = '/stripe-connect';
   static const consultDetail = '/consult-detail';
   static const previousConsults = '/previous-consults';
+  static const videoNotesFromProvider = '/video-notes-from-provider';
   static const prescriptionDetails = '/prescription-details';
   static const patientPrescriptions = '/patient-prescriptions';
   static const visitOverview = '/visit-overview';
@@ -116,6 +119,7 @@ class Routes {
   static const reviewMedicalHistory = '/review-medical-history';
   static const visitConsultPhotos = '/visit-consult-photos';
   static const visitDocNote = '/visit-doc-note';
+  static const patientVideoNote = '/patient-video-note';
   static const visitEducation = '/visit-education';
   static const visitPrescriptions = '/visit-prescriptions';
   static const visitNonPrescriptions = '/visit-non-prescriptions';
@@ -277,6 +281,12 @@ class Router {
       case Routes.previousConsults:
         return MaterialPageRoute<dynamic>(
           builder: (context) => PreviousVisits.create(context),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case Routes.videoNotesFromProvider:
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => VideoNotesFromProvider.create(context),
           settings: settings,
           fullscreenDialog: true,
         );
@@ -587,6 +597,7 @@ class Router {
           settings: settings,
           fullscreenDialog: true,
         );
+
       case Routes.reclassifyVisit:
         final Map<String, dynamic> mapArgs = args;
         final Consult consult = mapArgs['consult'];
@@ -642,12 +653,27 @@ class Router {
           settings: settings,
           fullscreenDialog: true,
         );
+
+      case Routes.patientVideoNote:
+        final Map<String, dynamic> mapArgs = args;
+        final VisitReviewViewModel visitReviewViewModel =
+            mapArgs['visitReviewViewModel'];
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => VideoNotesToPatient.create(
+            context,
+            visitReviewViewModel,
+          ),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+
       case Routes.completeVisit:
         return MaterialPageRoute<dynamic>(
           builder: (context) => CompleteVisit.create(context),
           settings: settings,
           fullscreenDialog: true,
         );
+
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

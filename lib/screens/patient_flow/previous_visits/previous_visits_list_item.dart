@@ -88,11 +88,13 @@ class PreviousVisitsListItem extends StatelessWidget {
 
   String getStatus() {
     if (consult.state == ConsultStatus.Completed) {
-      return EnumToString.parseCamelCase(ConsultStatus.InReview) ?? "";
+      return EnumToString.convertToString(ConsultStatus.InReview,
+              camelCase: true) ??
+          "";
     } else if (consult.state == ConsultStatus.Signed) {
       return "Reviewed";
     } else {
-      return EnumToString.parseCamelCase(consult.state) ?? "";
+      return EnumToString.convertToString(consult.state, camelCase: true) ?? "";
     }
   }
 

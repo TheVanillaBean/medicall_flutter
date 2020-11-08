@@ -70,7 +70,7 @@ abstract class MedicallUser {
   Map<String, dynamic> baseToMap() {
     return <String, dynamic>{
       'uid': uid,
-      'type': EnumToString.parse(type),
+      'type': EnumToString.convertToString(type),
       'first_name': firstName,
       'last_name': lastName,
       'email': email,
