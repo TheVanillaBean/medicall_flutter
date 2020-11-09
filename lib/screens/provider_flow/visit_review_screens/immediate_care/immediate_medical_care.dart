@@ -62,7 +62,7 @@ class ImmediateMedicalCare extends StatelessWidget {
             return false;
           }
         }
-        return false;
+        return true;
       },
       child: Scaffold(
         appBar: CustomAppBar.getAppBar(

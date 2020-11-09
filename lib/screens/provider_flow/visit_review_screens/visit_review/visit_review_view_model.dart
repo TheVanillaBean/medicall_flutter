@@ -2,12 +2,17 @@ import 'package:Medicall/models/consult-review/consult_review_options_model.dart
 import 'package:Medicall/models/consult-review/diagnosis_options_model.dart';
 import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:Medicall/models/consult_model.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/progress_timeline.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_view_models/diagnosis_step_state.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_view_models/educational_step_state.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_view_models/exam_step_state.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_view_models/follow_up_step_state.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_view_models/patient_note_step_state.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_view_models/treatment_note_step_state.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:progress_timeline/progress_timeline.dart';
 
 // Properties
 abstract class VisitReviewSteps {
@@ -32,13 +37,6 @@ class VisitReviewViewModel extends ChangeNotifier {
 
   List<int> completedSteps = [];
 
-  bool continueBtnPressed = false;
-
-  ScrollController scrollController = new ScrollController(
-    initialScrollOffset: 0.0,
-    keepScrollOffset: true,
-  );
-
   PatientNoteStepState patientNoteStepState = PatientNoteStepState();
 
   ProgressTimeline screenProgress;
@@ -51,12 +49,25 @@ class VisitReviewViewModel extends ChangeNotifier {
     SingleState(stateTitle: "Educational"),
   ];
 
+  VisitReviewViewModel({
+    @required this.firestoreDatabase,
+    @required this.consult,
+    @required this.consultReviewOptions,
+    @required this.visitReviewData,
+  });
+
+  void setVisitReviewStatus(VisitReviewStatus visitReviewStatus) {
+    this.visitReviewStatus = visitReviewStatus;
+  }
+
   void setProgressTimeline() {
     screenProgress = new ProgressTimeline(
+      height: 75,
       states: allStages,
       connectorColor: Color(0xff90024C), //no access to context, so manual
       iconSize: 35,
       connectorWidth: 2.0,
+      onTap: (index) => this.updateIndex(index),
       checkedIcon: Icon(
         Icons.check_circle,
         color: Color(0xff90024C),
@@ -80,17 +91,6 @@ class VisitReviewViewModel extends ChangeNotifier {
     );
   }
 
-  VisitReviewViewModel({
-    @required this.firestoreDatabase,
-    @required this.consult,
-    @required this.consultReviewOptions,
-    @required this.visitReviewData,
-  });
-
-  void setVisitReviewStatus(VisitReviewStatus visitReviewStatus) {
-    this.visitReviewStatus = visitReviewStatus;
-  }
-
   String getCustomStepText(int index) {
     if (index == VisitReviewSteps.DiagnosisStep) {
       return "Diagnosis";
@@ -107,101 +107,115 @@ class VisitReviewViewModel extends ChangeNotifier {
     }
   }
 
-  // bool get canContinue {
-  //   if (currentStep == VisitReviewSteps.DiagnosisStep) {
-  //     return this.diagnosisStepState.minimumRequiredFieldsFilledOut;
-  //   } else if (currentStep == VisitReviewSteps.ExamStep) {
-  //     return this.examStepState.minimumRequiredFieldsFilledOut;
-  //   } else if (currentStep == VisitReviewSteps.TreatmentStep) {
-  //     return this.treatmentNoteStepState.minimumRequiredFieldsFilledOut;
-  //   } else if (currentStep == VisitReviewSteps.FollowUpStep) {
-  //     return this.followUpStepState.minimumRequiredFieldsFilledOut;
-  //   } else if (currentStep == VisitReviewSteps.EducationalContentStep) {
-  //     return this.educationalStepState.minimumRequiredFieldsFilledOut;
-  //   } else {
-  //     return false;
-  //   }
-  // }
-  //
-  // void updateCompletedStepsList() {
-  //   List<int> completedSteps = [];
-  //   if (continueBtnPressed) {
-  //     if (this.diagnosisStepState.minimumRequiredFieldsFilledOut) {
-  //       completedSteps.add(VisitReviewSteps.DiagnosisStep);
-  //     }
-  //     if (this.examStepState.minimumRequiredFieldsFilledOut) {
-  //       completedSteps.add(VisitReviewSteps.ExamStep);
-  //     }
-  //     if (this.treatmentNoteStepState.minimumRequiredFieldsFilledOut) {
-  //       completedSteps.add(VisitReviewSteps.TreatmentStep);
-  //     }
-  //     if (this.followUpStepState.minimumRequiredFieldsFilledOut) {
-  //       completedSteps.add(VisitReviewSteps.FollowUpStep);
-  //     }
-  //     if (this.educationalStepState.minimumRequiredFieldsFilledOut) {
-  //       completedSteps.add(VisitReviewSteps.EducationalContentStep);
-  //     }
-  //     this.completedSteps = completedSteps;
-  //   }
-  // }
-  //
-  // void checkIfWorkSaved() {
-  //   if (canContinue &&
-  //       !continueBtnPressed &&
-  //       !this.completedSteps.contains(this.currentStep)) {
-  //     this
-  //         .visitReviewStatus
-  //         .updateStatus("Press continue to save your work for this step.");
-  //   }
-  // }
-  //
-  // Future<void> saveVisitReviewToFirestore() async {
-  //   this.visitReviewData.diagnosis = this.diagnosisStepState.diagnosis;
-  //   this.visitReviewData.includeDDX = this.diagnosisStepState.includeDDX;
-  //   this.visitReviewData.ddxOptions =
-  //       this.diagnosisStepState.selectedDDXOptions;
-  //   this.visitReviewData.ddxOtherOption =
-  //       this.diagnosisStepState.ddxOtherOption;
-  //   this.visitReviewData.otherDiagnosis =
-  //       this.diagnosisStepState.otherDiagnosis;
-  //   this.visitReviewData.examLocations =
-  //       this.examStepState.examLocationsForSerialization;
-  //   this.visitReviewData.treatmentOptions =
-  //       this.treatmentNoteStepState.selectedTreatmentOptions;
-  //   this.visitReviewData.educationalOptions =
-  //       this.educationalStepState.selectedEducationalOptions.map((option) {
-  //     var link = "";
-  //     if (option == "Other") {
-  //       link = this.educationalStepState.otherEducationalOption;
-  //     } else {
-  //       link = this
-  //           .diagnosisOptions
-  //           .educationalContent
-  //           .where((e) => e.containsKey(option))
-  //           .toList()
-  //           .first
-  //           .values
-  //           .first;
-  //     }
-  //
-  //     return {option: link};
-  //   }).toList();
-  //
-  //   this.visitReviewData.followUp = this.followUpStepState.followUpMap;
-  //
-  //   this.visitReviewData.patientNote =
-  //       this.patientNoteStepState.patientTemplateNote;
-  //
-  //   await firestoreDatabase.saveVisitReview(
-  //       consultId: this.consult.uid, visitReviewData: this.visitReviewData);
-  //
-  //   if (this.completedSteps.length == 6) {
-  //     this.consult.state = ConsultStatus.Completed;
-  //     await firestoreDatabase.saveConsult(
-  //         consultId: consult.uid, consult: consult);
-  //     this.visitReviewStatus.updateStatus("All steps completed!");
-  //   }
-  // }
+  void addCompletedStep(int step) {
+    if (!this.completedSteps.contains(step)) {
+      this.completedSteps.add(step);
+      this.screenProgress.completeStep(allStages[step]);
+    }
+  }
+
+  Future<void> saveDiagnosisToFirestore(DiagnosisStepState model) async {
+    this.visitReviewData.diagnosis = model.diagnosis;
+    this.visitReviewData.includeDDX = model.includeDDX;
+    this.visitReviewData.ddxOptions = model.selectedDDXOptions;
+    this.visitReviewData.ddxOtherOption = model.ddxOtherOption;
+    this.visitReviewData.otherDiagnosis = model.otherDiagnosis;
+
+    await firestoreDatabase.saveVisitReview(
+      consultId: this.consult.uid,
+      visitReviewData: this.visitReviewData,
+      step: VisitReviewSteps.DiagnosisStep,
+    );
+
+    addCompletedStep(VisitReviewSteps.DiagnosisStep);
+    checkIfCompleted();
+  }
+
+  Future<void> saveExamToFirestore(ExamStepState model) async {
+    this.visitReviewData.examLocations = model.examLocationsForSerialization;
+
+    await firestoreDatabase.saveVisitReview(
+      consultId: this.consult.uid,
+      visitReviewData: this.visitReviewData,
+      step: VisitReviewSteps.ExamStep,
+    );
+
+    addCompletedStep(VisitReviewSteps.ExamStep);
+    checkIfCompleted();
+  }
+
+  Future<void> saveTreatmentToFirestore(TreatmentNoteStepState model) async {
+    this.visitReviewData.treatmentOptions = model.selectedTreatmentOptions;
+
+    await firestoreDatabase.saveVisitReview(
+      consultId: this.consult.uid,
+      visitReviewData: this.visitReviewData,
+      step: VisitReviewSteps.TreatmentStep,
+    );
+
+    addCompletedStep(VisitReviewSteps.TreatmentStep);
+    checkIfCompleted();
+  }
+
+  Future<void> saveFollowUpToFirestore(FollowUpStepState model) async {
+    this.visitReviewData.followUp = model.followUpMap;
+
+    await firestoreDatabase.saveVisitReview(
+      consultId: this.consult.uid,
+      visitReviewData: this.visitReviewData,
+      step: VisitReviewSteps.FollowUpStep,
+    );
+
+    addCompletedStep(VisitReviewSteps.FollowUpStep);
+    checkIfCompleted();
+  }
+
+  Future<void> saveEducationalToFirestore(EducationalStepState model) async {
+    this.visitReviewData.educationalOptions =
+        model.selectedEducationalOptions.map((option) {
+      var link = "";
+      if (option == "Other") {
+        link = model.otherEducationalOption;
+      } else {
+        link = this
+            .diagnosisOptions
+            .educationalContent
+            .where((e) => e.containsKey(option))
+            .toList()
+            .first
+            .values
+            .first;
+      }
+
+      return {option: link};
+    }).toList();
+
+    await firestoreDatabase.saveVisitReview(
+      consultId: this.consult.uid,
+      visitReviewData: this.visitReviewData,
+      step: VisitReviewSteps.EducationalContentStep,
+    );
+
+    addCompletedStep(VisitReviewSteps.EducationalContentStep);
+    checkIfCompleted();
+  }
+
+  Future<void> savePatientNoteToFirestore(PatientNoteStepState model) async {
+    await firestoreDatabase.saveVisitReview(
+        consultId: this.consult.uid, visitReviewData: this.visitReviewData);
+
+    await firestoreDatabase.saveVisitReview(
+        consultId: this.consult.uid, visitReviewData: this.visitReviewData);
+
+    checkIfCompleted();
+  }
+
+  void checkIfCompleted() {
+    if (this.completedSteps.length == 6) {
+      this.consult.state = ConsultStatus.Completed;
+      this.visitReviewStatus.updateStatus("All steps completed!");
+    }
+  }
 
   void incrementIndex() {
     this.currentStep = this.currentStep == VisitReviewSteps.TotalSteps - 1

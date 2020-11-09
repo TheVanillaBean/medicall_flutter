@@ -17,8 +17,6 @@ class VisitReviewData {
 
   Map<String, String> followUp;
 
-  PatientTemplateNote patientNote;
-
   VisitReviewData({
     this.diagnosis = "",
     this.otherDiagnosis = "",
@@ -29,7 +27,6 @@ class VisitReviewData {
     this.treatmentOptions = const [],
     this.educationalOptions = const [],
     this.followUp = const {"": ""},
-    this.patientNote,
   });
 
   factory VisitReviewData.fromMap(
@@ -84,8 +81,46 @@ class VisitReviewData {
       treatmentOptions: treatmentOptions,
       educationalOptions: selectedEducationalOptions,
       followUp: followUp,
-      patientNote: patientNote,
     );
+  }
+
+  Map<String, dynamic> toDiagnosisMap() {
+    dynamic e = <String, dynamic>{
+      'diagnosis': diagnosis,
+      'other_diagnosis': otherDiagnosis,
+      'include_DDX': includeDDX,
+      'ddx_options': ddxOptions,
+      'ddx_other_option': ddxOtherOption,
+    };
+    return e;
+  }
+
+  Map<String, dynamic> toExamMap() {
+    dynamic e = <String, dynamic>{
+      'exam_locations': examLocations.toList(),
+    };
+    return e;
+  }
+
+  Map<String, dynamic> toTreatmentMap() {
+    dynamic e = <String, dynamic>{
+      'treatment_options': treatmentOptions.map((e) => e.toMap()).toList(),
+    };
+    return e;
+  }
+
+  Map<String, dynamic> toEducationMap() {
+    dynamic e = <String, dynamic>{
+      'selected_educational_options': educationalOptions,
+    };
+    return e;
+  }
+
+  Map<String, dynamic> toFollowMap() {
+    dynamic e = <String, dynamic>{
+      'follow_up': followUp,
+    };
+    return e;
   }
 
   Map<String, dynamic> toMap() {
@@ -99,7 +134,6 @@ class VisitReviewData {
       'treatment_options': treatmentOptions.map((e) => e.toMap()).toList(),
       'selected_educational_options': educationalOptions,
       'follow_up': followUp,
-      'patient_note': patientNote.toMap(),
     };
     return e;
   }

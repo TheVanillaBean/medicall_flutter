@@ -77,11 +77,8 @@ class DiagnosisStep extends StatelessWidget {
           width: width,
           onTap: this.model.canContinue
               ? () async {
+                  model.visitReviewViewModel.saveDiagnosisToFirestore(model);
                   model.visitReviewViewModel.incrementIndex();
-                  print("");
-                  // model.visitReviewViewModel.updateContinueBtnPressed(true);
-                  // model.visitReviewViewModel.incrementIndex();
-                  // await model.visitReviewViewModel.saveVisitReviewToFirestore();
                 }
               : null,
         ),

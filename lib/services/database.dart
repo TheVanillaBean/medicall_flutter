@@ -8,6 +8,7 @@ import 'package:Medicall/models/questionnaire/screening_questions_model.dart';
 import 'package:Medicall/models/user/patient_user_model.dart';
 import 'package:Medicall/models/user/provider_user_model.dart';
 import 'package:Medicall/models/user/user_model_base.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_review_view_model.dart';
 import 'package:Medicall/services/firestore_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
@@ -214,13 +215,42 @@ class FirestoreDatabase implements Database {
       );
 
   @override
-  Future<void> saveVisitReview(
-      {String consultId, VisitReviewData visitReviewData}) async {
-    await _service.setData(
-      path: FirestorePath.visitReview(consultId),
-      data: visitReviewData.toMap(),
-      merge: false,
-    );
+  Future<void> saveVisitReview({
+    String consultId,
+    VisitReviewData visitReviewData,
+    int step,
+  }) async {
+    if (step == VisitReviewSteps.DiagnosisStep) {
+      await _service.setData(
+        path: FirestorePath.visitReview(consultId),
+        data: visitReviewData.toDiagnosisMap(),
+        merge: true,
+      );
+    } else if (step == VisitReviewSteps.ExamStep) {
+      await _service.setData(
+        path: FirestorePath.visitReview(consultId),
+        data: visitReviewData.toExamMap(),
+        merge: true,
+      );
+    } else if (step == VisitReviewSteps.TreatmentStep) {
+      await _service.setData(
+        path: FirestorePath.visitReview(consultId),
+        data: visitReviewData.toTreatmentMap(),
+        merge: true,
+      );
+    } else if (step == VisitReviewSteps.EducationalContentStep) {
+      await _service.setData(
+        path: FirestorePath.visitReview(consultId),
+        data: visitReviewData.toEducationMap(),
+        merge: true,
+      );
+    } else if (step == VisitReviewSteps.FollowUpStep) {
+      await _service.setData(
+        path: FirestorePath.visitReview(consultId),
+        data: visitReviewData.toFollowMap(),
+        merge: true,
+      );
+    }
   }
 
   @override
