@@ -2,31 +2,44 @@ import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/continue_button.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/empty_diagnosis_widget.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/swipe_gesture_recognizer.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_view_models/patient_note_step_state.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_review_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:provider/provider.dart';
 
-class PatientNoteStep extends StatefulWidget {
-  @override
-  _PatientNoteStepState createState() => _PatientNoteStepState();
-}
+class PatientNoteStep extends StatelessWidget {
+  final PatientNoteStepState model;
 
-class _PatientNoteStepState extends State<PatientNoteStep> {
+  const PatientNoteStep({@required this.model});
+
+  static Widget create(BuildContext context) {
+    final VisitReviewViewModel visitReviewViewModel =
+        Provider.of<VisitReviewViewModel>(context);
+    return ChangeNotifierProvider<PatientNoteStepState>(
+      create: (context) => PatientNoteStepState(
+        visitReviewViewModel: visitReviewViewModel,
+      ),
+      child: Consumer<PatientNoteStepState>(
+        builder: (_, model, __) => PatientNoteStep(
+          model: model,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final VisitReviewViewModel model =
-        Provider.of<VisitReviewViewModel>(context);
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
-    if (model.diagnosisOptions != null)
+    if (model.visitReviewViewModel.diagnosisOptions != null)
       return KeyboardDismisser(
         gestures: [
           GestureType.onTap
         ], //onVerticalDrag not set because of weird behavior
         child: SwipeGestureRecognizer(
-          onSwipeLeft: () => model.incrementIndex(),
-          onSwipeRight: () => model.decrementIndex(),
+          onSwipeLeft: () => model.visitReviewViewModel.incrementIndex(),
+          onSwipeRight: () => model.visitReviewViewModel.decrementIndex(),
           child: CustomScrollView(
             slivers: <Widget>[
               SliverFillRemaining(
@@ -38,94 +51,63 @@ class _PatientNoteStepState extends State<PatientNoteStep> {
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       ..._buildSection(
+                        context: context,
+                        section: PatientNoteSection.Introduction,
                         title: "Introduction: (Required)",
-                        body: model.patientNoteStepState.sectionBody(
-                          "Introduction:",
-                          model.diagnosisOptions,
-                        ),
+                        body: model.introductionBody,
                         width: width,
                         height: height,
-                        model: model,
-                        checked:
-                            model.patientNoteStepState.introductionCheckbox ??
-                                false,
+                        checked: model.introductionCheckbox,
                         onChanged: (newValue) => {},
                       ),
                       ..._buildSection(
+                        context: context,
+                        section: PatientNoteSection.UnderstandingDiagnosis,
                         title: "Understanding the diagnosis:",
-                        body: model.patientNoteStepState.sectionBody(
-                          "Understanding the diagnosis:",
-                          model.diagnosisOptions,
-                        ),
+                        body: model.understandingBody,
                         width: width,
                         height: height,
-                        model: model,
-                        checked:
-                            model.patientNoteStepState.understandingCheckbox ??
-                                false,
+                        checked: model.understandingCheckbox,
                         onChanged: (newValue) => {},
                       ),
                       ..._buildSection(
+                        context: context,
+                        section: PatientNoteSection.Counseling,
                         title: "Counseling:",
-                        body: model.patientNoteStepState.sectionBody(
-                          "Counseling:",
-                          model.diagnosisOptions,
-                        ),
+                        body: model.counselingBody,
                         width: width,
                         height: height,
-                        model: model,
-                        checked:
-                            model.patientNoteStepState.counselingCheckbox ??
-                                false,
+                        checked: model.counselingCheckbox,
                         onChanged: (newValue) => {},
                       ),
                       ..._buildSection(
+                        context: context,
+                        section: PatientNoteSection.Treatments,
                         title: "Treatments:",
-                        body: model.patientNoteStepState.sectionBody(
-                          "Treatments:",
-                          model.diagnosisOptions,
-                        ),
+                        body: model.treatmentBody,
                         width: width,
                         height: height,
-                        model: model,
-                        checked:
-                            model.patientNoteStepState.treatmentsCheckbox ??
-                                false,
+                        checked: model.treatmentsCheckbox,
                         onChanged: (newValue) => {},
                       ),
                       ..._buildSection(
+                        context: context,
+                        section: PatientNoteSection.FurtherTesting,
                         title: "Further Testing (optional):",
-                        body: model.patientNoteStepState.sectionBody(
-                          "Further Testing (optional):",
-                          model.diagnosisOptions,
-                        ),
+                        body: model.furtherTestingBody,
                         width: width,
                         height: height,
-                        model: model,
-                        checked:
-                            model.patientNoteStepState.furtherTestingCheckbox ??
-                                false,
+                        checked: model.furtherTestingCheckbox,
                         onChanged: (newValue) => {},
                       ),
                       ..._buildSection(
-                        title: "Other:",
-                        body: "",
-                        width: width,
-                        height: height,
-                        model: model,
-                      ),
-                      ..._buildSection(
+                        context: context,
+                        section: PatientNoteSection.Conclusion,
                         title: "Conclusion:",
-                        body: model.patientNoteStepState.sectionBody(
-                          "Conclusion:",
-                          model.diagnosisOptions,
-                        ),
+                        body: model.conclusionBody,
                         width: width,
                         height: height,
-                        model: model,
-                        checked:
-                            model.patientNoteStepState.conclusionCheckbox ??
-                                false,
+                        checked: model.conclusionCheckbox,
                         onChanged: (newValue) => {},
                       ),
                       SizedBox(height: 16),
@@ -142,17 +124,18 @@ class _PatientNoteStepState extends State<PatientNoteStep> {
           ),
         ),
       );
-    return EmptyDiagnosis(model: model);
+    return EmptyDiagnosis(model: model.visitReviewViewModel);
   }
 
   List<Widget> _buildSection({
+    BuildContext context,
+    PatientNoteSection section,
     String title,
     bool checked = false,
     String body,
     double width,
     double height,
     ValueChanged<bool> onChanged,
-    VisitReviewViewModel model,
   }) {
     return [
       Row(
@@ -178,21 +161,22 @@ class _PatientNoteStepState extends State<PatientNoteStep> {
       ),
       SizedBox(height: 12),
       _buildSectionBtn(
+        context: context,
         width: width,
         height: height,
         title: "Edit Section",
-        section: title,
+        section: section,
         enabled: checked,
-        model: model,
       ),
     ];
   }
 
   Widget _buildSectionBtn({
+    BuildContext context,
+    PatientNoteSection section,
     double width,
     double height,
     String title,
-    String section,
     bool enabled,
     VisitReviewViewModel model,
   }) {
@@ -220,10 +204,10 @@ class _PatientNoteStepState extends State<PatientNoteStep> {
           onPressed: !enabled
               ? null
               : () {
-                  model.patientNoteStepState.setEditSectionNoteBody(
-                    section,
-                    model.diagnosisOptions,
-                  );
+                  // model.patientNoteStepState.setEditSectionNoteBody(
+                  //   section,
+                  //   model.diagnosisOptions,
+                  // );
                   EditNoteSection.show(
                     context: context,
                     visitReviewViewModel: model,

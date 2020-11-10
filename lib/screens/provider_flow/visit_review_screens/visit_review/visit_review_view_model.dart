@@ -16,13 +16,14 @@ import 'package:flutter/material.dart';
 
 // Properties
 abstract class VisitReviewSteps {
-  static const TotalSteps = 5;
+  static const TotalSteps = 6;
 
   static const DiagnosisStep = 0;
   static const ExamStep = 1;
   static const TreatmentStep = 2;
   static const FollowUpStep = 3;
   static const EducationalContentStep = 4;
+  static const PatientNoteStep = 5;
 }
 
 class VisitReviewViewModel extends ChangeNotifier {
@@ -37,7 +38,7 @@ class VisitReviewViewModel extends ChangeNotifier {
 
   List<int> completedSteps = [];
 
-  PatientNoteStepState patientNoteStepState = PatientNoteStepState();
+  PatientNoteStepState patientNoteStepState;
 
   ProgressTimeline screenProgress;
 
@@ -47,6 +48,7 @@ class VisitReviewViewModel extends ChangeNotifier {
     SingleState(stateTitle: "Treatment"),
     SingleState(stateTitle: "Follow Up"),
     SingleState(stateTitle: "Educational"),
+    SingleState(stateTitle: "Patient Note"),
   ];
 
   VisitReviewViewModel({
@@ -54,6 +56,7 @@ class VisitReviewViewModel extends ChangeNotifier {
     @required this.consult,
     @required this.consultReviewOptions,
     @required this.visitReviewData,
+    this.diagnosisOptions,
   });
 
   void setVisitReviewStatus(VisitReviewStatus visitReviewStatus) {
@@ -102,6 +105,8 @@ class VisitReviewViewModel extends ChangeNotifier {
       return "Follow Up";
     } else if (index == VisitReviewSteps.EducationalContentStep) {
       return "Educational";
+    } else if (index == VisitReviewSteps.PatientNoteStep) {
+      return "Patient Note";
     } else {
       return "Error";
     }
@@ -214,7 +219,7 @@ class VisitReviewViewModel extends ChangeNotifier {
   }
 
   void checkIfCompleted() {
-    if (this.completedSteps.length == 5) {
+    if (this.completedSteps.length == 6) {
       this.consult.state = ConsultStatus.Completed;
       this.visitReviewStatus.updateStatus("All steps completed!");
     }

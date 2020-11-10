@@ -17,6 +17,8 @@ class VisitReviewData {
 
   Map<String, String> followUp;
 
+  PatientTemplateNote patientNote = PatientTemplateNote();
+
   VisitReviewData({
     this.diagnosis = "",
     this.otherDiagnosis = "",
@@ -71,7 +73,7 @@ class VisitReviewData {
       patientNote = PatientTemplateNote.fromMap(data['patient_note'] as Map);
     }
 
-    return VisitReviewData(
+    final VisitReviewData visitReviewData = VisitReviewData(
       diagnosis: diagnosis,
       otherDiagnosis: otherDiagnosis,
       includeDDX: includeDDX,
@@ -82,17 +84,8 @@ class VisitReviewData {
       educationalOptions: selectedEducationalOptions,
       followUp: followUp,
     );
-  }
-
-  Map<String, dynamic> toDiagnosisMap() {
-    dynamic e = <String, dynamic>{
-      'diagnosis': diagnosis,
-      'other_diagnosis': otherDiagnosis,
-      'include_DDX': includeDDX,
-      'ddx_options': ddxOptions,
-      'ddx_other_option': ddxOtherOption,
-    };
-    return e;
+    visitReviewData.patientNote = patientNote;
+    return visitReviewData;
   }
 
   Map<String, dynamic> toMap() {
@@ -106,6 +99,7 @@ class VisitReviewData {
       'treatment_options': treatmentOptions.map((e) => e.toMap()).toList(),
       'selected_educational_options': educationalOptions,
       'follow_up': followUp,
+      'patient_note': patientNote.toMap(),
     };
     return e;
   }

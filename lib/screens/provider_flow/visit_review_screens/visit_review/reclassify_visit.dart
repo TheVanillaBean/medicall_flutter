@@ -2,6 +2,7 @@ import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/grouped_buttons/radio_button_group.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/consult-review/consult_review_options_model.dart';
+import 'package:Medicall/models/consult-review/diagnosis_options_model.dart';
 import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
@@ -73,8 +74,20 @@ class ReclassifyVisit extends StatelessWidget {
     VisitReviewData visitReviewData = await model.firestoreDatabase
         .visitReviewStream(consultId: model.consult.uid)
         .first;
+
+    DiagnosisOptions diagnosisOptions;
+
     if (visitReviewData == null) {
       visitReviewData = VisitReviewData();
+    } else {
+      String symptom = model.consult.providerReclassified
+          ? model.consult.reclassifiedVisit
+          : model.consult.symptom;
+      diagnosisOptions =
+          await model.firestoreDatabase.consultReviewDiagnosisOptions(
+        symptomName: symptom,
+        diagnosis: visitReviewData.diagnosis,
+      );
     }
     options.diagnosisList.insert(0, "Select a Diagnosis");
     await model.firestoreDatabase
@@ -85,6 +98,7 @@ class ReclassifyVisit extends StatelessWidget {
       consult: model.consult,
       consultReviewOptions: options,
       visitReviewData: visitReviewData,
+      diagnosisOptions: diagnosisOptions,
     );
   }
 

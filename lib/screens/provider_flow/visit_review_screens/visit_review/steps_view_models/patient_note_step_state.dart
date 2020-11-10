@@ -1,5 +1,7 @@
 import 'package:Medicall/models/consult-review/diagnosis_options_model.dart';
 import 'package:Medicall/models/consult-review/patient_note/patient_note_template_model.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_review_view_model.dart';
+import 'package:flutter/foundation.dart';
 
 enum PatientNoteSection {
   Introduction,
@@ -11,19 +13,91 @@ enum PatientNoteSection {
   Conclusion,
 }
 
-class PatientNoteStepState {
-  bool introductionCheckbox = true;
-  bool understandingCheckbox = false;
-  bool counselingCheckbox = false;
-  bool treatmentsCheckbox = false;
-  bool furtherTestingCheckbox = false;
-  bool conclusionCheckbox = false;
+class PatientNoteStepState with ChangeNotifier {
+  VisitReviewViewModel visitReviewViewModel;
+
+  bool introductionCheckbox;
+  bool understandingCheckbox;
+  bool counselingCheckbox;
+  bool treatmentsCheckbox;
+  bool furtherTestingCheckbox;
+  bool conclusionCheckbox;
+
+  String introductionBody;
+  String understandingBody;
+  String counselingBody;
+  String treatmentBody;
+  String furtherTestingBody;
+  String conclusionBody;
 
   PatientTemplateNote patientTemplateNote = PatientTemplateNote();
 
   String editNoteTitle = "";
   Map<String, dynamic> templateSection = {};
   Map<String, dynamic> editedSection = {};
+
+  PatientNoteStepState({
+    @required this.visitReviewViewModel,
+    this.introductionCheckbox = true,
+    this.understandingCheckbox = false,
+    this.counselingCheckbox = false,
+    this.treatmentsCheckbox = false,
+    this.furtherTestingCheckbox = false,
+    this.conclusionCheckbox = false,
+    this.introductionBody = "",
+    this.understandingBody = "",
+    this.counselingBody = "",
+    this.treatmentBody = "",
+    this.furtherTestingBody = "",
+    this.conclusionBody = "",
+  }) {
+    this.initFromDiagnosisOptions();
+    this.initFromFirestore();
+  }
+
+  void initFromDiagnosisOptions() {
+    this.introductionBody = visitReviewViewModel
+        .diagnosisOptions.patientNoteTemplate.introductionTemplate.body;
+    this.understandingBody = visitReviewViewModel.diagnosisOptions
+        .patientNoteTemplate.understandingDiagnosisTemplate.body;
+    this.counselingBody = visitReviewViewModel
+        .diagnosisOptions.patientNoteTemplate.counselingTemplate.body;
+    this.treatmentBody = visitReviewViewModel.diagnosisOptions
+        .patientNoteTemplate.treatmentRecommendationsTemplate.body;
+    this.furtherTestingBody = visitReviewViewModel
+        .diagnosisOptions.patientNoteTemplate.furtherTestingTemplate.body;
+    this.conclusionBody = visitReviewViewModel
+        .diagnosisOptions.patientNoteTemplate.conclusionTemplate.body;
+  }
+
+  void initFromFirestore() {
+    PatientTemplateNote templateNote =
+        visitReviewViewModel.visitReviewData.patientNote;
+    if (templateNote.hasIntroduction) {
+      this.introductionCheckbox = true;
+      this.introductionBody = templateNote.introductionTemplate.body;
+    }
+    if (templateNote.hasUnderstandingDiagnosis) {
+      this.understandingCheckbox = true;
+      this.understandingBody = templateNote.understandingDiagnosisTemplate.body;
+    }
+    if (templateNote.hasTreatmentRecommendations) {
+      this.treatmentsCheckbox = true;
+      this.treatmentBody = templateNote.treatmentRecommendationsTemplate.body;
+    }
+    if (templateNote.hasFurtherTesting) {
+      this.furtherTestingCheckbox = true;
+      this.furtherTestingBody = templateNote.furtherTestingTemplate.body;
+    }
+    if (templateNote.hasCounseling) {
+      this.counselingCheckbox = true;
+      this.counselingBody = templateNote.counselingTemplate.body;
+    }
+    if (templateNote.hasConclusion) {
+      this.conclusionCheckbox = true;
+      this.conclusionBody = templateNote.conclusionTemplate.body;
+    }
+  }
 
   void setEditSectionNoteBody(
     String section,

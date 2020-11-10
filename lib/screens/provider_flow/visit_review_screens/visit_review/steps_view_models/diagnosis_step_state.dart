@@ -5,6 +5,8 @@ import 'package:flutter/cupertino.dart';
 class DiagnosisStepState with ChangeNotifier {
   static const String UnselectedDiagnosis = "Select a Diagnosis";
 
+  bool diagnosisSetFromExistingData = false;
+
   VisitReviewViewModel visitReviewViewModel;
   String diagnosis;
   int selectedItemIndex;
@@ -24,9 +26,10 @@ class DiagnosisStepState with ChangeNotifier {
     this.initFromFirestore();
   }
 
-  void initFromFirestore() {
+  void initFromFirestore() async {
     VisitReviewData firestoreData = this.visitReviewViewModel.visitReviewData;
     if (firestoreData.diagnosis != UnselectedDiagnosis) {
+      this.diagnosisSetFromExistingData = true;
       this.diagnosis = firestoreData.diagnosis;
       int index = this
           .visitReviewViewModel
@@ -62,22 +65,26 @@ class DiagnosisStepState with ChangeNotifier {
   // Gets the review options for all other steps based on original symptom on reclassified symptom, if it was reclassified
   Future<void> updateReviewOptionsForDiagnosis(int selectedItemIndex) async {
     this.selectedItemIndex = selectedItemIndex ?? this.selectedItemIndex;
-    if (this.selectedItemIndex != null && this.selectedItemIndex > 0) {
-      this.diagnosis = visitReviewViewModel
-          .consultReviewOptions.diagnosisList[this.selectedItemIndex];
+    if (!this.diagnosisSetFromExistingData) {
+      if (this.selectedItemIndex != null && this.selectedItemIndex > 0) {
+        this.diagnosis = visitReviewViewModel
+            .consultReviewOptions.diagnosisList[this.selectedItemIndex];
 
-      String symptom = visitReviewViewModel.consult.providerReclassified
-          ? visitReviewViewModel.consult.reclassifiedVisit
-          : visitReviewViewModel.consult.symptom;
-      visitReviewViewModel.diagnosisOptions = await visitReviewViewModel
-          .firestoreDatabase
-          .consultReviewDiagnosisOptions(
-              symptomName: symptom, diagnosis: this.diagnosis);
+        String symptom = visitReviewViewModel.consult.providerReclassified
+            ? visitReviewViewModel.consult.reclassifiedVisit
+            : visitReviewViewModel.consult.symptom;
+        visitReviewViewModel.diagnosisOptions = await visitReviewViewModel
+            .firestoreDatabase
+            .consultReviewDiagnosisOptions(
+                symptomName: symptom, diagnosis: this.diagnosis);
 
-      updateDiagnosisStepWith();
+        updateDiagnosisStepWith();
+      } else {
+        this.diagnosis = UnselectedDiagnosis;
+        updateDiagnosisStepWith();
+      }
     } else {
-      this.diagnosis = UnselectedDiagnosis;
-      updateDiagnosisStepWith();
+      this.diagnosisSetFromExistingData = false;
     }
   }
 

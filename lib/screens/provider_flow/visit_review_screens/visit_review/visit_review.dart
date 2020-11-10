@@ -1,6 +1,7 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
 import 'package:Medicall/models/consult-review/consult_review_options_model.dart';
+import 'package:Medicall/models/consult-review/diagnosis_options_model.dart';
 import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
@@ -8,6 +9,7 @@ import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_widgets/educational_step.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_widgets/exam_step.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_widgets/follow_up_step.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_widgets/patient_note_step.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_widgets/treatment_step.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_review_view_model.dart';
 import 'package:Medicall/screens/shared/visit_information/consult_photos.dart';
@@ -26,6 +28,7 @@ class VisitReview extends StatefulWidget {
     Consult consult,
     ConsultReviewOptions consultReviewOptions,
     VisitReviewData visitReviewData,
+    DiagnosisOptions diagnosisOptions,
   ) {
     final FirestoreDatabase firestoreDatabase =
         Provider.of<FirestoreDatabase>(context);
@@ -35,6 +38,7 @@ class VisitReview extends StatefulWidget {
         consult: consult,
         consultReviewOptions: consultReviewOptions,
         visitReviewData: visitReviewData,
+        diagnosisOptions: diagnosisOptions,
       ),
       child: Consumer<VisitReviewViewModel>(
         builder: (_, model, __) => VisitReview(
@@ -49,6 +53,7 @@ class VisitReview extends StatefulWidget {
     Consult consult,
     ConsultReviewOptions consultReviewOptions,
     VisitReviewData visitReviewData,
+    DiagnosisOptions diagnosisOptions,
   }) async {
     await Navigator.of(context).pushReplacementNamed(
       Routes.visitReview,
@@ -56,6 +61,7 @@ class VisitReview extends StatefulWidget {
         'consult': consult,
         'consultReviewOptions': consultReviewOptions,
         'visitReviewData': visitReviewData,
+        'diagnosisOptions': diagnosisOptions,
       },
     );
   }
@@ -132,6 +138,7 @@ class _VisitReviewState extends State<VisitReview> with VisitReviewStatus {
                   TreatmentStep.create(context),
                   FollowUpStep.create(context),
                   EducationalContentStep.create(context),
+                  PatientNoteStep.create(context),
                 ],
               ),
             ),
@@ -144,10 +151,5 @@ class _VisitReviewState extends State<VisitReview> with VisitReviewStatus {
   @override
   void updateStatus(String msg) {
     AppUtil().showFlushBar(msg, context);
-    if (widget.model.completedSteps.length == 6) {
-      Navigator.of(context).popUntil(
-        (ModalRoute.withName(Routes.visitOverview)),
-      );
-    }
   }
 }

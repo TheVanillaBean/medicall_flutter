@@ -5,6 +5,10 @@ class FurtherTestingTemplate {
     this.template = const {},
   });
 
+  String get body {
+    return template.values.first;
+  }
+
   factory FurtherTestingTemplate.fromMap(Map<String, dynamic> data) {
     if (data == null) {
       return null;
