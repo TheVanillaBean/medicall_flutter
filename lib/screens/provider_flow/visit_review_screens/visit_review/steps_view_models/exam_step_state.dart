@@ -20,6 +20,11 @@ class ExamStepState with ChangeNotifier {
       this.examLocations = firestoreData.examLocations;
       this.selectedExamOptions =
           firestoreData.examLocations.map((e) => e.keys.first).toList();
+
+      if (minimumRequiredFieldsFilledOut) {
+        visitReviewViewModel.addCompletedStep(
+            step: VisitReviewSteps.ExamStep, setState: false);
+      }
     }
   }
 

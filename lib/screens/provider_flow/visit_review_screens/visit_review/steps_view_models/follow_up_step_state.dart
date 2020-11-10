@@ -48,6 +48,11 @@ class FollowUpStepState with ChangeNotifier {
             this.documentation = followUpValue;
           }
         }
+
+        if (minimumRequiredFieldsFilledOut) {
+          visitReviewViewModel.addCompletedStep(
+              step: VisitReviewSteps.FollowUpStep, setState: false);
+        }
       }
     }
   }

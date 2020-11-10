@@ -107,10 +107,12 @@ class VisitReviewViewModel extends ChangeNotifier {
     }
   }
 
-  void addCompletedStep(int step) {
+  void addCompletedStep({@required int step, @required bool setState}) {
     if (!this.completedSteps.contains(step)) {
       this.completedSteps.add(step);
-      this.screenProgress.completeStep(allStages[step]);
+      this
+          .screenProgress
+          .completeStep(singleState: allStages[step], setState: setState);
     }
   }
 
@@ -127,7 +129,7 @@ class VisitReviewViewModel extends ChangeNotifier {
       step: VisitReviewSteps.DiagnosisStep,
     );
 
-    addCompletedStep(VisitReviewSteps.DiagnosisStep);
+    addCompletedStep(step: VisitReviewSteps.DiagnosisStep, setState: true);
     checkIfCompleted();
   }
 
@@ -140,7 +142,7 @@ class VisitReviewViewModel extends ChangeNotifier {
       step: VisitReviewSteps.ExamStep,
     );
 
-    addCompletedStep(VisitReviewSteps.ExamStep);
+    addCompletedStep(step: VisitReviewSteps.ExamStep, setState: true);
     checkIfCompleted();
   }
 
@@ -153,7 +155,7 @@ class VisitReviewViewModel extends ChangeNotifier {
       step: VisitReviewSteps.TreatmentStep,
     );
 
-    addCompletedStep(VisitReviewSteps.TreatmentStep);
+    addCompletedStep(step: VisitReviewSteps.TreatmentStep, setState: true);
     checkIfCompleted();
   }
 
@@ -166,7 +168,7 @@ class VisitReviewViewModel extends ChangeNotifier {
       step: VisitReviewSteps.FollowUpStep,
     );
 
-    addCompletedStep(VisitReviewSteps.FollowUpStep);
+    addCompletedStep(step: VisitReviewSteps.FollowUpStep, setState: true);
     checkIfCompleted();
   }
 
@@ -196,7 +198,8 @@ class VisitReviewViewModel extends ChangeNotifier {
       step: VisitReviewSteps.EducationalContentStep,
     );
 
-    addCompletedStep(VisitReviewSteps.EducationalContentStep);
+    addCompletedStep(
+        step: VisitReviewSteps.EducationalContentStep, setState: true);
     checkIfCompleted();
   }
 

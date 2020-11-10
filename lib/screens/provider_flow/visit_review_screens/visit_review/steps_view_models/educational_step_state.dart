@@ -28,6 +28,11 @@ class EducationalStepState with ChangeNotifier {
           otherEducationalOption = element.values.first;
         }
       });
+
+      if (minimumRequiredFieldsFilledOut) {
+        visitReviewViewModel.addCompletedStep(
+            step: VisitReviewSteps.EducationalContentStep, setState: false);
+      }
     }
   }
 

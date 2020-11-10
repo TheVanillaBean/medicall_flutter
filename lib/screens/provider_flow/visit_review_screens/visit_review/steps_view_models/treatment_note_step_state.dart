@@ -18,6 +18,11 @@ class TreatmentNoteStepState with ChangeNotifier {
     VisitReviewData firestoreData = this.visitReviewViewModel.visitReviewData;
     if (firestoreData.treatmentOptions.length > 0) {
       this.selectedTreatmentOptions = firestoreData.treatmentOptions;
+
+      if (minimumRequiredFieldsFilledOut) {
+        visitReviewViewModel.addCompletedStep(
+            step: VisitReviewSteps.TreatmentStep, setState: false);
+      }
     }
   }
 

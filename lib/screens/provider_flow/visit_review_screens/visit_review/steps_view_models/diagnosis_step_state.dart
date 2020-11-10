@@ -40,6 +40,11 @@ class DiagnosisStepState with ChangeNotifier {
     this.selectedDDXOptions = firestoreData.ddxOptions;
     this.ddxOtherOption = firestoreData.ddxOtherOption;
     this.otherDiagnosis = firestoreData.otherDiagnosis;
+
+    if (minimumRequiredFieldsFilledOut) {
+      visitReviewViewModel.addCompletedStep(
+          step: VisitReviewSteps.DiagnosisStep, setState: false);
+    }
   }
 
   bool get minimumRequiredFieldsFilledOut {

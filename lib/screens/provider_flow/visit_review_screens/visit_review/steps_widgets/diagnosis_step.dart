@@ -36,7 +36,7 @@ class DiagnosisStep extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraint) {
         return KeyboardDismisser(
-          gestures: [GestureType.onTap, GestureType.onVerticalDragDown],
+          gestures: [GestureType.onTap],
           child: SwipeGestureRecognizer(
             onSwipeLeft: () => model.visitReviewViewModel.incrementIndex(),
             onSwipeRight: () => model.visitReviewViewModel.decrementIndex(),

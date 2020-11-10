@@ -37,7 +37,7 @@ class TreatmentStep extends StatelessWidget {
     final width = MediaQuery.of(context).size.width;
     if (model.visitReviewViewModel.diagnosisOptions != null) {
       return KeyboardDismisser(
-        gestures: [GestureType.onTap, GestureType.onVerticalDragDown],
+        gestures: [GestureType.onTap],
         child: SwipeGestureRecognizer(
           onSwipeLeft: () => model.visitReviewViewModel.incrementIndex(),
           onSwipeRight: () => model.visitReviewViewModel.decrementIndex(),

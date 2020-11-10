@@ -7,6 +7,9 @@ class ProgressTimeline extends StatefulWidget {
   /// a List of all states to be rendered
   final List<SingleState> states;
 
+  /// optional: a List of all completed steps (used when initializing previously saved visit from firestore)
+  List<SingleState> completedStates;
+
   /// height of the widget
   final double height;
 
@@ -44,6 +47,7 @@ class ProgressTimeline extends StatefulWidget {
 
   ProgressTimeline({
     @required this.states,
+    this.completedStates,
     this.onTap,
     this.height,
     this.checkedIcon,
@@ -61,8 +65,8 @@ class ProgressTimeline extends StatefulWidget {
   final _ProgressTimelineState state = new _ProgressTimelineState();
 
   /// method to jump to next stage in the process.
-  void completeStep(SingleState singleState) {
-    state.completeStep(singleState);
+  void completeStep({SingleState singleState, bool setState}) {
+    state.completeStep(state: singleState, shouldSetState: setState);
   }
 
   /// method to jump to next stage in the process.
@@ -96,6 +100,9 @@ class _ProgressTimelineState extends State<ProgressTimeline> {
   @override
   void initState() {
     states = widget.states;
+    if (widget.completedStates != null) {
+      completedStates = states;
+    }
     onTap = widget.onTap;
     if (widget.height != null) {
       height = widget.height;
@@ -158,12 +165,20 @@ class _ProgressTimelineState extends State<ProgressTimeline> {
     });
   }
 
-  void completeStep(SingleState state) {
-    setState(() {
+  // set state will cause issues if used when initializing from firestore
+  // look into initFromFirestore in each step state
+  void completeStep({SingleState state, bool shouldSetState}) {
+    if (shouldSetState) {
+      setState(() {
+        if (!this.completedStates.contains(state)) {
+          this.completedStates.add(state);
+        }
+      });
+    } else {
       if (!this.completedStates.contains(state)) {
         this.completedStates.add(state);
       }
-    });
+    }
   }
 
   void unCompleteStep(SingleState state) {
