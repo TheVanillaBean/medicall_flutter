@@ -1,3 +1,4 @@
+import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_review_view_model.dart';
 import 'package:flutter/foundation.dart';
 
@@ -29,7 +30,27 @@ class FollowUpStepState with ChangeNotifier {
     this.followUp = "",
     this.documentation = "",
     this.duration = "",
-  });
+  }) {
+    this.initFromFirestore();
+  }
+
+  void initFromFirestore() {
+    VisitReviewData firestoreData = this.visitReviewViewModel.visitReviewData;
+    if (firestoreData.followUp.length > 0) {
+      if (firestoreData.followUp.keys.first != null) {
+        this.followUp = firestoreData.followUp.keys.first;
+        String followUpValue = firestoreData.followUp.values.first;
+        if (followUpValue.length != null) {
+          if (this.followUp == FollowUpSteps.ViaMedicall ||
+              this.followUp == FollowUpSteps.InPerson) {
+            this.duration = followUpValue;
+          } else if (this.followUp == FollowUpSteps.Emergency) {
+            this.documentation = followUpValue;
+          }
+        }
+      }
+    }
+  }
 
   bool get minimumRequiredFieldsFilledOut {
     return this.followUp.length > 0;

@@ -211,7 +211,7 @@ class VisitReviewViewModel extends ChangeNotifier {
   }
 
   void checkIfCompleted() {
-    if (this.completedSteps.length == 6) {
+    if (this.completedSteps.length == 5) {
       this.consult.state = ConsultStatus.Completed;
       this.visitReviewStatus.updateStatus("All steps completed!");
     }

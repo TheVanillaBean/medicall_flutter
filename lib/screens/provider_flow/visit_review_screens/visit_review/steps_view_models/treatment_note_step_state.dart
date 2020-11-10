@@ -1,16 +1,25 @@
 import 'package:Medicall/models/consult-review/treatment_options.dart';
+import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_review_view_model.dart';
 import 'package:flutter/foundation.dart';
 
 class TreatmentNoteStepState with ChangeNotifier {
   VisitReviewViewModel visitReviewViewModel;
 
-  bool currentlySelectedIsOther = false;
   List<TreatmentOptions> selectedTreatmentOptions = [];
 
   TreatmentNoteStepState({
     @required this.visitReviewViewModel,
-  });
+  }) {
+    this.initFromFirestore();
+  }
+
+  void initFromFirestore() {
+    VisitReviewData firestoreData = this.visitReviewViewModel.visitReviewData;
+    if (firestoreData.treatmentOptions.length > 0) {
+      this.selectedTreatmentOptions = firestoreData.treatmentOptions;
+    }
+  }
 
   bool get minimumRequiredFieldsFilledOut {
     return this.selectedTreatmentOptions.length > 0;

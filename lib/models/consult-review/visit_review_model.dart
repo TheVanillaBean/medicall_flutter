@@ -95,34 +95,6 @@ class VisitReviewData {
     return e;
   }
 
-  Map<String, dynamic> toExamMap() {
-    dynamic e = <String, dynamic>{
-      'exam_locations': examLocations.toList(),
-    };
-    return e;
-  }
-
-  Map<String, dynamic> toTreatmentMap() {
-    dynamic e = <String, dynamic>{
-      'treatment_options': treatmentOptions.map((e) => e.toMap()).toList(),
-    };
-    return e;
-  }
-
-  Map<String, dynamic> toEducationMap() {
-    dynamic e = <String, dynamic>{
-      'selected_educational_options': educationalOptions,
-    };
-    return e;
-  }
-
-  Map<String, dynamic> toFollowMap() {
-    dynamic e = <String, dynamic>{
-      'follow_up': followUp,
-    };
-    return e;
-  }
-
   Map<String, dynamic> toMap() {
     dynamic e = <String, dynamic>{
       'diagnosis': diagnosis,

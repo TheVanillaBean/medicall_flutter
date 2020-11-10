@@ -1,3 +1,4 @@
+import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:flutter/foundation.dart';
 
 import '../visit_review_view_model.dart';
@@ -9,7 +10,18 @@ class ExamStepState with ChangeNotifier {
 
   ExamStepState({
     @required this.visitReviewViewModel,
-  });
+  }) {
+    this.initFromFirestore();
+  }
+
+  void initFromFirestore() {
+    VisitReviewData firestoreData = this.visitReviewViewModel.visitReviewData;
+    if (firestoreData.examLocations.length > 0) {
+      this.examLocations = firestoreData.examLocations;
+      this.selectedExamOptions =
+          firestoreData.examLocations.map((e) => e.keys.first).toList();
+    }
+  }
 
   bool get minimumRequiredFieldsFilledOut {
     return this.selectedExamOptions.length > 0;

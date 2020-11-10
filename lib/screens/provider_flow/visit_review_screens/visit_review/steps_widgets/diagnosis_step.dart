@@ -75,7 +75,7 @@ class DiagnosisStep extends StatelessWidget {
         child: ContinueButton(
           title: "Save and Continue",
           width: width,
-          onTap: this.model.canContinue
+          onTap: this.model.minimumRequiredFieldsFilledOut
               ? () async {
                   model.visitReviewViewModel.saveDiagnosisToFirestore(model);
                   model.visitReviewViewModel.incrementIndex();

@@ -1,3 +1,4 @@
+import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_review_view_model.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -19,10 +20,26 @@ class DiagnosisStepState with ChangeNotifier {
     this.includeDDX = false,
     this.ddxOtherOption = "",
     this.otherDiagnosis = "",
-  });
+  }) {
+    this.initFromFirestore();
+  }
 
-  bool get canContinue {
-    return minimumRequiredFieldsFilledOut;
+  void initFromFirestore() {
+    VisitReviewData firestoreData = this.visitReviewViewModel.visitReviewData;
+    if (firestoreData.diagnosis != UnselectedDiagnosis) {
+      this.diagnosis = firestoreData.diagnosis;
+      int index = this
+          .visitReviewViewModel
+          .consultReviewOptions
+          .diagnosisList
+          .indexWhere((element) => element == this.diagnosis);
+      this.selectedItemIndex = index > -1 ? index : 0;
+      updateReviewOptionsForDiagnosis(this.selectedItemIndex);
+    }
+    this.includeDDX = firestoreData.includeDDX;
+    this.selectedDDXOptions = firestoreData.ddxOptions;
+    this.ddxOtherOption = firestoreData.ddxOtherOption;
+    this.otherDiagnosis = firestoreData.otherDiagnosis;
   }
 
   bool get minimumRequiredFieldsFilledOut {
