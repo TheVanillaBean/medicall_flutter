@@ -1,3 +1,4 @@
+import 'package:Medicall/models/consult-review/diagnosis_options_model.dart';
 import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_review_view_model.dart';
 import 'package:flutter/cupertino.dart';
@@ -7,10 +8,13 @@ class DiagnosisStepState with ChangeNotifier {
 
   bool diagnosisSetFromExistingData = false;
 
+  bool editedStep = false;
+
   VisitReviewViewModel visitReviewViewModel;
   String diagnosis;
   int selectedItemIndex;
   bool includeDDX;
+  DiagnosisOptions diagnosisOptions;
   List<String> selectedDDXOptions = [];
   String otherDiagnosis;
   String ddxOtherOption;
@@ -37,6 +41,7 @@ class DiagnosisStepState with ChangeNotifier {
           .diagnosisList
           .indexWhere((element) => element == this.diagnosis);
       this.selectedItemIndex = index > -1 ? index : 0;
+      this.diagnosisOptions = visitReviewViewModel.diagnosisOptions;
       updateReviewOptionsForDiagnosis(this.selectedItemIndex);
     }
     this.includeDDX = firestoreData.includeDDX;
@@ -51,15 +56,18 @@ class DiagnosisStepState with ChangeNotifier {
   }
 
   bool get minimumRequiredFieldsFilledOut {
-    if (this.includeDDX) {
-      return this.diagnosis != UnselectedDiagnosis &&
-          this.selectedDDXOptions.length > 0;
+    if (this.diagnosisOptions != null) {
+      if (this.includeDDX) {
+        return this.diagnosis != UnselectedDiagnosis &&
+            this.selectedDDXOptions.length > 0;
+      }
+      if (this.diagnosis == "Other") {
+        return this.diagnosis != UnselectedDiagnosis &&
+            this.otherDiagnosis.length > 0;
+      }
+      return this.diagnosis != UnselectedDiagnosis;
     }
-    if (this.diagnosis == "Other") {
-      return this.diagnosis != UnselectedDiagnosis &&
-          this.otherDiagnosis.length > 0;
-    }
-    return this.diagnosis != UnselectedDiagnosis;
+    return false;
   }
 
   // Gets the review options for all other steps based on original symptom on reclassified symptom, if it was reclassified
@@ -73,8 +81,7 @@ class DiagnosisStepState with ChangeNotifier {
         String symptom = visitReviewViewModel.consult.providerReclassified
             ? visitReviewViewModel.consult.reclassifiedVisit
             : visitReviewViewModel.consult.symptom;
-        visitReviewViewModel.diagnosisOptions = await visitReviewViewModel
-            .firestoreDatabase
+        this.diagnosisOptions = await visitReviewViewModel.firestoreDatabase
             .consultReviewDiagnosisOptions(
           symptomName: symptom,
           diagnosis: this.diagnosis,
@@ -97,6 +104,8 @@ class DiagnosisStepState with ChangeNotifier {
     String otherDiagnosis,
     String ddxOtherOption,
   }) {
+    this.editedStep = true;
+
     this.otherDiagnosis = this.diagnosis == "Other"
         ? (otherDiagnosis ?? this.otherDiagnosis)
         : "";

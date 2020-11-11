@@ -122,6 +122,7 @@ class VisitReviewViewModel extends ChangeNotifier {
   }
 
   Future<void> saveDiagnosisToFirestore(DiagnosisStepState model) async {
+    this.diagnosisOptions = model.diagnosisOptions;
     this.visitReviewData.diagnosis = model.diagnosis;
     this.visitReviewData.includeDDX = model.includeDDX;
     this.visitReviewData.ddxOptions = model.selectedDDXOptions;
@@ -136,6 +137,7 @@ class VisitReviewViewModel extends ChangeNotifier {
 
     addCompletedStep(step: VisitReviewSteps.DiagnosisStep, setState: true);
     checkIfCompleted();
+    notifyListeners();
   }
 
   Future<void> saveExamToFirestore(ExamStepState model) async {

@@ -9,6 +9,8 @@ class EducationalStepState with ChangeNotifier {
   bool otherSelected;
   String otherEducationalOption;
 
+  bool editedStep = false;
+
   EducationalStepState({
     @required this.visitReviewViewModel,
     this.otherSelected = false,
@@ -47,6 +49,8 @@ class EducationalStepState with ChangeNotifier {
     List<String> selectedEducationalOptions,
     String otherEducationalOption,
   }) {
+    this.editedStep = true;
+
     this.selectedEducationalOptions =
         selectedEducationalOptions ?? this.selectedEducationalOptions;
     this.otherEducationalOption =

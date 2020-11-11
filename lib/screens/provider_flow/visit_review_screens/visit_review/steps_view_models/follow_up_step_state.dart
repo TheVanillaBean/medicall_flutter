@@ -25,6 +25,8 @@ class FollowUpStepState with ChangeNotifier {
   String documentation; //if immediate care option
   String duration;
 
+  bool editedStep = false;
+
   FollowUpStepState({
     @required this.visitReviewViewModel,
     this.followUp = "",
@@ -88,6 +90,8 @@ class FollowUpStepState with ChangeNotifier {
     String documentation,
     String duration,
   }) {
+    this.editedStep = true;
+
     this.followUp = followUp ?? this.followUp;
     this.documentation = documentation ?? this.documentation;
     this.duration = duration ?? this.duration;

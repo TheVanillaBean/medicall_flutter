@@ -39,8 +39,22 @@ class TreatmentStep extends StatelessWidget {
       return KeyboardDismisser(
         gestures: [GestureType.onTap],
         child: SwipeGestureRecognizer(
-          onSwipeLeft: () => model.visitReviewViewModel.incrementIndex(),
-          onSwipeRight: () => model.visitReviewViewModel.decrementIndex(),
+          onSwipeLeft: () {
+            if (model.minimumRequiredFieldsFilledOut && model.editedStep) {
+              model.editedStep = false;
+              AppUtil()
+                  .showFlushBar("Press save to save your changes", context);
+            }
+            model.visitReviewViewModel.incrementIndex();
+          },
+          onSwipeRight: () {
+            if (model.minimumRequiredFieldsFilledOut && model.editedStep) {
+              model.editedStep = false;
+              AppUtil()
+                  .showFlushBar("Press save to save your changes", context);
+            }
+            model.visitReviewViewModel.decrementIndex();
+          },
           child: CustomScrollView(
             slivers: <Widget>[
               SliverFillRemaining(

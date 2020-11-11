@@ -8,6 +8,8 @@ class ExamStepState with ChangeNotifier {
   List<String> selectedExamOptions = [];
   List<Map<String, String>> examLocations = [];
 
+  bool editedStep = false;
+
   ExamStepState({
     @required this.visitReviewViewModel,
   }) {
@@ -61,6 +63,8 @@ class ExamStepState with ChangeNotifier {
     List<String> selectedExamOptions,
     Map<String, String> locationMap,
   }) {
+    this.editedStep = true;
+
     this.selectedExamOptions = selectedExamOptions ?? this.selectedExamOptions;
     if (locationMap != null) {
       int index = this

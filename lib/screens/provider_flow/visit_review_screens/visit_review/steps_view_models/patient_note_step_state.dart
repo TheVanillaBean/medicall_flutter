@@ -29,9 +29,7 @@ class PatientNoteStepState with ChangeNotifier {
   String furtherTestingBody;
   String conclusionBody;
 
-  String editNoteTitle = "";
-  Map<String, dynamic> templateSection = {};
-  Map<String, dynamic> editedSection = {};
+  bool editedStep = false;
 
   PatientNoteStepState({
     @required this.visitReviewViewModel,
@@ -164,6 +162,8 @@ class PatientNoteStepState with ChangeNotifier {
     String furtherTestingBody,
     String conclusionBody,
   }) {
+    this.editedStep = true;
+
     this.introductionCheckbox =
         introductionCheckbox ?? this.introductionCheckbox;
     this.understandingCheckbox =

@@ -8,6 +8,8 @@ class TreatmentNoteStepState with ChangeNotifier {
 
   List<TreatmentOptions> selectedTreatmentOptions = [];
 
+  bool editedStep = false;
+
   TreatmentNoteStepState({
     @required this.visitReviewViewModel,
   }) {
@@ -69,17 +71,20 @@ class TreatmentNoteStepState with ChangeNotifier {
     int index = this.selectedTreatmentOptions.indexWhere(
         (element) => element.medicationName == treatmentOptions.medicationName);
     if (index > -1) {
+      this.editedStep = true;
       this.selectedTreatmentOptions[index] = treatmentOptions;
       notifyListeners();
     }
   }
 
   void addTreatment({TreatmentOptions treatmentOptions}) {
+    this.editedStep = true;
     this.selectedTreatmentOptions.add(treatmentOptions);
     notifyListeners();
   }
 
   void removeTreatment({TreatmentOptions treatmentOptions}) {
+    this.editedStep = true;
     this.selectedTreatmentOptions.remove(treatmentOptions);
     notifyListeners();
   }
