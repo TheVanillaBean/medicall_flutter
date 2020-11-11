@@ -17,7 +17,7 @@ class VisitReviewData {
 
   Map<String, String> followUp;
 
-  PatientTemplateNote patientNote = PatientTemplateNote();
+  PatientTemplateNote patientNote;
 
   VisitReviewData({
     this.diagnosis = "",
@@ -28,7 +28,7 @@ class VisitReviewData {
     this.examLocations = const [],
     this.treatmentOptions = const [],
     this.educationalOptions = const [],
-    this.followUp = const {"": ""},
+    this.followUp = const {},
   });
 
   factory VisitReviewData.fromMap(
@@ -80,7 +80,7 @@ class VisitReviewData {
       );
     }
 
-    PatientTemplateNote patientNote = PatientTemplateNote();
+    PatientTemplateNote patientNote;
     if (data['patient_note'] != null && data['patient_note'] is Map) {
       patientNote = PatientTemplateNote.fromMap(data['patient_note'] as Map);
     }
@@ -101,7 +101,7 @@ class VisitReviewData {
   }
 
   Map<String, dynamic> toMap() {
-    dynamic e = <String, dynamic>{
+    Map<String, dynamic> e = <String, dynamic>{
       'diagnosis': diagnosis,
       'other_diagnosis': otherDiagnosis,
       'include_DDX': includeDDX,
@@ -109,10 +109,16 @@ class VisitReviewData {
       'ddx_other_option': ddxOtherOption,
       'exam_locations': examLocations.toList(),
       'treatment_options': treatmentOptions.map((e) => e.toMap()).toList(),
-      'selected_educational_options': educationalOptions,
-      'follow_up': followUp.isNotEmpty ? followUp : {"N/A": "N/A"},
-      'patient_note': patientNote.toMap(),
+      'selected_educational_options': educationalOptions.toList(),
     };
+    if (followUp.isNotEmpty) {
+      e.addAll({
+        'follow_up': followUp,
+      });
+    }
+    if (patientNote != null) {
+      e.addAll({'patient_note': patientNote.toMap()});
+    }
     return e;
   }
 }

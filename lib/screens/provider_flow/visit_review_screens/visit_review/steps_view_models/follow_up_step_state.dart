@@ -51,9 +51,15 @@ class FollowUpStepState with ChangeNotifier {
           }
         }
 
-        if (minimumRequiredFieldsFilledOut) {
-          visitReviewViewModel.addCompletedStep(
-              step: VisitReviewSteps.FollowUpStep, setState: false);
+        if (this.followUp == FollowUpSteps.ViaMedicall ||
+            this.followUp == FollowUpSteps.InPerson ||
+            this.followUp == FollowUpSteps.ElectiveProcedure ||
+            this.followUp == FollowUpSteps.Emergency ||
+            this.followUp == FollowUpSteps.NoFollowUp) {
+          if (minimumRequiredFieldsFilledOut) {
+            visitReviewViewModel.addCompletedStep(
+                step: VisitReviewSteps.FollowUpStep, setState: false);
+          }
         }
       }
     }

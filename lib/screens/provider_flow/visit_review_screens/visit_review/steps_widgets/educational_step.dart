@@ -119,7 +119,7 @@ class EducationalContentStep extends StatelessWidget {
                         width: width,
                         onTap: this.model.minimumRequiredFieldsFilledOut
                             ? () async {
-                                model.visitReviewViewModel
+                                await model.visitReviewViewModel
                                     .saveEducationalToFirestore(model);
                                 model.visitReviewViewModel.incrementIndex();
                               }

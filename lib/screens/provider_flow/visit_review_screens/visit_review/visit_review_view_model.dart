@@ -121,6 +121,15 @@ class VisitReviewViewModel extends ChangeNotifier {
     }
   }
 
+  void unCompleteStep({@required int step, @required bool setState}) {
+    if (this.completedSteps.contains(step)) {
+      this.completedSteps.remove(step);
+      this
+          .screenProgress
+          .unCompleteStep(singleState: allStages[step], setState: setState);
+    }
+  }
+
   Future<void> saveDiagnosisToFirestore(DiagnosisStepState model) async {
     this.diagnosisOptions = model.diagnosisOptions;
     this.visitReviewData.diagnosis = model.diagnosis;

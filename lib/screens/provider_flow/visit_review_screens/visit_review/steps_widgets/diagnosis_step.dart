@@ -91,7 +91,8 @@ class DiagnosisStep extends StatelessWidget {
           width: width,
           onTap: this.model.minimumRequiredFieldsFilledOut
               ? () async {
-                  model.visitReviewViewModel.saveDiagnosisToFirestore(model);
+                  await model.visitReviewViewModel
+                      .saveDiagnosisToFirestore(model);
                   model.visitReviewViewModel.incrementIndex();
                 }
               : null,

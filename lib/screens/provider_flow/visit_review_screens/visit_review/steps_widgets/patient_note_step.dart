@@ -57,8 +57,8 @@ class PatientNoteStep extends StatelessWidget {
                         width: width,
                         height: height,
                         checked: model.introductionCheckbox,
-                        onChanged: (newValue) =>
-                            model.updateWith(introductionCheckbox: newValue),
+                        onChanged: (newValue) async => await model.updateWith(
+                            introductionCheckbox: newValue),
                       ),
                       ..._buildSection(
                         context: context,
@@ -68,8 +68,8 @@ class PatientNoteStep extends StatelessWidget {
                         width: width,
                         height: height,
                         checked: model.understandingCheckbox,
-                        onChanged: (newValue) =>
-                            model.updateWith(understandingCheckbox: newValue),
+                        onChanged: (newValue) async => await model.updateWith(
+                            understandingCheckbox: newValue),
                       ),
                       ..._buildSection(
                         context: context,
@@ -79,8 +79,8 @@ class PatientNoteStep extends StatelessWidget {
                         width: width,
                         height: height,
                         checked: model.counselingCheckbox,
-                        onChanged: (newValue) =>
-                            model.updateWith(counselingCheckbox: newValue),
+                        onChanged: (newValue) async => await model.updateWith(
+                            counselingCheckbox: newValue),
                       ),
                       ..._buildSection(
                         context: context,
@@ -90,8 +90,8 @@ class PatientNoteStep extends StatelessWidget {
                         width: width,
                         height: height,
                         checked: model.treatmentsCheckbox,
-                        onChanged: (newValue) =>
-                            model.updateWith(treatmentsCheckbox: newValue),
+                        onChanged: (newValue) async => await model.updateWith(
+                            treatmentsCheckbox: newValue),
                       ),
                       ..._buildSection(
                         context: context,
@@ -101,8 +101,8 @@ class PatientNoteStep extends StatelessWidget {
                         width: width,
                         height: height,
                         checked: model.furtherTestingCheckbox,
-                        onChanged: (newValue) =>
-                            model.updateWith(furtherTestingCheckbox: newValue),
+                        onChanged: (newValue) async => await model.updateWith(
+                            furtherTestingCheckbox: newValue),
                       ),
                       ..._buildSection(
                         context: context,
@@ -112,8 +112,8 @@ class PatientNoteStep extends StatelessWidget {
                         width: width,
                         height: height,
                         checked: model.conclusionCheckbox,
-                        onChanged: (newValue) =>
-                            model.updateWith(conclusionCheckbox: newValue),
+                        onChanged: (newValue) async => await model.updateWith(
+                            conclusionCheckbox: newValue),
                       ),
                       SizedBox(height: 16),
                     ],

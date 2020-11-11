@@ -64,9 +64,12 @@ class ProgressTimeline extends StatefulWidget {
 
   final _ProgressTimelineState state = new _ProgressTimelineState();
 
-  /// method to jump to next stage in the process.
   void completeStep({SingleState singleState, bool setState}) {
     state.completeStep(state: singleState, shouldSetState: setState);
+  }
+
+  void unCompleteStep({SingleState singleState, bool setState}) {
+    state.unCompleteStep(state: singleState, shouldSetState: setState);
   }
 
   /// method to jump to next stage in the process.
@@ -181,10 +184,14 @@ class _ProgressTimelineState extends State<ProgressTimeline> {
     }
   }
 
-  void unCompleteStep(SingleState state) {
-    setState(() {
+  void unCompleteStep({SingleState state, bool shouldSetState}) {
+    if (shouldSetState) {
+      setState(() {
+        this.completedStates.remove(state);
+      });
+    } else {
       this.completedStates.remove(state);
-    });
+    }
   }
 
   @override

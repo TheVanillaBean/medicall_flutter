@@ -98,7 +98,7 @@ class ExamStep extends StatelessWidget {
                         width: width,
                         onTap: this.model.minimumRequiredFieldsFilledOut
                             ? () async {
-                                model.visitReviewViewModel
+                                await model.visitReviewViewModel
                                     .saveExamToFirestore(model);
                                 model.visitReviewViewModel.incrementIndex();
                               }

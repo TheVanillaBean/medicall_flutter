@@ -154,7 +154,7 @@ class TreatmentStep extends StatelessWidget {
                         width: width,
                         onTap: this.model.minimumRequiredFieldsFilledOut
                             ? () async {
-                                model.visitReviewViewModel
+                                await model.visitReviewViewModel
                                     .saveTreatmentToFirestore(model);
                                 model.visitReviewViewModel.incrementIndex();
                               }

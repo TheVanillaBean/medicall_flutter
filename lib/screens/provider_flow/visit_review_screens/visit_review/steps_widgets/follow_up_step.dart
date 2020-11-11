@@ -122,7 +122,7 @@ class FollowUpStep extends StatelessWidget {
                         width: width,
                         onTap: this.model.minimumRequiredFieldsFilledOut
                             ? () async {
-                                model.visitReviewViewModel
+                                await model.visitReviewViewModel
                                     .saveFollowUpToFirestore(model);
                                 model.visitReviewViewModel.incrementIndex();
                               }
