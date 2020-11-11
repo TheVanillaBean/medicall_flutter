@@ -218,44 +218,12 @@ class FirestoreDatabase implements Database {
     String consultId,
     VisitReviewData visitReviewData,
     int step,
-  }) async {
-    await _service.setData(
-      path: FirestorePath.visitReview(consultId),
-      data: visitReviewData.toMap(),
-      merge: false,
-    );
-    // if (step == VisitReviewSteps.DiagnosisStep) {
-    //   await _service.setData(
-    //     path: FirestorePath.visitReview(consultId),
-    //     data: visitReviewData.toDiagnosisMap(),
-    //     merge: false,
-    //   );
-    // } else if (step == VisitReviewSteps.ExamStep) {
-    //   await _service.setData(
-    //     path: FirestorePath.visitReview(consultId),
-    //     data: visitReviewData.toExamMap(),
-    //     merge: false,
-    //   );
-    // } else if (step == VisitReviewSteps.TreatmentStep) {
-    //   await _service.setData(
-    //     path: FirestorePath.visitReview(consultId),
-    //     data: visitReviewData.toTreatmentMap(),
-    //     merge: false,
-    //   );
-    // } else if (step == VisitReviewSteps.EducationalContentStep) {
-    //   await _service.setData(
-    //     path: FirestorePath.visitReview(consultId),
-    //     data: visitReviewData.toEducationMap(),
-    //     merge: false,
-    //   );
-    // } else if (step == VisitReviewSteps.FollowUpStep) {
-    //   await _service.setData(
-    //     path: FirestorePath.visitReview(consultId),
-    //     data: visitReviewData.toFollowMap(),
-    //     merge: false,
-    //   );
-    // }
-  }
+  }) async =>
+      await _service.setData(
+        path: FirestorePath.visitReview(consultId),
+        data: visitReviewData.toMap(),
+        merge: false,
+      );
 
   @override
   Future<void> savePrescriptions(

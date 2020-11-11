@@ -1,49 +1,67 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/grouped_buttons/checkbox_group.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/edit_note/edit_note_view_model.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/edit_section_text_field.dart';
-import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_review_view_model.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_view_models/patient_note_step_state.dart';
 import 'package:flutter/material.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:provider/provider.dart';
 
 class EditNoteSection extends StatelessWidget {
+  final EditNoteViewModel model;
+
+  const EditNoteSection({@required this.model});
+
   static Widget create(
     BuildContext context,
-    VisitReviewViewModel visitReviewViewModel,
+    PatientNoteSection section,
+    String sectionTitle,
+    Map<String, String> templateSection,
+    Map<String, String> editedSection,
   ) {
-    return ChangeNotifierProvider.value(
-      value: visitReviewViewModel,
-      child: EditNoteSection(),
+    return ChangeNotifierProvider<EditNoteViewModel>(
+      create: (context) => EditNoteViewModel(
+        section: section,
+        sectionTitle: sectionTitle,
+        templateSection: templateSection,
+        editedSection: editedSection,
+      ),
+      child: Consumer<EditNoteViewModel>(
+        builder: (_, model, __) => EditNoteSection(
+          model: model,
+        ),
+      ),
     );
   }
 
-  static Future<void> show({
+  static Future<Map<String, String>> show({
     BuildContext context,
-    VisitReviewViewModel visitReviewViewModel,
+    PatientNoteSection section,
+    String sectionTitle,
+    Map<String, String> templateSection,
+    Map<String, String> editedSection,
   }) async {
-    await Navigator.of(context).pushNamed(
+    return await Navigator.of(context).pushNamed(
       Routes.editNoteSection,
       arguments: {
-        'visitReviewViewModel': visitReviewViewModel,
+        'section': section,
+        'sectionTitle': sectionTitle,
+        'templateSection': templateSection,
+        'editedSection': editedSection,
       },
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final VisitReviewViewModel model =
-        Provider.of<VisitReviewViewModel>(context);
-
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
         type: AppBarType.Back,
         title: "Edit Section",
         theme: Theme.of(context),
-        onPressed: () async {
-          Navigator.of(context).pop();
-        },
+        onPressed: () => Navigator.of(context).pop(),
       ),
       body: KeyboardDismisser(
         child: SingleChildScrollView(
@@ -58,17 +76,19 @@ class EditNoteSection extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-                  if (model.patientNoteStepState.templateSection.keys.length >
-                      1)
-                    ..._buildCheckboxes(context, model),
+                  if (model.templateSection.keys.length > 1)
+                    ..._buildCheckboxes(context),
                   Text(
-                    model.patientNoteStepState.editNoteTitle,
+                    model.sectionTitle,
                     style: Theme.of(context).textTheme.bodyText1,
                   ),
                   SizedBox(height: 12),
-                  for (String key
-                      in model.patientNoteStepState.editedSection.keys)
-                    ..._buildTextField(context, key, model),
+                  if (model.templateSection.keys.length == 1)
+                    for (String key in model.templateSection.keys)
+                      ..._buildTextField(context, key)
+                  else
+                    for (String key in model.editedSection.keys)
+                      ..._buildTextField(context, key),
                   Container(
                     width: width * .5,
                     child: SizedBox(
@@ -92,9 +112,10 @@ class EditNoteSection extends StatelessWidget {
                           side: BorderSide(
                               color: Theme.of(context).colorScheme.primary),
                         ),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
+                        onPressed: model.noteEdited
+                            ? () =>
+                                Navigator.of(context).pop(model.editedSection)
+                            : null,
                       ),
                     ),
                   ),
@@ -107,25 +128,24 @@ class EditNoteSection extends StatelessWidget {
     );
   }
 
-  List<Widget> _buildCheckboxes(
-      BuildContext context, VisitReviewViewModel model) {
+  List<Widget> _buildCheckboxes(BuildContext context) {
     return [
       CheckboxGroup(
-        labels: model.patientNoteStepState.templateSection.keys.toList(),
-        onChange: (isChecked, label, index) => {},
-        checked: model.patientNoteStepState.editedSection.keys.toList(),
+        labels: model.templateSection.keys.toList(),
+        onChange: (isChecked, label, index) =>
+            model.updateEditSectionCheckboxesWith(label, isChecked),
+        checked: model.editedSection.keys.toList(),
       ),
       SizedBox(height: 48),
     ];
   }
 
-  List<Widget> _buildTextField(
-      BuildContext context, String key, VisitReviewViewModel model) {
-    String initialText = "";
-    if (model.patientNoteStepState.editedSection.containsKey(key)) {
-      initialText = model.patientNoteStepState.editedSection[key];
+  List<Widget> _buildTextField(BuildContext context, String key) {
+    String initialText = model.editedSection[key];
+    if (model.editedSection.containsKey(key)) {
+      initialText = model.editedSection[key];
     } else {
-      initialText = model.patientNoteStepState.templateSection[key];
+      initialText = model.templateSection[key];
     }
     return [
       if (key != "Template")
@@ -141,7 +161,7 @@ class EditNoteSection extends StatelessWidget {
         initialText: initialText,
         labelText: 'Edit Section Note',
         hint: '',
-        onChanged: (newText) => {},
+        onChanged: (newText) => model.updateEditSectionWith(key, newText),
       ),
       SizedBox(height: 12),
     ];

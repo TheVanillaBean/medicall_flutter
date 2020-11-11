@@ -1,4 +1,3 @@
-import 'package:Medicall/models/consult-review/diagnosis_options_model.dart';
 import 'package:Medicall/models/consult-review/patient_note/patient_note_template_model.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_review_view_model.dart';
 import 'package:flutter/foundation.dart';
@@ -29,8 +28,6 @@ class PatientNoteStepState with ChangeNotifier {
   String treatmentBody;
   String furtherTestingBody;
   String conclusionBody;
-
-  PatientTemplateNote patientTemplateNote = PatientTemplateNote();
 
   String editNoteTitle = "";
   Map<String, dynamic> templateSection = {};
@@ -97,137 +94,93 @@ class PatientNoteStepState with ChangeNotifier {
       this.conclusionCheckbox = true;
       this.conclusionBody = templateNote.conclusionTemplate.body;
     }
-  }
-
-  void setEditSectionNoteBody(
-    String section,
-    DiagnosisOptions diagnosisOptions,
-  ) {
-    editNoteTitle = section;
-    if (section == "Introduction: (Required)") {
-      templateSection =
-          diagnosisOptions.patientNoteTemplate.introductionTemplate.template;
-      editedSection = patientTemplateNote.introductionTemplate.template;
-    } else if (section == "Understanding the diagnosis:") {
-      templateSection = diagnosisOptions
-          .patientNoteTemplate.understandingDiagnosisTemplate.template;
-      editedSection =
-          patientTemplateNote.understandingDiagnosisTemplate.template;
-    } else if (section == "Counseling:") {
-      templateSection =
-          diagnosisOptions.patientNoteTemplate.counselingTemplate.template;
-      editedSection = patientTemplateNote.counselingTemplate.template;
-    } else if (section == "Treatments:") {
-      templateSection = diagnosisOptions
-          .patientNoteTemplate.treatmentRecommendationsTemplate.template;
-      editedSection = {
-        patientTemplateNote
-                .treatmentRecommendationsTemplate.template.keys.first:
-            patientTemplateNote
-                .treatmentRecommendationsTemplate.template.values.first
-      } as Map<String, String>;
-    } else if (section == "Further Testing (optional):") {
-      templateSection =
-          diagnosisOptions.patientNoteTemplate.furtherTestingTemplate.template;
-      editedSection = patientTemplateNote.furtherTestingTemplate.template;
-    } else if (section == "Conclusion:") {
-      templateSection =
-          diagnosisOptions.patientNoteTemplate.conclusionTemplate.template;
-      editedSection = patientTemplateNote.conclusionTemplate.template;
+    if (this.minimumRequiredFieldsFilledOut) {
+      visitReviewViewModel.addCompletedStep(
+        step: VisitReviewSteps.PatientNoteStep,
+        setState: false,
+      );
     }
   }
 
-  //Does intro have a value
   bool get minimumRequiredFieldsFilledOut {
-    return patientTemplateNote.introductionTemplate.template.length > 0;
+    return this.introductionCheckbox;
   }
 
-  //return body from diagnosis from patient note or patient step state patient note
-  String sectionBody(String section, DiagnosisOptions diagnosisOptions) {
-    if (section == "Introduction:") {
-      if (this.patientTemplateNote.introductionTemplate.template.length == 0) {
-        return diagnosisOptions
-            .patientNoteTemplate.introductionTemplate.template.values.first;
-      } else {
-        return this
-            .patientTemplateNote
-            .introductionTemplate
-            .template
-            .values
-            .first;
-      }
-    } else if (section == "Understanding the diagnosis:") {
-      if (this
-              .patientTemplateNote
-              .understandingDiagnosisTemplate
-              .template
-              .length ==
-          0) {
-        return diagnosisOptions.patientNoteTemplate
-            .understandingDiagnosisTemplate.template.values.first;
-      } else {
-        return this
-            .patientTemplateNote
-            .understandingDiagnosisTemplate
-            .template
-            .values
-            .first;
-      }
-    } else if (section == "Counseling:") {
-      if (this.patientTemplateNote.counselingTemplate.template.length == 0) {
-        return diagnosisOptions
-            .patientNoteTemplate.counselingTemplate.template.values.first;
-      } else {
-        return this
-            .patientTemplateNote
-            .counselingTemplate
-            .template
-            .values
-            .first;
-      }
-    } else if (section == "Treatments:") {
-      if (this
-              .patientTemplateNote
-              .treatmentRecommendationsTemplate
-              .template
-              .length ==
-          0) {
-        return diagnosisOptions.patientNoteTemplate
-            .treatmentRecommendationsTemplate.template.values.first;
-      } else {
-        return this
-            .patientTemplateNote
-            .treatmentRecommendationsTemplate
-            .template
-            .values
-            .first;
-      }
-    } else if (section == "Further Testing (optional):") {
-      if (this.patientTemplateNote.furtherTestingTemplate.template.length ==
-          0) {
-        return diagnosisOptions
-            .patientNoteTemplate.furtherTestingTemplate.template.values.first;
-      } else {
-        return this
-            .patientTemplateNote
-            .furtherTestingTemplate
-            .template
-            .values
-            .first;
-      }
-    } else if (section == "Conclusion:") {
-      if (this.patientTemplateNote.conclusionTemplate.template.length == 0) {
-        return diagnosisOptions
-            .patientNoteTemplate.conclusionTemplate.template.values.first;
-      } else {
-        return this
-            .patientTemplateNote
-            .conclusionTemplate
-            .template
-            .values
-            .first;
-      }
+  Map<String, String> getEditedSection(PatientNoteSection section) {
+    PatientTemplateNote templateNote =
+        visitReviewViewModel.visitReviewData.patientNote;
+    if (section == PatientNoteSection.Introduction) {
+      return templateNote.introductionTemplate.template;
+    } else if (section == PatientNoteSection.UnderstandingDiagnosis) {
+      return templateNote.understandingDiagnosisTemplate.template;
+    } else if (section == PatientNoteSection.Counseling) {
+      return templateNote.counselingTemplate.template;
+    } else if (section == PatientNoteSection.Treatments) {
+      return templateNote.furtherTestingTemplate.template;
+    } else if (section == PatientNoteSection.FurtherTesting) {
+      return templateNote.furtherTestingTemplate.template;
+    } else if (section == PatientNoteSection.Conclusion) {
+      return templateNote.conclusionTemplate.template;
+    } else {
+      return {};
     }
-    return "";
+  }
+
+  Map<String, String> getTemplateSection(PatientNoteSection section) {
+    if (section == PatientNoteSection.Introduction) {
+      return visitReviewViewModel
+          .diagnosisOptions.patientNoteTemplate.introductionTemplate.template;
+    } else if (section == PatientNoteSection.UnderstandingDiagnosis) {
+      return visitReviewViewModel.diagnosisOptions.patientNoteTemplate
+          .understandingDiagnosisTemplate.template;
+    } else if (section == PatientNoteSection.Counseling) {
+      return visitReviewViewModel
+          .diagnosisOptions.patientNoteTemplate.counselingTemplate.template;
+    } else if (section == PatientNoteSection.Treatments) {
+      return visitReviewViewModel.diagnosisOptions.patientNoteTemplate
+          .treatmentRecommendationsTemplate.template;
+    } else if (section == PatientNoteSection.FurtherTesting) {
+      return visitReviewViewModel
+          .diagnosisOptions.patientNoteTemplate.furtherTestingTemplate.template;
+    } else if (section == PatientNoteSection.Conclusion) {
+      return visitReviewViewModel
+          .diagnosisOptions.patientNoteTemplate.conclusionTemplate.template;
+    } else {
+      return {};
+    }
+  }
+
+  void updateWith({
+    bool introductionCheckbox,
+    bool understandingCheckbox,
+    bool counselingCheckbox,
+    bool treatmentsCheckbox,
+    bool furtherTestingCheckbox,
+    bool conclusionCheckbox,
+    String introductionBody,
+    String understandingBody,
+    String counselingBody,
+    String treatmentBody,
+    String furtherTestingBody,
+    String conclusionBody,
+  }) {
+    this.introductionCheckbox =
+        introductionCheckbox ?? this.introductionCheckbox;
+    this.understandingCheckbox =
+        understandingCheckbox ?? this.understandingCheckbox;
+    this.counselingCheckbox = counselingCheckbox ?? this.counselingCheckbox;
+    this.treatmentsCheckbox = treatmentsCheckbox ?? this.treatmentsCheckbox;
+    this.furtherTestingCheckbox =
+        furtherTestingCheckbox ?? this.furtherTestingCheckbox;
+    this.conclusionCheckbox = conclusionCheckbox ?? this.conclusionCheckbox;
+
+    this.introductionBody = introductionBody ?? this.introductionBody;
+    this.understandingBody = understandingBody ?? this.understandingBody;
+    this.counselingBody = counselingBody ?? this.counselingBody;
+    this.treatmentBody = treatmentBody ?? this.treatmentBody;
+    this.furtherTestingBody = furtherTestingBody ?? this.furtherTestingBody;
+    this.conclusionBody = conclusionBody ?? this.conclusionBody;
+
+    notifyListeners();
   }
 }

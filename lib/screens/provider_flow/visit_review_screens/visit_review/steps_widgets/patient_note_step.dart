@@ -1,4 +1,4 @@
-import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/edit_note_section.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/edit_note/edit_note_section.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/continue_button.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/empty_diagnosis_widget.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/swipe_gesture_recognizer.dart';
@@ -58,7 +58,8 @@ class PatientNoteStep extends StatelessWidget {
                         width: width,
                         height: height,
                         checked: model.introductionCheckbox,
-                        onChanged: (newValue) => {},
+                        onChanged: (newValue) =>
+                            model.updateWith(introductionCheckbox: newValue),
                       ),
                       ..._buildSection(
                         context: context,
@@ -68,7 +69,8 @@ class PatientNoteStep extends StatelessWidget {
                         width: width,
                         height: height,
                         checked: model.understandingCheckbox,
-                        onChanged: (newValue) => {},
+                        onChanged: (newValue) =>
+                            model.updateWith(understandingCheckbox: newValue),
                       ),
                       ..._buildSection(
                         context: context,
@@ -78,7 +80,8 @@ class PatientNoteStep extends StatelessWidget {
                         width: width,
                         height: height,
                         checked: model.counselingCheckbox,
-                        onChanged: (newValue) => {},
+                        onChanged: (newValue) =>
+                            model.updateWith(counselingCheckbox: newValue),
                       ),
                       ..._buildSection(
                         context: context,
@@ -88,7 +91,8 @@ class PatientNoteStep extends StatelessWidget {
                         width: width,
                         height: height,
                         checked: model.treatmentsCheckbox,
-                        onChanged: (newValue) => {},
+                        onChanged: (newValue) =>
+                            model.updateWith(treatmentsCheckbox: newValue),
                       ),
                       ..._buildSection(
                         context: context,
@@ -98,7 +102,8 @@ class PatientNoteStep extends StatelessWidget {
                         width: width,
                         height: height,
                         checked: model.furtherTestingCheckbox,
-                        onChanged: (newValue) => {},
+                        onChanged: (newValue) =>
+                            model.updateWith(furtherTestingCheckbox: newValue),
                       ),
                       ..._buildSection(
                         context: context,
@@ -108,12 +113,21 @@ class PatientNoteStep extends StatelessWidget {
                         width: width,
                         height: height,
                         checked: model.conclusionCheckbox,
-                        onChanged: (newValue) => {},
+                        onChanged: (newValue) =>
+                            model.updateWith(conclusionCheckbox: newValue),
                       ),
                       SizedBox(height: 16),
                       Expanded(
                         child: ContinueButton(
+                          title: "Save and Continue",
                           width: width,
+                          onTap: this.model.minimumRequiredFieldsFilledOut
+                              ? () async {
+                                  model.visitReviewViewModel
+                                      .savePatientNoteToFirestore(model);
+                                  model.visitReviewViewModel.incrementIndex();
+                                }
+                              : null,
                         ),
                       ),
                     ],
@@ -178,7 +192,6 @@ class PatientNoteStep extends StatelessWidget {
     double height,
     String title,
     bool enabled,
-    VisitReviewViewModel model,
   }) {
     return Container(
       width: width * .35,
@@ -203,15 +216,17 @@ class PatientNoteStep extends StatelessWidget {
           ),
           onPressed: !enabled
               ? null
-              : () {
-                  // model.patientNoteStepState.setEditSectionNoteBody(
-                  //   section,
-                  //   model.diagnosisOptions,
-                  // );
-                  EditNoteSection.show(
+              : () async {
+                  Map<String, String> editedNote = await EditNoteSection.show(
                     context: context,
-                    visitReviewViewModel: model,
+                    section: section,
+                    sectionTitle: title,
+                    editedSection: model.getEditedSection(section),
+                    templateSection: model.getTemplateSection(section),
                   );
+                  if (editedNote != null) {
+                    // model.updateWith()
+                  }
                 },
         ),
       ),

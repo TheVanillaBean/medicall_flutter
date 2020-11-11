@@ -52,8 +52,9 @@ import 'package:Medicall/screens/provider_flow/review_medical_history/review_med
 import 'package:Medicall/screens/provider_flow/visit_review_screens/complete_visit/complete_visit.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/immediate_care/immediate_medical_care.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/prescription_details/prescription_details.dart';
-import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/edit_note_section.dart';
-import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reclassify_visit.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/edit_note/edit_note_section.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reclassify_visit/reclassify_visit.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_view_models/patient_note_step_state.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/video_note/video_notes_to_patient.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/view_patient_id.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/view_patient_info.dart';
@@ -449,11 +450,19 @@ class Router {
         );
       case Routes.editNoteSection:
         final Map<String, dynamic> mapArgs = args;
-        final VisitReviewViewModel visitReviewViewModel =
-            mapArgs['visitReviewViewModel'];
-        return MaterialPageRoute<dynamic>(
-          builder: (context) =>
-              EditNoteSection.create(context, visitReviewViewModel),
+        final PatientNoteSection section = mapArgs['section'];
+        final String sectionTitle = mapArgs['sectionTitle'];
+        final Map<String, String> templateSection = mapArgs['templateSection'];
+        final Map<String, String> editedSection = mapArgs['editedSection'];
+
+        return MaterialPageRoute<Map<String, String>>(
+          builder: (context) => EditNoteSection.create(
+            context,
+            section,
+            sectionTitle,
+            templateSection,
+            editedSection,
+          ),
           settings: settings,
           fullscreenDialog: true,
         );

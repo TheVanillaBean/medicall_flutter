@@ -76,7 +76,9 @@ class DiagnosisStepState with ChangeNotifier {
         visitReviewViewModel.diagnosisOptions = await visitReviewViewModel
             .firestoreDatabase
             .consultReviewDiagnosisOptions(
-                symptomName: symptom, diagnosis: this.diagnosis);
+          symptomName: symptom,
+          diagnosis: this.diagnosis,
+        );
 
         updateDiagnosisStepWith();
       } else {
