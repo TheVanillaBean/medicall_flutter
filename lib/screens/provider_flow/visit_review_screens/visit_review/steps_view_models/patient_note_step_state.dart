@@ -29,8 +29,6 @@ class PatientNoteStepState with ChangeNotifier {
   String furtherTestingBody;
   String conclusionBody;
 
-  bool editedStep = false;
-
   PatientNoteStepState({
     @required this.visitReviewViewModel,
     this.introductionCheckbox = true,
@@ -114,7 +112,7 @@ class PatientNoteStepState with ChangeNotifier {
     } else if (section == PatientNoteSection.Counseling) {
       return templateNote.counselingTemplate.template;
     } else if (section == PatientNoteSection.Treatments) {
-      return templateNote.furtherTestingTemplate.template;
+      return templateNote.treatmentRecommendationsTemplate.template;
     } else if (section == PatientNoteSection.FurtherTesting) {
       return templateNote.furtherTestingTemplate.template;
     } else if (section == PatientNoteSection.Conclusion) {
@@ -148,6 +146,33 @@ class PatientNoteStepState with ChangeNotifier {
     }
   }
 
+  void updateSection(PatientNoteSection section, Map<String, String> template) {
+    if (section == PatientNoteSection.Introduction) {
+      visitReviewViewModel
+          .visitReviewData.patientNote.introductionTemplate.template = template;
+    } else if (section == PatientNoteSection.UnderstandingDiagnosis) {
+      visitReviewViewModel.visitReviewData.patientNote
+          .understandingDiagnosisTemplate.template = template;
+    } else if (section == PatientNoteSection.Counseling) {
+      visitReviewViewModel
+          .visitReviewData.patientNote.counselingTemplate.template = template;
+    } else if (section == PatientNoteSection.Treatments) {
+      visitReviewViewModel.visitReviewData.patientNote
+          .treatmentRecommendationsTemplate.template = template;
+    } else if (section == PatientNoteSection.FurtherTesting) {
+      visitReviewViewModel.visitReviewData.patientNote.furtherTestingTemplate
+          .template = template;
+    } else if (section == PatientNoteSection.Conclusion) {
+      visitReviewViewModel
+          .visitReviewData.patientNote.conclusionTemplate.template = template;
+    } else {
+      return;
+    }
+    visitReviewViewModel.savePatientNoteToFirestore(this);
+    this.initFromFirestore();
+    notifyListeners();
+  }
+
   void updateWith({
     bool introductionCheckbox,
     bool understandingCheckbox,
@@ -162,8 +187,6 @@ class PatientNoteStepState with ChangeNotifier {
     String furtherTestingBody,
     String conclusionBody,
   }) {
-    this.editedStep = true;
-
     this.introductionCheckbox =
         introductionCheckbox ?? this.introductionCheckbox;
     this.understandingCheckbox =
@@ -174,12 +197,42 @@ class PatientNoteStepState with ChangeNotifier {
         furtherTestingCheckbox ?? this.furtherTestingCheckbox;
     this.conclusionCheckbox = conclusionCheckbox ?? this.conclusionCheckbox;
 
-    this.introductionBody = introductionBody ?? this.introductionBody;
-    this.understandingBody = understandingBody ?? this.understandingBody;
-    this.counselingBody = counselingBody ?? this.counselingBody;
-    this.treatmentBody = treatmentBody ?? this.treatmentBody;
-    this.furtherTestingBody = furtherTestingBody ?? this.furtherTestingBody;
-    this.conclusionBody = conclusionBody ?? this.conclusionBody;
+    if (this.introductionCheckbox) {
+      updateSection(PatientNoteSection.Introduction,
+          this.getTemplateSection(PatientNoteSection.Introduction));
+    } else {
+      updateSection(PatientNoteSection.Introduction, {});
+    }
+    if (understandingCheckbox != null && understandingCheckbox) {
+      updateSection(PatientNoteSection.UnderstandingDiagnosis,
+          this.getTemplateSection(PatientNoteSection.UnderstandingDiagnosis));
+    } else {
+      updateSection(PatientNoteSection.UnderstandingDiagnosis, {});
+    }
+    if (counselingCheckbox != null && counselingCheckbox) {
+      updateSection(PatientNoteSection.Counseling,
+          this.getTemplateSection(PatientNoteSection.Counseling));
+    } else {
+      updateSection(PatientNoteSection.Counseling, {});
+    }
+    if (treatmentsCheckbox != null && treatmentsCheckbox) {
+      updateSection(PatientNoteSection.Treatments,
+          this.getTemplateSection(PatientNoteSection.Treatments));
+    } else {
+      updateSection(PatientNoteSection.Treatments, {});
+    }
+    if (furtherTestingCheckbox != null && furtherTestingCheckbox) {
+      updateSection(PatientNoteSection.FurtherTesting,
+          this.getTemplateSection(PatientNoteSection.FurtherTesting));
+    } else {
+      updateSection(PatientNoteSection.FurtherTesting, {});
+    }
+    if (conclusionCheckbox != null && conclusionCheckbox) {
+      updateSection(PatientNoteSection.Conclusion,
+          this.getTemplateSection(PatientNoteSection.Conclusion));
+    } else {
+      updateSection(PatientNoteSection.Conclusion, {});
+    }
 
     notifyListeners();
   }

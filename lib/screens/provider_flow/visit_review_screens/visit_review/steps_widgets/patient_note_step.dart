@@ -1,10 +1,8 @@
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/edit_note/edit_note_section.dart';
-import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/continue_button.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/empty_diagnosis_widget.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/swipe_gesture_recognizer.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_view_models/patient_note_step_state.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_review_view_model.dart';
-import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:provider/provider.dart';
@@ -39,22 +37,8 @@ class PatientNoteStep extends StatelessWidget {
           GestureType.onTap
         ], //onVerticalDrag not set because of weird behavior
         child: SwipeGestureRecognizer(
-          onSwipeLeft: () {
-            if (model.minimumRequiredFieldsFilledOut && model.editedStep) {
-              model.editedStep = false;
-              AppUtil()
-                  .showFlushBar("Press save to save your changes", context);
-            }
-            model.visitReviewViewModel.incrementIndex();
-          },
-          onSwipeRight: () {
-            if (model.minimumRequiredFieldsFilledOut && model.editedStep) {
-              model.editedStep = false;
-              AppUtil()
-                  .showFlushBar("Press save to save your changes", context);
-            }
-            model.visitReviewViewModel.decrementIndex();
-          },
+          onSwipeLeft: () => model.visitReviewViewModel.incrementIndex(),
+          onSwipeRight: () => model.visitReviewViewModel.decrementIndex(),
           child: CustomScrollView(
             slivers: <Widget>[
               SliverFillRemaining(
@@ -132,19 +116,6 @@ class PatientNoteStep extends StatelessWidget {
                             model.updateWith(conclusionCheckbox: newValue),
                       ),
                       SizedBox(height: 16),
-                      Expanded(
-                        child: ContinueButton(
-                          title: "Save and Continue",
-                          width: width,
-                          onTap: this.model.minimumRequiredFieldsFilledOut
-                              ? () async {
-                                  model.visitReviewViewModel
-                                      .savePatientNoteToFirestore(model);
-                                  model.visitReviewViewModel.incrementIndex();
-                                }
-                              : null,
-                        ),
-                      ),
                     ],
                   ),
                 ),
@@ -240,7 +211,7 @@ class PatientNoteStep extends StatelessWidget {
                     templateSection: model.getTemplateSection(section),
                   );
                   if (editedNote != null) {
-                    // model.updateWith()
+                    model.updateSection(section, editedNote);
                   }
                 },
         ),

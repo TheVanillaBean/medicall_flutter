@@ -214,15 +214,16 @@ class VisitReviewViewModel extends ChangeNotifier {
     await firestoreDatabase.saveVisitReview(
         consultId: this.consult.uid, visitReviewData: this.visitReviewData);
 
-    await firestoreDatabase.saveVisitReview(
-        consultId: this.consult.uid, visitReviewData: this.visitReviewData);
-
     checkIfCompleted();
+    notifyListeners();
   }
 
-  void checkIfCompleted() {
-    if (this.completedSteps.length == 6) {
+  void checkIfCompleted() async {
+    if (this.completedSteps.length == 6 &&
+        this.consult.state != ConsultStatus.Completed) {
       this.consult.state = ConsultStatus.Completed;
+      await firestoreDatabase.saveConsult(
+          consultId: this.consult.uid, consult: this.consult);
       this.visitReviewStatus.updateStatus("All steps completed!");
     }
   }
