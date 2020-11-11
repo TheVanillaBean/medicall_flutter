@@ -42,31 +42,43 @@ class VisitReviewData {
     final List<String> ddxOptions =
         (data['ddx_options'] as List).map((e) => e.toString()).toList();
     final String ddxOtherOption = data['ddx_other_option'] as String ?? "";
-    final List<Map<String, String>> examLocations =
-        (data['exam_locations'] as List)
-            .map(
-              (e) => (e as Map).map(
-                (key, value) => MapEntry(key as String, value as String),
-              ),
-            )
-            .toList();
-    final List<TreatmentOptions> treatmentOptions =
-        (data['treatment_options'] as List)
-            .map(
-              (e) => TreatmentOptions.fromMap(e),
-            )
-            .toList();
-    final List<Map<String, String>> selectedEducationalOptions =
-        (data['selected_educational_options'] as List)
-            .map(
-              (e) => (e as Map).map(
-                (key, value) => MapEntry(key as String, value as String),
-              ),
-            )
-            .toList();
-    final Map<String, String> followUp = (data['follow_up'] as Map).map(
-      (key, value) => MapEntry(key as String, value as String),
-    );
+    List<Map<String, String>> examLocations;
+    if (data['exam_locations'] != null && data['exam_locations'] is List) {
+      examLocations = (data['exam_locations'] as List)
+          .map(
+            (e) => (e as Map).map(
+              (key, value) => MapEntry(key as String, value as String),
+            ),
+          )
+          .toList();
+    }
+    List<TreatmentOptions> treatmentOptions;
+    if (data['treatment_options'] != null &&
+        data['treatment_options'] is List) {
+      treatmentOptions = (data['treatment_options'] as List)
+          .map(
+            (e) => TreatmentOptions.fromMap(e),
+          )
+          .toList();
+    }
+    List<Map<String, String>> selectedEducationalOptions;
+    if (data['treatment_options'] != null &&
+        data['treatment_options'] is List) {
+      selectedEducationalOptions =
+          (data['selected_educational_options'] as List)
+              .map(
+                (e) => (e as Map).map(
+                  (key, value) => MapEntry(key as String, value as String),
+                ),
+              )
+              .toList();
+    }
+    Map<String, String> followUp;
+    if (data['follow_up'] != null && data['follow_up'] is Map) {
+      followUp = (data['follow_up'] as Map).map(
+        (key, value) => MapEntry(key as String, value as String),
+      );
+    }
 
     PatientTemplateNote patientNote = PatientTemplateNote();
     if (data['patient_note'] != null && data['patient_note'] is Map) {
@@ -98,7 +110,7 @@ class VisitReviewData {
       'exam_locations': examLocations.toList(),
       'treatment_options': treatmentOptions.map((e) => e.toMap()).toList(),
       'selected_educational_options': educationalOptions,
-      'follow_up': followUp,
+      'follow_up': followUp.isNotEmpty ? followUp : {"N/A": "N/A"},
       'patient_note': patientNote.toMap(),
     };
     return e;

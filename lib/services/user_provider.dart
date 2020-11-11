@@ -1,7 +1,7 @@
 import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:flutter/material.dart';
 
-class UserProvider {
+class UserProvider with ChangeNotifier {
   MedicallUser _user;
 
   MedicallUser get user {
@@ -10,6 +10,11 @@ class UserProvider {
 
   set user(user) {
     _user = user;
+  }
+
+  void updateUser(MedicallUser user) {
+    _user = user;
+    notifyListeners();
   }
 
   UserProvider({@required MedicallUser user}) : assert(user != null) {

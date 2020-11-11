@@ -21,7 +21,8 @@ class EducationalStepState with ChangeNotifier {
 
   void initFromFirestore() {
     VisitReviewData firestoreData = this.visitReviewViewModel.visitReviewData;
-    if (firestoreData.educationalOptions.length > 0) {
+    if (firestoreData.educationalOptions != null &&
+        firestoreData.educationalOptions.length > 0) {
       firestoreData.educationalOptions.forEach((element) {
         String eduOption = element.keys.first;
         this.selectedEducationalOptions.add(eduOption);

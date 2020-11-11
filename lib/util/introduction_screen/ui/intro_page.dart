@@ -13,7 +13,6 @@ class IntroPage extends StatelessWidget {
     return Container(
       color: page.decoration.pageColor,
       decoration: page.decoration.boxDecoration,
-      margin: EdgeInsets.only(top: 48),
       child: SafeArea(
         top: false,
         child: Column(

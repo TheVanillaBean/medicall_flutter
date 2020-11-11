@@ -218,12 +218,13 @@ class FirestoreDatabase implements Database {
     String consultId,
     VisitReviewData visitReviewData,
     int step,
-  }) async =>
-      await _service.setData(
-        path: FirestorePath.visitReview(consultId),
-        data: visitReviewData.toMap(),
-        merge: false,
-      );
+  }) {
+    return _service.setData(
+      path: FirestorePath.visitReview(consultId),
+      data: visitReviewData.toMap(),
+      merge: false,
+    );
+  }
 
   @override
   Future<void> savePrescriptions(

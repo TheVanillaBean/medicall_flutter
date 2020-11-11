@@ -49,18 +49,20 @@ class PatientNoteStepState with ChangeNotifier {
   }
 
   void initFromDiagnosisOptions() {
-    this.introductionBody = visitReviewViewModel
-        .diagnosisOptions.patientNoteTemplate.introductionTemplate.body;
-    this.understandingBody = visitReviewViewModel.diagnosisOptions
-        .patientNoteTemplate.understandingDiagnosisTemplate.body;
-    this.counselingBody = visitReviewViewModel
-        .diagnosisOptions.patientNoteTemplate.counselingTemplate.body;
-    this.treatmentBody = visitReviewViewModel.diagnosisOptions
-        .patientNoteTemplate.treatmentRecommendationsTemplate.body;
-    this.furtherTestingBody = visitReviewViewModel
-        .diagnosisOptions.patientNoteTemplate.furtherTestingTemplate.body;
-    this.conclusionBody = visitReviewViewModel
-        .diagnosisOptions.patientNoteTemplate.conclusionTemplate.body;
+    if (visitReviewViewModel.diagnosisOptions != null) {
+      this.introductionBody = visitReviewViewModel
+          .diagnosisOptions.patientNoteTemplate.introductionTemplate.body;
+      this.understandingBody = visitReviewViewModel.diagnosisOptions
+          .patientNoteTemplate.understandingDiagnosisTemplate.body;
+      this.counselingBody = visitReviewViewModel
+          .diagnosisOptions.patientNoteTemplate.counselingTemplate.body;
+      this.treatmentBody = visitReviewViewModel.diagnosisOptions
+          .patientNoteTemplate.treatmentRecommendationsTemplate.body;
+      this.furtherTestingBody = visitReviewViewModel
+          .diagnosisOptions.patientNoteTemplate.furtherTestingTemplate.body;
+      this.conclusionBody = visitReviewViewModel
+          .diagnosisOptions.patientNoteTemplate.conclusionTemplate.body;
+    }
   }
 
   void initFromFirestore() {
@@ -99,7 +101,8 @@ class PatientNoteStepState with ChangeNotifier {
   }
 
   bool get minimumRequiredFieldsFilledOut {
-    return this.introductionCheckbox;
+    return this.introductionCheckbox &&
+        visitReviewViewModel.diagnosisOptions != null;
   }
 
   Map<String, String> getEditedSection(PatientNoteSection section) {

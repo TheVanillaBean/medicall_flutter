@@ -18,7 +18,8 @@ class TreatmentNoteStepState with ChangeNotifier {
 
   void initFromFirestore() {
     VisitReviewData firestoreData = this.visitReviewViewModel.visitReviewData;
-    if (firestoreData.treatmentOptions.length > 0) {
+    if (firestoreData.treatmentOptions != null &&
+        firestoreData.treatmentOptions.length > 0) {
       this.selectedTreatmentOptions = firestoreData.treatmentOptions;
 
       if (minimumRequiredFieldsFilledOut) {

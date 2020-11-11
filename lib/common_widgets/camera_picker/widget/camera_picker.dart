@@ -983,8 +983,10 @@ class CameraPickerState extends State<CameraPicker> {
             ),
             onPressed: () {
               if (provider.isSelectedNotEmpty) {
-                Navigator.of(context)
-                    .pop(provider.currentlySelectedAssets.toList());
+                SchedulerBinding.instance.addPostFrameCallback((_) {
+                  Navigator.of(context)
+                      .pop(provider.currentlySelectedAssets.toList());
+                });
               }
             },
             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,

@@ -18,7 +18,8 @@ class ExamStepState with ChangeNotifier {
 
   void initFromFirestore() {
     VisitReviewData firestoreData = this.visitReviewViewModel.visitReviewData;
-    if (firestoreData.examLocations.length > 0) {
+    if (firestoreData.examLocations != null &&
+        firestoreData.examLocations.length > 0) {
       this.examLocations = firestoreData.examLocations;
       this.selectedExamOptions =
           firestoreData.examLocations.map((e) => e.keys.first).toList();

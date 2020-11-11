@@ -30,17 +30,13 @@ class WelcomeScreen extends StatelessWidget {
                 image: Column(
                   children: [
                     SizedBox(
-                      width: 180,
-                      height: logoHeight,
+                      width: 160,
+                      height: 100,
                       child: Image.asset(
                         'assets/icon/letter_mark.png',
                       ),
                     ),
-                    SizedBox(
-                      height: 12,
-                    ),
-                    Image.asset("assets/images/doctors.png",
-                        height: pictureHeight)
+                    Image.asset("assets/images/doctors.png", height: 200)
                   ],
                 ),
                 decoration: PageDecoration(
@@ -52,8 +48,8 @@ class WelcomeScreen extends StatelessWidget {
                 body:
                     "Low cost visit fee. No insurance headaches. Just transparent pricing.",
                 image: Center(
-                  child: Image.asset("assets/images/insurance.png",
-                      height: pictureHeight),
+                  child:
+                      Image.asset("assets/images/insurance.png", height: 250),
                 ),
                 decoration: PageDecoration(
                   pageColor: Colors.white,
@@ -64,8 +60,7 @@ class WelcomeScreen extends StatelessWidget {
                 body:
                     "If you need a prescription, we offer them at wholesale prices and ship them to your door for free.",
                 image: Center(
-                  child: Image.asset("assets/images/shipping.png",
-                      height: pictureHeight),
+                  child: Image.asset("assets/images/shipping.png", height: 250),
                 ),
                 decoration: PageDecoration(
                   pageColor: Colors.white,

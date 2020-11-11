@@ -38,7 +38,7 @@ class FollowUpStepState with ChangeNotifier {
 
   void initFromFirestore() {
     VisitReviewData firestoreData = this.visitReviewViewModel.visitReviewData;
-    if (firestoreData.followUp.length > 0) {
+    if (firestoreData.followUp != null && firestoreData.followUp.length > 0) {
       if (firestoreData.followUp.keys.first != null) {
         this.followUp = firestoreData.followUp.keys.first;
         String followUpValue = firestoreData.followUp.values.first;
