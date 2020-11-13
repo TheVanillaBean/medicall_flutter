@@ -1,6 +1,6 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/list_items_builder.dart';
-import 'package:Medicall/components/drawer_menu.dart';
+import 'package:Medicall/components/drawer_menu/drawer_menu.dart';
 import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';

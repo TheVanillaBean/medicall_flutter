@@ -168,7 +168,7 @@ class VisitOverview extends StatelessWidget {
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           clipBehavior: Clip.antiAlias,
           child: ListTile(
-            contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+            contentPadding: EdgeInsets.fromLTRB(20, 5, 20, 5),
             dense: true,
             title: Center(
               child: Text(

@@ -1,3 +1,5 @@
+import 'package:Medicall/components/drawer_menu/about_us.dart';
+import 'package:Medicall/components/drawer_menu/contact_us.dart';
 import 'package:Medicall/models/consult-review/consult_review_options_model.dart';
 import 'package:Medicall/models/consult-review/treatment_options.dart';
 import 'package:Medicall/models/consult-review/visit_review_model.dart';
@@ -133,6 +135,8 @@ class Routes {
   static const chatScreen = '/chat-screen';
   static const prescriptionCheckout = '/prescription-checkout';
   static const cardSelect = '/card-select';
+  static const aboutUs = '/about-us';
+  static const contactUs = '/contact-us';
 }
 
 /// The word 'consult' and 'visit' are used separately, but mean the exact
@@ -148,6 +152,27 @@ class Router {
       case Routes.welcome:
         return MaterialPageRoute<dynamic>(
           builder: (context) => WelcomeScreen(),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+
+      case Routes.aboutUs:
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => AboutUs(),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+
+      case Routes.aboutUs:
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => AboutUs(),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+
+      case Routes.contactUs:
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => ContactUs(),
           settings: settings,
           fullscreenDialog: true,
         );

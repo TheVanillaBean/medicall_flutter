@@ -904,7 +904,7 @@ class ChatMessageInputState extends State<ChatMessageInput> {
   }
 
   Widget _buildCompressionProgress(BuildContext context) {
-    if (VideoCompress.isCompressing) {
+    if (VideoCompress.isCompressing == true) {
       return CircularProgressIndicator();
     }
   }
