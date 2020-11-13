@@ -27,6 +27,7 @@ class LandingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final TempUserProvider tempUserProvider =
         Provider.of<TempUserProvider>(context, listen: false);
+
     if (userSnapshot.connectionState == ConnectionState.active) {
       if (userSnapshot.hasData) {
         if (tempUserProvider.consult != null) {

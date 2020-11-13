@@ -26,7 +26,7 @@ class AuthWidgetBuilder extends StatelessWidget {
     FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
     String token = await _firebaseMessaging.getToken();
     user.devTokens = [token];
-    await db.setUser(user);
+    await db.setUser(user, merge: true);
   }
 
   @override

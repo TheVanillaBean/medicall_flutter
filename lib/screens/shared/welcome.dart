@@ -69,8 +69,10 @@ class WelcomeScreen extends StatelessWidget {
             ],
             onDone: () => SymptomsScreen.show(context: context),
             next: Icon(Icons.navigate_next),
-            done: Text("Let's Get Started!",
-                style: TextStyle(fontWeight: FontWeight.w600)),
+            done: Text(
+              "Let's Get Started!",
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
             dotsDecorator: DotsDecorator(
               size: Size.square(10.0),
               activeSize: Size(20.0, 10.0),

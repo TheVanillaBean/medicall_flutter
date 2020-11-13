@@ -104,7 +104,7 @@ class MedicallApp extends StatelessWidget {
       ],
       child: AuthWidgetBuilder(
         userProvidersBuilder: (_, user) => [
-          ChangeNotifierProvider<UserProvider>(
+          Provider<UserProvider>(
             create: (_) => UserProvider(user: user),
           ),
           Provider<FirestoreDatabase>(
