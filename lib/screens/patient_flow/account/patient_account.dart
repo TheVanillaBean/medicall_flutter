@@ -1,6 +1,6 @@
 import 'package:Medicall/common_widgets/assets_picker/widget/asset_picker.dart';
 import 'package:Medicall/common_widgets/reusable_account_card.dart';
-import 'package:Medicall/components/drawer_menu.dart';
+import 'package:Medicall/components/drawer_menu/drawer_menu.dart';
 import 'package:Medicall/models/user/patient_user_model.dart';
 import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
