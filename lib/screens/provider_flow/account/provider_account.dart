@@ -483,8 +483,7 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
       this.setState(() {
         this.imageLoading = true;
       });
-      String url =
-          await storageService.uploadProfileImageWith(asset: assetEntity);
+      String url = await storageService.uploadProfileImage(asset: assetEntity);
       userProvider.user.profilePic = url;
       this.setState(() {
         this.imageLoading = false;

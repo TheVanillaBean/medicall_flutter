@@ -189,8 +189,10 @@ class _VideoToPatientStepState extends State<VideoToPatientStep> {
     if (!mounted) return;
     if (widget.model.assetEntity.id != null) {
       widget.model.updateWith(isLoading: true);
-      String url = await widget.model.storageService
-          .uploadProfileImageWith(asset: widget.model.assetEntity);
+      String url = await widget.model.storageService.uploadPatientNoteVideo(
+        asset: widget.model.assetEntity,
+        consultId: widget.model.visitReviewViewModel.consult.uid,
+      );
       widget.model.updateWith(isLoading: false);
       widget.model.updateWith(videoURL: url);
     }

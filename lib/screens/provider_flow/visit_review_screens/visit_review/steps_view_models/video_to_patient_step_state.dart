@@ -1,4 +1,5 @@
 import 'package:Medicall/common_widgets/camera_picker/constants/constants.dart';
+import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_review_view_model.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/firebase_storage_service.dart';
@@ -21,10 +22,24 @@ class VideoToPatientStepState with ChangeNotifier {
     this.assetEntity,
     this.isLoading = false,
     this.videoURL = "",
-  });
+  }) {
+    this.initFromFirestore();
+  }
+
+  void initFromFirestore() {
+    VisitReviewData firestoreData = this.visitReviewViewModel.visitReviewData;
+    if (firestoreData.videoNoteURL.length > 0) {
+      this.videoURL = firestoreData.videoNoteURL;
+
+      if (minimumRequiredFieldsFilledOut) {
+        visitReviewViewModel.addCompletedStep(
+            step: VisitReviewSteps.PatientVideoStep, setState: false);
+      }
+    }
+  }
 
   bool get minimumRequiredFieldsFilledOut {
-    return this.assetEntity != null;
+    return this.assetEntity != null && !this.isLoading;
   }
 
   void updateAssetEntity(AssetEntity assetEntity) =>
