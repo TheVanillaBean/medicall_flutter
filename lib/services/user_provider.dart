@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'firestore_path.dart';
 
 class UserProvider {
-  // ignore: close_sinks
   MedicallUser _user;
 
   final _service = FirestoreService.instance;

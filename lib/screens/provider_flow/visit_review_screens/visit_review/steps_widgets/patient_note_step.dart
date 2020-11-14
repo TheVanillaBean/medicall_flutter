@@ -148,9 +148,12 @@ class PatientNoteStep extends StatelessWidget {
             ),
           ),
           SizedBox(width: 12),
-          Text(
-            title,
-            style: Theme.of(context).textTheme.bodyText1,
+          GestureDetector(
+            onTap: () => onChanged(!checked),
+            child: Text(
+              title,
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
           ),
         ],
       ),

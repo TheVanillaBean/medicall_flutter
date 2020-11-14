@@ -37,7 +37,7 @@ class ExamStepState with ChangeNotifier {
 
   List<Map<String, String>> get examLocationsForSerialization {
     if (examLocations.length == 0) {
-      return selectedExamOptions.map((e) => {e: "N/A"}).toList();
+      return selectedExamOptions.map((e) => {e: ""}).toList();
     } else {
       return examLocations;
     }

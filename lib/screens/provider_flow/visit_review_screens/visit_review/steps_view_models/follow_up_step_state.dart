@@ -76,7 +76,7 @@ class FollowUpStepState with ChangeNotifier {
     } else if (followUp == FollowUpSteps.Emergency) {
       return {followUp: documentation};
     } else {
-      return {followUp.length > 0 ? followUp : "N/A": "N/A"};
+      return {followUp.length > 0 ? followUp : "": ""};
     }
   }
 
