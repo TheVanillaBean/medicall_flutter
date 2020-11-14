@@ -644,39 +644,63 @@ class ChatMessageInputState extends State<ChatMessageInput> {
             children: <Widget>[
               ListTile(
                 title: Text(
-                  'Add a file (20mb max)',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
+                  'Add a file:',
+                  style: Theme.of(context).textTheme.bodyText1.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                 ),
               ),
               ListTile(
-                leading: Icon(Icons.image),
-                title: Text('Upload a photo'),
+                leading: Icon(
+                  Icons.image,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                title: Text(
+                  'Upload a photo',
+                  style: Theme.of(context).textTheme.subtitle2,
+                ),
                 onTap: () {
                   pickFile(DefaultAttachmentTypes.image, false);
                   Navigator.pop(context);
                 },
               ),
               ListTile(
-                leading: Icon(Icons.video_library),
-                title: Text('Upload a video (3 minutes max)'),
+                leading: Icon(
+                  Icons.video_library,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                title: Text(
+                  'Upload a video (5 min max)',
+                  style: Theme.of(context).textTheme.subtitle2,
+                ),
                 onTap: () {
                   pickFile(DefaultAttachmentTypes.video, false);
                   Navigator.pop(context);
                 },
               ),
               ListTile(
-                leading: Icon(Icons.camera_alt),
-                title: Text('Photo from camera'),
+                leading: Icon(
+                  Icons.camera_alt,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                title: Text(
+                  'Photo from camera',
+                  style: Theme.of(context).textTheme.subtitle2,
+                ),
                 onTap: () {
                   pickFile(DefaultAttachmentTypes.image, true);
                   Navigator.pop(context);
                 },
               ),
               ListTile(
-                leading: Icon(Icons.videocam),
-                title: Text('Video from camera (3 minutes max)'),
+                leading: Icon(
+                  Icons.videocam,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                title: Text(
+                  'Video from camera (5 min max)',
+                  style: Theme.of(context).textTheme.subtitle2,
+                ),
                 onTap: () {
                   pickFile(DefaultAttachmentTypes.video, true);
                   Navigator.pop(context);
@@ -732,13 +756,15 @@ class ChatMessageInputState extends State<ChatMessageInput> {
         file = File(pickedFile.path);
       } else if (fileType == DefaultAttachmentTypes.video) {
         pickedFile = await _imagePicker.getVideo(source: ImageSource.camera);
+        showProgressDialog(
+            context, 'Your video is being processed. Please wait...');
         final info = await VideoCompress.compressVideo(
           pickedFile.path,
           quality: VideoQuality.LowQuality,
           deleteOrigin: true,
         );
-        _buildCompressionProgress;
         file = _showVideoSizeLimitError(info, file);
+        Navigator.pop(context);
       }
     } else {
       FileType type;
@@ -752,13 +778,15 @@ class ChatMessageInputState extends State<ChatMessageInput> {
         type = FileType.video;
         final res = await FilePicker.platform.pickFiles(type: type);
         if (res?.files?.isNotEmpty == true) {
+          showProgressDialog(
+              context, 'Your video is being processed. Please wait...');
           final info = await VideoCompress.compressVideo(
             res.files.first.path,
             quality: VideoQuality.LowQuality,
             deleteOrigin: true,
           );
-          _buildCompressionProgress;
           file = _showVideoSizeLimitError(info, file);
+          Navigator.pop(context);
         }
       } else if (fileType == DefaultAttachmentTypes.file) {
         type = FileType.any;
@@ -806,6 +834,8 @@ class ChatMessageInputState extends State<ChatMessageInput> {
     setState(() {
       attachment.uploaded = true;
     });
+
+    await VideoCompress.deleteAllCache();
   }
 
   File _showVideoSizeLimitError(MediaInfo info, File file) {
@@ -903,9 +933,35 @@ class ChatMessageInputState extends State<ChatMessageInput> {
     return res.file;
   }
 
-  Widget _buildCompressionProgress(BuildContext context) {
-    if (VideoCompress.isCompressing == true) {
-      return CircularProgressIndicator();
+  static showProgressDialog(BuildContext context, String title) {
+    try {
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16)),
+              elevation: 24,
+              content: Flex(
+                direction: Axis.horizontal,
+                children: <Widget>[
+                  CircularProgressIndicator(),
+                  Padding(
+                    padding: EdgeInsets.only(left: 15),
+                  ),
+                  Flexible(
+                      flex: 8,
+                      child: Text(
+                        title,
+                        style: Theme.of(context).textTheme.bodyText1,
+                      )),
+                ],
+              ),
+            );
+          });
+    } catch (e) {
+      print(e.toString());
     }
   }
 
