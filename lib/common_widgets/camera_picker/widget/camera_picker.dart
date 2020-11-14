@@ -607,7 +607,7 @@ class CameraPickerState extends State<CameraPicker> {
           theme: theme,
         );
         if (entity != null) {
-          Navigator.of(context).pop(entity);
+          Navigator.of(context).pop([entity]);
         } else {
           takenVideoFilePath = null;
           if (mounted) {
@@ -667,7 +667,9 @@ class CameraPickerState extends State<CameraPicker> {
           vertical: 20.0,
         ),
         child: Text(
-          Constants.textDelegate.shootingTips,
+          this.isOnlyAllowRecording
+              ? "Hold button to record"
+              : Constants.textDelegate.shootingTips,
           style: const TextStyle(fontSize: 15.0),
         ),
       ),
@@ -690,7 +692,10 @@ class CameraPickerState extends State<CameraPicker> {
                 : const SizedBox.shrink(),
           ),
           Expanded(child: Center(child: shootingButton)),
-          Expanded(child: Center(child: galleryButton)),
+          if (!this.isOnlyAllowRecording)
+            Expanded(child: Center(child: galleryButton))
+          else
+            const Spacer()
         ],
       ),
     );
@@ -1057,15 +1062,16 @@ class CameraPickerState extends State<CameraPicker> {
               )
             else
               const SizedBox.shrink(),
-            ChangeNotifierProvider<AssetPickerViewerProvider>.value(
-              value: provider,
-              child: Consumer<AssetPickerViewerProvider>(
-                builder: (_, model, __) =>
-                    provider.currentlySelectedAssets.length > 0
-                        ? bottomDetail
-                        : SizedBox.shrink(),
+            if (!this.isOnlyAllowRecording)
+              ChangeNotifierProvider<AssetPickerViewerProvider>.value(
+                value: provider,
+                child: Consumer<AssetPickerViewerProvider>(
+                  builder: (_, model, __) =>
+                      provider.currentlySelectedAssets.length > 0
+                          ? bottomDetail
+                          : SizedBox.shrink(),
+                ),
               ),
-            ),
             ChangeNotifierProvider<AssetPickerViewerProvider>.value(
               value: provider,
               child: Consumer<AssetPickerViewerProvider>(

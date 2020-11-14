@@ -34,6 +34,21 @@ class ImagePicker {
 
     return result;
   }
+
+  static Future<AssetEntity> recordVideo({BuildContext context}) async {
+    final List<AssetEntity> result = await CameraPicker.pickFromCamera(
+      context,
+      isAllowRecording: true,
+      isOnlyAllowRecording: true,
+      maximumRecordingDuration: Duration(minutes: 3),
+      cameraTextDelegate: EnglishCameraPickerTextDelegateWithRecording(),
+    );
+    if (result == null || result.length == 0) {
+      throw "Video not recorded";
+    }
+
+    return result.first;
+  }
 }
 
 class AssetEntityImage extends StatelessWidget {

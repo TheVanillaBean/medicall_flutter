@@ -9,6 +9,7 @@ import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_view_models/follow_up_step_state.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_view_models/patient_note_step_state.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_view_models/treatment_note_step_state.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_view_models/video_to_patient_step_state.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -16,7 +17,7 @@ import 'package:flutter/material.dart';
 
 // Properties
 abstract class VisitReviewSteps {
-  static const TotalSteps = 6;
+  static const TotalSteps = 7;
 
   static const DiagnosisStep = 0;
   static const ExamStep = 1;
@@ -24,6 +25,7 @@ abstract class VisitReviewSteps {
   static const FollowUpStep = 3;
   static const EducationalContentStep = 4;
   static const PatientNoteStep = 5;
+  static const PatientVideoStep = 6;
 }
 
 class VisitReviewViewModel extends ChangeNotifier {
@@ -49,6 +51,7 @@ class VisitReviewViewModel extends ChangeNotifier {
     SingleState(stateTitle: "Follow Up"),
     SingleState(stateTitle: "Educational"),
     SingleState(stateTitle: "Patient Note"),
+    SingleState(stateTitle: "Video Note"),
   ];
 
   VisitReviewViewModel({
@@ -227,13 +230,24 @@ class VisitReviewViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> saveVideoNoteToFirestore(VideoToPatientStepState model) async {
+    await firestoreDatabase.saveVisitReview(
+      consultId: this.consult.uid,
+      visitReviewData: this.visitReviewData,
+    );
+
+    checkIfCompleted();
+    notifyListeners();
+  }
+
   void checkIfCompleted() async {
     if (this.completedSteps.length == 6 &&
-        this.consult.state != ConsultStatus.Completed) {
+        this.consult.state != ConsultStatus.Completed &&
+        this.currentStep != VisitReviewSteps.PatientVideoStep) {
       this.consult.state = ConsultStatus.Completed;
       await firestoreDatabase.saveConsult(
           consultId: this.consult.uid, consult: this.consult);
-      this.visitReviewStatus.updateStatus("All steps completed!");
+      this.visitReviewStatus.updateStatus("All required steps completed!");
     }
   }
 

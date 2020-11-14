@@ -11,6 +11,7 @@ import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_widgets/follow_up_step.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_widgets/patient_note_step.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_widgets/treatment_step.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_widgets/video_to_patient_step.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_review_view_model.dart';
 import 'package:Medicall/screens/shared/visit_information/consult_photos.dart';
 import 'package:Medicall/services/database.dart';
@@ -139,6 +140,7 @@ class _VisitReviewState extends State<VisitReview> with VisitReviewStatus {
                   FollowUpStep.create(context),
                   EducationalContentStep.create(context),
                   PatientNoteStep.create(context),
+                  VideoToPatientStep.create(context),
                 ],
               ),
             ),

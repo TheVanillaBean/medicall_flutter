@@ -19,6 +19,8 @@ class VisitReviewData {
 
   PatientTemplateNote patientNote;
 
+  String videoNoteURL;
+
   VisitReviewData({
     this.diagnosis = "",
     this.otherDiagnosis = "",
@@ -29,6 +31,7 @@ class VisitReviewData {
     this.treatmentOptions = const [],
     this.educationalOptions = const [],
     this.followUp = const {},
+    this.videoNoteURL = "",
   });
 
   factory VisitReviewData.fromMap(
@@ -36,9 +39,9 @@ class VisitReviewData {
     if (data == null) {
       return null;
     }
-    final String diagnosis = data['diagnosis'] as String;
-    final String otherDiagnosis = data['other_diagnosis'] as String;
-    final bool includeDDX = data['include_DDX'] as bool;
+    final String diagnosis = data['diagnosis'] as String ?? "";
+    final String otherDiagnosis = data['other_diagnosis'] as String ?? "";
+    final bool includeDDX = data['include_DDX'] as bool ?? false;
     final List<String> ddxOptions =
         (data['ddx_options'] as List).map((e) => e.toString()).toList();
     final String ddxOtherOption = data['ddx_other_option'] as String ?? "";
@@ -85,6 +88,8 @@ class VisitReviewData {
       patientNote = PatientTemplateNote.fromMap(data['patient_note'] as Map);
     }
 
+    final String videoNoteURL = data['video_note_url'] as String ?? "";
+
     final VisitReviewData visitReviewData = VisitReviewData(
       diagnosis: diagnosis,
       otherDiagnosis: otherDiagnosis,
@@ -95,6 +100,7 @@ class VisitReviewData {
       treatmentOptions: treatmentOptions,
       educationalOptions: selectedEducationalOptions,
       followUp: followUp,
+      videoNoteURL: videoNoteURL,
     );
     visitReviewData.patientNote = patientNote;
     return visitReviewData;
@@ -118,6 +124,9 @@ class VisitReviewData {
     }
     if (patientNote != null) {
       e.addAll({'patient_note': patientNote.toMap()});
+    }
+    if (videoNoteURL.length > 0) {
+      e.addAll({'video_note_url': videoNoteURL});
     }
     return e;
   }
