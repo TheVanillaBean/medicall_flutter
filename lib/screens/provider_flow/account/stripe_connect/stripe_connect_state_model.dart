@@ -9,11 +9,13 @@ import 'package:http/http.dart' as http;
 class StripeConnectStateModel with ChangeNotifier {
   final AuthBase auth;
   final UserProvider userProvider;
+  final String stripeConnectUrl;
   bool isLoading;
 
   StripeConnectStateModel({
     @required this.auth,
     @required this.userProvider,
+    @required this.stripeConnectUrl,
     this.isLoading = false,
   });
 
@@ -23,7 +25,7 @@ class StripeConnectStateModel with ChangeNotifier {
     String idToken = await auth.currentUserIdToken();
 
     final response = await http.get(
-      'https://us-central1-telmed-216305.cloudfunctions.net/api/stripe/authorize',
+      this.stripeConnectUrl,
       headers: {HttpHeaders.authorizationHeader: "Bearer $idToken"},
     );
 

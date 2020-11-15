@@ -35,13 +35,15 @@ Future<void> main() async {
   await Firebase.initializeApp();
   final appleSignInAvailable = await AppleSignInAvailable.check();
   final settings = await _getFlavorSettings();
-  print('API URL ${settings.apiBaseUrl}');
-  runApp(MedicallApp(
-    appleSignInAvailable: appleSignInAvailable,
-    authServiceBuilder: (_) => Auth(),
-    databaseBuilder: (_) => NonAuthFirestoreDB(),
-    tempUserProvider: (_) => TempUserProvider(),
-  ));
+  runApp(
+    MedicallApp(
+      appleSignInAvailable: appleSignInAvailable,
+      authServiceBuilder: (_) => Auth(),
+      databaseBuilder: (_) => NonAuthFirestoreDB(),
+      tempUserProvider: (_) => TempUserProvider(),
+      flavorSettings: settings,
+    ),
+  );
 }
 
 Future<FlavorSettings> _getFlavorSettings() async {
@@ -50,10 +52,10 @@ Future<FlavorSettings> _getFlavorSettings() async {
 
   print('STARTED WITH FLAVOR $flavor');
 
-  if (flavor == 'dev') {
+  if (flavor == FlavorSettings.DEV) {
     return FlavorSettings.dev();
-  } else if (flavor == 'prod') {
-    return FlavorSettings.live();
+  } else if (flavor == FlavorSettings.PROD) {
+    return FlavorSettings.prod();
   } else {
     throw Exception("Unknown flavor: $flavor");
   }
@@ -64,6 +66,7 @@ class MedicallApp extends StatelessWidget {
   final AuthBase Function(BuildContext context) authServiceBuilder;
   final NonAuthDatabase Function(BuildContext context) databaseBuilder;
   final TempUserProvider Function(BuildContext context) tempUserProvider;
+  final FlavorSettings flavorSettings;
 
   const MedicallApp({
     Key key,
@@ -71,6 +74,7 @@ class MedicallApp extends StatelessWidget {
     this.authServiceBuilder,
     this.databaseBuilder,
     this.tempUserProvider,
+    this.flavorSettings,
   }) : super(key: key);
 
   @override
@@ -80,6 +84,9 @@ class MedicallApp extends StatelessWidget {
     ]);
     return MultiProvider(
       providers: [
+        Provider<FlavorSettings>.value(
+          value: flavorSettings,
+        ),
         Provider<AppleSignInAvailable>.value(
           value: appleSignInAvailable,
         ),
@@ -93,7 +100,9 @@ class MedicallApp extends StatelessWidget {
           create: databaseBuilder,
         ),
         Provider<StripeProviderBase>(
-          create: (_) => StripeProvider(),
+          create: (_) => StripeProvider(
+            stripeKey: flavorSettings.stripeKey,
+          ),
         ),
         Provider<ExtImageProvider>(
           create: (_) => ExtendedImageProvider(),
@@ -114,7 +123,9 @@ class MedicallApp extends StatelessWidget {
             create: (_) => FirebaseStorageService(uid: user.uid),
           ),
           Provider<ChatProvider>(
-            create: (_) => ChatProvider(),
+            create: (_) => ChatProvider(
+              streamChatAPIKey: flavorSettings.streamChatAPIKey,
+            ),
           ),
         ],
         builder: (context, userSnapshot) {

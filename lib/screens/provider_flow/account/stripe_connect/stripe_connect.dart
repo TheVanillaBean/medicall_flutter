@@ -1,5 +1,6 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/form_submit_button.dart';
+import 'package:Medicall/flavor_settings.dart';
 import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/provider_flow/account/stripe_connect/stripe_connect_state_model.dart';
@@ -20,9 +21,14 @@ class StripeConnect extends StatelessWidget {
     final AuthBase auth = Provider.of<AuthBase>(context, listen: false);
     final UserProvider userProvider =
         Provider.of<UserProvider>(context, listen: false);
+    final FlavorSettings settings =
+        Provider.of<FlavorSettings>(context, listen: false);
     return ChangeNotifierProvider<StripeConnectStateModel>(
-      create: (context) =>
-          StripeConnectStateModel(auth: auth, userProvider: userProvider),
+      create: (context) => StripeConnectStateModel(
+        auth: auth,
+        userProvider: userProvider,
+        stripeConnectUrl: settings.stripeConnectRedirectURl,
+      ),
       child: Consumer<StripeConnectStateModel>(
         builder: (_, model, __) => StripeConnect(
           model: model,

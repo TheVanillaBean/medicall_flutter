@@ -1,4 +1,3 @@
-import 'package:Medicall/secrets.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/foundation.dart';
 import 'package:stripe_payment/stripe_payment.dart';
@@ -18,7 +17,7 @@ abstract class StripeProviderBase {
 }
 
 class StripeProvider implements StripeProviderBase {
-  StripeProvider() {
+  StripeProvider({@required stripeKey}) {
     StripePayment.setOptions(StripeOptions(publishableKey: stripeKey));
   }
 
