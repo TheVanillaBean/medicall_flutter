@@ -13,6 +13,7 @@ class VideoToPatientStepState with ChangeNotifier {
   AssetEntity assetEntity;
   String videoURL;
   bool isLoading;
+  bool isSubmitted;
   bool editedStep = false;
 
   VideoToPatientStepState({
@@ -21,6 +22,7 @@ class VideoToPatientStepState with ChangeNotifier {
     @required this.extImageProvider,
     this.assetEntity,
     this.isLoading = false,
+    this.isSubmitted = false,
     this.videoURL = "",
   }) {
     this.initFromFirestore();
@@ -39,7 +41,9 @@ class VideoToPatientStepState with ChangeNotifier {
   }
 
   bool get minimumRequiredFieldsFilledOut {
-    return this.assetEntity != null && !this.isLoading;
+    return (this.assetEntity != null || this.videoURL.length > 0) &&
+        !this.isLoading &&
+        !this.isSubmitted;
   }
 
   void updateAssetEntity(AssetEntity assetEntity) =>
@@ -48,11 +52,13 @@ class VideoToPatientStepState with ChangeNotifier {
   void updateWith({
     AssetEntity assetEntity,
     bool isLoading,
+    bool isSubmitted,
     String videoURL,
   }) {
     this.editedStep = true;
     this.assetEntity = assetEntity ?? this.assetEntity;
     this.isLoading = isLoading ?? this.isLoading;
+    this.isSubmitted = isSubmitted ?? this.isSubmitted;
     this.videoURL = videoURL ?? this.videoURL;
     notifyListeners();
   }

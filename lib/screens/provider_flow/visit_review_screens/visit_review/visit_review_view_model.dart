@@ -110,6 +110,8 @@ class VisitReviewViewModel extends ChangeNotifier {
       return "Educational";
     } else if (index == VisitReviewSteps.PatientNoteStep) {
       return "Patient Note";
+    } else if (index == VisitReviewSteps.PatientVideoStep) {
+      return "Video Note";
     } else {
       return "Error";
     }
@@ -226,16 +228,20 @@ class VisitReviewViewModel extends ChangeNotifier {
     await firestoreDatabase.saveVisitReview(
         consultId: this.consult.uid, visitReviewData: this.visitReviewData);
 
+    addCompletedStep(step: VisitReviewSteps.PatientNoteStep, setState: true);
     checkIfCompleted();
     notifyListeners();
   }
 
   Future<void> saveVideoNoteToFirestore(VideoToPatientStepState model) async {
+    this.visitReviewData.videoNoteURL = model.videoURL;
+
     await firestoreDatabase.saveVisitReview(
       consultId: this.consult.uid,
       visitReviewData: this.visitReviewData,
     );
 
+    addCompletedStep(step: VisitReviewSteps.PatientVideoStep, setState: true);
     checkIfCompleted();
     notifyListeners();
   }

@@ -66,6 +66,7 @@ import 'package:Medicall/screens/shared/consent/index.dart';
 import 'package:Medicall/screens/shared/password_reset/password_reset.dart';
 import 'package:Medicall/screens/shared/privacy/index.dart';
 import 'package:Medicall/screens/shared/terms/index.dart';
+import 'package:Medicall/screens/shared/video_player/video_player.dart';
 import 'package:Medicall/screens/shared/welcome.dart';
 import 'package:flutter/material.dart';
 import 'package:stream_chat_flutter/stream_chat_flutter.dart';
@@ -136,6 +137,7 @@ class Routes {
   static const cardSelect = '/card-select';
   static const aboutUs = '/about-us';
   static const contactUs = '/contact-us';
+  static const videoPlayer = '/video-player';
 }
 
 /// The word 'consult' and 'visit' are used separately, but mean the exact
@@ -690,6 +692,15 @@ class Router {
       case Routes.completeVisit:
         return MaterialPageRoute<dynamic>(
           builder: (context) => CompleteVisit.create(context),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case Routes.videoPlayer:
+        final Map<String, dynamic> mapArgs = args;
+        final String title = mapArgs['title'];
+        final String url = mapArgs['url'];
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => VideoPlayer(title: title, url: url),
           settings: settings,
           fullscreenDialog: true,
         );

@@ -1,7 +1,9 @@
 import 'package:Medicall/common_widgets/assets_picker/widget/asset_picker.dart';
+import 'package:Medicall/common_widgets/camera_picker/constants/constants.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/continue_button.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/swipe_gesture_recognizer.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_view_models/video_to_patient_step_state.dart';
+import 'package:Medicall/screens/shared/video_player/video_player.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/firebase_storage_service.dart';
 import 'package:Medicall/util/app_util.dart';
@@ -39,6 +41,18 @@ class VideoToPatientStep extends StatefulWidget {
 }
 
 class _VideoToPatientStepState extends State<VideoToPatientStep> {
+  Future<void> _submit() async {
+    widget.model.updateWith(isLoading: true, isSubmitted: true);
+    String url = await widget.model.storageService.uploadPatientNoteVideo(
+      asset: widget.model.assetEntity,
+      consultId: widget.model.visitReviewViewModel.consult.uid,
+    );
+    widget.model.updateWith(videoURL: url);
+    await widget.model.visitReviewViewModel
+        .saveVideoNoteToFirestore(widget.model);
+    widget.model.updateWith(isLoading: false);
+  }
+
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
@@ -73,12 +87,18 @@ class _VideoToPatientStepState extends State<VideoToPatientStep> {
                 ),
               ),
             ),
-            if (widget.model.assetEntity != null)
+            if (widget.model.minimumRequiredFieldsFilledOut)
               _buildVideoCardButton(
                 context,
                 'Recorded on:',
-                'Nov 6, 2020, 2:30p',
-                null,
+                widget.model.visitReviewViewModel.consult.date.toString(),
+                () async {
+                  await VideoPlayer.show(
+                    context: context,
+                    url: widget.model.videoURL,
+                    title: "Video Note",
+                  );
+                },
               ),
             SizedBox(height: 50),
             Center(
@@ -125,9 +145,7 @@ class _VideoToPatientStepState extends State<VideoToPatientStep> {
                 width: width,
                 onTap: this.widget.model.minimumRequiredFieldsFilledOut
                     ? () async {
-                        await widget.model.visitReviewViewModel
-                            .saveVideoNoteToFirestore(widget.model);
-                        widget.model.visitReviewViewModel.incrementIndex();
+                        await _submit();
                       }
                     : null,
               ),
@@ -177,9 +195,9 @@ class _VideoToPatientStepState extends State<VideoToPatientStep> {
   Future<void> _recordVideo() async {
     AssetPicker.registerObserve();
 
+    AssetEntity assetEntity;
     try {
-      widget.model.assetEntity =
-          await ImagePicker.recordVideo(context: context);
+      assetEntity = await ImagePicker.recordVideo(context: context);
     } catch (e) {
       AppUtil().showFlushBar(e, context);
     }
@@ -187,14 +205,8 @@ class _VideoToPatientStepState extends State<VideoToPatientStep> {
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
     if (!mounted) return;
-    if (widget.model.assetEntity.id != null) {
-      widget.model.updateWith(isLoading: true);
-      String url = await widget.model.storageService.uploadPatientNoteVideo(
-        asset: widget.model.assetEntity,
-        consultId: widget.model.visitReviewViewModel.consult.uid,
-      );
-      widget.model.updateWith(isLoading: false);
-      widget.model.updateWith(videoURL: url);
+    if (assetEntity.id != null) {
+      widget.model.updateWith(assetEntity: assetEntity, isSubmitted: false);
     }
     AssetPicker.unregisterObserve();
   }

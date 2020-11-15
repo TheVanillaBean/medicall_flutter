@@ -11,6 +11,7 @@ class ProviderUser extends MedicallUser {
   String providerBio;
   String practiceName;
   bool stripeConnectAuthorized;
+  List<String> d;
 
   ProviderUser({
     this.professionalTitle = '',
