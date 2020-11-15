@@ -13,7 +13,6 @@ import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:Medicall/util/image_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:provider/provider.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
@@ -226,77 +225,7 @@ class PhotoIDScreen extends StatelessWidget {
   List<Widget> _buildProfilePlaceholder({BuildContext context, double height}) {
     return [
       Text(
-        "Please upload a state issued photo ID\nThis is a legal requirement for telemedicine",
-        textAlign: TextAlign.center,
-        style: Theme.of(context).textTheme.bodyText1,
-      ),
-      Container(
-        height: height * 0.25,
-        width: MediaQuery.of(context).size.width,
-        child: IconButton(
-          onPressed: () => _loadProfileImage(context),
-          icon: Stack(
-            alignment: AlignmentDirectional.bottomStart,
-            overflow: Overflow.visible,
-            children: <Widget>[
-              Container(
-                width: ScreenUtil.screenWidthDp - 100,
-                height: 300,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                    border: Border.all(color: Colors.grey)),
-                child: Align(
-                  alignment: Alignment(-0.8, 0.0),
-                  child: Row(children: [
-                    Icon(
-                      Icons.account_circle_outlined,
-                      color: Colors.grey.withAlpha(140),
-                      size: height * 0.15,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            color: Colors.black12,
-                            height: 10,
-                            width: 160,
-                          ),
-                          Container(
-                            color: Colors.black12,
-                            height: 10,
-                            width: 90,
-                          ),
-                          Container(
-                            color: Colors.black12,
-                            height: 10,
-                            width: 120,
-                          )
-                        ],
-                      ),
-                    )
-                  ]),
-                ),
-              ),
-              Positioned(
-                bottom: -10,
-                child: CircleAvatar(
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  radius: 20.0,
-                  child: new Icon(
-                    Icons.camera_alt,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      Text(
-        "Please upload a profile photo,\nthis will be seen in app.",
+        "Please upload a photo ID\nThis is a legal requirement for telemedicine",
         textAlign: TextAlign.center,
         style: Theme.of(context).textTheme.bodyText1,
       ),
