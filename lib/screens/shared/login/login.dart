@@ -141,7 +141,7 @@ class _LoginScreenState extends State<LoginScreen> {
       FadeIn(
         2,
         Padding(
-            padding: const EdgeInsets.fromLTRB(45, 15, 45, 15),
+            padding: const EdgeInsets.fromLTRB(45, 0, 45, 15),
             child: Column(
               children: <Widget>[
                 _buildHeader(context),
@@ -206,7 +206,7 @@ class _LoginScreenState extends State<LoginScreen> {
       children: <Widget>[
         SizedBox(
           width: 160,
-          height: 120,
+          height: 70,
           child: Image.asset(
             'assets/icon/letter_mark.png',
           ),
