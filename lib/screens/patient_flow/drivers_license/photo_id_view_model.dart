@@ -37,8 +37,8 @@ class PhotoIDViewModel with ChangeNotifier {
     updateWith(isLoading: true);
     PatientUser medicallUser = userProvider.user;
     try {
-      medicallUser.photoID = await firebaseStorageService
-          .uploadProfileImageWith(asset: this.idPhoto);
+      medicallUser.photoID =
+          await firebaseStorageService.uploadProfileImage(asset: this.idPhoto);
     } catch (e) {
       updateWith(isLoading: false);
       btnController.reset();

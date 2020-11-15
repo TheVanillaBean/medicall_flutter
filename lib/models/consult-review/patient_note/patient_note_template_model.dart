@@ -18,6 +18,30 @@ class PatientTemplateNote {
 
   PatientTemplateNote();
 
+  bool get hasIntroduction {
+    return this.introductionTemplate.template.isNotEmpty;
+  }
+
+  bool get hasUnderstandingDiagnosis {
+    return this.understandingDiagnosisTemplate.template.isNotEmpty;
+  }
+
+  bool get hasCounseling {
+    return this.counselingTemplate.template.isNotEmpty;
+  }
+
+  bool get hasTreatmentRecommendations {
+    return this.treatmentRecommendationsTemplate.template.isNotEmpty;
+  }
+
+  bool get hasFurtherTesting {
+    return this.furtherTestingTemplate.template.isNotEmpty;
+  }
+
+  bool get hasConclusion {
+    return this.conclusionTemplate.template.isNotEmpty;
+  }
+
   factory PatientTemplateNote.fromMap(Map<String, dynamic> data) {
     if (data == null) {
       return null;

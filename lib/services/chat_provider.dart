@@ -1,13 +1,18 @@
 import 'package:Medicall/models/user/user_model_base.dart' as MedicallUser;
-import 'package:Medicall/secrets.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:stream_chat_flutter/stream_chat_flutter.dart';
 
 class ChatProvider {
-  final Client client = Client(
-    streamChatAPIKey,
-    logLevel: Level.INFO,
-    persistenceEnabled: false,
-  );
+  final streamChatAPIKey;
+  Client client;
+
+  ChatProvider({@required this.streamChatAPIKey}) {
+    client = Client(
+      streamChatAPIKey,
+      logLevel: Level.INFO,
+      persistenceEnabled: true,
+    );
+  }
 
   bool userSet = false;
 

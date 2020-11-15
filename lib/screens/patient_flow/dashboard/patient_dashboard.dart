@@ -26,7 +26,7 @@ class PatientDashboardScreen extends StatelessWidget {
     final FirestoreDatabase database =
         Provider.of<FirestoreDatabase>(context, listen: false);
     final UserProvider provider =
-        Provider.of<UserProvider>(context, listen: false);
+        Provider.of<UserProvider>(context, listen: true);
     return ChangeNotifierProvider<PatientDashboardViewModel>(
       create: (context) => PatientDashboardViewModel(
         database: database,

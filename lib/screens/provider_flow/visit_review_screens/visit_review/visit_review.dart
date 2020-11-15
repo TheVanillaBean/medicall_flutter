@@ -1,5 +1,7 @@
+import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
 import 'package:Medicall/models/consult-review/consult_review_options_model.dart';
+import 'package:Medicall/models/consult-review/diagnosis_options_model.dart';
 import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
@@ -9,14 +11,13 @@ import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_widgets/follow_up_step.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_widgets/patient_note_step.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_widgets/treatment_step.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_widgets/video_to_patient_step.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_review_view_model.dart';
 import 'package:Medicall/screens/shared/visit_information/consult_photos.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
-import 'package:property_change_notifier/property_change_notifier.dart';
 import 'package:provider/provider.dart';
-import 'package:step_progress_indicator/step_progress_indicator.dart';
 
 class VisitReview extends StatefulWidget {
   final VisitReviewViewModel model;
@@ -28,18 +29,19 @@ class VisitReview extends StatefulWidget {
     Consult consult,
     ConsultReviewOptions consultReviewOptions,
     VisitReviewData visitReviewData,
+    DiagnosisOptions diagnosisOptions,
   ) {
     final FirestoreDatabase firestoreDatabase =
         Provider.of<FirestoreDatabase>(context);
-    return PropertyChangeProvider<VisitReviewViewModel>(
-      value: VisitReviewViewModel(
+    return ChangeNotifierProvider<VisitReviewViewModel>(
+      create: (context) => VisitReviewViewModel(
         firestoreDatabase: firestoreDatabase,
         consult: consult,
         consultReviewOptions: consultReviewOptions,
         visitReviewData: visitReviewData,
+        diagnosisOptions: diagnosisOptions,
       ),
-      child: PropertyChangeConsumer<VisitReviewViewModel>(
-        properties: [VisitReviewVMProperties.visitReview],
+      child: Consumer<VisitReviewViewModel>(
         builder: (_, model, __) => VisitReview(
           model: model,
         ),
@@ -52,6 +54,7 @@ class VisitReview extends StatefulWidget {
     Consult consult,
     ConsultReviewOptions consultReviewOptions,
     VisitReviewData visitReviewData,
+    DiagnosisOptions diagnosisOptions,
   }) async {
     await Navigator.of(context).pushReplacementNamed(
       Routes.visitReview,
@@ -59,6 +62,7 @@ class VisitReview extends StatefulWidget {
         'consult': consult,
         'consultReviewOptions': consultReviewOptions,
         'visitReviewData': visitReviewData,
+        'diagnosisOptions': diagnosisOptions,
       },
     );
   }
@@ -69,126 +73,85 @@ class VisitReview extends StatefulWidget {
 
 class _VisitReviewState extends State<VisitReview> with VisitReviewStatus {
   @override
+  void initState() {
+    widget.model.setProgressTimeline();
+    super.initState();
+  }
+
+  Future<bool> _onWillPop() async {
+    final didPressYes = await PlatformAlertDialog(
+      title: "Cancel Review?",
+      content: "Are you sure you want to cancel?",
+      defaultActionText: "Yes, cancel",
+      cancelActionText: "No",
+    ).show(context);
+    if (didPressYes) {
+      Navigator.of(context).pop();
+      return false;
+    } else {
+      return false;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     widget.model.setVisitReviewStatus(this);
-    final width = MediaQuery.of(context).size.width;
-    return Scaffold(
-      appBar: AppBar(
-        leading: Builder(
-          builder: (BuildContext context) {
-            return IconButton(
-              onPressed: () async {
-                final didPressYes = await PlatformAlertDialog(
-                  title: "Cancel Review?",
-                  content: "Are you sure you want to cancel?",
-                  defaultActionText: "Yes, cancel",
-                  cancelActionText: "No",
-                ).show(context);
-                if (didPressYes) {
-                  Navigator.pop(context);
-                }
+
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        appBar: CustomAppBar.getAppBar(
+          type: AppBarType.Back,
+          title: widget.model.getCustomStepText(widget.model.currentStep),
+          theme: Theme.of(context),
+          onPressed: () => Navigator.maybePop(context),
+          actions: [
+            IconButton(
+              icon: Icon(
+                Icons.photo_library,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              onPressed: () {
+                ConsultPhotos.show(
+                  context: context,
+                  consult: widget.model.consult,
+                );
               },
-              icon: Icon(Icons.arrow_back),
-            );
-          },
+            )
+          ],
         ),
-        centerTitle: true,
-        title: Text(
-          widget.model.getCustomStepText(widget.model.currentStep),
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.photo_library,
-              color: Theme.of(context).colorScheme.primary,
+        body: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              child: widget.model.screenProgress,
             ),
-            onPressed: () {
-              ConsultPhotos.show(
-                context: context,
-                consult: widget.model.consult,
-              );
-            },
-          )
-        ],
-      ),
-      body: Column(
-        mainAxisSize: MainAxisSize.max,
-        children: <Widget>[
-          Expanded(
-            flex: 8,
-            child: IndexedStack(
-              index: widget.model.currentStep,
-              children: <Widget>[
-                DiagnosisStep(),
-                ExamStep(),
-                TreatmentStep(),
-                FollowUpStep(),
-                EducationalContentStep(),
-                PatientNoteStep(),
-              ],
+            Divider(
+              height: 2,
             ),
-          ),
-          Divider(
-            height: 2,
-          ),
-          Expanded(
-            flex: 1,
-            child: SingleChildScrollView(
-              controller: widget.model.scrollController,
-              scrollDirection: Axis.horizontal,
-              child: SizedBox(
-                width: width * 1.5,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-                  child: StepProgressIndicator(
-                    direction: Axis.horizontal,
-                    totalSteps: VisitReviewSteps.TotalSteps,
-                    currentStep: widget.model.currentStep,
-                    size: 48,
-                    roundedEdges: Radius.circular(25),
-                    customStep: (index, color, size) => buildCustomStep(index),
-                    onTap: (index) => () => widget.model.updateIndex(index),
-                  ),
-                ),
+            Expanded(
+              child: IndexedStack(
+                index: widget.model.currentStep,
+                children: <Widget>[
+                  DiagnosisStep.create(context),
+                  ExamStep.create(context),
+                  TreatmentStep.create(context),
+                  FollowUpStep.create(context),
+                  EducationalContentStep.create(context),
+                  PatientNoteStep.create(context),
+                  VideoToPatientStep.create(context),
+                ],
               ),
             ),
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget buildCustomStep(int stepIndex) {
-    return Container(
-      color: getColorForStep(stepIndex),
-      child: Center(
-        child: Text(
-          widget.model.getCustomStepText(stepIndex),
-          style: TextStyle(fontSize: 12, color: Colors.white),
+          ],
         ),
       ),
     );
-  }
-
-  Color getColorForStep(int stepIndex) {
-    if (widget.model.completedSteps.contains(stepIndex) &&
-        widget.model.currentStep != stepIndex) {
-      return Theme.of(context).primaryColorDark;
-    }
-    if (widget.model.currentStep == stepIndex) {
-      return Theme.of(context).colorScheme.primary;
-    } else {
-      return Theme.of(context).colorScheme.secondaryVariant;
-    }
   }
 
   @override
   void updateStatus(String msg) {
     AppUtil().showFlushBar(msg, context);
-    if (widget.model.completedSteps.length == 6) {
-      Navigator.of(context).popUntil(
-        (ModalRoute.withName(Routes.visitOverview)),
-      );
-    }
   }
 }

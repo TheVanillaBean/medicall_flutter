@@ -2,8 +2,6 @@ import 'package:Medicall/common_widgets/custom_dropdown_formfield.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/screens/patient_flow/account/update_patient_info/update_patient_info_view_model.dart';
 import 'package:Medicall/screens/patient_flow/personal_info/personal_info_text_field.dart';
-import 'package:Medicall/services/auth.dart';
-import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
@@ -45,9 +43,6 @@ class _UpdatePatientInfoFormState extends State<UpdatePatientInfoForm> {
 
   @override
   Widget build(BuildContext context) {
-    final AuthBase auth = Provider.of<AuthBase>(context, listen: false);
-    final FirestoreDatabase firestoreDatabase =
-        Provider.of<FirestoreDatabase>(context, listen: false);
     final UserProvider userProvider =
         Provider.of<UserProvider>(context, listen: false);
     UpdatePatientInfoViewModel model = Provider.of<UpdatePatientInfoViewModel>(
@@ -94,20 +89,20 @@ class _UpdatePatientInfoFormState extends State<UpdatePatientInfoForm> {
           child: Column(
             children: [
               PersonalInfoTextField(
-                initialText: userProvider.user.mailingAddress,
+                initialText: model.billingAddress,
                 labelText: 'Billing Address',
                 hint: '123 Main St',
                 errorText: model.patientBillingAddressErrorText,
                 onChanged: model.updateBillingAddress,
               ),
               PersonalInfoTextField(
-                initialText: userProvider.user.mailingAddressLine2,
+                initialText: model.billingAddressLine2,
                 labelText: 'Apartment, building, suite (optional)',
                 hint: 'BLDG E, APT 2',
                 onChanged: model.updateBillingAddressLine2,
               ),
               PersonalInfoTextField(
-                initialText: userProvider.user.mailingCity,
+                initialText: model.mailingCity,
                 labelText: 'City',
                 hint: 'Anytown',
                 errorText: model.patientCityErrorText,
@@ -118,10 +113,10 @@ class _UpdatePatientInfoFormState extends State<UpdatePatientInfoForm> {
                 onChanged: model.updateMailingState,
                 items: model.states,
                 errorText: model.patientStateErrorText,
-                selectedItem: userProvider.user.mailingState,
+                selectedItem: model.mailingState,
               ),
               PersonalInfoTextField(
-                initialText: userProvider.user.mailingZipCode,
+                initialText: model.mailingZipCode,
                 labelText: 'Zip code',
                 inputFormatters: [zipCodeTextInputFormatter],
                 hint: '12345',

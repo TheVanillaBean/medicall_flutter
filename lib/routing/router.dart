@@ -1,6 +1,7 @@
 import 'package:Medicall/components/drawer_menu/about_us.dart';
 import 'package:Medicall/components/drawer_menu/contact_us.dart';
 import 'package:Medicall/models/consult-review/consult_review_options_model.dart';
+import 'package:Medicall/models/consult-review/diagnosis_options_model.dart';
 import 'package:Medicall/models/consult-review/treatment_options.dart';
 import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:Medicall/models/consult_model.dart';
@@ -53,14 +54,13 @@ import 'package:Medicall/screens/provider_flow/review_medical_history/review_med
 import 'package:Medicall/screens/provider_flow/visit_review_screens/complete_visit/complete_visit.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/immediate_care/immediate_medical_care.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/prescription_details/prescription_details.dart';
-import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/edit_note_section.dart';
-import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reclassify_visit.dart';
-import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/video_note/video_notes_to_patient.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/edit_note/edit_note_section.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reclassify_visit/reclassify_visit.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_view_models/patient_note_step_state.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/view_patient_id.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/view_patient_info.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_overview.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_review.dart';
-import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_review_view_model.dart';
 import 'package:Medicall/screens/shared/chat/chat_screen.dart';
 import 'package:Medicall/screens/shared/consent/index.dart';
 import 'package:Medicall/screens/shared/password_reset/password_reset.dart';
@@ -121,7 +121,6 @@ class Routes {
   static const reviewMedicalHistory = '/review-medical-history';
   static const visitConsultPhotos = '/visit-consult-photos';
   static const visitDocNote = '/visit-doc-note';
-  static const patientVideoNote = '/patient-video-note';
   static const visitEducation = '/visit-education';
   static const visitPrescriptions = '/visit-prescriptions';
   static const visitNonPrescriptions = '/visit-non-prescriptions';
@@ -473,11 +472,19 @@ class Router {
         );
       case Routes.editNoteSection:
         final Map<String, dynamic> mapArgs = args;
-        final VisitReviewViewModel visitReviewViewModel =
-            mapArgs['visitReviewViewModel'];
-        return MaterialPageRoute<dynamic>(
-          builder: (context) =>
-              EditNoteSection.create(context, visitReviewViewModel),
+        final PatientNoteSection section = mapArgs['section'];
+        final String sectionTitle = mapArgs['sectionTitle'];
+        final Map<String, String> templateSection = mapArgs['templateSection'];
+        final Map<String, String> editedSection = mapArgs['editedSection'];
+
+        return MaterialPageRoute<Map<String, String>>(
+          builder: (context) => EditNoteSection.create(
+            context,
+            section,
+            sectionTitle,
+            templateSection,
+            editedSection,
+          ),
           settings: settings,
           fullscreenDialog: true,
         );
@@ -644,12 +651,14 @@ class Router {
         final ConsultReviewOptions consultReviewOptions =
             mapArgs['consultReviewOptions'];
         final VisitReviewData visitReviewData = mapArgs['visitReviewData'];
+        final DiagnosisOptions diagnosisOptions = mapArgs['diagnosisOptions'];
         return MaterialPageRoute<dynamic>(
           builder: (context) => VisitReview.create(
             context,
             consult,
             consultReviewOptions,
             visitReviewData,
+            diagnosisOptions,
           ),
           settings: settings,
           fullscreenDialog: true,
@@ -657,13 +666,10 @@ class Router {
       case Routes.prescriptionDetails:
         final Map<String, dynamic> mapArgs = args;
         final TreatmentOptions treatmentOptions = mapArgs['treatmentOptions'];
-        final VisitReviewViewModel visitReviewViewModel =
-            mapArgs['visitReviewViewModel'];
-        return MaterialPageRoute<dynamic>(
+        return MaterialPageRoute<TreatmentOptions>(
           builder: (context) => PrescriptionDetails.create(
             context,
             treatmentOptions,
-            visitReviewViewModel,
           ),
           settings: settings,
           fullscreenDialog: true,
@@ -671,31 +677,16 @@ class Router {
       case Routes.immediateMedicalCare:
         final Map<String, dynamic> mapArgs = args;
         final String documentation = mapArgs['documentation'];
-        final VisitReviewViewModel visitReviewViewModel =
-            mapArgs['visitReviewViewModel'];
-        return MaterialPageRoute<dynamic>(
+        final PatientUser patientUser = mapArgs['patientUser'];
+        return MaterialPageRoute<String>(
           builder: (context) => ImmediateMedicalCare.create(
             context,
             documentation,
-            visitReviewViewModel,
+            patientUser,
           ),
           settings: settings,
           fullscreenDialog: true,
         );
-
-      case Routes.patientVideoNote:
-        final Map<String, dynamic> mapArgs = args;
-        final VisitReviewViewModel visitReviewViewModel =
-            mapArgs['visitReviewViewModel'];
-        return MaterialPageRoute<dynamic>(
-          builder: (context) => VideoNotesToPatient.create(
-            context,
-            visitReviewViewModel,
-          ),
-          settings: settings,
-          fullscreenDialog: true,
-        );
-
       case Routes.completeVisit:
         return MaterialPageRoute<dynamic>(
           builder: (context) => CompleteVisit.create(context),

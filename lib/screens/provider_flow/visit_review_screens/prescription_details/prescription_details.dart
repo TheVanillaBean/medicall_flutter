@@ -12,7 +12,6 @@ import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
-import 'package:property_change_notifier/property_change_notifier.dart';
 import 'package:provider/provider.dart';
 
 class PrescriptionDetails extends StatelessWidget {
@@ -23,144 +22,168 @@ class PrescriptionDetails extends StatelessWidget {
   final PrescriptionDetailsViewModel model;
   @override
   Widget build(BuildContext context) {
-    final VisitReviewViewModel visitReviewViewModel =
-        PropertyChangeProvider.of<VisitReviewViewModel>(
-      context,
-      properties: [VisitReviewVMProperties.treatmentStep],
-    ).value;
-    return Scaffold(
-      appBar: CustomAppBar.getAppBar(
-        type: AppBarType.Back,
-        title: "Prescription Details",
-        theme: Theme.of(context),
-        onPressed: () async {
-          if (!model.allFieldsValidated) {
-            visitReviewViewModel.removeTreatmentOption(
-                selectedTreatment: model.treatmentOptions);
-          } else {
-            if (model.treatmentUpdated) {
-              final didPressYes = await PlatformAlertDialog(
-                title: "Update Treatment?",
-                content:
-                    "Would you like to save the changes you made to this treatment option?",
-                defaultActionText: "Yes",
-                cancelActionText: "No, don't update",
-              ).show(context);
-              if (didPressYes) {
-                visitReviewViewModel.updateTreatmentStepWith(
-                  selectedTreatment: model.treatmentOptions,
-                );
-              }
+    return WillPopScope(
+      onWillPop: () async {
+        if (!model.allFieldsValidated) {
+          Navigator.of(context).pop(null);
+          return false;
+        } else {
+          if (model.treatmentUpdated) {
+            final didPressYes = await PlatformAlertDialog(
+              title: "Update Treatment?",
+              content:
+                  "Would you like to save the changes you made to this treatment option?",
+              defaultActionText: "Yes",
+              cancelActionText: "No, don't update",
+            ).show(context);
+            if (!didPressYes) {
+              Navigator.of(context).pop(null);
+              return false;
+            } else {
+              TreatmentOptions treatmentOptions = TreatmentOptions(
+                medicationName: model.medicationName,
+                dose: model.dose,
+                form: model.form,
+                frequency: model.frequency,
+                instructions: model.instructions,
+                quantity: model.quantity,
+                refills: model.refills,
+                date: model.treatmentOptions.date,
+                status: model.treatmentOptions.status,
+                price: model.treatmentOptions.price,
+                notAPrescription: model.treatmentOptions.price == -1,
+              );
+              Navigator.of(context).pop(treatmentOptions);
+              return false;
             }
+          } else {
+            Navigator.of(context).pop(null);
+            return false;
           }
-          Navigator.of(context).pop();
-        },
-      ),
-      body: KeyboardDismisser(
-        child: SingleChildScrollView(
-          child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () {
-                FocusScope.of(context).requestFocus(FocusNode());
-              },
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    PrescriptionDetailsTextField(
-                      focusNode: model.medicationNameFocusNode,
-                      labelText: 'Medication Name',
-                      initialValue: this.model.treatmentOptions.medicationName,
-                      onChanged: model.updateMedicationName,
-                      enabled: visitReviewViewModel
-                          .treatmentNoteStepState.currentlySelectedIsOther,
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: Container(
-                            child: PrescriptionDetailsTextField(
-                              focusNode: model.quantityFocusNode,
-                              labelText: 'Quantity',
-                              initialValue:
-                                  this.model.treatmentOptions.quantity,
-                              onChanged: model.updateQuantity,
+        }
+      },
+      child: Scaffold(
+        appBar: CustomAppBar.getAppBar(
+          type: AppBarType.Back,
+          title: "Prescription Details",
+          theme: Theme.of(context),
+          onPressed: () => Navigator.maybePop(context),
+        ),
+        body: KeyboardDismisser(
+          child: SingleChildScrollView(
+            child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () {
+                  FocusScope.of(context).requestFocus(FocusNode());
+                },
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      PrescriptionDetailsTextField(
+                        focusNode: model.medicationNameFocusNode,
+                        labelText: 'Medication Name',
+                        initialValue: this.model.medicationName,
+                        onChanged: model.updateMedicationName,
+                        enabled: this.model.isCurrentTreatmentOther,
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: Container(
+                              child: PrescriptionDetailsTextField(
+                                focusNode: model.quantityFocusNode,
+                                labelText: 'Quantity',
+                                initialValue: this.model.quantity,
+                                onChanged: model.updateQuantity,
+                              ),
                             ),
                           ),
-                        ),
-                        Expanded(
-                          child: Container(
-                            child: PrescriptionDetailsTextField(
-                              focusNode: model.refillsFocusNode,
-                              labelText: 'Refills',
-                              initialValue: this.model.treatmentOptions.refills,
-                              onChanged: model.updateRefills,
+                          Expanded(
+                            child: Container(
+                              child: PrescriptionDetailsTextField(
+                                focusNode: model.refillsFocusNode,
+                                labelText: 'Refills',
+                                initialValue: this.model.refills,
+                                onChanged: model.updateRefills,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      PrescriptionDetailsTextField(
+                        focusNode: model.formFocusNode,
+                        labelText: 'Form',
+                        initialValue: this.model.form,
+                        onChanged: model.updateForm,
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: Container(
+                              child: PrescriptionDetailsTextField(
+                                focusNode: model.doseFocusNode,
+                                labelText: 'Dose',
+                                initialValue: this.model.dose,
+                                onChanged: model.updateDose,
+                              ),
                             ),
                           ),
-                        )
-                      ],
-                    ),
-                    PrescriptionDetailsTextField(
-                      focusNode: model.formFocusNode,
-                      labelText: 'Form',
-                      initialValue: this.model.treatmentOptions.form,
-                      onChanged: model.updateForm,
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: Container(
-                            child: PrescriptionDetailsTextField(
-                              focusNode: model.doseFocusNode,
-                              labelText: 'Dose',
-                              initialValue: this.model.treatmentOptions.dose,
-                              onChanged: model.updateDose,
+                          Expanded(
+                            child: Container(
+                              child: PrescriptionDetailsTextField(
+                                focusNode: model.frequencyFocusNode,
+                                labelText: 'Frequency',
+                                initialValue: this.model.frequency,
+                                onChanged: model.updateFrequency,
+                              ),
                             ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Container(
-                            child: PrescriptionDetailsTextField(
-                              focusNode: model.frequencyFocusNode,
-                              labelText: 'Frequency',
-                              initialValue:
-                                  this.model.treatmentOptions.frequency,
-                              onChanged: model.updateFrequency,
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                    PrescriptionDetailsTextField(
-                      keyboardType: TextInputType.multiline,
-                      focusNode: model.instructionsFocusNode,
-                      maxLines: null,
-                      labelText: 'Instructions',
-                      initialValue: this.model.treatmentOptions.instructions,
-                      onChanged: model.updateInstructions,
-                    ),
-                    SizedBox(
-                      height: 30,
-                    ),
-                    ReusableRaisedButton(
-                      title: 'Continue',
-                      onPressed: () {
-                        if (!model.allFieldsValidated) {
-                          AppUtil().showFlushBar(
-                              "Please fill out all fields", context);
-                        } else {
-                          visitReviewViewModel.updateTreatmentStepWith(
-                            selectedTreatment: model.treatmentOptions,
-                          );
-                          Navigator.of(context).pop();
-                        }
-                      },
-                    ),
-                  ],
-                ),
-              )),
+                          )
+                        ],
+                      ),
+                      PrescriptionDetailsTextField(
+                        keyboardType: TextInputType.multiline,
+                        focusNode: model.instructionsFocusNode,
+                        maxLines: null,
+                        labelText: 'Instructions',
+                        initialValue: this.model.instructions,
+                        onChanged: model.updateInstructions,
+                      ),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      ReusableRaisedButton(
+                        title: 'Continue',
+                        onPressed: () {
+                          if (!model.allFieldsValidated) {
+                            AppUtil().showFlushBar(
+                                "Please fill out all fields", context);
+                          } else {
+                            TreatmentOptions treatmentOptions =
+                                TreatmentOptions(
+                              medicationName: model.medicationName,
+                              dose: model.dose,
+                              form: model.form,
+                              frequency: model.frequency,
+                              instructions: model.instructions,
+                              quantity: model.quantity,
+                              refills: model.refills,
+                              date: model.treatmentOptions.date,
+                              status: model.treatmentOptions.status,
+                              price: model.treatmentOptions.price,
+                              notAPrescription:
+                                  model.treatmentOptions.price == -1,
+                            );
+                            Navigator.of(context).pop(treatmentOptions);
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                )),
+          ),
         ),
       ),
     );
@@ -169,40 +192,38 @@ class PrescriptionDetails extends StatelessWidget {
   static Widget create(
     BuildContext context,
     TreatmentOptions treatmentOptions,
-    VisitReviewViewModel visitReviewViewModel,
   ) {
     final FirestoreDatabase database = Provider.of<FirestoreDatabase>(context);
     final UserProvider provider = Provider.of<UserProvider>(context);
     final AuthBase auth = Provider.of<AuthBase>(context, listen: false);
-    return PropertyChangeProvider(
-      value: visitReviewViewModel,
-      child: ChangeNotifierProvider<PrescriptionDetailsViewModel>(
-        create: (context) => PrescriptionDetailsViewModel(
-          database: database,
-          userProvider: provider,
-          auth: auth,
-          treatmentOptions: treatmentOptions,
-        ),
-        child: Consumer<PrescriptionDetailsViewModel>(
-          builder: (_, model, __) => PrescriptionDetails(
-            model: model,
-          ),
+    return ChangeNotifierProvider<PrescriptionDetailsViewModel>(
+      create: (context) => PrescriptionDetailsViewModel(
+        database: database,
+        userProvider: provider,
+        auth: auth,
+        treatmentOptions: treatmentOptions,
+      ),
+      child: Consumer<PrescriptionDetailsViewModel>(
+        builder: (_, model, __) => PrescriptionDetails(
+          model: model,
         ),
       ),
     );
   }
 
-  static Future<void> show({
+  static Future<List<TreatmentOptions>> show({
     BuildContext context,
     TreatmentOptions treatmentOptions,
     VisitReviewViewModel visitReviewViewModel,
   }) async {
-    await Navigator.of(context).pushNamed(
+    final List<TreatmentOptions> returnedTreatmentOptions =
+        await Navigator.of(context).pushNamed<List<TreatmentOptions>>(
       Routes.prescriptionDetails,
       arguments: {
         'treatmentOptions': treatmentOptions,
         'visitReviewViewModel': visitReviewViewModel,
       },
     );
+    return returnedTreatmentOptions;
   }
 }

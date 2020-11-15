@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:Medicall/common_widgets/assets_picker/widget/asset_picker.dart';
 import 'package:Medicall/common_widgets/grouped_buttons/radio_button_group.dart';
 import 'package:Medicall/models/questionnaire/question_model.dart';
 import 'package:Medicall/screens/patient_flow/questionnaire/grouped_checkbox.dart';
@@ -58,6 +59,8 @@ class _QuestionFormState extends State<QuestionForm> {
   bool isLoading = false;
 
   Future<void> _loadProfileImage() async {
+    AssetPicker.registerObserve();
+
     List<AssetEntity> assetEntityList = [];
 
     try {
@@ -82,6 +85,7 @@ class _QuestionFormState extends State<QuestionForm> {
       isLoading = false;
     });
     model.updateQuestionPageWith(questionPhotos: resultMap);
+    AssetPicker.unregisterObserve();
   }
 
   @override

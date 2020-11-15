@@ -2,31 +2,56 @@ import 'package:Medicall/common_widgets/grouped_buttons/checkbox_group.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/continue_button.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/empty_diagnosis_widget.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/swipe_gesture_recognizer.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_view_models/exam_step_state.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_review_view_model.dart';
+import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
-import 'package:property_change_notifier/property_change_notifier.dart';
+import 'package:provider/provider.dart';
 
-class ExamStep extends StatefulWidget {
-  @override
-  _ExamStepState createState() => _ExamStepState();
-}
+class ExamStep extends StatelessWidget {
+  final ExamStepState model;
 
-class _ExamStepState extends State<ExamStep> {
+  const ExamStep({@required this.model});
+
+  static Widget create(BuildContext context) {
+    final VisitReviewViewModel visitReviewViewModel =
+        Provider.of<VisitReviewViewModel>(context);
+    return ChangeNotifierProvider<ExamStepState>(
+      create: (context) => ExamStepState(
+        visitReviewViewModel: visitReviewViewModel,
+      ),
+      child: Consumer<ExamStepState>(
+        builder: (_, model, __) => ExamStep(
+          model: model,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final VisitReviewViewModel model =
-        PropertyChangeProvider.of<VisitReviewViewModel>(
-      context,
-      properties: [VisitReviewVMProperties.examStep],
-    ).value;
     final width = MediaQuery.of(context).size.width;
-    if (model.diagnosisOptions != null)
+    if (this.model.visitReviewViewModel.diagnosisOptions != null)
       return KeyboardDismisser(
-        gestures: [GestureType.onTap, GestureType.onVerticalDragDown],
+        gestures: [GestureType.onTap],
         child: SwipeGestureRecognizer(
-          onSwipeLeft: () => model.incrementIndex(),
-          onSwipeRight: () => model.decrementIndex(),
+          onSwipeLeft: () {
+            if (model.minimumRequiredFieldsFilledOut && model.editedStep) {
+              model.editedStep = false;
+              AppUtil()
+                  .showFlushBar("Press save to save your changes", context);
+            }
+            model.visitReviewViewModel.incrementIndex();
+          },
+          onSwipeRight: () {
+            if (model.minimumRequiredFieldsFilledOut && model.editedStep) {
+              model.editedStep = false;
+              AppUtil()
+                  .showFlushBar("Press save to save your changes", context);
+            }
+            model.visitReviewViewModel.decrementIndex();
+          },
           child: CustomScrollView(
             slivers: <Widget>[
               SliverFillRemaining(
@@ -47,22 +72,37 @@ class _ExamStepState extends State<ExamStep> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 36),
                       child: CheckboxGroup(
-                        labels: model.diagnosisOptions.exam,
-                        onSelected: (List<String> checked) => model
+                        labels: this
+                            .model
+                            .visitReviewViewModel
+                            .diagnosisOptions
+                            .exam,
+                        onSelected: (List<String> checked) => this
+                            .model
                             .updateExamStepWith(selectedExamOptions: checked),
-                        checked: model.examStepState.selectedExamOptions,
+                        checked: this.model.selectedExamOptions,
                       ),
                     ),
-                    if (model.examStepState.selectedExamOptions.length > 0)
-                      for (String examOption
-                          in model.examStepState.selectedExamOptions)
-                        ..._buildLocationItem(examOption, model),
+                    if (this.model.selectedExamOptions.length > 0)
+                      for (String examOption in this.model.selectedExamOptions)
+                        ..._buildLocationItem(
+                          context,
+                          examOption,
+                        ),
                     SizedBox(
                       height: 8,
                     ),
                     Expanded(
                       child: ContinueButton(
+                        title: "Save and Continue",
                         width: width,
+                        onTap: this.model.minimumRequiredFieldsFilledOut
+                            ? () async {
+                                await model.visitReviewViewModel
+                                    .saveExamToFirestore(model);
+                                model.visitReviewViewModel.incrementIndex();
+                              }
+                            : null,
                       ),
                     ),
                   ],
@@ -72,19 +112,18 @@ class _ExamStepState extends State<ExamStep> {
           ),
         ),
       );
-    return EmptyDiagnosis(model: model);
+    return EmptyDiagnosis(model: this.model.visitReviewViewModel);
   }
 
   List<Widget> _buildLocationItem(
-      String examOption, VisitReviewViewModel model) {
-    String locationQuestion = examOption.toLowerCase() == "other"
-        ? "Enter custom entry for \"Other\""
-        : "What is the location of the $examOption? (Optional)";
+    BuildContext context,
+    String examOption,
+  ) {
     return [
       Padding(
         padding: const EdgeInsets.symmetric(vertical: 12),
         child: Text(
-          locationQuestion,
+          this.model.locationQuestion(examOption),
           textAlign: TextAlign.center,
           style: TextStyle(
             color: Colors.grey,
@@ -96,11 +135,11 @@ class _ExamStepState extends State<ExamStep> {
         padding: const EdgeInsets.symmetric(horizontal: 24),
         child: TextFormField(
           textCapitalization: TextCapitalization.sentences,
-          initialValue: model.examStepState.getExamLocation(examOption),
+          initialValue: this.model.getExamLocation(examOption),
           autocorrect: true,
           keyboardType: TextInputType.text,
           onChanged: (String text) =>
-              model.updateExamStepWith(locationMap: {examOption: text}),
+              this.model.updateExamStepWith(locationMap: {examOption: text}),
           style: Theme.of(context).textTheme.bodyText2,
           decoration: InputDecoration(
             labelStyle: TextStyle(

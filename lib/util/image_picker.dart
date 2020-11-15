@@ -14,7 +14,7 @@ class ImagePicker {
       maxAssets: 1,
     );
     if (result == null || result.length == 0) {
-      throw "Error retrieving images";
+      throw "No images selected";
     }
 
     return result.first;
@@ -29,10 +29,25 @@ class ImagePicker {
       maxAssets: 4,
     );
     if (result == null || result.length == 0) {
-      throw "Error retrieving images";
+      throw "No images selected";
     }
 
     return result;
+  }
+
+  static Future<AssetEntity> recordVideo({BuildContext context}) async {
+    final List<AssetEntity> result = await CameraPicker.pickFromCamera(
+      context,
+      isAllowRecording: true,
+      isOnlyAllowRecording: true,
+      maximumRecordingDuration: Duration(minutes: 3),
+      cameraTextDelegate: EnglishCameraPickerTextDelegateWithRecording(),
+    );
+    if (result == null || result.length == 0) {
+      throw "Video not recorded";
+    }
+
+    return result.first;
   }
 }
 

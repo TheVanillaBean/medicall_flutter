@@ -31,4 +31,6 @@ class FirestorePath {
   static String consultPhotoQuestion({String consultID, String assetName}) =>
       'consults/$consultID/$assetName.JPG';
   static String symptomPhoto({String symptom}) => 'symptom-photos/$symptom/';
+  static String userVideoNote({String consultID, String assetName}) =>
+      'consult/$consultID/$assetName.mp4';
 }

@@ -5,6 +5,10 @@ class UnderstandingDiagnosisTemplate {
     this.template = const {},
   });
 
+  String get body {
+    return template.values.first;
+  }
+
   factory UnderstandingDiagnosisTemplate.fromMap(Map<String, dynamic> data) {
     if (data == null) {
       return null;
