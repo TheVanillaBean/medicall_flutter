@@ -4,7 +4,7 @@ description: Telemedicine for everyone.
 version: 1.0.2+1
 
 environment:
-  sdk: ">=2.8.0 <3.0.0"
+  sdk: ">=2.10.0 <3.0.0"
 https://github:
   com/FirebaseExtended/flutterfire/commit/3fc3ca8e8f2f2577b1553e3513a7dba45da31b37:
 dependencies:
@@ -31,7 +31,6 @@ dependencies:
   keyboard_dismisser: ^1.0.2
   flutter_screenutil: ^1.0.2
   flutter_absolute_path: ^1.0.6
-  cupertino_icons: ^0.1.0
   url_launcher: ^5.4.2
   flutter_linkify: ^2.1.0
   location: ^2.3.5
@@ -82,11 +81,15 @@ dependencies:
   video_player: ">=0.11.0 <2.0.0"
   video_compress: ^2.1.0
   scrollable_positioned_list: ^0.1.7
+  chewie: ^0.12.0
+  cupertino_icons: ^1.0.0
+  video_thumbnail_generator: ^0.0.6
 
 dependency_overrides:
   intl: ^0.16.1
   flutter_chips_input: ^1.9.0-dev.2
   video_player: ^0.11.1+2
+  chewie: ^0.12.0
 
 dev_dependencies:
   flutter_test:

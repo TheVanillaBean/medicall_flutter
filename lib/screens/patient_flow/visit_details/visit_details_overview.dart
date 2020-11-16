@@ -10,6 +10,7 @@ import 'package:Medicall/screens/patient_flow/visit_details/visit_doc_note.dart'
 import 'package:Medicall/screens/patient_flow/visit_details/visit_education.dart';
 import 'package:Medicall/screens/patient_flow/visit_details/visit_treatment_recommendations.dart';
 import 'package:Medicall/screens/shared/chat/chat_screen.dart';
+import 'package:Medicall/screens/shared/video_player/video_player.dart';
 import 'package:Medicall/services/chat_provider.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/util/app_util.dart';
@@ -227,7 +228,12 @@ class VisitDetailsOverview extends StatelessWidget {
                 context,
                 "Provider Video Note",
                 Icons.personal_video_rounded,
-                null,
+                () => VideoPlayer.show(
+                  context: context,
+                  title: "Video Note",
+                  url: snapshot.data.videoNoteURL,
+                  fromNetwork: true,
+                ),
                 consult.patientReviewNotifications,
               ),
               _buildCardButton(
