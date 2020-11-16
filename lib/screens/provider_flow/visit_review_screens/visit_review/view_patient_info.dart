@@ -1,9 +1,13 @@
+import 'package:Medicall/common_widgets/custom_raised_button.dart';
 import 'package:Medicall/common_widgets/reusable_account_card.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/view_patient_id.dart';
 import 'package:Medicall/services/database.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
 
 class ViewPatientInfo extends StatelessWidget {
@@ -53,8 +57,10 @@ class ViewPatientInfo extends StatelessWidget {
                   );
                 } else {
                   if (snapshot.hasData) {
-                    return Column(
-                      children: _buildChildren(snapshot.data),
+                    return SingleChildScrollView(
+                      child: Column(
+                        children: _buildChildren(snapshot.data, context),
+                      ),
                     );
                   } else {
                     return Center(
@@ -69,14 +75,36 @@ class ViewPatientInfo extends StatelessWidget {
     );
   }
 
-  List<Widget> _buildChildren(MedicallUser medicallUser) {
+  List<Widget> _buildChildren(MedicallUser medicallUser, BuildContext context) {
     return [
+      // Container(
+      //   height: 600,
+      //   child: PhotoView(
+      //     backgroundDecoration: BoxDecoration(color: Colors.white),
+      //     imageProvider: CachedNetworkImageProvider(medicallUser.photoID),
+      //   ),
+      // ),
+      CircleAvatar(
+        minRadius: 60,
+        backgroundImage: CachedNetworkImageProvider(medicallUser.profilePic),
+      ),
+      Container(
+        margin: EdgeInsets.fromLTRB(0, 20, 0, 40),
+        child: CustomRaisedButton(
+          child: Text('View patient Id'),
+          color: Colors.white,
+          onPressed: () => ViewPatientID.show(
+            context: context,
+            consult: consult,
+          ),
+        ),
+      ),
+      Divider(),
       _buildNameCard(medicallUser),
       Divider(),
       _buildDOBCard(medicallUser),
       Divider(),
       _buildAddressCard(medicallUser),
-      Divider(),
     ];
   }
 

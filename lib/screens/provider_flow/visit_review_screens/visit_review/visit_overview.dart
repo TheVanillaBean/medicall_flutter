@@ -94,15 +94,7 @@ class VisitOverview extends StatelessWidget {
       ),
       _buildProviderCardButton(
           context,
-          "VIEW PATIENT IDENTIFICATION",
-          () => ViewPatientID.show(
-                context: context,
-                consult: consult,
-              ),
-          0),
-      _buildProviderCardButton(
-          context,
-          "VIEW PATIENT INFORMATION",
+          "PATIENT INFORMATION",
           () => ViewPatientInfo.show(
                 context: context,
                 consult: consult,
