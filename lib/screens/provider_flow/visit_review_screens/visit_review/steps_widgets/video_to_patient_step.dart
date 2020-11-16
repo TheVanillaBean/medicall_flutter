@@ -10,6 +10,7 @@ import 'package:Medicall/util/app_util.dart';
 import 'package:Medicall/util/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:video_thumbnail_generator/video_thumbnail_generator.dart';
 
 import '../visit_review_view_model.dart';
 
@@ -90,8 +91,8 @@ class _VideoToPatientStepState extends State<VideoToPatientStep> {
             if (widget.model.minimumRequiredFieldsFilledOut)
               _buildVideoCardButton(
                 context,
-                'Recorded on:',
-                widget.model.visitReviewViewModel.consult.date.toString(),
+                'Visit Date: ',
+                widget.model.formattedRecordedDate,
                 () async {
                   await VideoPlayer.show(
                     context: context,
@@ -171,7 +172,9 @@ class _VideoToPatientStepState extends State<VideoToPatientStep> {
           leading: SizedBox(
             height: 50,
             width: 50,
-            child: Image.network('https://picsum.photos/250?image=9'),
+            child: ThumbnailImage(
+              videoUrl: widget.model.videoURL,
+            ),
           ),
           title: Text(
             title,

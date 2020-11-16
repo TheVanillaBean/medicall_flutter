@@ -93,12 +93,6 @@ class _VideoPlayerState extends State<VideoPlayer> {
                     ),
             ),
           ),
-          FlatButton(
-            onPressed: () {
-              _chewieController.enterFullScreen();
-            },
-            child: Text('Fullscreen'),
-          ),
         ],
       ),
     );

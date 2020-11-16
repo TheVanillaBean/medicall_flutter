@@ -3,6 +3,7 @@ import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_review_view_model.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/firebase_storage_service.dart';
+import 'package:dash_chat/dash_chat.dart';
 import 'package:flutter/material.dart';
 
 class VideoToPatientStepState with ChangeNotifier {
@@ -15,6 +16,8 @@ class VideoToPatientStepState with ChangeNotifier {
   bool isLoading;
   bool isSubmitted;
   bool editedStep = false;
+
+  final f = new DateFormat('E MMM d');
 
   VideoToPatientStepState({
     @required this.visitReviewViewModel,
@@ -31,7 +34,7 @@ class VideoToPatientStepState with ChangeNotifier {
   void initFromFirestore() {
     VisitReviewData firestoreData = this.visitReviewViewModel.visitReviewData;
     if (firestoreData.videoNoteURL.length > 0) {
-      this.videoURL = firestoreData.videoNoteURL;
+      this.updateWith(videoURL: firestoreData.videoNoteURL);
 
       if (minimumRequiredFieldsFilledOut) {
         visitReviewViewModel.addCompletedStep(
@@ -44,6 +47,10 @@ class VideoToPatientStepState with ChangeNotifier {
     return (this.assetEntity != null || this.videoURL.length > 0) &&
         !this.isLoading &&
         !this.isSubmitted;
+  }
+
+  String get formattedRecordedDate {
+    return f.format(visitReviewViewModel.consult.date);
   }
 
   void updateAssetEntity(AssetEntity assetEntity) =>
