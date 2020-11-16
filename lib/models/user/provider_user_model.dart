@@ -62,7 +62,9 @@ class ProviderUser extends MedicallUser {
     provider.stripeConnectAuthorized =
         data['stripe_connect_authorized'] ?? provider.stripeConnectAuthorized;
     provider.selectedServices =
-        data['selected_services'] as List<dynamic> ?? provider.selectedServices;
+        (data['selected_services'] as List).map((e) => e.toString()).toList() ??
+            provider.selectedServices;
+
     return provider;
   }
 }

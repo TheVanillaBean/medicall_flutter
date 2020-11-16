@@ -64,7 +64,7 @@ class SelectProviderScreen extends StatelessWidget {
                 })
           ]),
       body: StreamBuilder(
-        stream: db.getAllProviders(state: state),
+        stream: db.getAllProviders(state: state, symptom: this.symptom.name),
         builder:
             (BuildContext context, AsyncSnapshot<List<ProviderUser>> snapshot) {
           return Stack(

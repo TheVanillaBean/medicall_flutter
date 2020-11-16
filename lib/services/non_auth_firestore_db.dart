@@ -15,7 +15,7 @@ abstract class NonAuthDatabase {
   Future<List<String>> symptomsListByName();
   Stream<List<Symptom>> symptomsStream();
   Future<List<String>> getAllProviderStates();
-  Stream<List<ProviderUser>> getAllProviders({String state});
+  Stream<List<ProviderUser>> getAllProviders({String state, String symptom});
   Stream<MedicallUser> providerStream({String uid});
   Future<String> getSymptomPhotoURL({String symptom});
   Future<void> addEmailToWaitList({String email, String state});
@@ -68,7 +68,7 @@ class NonAuthFirestoreDB implements NonAuthDatabase {
       .first;
 
   @override
-  Stream<List<ProviderUser>> getAllProviders({String state}) =>
+  Stream<List<ProviderUser>> getAllProviders({String state, String symptom}) =>
       _service.collectionStream(
         path: FirestorePath.users(),
         queryBuilder: (query) => query
@@ -77,7 +77,8 @@ class NonAuthFirestoreDB implements NonAuthDatabase {
               isEqualTo: EnumToString.convertToString(USER_TYPE.PROVIDER),
             )
             .where("stripe_connect_authorized", isEqualTo: true)
-            .where("mailing_state", isEqualTo: state),
+            .where("mailing_state", isEqualTo: state)
+            .where("selected_services", arrayContains: symptom),
         builder: (data, documentId) => MedicallUser.fromMap(
             userType: USER_TYPE.PROVIDER, data: data, uid: documentId),
       );

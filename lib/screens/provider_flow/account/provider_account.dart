@@ -270,15 +270,15 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
   }
 
   Widget _buildSelectedServicesCard(MedicallUser medicallUser) {
+    String formatted =
+        (medicallUser as ProviderUser).selectedServices.join(', ');
     return ReusableAccountCard(
       leading: 'Services:',
-      title: '',
+      title: '$formatted',
       trailing: IconButton(
         icon: Icon(Icons.create, size: 20),
         onPressed: () {
-          SelectServices.show(
-            context: context,
-          );
+          SelectServices.show(context: context, model: model);
         },
       ),
     );

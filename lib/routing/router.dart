@@ -558,8 +558,10 @@ class Router {
         );
 
       case Routes.selectServices:
+        final Map<String, dynamic> mapArgs = args;
+        final UpdateProviderInfoViewModel model = mapArgs['model'];
         return MaterialPageRoute<dynamic>(
-          builder: (context) => SelectServices.create(context),
+          builder: (context) => SelectServices.create(context, model),
           settings: settings,
           fullscreenDialog: true,
         );

@@ -26,7 +26,14 @@ class SelectServicesViewModel with ChangeNotifier {
     @required this.userProvider,
     this.isLoading = false,
     this.submitted = false,
-  });
+  }) {
+    this.initFromFirestore();
+  }
+
+  void initFromFirestore() {
+    this.selectedServices =
+        (this.userProvider.user as ProviderUser).selectedServices;
+  }
 
   bool get canSubmit {
     return selectedServices.length > 0 && !isLoading;
