@@ -44,6 +44,7 @@ import 'package:Medicall/screens/patient_flow/visit_details/visit_treatment_reco
 import 'package:Medicall/screens/patient_flow/visit_payment/make_payment.dart';
 import 'package:Medicall/screens/patient_flow/zip_code_verify/zip_code_verify.dart';
 import 'package:Medicall/screens/provider_flow/account/provider_account.dart';
+import 'package:Medicall/screens/provider_flow/account/select_services/select_services.dart';
 import 'package:Medicall/screens/provider_flow/account/stripe_connect/stripe_connect.dart';
 import 'package:Medicall/screens/provider_flow/account/update_provider_info/update_provider_info_screen.dart';
 import 'package:Medicall/screens/provider_flow/account/update_provider_info/update_provider_info_view_model.dart';
@@ -136,6 +137,7 @@ class Routes {
   static const cardSelect = '/card-select';
   static const aboutUs = '/about-us';
   static const contactUs = '/contact-us';
+  static const selectServices = '/select-services';
 }
 
 /// The word 'consult' and 'visit' are used separately, but mean the exact
@@ -551,6 +553,13 @@ class Router {
       case Routes.providerRegistration:
         return MaterialPageRoute<dynamic>(
           builder: (context) => ProviderRegistrationScreen.create(context),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+
+      case Routes.selectServices:
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => SelectServices.create(context),
           settings: settings,
           fullscreenDialog: true,
         );
