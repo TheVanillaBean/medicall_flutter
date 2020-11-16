@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:Medicall/components/drawer_menu/about_us.dart';
 import 'package:Medicall/components/drawer_menu/contact_us.dart';
 import 'package:Medicall/models/consult-review/consult_review_options_model.dart';
@@ -44,6 +46,7 @@ import 'package:Medicall/screens/patient_flow/visit_details/visit_treatment_reco
 import 'package:Medicall/screens/patient_flow/visit_payment/make_payment.dart';
 import 'package:Medicall/screens/patient_flow/zip_code_verify/zip_code_verify.dart';
 import 'package:Medicall/screens/provider_flow/account/provider_account.dart';
+import 'package:Medicall/screens/provider_flow/account/select_services/select_services.dart';
 import 'package:Medicall/screens/provider_flow/account/stripe_connect/stripe_connect.dart';
 import 'package:Medicall/screens/provider_flow/account/update_provider_info/update_provider_info_screen.dart';
 import 'package:Medicall/screens/provider_flow/account/update_provider_info/update_provider_info_view_model.dart';
@@ -66,6 +69,7 @@ import 'package:Medicall/screens/shared/consent/index.dart';
 import 'package:Medicall/screens/shared/password_reset/password_reset.dart';
 import 'package:Medicall/screens/shared/privacy/index.dart';
 import 'package:Medicall/screens/shared/terms/index.dart';
+import 'package:Medicall/screens/shared/video_player/video_player.dart';
 import 'package:Medicall/screens/shared/welcome.dart';
 import 'package:flutter/material.dart';
 import 'package:stream_chat_flutter/stream_chat_flutter.dart';
@@ -136,6 +140,8 @@ class Routes {
   static const cardSelect = '/card-select';
   static const aboutUs = '/about-us';
   static const contactUs = '/contact-us';
+  static const selectServices = '/select-services';
+  static const videoPlayer = '/video-player';
 }
 
 /// The word 'consult' and 'visit' are used separately, but mean the exact
@@ -555,6 +561,15 @@ class Router {
           fullscreenDialog: true,
         );
 
+      case Routes.selectServices:
+        final Map<String, dynamic> mapArgs = args;
+        final UpdateProviderInfoViewModel model = mapArgs['model'];
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => SelectServices.create(context, model),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+
       case Routes.updateProviderInfo:
         final Map<String, dynamic> mapArgs = args;
         final UpdateProviderInfoViewModel model = mapArgs['model'];
@@ -692,6 +707,42 @@ class Router {
           builder: (context) => CompleteVisit.create(context),
           settings: settings,
           fullscreenDialog: true,
+        );
+      case Routes.videoPlayer:
+        final Map<String, dynamic> mapArgs = args;
+        final String title = mapArgs['title'];
+        final bool fromNetwork = mapArgs['fromNetwork'];
+
+        if (fromNetwork) {
+          final String url = mapArgs['url'];
+          return MaterialPageRoute<dynamic>(
+            builder: (context) => VideoPlayer(
+              title: title,
+              url: url,
+              fromNetwork: true,
+            ),
+            settings: settings,
+            fullscreenDialog: true,
+          );
+        } else {
+          final File file = mapArgs['file'];
+          return MaterialPageRoute<dynamic>(
+            builder: (context) => VideoPlayer(
+              title: title,
+              file: file,
+              fromNetwork: false,
+            ),
+            settings: settings,
+            fullscreenDialog: true,
+          );
+        }
+        //never called but needed for some reason because switch statements are dumb
+        return MaterialPageRoute(
+          builder: (_) => Scaffold(
+            body: Center(
+              child: Text('No route defined for ${settings.name}'),
+            ),
+          ),
         );
 
       default:

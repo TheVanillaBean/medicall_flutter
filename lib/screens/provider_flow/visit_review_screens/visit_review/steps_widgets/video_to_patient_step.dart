@@ -1,13 +1,18 @@
+import 'dart:io';
+
 import 'package:Medicall/common_widgets/assets_picker/widget/asset_picker.dart';
+import 'package:Medicall/common_widgets/camera_picker/constants/constants.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/continue_button.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/swipe_gesture_recognizer.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_view_models/video_to_patient_step_state.dart';
+import 'package:Medicall/screens/shared/video_player/video_player.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/firebase_storage_service.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:Medicall/util/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:video_thumbnail_generator/video_thumbnail_generator.dart';
 
 import '../visit_review_view_model.dart';
 
@@ -39,6 +44,21 @@ class VideoToPatientStep extends StatefulWidget {
 }
 
 class _VideoToPatientStepState extends State<VideoToPatientStep> {
+  Future<void> _submit() async {
+    widget.model.updateWith(isLoading: true, isSubmitted: true);
+    String url = await widget.model.storageService.uploadPatientNoteVideo(
+      asset: widget.model.assetEntity,
+      consultId: widget.model.visitReviewViewModel.consult.uid,
+    );
+    widget.model.updateWith(videoURL: url);
+    await widget.model.visitReviewViewModel
+        .saveVideoNoteToFirestore(widget.model);
+    //have to set it this way because updateWith function wont actually update it if it is null arg
+    widget.model.assetEntity = null;
+    widget.model.updateWith(isLoading: false);
+    AppUtil().showFlushBar("Successfully saved video note!", context);
+  }
+
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
@@ -73,12 +93,39 @@ class _VideoToPatientStepState extends State<VideoToPatientStep> {
                 ),
               ),
             ),
-            if (widget.model.assetEntity != null)
-              _buildVideoCardButton(
+            if (widget.model.assetEntity == null &&
+                widget.model.videoURL.length > 0)
+              _buildVideoCardNetworkButton(
                 context,
-                'Recorded on:',
-                'Nov 6, 2020, 2:30p',
-                null,
+                'Visit Date: ',
+                widget.model.formattedRecordedDate,
+                () async {
+                  widget.model.updateWith(isLoading: true);
+                  await VideoPlayer.show(
+                    context: context,
+                    url: widget.model.videoURL,
+                    title: "Video Note",
+                    fromNetwork: true,
+                  );
+                  widget.model.updateWith(isLoading: false);
+                },
+              ),
+            if (widget.model.assetEntity != null)
+              _buildVideoCardMemoryButton(
+                context,
+                'Visit Date: ',
+                widget.model.formattedRecordedDate,
+                () async {
+                  widget.model.updateWith(isLoading: true);
+                  File file = await widget.model.assetEntity.file;
+                  await VideoPlayer.show(
+                    context: context,
+                    file: file,
+                    title: "Video Note",
+                    fromNetwork: false,
+                  );
+                  widget.model.updateWith(isLoading: false);
+                },
               ),
             SizedBox(height: 50),
             Center(
@@ -125,9 +172,7 @@ class _VideoToPatientStepState extends State<VideoToPatientStep> {
                 width: width,
                 onTap: this.widget.model.minimumRequiredFieldsFilledOut
                     ? () async {
-                        await widget.model.visitReviewViewModel
-                            .saveVideoNoteToFirestore(widget.model);
-                        widget.model.visitReviewViewModel.incrementIndex();
+                        await _submit();
                       }
                     : null,
               ),
@@ -138,7 +183,7 @@ class _VideoToPatientStepState extends State<VideoToPatientStep> {
     });
   }
 
-  Widget _buildVideoCardButton(
+  Widget _buildVideoCardNetworkButton(
       BuildContext context, String title, String subtitle, Function onTap) {
     return Container(
       padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
@@ -153,7 +198,45 @@ class _VideoToPatientStepState extends State<VideoToPatientStep> {
           leading: SizedBox(
             height: 50,
             width: 50,
-            child: Image.network('https://picsum.photos/250?image=9'),
+            child: ThumbnailImage(
+              videoUrl: widget.model.videoURL,
+            ),
+          ),
+          title: Text(
+            title,
+            style: Theme.of(context).textTheme.subtitle2,
+          ),
+          subtitle: Text(
+            subtitle,
+            style: Theme.of(context).textTheme.caption,
+          ),
+          trailing: Icon(
+            Icons.play_arrow_rounded,
+            size: 50,
+            color: Colors.teal,
+          ),
+          onTap: onTap,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildVideoCardMemoryButton(
+      BuildContext context, String title, String subtitle, Function onTap) {
+    return Container(
+      padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
+      child: Card(
+        elevation: 2,
+        borderOnForeground: false,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        clipBehavior: Clip.antiAlias,
+        child: ListTile(
+          contentPadding: EdgeInsets.fromLTRB(15, 5, 5, 5),
+          dense: true,
+          leading: SizedBox(
+            height: 50,
+            width: 50,
+            child: Icon(Icons.video_collection_rounded),
           ),
           title: Text(
             title,
@@ -177,9 +260,9 @@ class _VideoToPatientStepState extends State<VideoToPatientStep> {
   Future<void> _recordVideo() async {
     AssetPicker.registerObserve();
 
+    AssetEntity assetEntity;
     try {
-      widget.model.assetEntity =
-          await ImagePicker.recordVideo(context: context);
+      assetEntity = await ImagePicker.recordVideo(context: context);
     } catch (e) {
       AppUtil().showFlushBar(e, context);
     }
@@ -187,14 +270,8 @@ class _VideoToPatientStepState extends State<VideoToPatientStep> {
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
     if (!mounted) return;
-    if (widget.model.assetEntity.id != null) {
-      widget.model.updateWith(isLoading: true);
-      String url = await widget.model.storageService.uploadPatientNoteVideo(
-        asset: widget.model.assetEntity,
-        consultId: widget.model.visitReviewViewModel.consult.uid,
-      );
-      widget.model.updateWith(isLoading: false);
-      widget.model.updateWith(videoURL: url);
+    if (assetEntity.id != null) {
+      widget.model.updateWith(assetEntity: assetEntity, isSubmitted: false);
     }
     AssetPicker.unregisterObserve();
   }

@@ -3,6 +3,7 @@ import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_review_view_model.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/firebase_storage_service.dart';
+import 'package:dash_chat/dash_chat.dart';
 import 'package:flutter/material.dart';
 
 class VideoToPatientStepState with ChangeNotifier {
@@ -13,7 +14,10 @@ class VideoToPatientStepState with ChangeNotifier {
   AssetEntity assetEntity;
   String videoURL;
   bool isLoading;
+  bool isSubmitted;
   bool editedStep = false;
+
+  final f = new DateFormat('E MMM d');
 
   VideoToPatientStepState({
     @required this.visitReviewViewModel,
@@ -21,6 +25,7 @@ class VideoToPatientStepState with ChangeNotifier {
     @required this.extImageProvider,
     this.assetEntity,
     this.isLoading = false,
+    this.isSubmitted = false,
     this.videoURL = "",
   }) {
     this.initFromFirestore();
@@ -29,7 +34,7 @@ class VideoToPatientStepState with ChangeNotifier {
   void initFromFirestore() {
     VisitReviewData firestoreData = this.visitReviewViewModel.visitReviewData;
     if (firestoreData.videoNoteURL.length > 0) {
-      this.videoURL = firestoreData.videoNoteURL;
+      this.updateWith(videoURL: firestoreData.videoNoteURL);
 
       if (minimumRequiredFieldsFilledOut) {
         visitReviewViewModel.addCompletedStep(
@@ -39,7 +44,13 @@ class VideoToPatientStepState with ChangeNotifier {
   }
 
   bool get minimumRequiredFieldsFilledOut {
-    return this.assetEntity != null && !this.isLoading;
+    return (this.assetEntity != null || this.videoURL.length > 0) &&
+        !this.isLoading &&
+        !this.isSubmitted;
+  }
+
+  String get formattedRecordedDate {
+    return f.format(visitReviewViewModel.consult.date);
   }
 
   void updateAssetEntity(AssetEntity assetEntity) =>
@@ -48,11 +59,13 @@ class VideoToPatientStepState with ChangeNotifier {
   void updateWith({
     AssetEntity assetEntity,
     bool isLoading,
+    bool isSubmitted,
     String videoURL,
   }) {
     this.editedStep = true;
     this.assetEntity = assetEntity ?? this.assetEntity;
     this.isLoading = isLoading ?? this.isLoading;
+    this.isSubmitted = isSubmitted ?? this.isSubmitted;
     this.videoURL = videoURL ?? this.videoURL;
     notifyListeners();
   }

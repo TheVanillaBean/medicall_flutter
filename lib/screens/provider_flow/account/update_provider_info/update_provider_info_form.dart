@@ -58,9 +58,6 @@ class _UpdateProviderInfoFormState extends State<UpdateProviderInfoForm>
 
   @override
   Widget build(BuildContext context) {
-    final AuthBase auth = Provider.of<AuthBase>(context, listen: false);
-    final FirestoreDatabase firestoreDatabase =
-        Provider.of<FirestoreDatabase>(context, listen: false);
     final UserProvider userProvider =
         Provider.of<UserProvider>(context, listen: false);
     UpdateProviderInfoViewModel model =

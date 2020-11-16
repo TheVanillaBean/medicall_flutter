@@ -81,7 +81,7 @@ class ProviderDetailScreen extends StatelessWidget {
           children: [
             SingleChildScrollView(
               child: Padding(
-                padding: EdgeInsets.fromLTRB(30, 12, 30, 62),
+                padding: EdgeInsets.fromLTRB(30, 12, 30, 80),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: _buildChildren(
@@ -190,6 +190,7 @@ class ProviderDetailScreen extends StatelessWidget {
 
   Widget _providerBioInfo(BuildContext context) {
     return ListTile(
+      contentPadding: EdgeInsets.fromLTRB(0, 10, 0, 8),
       dense: true,
       title: Text(
         'Bio:',
