@@ -232,6 +232,7 @@ class VisitDetailsOverview extends StatelessWidget {
                   context: context,
                   title: "Video Note",
                   url: snapshot.data.videoNoteURL,
+                  fromNetwork: true,
                 ),
                 consult.patientReviewNotifications,
               ),

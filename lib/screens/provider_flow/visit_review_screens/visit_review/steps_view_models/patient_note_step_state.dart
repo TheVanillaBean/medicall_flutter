@@ -29,6 +29,8 @@ class PatientNoteStepState with ChangeNotifier {
   String furtherTestingBody;
   String conclusionBody;
 
+  bool initFromDiagnosis = true;
+
   PatientNoteStepState({
     @required this.visitReviewViewModel,
     this.introductionCheckbox = true,
@@ -44,7 +46,6 @@ class PatientNoteStepState with ChangeNotifier {
     this.furtherTestingBody = "",
     this.conclusionBody = "",
   }) {
-    this.initFromDiagnosisOptions();
     this.initFromFirestore();
   }
 
@@ -63,6 +64,7 @@ class PatientNoteStepState with ChangeNotifier {
           .diagnosisOptions.patientNoteTemplate.furtherTestingTemplate.body;
       this.conclusionBody = visitReviewViewModel
           .diagnosisOptions.patientNoteTemplate.conclusionTemplate.body;
+      this.initFromDiagnosis = false;
     }
   }
 

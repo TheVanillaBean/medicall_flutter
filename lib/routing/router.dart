@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:Medicall/components/drawer_menu/about_us.dart';
 import 'package:Medicall/components/drawer_menu/contact_us.dart';
 import 'package:Medicall/models/consult-review/consult_review_options_model.dart';
@@ -698,11 +700,38 @@ class Router {
       case Routes.videoPlayer:
         final Map<String, dynamic> mapArgs = args;
         final String title = mapArgs['title'];
-        final String url = mapArgs['url'];
-        return MaterialPageRoute<dynamic>(
-          builder: (context) => VideoPlayer(title: title, url: url),
-          settings: settings,
-          fullscreenDialog: true,
+        final bool fromNetwork = mapArgs['fromNetwork'];
+
+        if (fromNetwork) {
+          final String url = mapArgs['url'];
+          return MaterialPageRoute<dynamic>(
+            builder: (context) => VideoPlayer(
+              title: title,
+              url: url,
+              fromNetwork: true,
+            ),
+            settings: settings,
+            fullscreenDialog: true,
+          );
+        } else {
+          final File file = mapArgs['file'];
+          return MaterialPageRoute<dynamic>(
+            builder: (context) => VideoPlayer(
+              title: title,
+              file: file,
+              fromNetwork: false,
+            ),
+            settings: settings,
+            fullscreenDialog: true,
+          );
+        }
+        //never called but needed for some reason because switch statements are dumb
+        return MaterialPageRoute(
+          builder: (_) => Scaffold(
+            body: Center(
+              child: Text('No route defined for ${settings.name}'),
+            ),
+          ),
         );
 
       default:

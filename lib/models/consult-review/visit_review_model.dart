@@ -117,7 +117,7 @@ class VisitReviewData {
       'treatment_options': treatmentOptions.map((e) => e.toMap()).toList(),
       'selected_educational_options': educationalOptions.toList(),
     };
-    if (followUp.isNotEmpty) {
+    if (followUp != null && followUp.isNotEmpty) {
       e.addAll({
         'follow_up': followUp,
       });
