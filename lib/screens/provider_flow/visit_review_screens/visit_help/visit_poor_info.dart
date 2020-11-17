@@ -26,11 +26,9 @@ class _VisitPoorInfoState extends State<VisitPoorInfo> {
     //List<String> selectedExamOptions = [];
     String picked = '';
     List<String> options = [
-      "Inadequate/poor quality information",
-      "Redirect patient to an office visit",
-      "Patient satification concern",
-      "Inappropriate patient conduct",
-      "Other"
+      "Clinical History",
+      "Photographs",
+      "Other",
     ];
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
@@ -43,7 +41,7 @@ class _VisitPoorInfoState extends State<VisitPoorInfo> {
           Padding(
             padding: const EdgeInsets.fromLTRB(0, 32, 0, 12),
             child: Text(
-              "Do you have one of these issues?",
+              "Is there particular information that is Missing, inadequate, or of poor quality?",
               style: Theme.of(context).textTheme.headline6,
             ),
           ),

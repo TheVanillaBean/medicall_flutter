@@ -25,12 +25,10 @@ class _VisitPatientConductState extends State<VisitPatientConduct> {
   Widget build(BuildContext context) {
     //List<String> selectedExamOptions = [];
     String picked = '';
+    String input0 = '';
     List<String> options = [
-      "Inadequate/poor quality information",
-      "Redirect patient to an office visit",
-      "Patient satification concern",
-      "Inappropriate patient conduct",
-      "Other"
+      "Yes",
+      "No",
     ];
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
@@ -38,46 +36,66 @@ class _VisitPatientConductState extends State<VisitPatientConduct> {
         title: "",
         theme: Theme.of(context),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 32, 0, 12),
-            child: Text(
-              "Do you have one of these issues?",
-              style: Theme.of(context).textTheme.headline6,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: TextFormField(
+                textCapitalization: TextCapitalization.sentences,
+                initialValue: input0,
+                autocorrect: true,
+                keyboardType: TextInputType.text,
+                onChanged: (String selected) async {
+                  setState(() {
+                    input0 = selected;
+                  });
+                },
+                style: Theme.of(context).textTheme.bodyText2,
+                decoration: InputDecoration(
+                  labelStyle: TextStyle(
+                    color:
+                        Theme.of(context).colorScheme.onSurface.withAlpha(90),
+                  ),
+                  hintStyle: TextStyle(
+                    color: Color.fromRGBO(100, 100, 100, 1),
+                  ),
+                  filled: true,
+                  fillColor: Colors.grey.withAlpha(20),
+                  labelText: "Can you please tell us more?",
+                ),
+              ),
             ),
-          ),
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(horizontal: 36),
-          //   child: CheckboxGroup(
-          //     labels: options,
-          //     onSelected: (selected) {
-          //       setState(() {});
-          //     },
-          //     checked: selectedExamOptions,
-          //   ),
-          // ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 36),
-            child: RadioButtonGroup(
-              labelStyle: Theme.of(context).textTheme.bodyText1,
-              labels: options,
-              picked: picked,
-              onSelected: (String selected) async {
-                setState(() {
-                  picked = selected;
-                });
-              },
+            Divider(),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 32, 0, 12),
+              child: Text(
+                "Would you like the Medicall customer service team to help address this issue?",
+                style: Theme.of(context).textTheme.headline6,
+              ),
             ),
-          ),
-          Expanded(
-            child: ContinueButton(
-              title: "Continue",
-              width: ScreenUtil.screenWidthDp - 60,
-              onTap: () {},
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 36),
+              child: RadioButtonGroup(
+                labelStyle: Theme.of(context).textTheme.bodyText1,
+                labels: options,
+                picked: picked,
+                onSelected: (String selected) async {
+                  setState(() {
+                    picked = selected;
+                  });
+                },
+              ),
             ),
-          ),
-        ],
+            Expanded(
+              child: ContinueButton(
+                title: "Continue",
+                width: ScreenUtil.screenWidthDp - 60,
+                onTap: () {},
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
