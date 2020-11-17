@@ -553,32 +553,52 @@ class Router {
           fullscreenDialog: true,
         );
       case Routes.visitPoorInfo:
+        final Map<String, dynamic> mapArgs = args;
+        final Consult consult = mapArgs['consult'];
         return MaterialPageRoute<dynamic>(
-          builder: (context) => VisitPoorInfo(),
+          builder: (context) => VisitPoorInfo(
+            consult: consult,
+          ),
           settings: settings,
           fullscreenDialog: true,
         );
       case Routes.visitOffice:
+        final Map<String, dynamic> mapArgs = args;
+        final Consult consult = mapArgs['consult'];
         return MaterialPageRoute<dynamic>(
-          builder: (context) => VisitOffice(),
+          builder: (context) => VisitOffice(
+            consult: consult,
+          ),
           settings: settings,
           fullscreenDialog: true,
         );
       case Routes.visitPatientSatisfaction:
+        final Map<String, dynamic> mapArgs = args;
+        final Consult consult = mapArgs['consult'];
         return MaterialPageRoute<dynamic>(
-          builder: (context) => VisitPatientSatisfaction(),
+          builder: (context) => VisitPatientSatisfaction(
+            consult: consult,
+          ),
           settings: settings,
           fullscreenDialog: true,
         );
       case Routes.visitPatientConduct:
+        final Map<String, dynamic> mapArgs = args;
+        final Consult consult = mapArgs['consult'];
         return MaterialPageRoute<dynamic>(
-          builder: (context) => VisitPatientConduct(),
+          builder: (context) => VisitPatientConduct(
+            consult: consult,
+          ),
           settings: settings,
           fullscreenDialog: true,
         );
       case Routes.visitHelpOther:
+        final Map<String, dynamic> mapArgs = args;
+        final Consult consult = mapArgs['consult'];
         return MaterialPageRoute<dynamic>(
-          builder: (context) => VisitHelpOther(),
+          builder: (context) => VisitHelpOther(
+            consult: consult,
+          ),
           settings: settings,
           fullscreenDialog: true,
         );
