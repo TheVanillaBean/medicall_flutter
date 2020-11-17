@@ -58,6 +58,11 @@ import 'package:Medicall/screens/provider_flow/visit_review_screens/complete_vis
 import 'package:Medicall/screens/provider_flow/visit_review_screens/immediate_care/immediate_medical_care.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/prescription_details/prescription_details.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_help/visit_help.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_help/visit_help_other.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_help/visit_office.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_help/visit_patient_conduct.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_help/visit_patient_satisfaction.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_help/visit_poor_info.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/edit_note/edit_note_section.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reclassify_visit/reclassify_visit.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_view_models/patient_note_step_state.dart';
@@ -538,38 +543,62 @@ class Router {
           fullscreenDialog: true,
         );
       case Routes.visitHelp:
+        final Map<String, dynamic> mapArgs = args;
+        final Consult consult = mapArgs['consult'];
         return MaterialPageRoute<dynamic>(
-          builder: (context) => VisitHelp(),
+          builder: (context) => VisitHelp(
+            consult: consult,
+          ),
           settings: settings,
           fullscreenDialog: true,
         );
       case Routes.visitPoorInfo:
+        final Map<String, dynamic> mapArgs = args;
+        final Consult consult = mapArgs['consult'];
         return MaterialPageRoute<dynamic>(
-          builder: (context) => VisitHelp(),
+          builder: (context) => VisitPoorInfo(
+            consult: consult,
+          ),
           settings: settings,
           fullscreenDialog: true,
         );
       case Routes.visitOffice:
+        final Map<String, dynamic> mapArgs = args;
+        final Consult consult = mapArgs['consult'];
         return MaterialPageRoute<dynamic>(
-          builder: (context) => VisitHelp(),
+          builder: (context) => VisitOffice(
+            consult: consult,
+          ),
           settings: settings,
           fullscreenDialog: true,
         );
       case Routes.visitPatientSatisfaction:
+        final Map<String, dynamic> mapArgs = args;
+        final Consult consult = mapArgs['consult'];
         return MaterialPageRoute<dynamic>(
-          builder: (context) => VisitHelp(),
+          builder: (context) => VisitPatientSatisfaction(
+            consult: consult,
+          ),
           settings: settings,
           fullscreenDialog: true,
         );
       case Routes.visitPatientConduct:
+        final Map<String, dynamic> mapArgs = args;
+        final Consult consult = mapArgs['consult'];
         return MaterialPageRoute<dynamic>(
-          builder: (context) => VisitHelp(),
+          builder: (context) => VisitPatientConduct(
+            consult: consult,
+          ),
           settings: settings,
           fullscreenDialog: true,
         );
       case Routes.visitHelpOther:
+        final Map<String, dynamic> mapArgs = args;
+        final Consult consult = mapArgs['consult'];
         return MaterialPageRoute<dynamic>(
-          builder: (context) => VisitHelp(),
+          builder: (context) => VisitHelpOther(
+            consult: consult,
+          ),
           settings: settings,
           fullscreenDialog: true,
         );
