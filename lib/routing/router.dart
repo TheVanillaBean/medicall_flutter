@@ -55,6 +55,7 @@ import 'package:Medicall/screens/provider_flow/provider_visits/provider_visits.d
 import 'package:Medicall/screens/provider_flow/registration/provider_registration.dart';
 import 'package:Medicall/screens/provider_flow/review_medical_history/review_medical_history.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/complete_visit/complete_visit.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/email_assistant/email_assistant.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/immediate_care/immediate_medical_care.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/prescription_details/prescription_details.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_help/visit_help.dart';
@@ -149,6 +150,7 @@ class Routes {
   static const contactUs = '/contact-us';
   static const selectServices = '/select-services';
   static const videoPlayer = '/video-player';
+  static const emailAssistant = '/email-assistant';
 }
 
 /// The word 'consult' and 'visit' are used separately, but mean the exact
@@ -717,6 +719,17 @@ class Router {
             consultReviewOptions,
             visitReviewData,
             diagnosisOptions,
+          ),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case Routes.emailAssistant:
+        final Map<String, dynamic> mapArgs = args;
+        final Consult consult = mapArgs['consult'];
+        return MaterialPageRoute(
+          builder: (context) => EmailAssistant.create(
+            context,
+            consult,
           ),
           settings: settings,
           fullscreenDialog: true,
