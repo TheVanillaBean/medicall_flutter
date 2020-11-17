@@ -61,9 +61,10 @@ class ProviderUser extends MedicallUser {
     provider.practiceName = data['practice_name'] ?? provider.practiceName;
     provider.stripeConnectAuthorized =
         data['stripe_connect_authorized'] ?? provider.stripeConnectAuthorized;
-    provider.selectedServices =
-        (data['selected_services'] as List).map((e) => e.toString()).toList() ??
-            provider.selectedServices;
+    if (data['selected_services'] != null) {
+      provider.selectedServices =
+          (data['selected_services'] as List).map((e) => e.toString()).toList();
+    }
 
     return provider;
   }
