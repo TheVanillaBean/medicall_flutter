@@ -57,6 +57,7 @@ import 'package:Medicall/screens/provider_flow/review_medical_history/review_med
 import 'package:Medicall/screens/provider_flow/visit_review_screens/complete_visit/complete_visit.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/immediate_care/immediate_medical_care.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/prescription_details/prescription_details.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_help/visit_help.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/edit_note/edit_note_section.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reclassify_visit/reclassify_visit.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_view_models/patient_note_step_state.dart';
@@ -127,6 +128,12 @@ class Routes {
   static const visitDocNote = '/visit-doc-note';
   static const visitEducation = '/visit-education';
   static const visitPrescriptions = '/visit-prescriptions';
+  static const visitHelp = '/visit-help';
+  static const visitPoorInfo = '/visit-poor-info';
+  static const visitOffice = '/visit-office';
+  static const visitPatientSatisfaction = '/visit-patient-satisfaction';
+  static const visitPatientConduct = '/visit-patient-conduct';
+  static const visitHelpOther = '/visit-help-other';
   static const visitNonPrescriptions = '/visit-non-prescriptions';
   static const immediateMedicalCare = '/immediate-medical-care';
   static const completeVisit = '/complete-visit';
@@ -527,6 +534,42 @@ class Router {
             consult: consult,
             visitReviewData: visitReviewData,
           ),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case Routes.visitHelp:
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => VisitHelp(),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case Routes.visitPoorInfo:
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => VisitHelp(),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case Routes.visitOffice:
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => VisitHelp(),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case Routes.visitPatientSatisfaction:
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => VisitHelp(),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case Routes.visitPatientConduct:
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => VisitHelp(),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case Routes.visitHelpOther:
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => VisitHelp(),
           settings: settings,
           fullscreenDialog: true,
         );

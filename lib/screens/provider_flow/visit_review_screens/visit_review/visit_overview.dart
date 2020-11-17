@@ -8,6 +8,7 @@ import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Shared/visit_information/review_visit_information.dart';
 import 'package:Medicall/screens/provider_flow/dashboard/provider_dashboard_list_item.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_help/visit_help.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reclassify_visit/reclassify_visit.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/view_patient_id.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/view_patient_info.dart';
@@ -100,6 +101,7 @@ class VisitOverview extends StatelessWidget {
                 consult: consult,
               ),
           0),
+
       // _buildProviderCardButton(
       //   context,
       //   "SEND A VIDEO NOTE (OPTIONAL)",
@@ -115,6 +117,13 @@ class VisitOverview extends StatelessWidget {
         () => navigateToChatScreen(context, consult),
         consult.providerMessageNotifications,
       ),
+      _buildProviderCardButton(
+          context,
+          "NEED HELP?",
+          () => VisitHelp.show(
+                context: context,
+              ),
+          0),
       Expanded(
         child: Align(
           alignment: FractionalOffset.bottomCenter,
