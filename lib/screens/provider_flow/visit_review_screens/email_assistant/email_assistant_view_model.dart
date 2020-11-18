@@ -1,8 +1,9 @@
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/services/database.dart';
+import 'package:Medicall/util/validators.dart';
 import 'package:flutter/material.dart';
 
-class EmailAssistantViewModel with ChangeNotifier {
+class EmailAssistantViewModel with EmailAndPasswordValidators, ChangeNotifier {
   final FirestoreDatabase firestoreDatabase;
   Consult consult;
   String email;
@@ -26,6 +27,10 @@ class EmailAssistantViewModel with ChangeNotifier {
     this.boxChecked,
     this.isSubmitted,
   });
+
+  bool get canSubmit {
+    return emailValidator.isValid(email) && !isSubmitted;
+  }
 
   void updateWith({
     Consult consult,

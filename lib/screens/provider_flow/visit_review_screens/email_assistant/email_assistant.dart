@@ -1,3 +1,4 @@
+import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/email_assistant/email_assistant_view_model.dart';
@@ -43,6 +44,13 @@ class EmailAssistant extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      appBar: CustomAppBar.getAppBar(
+        type: AppBarType.Back,
+        title: "Email Assistant",
+        theme: Theme.of(context),
+      ),
+      body: Column(),
+    );
   }
 }
