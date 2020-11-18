@@ -1,4 +1,5 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
+import 'package:Medicall/common_widgets/grouped_buttons/radio_button_group.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/email_assistant/email_assistant_view_model.dart';
@@ -50,7 +51,47 @@ class EmailAssistant extends StatelessWidget {
         title: "Email Assistant",
         theme: Theme.of(context),
       ),
-      body: Column(),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 12, 24, 12),
+            child: Text(
+              'Assistant Email:',
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 12, 24, 12),
+            child: Text(
+              'Please select the reason:',
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 0, 12, 36),
+            child: RadioButtonGroup(
+              labelStyle: Theme.of(context).textTheme.bodyText1,
+              labels: this.model.selectReasons,
+              picked: this.model.selectedReason,
+              onSelected: (String picked) =>
+                  model.updateWith(selectedReason: picked),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: CheckboxListTile(
+              title: Text(
+                'Please send a copy of my note to my office manager via secure email',
+                style: Theme.of(context).textTheme.bodyText2,
+              ),
+              controlAffinity: ListTileControlAffinity.leading,
+              value: this.model.boxChecked,
+              onChanged: (bool c) => this.model.updateWith(boxChecked: c),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

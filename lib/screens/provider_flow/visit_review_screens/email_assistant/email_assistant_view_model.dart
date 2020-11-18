@@ -7,25 +7,24 @@ class EmailAssistantViewModel with EmailAndPasswordValidators, ChangeNotifier {
   final FirestoreDatabase firestoreDatabase;
   Consult consult;
   String email;
-  List<String> reasonLabels = [
+  List<String> selectReasons = [
     'Coordinate an office visit',
     'Coordinate referral',
     'Pharmacy issue',
     'Upload patient note to EHR',
     'Other',
   ];
-  String selectedVisit;
+  String selectedReason;
   bool boxChecked;
   bool isSubmitted;
 
   EmailAssistantViewModel({
     @required this.consult,
     @required this.firestoreDatabase,
-    this.email,
-    this.selectedVisit,
-    this.reasonLabels,
-    this.boxChecked,
-    this.isSubmitted,
+    this.email = "",
+    this.selectedReason = "",
+    this.boxChecked = false,
+    this.isSubmitted = false,
   });
 
   bool get canSubmit {
@@ -35,13 +34,13 @@ class EmailAssistantViewModel with EmailAndPasswordValidators, ChangeNotifier {
   void updateWith({
     Consult consult,
     String email,
-    String selectedVisit,
+    String selectedReason,
     bool boxChecked,
     bool isSubmitted,
   }) {
     this.consult = consult ?? this.consult;
     this.email = email ?? this.email;
-    this.selectedVisit = selectedVisit ?? this.selectedVisit;
+    this.selectedReason = selectedReason ?? this.selectedReason;
     this.boxChecked = boxChecked ?? boxChecked;
     this.isSubmitted = isSubmitted ?? isSubmitted;
     notifyListeners();
