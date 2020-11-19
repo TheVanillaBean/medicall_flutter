@@ -40,17 +40,11 @@ class FirebaseStorageService {
   }
 
   Future<String> uploadPatientNoteVideo({
-    @required AssetEntity asset,
+    @required MediaInfo mediaInfo,
     @required String consultId,
   }) async {
-    final file = await asset.file;
-    final compressed = await VideoCompress.compressVideo(
-      file.path,
-      quality: VideoQuality.LowQuality,
-      deleteOrigin: true,
-    );
-    Uint8List videoData = await compressed.file.readAsBytes();
-    String assetName = getImageName(asset.title);
+    Uint8List videoData = await mediaInfo.file.readAsBytes();
+    String assetName = getImageName(mediaInfo.title);
     return await upload(
       data: videoData,
       path: FirestorePath.userVideoNote(

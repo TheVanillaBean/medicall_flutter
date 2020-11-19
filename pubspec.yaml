@@ -78,17 +78,15 @@ dependencies:
   device_info: ^0.4.2+9
   path_provider: ^1.6.21
   photo_manager: ">=0.5.8 <2.0.0"
-  video_player: ">=0.11.0 <2.0.0"
+  video_player: ^1.0.1
   video_compress: ^2.1.0
   scrollable_positioned_list: ^0.1.7
-  chewie: ^0.12.0
   cupertino_icons: ^1.0.0
   video_thumbnail_generator: ^0.0.6
 
 dependency_overrides:
   intl: ^0.16.1
   flutter_chips_input: ^1.9.0-dev.2
-  video_player: ^0.11.1+2
   chewie: ^0.12.0
 
 dev_dependencies:

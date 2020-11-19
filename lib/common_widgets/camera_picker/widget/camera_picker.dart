@@ -20,6 +20,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:video_compress/video_compress.dart';
 
 import '../constants/constants.dart';
 import 'builder/slide_page_transition_builder.dart';
@@ -598,12 +599,17 @@ class CameraPickerState extends State<CameraPicker> {
   Future<void> stopRecordingVideo() async {
     if (cameraController.value.isRecordingVideo) {
       cameraController.stopVideoRecording().then((dynamic result) async {
+        final compressed = await VideoCompress.compressVideo(
+          takenVideoFilePath,
+          quality: VideoQuality.LowQuality,
+          deleteOrigin: true,
+        );
         final AssetEntity entity = await CameraPickerViewer.pushToViewer(
           context,
           pickerState: this,
           pickerType: CameraPickerViewType.video,
-          previewFile: takenVideoFile,
-          previewFilePath: takenVideoFilePath,
+          previewFile: compressed.file,
+          previewFilePath: compressed.path,
           theme: theme,
         );
         if (entity != null) {

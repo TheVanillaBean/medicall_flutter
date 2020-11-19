@@ -1,17 +1,18 @@
-import 'package:Medicall/common_widgets/camera_picker/constants/constants.dart';
 import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/visit_review_view_model.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/firebase_storage_service.dart';
 import 'package:dash_chat/dash_chat.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:video_compress/video_compress.dart';
 
 class VideoToPatientStepState with ChangeNotifier {
   final ExtImageProvider extImageProvider;
   final FirebaseStorageService storageService;
   final VisitReviewViewModel visitReviewViewModel;
 
-  AssetEntity assetEntity;
+  MediaInfo mediaInfo;
   String videoURL;
   bool isLoading;
   bool isSubmitted;
@@ -19,11 +20,13 @@ class VideoToPatientStepState with ChangeNotifier {
 
   final f = new DateFormat('E MMM d');
 
+  final imagePicker = ImagePicker();
+
   VideoToPatientStepState({
     @required this.visitReviewViewModel,
     @required this.storageService,
     @required this.extImageProvider,
-    this.assetEntity,
+    this.mediaInfo,
     this.isLoading = false,
     this.isSubmitted = false,
     this.videoURL = "",
@@ -44,7 +47,7 @@ class VideoToPatientStepState with ChangeNotifier {
   }
 
   bool get minimumRequiredFieldsFilledOut {
-    return (this.assetEntity != null || this.videoURL.length > 0) &&
+    return (this.mediaInfo != null || this.videoURL.length > 0) &&
         !this.isLoading &&
         !this.isSubmitted;
   }
@@ -53,17 +56,17 @@ class VideoToPatientStepState with ChangeNotifier {
     return f.format(visitReviewViewModel.consult.date);
   }
 
-  void updateAssetEntity(AssetEntity assetEntity) =>
-      updateWith(assetEntity: assetEntity);
+  void updateAssetEntity(MediaInfo mediaInfo) =>
+      updateWith(mediaInfo: mediaInfo);
 
   void updateWith({
-    AssetEntity assetEntity,
+    MediaInfo mediaInfo,
     bool isLoading,
     bool isSubmitted,
     String videoURL,
   }) {
     this.editedStep = true;
-    this.assetEntity = assetEntity ?? this.assetEntity;
+    this.mediaInfo = mediaInfo ?? this.mediaInfo;
     this.isLoading = isLoading ?? this.isLoading;
     this.isSubmitted = isSubmitted ?? this.isSubmitted;
     this.videoURL = videoURL ?? this.videoURL;

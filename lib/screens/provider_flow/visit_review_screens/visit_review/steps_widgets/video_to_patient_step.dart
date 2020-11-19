@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:Medicall/common_widgets/assets_picker/widget/asset_picker.dart';
-import 'package:Medicall/common_widgets/camera_picker/constants/constants.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/continue_button.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/swipe_gesture_recognizer.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_view_models/video_to_patient_step_state.dart';
@@ -9,9 +8,10 @@ import 'package:Medicall/screens/shared/video_player/video_player.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/firebase_storage_service.dart';
 import 'package:Medicall/util/app_util.dart';
-import 'package:Medicall/util/image_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:video_compress/video_compress.dart';
 import 'package:video_thumbnail_generator/video_thumbnail_generator.dart';
 
 import '../visit_review_view_model.dart';
@@ -47,14 +47,13 @@ class _VideoToPatientStepState extends State<VideoToPatientStep> {
   Future<void> _submit() async {
     widget.model.updateWith(isLoading: true, isSubmitted: true);
     String url = await widget.model.storageService.uploadPatientNoteVideo(
-      asset: widget.model.assetEntity,
+      mediaInfo: widget.model.mediaInfo,
       consultId: widget.model.visitReviewViewModel.consult.uid,
     );
     widget.model.updateWith(videoURL: url);
     await widget.model.visitReviewViewModel
         .saveVideoNoteToFirestore(widget.model);
-    //have to set it this way because updateWith function wont actually update it if it is null arg
-    widget.model.assetEntity = null;
+
     widget.model.updateWith(isLoading: false);
     AppUtil().showFlushBar("Successfully saved video note!", context);
   }
@@ -93,7 +92,7 @@ class _VideoToPatientStepState extends State<VideoToPatientStep> {
                 ),
               ),
             ),
-            if (widget.model.assetEntity == null &&
+            if (widget.model.mediaInfo == null &&
                 widget.model.videoURL.length > 0)
               _buildVideoCardNetworkButton(
                 context,
@@ -110,14 +109,14 @@ class _VideoToPatientStepState extends State<VideoToPatientStep> {
                   widget.model.updateWith(isLoading: false);
                 },
               ),
-            if (widget.model.assetEntity != null)
+            if (widget.model.mediaInfo != null)
               _buildVideoCardMemoryButton(
                 context,
                 'Visit Date: ',
                 widget.model.formattedRecordedDate,
                 () async {
                   widget.model.updateWith(isLoading: true);
-                  File file = await widget.model.assetEntity.file;
+                  File file = widget.model.mediaInfo.file;
                   await VideoPlayer.show(
                     context: context,
                     file: file,
@@ -258,11 +257,13 @@ class _VideoToPatientStepState extends State<VideoToPatientStep> {
   }
 
   Future<void> _recordVideo() async {
-    AssetPicker.registerObserve();
-
-    AssetEntity assetEntity;
+    PickedFile pickedFile;
     try {
-      assetEntity = await ImagePicker.recordVideo(context: context);
+      pickedFile = await widget.model.imagePicker.getVideo(
+        source: ImageSource.camera,
+        preferredCameraDevice: CameraDevice.front,
+        maxDuration: Duration(minutes: 3),
+      );
     } catch (e) {
       AppUtil().showFlushBar(e, context);
     }
@@ -270,8 +271,18 @@ class _VideoToPatientStepState extends State<VideoToPatientStep> {
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
     if (!mounted) return;
-    if (assetEntity.id != null) {
-      widget.model.updateWith(assetEntity: assetEntity, isSubmitted: false);
+    if (pickedFile != null && pickedFile.path != null) {
+      widget.model.updateWith(isLoading: true);
+      final MediaInfo info = await VideoCompress.compressVideo(
+        pickedFile.path,
+        quality: VideoQuality.LowQuality,
+        deleteOrigin: true,
+      );
+      widget.model.updateWith(
+        mediaInfo: info,
+        isSubmitted: false,
+        isLoading: false,
+      );
     }
     AssetPicker.unregisterObserve();
   }
