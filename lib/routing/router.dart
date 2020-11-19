@@ -727,10 +727,7 @@ class Router {
         final Map<String, dynamic> mapArgs = args;
         final Consult consult = mapArgs['consult'];
         return MaterialPageRoute(
-          builder: (context) => EmailAssistant.create(
-            context,
-            consult,
-          ),
+          builder: (context) => EmailAssistant.create(context, consult),
           settings: settings,
           fullscreenDialog: true,
         );

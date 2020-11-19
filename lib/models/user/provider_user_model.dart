@@ -12,6 +12,7 @@ class ProviderUser extends MedicallUser {
   String practiceName;
   bool stripeConnectAuthorized;
   List<dynamic> selectedServices;
+  String assistantEmail;
 
   ProviderUser({
     this.professionalTitle = '',
@@ -25,6 +26,7 @@ class ProviderUser extends MedicallUser {
     this.practiceName = '',
     this.stripeConnectAuthorized = false,
     this.selectedServices = const [],
+    this.assistantEmail = '',
   });
 
   @override
@@ -42,6 +44,7 @@ class ProviderUser extends MedicallUser {
       'practice_name': practiceName,
       'stripe_connect_authorized': stripeConnectAuthorized,
       'selected_services': selectedServices,
+      'assistant_email': assistantEmail,
     });
     return userMap;
   }
@@ -64,6 +67,8 @@ class ProviderUser extends MedicallUser {
     provider.selectedServices =
         (data['selected_services'] as List).map((e) => e.toString()).toList() ??
             provider.selectedServices;
+    provider.assistantEmail =
+        data['assistant_email'] ?? provider.assistantEmail;
 
     return provider;
   }
