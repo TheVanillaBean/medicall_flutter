@@ -2,13 +2,12 @@ import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/grouped_buttons/radio_button_group.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/consult_model.dart';
-import 'package:Medicall/models/user/provider_user_model.dart';
 import 'package:Medicall/routing/router.dart';
-import 'package:Medicall/screens/provider_flow/account/update_provider_info/update_provider_info_view_model.dart';
 import 'package:Medicall/screens/provider_flow/registration/provider_custom_text_field.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/email_assistant/email_assistant_view_model.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
+import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:provider/provider.dart';
@@ -55,8 +54,12 @@ class EmailAssistant extends StatelessWidget {
   Future<void> submit(
     BuildContext context,
   ) async {
-    await model.sendSecureEmail();
-    Navigator.pop(context);
+    try {
+      await model.sendSecureEmail();
+      Navigator.pop(context);
+    } catch (e) {
+      AppUtil().showFlushBar(e, context);
+    }
   }
 
   @override

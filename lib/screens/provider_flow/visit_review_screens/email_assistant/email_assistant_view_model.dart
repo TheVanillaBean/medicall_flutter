@@ -3,6 +3,7 @@ import 'package:Medicall/models/user/provider_user_model.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/validators.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 
 class EmailAssistantViewModel with EmailAndPasswordValidators, ChangeNotifier {
@@ -29,7 +30,11 @@ class EmailAssistantViewModel with EmailAndPasswordValidators, ChangeNotifier {
     this.selectedReason = "",
     this.checkValue = false,
     this.submitted = false,
-  });
+  }) {
+    this.assistantEmail =
+        (this.userProvider.user as ProviderUser).assistantEmail ?? "";
+    notifyListeners();
+  }
 
   void updateCheckValue(bool checkValue) => updateWith(checkValue: checkValue);
   void updateSubmitted(bool submitted) => updateWith(submitted: submitted);
@@ -47,7 +52,12 @@ class EmailAssistantViewModel with EmailAndPasswordValidators, ChangeNotifier {
 
     await updateUser(user);
 
-    await sendEmail();
+    try {
+      await sendEmail();
+    } catch (e) {
+      updateWith(submitted: false);
+      throw e;
+    }
 
     updateWith(submitted: false, checkValue: false);
   }
@@ -57,7 +67,27 @@ class EmailAssistantViewModel with EmailAndPasswordValidators, ChangeNotifier {
     userProvider.user = user;
   }
 
-  Future<void> sendEmail() async {}
+  Future<void> sendEmail() async {
+    final HttpsCallable callable = CloudFunctions.instance
+        .getHttpsCallable(functionName: 'sendAssistantEmail')
+          ..timeout = const Duration(seconds: 30);
+
+    final HttpsCallableResult result = await callable.call(
+      <String, dynamic>{
+        'consultId': this.consult.uid,
+        'reason': this.selectedReason,
+        'sendNoteCopy': this.checkValue,
+      },
+    );
+
+    if (result.data == null) {
+      throw "Failed to send email";
+    }
+
+    if (result.data["emailSent"] as bool == false) {
+      throw "There was an error sending the email";
+    }
+  }
 
   String get emailErrorText {
     bool showErrorText =
