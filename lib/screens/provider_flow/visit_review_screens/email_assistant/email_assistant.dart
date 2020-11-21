@@ -80,7 +80,7 @@ class EmailAssistant extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0, 6, 12, 24),
                   child: ProviderCustomTextField(
-                    initialText: '',
+                    initialText: model.assistantEmail,
                     labelText: 'Assistant Email',
                     hint: 'assistant@email.com',
                     errorText: model.emailErrorText,
@@ -104,16 +104,22 @@ class EmailAssistant extends StatelessWidget {
                         model.updateWith(selectedReason: picked),
                   ),
                 ),
-                //Spacer(),
+                if (model.includeTextBox) ..._buildTextBox(context),
                 CheckboxListTile(
                   contentPadding: EdgeInsets.fromLTRB(24, 12, 24, 12),
                   title: Text(
-                    'Please send a copy of my note to my office manager via secure email',
+                    'Please send a copy of my note to my assistant via secure email',
                     style: Theme.of(context).textTheme.bodyText2,
                   ),
                   controlAffinity: ListTileControlAffinity.leading,
                   value: this.model.checkValue ?? false,
-                  onChanged: model.updateCheckValue,
+                  onChanged: (bool newValue) {
+                    try {
+                      model.updateCheckValue(newValue);
+                    } catch (e) {
+                      AppUtil().showFlushBar(e, context);
+                    }
+                  },
                 ),
                 Expanded(
                   flex: 1,
@@ -124,7 +130,14 @@ class EmailAssistant extends StatelessWidget {
                       title: 'Email Assistant',
                       onPressed: model.canSubmit
                           ? () async {
-                              await submit(context);
+                              try {
+                                await submit(context);
+                                AppUtil().showFlushBar(
+                                    "Successfully sent an email to your assistant",
+                                    context);
+                              } catch (e) {
+                                AppUtil().showFlushBar(e, context);
+                              }
                             }
                           : null,
                     ),
@@ -145,5 +158,49 @@ class EmailAssistant extends StatelessWidget {
         ]),
       ),
     );
+  }
+
+  List<Widget> _buildTextBox(BuildContext context) {
+    return [
+      Padding(
+        padding: const EdgeInsets.fromLTRB(24, 12, 12, 24),
+        child: Text(
+          "${this.model.selectedReason} note:",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Colors.grey,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: TextFormField(
+          textCapitalization: TextCapitalization.sentences,
+          initialValue: "",
+          autocorrect: true,
+          minLines: 2,
+          maxLines: 4,
+          keyboardType: TextInputType.text,
+          onChanged: this.model.updateEmailNote,
+          style: Theme.of(context).textTheme.bodyText2,
+          decoration: InputDecoration(
+            labelStyle: TextStyle(
+              color: Theme.of(context).colorScheme.onSurface.withAlpha(90),
+            ),
+            hintStyle: TextStyle(
+              color: Color.fromRGBO(100, 100, 100, 1),
+            ),
+            filled: true,
+            fillColor: Colors.grey.withAlpha(20),
+            labelText: "Enter any additional notes for your assistant",
+            hintText: 'Optional',
+          ),
+        ),
+      ),
+      SizedBox(
+        height: 12,
+      ),
+    ];
   }
 }
