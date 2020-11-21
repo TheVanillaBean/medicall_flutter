@@ -23,6 +23,11 @@ extension EnumParser on String {
   }
 }
 
+abstract class VisitClosedKeys {
+  static const REASON = "reason";
+  static const CONTACT_PATIENT = "contact_patient";
+}
+
 class Consult {
   String uid;
   final String providerId;
@@ -39,6 +44,7 @@ class Consult {
   int providerMessageNotifications;
   int patientReviewNotifications;
   int patientMessageNotifications;
+  Map<String, String> visitClosed;
 
   //not serialized
   PatientUser patientUser;
@@ -67,6 +73,7 @@ class Consult {
     this.patientReviewNotifications = 0,
     this.providerMessageNotifications = 0,
     this.providerReviewNotifications = 0,
+    this.visitClosed = const {},
   });
 
   factory Consult.fromMap(Map<String, dynamic> data, String documentId) {
@@ -97,6 +104,13 @@ class Consult {
     final int providersMessageNotifications =
         data['provider_message_notifications'] ?? 0;
 
+    Map<String, String> visitClosed;
+    if (data["visit_closed"] != null) {
+      visitClosed = (data["visit_closed"] as Map).map(
+        (key, value) => MapEntry(key as String, value as String),
+      );
+    }
+
     return Consult(
       uid: documentId,
       providerId: providerId,
@@ -112,6 +126,7 @@ class Consult {
       patientReviewNotifications: patientReviewNotifications,
       providerMessageNotifications: providersMessageNotifications,
       providerReviewNotifications: providerReviewNotifications,
+      visitClosed: visitClosed,
     );
   }
 
@@ -137,6 +152,11 @@ class Consult {
     if (coupon != null) {
       baseToMap.addAll({
         'coupon_code': coupon,
+      });
+    }
+    if (visitClosed != null) {
+      baseToMap.addAll({
+        'visit_closed': visitClosed,
       });
     }
 

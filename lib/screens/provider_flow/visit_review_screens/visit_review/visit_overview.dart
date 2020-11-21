@@ -131,6 +131,7 @@ class VisitOverview extends StatelessWidget {
           "NEED HELP?",
           () => VisitHelp.show(
                 context: context,
+                consult: consult,
               ),
           0),
       Expanded(

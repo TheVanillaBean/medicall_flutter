@@ -8,12 +8,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class VisitPatientSatisfaction extends StatefulWidget {
-  VisitPatientSatisfaction({Key key, Consult consult}) : super(key: key);
+  final Consult consult;
+
+  VisitPatientSatisfaction({Key key, this.consult}) : super(key: key);
   static Future<void> show({
     BuildContext context,
+    Consult consult,
   }) async {
     await Navigator.of(context).pushNamed(
       Routes.visitPatientSatisfaction,
+      arguments: {
+        'consult': consult,
+      },
     );
   }
 
@@ -36,95 +42,113 @@ class _VisitPatientSatisfactionState extends State<VisitPatientSatisfaction> {
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
         type: AppBarType.Back,
-        title: "",
+        title: "Patient satisfaction concern",
         theme: Theme.of(context),
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: TextFormField(
-                textCapitalization: TextCapitalization.sentences,
-                initialValue: input0,
-                autocorrect: true,
-                keyboardType: TextInputType.text,
-                onChanged: (String selected) async {
-                  setState(() {
-                    input0 = selected;
-                  });
-                },
-                style: Theme.of(context).textTheme.bodyText2,
-                decoration: InputDecoration(
-                  labelStyle: TextStyle(
-                    color:
-                        Theme.of(context).colorScheme.onSurface.withAlpha(90),
-                  ),
-                  hintStyle: TextStyle(
-                    color: Color.fromRGBO(100, 100, 100, 1),
-                  ),
-                  filled: true,
-                  fillColor: Colors.grey.withAlpha(20),
-                  labelText: "Can you please tell us more?",
-                ),
-              ),
-            ),
+                padding: EdgeInsets.fromLTRB(24, 10, 24, 10),
+                child: Column(
+                  children: [
+                    Text(
+                      "Can you please tell us more?",
+                      style: Theme.of(context).textTheme.headline6,
+                    ),
+                    Divider(
+                      color: Colors.transparent,
+                    ),
+                    TextFormField(
+                      textCapitalization: TextCapitalization.sentences,
+                      initialValue: input0,
+                      autocorrect: true,
+                      keyboardType: TextInputType.text,
+                      minLines: 10,
+                      maxLines: 300,
+                      onChanged: (String selected) async {
+                        input0 = selected;
+                      },
+                      style: Theme.of(context).textTheme.bodyText2,
+                      decoration: InputDecoration(
+                        labelStyle: TextStyle(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withAlpha(90),
+                        ),
+                        hintStyle: TextStyle(
+                          color: Color.fromRGBO(100, 100, 100, 1),
+                        ),
+                        filled: true,
+                        fillColor: Colors.grey.withAlpha(20),
+                      ),
+                    ),
+                  ],
+                )),
             Divider(),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: TextFormField(
-                textCapitalization: TextCapitalization.sentences,
-                initialValue: input1,
-                autocorrect: true,
-                keyboardType: TextInputType.text,
-                onChanged: (String selected) async {
-                  setState(() {
-                    input1 = selected;
-                  });
-                },
-                style: Theme.of(context).textTheme.bodyText2,
-                decoration: InputDecoration(
-                  labelStyle: TextStyle(
-                    color:
-                        Theme.of(context).colorScheme.onSurface.withAlpha(90),
-                  ),
-                  hintStyle: TextStyle(
-                    color: Color.fromRGBO(100, 100, 100, 1),
-                  ),
-                  filled: true,
-                  fillColor: Colors.grey.withAlpha(20),
-                  labelText:
+                padding: EdgeInsets.fromLTRB(24, 10, 24, 10),
+                child: Column(
+                  children: [
+                    Text(
                       "Do you have suggestions regarding how to best address this?",
-                ),
-              ),
-            ),
+                      style: Theme.of(context).textTheme.headline6,
+                    ),
+                    Divider(
+                      color: Colors.transparent,
+                    ),
+                    TextFormField(
+                      textCapitalization: TextCapitalization.sentences,
+                      initialValue: input1,
+                      autocorrect: true,
+                      keyboardType: TextInputType.text,
+                      minLines: 10,
+                      maxLines: 300,
+                      onChanged: (String selected) async {
+                        input1 = selected;
+                      },
+                      style: Theme.of(context).textTheme.bodyText2,
+                      decoration: InputDecoration(
+                        labelStyle: TextStyle(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withAlpha(90),
+                        ),
+                        hintStyle: TextStyle(
+                          color: Color.fromRGBO(100, 100, 100, 1),
+                        ),
+                        filled: true,
+                        fillColor: Colors.grey.withAlpha(20),
+                      ),
+                    ),
+                  ],
+                )),
             Divider(),
             Padding(
-              padding: const EdgeInsets.fromLTRB(0, 32, 0, 12),
-              child: Text(
-                "Would you like the Medicall customer service team to help address this issue?",
-                style: Theme.of(context).textTheme.headline6,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 36),
-              child: RadioButtonGroup(
-                labelStyle: Theme.of(context).textTheme.bodyText1,
-                labels: options,
-                picked: picked,
-                onSelected: (String selected) async {
-                  setState(() {
-                    picked = selected;
-                  });
-                },
-              ),
-            ),
-            Expanded(
-              child: ContinueButton(
-                title: "Continue",
-                width: ScreenUtil.screenWidthDp - 60,
-                onTap: () {},
-              ),
+                padding: EdgeInsets.fromLTRB(24, 10, 24, 10),
+                child: Column(
+                  children: [
+                    Text(
+                      "Would you like the Medicall customer service team to help address this issue?",
+                      style: Theme.of(context).textTheme.headline6,
+                    ),
+                    RadioButtonGroup(
+                      labelStyle: Theme.of(context).textTheme.bodyText1,
+                      activeColor: Theme.of(context).colorScheme.primary,
+                      labels: options,
+                      picked: picked,
+                      onSelected: (String selected) async {
+                        picked = selected;
+                      },
+                    ),
+                  ],
+                )),
+            ContinueButton(
+              title: "Continue",
+              width: ScreenUtil.screenWidthDp - 60,
+              onTap: () {},
             ),
           ],
         ),

@@ -8,12 +8,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class VisitPoorInfo extends StatefulWidget {
-  VisitPoorInfo({Key key, Consult consult}) : super(key: key);
+  final Consult consult;
+
+  VisitPoorInfo({Key key, this.consult}) : super(key: key);
   static Future<void> show({
     BuildContext context,
+    Consult consult,
   }) async {
     await Navigator.of(context).pushNamed(
       Routes.visitPoorInfo,
+      arguments: {
+        'consult': consult,
+      },
     );
   }
 
@@ -25,7 +31,7 @@ class _VisitPoorInfoState extends State<VisitPoorInfo> {
   @override
   Widget build(BuildContext context) {
     //List<String> selectedExamOptions = [];
-    String picked = '';
+    String picked;
     List<String> options = [
       "Clinical History",
       "Photographs",
@@ -34,13 +40,13 @@ class _VisitPoorInfoState extends State<VisitPoorInfo> {
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
         type: AppBarType.Back,
-        title: "",
+        title: "Visit Quality",
         theme: Theme.of(context),
       ),
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(0, 32, 0, 12),
+            padding: const EdgeInsets.fromLTRB(36, 32, 36, 12),
             child: Text(
               "Is there particular information that is Missing, inadequate, or of poor quality?",
               style: Theme.of(context).textTheme.headline6,
@@ -60,12 +66,11 @@ class _VisitPoorInfoState extends State<VisitPoorInfo> {
             padding: const EdgeInsets.symmetric(horizontal: 36),
             child: RadioButtonGroup(
               labelStyle: Theme.of(context).textTheme.bodyText1,
+              activeColor: Theme.of(context).colorScheme.primary,
               labels: options,
               picked: picked,
               onSelected: (String selected) async {
-                setState(() {
-                  picked = selected;
-                });
+                picked = selected;
               },
             ),
           ),
