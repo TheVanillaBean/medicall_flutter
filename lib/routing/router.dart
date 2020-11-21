@@ -54,6 +54,7 @@ import 'package:Medicall/screens/provider_flow/dashboard/provider_dashboard.dart
 import 'package:Medicall/screens/provider_flow/provider_visits/provider_visits.dart';
 import 'package:Medicall/screens/provider_flow/registration/provider_registration.dart';
 import 'package:Medicall/screens/provider_flow/review_medical_history/review_medical_history.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/close_chat/close_chat.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/complete_visit/complete_visit.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/email_assistant/email_assistant.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/immediate_care/immediate_medical_care.dart';
@@ -156,6 +157,7 @@ class Routes {
   static const selectServices = '/select-services';
   static const videoPlayer = '/video-player';
   static const emailAssistant = '/email-assistant';
+  static const closeChat = '/close-chat';
 }
 
 /// The word 'consult' and 'visit' are used separately, but mean the exact
@@ -760,6 +762,15 @@ class Router {
           settings: settings,
           fullscreenDialog: true,
         );
+      case Routes.closeChat:
+        final Map<String, dynamic> mapArgs = args;
+        final Consult consult = mapArgs['consult'];
+        return MaterialPageRoute(
+          builder: (context) => CloseChat(consult: consult),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+
       case Routes.prescriptionDetails:
         final Map<String, dynamic> mapArgs = args;
         final TreatmentOptions treatmentOptions = mapArgs['treatmentOptions'];
