@@ -33,25 +33,31 @@ class QuestionPage extends StatelessWidget {
             child: FadingEdgeScrollView.fromSingleChildScrollView(
               child: SingleChildScrollView(
                 controller: scrollController,
-                child: Container(
-                  padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
-                  alignment: Alignment.topCenter,
-                  child: Column(
-                    children: <Widget>[
-                      Text(
-                        question.question,
-                        style: Theme.of(context).textTheme.headline5,
-                      ),
-                      if (question.maxImages > 1)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8),
-                          child: Text(
-                            "Select up to ${question.maxImages} images.\nClick on the icon below to open the camera.",
-                            textAlign: TextAlign.center,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
+                      alignment: Alignment.topCenter,
+                      child: Column(
+                        children: <Widget>[
+                          Text(
+                            question.question,
+                            style: Theme.of(context).textTheme.headline5,
                           ),
-                        ),
-                    ],
-                  ),
+                          if (question.maxImages > 1)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8),
+                              child: Text(
+                                "Select up to ${question.maxImages} images.\nClick on the icon below to open the camera.",
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),

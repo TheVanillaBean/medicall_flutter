@@ -1,7 +1,6 @@
 import 'package:Medicall/models/user/provider_user_model.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
-import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 
 class SelectServicesViewModel with ChangeNotifier {
@@ -60,8 +59,8 @@ class SelectServicesViewModel with ChangeNotifier {
   }
 
   Future<void> updateUser(ProviderUser user) async {
+    user.selectedServices = this.selectedServices;
     await firestoreDatabase.setUser(user);
     userProvider.user = user;
-    user.selectedServices = this.selectedServices;
   }
 }
