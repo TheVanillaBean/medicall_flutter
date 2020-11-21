@@ -8,12 +8,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class VisitOffice extends StatefulWidget {
-  VisitOffice({Key key, Consult consult}) : super(key: key);
+  final Consult consult;
+
+  VisitOffice({Key key, this.consult}) : super(key: key);
   static Future<void> show({
     BuildContext context,
+    Consult consult,
   }) async {
     await Navigator.of(context).pushNamed(
       Routes.visitOffice,
+      arguments: {
+        'consult': consult,
+      },
     );
   }
 
@@ -28,7 +34,7 @@ class _VisitOfficeState extends State<VisitOffice> {
     String picked = '';
     String picked1 = '';
     String picked2 = '';
-    String picked3 = '';
+    List<String> picked3 = [];
     List<String> options = [
       "Not appropriate for teledermatology",
       "Prefer to see patient in person",
@@ -42,7 +48,7 @@ class _VisitOfficeState extends State<VisitOffice> {
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
         type: AppBarType.Back,
-        title: "",
+        title: "Office Visit",
         theme: Theme.of(context),
       ),
       body: SingleChildScrollView(
@@ -55,26 +61,15 @@ class _VisitOfficeState extends State<VisitOffice> {
                 style: Theme.of(context).textTheme.headline6,
               ),
             ),
-            // Padding(
-            //   padding: const EdgeInsets.symmetric(horizontal: 36),
-            //   child: CheckboxGroup(
-            //     labels: options,
-            //     onSelected: (selected) {
-            //       setState(() {});
-            //     },
-            //     checked: selectedExamOptions,
-            //   ),
-            // ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 36),
               child: RadioButtonGroup(
                 labelStyle: Theme.of(context).textTheme.bodyText1,
+                activeColor: Theme.of(context).colorScheme.primary,
                 labels: options,
-                picked: picked,
+                picked: picked != null && picked.length > 0 ? picked : null,
                 onSelected: (String selected) async {
-                  setState(() {
-                    picked = selected;
-                  });
+                  picked = selected;
                 },
               ),
             ),
@@ -90,12 +85,11 @@ class _VisitOfficeState extends State<VisitOffice> {
               padding: const EdgeInsets.symmetric(horizontal: 36),
               child: RadioButtonGroup(
                 labelStyle: Theme.of(context).textTheme.bodyText1,
+                activeColor: Theme.of(context).colorScheme.primary,
                 labels: boolOptions,
-                picked: picked1,
+                picked: picked1 != null && picked1.length > 0 ? picked1 : null,
                 onSelected: (String selected) async {
-                  setState(() {
-                    picked1 = selected;
-                  });
+                  picked1 = selected;
                 },
               ),
             ),
@@ -111,35 +105,31 @@ class _VisitOfficeState extends State<VisitOffice> {
               padding: const EdgeInsets.symmetric(horizontal: 36),
               child: RadioButtonGroup(
                 labelStyle: Theme.of(context).textTheme.bodyText1,
+                activeColor: Theme.of(context).colorScheme.primary,
                 labels: boolOptions,
-                picked: picked2,
+                picked: picked2 != null && picked2.length > 0 ? picked2 : null,
                 onSelected: (String selected) async {
-                  setState(() {
-                    picked2 = selected;
-                  });
+                  picked2 = selected;
                 },
               ),
             ),
             Divider(),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 36),
-              child: RadioButtonGroup(
-                labelStyle: Theme.of(context).textTheme.bodyText1,
-                labels: [
-                  "Notify my office so they can schedule in person follow-up for the patient"
-                ],
-                picked: picked3,
-                onSelected: (String selected) async {
-                  setState(() {
-                    picked3 = selected;
-                  });
-                },
-              ),
+            CheckboxGroup(
+              labelStyle: Theme.of(context).textTheme.bodyText1,
+              activeColor: Theme.of(context).colorScheme.primary,
+              labels: [
+                "Notify my office so they can schedule in person follow-up for the patient"
+              ],
+              checked: picked3 != null && picked3.length > 0 ? picked3 : null,
+              onSelected: (List<String> selected) async {
+                picked3 = selected;
+              },
             ),
-            Expanded(
+            Padding(
+              padding: EdgeInsets.fromLTRB(36, 20, 36, 15),
               child: ContinueButton(
                 title: "Continue",
-                width: ScreenUtil.screenWidthDp - 60,
+                width: ScreenUtil.screenWidthDp,
                 onTap: () {},
               ),
             ),
