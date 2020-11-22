@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:Medicall/routing/router.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoPlayer extends StatefulWidget {
@@ -95,6 +96,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -105,8 +107,12 @@ class _VideoPlayerState extends State<VideoPlayer> {
             child: Center(
               child: _chewieController != null &&
                       _chewieController.videoPlayerController.value.initialized
-                  ? Chewie(
-                      controller: _chewieController,
+                  ? Padding(
+                      padding: EdgeInsets.only(
+                          bottom: ScreenUtil.bottomBarHeight.toDouble()),
+                      child: Chewie(
+                        controller: _chewieController,
+                      ),
                     )
                   : Column(
                       mainAxisAlignment: MainAxisAlignment.center,

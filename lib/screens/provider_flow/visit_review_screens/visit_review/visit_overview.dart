@@ -64,9 +64,17 @@ class VisitOverview extends StatelessWidget {
               Consult consult = snapshot.data;
               consult.patientUser = this.patientUser;
               consult.providerUser = userProvider.user as ProviderUser;
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: _buildChildren(context, firestoreDatabase, consult),
+              return CustomScrollView(
+                slivers: [
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children:
+                          _buildChildren(context, firestoreDatabase, consult),
+                    ),
+                  )
+                ],
               );
             }
             return Center(child: CircularProgressIndicator());
@@ -136,7 +144,7 @@ class VisitOverview extends StatelessWidget {
         child: Align(
           alignment: FractionalOffset.bottomCenter,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
             child: SignInButton(
               text: getContinueBtnText(consult).toUpperCase(),
               height: 8,
