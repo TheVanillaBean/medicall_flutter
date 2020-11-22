@@ -35,6 +35,7 @@ class PatientNoteStep extends StatelessWidget {
     final height = MediaQuery.of(context).size.height;
     if (model.initFromDiagnosis) {
       model.initFromDiagnosisOptions();
+      model.initFromFirestore();
     }
     if (model.visitReviewViewModel.diagnosisOptions != null)
       return KeyboardDismisser(
@@ -57,7 +58,7 @@ class PatientNoteStep extends StatelessWidget {
                       ..._buildSection(
                         context: context,
                         section: PatientNoteSection.Introduction,
-                        title: "Introduction: (Required)",
+                        title: "Introduction:",
                         body: model.introductionBody,
                         width: width,
                         height: height,
@@ -128,6 +129,7 @@ class PatientNoteStep extends StatelessWidget {
                           onTap: this.model.minimumRequiredFieldsFilledOut
                               ? () async {
                                   await model.saveSelectedSections();
+                                  model.visitReviewViewModel.incrementIndex();
                                   AppUtil().showFlushBar(
                                       "Successfully updated patient note!",
                                       context);

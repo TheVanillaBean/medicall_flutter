@@ -37,7 +37,7 @@ class PatientNoteStepState with ChangeNotifier {
     this.understandingCheckbox = true,
     this.counselingCheckbox = true,
     this.treatmentsCheckbox = false,
-    this.furtherTestingCheckbox = true,
+    this.furtherTestingCheckbox = false,
     this.conclusionCheckbox = true,
     this.introductionBody = "",
     this.understandingBody = "",
@@ -45,9 +45,7 @@ class PatientNoteStepState with ChangeNotifier {
     this.treatmentBody = "",
     this.furtherTestingBody = "",
     this.conclusionBody = "",
-  }) {
-    this.initFromFirestore();
-  }
+  });
 
   void initFromDiagnosisOptions() {
     if (visitReviewViewModel.diagnosisOptions != null &&
@@ -110,7 +108,6 @@ class PatientNoteStepState with ChangeNotifier {
             this.understandingCheckbox ||
             this.counselingCheckbox ||
             this.treatmentsCheckbox ||
-            this.furtherTestingCheckbox ||
             this.conclusionCheckbox) &&
         visitReviewViewModel.diagnosisOptions != null;
   }
