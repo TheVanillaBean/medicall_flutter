@@ -19,7 +19,7 @@ class WelcomeScreen extends StatelessWidget {
       body: Stack(
         children: [
           Padding(
-            padding: EdgeInsets.fromLTRB(0, 0, 0, 35),
+            padding: EdgeInsets.fromLTRB(0, 20, 0, 35),
             child: IntroductionScreen(
               pages: [
                 PageViewModel(
