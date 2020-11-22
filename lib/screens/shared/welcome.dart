@@ -19,7 +19,7 @@ class WelcomeScreen extends StatelessWidget {
       body: Stack(
         children: [
           Padding(
-            padding: EdgeInsets.fromLTRB(0, 0, 0, 35),
+            padding: EdgeInsets.fromLTRB(0, 20, 0, 35),
             child: IntroductionScreen(
               pages: [
                 PageViewModel(
@@ -86,7 +86,7 @@ class WelcomeScreen extends StatelessWidget {
             ),
           ),
           Positioned(
-            bottom: 53,
+            bottom: ScreenUtil.screenHeightDp * 0.075,
             left: 10,
             child: FlatButton(
               child: Text("Login"),
