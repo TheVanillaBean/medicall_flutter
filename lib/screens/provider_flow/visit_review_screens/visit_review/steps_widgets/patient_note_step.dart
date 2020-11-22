@@ -1,3 +1,5 @@
+import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
+import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/edit_note/edit_note_section.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/continue_button.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/empty_diagnosis_widget.dart';
@@ -133,6 +135,26 @@ class PatientNoteStep extends StatelessWidget {
                                   AppUtil().showFlushBar(
                                       "Successfully updated patient note!",
                                       context);
+
+                                  if (model
+                                          .visitReviewViewModel.consult.state ==
+                                      ConsultStatus.Completed) {
+                                    bool didPressYes =
+                                        await PlatformAlertDialog(
+                                      title: "Review Completed",
+                                      content:
+                                          "You've completed all the required steps for this visit review. Would you like to go back to the dashboard where you can officially sign this visit?",
+                                      defaultActionText: "Yes",
+                                      cancelActionText: "No, stay here",
+                                    ).show(context);
+
+                                    if (didPressYes) {
+                                      Navigator.of(context).pop();
+                                      return false;
+                                    } else {
+                                      return false;
+                                    }
+                                  }
                                 }
                               : null,
                         ),
