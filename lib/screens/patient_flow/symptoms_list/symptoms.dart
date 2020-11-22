@@ -114,7 +114,7 @@ class SymptomsScreen extends StatelessWidget {
       child: Column(
         children: <Widget>[
           Text(
-            'Visit Fee: \$49',
+            'Visit Fee: \$65',
             style: Theme.of(context).textTheme.headline5,
           ),
           Text(
