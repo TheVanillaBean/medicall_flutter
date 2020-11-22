@@ -117,8 +117,8 @@ class _CloseChatState extends State<CloseChat> {
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(24, 12, 24, 12),
                         child: Text(
-                          'Read Only',
-                          style: Theme.of(context).textTheme.bodyText1,
+                          '* Read Only *',
+                          style: Theme.of(context).textTheme.headline5,
                         ),
                       ),
                     ),
