@@ -48,8 +48,9 @@ class _VisitPoorInfoState extends State<VisitPoorInfo> {
           Padding(
             padding: const EdgeInsets.fromLTRB(36, 32, 36, 12),
             child: Text(
-              "Is there particular information that is Missing, inadequate, or of poor quality?",
+              "Is there particular information that is missing, inadequate, or of poor quality?",
               style: Theme.of(context).textTheme.headline6,
+              textAlign: TextAlign.left,
             ),
           ),
           // Padding(
