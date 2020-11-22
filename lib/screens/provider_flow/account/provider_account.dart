@@ -121,7 +121,7 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
   }) {
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 36),
+        padding: const EdgeInsets.symmetric(horizontal: 24),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
