@@ -8,6 +8,7 @@ import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Shared/visit_information/review_visit_information.dart';
 import 'package:Medicall/screens/provider_flow/dashboard/provider_dashboard_list_item.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/close_chat/close_chat.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/email_assistant/email_assistant.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_help/visit_help.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reclassify_visit/reclassify_visit.dart';
@@ -111,6 +112,14 @@ class VisitOverview extends StatelessWidget {
           context,
           "EMAIL ASSISTANT",
           () => EmailAssistant.show(
+                context: context,
+                consult: consult,
+              ),
+          0),
+      _buildProviderCardButton(
+          context,
+          "CLOSE CHAT",
+          () => CloseChat.show(
                 context: context,
                 consult: consult,
               ),
