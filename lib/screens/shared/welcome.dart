@@ -86,7 +86,7 @@ class WelcomeScreen extends StatelessWidget {
             ),
           ),
           Positioned(
-            bottom: 53,
+            bottom: ScreenUtil.screenHeightDp * 0.075,
             left: 10,
             child: FlatButton(
               child: Text("Login"),
