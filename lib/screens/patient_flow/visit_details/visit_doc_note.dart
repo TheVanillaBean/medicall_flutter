@@ -3,9 +3,11 @@ import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/services/database.dart';
+import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:super_rich_text/super_rich_text.dart';
 
 class VisitDocNote extends StatelessWidget {
   final Consult consult;
@@ -50,24 +52,35 @@ class VisitDocNote extends StatelessWidget {
           )
         ],
       ),
-      body: Container(
-        padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
-        child: SelectableText(
-          patientNote,
-          cursorColor: Theme.of(context).colorScheme.primary,
-          strutStyle:
-              StrutStyle.fromTextStyle(Theme.of(context).textTheme.bodyText1),
-          showCursor: true,
-          toolbarOptions: ToolbarOptions(
-            copy: true,
-            selectAll: true,
-            cut: false,
-            paste: false,
+      body: Scrollbar(
+        child: FadingEdgeScrollView.fromSingleChildScrollView(
+          child: SingleChildScrollView(
+            controller: ScrollController(),
+            scrollDirection: Axis.vertical,
+            child: Container(
+              padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
+              child: _buildRichText(context),
+            ),
           ),
-          style: Theme.of(context).textTheme.bodyText1,
-          scrollPhysics: ClampingScrollPhysics(),
         ),
       ),
+    );
+  }
+
+  Widget _buildRichText(BuildContext context) {
+    return SuperRichText(
+      text: patientNote,
+      strutStyle:
+          StrutStyle.fromTextStyle(Theme.of(context).textTheme.bodyText1),
+      style: Theme.of(context).textTheme.bodyText1,
+      othersMarkers: [
+        MarkerText.withSameFunction(
+          marker: '<bold>',
+          function: () => {},
+          onError: (msg) => print('$msg'),
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ],
     );
   }
 
@@ -75,21 +88,25 @@ class VisitDocNote extends StatelessWidget {
     String note = "";
 
     if (visitReviewData.patientNote.hasIntroduction) {
+      note += "\n<bold>Introduction:<bold>\n\n";
       note += visitReviewData
           .patientNote.introductionTemplate.template.values.first;
     }
 
     if (visitReviewData.patientNote.hasUnderstandingDiagnosis) {
+      note += "\n<bold>Understanding The Diagnosis:<bold>\n\n";
       note += visitReviewData
           .patientNote.understandingDiagnosisTemplate.template.values.first;
     }
 
     if (visitReviewData.patientNote.hasCounseling) {
+      note += "\n<bold>Counseling:<bold>\n\n";
       note +=
           visitReviewData.patientNote.counselingTemplate.template.values.first;
     }
 
     if (visitReviewData.patientNote.hasTreatmentRecommendations) {
+      note += "\n<bold>Treatment Recommendations:<bold>\n";
       note +=
           "\nIn your particular case, I recommend the following treatment recommendations:\n\n";
       for (String value in visitReviewData
@@ -99,11 +116,13 @@ class VisitDocNote extends StatelessWidget {
     }
 
     if (visitReviewData.patientNote.hasFurtherTesting) {
+      note += "\n<bold>Further Testing:<bold>\n\n";
       note += visitReviewData
           .patientNote.furtherTestingTemplate.template.values.first;
     }
 
     if (visitReviewData.patientNote.hasConclusion) {
+      note += "\n<bold>Conclusion:<bold>\n\n";
       note +=
           visitReviewData.patientNote.conclusionTemplate.template.values.first;
     }

@@ -177,8 +177,8 @@ class VisitDetailsOverview extends StatelessWidget {
                 context,
                 "Provider Note",
                 MedicallIcons.clipboard_1,
-                () => {
-                  VisitDocNote.show(
+                () async => {
+                  await VisitDocNote.show(
                     context: context,
                     consult: this.consult,
                     visitReviewData: snapshot.data,
@@ -190,8 +190,8 @@ class VisitDetailsOverview extends StatelessWidget {
                 context,
                 "Treatment Recommendations",
                 Icons.local_pharmacy,
-                () => {
-                  VisitTreatmentRecommendations.show(
+                () async => {
+                  await VisitTreatmentRecommendations.show(
                     context: context,
                     consult: this.consult,
                     visitReviewData: snapshot.data,
@@ -203,8 +203,8 @@ class VisitDetailsOverview extends StatelessWidget {
                 context,
                 "Further Learning",
                 Icons.school,
-                () => {
-                  VisitEducation.show(
+                () async => {
+                  await VisitEducation.show(
                     context: context,
                     consult: this.consult,
                     visitReviewData: snapshot.data,
@@ -216,8 +216,8 @@ class VisitDetailsOverview extends StatelessWidget {
                 context,
                 "Your Visit Information",
                 Icons.assignment,
-                () => {
-                  ReviewVisitInformation.show(
+                () async => {
+                  await ReviewVisitInformation.show(
                     context: context,
                     consult: this.consult,
                   ),
@@ -228,7 +228,7 @@ class VisitDetailsOverview extends StatelessWidget {
                 context,
                 "Provider Video Note",
                 Icons.personal_video_rounded,
-                () => VideoPlayer.show(
+                () async => await VideoPlayer.show(
                   context: context,
                   title: "Video Note",
                   url: snapshot.data.videoNoteURL,
