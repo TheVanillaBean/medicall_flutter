@@ -7,7 +7,6 @@ import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review
 import 'package:Medicall/services/database.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
 
 class ViewPatientInfo extends StatelessWidget {
@@ -77,13 +76,6 @@ class ViewPatientInfo extends StatelessWidget {
 
   List<Widget> _buildChildren(MedicallUser medicallUser, BuildContext context) {
     return [
-      // Container(
-      //   height: 600,
-      //   child: PhotoView(
-      //     backgroundDecoration: BoxDecoration(color: Colors.white),
-      //     imageProvider: CachedNetworkImageProvider(medicallUser.photoID),
-      //   ),
-      // ),
       CircleAvatar(
         minRadius: 60,
         backgroundImage: CachedNetworkImageProvider(medicallUser.profilePic),
@@ -91,7 +83,7 @@ class ViewPatientInfo extends StatelessWidget {
       Container(
         margin: EdgeInsets.fromLTRB(0, 20, 0, 40),
         child: CustomRaisedButton(
-          child: Text('View patient Id'),
+          child: Text('View Patient\'s Photo ID'),
           color: Colors.white,
           onPressed: () => ViewPatientID.show(
             context: context,

@@ -118,10 +118,12 @@ class _VisitReviewState extends State<VisitReview> with VisitReviewStatus {
           theme: Theme.of(context),
           onPressed: () => Navigator.maybePop(context),
           actions: [
-            IconButton(
-              icon: Icon(
-                Icons.photo_library,
-                color: Theme.of(context).colorScheme.primary,
+            FlatButton(
+              child: Text(
+                "Photos",
+                style: Theme.of(context).textTheme.headline5.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
               ),
               onPressed: () {
                 ConsultPhotos.show(

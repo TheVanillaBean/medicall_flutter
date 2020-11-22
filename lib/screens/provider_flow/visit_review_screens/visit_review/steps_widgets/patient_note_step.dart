@@ -129,7 +129,7 @@ class PatientNoteStep extends StatelessWidget {
                               ? () async {
                                   await model.saveSelectedSections();
                                   AppUtil().showFlushBar(
-                                      "Successfully updated patient note",
+                                      "Successfully updated patient note!",
                                       context);
                                 }
                               : null,
