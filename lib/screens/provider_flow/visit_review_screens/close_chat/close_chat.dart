@@ -8,7 +8,9 @@ import 'package:provider/provider.dart';
 class CloseChat extends StatefulWidget {
   final Consult consult;
 
-  const CloseChat({@required this.consult});
+  const CloseChat({
+    @required this.consult,
+  });
 
   static Future<void> show({
     BuildContext context,
@@ -34,6 +36,8 @@ class _CloseChatState extends State<CloseChat> {
   String selectedReason;
   bool shouldMedicallContactPatient = false;
   bool submitted;
+  bool readOnlyMode = false;
+  Consult consult;
 
   bool get canSubmit {
     return selectedReason.length > 0 && !submitted;
@@ -46,6 +50,14 @@ class _CloseChatState extends State<CloseChat> {
       VisitClosedKeys.CONTACT_PATIENT: this.shouldMedicallContactPatient,
     };
     widget.consult.visitClosed = visitClosed;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (consult.visitClosed != null) {
+      readOnlyMode = true;
+    }
   }
 
   void updateWith({
