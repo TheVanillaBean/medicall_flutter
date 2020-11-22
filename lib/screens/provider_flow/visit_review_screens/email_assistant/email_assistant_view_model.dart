@@ -6,21 +6,32 @@ import 'package:Medicall/util/validators.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 
+abstract class EmailAssistantReasons {
+  static const Visit_Office = "Coordinate an office visit";
+  static const Coordinate_Referral = "Coordinate referral";
+  static const Pharmacy_Issue = "Pharmacy issue";
+  static const Upload_Patient_Note = "Upload patient note to EHR";
+  static const Other = "Other";
+  static const allReasons = [
+    Visit_Office,
+    Coordinate_Referral,
+    Pharmacy_Issue,
+    Upload_Patient_Note,
+    Other,
+  ];
+}
+
 class EmailAssistantViewModel with EmailAndPasswordValidators, ChangeNotifier {
   final FirestoreDatabase firestoreDatabase;
   final UserProvider userProvider;
   Consult consult;
   String assistantEmail;
-  List<String> selectReasons = [
-    'Coordinate an office visit',
-    'Coordinate referral',
-    'Pharmacy issue',
-    'Upload patient note to EHR',
-    'Other',
-  ];
+  List<String> selectReasons = EmailAssistantReasons.allReasons;
   String selectedReason;
   bool checkValue = false;
   bool submitted = false;
+
+  String emailNote;
 
   EmailAssistantViewModel({
     @required this.consult,
@@ -28,6 +39,7 @@ class EmailAssistantViewModel with EmailAndPasswordValidators, ChangeNotifier {
     @required this.userProvider,
     this.assistantEmail = "",
     this.selectedReason = "",
+    this.emailNote = "",
     this.checkValue = false,
     this.submitted = false,
   }) {
@@ -36,8 +48,9 @@ class EmailAssistantViewModel with EmailAndPasswordValidators, ChangeNotifier {
     notifyListeners();
   }
 
-  void updateCheckValue(bool checkValue) => updateWith(checkValue: checkValue);
-  void updateSubmitted(bool submitted) => updateWith(submitted: submitted);
+  bool get includeTextBox {
+    return this.selectReasons.contains(this.selectedReason);
+  }
 
   bool get canSubmit {
     return emailValidator.isValid(assistantEmail) && !this.submitted;
@@ -59,7 +72,7 @@ class EmailAssistantViewModel with EmailAndPasswordValidators, ChangeNotifier {
       throw e;
     }
 
-    updateWith(submitted: false, checkValue: false);
+    updateWith(checkValue: false);
   }
 
   Future<void> updateUser(ProviderUser user) async {
@@ -77,6 +90,7 @@ class EmailAssistantViewModel with EmailAndPasswordValidators, ChangeNotifier {
         'consultId': this.consult.uid,
         'reason': this.selectedReason,
         'sendNoteCopy': this.checkValue,
+        'additionalNote': this.emailNote,
       },
     );
 
@@ -84,7 +98,7 @@ class EmailAssistantViewModel with EmailAndPasswordValidators, ChangeNotifier {
       throw "Failed to send email";
     }
 
-    if (result.data["emailSent"] as bool == false) {
+    if (result.data["data"] as String != "Service OK") {
       throw "There was an error sending the email";
     }
   }
@@ -95,6 +109,17 @@ class EmailAssistantViewModel with EmailAndPasswordValidators, ChangeNotifier {
     return showErrorText ? invalidEmailErrorText : null;
   }
 
+  void updateCheckValue(bool checkValue) {
+    if (checkValue != null &&
+        !checkValue &&
+        this.selectedReason == EmailAssistantReasons.Upload_Patient_Note) {
+      throw "You must send a copy of the patient note when selecting this reason";
+    }
+    updateWith(checkValue: checkValue);
+  }
+
+  void updateSubmitted(bool submitted) => updateWith(submitted: submitted);
+  void updateEmailNote(String note) => updateWith(emailNote: note);
   void updateAssistantEmail(String assistantEmail) =>
       updateWith(assistantEmail: assistantEmail);
 
@@ -102,6 +127,7 @@ class EmailAssistantViewModel with EmailAndPasswordValidators, ChangeNotifier {
     Consult consult,
     String assistantEmail,
     String selectedReason,
+    String emailNote,
     bool checkValue,
     bool submitted,
   }) {
@@ -110,6 +136,10 @@ class EmailAssistantViewModel with EmailAndPasswordValidators, ChangeNotifier {
     this.selectedReason = selectedReason ?? this.selectedReason;
     this.checkValue = checkValue ?? this.checkValue;
     this.submitted = submitted ?? this.submitted;
+    this.emailNote = emailNote ?? this.emailNote;
+    if (this.selectedReason == EmailAssistantReasons.Upload_Patient_Note) {
+      this.checkValue = true;
+    }
     notifyListeners();
   }
 }

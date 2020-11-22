@@ -59,6 +59,7 @@ class _VisitOfficeState extends State<VisitOffice> {
               child: Text(
                 "Why are you recommending an in person visit?",
                 style: Theme.of(context).textTheme.headline6,
+                textAlign: TextAlign.left,
               ),
             ),
             Padding(
@@ -79,6 +80,7 @@ class _VisitOfficeState extends State<VisitOffice> {
               child: Text(
                 "Would you like to complete the online visit?",
                 style: Theme.of(context).textTheme.headline6,
+                textAlign: TextAlign.left,
               ),
             ),
             Padding(
@@ -99,6 +101,7 @@ class _VisitOfficeState extends State<VisitOffice> {
               child: Text(
                 "Would you like issue a refund to the patient?",
                 style: Theme.of(context).textTheme.headline6,
+                textAlign: TextAlign.left,
               ),
             ),
             Padding(

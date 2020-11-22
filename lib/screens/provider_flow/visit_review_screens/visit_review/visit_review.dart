@@ -79,12 +79,24 @@ class _VisitReviewState extends State<VisitReview> with VisitReviewStatus {
   }
 
   Future<bool> _onWillPop() async {
-    final didPressYes = await PlatformAlertDialog(
-      title: "Cancel Review?",
-      content: "Are you sure you want to cancel?",
-      defaultActionText: "Yes, cancel",
-      cancelActionText: "No",
-    ).show(context);
+    bool didPressYes = false;
+    if (widget.model.consult.state != ConsultStatus.Completed) {
+      didPressYes = await PlatformAlertDialog(
+        title: "Cancel Review?",
+        content: "Are you sure you want to exit this screen?",
+        defaultActionText: "Yes, cancel",
+        cancelActionText: "No",
+      ).show(context);
+    } else {
+      didPressYes = await PlatformAlertDialog(
+        title: "Exit Screen?",
+        content:
+            "This visit is completed. Do you want to exit this screen now?",
+        defaultActionText: "Yes, exit",
+        cancelActionText: "No",
+      ).show(context);
+    }
+
     if (didPressYes) {
       Navigator.of(context).pop();
       return false;
@@ -106,10 +118,12 @@ class _VisitReviewState extends State<VisitReview> with VisitReviewStatus {
           theme: Theme.of(context),
           onPressed: () => Navigator.maybePop(context),
           actions: [
-            IconButton(
-              icon: Icon(
-                Icons.photo_library,
-                color: Theme.of(context).colorScheme.primary,
+            FlatButton(
+              child: Text(
+                "Photos",
+                style: Theme.of(context).textTheme.headline5.copyWith(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
               ),
               onPressed: () {
                 ConsultPhotos.show(

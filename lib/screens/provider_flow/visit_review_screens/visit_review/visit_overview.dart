@@ -12,7 +12,6 @@ import 'package:Medicall/screens/provider_flow/visit_review_screens/close_chat/c
 import 'package:Medicall/screens/provider_flow/visit_review_screens/email_assistant/email_assistant.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_help/visit_help.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reclassify_visit/reclassify_visit.dart';
-import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/view_patient_id.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/view_patient_info.dart';
 import 'package:Medicall/screens/shared/chat/chat_screen.dart';
 import 'package:Medicall/services/chat_provider.dart';
@@ -103,16 +102,6 @@ class VisitOverview extends StatelessWidget {
                 consult: consult,
               ),
           0),
-
-      // _buildProviderCardButton(
-      //   context,
-      //   "SEND A VIDEO NOTE (OPTIONAL)",
-      //   () => VideoNotesToPatient.show(
-      //     context: context,
-      //     //consult: consult,
-      //   ),
-      //   consult.providerReviewNotifications,
-      // ),
       _buildProviderCardButton(
         context,
         'MESSAGE PATIENT',
@@ -233,7 +222,7 @@ class VisitOverview extends StatelessWidget {
     } else if (consult.state == ConsultStatus.InReview) {
       return "Continue Diagnosis & Treatment Plan";
     } else if (consult.state == ConsultStatus.Completed) {
-      return "Sign and Complete Visit";
+      return "Officially Sign Visit";
     } else {
       return "Signed";
     }
@@ -276,9 +265,9 @@ class VisitOverview extends StatelessWidget {
       BuildContext context, Consult consult) async {
     final db = Provider.of<FirestoreDatabase>(context, listen: false);
     final didPressYes = await PlatformAlertDialog(
-      title: "Sign Review",
+      title: "Sign Review?",
       content:
-          "Would you like to sign this review or edit it? Once you sign it, any additional changes will be made as addendums to the original review.",
+          "Would you like to sign this review or edit it? Once you officially sign it, any additional changes will be made as addendums to the original review.",
       defaultActionText: "Yes, sign",
       cancelActionText: "No, edit ",
     ).show(context);

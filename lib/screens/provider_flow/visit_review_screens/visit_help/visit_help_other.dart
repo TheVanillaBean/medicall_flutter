@@ -51,6 +51,7 @@ class _VisitHelpOtherState extends State<VisitHelpOther> {
                     Text(
                       "Can you please tell us more?",
                       style: Theme.of(context).textTheme.headline6,
+                      textAlign: TextAlign.left,
                     ),
                     Divider(
                       color: Colors.transparent,
@@ -90,6 +91,7 @@ class _VisitHelpOtherState extends State<VisitHelpOther> {
                     Text(
                       "Would you like the Medicall customer service team to help address this issue?",
                       style: Theme.of(context).textTheme.headline6,
+                      textAlign: TextAlign.left,
                     ),
                     RadioButtonGroup(
                       labelStyle: Theme.of(context).textTheme.bodyText1,

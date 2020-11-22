@@ -40,7 +40,7 @@ class _VisitHelpState extends State<VisitHelp> {
     List<String> options = [
       "Inadequate/poor quality information",
       "Redirect patient to an office visit",
-      "Patient satification concern",
+      "Patient satisfaction concern",
       "Inappropriate patient conduct",
       "Other"
     ];
@@ -57,6 +57,7 @@ class _VisitHelpState extends State<VisitHelp> {
             child: Text(
               "Do you have one of these issues?",
               style: Theme.of(context).textTheme.headline6,
+              textAlign: TextAlign.left,
             ),
           ),
           // Padding(
