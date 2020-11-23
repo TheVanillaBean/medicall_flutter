@@ -114,7 +114,7 @@ class _VisitOfficeState extends State<VisitOffice> {
       ..._buildOptionsUI(),
       SizedBox(height: 32),
       if (this.selectedReason == OfficeVisitReasons.Other)
-        ..._buildOtherTextBox(context),
+        ..._buildOtherTextBox(),
       ..._buildCheckbox(),
       SizedBox(height: 32),
       ..._buildTextBox(),
@@ -226,7 +226,7 @@ class _VisitOfficeState extends State<VisitOffice> {
     ];
   }
 
-  List<Widget> _buildOtherTextBox(BuildContext context) {
+  List<Widget> _buildOtherTextBox() {
     return [
       Padding(
         padding: const EdgeInsets.symmetric(vertical: 12),

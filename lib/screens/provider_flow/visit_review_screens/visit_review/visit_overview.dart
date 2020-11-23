@@ -96,7 +96,7 @@ class VisitOverview extends StatelessWidget {
       _buildProviderCardButton(
         context,
         "VISIT INFORMATION",
-        () => ReviewVisitInformation.show(
+        () async => await ReviewVisitInformation.show(
           context: context,
           consult: consult,
         ),
@@ -105,7 +105,7 @@ class VisitOverview extends StatelessWidget {
       _buildProviderCardButton(
           context,
           "PATIENT INFORMATION",
-          () => ViewPatientInfo.show(
+          () async => await ViewPatientInfo.show(
                 context: context,
                 consult: consult,
               ),
@@ -119,7 +119,7 @@ class VisitOverview extends StatelessWidget {
       _buildProviderCardButton(
           context,
           "EMAIL ASSISTANT",
-          () => EmailAssistant.show(
+          () async => await EmailAssistant.show(
                 context: context,
                 consult: consult,
               ),
@@ -127,7 +127,7 @@ class VisitOverview extends StatelessWidget {
       _buildProviderCardButton(
           context,
           "CLOSE CHAT",
-          () => CloseChat.show(
+          () async => await CloseChat.show(
                 context: context,
                 consult: consult,
               ),
@@ -135,7 +135,7 @@ class VisitOverview extends StatelessWidget {
       _buildProviderCardButton(
           context,
           "NEED HELP?",
-          () => VisitHelp.show(
+          () async => await VisitHelp.show(
                 context: context,
                 consult: consult,
               ),

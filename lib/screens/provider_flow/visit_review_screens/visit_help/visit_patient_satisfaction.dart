@@ -227,7 +227,7 @@ class _VisitPatientSatisfactionState extends State<VisitPatientSatisfaction> {
       Padding(
         padding: const EdgeInsets.fromLTRB(0, 32, 0, 12),
         child: Text(
-          "Thank You",
+          "Thank You!",
           style: Theme.of(context).textTheme.headline6,
           textAlign: TextAlign.left,
         ),

@@ -132,16 +132,16 @@ class Consult {
     final int providersMessageNotifications =
         data['provider_message_notifications'] ?? 0;
 
-    Map<String, dynamic> visitClosed;
+    Map<String, dynamic> chatClosed;
     if (data["chat_closed"] != null) {
-      visitClosed = (data["chat_closed"] as Map).map(
+      chatClosed = (data["chat_closed"] as Map).map(
         (key, value) => MapEntry(key as String, value as dynamic),
       );
     }
 
     Map<String, dynamic> visitIssue;
     if (data["visit_issue"] != null) {
-      visitClosed = (data["visit_issue"] as Map).map(
+      visitIssue = (data["visit_issue"] as Map).map(
         (key, value) => MapEntry(key as String, value as dynamic),
       );
     }
@@ -161,7 +161,7 @@ class Consult {
       patientReviewNotifications: patientReviewNotifications,
       providerMessageNotifications: providersMessageNotifications,
       providerReviewNotifications: providerReviewNotifications,
-      chatClosed: visitClosed,
+      chatClosed: chatClosed,
       visitIssue: visitIssue,
     );
   }

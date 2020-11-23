@@ -50,38 +50,11 @@ class CloseChat extends StatefulWidget {
 
 class _CloseChatState extends State<CloseChat> {
   List<String> reasonLabels = CloseChatReasons.allReasons;
-  String selectedReason = '';
+  String selectedReason = CloseChatReasons.Visit_Concluded;
+  String otherText = "";
   bool shouldMedicallContactPatient = false;
   bool submitted = false;
   bool readOnlyMode = false;
-
-  bool get canSubmit {
-    return selectedReason.length > 0 && !submitted;
-  }
-
-  Future<void> submit(Database database) async {
-    updateWith(submitted: true);
-    Map<String, dynamic> visitClosed = {
-      ChatClosedKeys.REASON: this.selectedReason,
-      ChatClosedKeys.CONTACT_PATIENT: this.shouldMedicallContactPatient,
-    };
-    widget.consult.chatClosed = visitClosed;
-    await database.saveConsult(
-        consult: widget.consult, consultId: widget.consult.uid);
-  }
-
-  void updateWith({
-    bool submitted,
-    String selectedReason,
-    bool shouldMedicallContactPatient,
-  }) {
-    setState(() {
-      this.submitted = submitted ?? this.submitted;
-      this.selectedReason = selectedReason ?? this.selectedReason;
-      this.shouldMedicallContactPatient =
-          shouldMedicallContactPatient ?? this.shouldMedicallContactPatient;
-    });
-  }
 
   @override
   void initState() {
@@ -91,13 +64,30 @@ class _CloseChatState extends State<CloseChat> {
       this.selectedReason = widget.consult.chatClosed[ChatClosedKeys.REASON];
       this.shouldMedicallContactPatient =
           widget.consult.chatClosed[ChatClosedKeys.CONTACT_PATIENT] as bool;
+      if (!CloseChatReasons.allReasons.contains(this.selectedReason)) {
+        this.otherText = this.selectedReason;
+        this.selectedReason = CloseChatReasons.Other;
+      }
     }
+  }
+
+  Future<void> submit() async {
+    FirestoreDatabase database =
+        Provider.of<FirestoreDatabase>(context, listen: false);
+    updateWith(submitted: true);
+    Map<String, dynamic> visitClosed = {
+      ChatClosedKeys.REASON: this.selectedReason == CloseChatReasons.Other
+          ? this.otherText
+          : this.selectedReason,
+      ChatClosedKeys.CONTACT_PATIENT: this.shouldMedicallContactPatient,
+    };
+    widget.consult.chatClosed = visitClosed;
+    await database.saveConsult(
+        consult: widget.consult, consultId: widget.consult.uid);
   }
 
   @override
   Widget build(BuildContext context) {
-    FirestoreDatabase database =
-        Provider.of<FirestoreDatabase>(context, listen: false);
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
         type: AppBarType.Back,
@@ -117,7 +107,7 @@ class _CloseChatState extends State<CloseChat> {
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(24, 12, 24, 12),
                         child: Text(
-                          '* Read Only *',
+                          '* You\'ve already closed this chat *',
                           style: Theme.of(context).textTheme.headline5,
                         ),
                       ),
@@ -140,10 +130,12 @@ class _CloseChatState extends State<CloseChat> {
                           updateWith(selectedReason: picked),
                     ),
                   ),
+                  if (this.selectedReason == CloseChatReasons.Other)
+                    ..._buildOtherTextBox(),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(24, 12, 24, 12),
                     child: Text(
-                      'Would you like the Medicall customer service team to contact the patient to help address this issues?',
+                      'Would you like the Medicall customer service team to contact the patient to help address this issue?',
                       style: Theme.of(context).textTheme.bodyText1,
                     ),
                   ),
@@ -177,7 +169,7 @@ class _CloseChatState extends State<CloseChat> {
                         onPressed: !readOnlyMode
                             ? () async {
                                 try {
-                                  await submit(database);
+                                  await submit();
                                   Navigator.pop(context);
                                 } catch (e) {
                                   AppUtil().showFlushBar(e, context);
@@ -195,5 +187,76 @@ class _CloseChatState extends State<CloseChat> {
         ),
       ),
     );
+  }
+
+  List<Widget> _buildOtherTextBox() {
+    return [
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        child: Text(
+          "What is the issue?",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Colors.grey,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+      SizedBox(
+        height: 12,
+      ),
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        child: TextFormField(
+          enabled: !this.readOnlyMode,
+          textCapitalization: TextCapitalization.sentences,
+          initialValue: this.otherText,
+          autocorrect: true,
+          maxLines: 3,
+          keyboardType: TextInputType.text,
+          onChanged: (String text) => this.updateWith(otherText: text),
+          style: Theme.of(context).textTheme.bodyText2,
+          decoration: InputDecoration(
+            labelStyle: TextStyle(
+              color: Theme.of(context).colorScheme.onSurface.withAlpha(90),
+            ),
+            hintStyle: TextStyle(
+              color: Color.fromRGBO(100, 100, 100, 1),
+            ),
+            filled: true,
+            fillColor: Colors.grey.withAlpha(20),
+            labelText: "",
+            hintText: '',
+          ),
+        ),
+      ),
+      SizedBox(
+        height: 12,
+      ),
+    ];
+  }
+
+  bool get canSubmit {
+    if (!this.submitted &&
+        this.selectedReason == CloseChatReasons.Other &&
+        this.otherText.length == 0) {
+      return false;
+    }
+    return true;
+  }
+
+  void updateWith({
+    bool submitted,
+    String otherText,
+    String selectedReason,
+    bool shouldMedicallContactPatient,
+  }) {
+    setState(() {
+      this.submitted = submitted ?? this.submitted;
+      this.selectedReason = selectedReason ?? this.selectedReason;
+      this.otherText = otherText ?? this.otherText;
+      this.shouldMedicallContactPatient =
+          shouldMedicallContactPatient ?? this.shouldMedicallContactPatient;
+    });
   }
 }
