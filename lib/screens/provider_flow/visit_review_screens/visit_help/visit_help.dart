@@ -11,6 +11,21 @@ import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+abstract class VisitTroubleLabels {
+  static const Poor_Quality = "Inadequate/poor quality information";
+  static const Redirect = "Redirect patient to an office visit";
+  static const Patient_Satisfaction = "Patient satisfaction concern";
+  static const Inappropriate_Conduct = "Inappropriate patient conduct";
+  static const Other = "Other";
+  static const allReasons = [
+    Poor_Quality,
+    Redirect,
+    Patient_Satisfaction,
+    Inappropriate_Conduct,
+    Other,
+  ];
+}
+
 class VisitHelp extends StatefulWidget {
   final Consult consult;
 
@@ -32,18 +47,11 @@ class VisitHelp extends StatefulWidget {
 }
 
 class _VisitHelpState extends State<VisitHelp> {
+  String selectedReason = VisitTroubleLabels.Poor_Quality;
+
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context);
-    //List<String> selectedExamOptions = [];
-    String picked;
-    List<String> options = [
-      "Inadequate/poor quality information",
-      "Redirect patient to an office visit",
-      "Patient satisfaction concern",
-      "Inappropriate patient conduct",
-      "Other"
-    ];
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
         type: AppBarType.Back,
@@ -60,26 +68,16 @@ class _VisitHelpState extends State<VisitHelp> {
               textAlign: TextAlign.left,
             ),
           ),
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(horizontal: 36),
-          //   child: CheckboxGroup(
-          //     labels: options,
-          //     onSelected: (selected) {
-          //       setState(() {});
-          //     },
-          //     checked: selectedExamOptions,
-          //   ),
-          // ),
+          SizedBox(height: 12),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 36),
+            padding: const EdgeInsets.symmetric(horizontal: 32),
             child: RadioButtonGroup(
               labelStyle: Theme.of(context).textTheme.bodyText1,
-              labels: options,
+              labels: VisitTroubleLabels.allReasons,
               activeColor: Theme.of(context).colorScheme.primary,
-              picked: picked != null && picked.length > 0 ? picked : null,
-              onSelected: (String selected) async {
-                picked = selected;
-              },
+              picked: this.selectedReason,
+              onSelected: (String selected) =>
+                  this.updateWith(selectedReason: selected),
             ),
           ),
           Expanded(
@@ -87,21 +85,23 @@ class _VisitHelpState extends State<VisitHelp> {
               title: "Continue",
               width: ScreenUtil.screenWidthDp - 60,
               onTap: () {
-                if (picked == options[0]) {
+                if (this.selectedReason == VisitTroubleLabels.Poor_Quality) {
                   VisitPoorInfo.show(context: context, consult: widget.consult);
                 }
-                if (picked == options[1]) {
+                if (this.selectedReason == VisitTroubleLabels.Redirect) {
                   VisitOffice.show(context: context, consult: widget.consult);
                 }
-                if (picked == options[2]) {
+                if (this.selectedReason ==
+                    VisitTroubleLabels.Patient_Satisfaction) {
                   VisitPatientSatisfaction.show(
                       context: context, consult: widget.consult);
                 }
-                if (picked == options[3]) {
+                if (this.selectedReason ==
+                    VisitTroubleLabels.Inappropriate_Conduct) {
                   VisitPatientConduct.show(
                       context: context, consult: widget.consult);
                 }
-                if (picked == options[4]) {
+                if (this.selectedReason == VisitTroubleLabels.Other) {
                   VisitHelpOther.show(
                       context: context, consult: widget.consult);
                 }
@@ -111,5 +111,11 @@ class _VisitHelpState extends State<VisitHelp> {
         ],
       ),
     );
+  }
+
+  void updateWith({String selectedReason}) {
+    setState(() {
+      this.selectedReason = selectedReason ?? this.selectedReason;
+    });
   }
 }
