@@ -31,7 +31,6 @@ class VisitPatientConduct extends StatefulWidget {
 
 class _VisitPatientConductState extends State<VisitPatientConduct> {
   String explanation = "";
-  String suggestion = "";
   bool shouldMedicallAddressIssue = false;
   bool submitted = false;
   bool showSuccessUI = false;
@@ -42,7 +41,6 @@ class _VisitPatientConductState extends State<VisitPatientConduct> {
     Map<String, dynamic> patientConduct = {
       VisitIssueKeys.ISSUE: VisitTroubleLabels.Patient_Satisfaction,
       VisitIssueKeys.EXPLANATION: this.explanation,
-      VisitIssueKeys.SUGGESTIONS: this.suggestion,
       VisitIssueKeys.MEDICALL_ADDRESS_ISSUE: this.shouldMedicallAddressIssue,
     };
 
@@ -81,9 +79,7 @@ class _VisitPatientConductState extends State<VisitPatientConduct> {
   }
 
   bool get canSubmit {
-    if (!this.submitted &&
-        this.explanation.length > 0 &&
-        this.suggestion.length > 0) {
+    if (!this.submitted && this.explanation.length > 0) {
       return true;
     }
     return false;
@@ -93,8 +89,6 @@ class _VisitPatientConductState extends State<VisitPatientConduct> {
     return [
       SizedBox(height: 16),
       ..._buildExplanationTextBox(),
-      SizedBox(height: 32),
-      ..._buildSuggestionsTextBox(),
       SizedBox(height: 32),
       ..._buildCheckbox(),
       SizedBox(height: 16),
@@ -154,47 +148,6 @@ class _VisitPatientConductState extends State<VisitPatientConduct> {
     ];
   }
 
-  List<Widget> _buildSuggestionsTextBox() {
-    return [
-      Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            "Do you have suggestions regarding how to best address this?",
-            style: Theme.of(context).textTheme.headline6,
-            textAlign: TextAlign.left,
-          ),
-        ),
-      ),
-      SizedBox(height: 12),
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        child: TextFormField(
-          textCapitalization: TextCapitalization.sentences,
-          initialValue: this.suggestion,
-          maxLines: 8,
-          minLines: 5,
-          autocorrect: true,
-          keyboardType: TextInputType.text,
-          onChanged: (String text) => this.updateWith(suggestion: text),
-          style: Theme.of(context).textTheme.bodyText2,
-          decoration: InputDecoration(
-            labelStyle: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface.withAlpha(90),
-            ),
-            hintStyle: TextStyle(
-              color: Color.fromRGBO(100, 100, 100, 1),
-            ),
-            filled: true,
-            fillColor: Colors.grey.withAlpha(20),
-            labelText: "Suggestions:",
-            hintText: '',
-          ),
-        ),
-      ),
-    ];
-  }
-
   List<Widget> _buildCheckbox() {
     return [
       Center(
@@ -244,14 +197,12 @@ class _VisitPatientConductState extends State<VisitPatientConduct> {
 
   void updateWith({
     String explanation,
-    String suggestion,
     bool shouldMedicallAddressIssue,
     bool submitted,
     bool showSuccessUI,
   }) {
     setState(() {
       this.explanation = explanation ?? this.explanation;
-      this.suggestion = suggestion ?? this.suggestion;
       this.shouldMedicallAddressIssue =
           shouldMedicallAddressIssue ?? this.shouldMedicallAddressIssue;
       this.submitted = submitted ?? this.submitted;
