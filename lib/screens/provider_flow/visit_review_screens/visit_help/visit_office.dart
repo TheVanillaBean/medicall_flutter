@@ -1,11 +1,26 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
-import 'package:Medicall/common_widgets/grouped_buttons/checkbox_group.dart';
 import 'package:Medicall/common_widgets/grouped_buttons/radio_button_group.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/continue_button.dart';
+import 'package:Medicall/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:keyboard_dismisser/keyboard_dismisser.dart';
+import 'package:provider/provider.dart';
+
+abstract class OfficeVisitReasons {
+  static const Not_Appropriate = "Not appropriate for teledermatology";
+  static const Prefer_In_Person = "Prefer to see patient in person";
+  static const Further_Testing = "Will need further testing";
+  static const Other = "Other";
+  static const allReasons = [
+    Not_Appropriate,
+    Prefer_In_Person,
+    Further_Testing,
+    Other,
+  ];
+}
 
 class VisitOffice extends StatefulWidget {
   final Consult consult;
@@ -28,117 +43,260 @@ class VisitOffice extends StatefulWidget {
 }
 
 class _VisitOfficeState extends State<VisitOffice> {
+  String selectedReason = OfficeVisitReasons.Not_Appropriate;
+  bool shouldAssistantScheduleVisit = false;
+  String otherText = "";
+  String note = "";
+  bool submitted = false;
+  bool showSuccessUI = false;
+
+  Future<void> _saveToFirestore() async {
+    this.updateWith(submitted: true);
+    Database database = Provider.of<FirestoreDatabase>(context, listen: false);
+    Map<String, dynamic> poorInfoMap = {
+      VisitIssueKeys.ISSUE: VisitTroubleLabels.Redirect,
+      VisitIssueKeys.REASON: this.selectedReason == OfficeVisitReasons.Other
+          ? this.otherText
+          : this.selectedReason,
+      VisitIssueKeys.ASSISTANT_REACH_OUT: this.shouldAssistantScheduleVisit,
+      VisitIssueKeys.BRIEF_NOTE: this.note,
+    };
+
+    widget.consult.visitIssue = poorInfoMap;
+
+    await database.saveConsult(
+        consultId: widget.consult.uid, consult: widget.consult);
+
+    this.updateWith(showSuccessUI: true, submitted: false);
+  }
+
   @override
   Widget build(BuildContext context) {
-    //List<String> selectedExamOptions = [];
-    String picked = '';
-    String picked1 = '';
-    String picked2 = '';
-    List<String> picked3 = [];
-    List<String> options = [
-      "Not appropriate for teledermatology",
-      "Prefer to see patient in person",
-      "Will need further testing",
-      "Other",
-    ];
-    List<String> boolOptions = [
-      "Yes",
-      "No",
-    ];
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
         type: AppBarType.Back,
         title: "Office Visit",
         theme: Theme.of(context),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 32, 0, 12),
-              child: Text(
-                "Why are you recommending an in person visit?",
-                style: Theme.of(context).textTheme.headline6,
-                textAlign: TextAlign.left,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 36),
-              child: RadioButtonGroup(
-                labelStyle: Theme.of(context).textTheme.bodyText1,
-                activeColor: Theme.of(context).colorScheme.primary,
-                labels: options,
-                picked: picked != null && picked.length > 0 ? picked : null,
-                onSelected: (String selected) async {
-                  picked = selected;
-                },
-              ),
-            ),
-            Divider(),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 32, 0, 12),
-              child: Text(
-                "Would you like to complete the online visit?",
-                style: Theme.of(context).textTheme.headline6,
-                textAlign: TextAlign.left,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 36),
-              child: RadioButtonGroup(
-                labelStyle: Theme.of(context).textTheme.bodyText1,
-                activeColor: Theme.of(context).colorScheme.primary,
-                labels: boolOptions,
-                picked: picked1 != null && picked1.length > 0 ? picked1 : null,
-                onSelected: (String selected) async {
-                  picked1 = selected;
-                },
-              ),
-            ),
-            Divider(),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 32, 0, 12),
-              child: Text(
-                "Would you like issue a refund to the patient?",
-                style: Theme.of(context).textTheme.headline6,
-                textAlign: TextAlign.left,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 36),
-              child: RadioButtonGroup(
-                labelStyle: Theme.of(context).textTheme.bodyText1,
-                activeColor: Theme.of(context).colorScheme.primary,
-                labels: boolOptions,
-                picked: picked2 != null && picked2.length > 0 ? picked2 : null,
-                onSelected: (String selected) async {
-                  picked2 = selected;
-                },
-              ),
-            ),
-            Divider(),
-            CheckboxGroup(
-              labelStyle: Theme.of(context).textTheme.bodyText1,
-              activeColor: Theme.of(context).colorScheme.primary,
-              labels: [
-                "Notify my office so they can schedule in person follow-up for the patient"
+      body: KeyboardDismisser(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Column(
+              children: [
+                if (this.showSuccessUI)
+                  ..._buildSuccessUI()
+                else
+                  ..._buildChildren(),
               ],
-              checked: picked3 != null && picked3.length > 0 ? picked3 : null,
-              onSelected: (List<String> selected) async {
-                picked3 = selected;
-              },
             ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(36, 20, 36, 15),
-              child: ContinueButton(
-                title: "Continue",
-                width: ScreenUtil.screenWidthDp,
-                onTap: () {},
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
+  }
+
+  bool get canSubmit {
+    if (!this.submitted &&
+        this.selectedReason == OfficeVisitReasons.Other &&
+        this.otherText.length == 0) {
+      return false;
+    }
+    return true;
+  }
+
+  List<Widget> _buildChildren() {
+    return [
+      SizedBox(height: 16),
+      ..._buildOptionsUI(),
+      SizedBox(height: 32),
+      if (this.selectedReason == OfficeVisitReasons.Other)
+        ..._buildOtherTextBox(context),
+      ..._buildCheckbox(),
+      SizedBox(height: 32),
+      ..._buildTextBox(),
+      SizedBox(height: 16),
+      Padding(
+        padding: EdgeInsets.fromLTRB(36, 20, 36, 15),
+        child: ContinueButton(
+          title: "Continue",
+          width: ScreenUtil.screenWidthDp,
+          onTap: () async {
+            this._saveToFirestore();
+          },
+        ),
+      ),
+    ];
+  }
+
+  List<Widget> _buildOptionsUI() {
+    return [
+      Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            "Why are you recommending an in person visit?",
+            style: Theme.of(context).textTheme.headline6,
+            textAlign: TextAlign.left,
+          ),
+        ),
+      ),
+      SizedBox(height: 12),
+      RadioButtonGroup(
+        labelStyle: Theme.of(context).textTheme.bodyText1,
+        activeColor: Theme.of(context).colorScheme.primary,
+        labels: OfficeVisitReasons.allReasons,
+        picked: this.selectedReason,
+        onSelected: (String selected) async {
+          this.updateWith(selectedReason: selected);
+        },
+      ),
+    ];
+  }
+
+  List<Widget> _buildCheckbox() {
+    return [
+      Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            "Would you like your assistant to reach out and help the patient schedule a visit?",
+            style: Theme.of(context).textTheme.headline6,
+            textAlign: TextAlign.left,
+          ),
+        ),
+      ),
+      SizedBox(height: 12),
+      RadioButtonGroup(
+        labelStyle: Theme.of(context).textTheme.bodyText1,
+        activeColor: Theme.of(context).colorScheme.primary,
+        labels: ["Yes", "No"],
+        picked: this.shouldAssistantScheduleVisit ? "Yes" : "No",
+        onSelected: (String selected) async {
+          this.updateWith(
+              shouldAssistantScheduleVisit: selected == "Yes" ? true : false);
+        },
+      ),
+    ];
+  }
+
+  List<Widget> _buildTextBox() {
+    return [
+      Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            "We recommend that you write a brief note to the patient explaining why you prefer to see them in person.",
+            style: Theme.of(context).textTheme.headline6,
+            textAlign: TextAlign.left,
+          ),
+        ),
+      ),
+      SizedBox(height: 12),
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        child: TextFormField(
+          textCapitalization: TextCapitalization.sentences,
+          initialValue: this.note,
+          maxLines: 10,
+          minLines: 6,
+          autocorrect: true,
+          keyboardType: TextInputType.text,
+          onChanged: (String text) => this.updateWith(note: text),
+          style: Theme.of(context).textTheme.bodyText2,
+          decoration: InputDecoration(
+            labelStyle: TextStyle(
+              color: Theme.of(context).colorScheme.onSurface.withAlpha(90),
+            ),
+            hintStyle: TextStyle(
+              color: Color.fromRGBO(100, 100, 100, 1),
+            ),
+            filled: true,
+            fillColor: Colors.grey.withAlpha(20),
+            labelText: "Note for patient",
+            hintText: '',
+          ),
+        ),
+      ),
+    ];
+  }
+
+  List<Widget> _buildOtherTextBox(BuildContext context) {
+    return [
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: Text(
+          "What is the issue?",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Colors.grey,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+      TextFormField(
+        textCapitalization: TextCapitalization.sentences,
+        initialValue: this.otherText,
+        autocorrect: true,
+        keyboardType: TextInputType.text,
+        onChanged: (String text) => this.updateWith(otherText: text),
+        style: Theme.of(context).textTheme.bodyText2,
+        decoration: InputDecoration(
+          labelStyle: TextStyle(
+            color: Theme.of(context).colorScheme.onSurface.withAlpha(90),
+          ),
+          hintStyle: TextStyle(
+            color: Color.fromRGBO(100, 100, 100, 1),
+          ),
+          filled: true,
+          fillColor: Colors.grey.withAlpha(20),
+          labelText: "",
+          hintText: '',
+        ),
+      ),
+      SizedBox(
+        height: 12,
+      ),
+    ];
+  }
+
+  List<Widget> _buildSuccessUI() {
+    return [
+      Padding(
+        padding: const EdgeInsets.fromLTRB(0, 32, 0, 12),
+        child: Text(
+          "Refund Issued",
+          style: Theme.of(context).textTheme.headline6,
+          textAlign: TextAlign.left,
+        ),
+      ),
+      Padding(
+        padding: const EdgeInsets.fromLTRB(0, 32, 0, 12),
+        child: Text(
+          "We will process the refund and notify the patient. If you have any further questions, you can email omar@medicall.com with your inquiry.",
+          style: Theme.of(context).textTheme.headline6,
+          textAlign: TextAlign.center,
+        ),
+      ),
+    ];
+  }
+
+  void updateWith({
+    String selectedReason,
+    bool shouldAssistantScheduleVisit,
+    String otherText,
+    String note,
+    bool submitted,
+    bool showSuccessUI,
+  }) {
+    setState(() {
+      this.selectedReason = selectedReason ?? this.selectedReason;
+      this.shouldAssistantScheduleVisit =
+          shouldAssistantScheduleVisit ?? this.shouldAssistantScheduleVisit;
+      this.otherText = otherText ?? this.otherText;
+      this.note = note ?? this.note;
+      this.submitted = submitted ?? this.submitted;
+      this.showSuccessUI = showSuccessUI ?? this.showSuccessUI;
+    });
   }
 }

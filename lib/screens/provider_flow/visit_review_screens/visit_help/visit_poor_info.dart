@@ -99,7 +99,8 @@ class _VisitPoorInfoState extends State<VisitPoorInfo> {
   }
 
   bool get canSubmit {
-    if (this.selectedReason == PoorInfoReasons.Other &&
+    if (!this.submitted &&
+        this.selectedReason == PoorInfoReasons.Other &&
         this.otherText.length == 0) {
       return false;
     }
