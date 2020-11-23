@@ -44,7 +44,7 @@ class Consult {
   int providerMessageNotifications;
   int patientReviewNotifications;
   int patientMessageNotifications;
-  Map<String, String> visitClosed;
+  Map<String, dynamic> visitClosed;
 
   //not serialized
   PatientUser patientUser;
@@ -104,10 +104,10 @@ class Consult {
     final int providersMessageNotifications =
         data['provider_message_notifications'] ?? 0;
 
-    Map<String, String> visitClosed;
+    Map<String, dynamic> visitClosed;
     if (data["visit_closed"] != null) {
       visitClosed = (data["visit_closed"] as Map).map(
-        (key, value) => MapEntry(key as String, value as String),
+        (key, value) => MapEntry(key as String, value as dynamic),
       );
     }
 
