@@ -11,21 +11,6 @@ import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-abstract class VisitTroubleLabels {
-  static const Poor_Quality = "Inadequate/poor quality information";
-  static const Redirect = "Redirect patient to an office visit";
-  static const Patient_Satisfaction = "Patient satisfaction concern";
-  static const Inappropriate_Conduct = "Inappropriate patient conduct";
-  static const Other = "Other";
-  static const allReasons = [
-    Poor_Quality,
-    Redirect,
-    Patient_Satisfaction,
-    Inappropriate_Conduct,
-    Other,
-  ];
-}
-
 class VisitHelp extends StatefulWidget {
   final Consult consult;
 

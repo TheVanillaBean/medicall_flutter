@@ -23,9 +23,31 @@ extension EnumParser on String {
   }
 }
 
-abstract class VisitClosedKeys {
+abstract class ChatClosedKeys {
   static const REASON = "reason";
   static const CONTACT_PATIENT = "contact_patient";
+}
+
+abstract class VisitTroubleLabels {
+  static const Poor_Quality = "Inadequate/poor quality information";
+  static const Redirect = "Redirect patient to an office visit";
+  static const Patient_Satisfaction = "Patient satisfaction concern";
+  static const Inappropriate_Conduct = "Inappropriate patient conduct";
+  static const Other = "Other";
+  static const allReasons = [
+    Poor_Quality,
+    Redirect,
+    Patient_Satisfaction,
+    Inappropriate_Conduct,
+    Other,
+  ];
+}
+
+abstract class VisitIssueKeys {
+  static const ISSUE = "issue";
+  static const REASON = "reason";
+  static const ASSISTANT_REACH_OUT = "assistant_reach_out";
+  static const BRIEF_NOTE = "note";
 }
 
 class Consult {
@@ -44,7 +66,8 @@ class Consult {
   int providerMessageNotifications;
   int patientReviewNotifications;
   int patientMessageNotifications;
-  Map<String, dynamic> visitClosed;
+  Map<String, dynamic> chatClosed;
+  Map<String, dynamic> visitIssue;
 
   //not serialized
   PatientUser patientUser;
@@ -73,7 +96,8 @@ class Consult {
     this.patientReviewNotifications = 0,
     this.providerMessageNotifications = 0,
     this.providerReviewNotifications = 0,
-    this.visitClosed = const {},
+    this.chatClosed = const {},
+    this.visitIssue = const {},
   });
 
   factory Consult.fromMap(Map<String, dynamic> data, String documentId) {
@@ -105,8 +129,15 @@ class Consult {
         data['provider_message_notifications'] ?? 0;
 
     Map<String, dynamic> visitClosed;
-    if (data["visit_closed"] != null) {
-      visitClosed = (data["visit_closed"] as Map).map(
+    if (data["chat_closed"] != null) {
+      visitClosed = (data["chat_closed"] as Map).map(
+        (key, value) => MapEntry(key as String, value as dynamic),
+      );
+    }
+
+    Map<String, dynamic> visitIssue;
+    if (data["visit_issue"] != null) {
+      visitClosed = (data["visit_issue"] as Map).map(
         (key, value) => MapEntry(key as String, value as dynamic),
       );
     }
@@ -126,7 +157,8 @@ class Consult {
       patientReviewNotifications: patientReviewNotifications,
       providerMessageNotifications: providersMessageNotifications,
       providerReviewNotifications: providerReviewNotifications,
-      visitClosed: visitClosed,
+      chatClosed: visitClosed,
+      visitIssue: visitIssue,
     );
   }
 
@@ -154,12 +186,16 @@ class Consult {
         'coupon_code': coupon,
       });
     }
-    if (visitClosed != null) {
+    if (chatClosed != null) {
       baseToMap.addAll({
-        'visit_closed': visitClosed,
+        'chat_closed': chatClosed,
       });
     }
-
+    if (visitIssue != null) {
+      baseToMap.addAll({
+        'visit_issue': visitIssue,
+      });
+    }
     return baseToMap;
   }
 

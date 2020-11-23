@@ -62,10 +62,10 @@ class _CloseChatState extends State<CloseChat> {
   Future<void> submit(Database database) async {
     updateWith(submitted: true);
     Map<String, dynamic> visitClosed = {
-      VisitClosedKeys.REASON: this.selectedReason,
-      VisitClosedKeys.CONTACT_PATIENT: this.shouldMedicallContactPatient,
+      ChatClosedKeys.REASON: this.selectedReason,
+      ChatClosedKeys.CONTACT_PATIENT: this.shouldMedicallContactPatient,
     };
-    widget.consult.visitClosed = visitClosed;
+    widget.consult.chatClosed = visitClosed;
     await database.saveConsult(
         consult: widget.consult, consultId: widget.consult.uid);
   }
@@ -86,11 +86,11 @@ class _CloseChatState extends State<CloseChat> {
   @override
   void initState() {
     super.initState();
-    if (widget.consult.visitClosed != null) {
+    if (widget.consult.chatClosed != null) {
       readOnlyMode = true;
-      this.selectedReason = widget.consult.visitClosed[VisitClosedKeys.REASON];
+      this.selectedReason = widget.consult.chatClosed[ChatClosedKeys.REASON];
       this.shouldMedicallContactPatient =
-          widget.consult.visitClosed[VisitClosedKeys.CONTACT_PATIENT] as bool;
+          widget.consult.chatClosed[ChatClosedKeys.CONTACT_PATIENT] as bool;
     }
   }
 
