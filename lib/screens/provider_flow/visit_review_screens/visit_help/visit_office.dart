@@ -53,7 +53,7 @@ class _VisitOfficeState extends State<VisitOffice> {
   Future<void> _saveToFirestore() async {
     this.updateWith(submitted: true);
     Database database = Provider.of<FirestoreDatabase>(context, listen: false);
-    Map<String, dynamic> poorInfoMap = {
+    Map<String, dynamic> officeVisitMap = {
       VisitIssueKeys.ISSUE: VisitTroubleLabels.Redirect,
       VisitIssueKeys.REASON: this.selectedReason == OfficeVisitReasons.Other
           ? this.otherText
@@ -62,7 +62,7 @@ class _VisitOfficeState extends State<VisitOffice> {
       VisitIssueKeys.BRIEF_NOTE: this.note,
     };
 
-    widget.consult.visitIssue = poorInfoMap;
+    widget.consult.visitIssue = officeVisitMap;
 
     await database.saveConsult(
         consultId: widget.consult.uid, consult: widget.consult);
@@ -102,6 +102,9 @@ class _VisitOfficeState extends State<VisitOffice> {
         this.otherText.length == 0) {
       return false;
     }
+    if (!this.submitted && this.note.length == 0) {
+      return false;
+    }
     return true;
   }
 
@@ -121,9 +124,11 @@ class _VisitOfficeState extends State<VisitOffice> {
         child: ContinueButton(
           title: "Continue",
           width: ScreenUtil.screenWidthDp,
-          onTap: () async {
-            this._saveToFirestore();
-          },
+          onTap: this.canSubmit
+              ? () async {
+                  await _saveToFirestore();
+                }
+              : null,
         ),
       ),
     ];

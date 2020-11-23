@@ -48,6 +48,10 @@ abstract class VisitIssueKeys {
   static const REASON = "reason";
   static const ASSISTANT_REACH_OUT = "assistant_reach_out";
   static const BRIEF_NOTE = "note";
+  static const EXPLANATION = "explanation";
+  static const SUGGESTIONS = "suggestion";
+  static const MEDICALL_ADDRESS_ISSUE = "medicall_address_issue";
+  static const SHOULD_REFUND = "should_refund";
 }
 
 class Consult {
