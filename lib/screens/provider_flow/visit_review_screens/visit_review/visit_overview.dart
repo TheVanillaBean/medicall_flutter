@@ -18,6 +18,7 @@ import 'package:Medicall/services/chat_provider.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/non_auth_firestore_db.dart';
 import 'package:Medicall/services/user_provider.dart';
+import 'package:Medicall/util/app_util.dart';
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -116,30 +117,36 @@ class VisitOverview extends StatelessWidget {
         () => navigateToChatScreen(context, consult),
         consult.providerMessageNotifications,
       ),
-      _buildProviderCardButton(
-          context,
-          "EMAIL ASSISTANT",
-          () async => await EmailAssistant.show(
-                context: context,
-                consult: consult,
-              ),
-          0),
-      _buildProviderCardButton(
-          context,
-          "CLOSE CHAT",
-          () async => await CloseChat.show(
-                context: context,
-                consult: consult,
-              ),
-          0),
-      _buildProviderCardButton(
-          context,
-          "NEED HELP?",
-          () async => await VisitHelp.show(
-                context: context,
-                consult: consult,
-              ),
-          0),
+      _buildProviderCardButton(context, "EMAIL ASSISTANT", () async {
+        if (consult.assistantEmailed) {
+          AppUtil().showFlushBar(
+              "You have already emailed your assistant regarding this consult",
+              context);
+        } else {
+          await EmailAssistant.show(
+            context: context,
+            consult: consult,
+          );
+        }
+      }, 0),
+      _buildProviderCardButton(context, "CLOSE CHAT", () async {
+        await CloseChat.show(
+          context: context,
+          consult: consult,
+        );
+      }, 0),
+      _buildProviderCardButton(context, "NEED HELP?", () async {
+        if (consult.visitIssue != null) {
+          AppUtil().showFlushBar(
+              "You have already submitted an issue regarding this visit",
+              context);
+        } else {
+          await VisitHelp.show(
+            context: context,
+            consult: consult,
+          );
+        }
+      }, 0),
       Expanded(
         child: Align(
           alignment: FractionalOffset.bottomCenter,

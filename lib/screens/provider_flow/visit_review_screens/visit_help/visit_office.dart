@@ -118,7 +118,17 @@ class _VisitOfficeState extends State<VisitOffice> {
       ..._buildCheckbox(),
       SizedBox(height: 32),
       ..._buildTextBox(),
-      SizedBox(height: 16),
+      SizedBox(height: 32),
+      Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            "*Redirecting the visit to in person will result in the online visit fee being refunded to the patient.",
+            style: Theme.of(context).textTheme.bodyText1,
+            textAlign: TextAlign.left,
+          ),
+        ),
+      ),
       Padding(
         padding: EdgeInsets.fromLTRB(36, 20, 36, 15),
         child: ContinueButton(

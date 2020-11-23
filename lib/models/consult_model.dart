@@ -70,6 +70,7 @@ class Consult {
   int providerMessageNotifications;
   int patientReviewNotifications;
   int patientMessageNotifications;
+  bool assistantEmailed = false;
   Map<String, dynamic> chatClosed;
   Map<String, dynamic> visitIssue;
 
@@ -100,6 +101,7 @@ class Consult {
     this.patientReviewNotifications = 0,
     this.providerMessageNotifications = 0,
     this.providerReviewNotifications = 0,
+    this.assistantEmailed = false,
     this.chatClosed = const {},
     this.visitIssue = const {},
   });
@@ -132,6 +134,9 @@ class Consult {
     final int providersMessageNotifications =
         data['provider_message_notifications'] ?? 0;
 
+    //is set whenever paubox cloud function is called, so not in toMap
+    final bool assistantEmailed = data['assistant_emailed'] ?? false;
+
     Map<String, dynamic> chatClosed;
     if (data["chat_closed"] != null) {
       chatClosed = (data["chat_closed"] as Map).map(
@@ -161,6 +166,7 @@ class Consult {
       patientReviewNotifications: patientReviewNotifications,
       providerMessageNotifications: providersMessageNotifications,
       providerReviewNotifications: providerReviewNotifications,
+      assistantEmailed: assistantEmailed,
       chatClosed: chatClosed,
       visitIssue: visitIssue,
     );
