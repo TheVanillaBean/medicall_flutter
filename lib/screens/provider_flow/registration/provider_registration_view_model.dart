@@ -130,6 +130,15 @@ class ProviderRegistrationViewModel extends ProviderProfileViewModelBase {
         (tempUserProvider.user as ProviderUser).npi = this.npi;
         (tempUserProvider.user as ProviderUser).boardCertified =
             this.boardCertified;
+        (tempUserProvider.user as ProviderUser).selectedServices = [
+          "Rash",
+          "Hairloss",
+          "Rosacea",
+          "Acne",
+          "Skin spots",
+          "Cosmetic skin issues"
+        ];
+
         updateWith(submitted: false, isLoading: false);
         saveUserDetails(user);
       } else {

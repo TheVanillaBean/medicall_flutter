@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
+import 'package:Medicall/common_widgets/empty_content.dart';
 import 'package:Medicall/common_widgets/list_items_builder.dart';
 import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/models/user/provider_user_model.dart';
@@ -63,7 +64,7 @@ class SelectProviderScreen extends StatelessWidget {
                 })
           ]),
       body: StreamBuilder(
-        stream: db.getAllProviders(state: state),
+        stream: db.getAllProviders(state: state, symptom: this.symptom.name),
         builder:
             (BuildContext context, AsyncSnapshot<List<ProviderUser>> snapshot) {
           return Stack(
@@ -79,6 +80,10 @@ class SelectProviderScreen extends StatelessWidget {
                 padding: EdgeInsets.only(top: 60),
                 child: ListItemsBuilder<ProviderUser>(
                   snapshot: snapshot,
+                  emptyContentWidget: const EmptyContent(
+                    title: 'There are no providers in your area',
+                    message: '',
+                  ),
                   itemBuilder: (context, provider) => ProviderListItem(
                     provider: provider,
                     onTap: () => ProviderDetailScreen.show(

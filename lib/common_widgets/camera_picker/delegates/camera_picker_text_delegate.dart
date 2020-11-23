@@ -95,7 +95,7 @@ class EnglishCameraPickerTextDelegateWithRecording
   String confirm = 'Confirm';
 
   @override
-  String shootingTips = 'Tap to take photo. Long press to record video.';
+  String shootingTips = 'Long press to record video.';
 
   @override
   String select = 'Select';

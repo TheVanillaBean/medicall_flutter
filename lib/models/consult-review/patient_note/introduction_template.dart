@@ -5,6 +5,10 @@ class IntroductionTemplate {
     this.template = const {},
   });
 
+  String get body {
+    return template.values.first;
+  }
+
   factory IntroductionTemplate.fromMap(Map<String, dynamic> data) {
     if (data == null) {
       return null;

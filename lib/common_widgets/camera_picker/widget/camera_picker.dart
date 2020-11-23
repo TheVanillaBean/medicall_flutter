@@ -20,6 +20,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:video_compress/video_compress.dart';
 
 import '../constants/constants.dart';
 import 'builder/slide_page_transition_builder.dart';
@@ -598,16 +599,21 @@ class CameraPickerState extends State<CameraPicker> {
   Future<void> stopRecordingVideo() async {
     if (cameraController.value.isRecordingVideo) {
       cameraController.stopVideoRecording().then((dynamic result) async {
+        final compressed = await VideoCompress.compressVideo(
+          takenVideoFilePath,
+          quality: VideoQuality.LowQuality,
+          deleteOrigin: true,
+        );
         final AssetEntity entity = await CameraPickerViewer.pushToViewer(
           context,
           pickerState: this,
           pickerType: CameraPickerViewType.video,
-          previewFile: takenVideoFile,
-          previewFilePath: takenVideoFilePath,
+          previewFile: compressed.file,
+          previewFilePath: compressed.path,
           theme: theme,
         );
         if (entity != null) {
-          Navigator.of(context).pop(entity);
+          Navigator.of(context).pop([entity]);
         } else {
           takenVideoFilePath = null;
           if (mounted) {
@@ -667,7 +673,9 @@ class CameraPickerState extends State<CameraPicker> {
           vertical: 20.0,
         ),
         child: Text(
-          Constants.textDelegate.shootingTips,
+          this.isOnlyAllowRecording
+              ? "Hold button to record"
+              : Constants.textDelegate.shootingTips,
           style: const TextStyle(fontSize: 15.0),
         ),
       ),
@@ -690,7 +698,10 @@ class CameraPickerState extends State<CameraPicker> {
                 : const SizedBox.shrink(),
           ),
           Expanded(child: Center(child: shootingButton)),
-          Expanded(child: Center(child: galleryButton)),
+          if (!this.isOnlyAllowRecording)
+            Expanded(child: Center(child: galleryButton))
+          else
+            const Spacer()
         ],
       ),
     );
@@ -983,8 +994,10 @@ class CameraPickerState extends State<CameraPicker> {
             ),
             onPressed: () {
               if (provider.isSelectedNotEmpty) {
-                Navigator.of(context)
-                    .pop(provider.currentlySelectedAssets.toList());
+                SchedulerBinding.instance.addPostFrameCallback((_) {
+                  Navigator.of(context)
+                      .pop(provider.currentlySelectedAssets.toList());
+                });
               }
             },
             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -1055,15 +1068,16 @@ class CameraPickerState extends State<CameraPicker> {
               )
             else
               const SizedBox.shrink(),
-            ChangeNotifierProvider<AssetPickerViewerProvider>.value(
-              value: provider,
-              child: Consumer<AssetPickerViewerProvider>(
-                builder: (_, model, __) =>
-                    provider.currentlySelectedAssets.length > 0
-                        ? bottomDetail
-                        : SizedBox.shrink(),
+            if (!this.isOnlyAllowRecording)
+              ChangeNotifierProvider<AssetPickerViewerProvider>.value(
+                value: provider,
+                child: Consumer<AssetPickerViewerProvider>(
+                  builder: (_, model, __) =>
+                      provider.currentlySelectedAssets.length > 0
+                          ? bottomDetail
+                          : SizedBox.shrink(),
+                ),
               ),
-            ),
             ChangeNotifierProvider<AssetPickerViewerProvider>.value(
               value: provider,
               child: Consumer<AssetPickerViewerProvider>(

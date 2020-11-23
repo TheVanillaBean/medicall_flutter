@@ -13,6 +13,9 @@ import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'about_us.dart';
+import 'contact_us.dart';
+
 class DrawerMenu extends StatelessWidget {
   const DrawerMenu({Key key}) : super(key: key);
 
@@ -58,25 +61,34 @@ class DrawerMenu extends StatelessWidget {
     );
   }
 
-  Column _buildNavigationItems(
+  Widget _buildNavigationItems(
     EdgeInsets listContentPadding,
     BuildContext context,
     MedicallUser medicallUser,
   ) {
-    return Column(
-      children: <Widget>[
-        _buildHomeButton(listContentPadding, context, medicallUser),
-        if (medicallUser.type == USER_TYPE.PATIENT)
-          _buildNewVisitItem(listContentPadding, context, medicallUser),
-        medicallUser.type == USER_TYPE.PROVIDER
-            ? _buildProviderVisitsItem(listContentPadding, context)
-            : _buildPatientVisitsItem(listContentPadding, context),
-        _buildAccountItem(listContentPadding, context, medicallUser),
-        Divider(
-          height: 0,
-          color: Colors.grey[400],
-        ),
-        _buildSignOutItem(listContentPadding, context)
+    return CustomScrollView(
+      slivers: [
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: Column(
+            children: <Widget>[
+              _buildHomeButton(listContentPadding, context, medicallUser),
+              if (medicallUser.type == USER_TYPE.PATIENT)
+                _buildNewVisitItem(listContentPadding, context, medicallUser),
+              medicallUser.type == USER_TYPE.PROVIDER
+                  ? _buildProviderVisitsItem(listContentPadding, context)
+                  : _buildPatientVisitsItem(listContentPadding, context),
+              _buildAccountItem(listContentPadding, context, medicallUser),
+              _buildAboutItem(listContentPadding, context, medicallUser),
+              _buildContactItem(listContentPadding, context, medicallUser),
+              Divider(
+                height: 0,
+                color: Colors.grey[400],
+              ),
+              _buildSignOutItem(listContentPadding, context)
+            ],
+          ),
+        )
       ],
     );
   }
@@ -122,6 +134,48 @@ class DrawerMenu extends StatelessWidget {
           } else {
             ProviderAccountScreen.show(context: context);
           }
+        });
+  }
+
+  ListTile _buildAboutItem(EdgeInsets listContentPadding, BuildContext context,
+      MedicallUser medicallUser) {
+    return ListTile(
+        contentPadding: listContentPadding,
+        title: Container(
+          margin: EdgeInsets.only(left: 15),
+          child: Text(
+            'About',
+            style: Theme.of(context).textTheme.headline6,
+          ),
+        ),
+        leading: Icon(
+          Icons.info,
+          color: Theme.of(context).colorScheme.primary,
+        ),
+        onTap: () {
+          Navigator.of(context).pop();
+          AboutUs.show(context: context);
+        });
+  }
+
+  ListTile _buildContactItem(EdgeInsets listContentPadding,
+      BuildContext context, MedicallUser medicallUser) {
+    return ListTile(
+        contentPadding: listContentPadding,
+        title: Container(
+          margin: EdgeInsets.only(left: 15),
+          child: Text(
+            'Contact Us',
+            style: Theme.of(context).textTheme.headline6,
+          ),
+        ),
+        leading: Icon(
+          Icons.phone,
+          color: Theme.of(context).colorScheme.primary,
+        ),
+        onTap: () {
+          Navigator.of(context).pop();
+          ContactUs.show(context: context);
         });
   }
 

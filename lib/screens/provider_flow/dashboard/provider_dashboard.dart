@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:Medicall/common_widgets/empty_visits.dart';
 import 'package:Medicall/common_widgets/list_items_builder.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
-import 'package:Medicall/components/drawer_menu.dart';
+import 'package:Medicall/components/drawer_menu/drawer_menu.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/user/provider_user_model.dart';
 import 'package:Medicall/routing/router.dart';

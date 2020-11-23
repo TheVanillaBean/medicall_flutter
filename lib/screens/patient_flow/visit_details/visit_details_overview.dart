@@ -5,10 +5,12 @@ import 'package:Medicall/presentation/medicall_icons_icons.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Shared/visit_information/review_visit_information.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
+import 'package:Medicall/screens/patient_flow/video_notes_from_provider/video_notes_from_provider.dart';
 import 'package:Medicall/screens/patient_flow/visit_details/visit_doc_note.dart';
 import 'package:Medicall/screens/patient_flow/visit_details/visit_education.dart';
 import 'package:Medicall/screens/patient_flow/visit_details/visit_treatment_recommendations.dart';
 import 'package:Medicall/screens/shared/chat/chat_screen.dart';
+import 'package:Medicall/screens/shared/video_player/video_player.dart';
 import 'package:Medicall/services/chat_provider.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/util/app_util.dart';
@@ -123,9 +125,29 @@ class VisitDetailsOverview extends StatelessWidget {
           ),
           _buildCardButton(
             context,
+            "Provider Video Notes",
+            Icons.personal_video_rounded,
+            () => {
+              VideoNotesFromProvider.show(
+                context: context,
+              ),
+            },
+            0,
+          ),
+          _buildCardButton(
+            context,
             "Message Provider",
             Icons.message,
-            () => navigateToChatScreen(context),
+            () async {
+              DateTime currentDate = DateTime.now();
+              if (this.consult.chatClosed != null ||
+                  currentDate.difference(this.consult.date).inDays > 3) {
+                AppUtil().showFlushBar(
+                    "The chat time window for this visit has passed", context);
+              } else {
+                await navigateToChatScreen(context);
+              }
+            },
             consult.patientMessageNotifications,
           ),
         ],
@@ -164,8 +186,8 @@ class VisitDetailsOverview extends StatelessWidget {
                 context,
                 "Provider Note",
                 MedicallIcons.clipboard_1,
-                () => {
-                  VisitDocNote.show(
+                () async => {
+                  await VisitDocNote.show(
                     context: context,
                     consult: this.consult,
                     visitReviewData: snapshot.data,
@@ -177,8 +199,8 @@ class VisitDetailsOverview extends StatelessWidget {
                 context,
                 "Treatment Recommendations",
                 Icons.local_pharmacy,
-                () => {
-                  VisitTreatmentRecommendations.show(
+                () async => {
+                  await VisitTreatmentRecommendations.show(
                     context: context,
                     consult: this.consult,
                     visitReviewData: snapshot.data,
@@ -190,8 +212,8 @@ class VisitDetailsOverview extends StatelessWidget {
                 context,
                 "Further Learning",
                 Icons.school,
-                () => {
-                  VisitEducation.show(
+                () async => {
+                  await VisitEducation.show(
                     context: context,
                     consult: this.consult,
                     visitReviewData: snapshot.data,
@@ -203,8 +225,8 @@ class VisitDetailsOverview extends StatelessWidget {
                 context,
                 "Your Visit Information",
                 Icons.assignment,
-                () => {
-                  ReviewVisitInformation.show(
+                () async => {
+                  await ReviewVisitInformation.show(
                     context: context,
                     consult: this.consult,
                   ),
@@ -213,9 +235,31 @@ class VisitDetailsOverview extends StatelessWidget {
               ),
               _buildCardButton(
                 context,
+                "Provider Video Note",
+                Icons.personal_video_rounded,
+                () async => await VideoPlayer.show(
+                  context: context,
+                  title: "Video Note",
+                  url: snapshot.data.videoNoteURL,
+                  fromNetwork: true,
+                ),
+                consult.patientReviewNotifications,
+              ),
+              _buildCardButton(
+                context,
                 "Message Provider",
                 Icons.message,
-                () => navigateToChatScreen(context),
+                () async {
+                  DateTime currentDate = DateTime.now();
+                  if (this.consult.chatClosed != null ||
+                      currentDate.difference(this.consult.date).inDays > 3) {
+                    AppUtil().showFlushBar(
+                        "The chat time window for this visit has passed",
+                        context);
+                  } else {
+                    await navigateToChatScreen(context);
+                  }
+                },
                 consult.patientMessageNotifications,
               ),
             ],
@@ -225,7 +269,7 @@ class VisitDetailsOverview extends StatelessWidget {
     );
   }
 
-  void navigateToChatScreen(BuildContext context) async {
+  Future<void> navigateToChatScreen(BuildContext context) async {
     ChatProvider chatProvider =
         Provider.of<ChatProvider>(context, listen: false);
     final channel =

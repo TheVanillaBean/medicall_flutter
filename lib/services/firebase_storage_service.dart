@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:uuid/uuid.dart';
+import 'package:video_compress/video_compress.dart';
 
 import 'firestore_path.dart';
 
@@ -12,24 +13,11 @@ class FirebaseStorageService {
   FirebaseStorageService({@required this.uid}) : assert(uid != null);
   final String uid;
 
-  Future<String> uploadProfileImageWith({
+  Future<String> uploadProfileImage({
     @required AssetEntity asset,
   }) async {
     Uint8List imageData = await getAccurateUint8List(asset);
     String assetName = getImageName(asset.title);
-    return await upload(
-      data: imageData,
-      path: FirestorePath.userProfileImage(uid: uid, assetName: assetName),
-      contentType: 'image/jpg',
-    );
-  }
-
-  Future<String> uploadProfileImage({
-    @required Asset asset,
-  }) async {
-    ByteData byteData = await getAccurateByteData(asset);
-    Uint8List imageData = byteData.buffer.asUint8List();
-    String assetName = getImageName(asset.name);
     return await upload(
       data: imageData,
       path: FirestorePath.userProfileImage(uid: uid, assetName: assetName),
@@ -48,6 +36,20 @@ class FirebaseStorageService {
       path: FirestorePath.consultPhotoQuestion(
           consultID: consultId, assetName: assetName),
       contentType: 'image/jpg',
+    );
+  }
+
+  Future<String> uploadPatientNoteVideo({
+    @required MediaInfo mediaInfo,
+    @required String consultId,
+  }) async {
+    Uint8List videoData = await mediaInfo.file.readAsBytes();
+    String assetName = getImageName(mediaInfo.title);
+    return await upload(
+      data: videoData,
+      path: FirestorePath.userVideoNote(
+          consultID: consultId, assetName: assetName),
+      contentType: 'video/mp4',
     );
   }
 

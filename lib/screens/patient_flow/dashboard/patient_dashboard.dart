@@ -1,6 +1,6 @@
 import 'package:Medicall/common_widgets/empty_visits.dart';
 import 'package:Medicall/common_widgets/list_items_builder.dart';
-import 'package:Medicall/components/drawer_menu.dart';
+import 'package:Medicall/components/drawer_menu/drawer_menu.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/user/patient_user_model.dart';
 import 'package:Medicall/routing/router.dart';
@@ -26,7 +26,7 @@ class PatientDashboardScreen extends StatelessWidget {
     final FirestoreDatabase database =
         Provider.of<FirestoreDatabase>(context, listen: false);
     final UserProvider provider =
-        Provider.of<UserProvider>(context, listen: false);
+        Provider.of<UserProvider>(context, listen: true);
     return ChangeNotifierProvider<PatientDashboardViewModel>(
       create: (context) => PatientDashboardViewModel(
         database: database,

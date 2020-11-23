@@ -254,8 +254,8 @@ class PersonalInfoViewModel extends PropertyChangeNotifier
     medicallUser.mailingZipCode = this.zipCode;
 
     try {
-      medicallUser.profilePic = await firebaseStorageService
-          .uploadProfileImageWith(asset: this.profileImage);
+      medicallUser.profilePic = await firebaseStorageService.uploadProfileImage(
+          asset: this.profileImage);
     } catch (e) {
       updateWith(submitted: false, isLoading: false);
       btnController.reset();

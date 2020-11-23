@@ -23,6 +23,37 @@ extension EnumParser on String {
   }
 }
 
+abstract class ChatClosedKeys {
+  static const REASON = "reason";
+  static const CONTACT_PATIENT = "contact_patient";
+}
+
+abstract class VisitTroubleLabels {
+  static const Poor_Quality = "Inadequate/poor quality information";
+  static const Redirect = "Redirect patient to an office visit";
+  static const Patient_Satisfaction = "Patient satisfaction concern";
+  static const Inappropriate_Conduct = "Inappropriate patient conduct";
+  static const Other = "Other";
+  static const allReasons = [
+    Poor_Quality,
+    Redirect,
+    Patient_Satisfaction,
+    Inappropriate_Conduct,
+    Other,
+  ];
+}
+
+abstract class VisitIssueKeys {
+  static const ISSUE = "issue";
+  static const REASON = "reason";
+  static const ASSISTANT_REACH_OUT = "assistant_reach_out";
+  static const BRIEF_NOTE = "note";
+  static const EXPLANATION = "explanation";
+  static const SUGGESTIONS = "suggestion";
+  static const MEDICALL_ADDRESS_ISSUE = "medicall_address_issue";
+  static const SHOULD_REFUND = "should_refund";
+}
+
 class Consult {
   String uid;
   final String providerId;
@@ -39,6 +70,9 @@ class Consult {
   int providerMessageNotifications;
   int patientReviewNotifications;
   int patientMessageNotifications;
+  bool assistantEmailed = false;
+  Map<String, dynamic> chatClosed;
+  Map<String, dynamic> visitIssue;
 
   //not serialized
   PatientUser patientUser;
@@ -67,6 +101,9 @@ class Consult {
     this.patientReviewNotifications = 0,
     this.providerMessageNotifications = 0,
     this.providerReviewNotifications = 0,
+    this.assistantEmailed = false,
+    this.chatClosed = const {},
+    this.visitIssue = const {},
   });
 
   factory Consult.fromMap(Map<String, dynamic> data, String documentId) {
@@ -97,6 +134,23 @@ class Consult {
     final int providersMessageNotifications =
         data['provider_message_notifications'] ?? 0;
 
+    //is set whenever paubox cloud function is called, so not in toMap
+    final bool assistantEmailed = data['assistant_emailed'] ?? false;
+
+    Map<String, dynamic> chatClosed;
+    if (data["chat_closed"] != null) {
+      chatClosed = (data["chat_closed"] as Map).map(
+        (key, value) => MapEntry(key as String, value as dynamic),
+      );
+    }
+
+    Map<String, dynamic> visitIssue;
+    if (data["visit_issue"] != null) {
+      visitIssue = (data["visit_issue"] as Map).map(
+        (key, value) => MapEntry(key as String, value as dynamic),
+      );
+    }
+
     return Consult(
       uid: documentId,
       providerId: providerId,
@@ -112,6 +166,9 @@ class Consult {
       patientReviewNotifications: patientReviewNotifications,
       providerMessageNotifications: providersMessageNotifications,
       providerReviewNotifications: providerReviewNotifications,
+      assistantEmailed: assistantEmailed,
+      chatClosed: chatClosed,
+      visitIssue: visitIssue,
     );
   }
 
@@ -122,7 +179,7 @@ class Consult {
       'symptom': symptom,
       'price': price,
       'date': date,
-      'state': EnumToString.parse(state),
+      'state': EnumToString.convertToString(state),
       'provider_reclassified': providerReclassified,
       'patient_message_notifications': patientMessageNotifications,
       'patient_review_notifications': patientReviewNotifications,
@@ -139,7 +196,16 @@ class Consult {
         'coupon_code': coupon,
       });
     }
-
+    if (chatClosed != null) {
+      baseToMap.addAll({
+        'chat_closed': chatClosed,
+      });
+    }
+    if (visitIssue != null) {
+      baseToMap.addAll({
+        'visit_issue': visitIssue,
+      });
+    }
     return baseToMap;
   }
 

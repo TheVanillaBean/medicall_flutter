@@ -96,7 +96,9 @@ class PatientPrescriptionsListItem extends StatelessWidget {
               ),
               if (this.treatment.price >= 0)
                 Text(
-                  EnumToString.parseCamelCase(this.treatment.status) ?? "",
+                  EnumToString.convertToString(this.treatment.status,
+                          camelCase: true) ??
+                      "",
                   style: Theme.of(context).textTheme.headline6,
                 ),
             ],

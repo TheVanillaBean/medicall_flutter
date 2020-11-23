@@ -5,6 +5,10 @@ class ConclusionTemplate {
     this.template = const {},
   });
 
+  String get body {
+    return template.values.first;
+  }
+
   factory ConclusionTemplate.fromMap(Map<String, dynamic> data) {
     if (data == null) {
       return null;

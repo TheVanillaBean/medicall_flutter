@@ -66,7 +66,7 @@ class Question {
   Map<String, dynamic> toMap() {
     Map<String, dynamic> toStringMap = <String, dynamic>{
       'question': question,
-      'type': EnumToString.parse(type),
+      'type': EnumToString.convertToString(type),
       'answer': answer != null ? answer.toMap() : null,
     };
     if (type == Q_TYPE.MC || type == Q_TYPE.SC) {

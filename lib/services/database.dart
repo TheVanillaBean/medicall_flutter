@@ -139,7 +139,9 @@ class FirestoreDatabase implements Database {
   Stream<List<Consult>> getConsultsForProvider(String uid) =>
       _service.collectionStream(
         path: FirestorePath.consults(),
-        queryBuilder: (query) => query.where('provider_id', isEqualTo: uid),
+        queryBuilder: (query) => query
+            .where('provider_id', isEqualTo: uid)
+            .orderBy("date", descending: true),
         builder: (data, documentId) => Consult.fromMap(data, documentId),
       );
 
@@ -212,9 +214,12 @@ class FirestoreDatabase implements Database {
       );
 
   @override
-  Future<void> saveVisitReview(
-      {String consultId, VisitReviewData visitReviewData}) async {
-    await _service.setData(
+  Future<void> saveVisitReview({
+    String consultId,
+    VisitReviewData visitReviewData,
+    int step,
+  }) {
+    return _service.setData(
       path: FirestorePath.visitReview(consultId),
       data: visitReviewData.toMap(),
       merge: false,

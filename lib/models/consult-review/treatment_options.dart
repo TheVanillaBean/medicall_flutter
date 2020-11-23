@@ -89,7 +89,28 @@ class TreatmentOptions {
       'refills': refills,
       'date': date,
       'price': price,
-      'state': EnumToString.parse(status),
+      'state': EnumToString.convertToString(status),
     };
+  }
+
+  factory TreatmentOptions.copyWith(TreatmentOptions treatmentOptions) {
+    if (treatmentOptions == null) {
+      return null;
+    }
+
+    TreatmentOptions copy = TreatmentOptions()
+      ..medicationName = treatmentOptions.medicationName
+      ..dose = treatmentOptions.dose
+      ..form = treatmentOptions.form
+      ..frequency = treatmentOptions.frequency
+      ..instructions = treatmentOptions.instructions
+      ..quantity = treatmentOptions.quantity
+      ..refills = treatmentOptions.refills
+      ..date = treatmentOptions.date
+      ..status = treatmentOptions.status
+      ..price = treatmentOptions.price
+      ..notAPrescription = treatmentOptions.price == -1;
+
+    return copy;
   }
 }

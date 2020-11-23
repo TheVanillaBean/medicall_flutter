@@ -6,6 +6,7 @@ Copyright: © 2019, Akshath Jain. All rights reserved.
 Licensing: More information can be found here: https://github.com/akshathjain/grouped_buttons/blob/master/LICENSE
 */
 
+import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 
 import 'grouped_buttons_orientation.dart';
@@ -73,6 +74,7 @@ class RadioButtonGroup extends StatefulWidget {
 
 class _RadioButtonGroupState extends State<RadioButtonGroup> {
   String _selected;
+  ScrollController scrollController = ScrollController();
 
   @override
   void initState() {
@@ -151,12 +153,44 @@ class _RadioButtonGroupState extends State<RadioButtonGroup> {
       }
     }
 
-    return Container(
-      padding: widget.padding,
-      margin: widget.margin,
-      child: widget.orientation == GroupedButtonsOrientation.VERTICAL
-          ? Column(children: content)
-          : Row(children: content),
-    );
+    if (widget.orientation == GroupedButtonsOrientation.VERTICAL) {
+      return Scrollbar(
+        child: FadingEdgeScrollView.fromSingleChildScrollView(
+          child: SingleChildScrollView(
+            controller: scrollController,
+            scrollDirection: Axis.vertical,
+            child: Container(
+                padding: widget.padding,
+                margin: widget.margin,
+                child: Column(children: content)),
+          ),
+        ),
+      );
+    } else if (widget.orientation == GroupedButtonsOrientation.HORIZONTAL) {
+      return Scrollbar(
+        child: FadingEdgeScrollView.fromSingleChildScrollView(
+          child: SingleChildScrollView(
+            controller: scrollController,
+            scrollDirection: Axis.horizontal,
+            child: Container(
+                padding: widget.padding,
+                margin: widget.margin,
+                child: Row(children: content)),
+          ),
+        ),
+      );
+    } else {
+      return Scrollbar(
+        child: FadingEdgeScrollView.fromSingleChildScrollView(
+          child: SingleChildScrollView(
+            controller: scrollController,
+            child: Wrap(
+              children: content,
+              direction: Axis.horizontal,
+            ),
+          ),
+        ),
+      );
+    }
   }
 }

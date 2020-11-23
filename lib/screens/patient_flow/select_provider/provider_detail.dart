@@ -77,12 +77,11 @@ class ProviderDetailScreen extends StatelessWidget {
                 })
           ],
         ),
-        body: CustomScrollView(
-          slivers: [
-            SliverFillRemaining(
-              hasScrollBody: false,
+        body: Stack(
+          children: [
+            SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(30, 12, 30, 12),
+                padding: EdgeInsets.fromLTRB(30, 12, 30, 80),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: _buildChildren(
@@ -90,6 +89,38 @@ class ProviderDetailScreen extends StatelessWidget {
                     extImageProvider,
                     currentUser,
                     context,
+                  ),
+                ),
+              ),
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                color: Colors.white.withAlpha(170),
+                padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                child: SizedBox(
+                  height: 60,
+                  width: ScreenUtil.screenWidthDp - 60,
+                  child: ReusableRaisedButton(
+                    title: "Start Visit",
+                    onPressed: () {
+                      Consult consult = Consult(
+                        providerId: provider.uid,
+                        providerUser: provider,
+                        symptom: symptom.name,
+                        date: DateTime.now(),
+                        price: 49,
+                      );
+                      if (currentUser != null) {
+                        StartVisitScreen.show(
+                          context: context,
+                          consult: consult,
+                        );
+                      } else {
+                        tempUserProvider.consult = consult;
+                        RegistrationScreen.show(context: context);
+                      }
+                    },
                   ),
                 ),
               ),
@@ -154,44 +185,12 @@ class ProviderDetailScreen extends StatelessWidget {
           : SizedBox(),
       provider.mailingAddress != '' ? Divider(height: 0) : SizedBox(),
       provider.providerBio != '' ? _providerBioInfo(context) : SizedBox(),
-      SizedBox(height: 30),
-      Expanded(
-        child: Align(
-          alignment: FractionalOffset.bottomCenter,
-          child: SizedBox(
-            height: 60,
-            width: 200,
-            child: ReusableRaisedButton(
-              title: "Start Visit",
-              onPressed: () {
-                Consult consult = Consult(
-                  providerId: provider.uid,
-                  providerUser: provider,
-                  symptom: symptom.name,
-                  date: DateTime.now(),
-                  price: 49,
-                );
-                if (currentUser != null) {
-                  StartVisitScreen.show(
-                    context: context,
-                    consult: consult,
-                  );
-                } else {
-                  tempUserProvider.consult = consult;
-                  RegistrationScreen.show(context: context);
-                }
-              },
-            ),
-          ),
-        ),
-      ),
-      SizedBox(height: 30),
     ];
   }
 
   Widget _providerBioInfo(BuildContext context) {
     return ListTile(
-      contentPadding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+      contentPadding: EdgeInsets.fromLTRB(0, 10, 0, 8),
       dense: true,
       title: Text(
         'Bio:',

@@ -2,10 +2,11 @@ import 'package:Medicall/common_widgets/assets_picker/widget/asset_picker.dart';
 import 'package:Medicall/common_widgets/camera_picker/constants/constants.dart';
 import 'package:Medicall/common_widgets/provider_bio_card.dart';
 import 'package:Medicall/common_widgets/reusable_account_card.dart';
-import 'package:Medicall/components/drawer_menu.dart';
+import 'package:Medicall/components/drawer_menu/drawer_menu.dart';
 import 'package:Medicall/models/user/provider_user_model.dart';
 import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/provider_flow/account/select_services/select_services.dart';
 import 'package:Medicall/screens/provider_flow/account/update_provider_info/update_provider_info_form.dart';
 import 'package:Medicall/screens/provider_flow/account/update_provider_info/update_provider_info_screen.dart';
 import 'package:Medicall/screens/provider_flow/account/update_provider_info/update_provider_info_view_model.dart';
@@ -120,7 +121,7 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
   }) {
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 36),
+        padding: const EdgeInsets.symmetric(horizontal: 24),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
@@ -178,6 +179,8 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
             Divider(height: 0.5, thickness: 1),
             _buildAddressCard(medicallUser),
             Divider(height: 0.5, thickness: 1),
+            _buildSelectedServicesCard(medicallUser),
+            Divider(height: 0.5, thickness: 1),
             _buildProfessionalTitleCard(medicallUser),
             Divider(height: 0.5, thickness: 1),
             _buildMedicalLicenseCard(medicallUser),
@@ -231,9 +234,7 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
   Widget _buildPracticeNameCard(MedicallUser medicallUser) {
     return ReusableAccountCard(
       leading: 'Practice \nName:',
-      title: (medicallUser as ProviderUser).practiceName != null
-          ? '${(medicallUser as ProviderUser).practiceName}'
-          : '',
+      title: '${(medicallUser as ProviderUser).practiceName}' ?? '',
       trailing: IconButton(
         icon: Icon(Icons.create, size: 20),
         onPressed: () {
@@ -263,6 +264,21 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
             context: context,
             model: model,
           );
+        },
+      ),
+    );
+  }
+
+  Widget _buildSelectedServicesCard(MedicallUser medicallUser) {
+    String formatted =
+        (medicallUser as ProviderUser).selectedServices.join(', ');
+    return ReusableAccountCard(
+      leading: 'Services:',
+      title: '$formatted',
+      trailing: IconButton(
+        icon: Icon(Icons.create, size: 20),
+        onPressed: () {
+          SelectServices.show(context: context, model: model);
         },
       ),
     );
@@ -485,8 +501,7 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
       this.setState(() {
         this.imageLoading = true;
       });
-      String url =
-          await storageService.uploadProfileImageWith(asset: assetEntity);
+      String url = await storageService.uploadProfileImage(asset: assetEntity);
       userProvider.user.profilePic = url;
       this.setState(() {
         this.imageLoading = false;

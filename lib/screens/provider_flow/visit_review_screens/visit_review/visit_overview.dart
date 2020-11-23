@@ -8,14 +8,17 @@ import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Shared/visit_information/review_visit_information.dart';
 import 'package:Medicall/screens/provider_flow/dashboard/provider_dashboard_list_item.dart';
-import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reclassify_visit.dart';
-import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/view_patient_id.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/close_chat/close_chat.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/email_assistant/email_assistant.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_help/visit_help.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reclassify_visit/reclassify_visit.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/view_patient_info.dart';
 import 'package:Medicall/screens/shared/chat/chat_screen.dart';
 import 'package:Medicall/services/chat_provider.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/non_auth_firestore_db.dart';
 import 'package:Medicall/services/user_provider.dart';
+import 'package:Medicall/util/app_util.dart';
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -62,9 +65,17 @@ class VisitOverview extends StatelessWidget {
               Consult consult = snapshot.data;
               consult.patientUser = this.patientUser;
               consult.providerUser = userProvider.user as ProviderUser;
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: _buildChildren(context, firestoreDatabase, consult),
+              return CustomScrollView(
+                slivers: [
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children:
+                          _buildChildren(context, firestoreDatabase, consult),
+                    ),
+                  )
+                ],
               );
             }
             return Center(child: CircularProgressIndicator());
@@ -86,7 +97,7 @@ class VisitOverview extends StatelessWidget {
       _buildProviderCardButton(
         context,
         "VISIT INFORMATION",
-        () => ReviewVisitInformation.show(
+        () async => await ReviewVisitInformation.show(
           context: context,
           consult: consult,
         ),
@@ -94,16 +105,8 @@ class VisitOverview extends StatelessWidget {
       ),
       _buildProviderCardButton(
           context,
-          "VIEW PATIENT IDENTIFICATION",
-          () => ViewPatientID.show(
-                context: context,
-                consult: consult,
-              ),
-          0),
-      _buildProviderCardButton(
-          context,
-          "VIEW PATIENT INFORMATION",
-          () => ViewPatientInfo.show(
+          "PATIENT INFORMATION",
+          () async => await ViewPatientInfo.show(
                 context: context,
                 consult: consult,
               ),
@@ -114,11 +117,41 @@ class VisitOverview extends StatelessWidget {
         () => navigateToChatScreen(context, consult),
         consult.providerMessageNotifications,
       ),
+      _buildProviderCardButton(context, "EMAIL ASSISTANT", () async {
+        if (consult.assistantEmailed) {
+          AppUtil().showFlushBar(
+              "You have already emailed your assistant regarding this consult",
+              context);
+        } else {
+          await EmailAssistant.show(
+            context: context,
+            consult: consult,
+          );
+        }
+      }, 0),
+      _buildProviderCardButton(context, "CLOSE CHAT", () async {
+        await CloseChat.show(
+          context: context,
+          consult: consult,
+        );
+      }, 0),
+      _buildProviderCardButton(context, "NEED HELP?", () async {
+        if (consult.visitIssue != null) {
+          AppUtil().showFlushBar(
+              "You have already submitted an issue regarding this visit",
+              context);
+        } else {
+          await VisitHelp.show(
+            context: context,
+            consult: consult,
+          );
+        }
+      }, 0),
       Expanded(
         child: Align(
           alignment: FractionalOffset.bottomCenter,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
             child: SignInButton(
               text: getContinueBtnText(consult).toUpperCase(),
               height: 8,
@@ -158,7 +191,7 @@ class VisitOverview extends StatelessWidget {
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           clipBehavior: Clip.antiAlias,
           child: ListTile(
-            contentPadding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+            contentPadding: EdgeInsets.fromLTRB(20, 5, 20, 5),
             dense: true,
             title: Center(
               child: Text(
@@ -204,7 +237,7 @@ class VisitOverview extends StatelessWidget {
     } else if (consult.state == ConsultStatus.InReview) {
       return "Continue Diagnosis & Treatment Plan";
     } else if (consult.state == ConsultStatus.Completed) {
-      return "Sign and Complete Visit";
+      return "Officially Sign Visit";
     } else {
       return "Signed";
     }
@@ -247,9 +280,9 @@ class VisitOverview extends StatelessWidget {
       BuildContext context, Consult consult) async {
     final db = Provider.of<FirestoreDatabase>(context, listen: false);
     final didPressYes = await PlatformAlertDialog(
-      title: "Sign Review",
+      title: "Sign Review?",
       content:
-          "Would you like to sign this review or edit it? Once you sign it, any additional changes will be made as addendums to the original review.",
+          "Would you like to sign this review or edit it? Once you officially sign it, any additional changes will be made as addendums to the original review.",
       defaultActionText: "Yes, sign",
       cancelActionText: "No, edit ",
     ).show(context);

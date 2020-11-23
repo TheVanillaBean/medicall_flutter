@@ -21,8 +21,8 @@ class PatientPrescriptionsViewModel with ChangeNotifier {
     treatmentOptionsStream.add([]);
 
     database
-        .getConsultsForPatient(
-            userProvider.user.uid, EnumToString.parse(ConsultStatus.Signed))
+        .getConsultsForPatient(userProvider.user.uid,
+            EnumToString.convertToString(ConsultStatus.Signed))
         .listen((consults) {
       List<TreatmentOptions> treatmentOptions = [];
 
