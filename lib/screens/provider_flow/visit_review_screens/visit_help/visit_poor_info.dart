@@ -28,7 +28,7 @@ class VisitPoorInfo extends StatefulWidget {
     BuildContext context,
     Consult consult,
   }) async {
-    await Navigator.of(context).pushNamed(
+    await Navigator.of(context).pushReplacementNamed(
       Routes.visitPoorInfo,
       arguments: {
         'consult': consult,

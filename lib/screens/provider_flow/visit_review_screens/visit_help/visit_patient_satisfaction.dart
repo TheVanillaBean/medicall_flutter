@@ -17,7 +17,7 @@ class VisitPatientSatisfaction extends StatefulWidget {
     BuildContext context,
     Consult consult,
   }) async {
-    await Navigator.of(context).pushNamed(
+    await Navigator.of(context).pushReplacementNamed(
       Routes.visitPatientSatisfaction,
       arguments: {
         'consult': consult,
