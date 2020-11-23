@@ -138,7 +138,16 @@ class VisitDetailsOverview extends StatelessWidget {
             context,
             "Message Provider",
             Icons.message,
-            () => navigateToChatScreen(context),
+            () async {
+              DateTime currentDate = DateTime.now();
+              if (this.consult.chatClosed != null ||
+                  currentDate.difference(this.consult.date).inDays > 3) {
+                AppUtil().showFlushBar(
+                    "The chat time window for this visit has passed", context);
+              } else {
+                await navigateToChatScreen(context);
+              }
+            },
             consult.patientMessageNotifications,
           ),
         ],
@@ -240,7 +249,17 @@ class VisitDetailsOverview extends StatelessWidget {
                 context,
                 "Message Provider",
                 Icons.message,
-                () => navigateToChatScreen(context),
+                () async {
+                  DateTime currentDate = DateTime.now();
+                  if (this.consult.chatClosed != null ||
+                      currentDate.difference(this.consult.date).inDays > 3) {
+                    AppUtil().showFlushBar(
+                        "The chat time window for this visit has passed",
+                        context);
+                  } else {
+                    await navigateToChatScreen(context);
+                  }
+                },
                 consult.patientMessageNotifications,
               ),
             ],
@@ -250,7 +269,7 @@ class VisitDetailsOverview extends StatelessWidget {
     );
   }
 
-  void navigateToChatScreen(BuildContext context) async {
+  Future<void> navigateToChatScreen(BuildContext context) async {
     ChatProvider chatProvider =
         Provider.of<ChatProvider>(context, listen: false);
     final channel =
