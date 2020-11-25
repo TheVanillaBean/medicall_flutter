@@ -28,7 +28,7 @@ class AboutUs extends StatelessWidget {
             children: [
               Text(
                 "Medicall is a Boston-based leading online telemedicine platform that connects patients with leading "
-                "local doctors. Get the convenience of an online visit with the comfort of knowing the you can "
+                "local doctors. Get the convenience of an online visit with the comfort of knowing that you can "
                 "see your doctor if needed. It was founded in 2019 by a group of Harvard doctors and MIT engineers.",
                 style: Theme.of(context).textTheme.bodyText1,
               ),

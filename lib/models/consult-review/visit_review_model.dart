@@ -65,8 +65,8 @@ class VisitReviewData {
           .toList();
     }
     List<Map<String, String>> selectedEducationalOptions;
-    if (data['treatment_options'] != null &&
-        data['treatment_options'] is List) {
+    if (data['selected_educational_options'] != null &&
+        data['selected_educational_options'] is List) {
       selectedEducationalOptions =
           (data['selected_educational_options'] as List)
               .map(
