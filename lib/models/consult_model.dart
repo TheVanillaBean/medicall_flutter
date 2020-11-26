@@ -102,8 +102,8 @@ class Consult {
     this.providerMessageNotifications = 0,
     this.providerReviewNotifications = 0,
     this.assistantEmailed = false,
-    this.chatClosed = const {},
-    this.visitIssue = const {},
+    this.chatClosed,
+    this.visitIssue,
   });
 
   factory Consult.fromMap(Map<String, dynamic> data, String documentId) {

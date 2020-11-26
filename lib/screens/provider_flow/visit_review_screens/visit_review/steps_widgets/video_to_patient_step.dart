@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:Medicall/common_widgets/assets_picker/widget/asset_picker.dart';
+import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
+import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/continue_button.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/swipe_gesture_recognizer.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_view_models/video_to_patient_step_state.dart';
@@ -56,6 +58,24 @@ class _VideoToPatientStepState extends State<VideoToPatientStep> {
 
     widget.model.updateWith(isLoading: false);
     AppUtil().showFlushBar("Successfully saved video note!", context);
+
+    if (widget.model.visitReviewViewModel.consult.state ==
+        ConsultStatus.Completed) {
+      bool didPressYes = await PlatformAlertDialog(
+        title: "Review Completed",
+        content:
+            "You've completed all the required steps for this visit review. Would you like to go back to the dashboard where you can officially sign this visit?",
+        defaultActionText: "Yes",
+        cancelActionText: "No, stay here",
+      ).show(context);
+
+      if (didPressYes) {
+        Navigator.of(context).pop();
+        return false;
+      } else {
+        return false;
+      }
+    }
   }
 
   @override
@@ -169,7 +189,8 @@ class _VideoToPatientStepState extends State<VideoToPatientStep> {
               child: ContinueButton(
                 title: "Save and Continue",
                 width: width,
-                onTap: this.widget.model.minimumRequiredFieldsFilledOut
+                onTap: this.widget.model.minimumRequiredFieldsFilledOut &&
+                        this.widget.model.mediaInfo != null
                     ? () async {
                         await _submit();
                       }

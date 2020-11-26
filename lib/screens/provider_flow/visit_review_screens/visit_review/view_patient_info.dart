@@ -75,15 +75,24 @@ class ViewPatientInfo extends StatelessWidget {
   }
 
   List<Widget> _buildChildren(MedicallUser medicallUser, BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
     return [
-      CircleAvatar(
-        minRadius: 60,
-        backgroundImage: CachedNetworkImageProvider(medicallUser.profilePic),
+      ClipRRect(
+        borderRadius: BorderRadius.circular(300),
+        child: CachedNetworkImage(
+          imageUrl: medicallUser.profilePic,
+          height: (height * 0.2),
+          width: (height * 0.2),
+          fit: BoxFit.cover,
+        ),
       ),
       Container(
         margin: EdgeInsets.fromLTRB(0, 20, 0, 40),
         child: CustomRaisedButton(
-          child: Text('View Patient\'s Photo ID'),
+          child: Text(
+            'View Patient\'s Photo ID',
+            style: Theme.of(context).textTheme.headline5,
+          ),
           color: Colors.white,
           onPressed: () => ViewPatientID.show(
             context: context,
