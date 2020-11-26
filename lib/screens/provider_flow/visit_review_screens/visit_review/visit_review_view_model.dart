@@ -248,8 +248,7 @@ class VisitReviewViewModel extends ChangeNotifier {
 
   void checkIfCompleted() async {
     if (this.completedSteps.length == 6 &&
-        this.consult.state != ConsultStatus.Completed &&
-        this.currentStep != VisitReviewSteps.PatientVideoStep) {
+        this.consult.state != ConsultStatus.Completed) {
       this.consult.state = ConsultStatus.Completed;
       await firestoreDatabase.saveConsult(
           consultId: this.consult.uid, consult: this.consult);

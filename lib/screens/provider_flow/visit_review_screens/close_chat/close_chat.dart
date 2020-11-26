@@ -59,7 +59,8 @@ class _CloseChatState extends State<CloseChat> {
   @override
   void initState() {
     super.initState();
-    if (widget.consult.chatClosed != null) {
+    if (widget.consult.chatClosed != null &&
+        widget.consult.chatClosed[ChatClosedKeys.REASON] != null) {
       readOnlyMode = true;
       this.selectedReason = widget.consult.chatClosed[ChatClosedKeys.REASON];
       this.shouldMedicallContactPatient =
