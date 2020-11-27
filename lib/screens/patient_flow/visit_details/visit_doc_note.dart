@@ -94,7 +94,7 @@ class VisitDocNote extends StatelessWidget {
     }
 
     if (visitReviewData.patientNote.hasUnderstandingDiagnosis) {
-      note += "\n<bold>Understanding The Diagnosis:<bold>\n\n";
+      note += "\n\n<bold>Understanding The Diagnosis:<bold>\n\n";
       note += visitReviewData
           .patientNote.understandingDiagnosisTemplate.template.values.first;
     }
