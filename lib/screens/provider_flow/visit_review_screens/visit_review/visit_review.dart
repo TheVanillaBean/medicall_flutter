@@ -79,23 +79,12 @@ class _VisitReviewState extends State<VisitReview> with VisitReviewStatus {
   }
 
   Future<bool> _onWillPop() async {
-    bool didPressYes = false;
-    if (widget.model.consult.state != ConsultStatus.Completed) {
-      didPressYes = await PlatformAlertDialog(
-        title: "Cancel Review?",
-        content: "Are you sure you want to exit this screen?",
-        defaultActionText: "Yes, cancel",
-        cancelActionText: "No",
-      ).show(context);
-    } else {
-      didPressYes = await PlatformAlertDialog(
-        title: "Exit Screen?",
-        content:
-            "This visit is completed. Do you want to exit this screen now?",
-        defaultActionText: "Yes, exit",
-        cancelActionText: "No",
-      ).show(context);
-    }
+    bool didPressYes = await PlatformAlertDialog(
+      title: "Return to Dashboard?",
+      content: "Don’t worry! Any saved work will be here when you come back.",
+      defaultActionText: "Yes, exit",
+      cancelActionText: "No, stay",
+    ).show(context);
 
     if (didPressYes) {
       Navigator.of(context).pop();

@@ -5,7 +5,6 @@ import 'package:Medicall/presentation/medicall_icons_icons.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/Shared/visit_information/review_visit_information.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
-import 'package:Medicall/screens/patient_flow/video_notes_from_provider/video_notes_from_provider.dart';
 import 'package:Medicall/screens/patient_flow/visit_details/visit_doc_note.dart';
 import 'package:Medicall/screens/patient_flow/visit_details/visit_education.dart';
 import 'package:Medicall/screens/patient_flow/visit_details/visit_treatment_recommendations.dart';
@@ -74,13 +73,6 @@ class VisitDetailsOverview extends StatelessWidget {
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
-          // _buildCardButton(
-          //   "About the Provider",
-          //   Icons.medical_services,
-          //   () => {
-          //     ProviderDetailScreen.show(context: context),
-          //   },
-          // ),
           _buildCardButton(
             context,
             "Provider Note",
@@ -119,17 +111,6 @@ class VisitDetailsOverview extends StatelessWidget {
               ReviewVisitInformation.show(
                 context: context,
                 consult: this.consult,
-              ),
-            },
-            0,
-          ),
-          _buildCardButton(
-            context,
-            "Provider Video Notes",
-            Icons.personal_video_rounded,
-            () => {
-              VideoNotesFromProvider.show(
-                context: context,
               ),
             },
             0,
@@ -233,18 +214,19 @@ class VisitDetailsOverview extends StatelessWidget {
                 },
                 0,
               ),
-              _buildCardButton(
-                context,
-                "Provider Video Note",
-                Icons.personal_video_rounded,
-                () async => await VideoPlayer.show(
-                  context: context,
-                  title: "Video Note",
-                  url: snapshot.data.videoNoteURL,
-                  fromNetwork: true,
+              if (snapshot.data.videoNoteURL.length > 0)
+                _buildCardButton(
+                  context,
+                  "Provider Video Note",
+                  Icons.personal_video_rounded,
+                  () async => await VideoPlayer.show(
+                    context: context,
+                    title: "Video Note",
+                    url: snapshot.data.videoNoteURL,
+                    fromNetwork: true,
+                  ),
+                  consult.patientReviewNotifications,
                 ),
-                consult.patientReviewNotifications,
-              ),
               _buildCardButton(
                 context,
                 "Message Provider",

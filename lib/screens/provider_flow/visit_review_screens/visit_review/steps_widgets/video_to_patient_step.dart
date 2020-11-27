@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:Medicall/common_widgets/assets_picker/widget/asset_picker.dart';
 import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
+import 'package:Medicall/common_widgets/sign_in_button.dart';
 import 'package:Medicall/models/consult_model.dart';
-import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/continue_button.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/swipe_gesture_recognizer.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/steps_view_models/video_to_patient_step_state.dart';
 import 'package:Medicall/screens/shared/video_player/video_player.dart';
@@ -58,23 +58,23 @@ class _VideoToPatientStepState extends State<VideoToPatientStep> {
 
     widget.model.updateWith(isLoading: false);
     AppUtil().showFlushBar("Successfully saved video note!", context);
+  }
 
-    if (widget.model.visitReviewViewModel.consult.state ==
-        ConsultStatus.Completed) {
-      bool didPressYes = await PlatformAlertDialog(
-        title: "Review Completed",
-        content:
-            "You've completed all the required steps for this visit review. Would you like to go back to the dashboard where you can officially sign this visit?",
-        defaultActionText: "Yes",
-        cancelActionText: "No, stay here",
-      ).show(context);
+  Future<void> _showSignReviewDialog(BuildContext context) async {
+    final didPressYes = await PlatformAlertDialog(
+      title: "Sign Review?",
+      content:
+          "Are you sure you would you like to sign this review. Once you officially sign it, any additional changes will be made as addendums to the original review.",
+      defaultActionText: "Yes, sign",
+      cancelActionText: "No, edit ",
+    ).show(context);
 
-      if (didPressYes) {
-        Navigator.of(context).pop();
-        return false;
-      } else {
-        return false;
-      }
+    if (didPressYes == true) {
+      widget.model.visitReviewViewModel.consult.state = ConsultStatus.Signed;
+      await widget.model.visitReviewViewModel.firestoreDatabase.saveConsult(
+          consultId: widget.model.visitReviewViewModel.consult.uid,
+          consult: widget.model.visitReviewViewModel.consult);
+      Navigator.of(context).pop();
     }
   }
 
@@ -186,17 +186,24 @@ class _VideoToPatientStepState extends State<VideoToPatientStep> {
               SizedBox(height: 12),
             ],
             Expanded(
-              child: ContinueButton(
-                title: "Save and Continue",
-                width: width,
-                onTap: this.widget.model.minimumRequiredFieldsFilledOut &&
-                        this.widget.model.mediaInfo != null
-                    ? () async {
-                        await _submit();
-                      }
-                    : null,
+              child: Align(
+                alignment: FractionalOffset.bottomCenter,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
+                  child: SignInButton(
+                    text: "Officially Sign Visit",
+                    height: 8,
+                    color: Colors.deepOrangeAccent,
+                    textColor: Colors.white,
+                    onPressed: widget.model.visitReviewViewModel.completedSteps
+                                .length >=
+                            6
+                        ? () async => await _showSignReviewDialog(context)
+                        : null,
+                  ),
+                ),
               ),
-            ),
+            )
           ],
         ),
       );
@@ -304,6 +311,8 @@ class _VideoToPatientStepState extends State<VideoToPatientStep> {
         isSubmitted: false,
         isLoading: false,
       );
+
+      await _submit();
     }
     AssetPicker.unregisterObserve();
   }
