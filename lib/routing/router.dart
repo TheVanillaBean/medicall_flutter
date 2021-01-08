@@ -33,6 +33,7 @@ import 'package:Medicall/screens/patient_flow/symptoms_list/cosmetic_symptoms.da
 import 'package:Medicall/screens/patient_flow/symptoms_list/symptom_detail.dart';
 import 'package:Medicall/screens/patient_flow/symptoms_list/symptoms.dart';
 import 'package:Medicall/screens/patient_flow/update_medical_history/view_medical_history.dart';
+import 'package:Medicall/screens/patient_flow/verify_insurance/verify_insurance.dart';
 import 'package:Medicall/screens/patient_flow/video_notes_from_provider/video_notes_from_provider.dart';
 import 'package:Medicall/screens/patient_flow/visit_confirmed/confirm_consult.dart';
 import 'package:Medicall/screens/patient_flow/visit_details/card_select.dart';
@@ -158,6 +159,7 @@ class Routes {
   static const videoPlayer = '/video-player';
   static const emailAssistant = '/email-assistant';
   static const closeChat = '/close-chat';
+  static const verifyInsurance = '/verify-insurance';
 }
 
 /// The word 'consult' and 'visit' are used separately, but mean the exact
@@ -363,6 +365,14 @@ class Router {
         final Symptom symptom = mapArgs['symptom'];
         return MaterialPageRoute<dynamic>(
           builder: (context) => ZipCodeVerifyScreen.create(context, symptom),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case Routes.verifyInsurance:
+        final Map<String, dynamic> mapArgs = args;
+        final Symptom symptom = mapArgs['symptom'];
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => VerifyInsurance.create(context, symptom),
           settings: settings,
           fullscreenDialog: true,
         );

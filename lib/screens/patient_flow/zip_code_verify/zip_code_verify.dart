@@ -4,7 +4,7 @@ import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
-import 'package:Medicall/screens/patient_flow/select_provider/select_provider.dart';
+import 'package:Medicall/screens/patient_flow/verify_insurance/verify_insurance.dart';
 import 'package:Medicall/screens/patient_flow/zip_code_verify/zip_code_view_model.dart';
 import 'package:Medicall/screens/shared/welcome.dart';
 import 'package:Medicall/services/auth.dart';
@@ -84,11 +84,16 @@ class _ZipCodeVerifyScreenState extends State<ZipCodeVerifyScreen> {
       model.tempUserProvider.setUser(userType: USER_TYPE.PATIENT);
       model.tempUserProvider.user.mailingZipCode = model.zipcode;
       model.tempUserProvider.user.mailingState = state;
-      SelectProviderScreen.show(
+      VerifyInsurance.show(
         context: context,
+        pushReplaceNamed: false,
         symptom: symptom,
-        state: state,
       );
+      // SelectProviderScreen.show(
+      //   context: context,
+      //   symptom: symptom,
+      //   state: state,
+      // );
     } else {
       model.updateWith(showEmailField: true);
     }

@@ -88,7 +88,7 @@ class Consult {
     @required this.symptom,
     this.uid,
     this.patientId,
-    this.price = 49,
+    this.price,
     this.date,
     this.state,
     this.questions = const <Question>[],
