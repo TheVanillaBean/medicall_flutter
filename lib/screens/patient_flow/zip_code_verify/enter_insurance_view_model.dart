@@ -1,4 +1,5 @@
 import 'package:Medicall/models/symptom_model.dart';
+import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/non_auth_firestore_db.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
@@ -12,12 +13,12 @@ class EnterInsuranceViewModel with EmailAndPasswordValidators, ChangeNotifier {
   final Symptom symptom;
   final TempUserProvider tempUserProvider;
 
-  String state;
   bool showEmailField;
   String email;
   String zipcode;
   bool isLoading;
 
+  bool showInsuranceWidgets;
   String insurance;
   int selectedItemIndex;
   List<String> insuranceOptions = [
@@ -39,9 +40,9 @@ class EnterInsuranceViewModel with EmailAndPasswordValidators, ChangeNotifier {
     this.zipcode = '',
     this.isLoading = false,
     this.waiverCheck = false,
-    this.state = '',
     this.insurance = '',
     this.selectedItemIndex = 0,
+    this.showInsuranceWidgets = false,
   });
 
   String get emailErrorText {
@@ -49,18 +50,10 @@ class EnterInsuranceViewModel with EmailAndPasswordValidators, ChangeNotifier {
     return showErrorText ? invalidEmailErrorText : "";
   }
 
-  bool get showInsuranceWidgets {
-    return state.length > 0 && !isLoading;
-  }
-
-  bool get showInsuranceWaiver {
-    return this.state.length > 0 && this.insurance.length > 0 ?? !isLoading;
-  }
-
   void updateEmail(String email) => updateWith(email: email);
   void updateZipcode(String zipcode) => updateWith(zipcode: zipcode);
 
-  Future<void> submit() async {
+  Future<void> addEmailToWaitList() async {
     updateWith(isLoading: true);
 
     try {
@@ -69,8 +62,8 @@ class EnterInsuranceViewModel with EmailAndPasswordValidators, ChangeNotifier {
         throw PlatformException(
             code: 'ERROR', message: 'Please enter a valid zipcode');
       }
-      await this.areProvidersInArea(zipcode);
-      if (this.state != null) {
+      String alreadyInArea = await this.areProvidersInArea(zipcode);
+      if (alreadyInArea != null) {
         throw PlatformException(
             code: 'ERROR', message: 'We are already in your area :)');
       }
@@ -87,6 +80,24 @@ class EnterInsuranceViewModel with EmailAndPasswordValidators, ChangeNotifier {
       updateWith(isLoading: false);
       rethrow;
     }
+  }
+
+  Future<String> validateZipCodeAndInsurance() async {
+    String state = await this.areProvidersInArea(this.zipcode);
+    if (state != null) {
+      if (showInsuranceWidgets && waiverCheck) {
+        this.tempUserProvider.setUser(userType: USER_TYPE.PATIENT);
+        this.tempUserProvider.user.mailingZipCode = this.zipcode;
+        this.tempUserProvider.user.mailingState = state;
+        return state;
+      } else {
+        throw "You must agree to the waiver before proceeding";
+      }
+      this.updateWith(showEmailField: false);
+    } else {
+      this.updateWith(showEmailField: true);
+    }
+    return null;
   }
 
   String getState() {
@@ -210,15 +221,19 @@ class EnterInsuranceViewModel with EmailAndPasswordValidators, ChangeNotifier {
     return st;
   }
 
-  Future<void> areProvidersInArea(String zipCode) async {
+  Future<String> areProvidersInArea(String zipCode) async {
     List<String> states = await nonAuthDatabase.getAllProviderStates();
 
     for (var state in states) {
       String enteredState = getState();
       if (state == enteredState) {
-        this.updateWith(state: state);
+        updateWith(showInsuranceWidgets: true);
+        return state;
       }
     }
+
+    updateWith(showInsuranceWidgets: false);
+    return null;
   }
 
   void updateWith({
@@ -226,9 +241,10 @@ class EnterInsuranceViewModel with EmailAndPasswordValidators, ChangeNotifier {
     String email,
     String zipcode,
     bool isLoading,
+    bool showInsuranceWidgets,
     int selectedItemIndex,
     bool waiverCheck,
-    String state,
+    bool zipCodeFieldEnabled,
   }) {
     this.showEmailField = showEmailField ?? this.showEmailField;
     this.email = email ?? this.email;
@@ -236,8 +252,9 @@ class EnterInsuranceViewModel with EmailAndPasswordValidators, ChangeNotifier {
     this.isLoading = isLoading ?? this.isLoading;
     this.selectedItemIndex = selectedItemIndex ?? this.selectedItemIndex;
     this.insurance = this.insuranceOptions[this.selectedItemIndex];
+    this.showInsuranceWidgets =
+        showInsuranceWidgets ?? this.showInsuranceWidgets;
     this.waiverCheck = waiverCheck ?? this.waiverCheck;
-    this.state = state ?? this.state;
     notifyListeners();
   }
 }

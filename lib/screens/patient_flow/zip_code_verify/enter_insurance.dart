@@ -4,6 +4,7 @@ import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
+import 'package:Medicall/screens/patient_flow/select_provider/select_provider.dart';
 import 'package:Medicall/screens/patient_flow/zip_code_verify/enter_insurance_view_model.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reclassify_visit/reclassify_visit.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/direct_select.dart';
@@ -71,7 +72,7 @@ class _EnterInsuranceScreenState extends State<EnterInsuranceScreen> {
 
   Future<void> _addEmailToWaitList() async {
     try {
-      await model.submit();
+      await model.addEmailToWaitList();
       AppUtil().showFlushBar(
           "You have been added to our waitlist. We will notify you once we are in your area!",
           context);
@@ -81,19 +82,19 @@ class _EnterInsuranceScreenState extends State<EnterInsuranceScreen> {
   }
 
   Future<void> _submit() async {
-    await model.areProvidersInArea(model.zipcode);
-    // if (state != null) {
-    //   model.tempUserProvider.setUser(userType: USER_TYPE.PATIENT);
-    //   model.tempUserProvider.user.mailingZipCode = model.zipcode;
-    //   model.tempUserProvider.user.mailingState = state;
-    //   // SelectProviderScreen.show(
-    //   //   context: context,
-    //   //   symptom: symptom,
-    //   //   state: state,
-    //   // );
-    // } else {
-    //   model.updateWith(showEmailField: true);
-    // }
+    try {
+      String state = await model.validateZipCodeAndInsurance();
+
+      if (state != null) {
+        SelectProviderScreen.show(
+          context: context,
+          symptom: symptom,
+          state: state,
+        );
+      }
+    } catch (e) {
+      AppUtil().showFlushBar(e, context);
+    }
   }
 
   @override
@@ -126,7 +127,7 @@ class _EnterInsuranceScreenState extends State<EnterInsuranceScreen> {
         child: SingleChildScrollView(
           child: Container(
             color: Colors.white,
-            padding: EdgeInsets.symmetric(vertical: 40, horizontal: 40),
+            padding: EdgeInsets.symmetric(vertical: 24, horizontal: 24),
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: () {
@@ -166,7 +167,7 @@ class _EnterInsuranceScreenState extends State<EnterInsuranceScreen> {
       ),
       _buildVerifyButton(),
       if (model.showEmailField) ..._buildNotifyTextField(),
-      if (model.showInsuranceWaiver) _buildInsuranceWaiverCheckbox(),
+      if (model.showInsuranceWidgets) _buildInsuranceWaiverCheckbox(context),
     ];
   }
 
@@ -257,6 +258,9 @@ class _EnterInsuranceScreenState extends State<EnterInsuranceScreen> {
           style: Theme.of(context).textTheme.bodyText2,
         ),
       ),
+      SizedBox(
+        height: 8,
+      ),
       DirectSelect(
         itemExtent: 60.0,
         selectedIndex: model.selectedItemIndex,
@@ -271,7 +275,7 @@ class _EnterInsuranceScreenState extends State<EnterInsuranceScreen> {
     ];
   }
 
-  Widget _buildInsuranceWaiverCheckbox() {
+  Widget _buildInsuranceWaiverCheckbox(BuildContext context) {
     return CheckboxListTile(
       title: Title(
         color: Colors.blue,
@@ -292,7 +296,7 @@ class _EnterInsuranceScreenState extends State<EnterInsuranceScreen> {
       value: model.waiverCheck,
       onChanged: (waiverCheck) => model.updateWith(waiverCheck: waiverCheck),
       controlAffinity: ListTileControlAffinity.leading,
-      activeColor: Colors.blue,
+      activeColor: Theme.of(context).colorScheme.primary,
     );
   }
 
