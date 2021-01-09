@@ -92,13 +92,9 @@ class EnterInsuranceViewModel with EmailAndPasswordValidators, ChangeNotifier {
         this.tempUserProvider.user.mailingState = state;
         return state;
       }
-      // } else {
-      //   this.updateWith(showEmailField: false);
-      //   throw "You must agree to the waiver before proceeding";
-      // }
       this.updateWith(showEmailField: false);
     } else {
-      this.updateWith(showEmailField: true);
+      this.updateWith(showEmailField: true, showInsuranceWidgets: false);
     }
     return null;
   }
