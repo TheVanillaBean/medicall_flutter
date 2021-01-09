@@ -6,18 +6,30 @@ import 'package:Medicall/util/validators.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 
-class ZipCodeViewModel with EmailAndPasswordValidators, ChangeNotifier {
+class EnterInsuranceViewModel with EmailAndPasswordValidators, ChangeNotifier {
   final AuthBase auth;
   final NonAuthDatabase nonAuthDatabase;
   final Symptom symptom;
   final TempUserProvider tempUserProvider;
 
+  String state;
   bool showEmailField;
   String email;
   String zipcode;
   bool isLoading;
 
-  ZipCodeViewModel({
+  String insurance;
+  int selectedItemIndex;
+  List<String> insuranceOptions = [
+    'Proceed without insurance',
+    'Medicare',
+    'BlueCross',
+    'Aetna'
+  ];
+
+  bool waiverCheck;
+
+  EnterInsuranceViewModel({
     @required this.nonAuthDatabase,
     @required this.symptom,
     @required this.auth,
@@ -26,11 +38,23 @@ class ZipCodeViewModel with EmailAndPasswordValidators, ChangeNotifier {
     this.email = '',
     this.zipcode = '',
     this.isLoading = false,
+    this.waiverCheck = false,
+    this.state = '',
+    this.insurance = '',
+    this.selectedItemIndex = 0,
   });
 
   String get emailErrorText {
     bool showErrorText = isLoading && !emailValidator.isValid(email);
     return showErrorText ? invalidEmailErrorText : "";
+  }
+
+  bool get showInsuranceWidgets {
+    return state.length > 0 && !isLoading;
+  }
+
+  bool get showInsuranceWaiver {
+    return this.state.length > 0 && this.insurance.length > 0 ?? !isLoading;
   }
 
   void updateEmail(String email) => updateWith(email: email);
@@ -45,8 +69,8 @@ class ZipCodeViewModel with EmailAndPasswordValidators, ChangeNotifier {
         throw PlatformException(
             code: 'ERROR', message: 'Please enter a valid zipcode');
       }
-      String alreadyInArea = await this.areProvidersInArea(zipcode);
-      if (alreadyInArea != null) {
+      await this.areProvidersInArea(zipcode);
+      if (this.state != null) {
         throw PlatformException(
             code: 'ERROR', message: 'We are already in your area :)');
       }
@@ -186,17 +210,15 @@ class ZipCodeViewModel with EmailAndPasswordValidators, ChangeNotifier {
     return st;
   }
 
-  Future<String> areProvidersInArea(String zipCode) async {
+  Future<void> areProvidersInArea(String zipCode) async {
     List<String> states = await nonAuthDatabase.getAllProviderStates();
 
     for (var state in states) {
       String enteredState = getState();
       if (state == enteredState) {
-        return state;
+        this.updateWith(state: state);
       }
     }
-
-    return null;
   }
 
   void updateWith({
@@ -204,11 +226,18 @@ class ZipCodeViewModel with EmailAndPasswordValidators, ChangeNotifier {
     String email,
     String zipcode,
     bool isLoading,
+    int selectedItemIndex,
+    bool waiverCheck,
+    String state,
   }) {
     this.showEmailField = showEmailField ?? this.showEmailField;
     this.email = email ?? this.email;
     this.zipcode = zipcode ?? this.zipcode;
     this.isLoading = isLoading ?? this.isLoading;
+    this.selectedItemIndex = selectedItemIndex ?? this.selectedItemIndex;
+    this.insurance = this.insuranceOptions[this.selectedItemIndex];
+    this.waiverCheck = waiverCheck ?? this.waiverCheck;
+    this.state = state ?? this.state;
     notifyListeners();
   }
 }

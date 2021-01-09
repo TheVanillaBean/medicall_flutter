@@ -45,7 +45,7 @@ import 'package:Medicall/screens/patient_flow/visit_details/visit_non_prescripti
 import 'package:Medicall/screens/patient_flow/visit_details/visit_prescriptions.dart';
 import 'package:Medicall/screens/patient_flow/visit_details/visit_treatment_recommendations.dart';
 import 'package:Medicall/screens/patient_flow/visit_payment/make_payment.dart';
-import 'package:Medicall/screens/patient_flow/zip_code_verify/zip_code_verify.dart';
+import 'package:Medicall/screens/patient_flow/zip_code_verify/enter_insurance.dart';
 import 'package:Medicall/screens/provider_flow/account/provider_account.dart';
 import 'package:Medicall/screens/provider_flow/account/select_services/select_services.dart';
 import 'package:Medicall/screens/provider_flow/account/stripe_connect/stripe_connect.dart';
@@ -364,7 +364,7 @@ class Router {
         final Map<String, dynamic> mapArgs = args;
         final Symptom symptom = mapArgs['symptom'];
         return MaterialPageRoute<dynamic>(
-          builder: (context) => ZipCodeVerifyScreen.create(context, symptom),
+          builder: (context) => EnterInsuranceScreen.create(context, symptom),
           settings: settings,
           fullscreenDialog: true,
         );

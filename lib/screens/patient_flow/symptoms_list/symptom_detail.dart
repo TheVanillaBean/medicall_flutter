@@ -3,7 +3,7 @@ import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/patient_flow/verify_insurance/verify_insurance.dart';
-import 'package:Medicall/screens/patient_flow/zip_code_verify/zip_code_verify.dart';
+import 'package:Medicall/screens/patient_flow/zip_code_verify/enter_insurance.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -149,7 +149,7 @@ class SymptomBody extends StatelessWidget {
                 //   state: medicallUser.mailingState,
                 // );
               } else {
-                ZipCodeVerifyScreen.show(context: context, symptom: symptom);
+                EnterInsuranceScreen.show(context: context, symptom: symptom);
               }
             },
           ),

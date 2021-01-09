@@ -4,8 +4,9 @@ import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
-import 'package:Medicall/screens/patient_flow/verify_insurance/verify_insurance.dart';
-import 'package:Medicall/screens/patient_flow/zip_code_verify/zip_code_view_model.dart';
+import 'package:Medicall/screens/patient_flow/zip_code_verify/enter_insurance_view_model.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reclassify_visit/reclassify_visit.dart';
+import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/direct_select.dart';
 import 'package:Medicall/screens/shared/welcome.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/non_auth_firestore_db.dart';
@@ -16,12 +17,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:provider/provider.dart';
+import 'package:super_rich_text/super_rich_text.dart';
 
-class ZipCodeVerifyScreen extends StatefulWidget {
-  final ZipCodeViewModel model;
+class EnterInsuranceScreen extends StatefulWidget {
+  final EnterInsuranceViewModel model;
   final Symptom symptom;
 
-  const ZipCodeVerifyScreen({@required this.model, @required this.symptom});
+  const EnterInsuranceScreen({@required this.model, @required this.symptom});
 
   static Widget create(BuildContext context, Symptom symptom) {
     final NonAuthDatabase nonAuthDatabase =
@@ -29,15 +31,15 @@ class ZipCodeVerifyScreen extends StatefulWidget {
     final AuthBase auth = Provider.of<AuthBase>(context);
     final TempUserProvider tempUserProvider =
         Provider.of<TempUserProvider>(context, listen: false);
-    return ChangeNotifierProvider<ZipCodeViewModel>(
-      create: (context) => ZipCodeViewModel(
+    return ChangeNotifierProvider<EnterInsuranceViewModel>(
+      create: (context) => EnterInsuranceViewModel(
         nonAuthDatabase: nonAuthDatabase,
         symptom: symptom,
         auth: auth,
         tempUserProvider: tempUserProvider,
       ),
-      child: Consumer<ZipCodeViewModel>(
-        builder: (_, model, __) => ZipCodeVerifyScreen(
+      child: Consumer<EnterInsuranceViewModel>(
+        builder: (_, model, __) => EnterInsuranceScreen(
           model: model,
           symptom: symptom,
         ),
@@ -58,11 +60,11 @@ class ZipCodeVerifyScreen extends StatefulWidget {
   }
 
   @override
-  _ZipCodeVerifyScreenState createState() => _ZipCodeVerifyScreenState();
+  _EnterInsuranceScreenState createState() => _EnterInsuranceScreenState();
 }
 
-class _ZipCodeVerifyScreenState extends State<ZipCodeVerifyScreen> {
-  ZipCodeViewModel get model => widget.model;
+class _EnterInsuranceScreenState extends State<EnterInsuranceScreen> {
+  EnterInsuranceViewModel get model => widget.model;
   Symptom get symptom => widget.symptom;
 
   final GlobalKey<FormBuilderState> formKey = GlobalKey<FormBuilderState>();
@@ -79,24 +81,19 @@ class _ZipCodeVerifyScreenState extends State<ZipCodeVerifyScreen> {
   }
 
   Future<void> _submit() async {
-    String state = await model.areProvidersInArea(model.zipcode);
-    if (state != null) {
-      model.tempUserProvider.setUser(userType: USER_TYPE.PATIENT);
-      model.tempUserProvider.user.mailingZipCode = model.zipcode;
-      model.tempUserProvider.user.mailingState = state;
-      VerifyInsurance.show(
-        context: context,
-        pushReplaceNamed: false,
-        symptom: symptom,
-      );
-      // SelectProviderScreen.show(
-      //   context: context,
-      //   symptom: symptom,
-      //   state: state,
-      // );
-    } else {
-      model.updateWith(showEmailField: true);
-    }
+    await model.areProvidersInArea(model.zipcode);
+    // if (state != null) {
+    //   model.tempUserProvider.setUser(userType: USER_TYPE.PATIENT);
+    //   model.tempUserProvider.user.mailingZipCode = model.zipcode;
+    //   model.tempUserProvider.user.mailingState = state;
+    //   // SelectProviderScreen.show(
+    //   //   context: context,
+    //   //   symptom: symptom,
+    //   //   state: state,
+    //   // );
+    // } else {
+    //   model.updateWith(showEmailField: true);
+    // }
   }
 
   @override
@@ -108,7 +105,7 @@ class _ZipCodeVerifyScreenState extends State<ZipCodeVerifyScreen> {
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
           type: AppBarType.Back,
-          title: "Checking your area.",
+          title: "Your Insurance",
           theme: Theme.of(context),
           actions: [
             IconButton(
@@ -160,18 +157,20 @@ class _ZipCodeVerifyScreenState extends State<ZipCodeVerifyScreen> {
           SizedBox(
             height: 20,
           ),
-          buildZipCodeForm(),
+          _buildZipCodeForm(),
+          if (model.showInsuranceWidgets) ..._buildInsuranceWidgets()
         ],
       ),
       SizedBox(
         height: 24,
       ),
-      buildVerifyButton(),
-      if (model.showEmailField) ...buildNotifyTextField(),
+      _buildVerifyButton(),
+      if (model.showEmailField) ..._buildNotifyTextField(),
+      if (model.showInsuranceWaiver) _buildInsuranceWaiverCheckbox(),
     ];
   }
 
-  Widget buildZipCodeForm() {
+  Widget _buildZipCodeForm() {
     return TextField(
       minLines: 1,
       maxLength: 5,
@@ -188,14 +187,14 @@ class _ZipCodeVerifyScreenState extends State<ZipCodeVerifyScreen> {
     );
   }
 
-  Widget buildVerifyButton() {
+  Widget _buildVerifyButton() {
     return ReusableRaisedButton(
       title: "Continue",
       onPressed: _submit,
     );
   }
 
-  List<Widget> buildNotifyTextField() {
+  List<Widget> _buildNotifyTextField() {
     return [
       SizedBox(height: 32),
       Center(
@@ -240,5 +239,68 @@ class _ZipCodeVerifyScreenState extends State<ZipCodeVerifyScreen> {
         onPressed: _addEmailToWaitList,
       ),
     ];
+  }
+
+  List<Widget> _buildInsuranceWidgets() {
+    return [
+      SizedBox(height: 32),
+      Text(
+        'Please enter your insurance',
+        style: Theme.of(context).textTheme.headline5,
+      ),
+      SizedBox(
+        height: 8,
+      ),
+      Center(
+        child: Text(
+          "This helps us show you the doctors covered by your plan.",
+          style: Theme.of(context).textTheme.bodyText2,
+        ),
+      ),
+      DirectSelect(
+        itemExtent: 60.0,
+        selectedIndex: model.selectedItemIndex,
+        child: CustomSelectionItem(
+          isForList: false,
+          title: model.insurance,
+        ),
+        onSelectedItemChanged: (index) =>
+            model.updateWith(selectedItemIndex: index),
+        items: _buildInsuranceListItem(),
+      ),
+    ];
+  }
+
+  Widget _buildInsuranceWaiverCheckbox() {
+    return CheckboxListTile(
+      title: Title(
+        color: Colors.blue,
+        child: SuperRichText(
+          text: 'I agree to Medicall’s <waiver>Insurance Waiver<waiver>.',
+          style: Theme.of(context).textTheme.bodyText2,
+          othersMarkers: [
+            MarkerText.withSameFunction(
+              marker: '<waiver>',
+              function: () => Navigator.of(context).pushNamed('/terms'),
+              onError: (msg) => print('$msg'),
+              style: TextStyle(
+                  color: Colors.blue, decoration: TextDecoration.underline),
+            ),
+          ],
+        ),
+      ),
+      value: model.waiverCheck,
+      onChanged: (waiverCheck) => model.updateWith(waiverCheck: waiverCheck),
+      controlAffinity: ListTileControlAffinity.leading,
+      activeColor: Colors.blue,
+    );
+  }
+
+  List<Widget> _buildInsuranceListItem() {
+    return model.insuranceOptions
+        .map((val) => CustomSelectionItem(
+              title: val,
+            ))
+        .toList();
   }
 }
