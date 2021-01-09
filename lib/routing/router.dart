@@ -21,6 +21,7 @@ import 'package:Medicall/screens/patient_flow/account/update_patient_info/update
 import 'package:Medicall/screens/patient_flow/account/update_photo_id.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/patient_flow/drivers_license/photo_id.dart';
+import 'package:Medicall/screens/patient_flow/enter_insurance/enter_insurance.dart';
 import 'package:Medicall/screens/patient_flow/patient_prescriptions/patient_prescriptions.dart';
 import 'package:Medicall/screens/patient_flow/personal_info/personal_info.dart';
 import 'package:Medicall/screens/patient_flow/previous_visits/previous_visits.dart';
@@ -45,7 +46,6 @@ import 'package:Medicall/screens/patient_flow/visit_details/visit_non_prescripti
 import 'package:Medicall/screens/patient_flow/visit_details/visit_prescriptions.dart';
 import 'package:Medicall/screens/patient_flow/visit_details/visit_treatment_recommendations.dart';
 import 'package:Medicall/screens/patient_flow/visit_payment/make_payment.dart';
-import 'package:Medicall/screens/patient_flow/zip_code_verify/enter_insurance.dart';
 import 'package:Medicall/screens/provider_flow/account/provider_account.dart';
 import 'package:Medicall/screens/provider_flow/account/select_services/select_services.dart';
 import 'package:Medicall/screens/provider_flow/account/stripe_connect/stripe_connect.dart';

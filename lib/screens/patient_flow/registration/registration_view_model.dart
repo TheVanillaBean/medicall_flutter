@@ -73,7 +73,7 @@ class RegistrationViewModel with EmailAndPasswordValidators, ChangeNotifier {
     updateWith(submitted: true);
     if (!checkValue) {
       this.verificationStatus.updateStatus(
-          "You have to agree to the Terms and Conditions, as well as the Privacy policy before signing in");
+          "You have to agree to the Terms and Conditions, as well as the Privacy Policy before signing in");
       return;
     }
 
