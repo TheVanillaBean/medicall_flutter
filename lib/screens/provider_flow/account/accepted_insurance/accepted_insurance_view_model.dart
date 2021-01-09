@@ -3,7 +3,7 @@ import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 
-class SupportedInsuranceViewModel with ChangeNotifier {
+class AcceptedInsuranceViewModel with ChangeNotifier {
   final FirestoreDatabase firestoreDatabase;
   final UserProvider userProvider;
 
@@ -18,7 +18,7 @@ class SupportedInsuranceViewModel with ChangeNotifier {
 
   List<String> acceptedInsurances = [];
 
-  SupportedInsuranceViewModel({
+  AcceptedInsuranceViewModel({
     @required this.firestoreDatabase,
     @required this.userProvider,
     this.isLoading = false,
