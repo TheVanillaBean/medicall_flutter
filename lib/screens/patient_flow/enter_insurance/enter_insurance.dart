@@ -1,6 +1,7 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/symptom_model.dart';
+import 'package:Medicall/models/user/patient_user_model.dart';
 import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
@@ -86,6 +87,8 @@ class _EnterInsuranceScreenState extends State<EnterInsuranceScreen> {
       String state = await model.validateZipCodeAndInsurance();
 
       if (state != null) {
+        (model.tempUserProvider.user as PatientUser).insurance =
+            model.insurance;
         SelectProviderScreen.show(
           context: context,
           symptom: symptom,

@@ -15,7 +15,10 @@ abstract class NonAuthDatabase {
   Future<List<String>> symptomsListByName();
   Stream<List<Symptom>> symptomsStream();
   Future<List<String>> getAllProviderStates();
-  Stream<List<ProviderUser>> getAllProviders({String state, String symptom});
+  Stream<List<ProviderUser>> getAllProvidersWithInsurance(
+      {String state, String symptom, String insurance});
+  Stream<List<ProviderUser>> getAllProvidersWithoutInsurance(
+      {String state, String symptom, String insurance});
   Stream<MedicallUser> providerStream({String uid});
   Future<String> getSymptomPhotoURL({String symptom});
   Future<void> addEmailToWaitList({String email, String state});
@@ -55,6 +58,7 @@ class NonAuthFirestoreDB implements NonAuthDatabase {
         path: FirestorePath.symptoms(),
         builder: (data, documentId) => Symptom.fromMap(data, documentId),
       );
+
   @override
   Future<List<String>> getAllProviderStates() => _service
       .collectionStream(
@@ -68,7 +72,8 @@ class NonAuthFirestoreDB implements NonAuthDatabase {
       .first;
 
   @override
-  Stream<List<ProviderUser>> getAllProviders({String state, String symptom}) =>
+  Stream<List<ProviderUser>> getAllProvidersWithInsurance(
+          {String state, String symptom, String insurance}) =>
       _service.collectionStream(
         path: FirestorePath.users(),
         queryBuilder: (query) => query
@@ -78,7 +83,26 @@ class NonAuthFirestoreDB implements NonAuthDatabase {
             )
             .where("stripe_connect_authorized", isEqualTo: true)
             .where("mailing_state", isEqualTo: state)
-            .where("selected_services", arrayContains: symptom),
+            .where("selected_services", arrayContains: symptom)
+            .where("accepted_insurances", arrayContains: insurance),
+        builder: (data, documentId) => MedicallUser.fromMap(
+            userType: USER_TYPE.PROVIDER, data: data, uid: documentId),
+      );
+
+  @override
+  Stream<List<ProviderUser>> getAllProvidersWithoutInsurance(
+          {String state, String symptom, String insurance}) =>
+      _service.collectionStream(
+        path: FirestorePath.users(),
+        queryBuilder: (query) => query
+            .where(
+              'type',
+              isEqualTo: EnumToString.convertToString(USER_TYPE.PROVIDER),
+            )
+            .where("stripe_connect_authorized", isEqualTo: true)
+            .where("mailing_state", isEqualTo: state)
+            .where("selected_services", arrayContains: symptom)
+            .where("accepted_insurances", whereNotIn: [insurance]),
         builder: (data, documentId) => MedicallUser.fromMap(
             userType: USER_TYPE.PROVIDER, data: data, uid: documentId),
       );
