@@ -6,6 +6,7 @@ import 'package:Medicall/components/drawer_menu/drawer_menu.dart';
 import 'package:Medicall/models/user/provider_user_model.dart';
 import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/provider_flow/account/accepted_insurances/accepted_insurances.dart';
 import 'package:Medicall/screens/provider_flow/account/select_services/select_services.dart';
 import 'package:Medicall/screens/provider_flow/account/update_provider_info/update_provider_info_form.dart';
 import 'package:Medicall/screens/provider_flow/account/update_provider_info/update_provider_info_screen.dart';
@@ -181,6 +182,8 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
             Divider(height: 0.5, thickness: 1),
             _buildSelectedServicesCard(medicallUser),
             Divider(height: 0.5, thickness: 1),
+            _buildAcceptedInsurancesCard(medicallUser),
+            Divider(height: 0.5, thickness: 1),
             _buildProfessionalTitleCard(medicallUser),
             Divider(height: 0.5, thickness: 1),
             _buildMedicalLicenseCard(medicallUser),
@@ -279,6 +282,21 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
         icon: Icon(Icons.create, size: 20),
         onPressed: () {
           SelectServices.show(context: context, model: model);
+        },
+      ),
+    );
+  }
+
+  Widget _buildAcceptedInsurancesCard(MedicallUser medicallUser) {
+    String formatted =
+        (medicallUser as ProviderUser).acceptedInsurances.join(', ');
+    return ReusableAccountCard(
+      leading: 'Accepted \nInsurances:',
+      title: '$formatted',
+      trailing: IconButton(
+        icon: Icon(Icons.create, size: 20),
+        onPressed: () {
+          AcceptedInsurances.show(context: context, model: model);
         },
       ),
     );

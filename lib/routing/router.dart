@@ -46,7 +46,7 @@ import 'package:Medicall/screens/patient_flow/visit_details/visit_prescriptions.
 import 'package:Medicall/screens/patient_flow/visit_details/visit_treatment_recommendations.dart';
 import 'package:Medicall/screens/patient_flow/visit_payment/make_payment.dart';
 import 'package:Medicall/screens/patient_flow/zip_code_verify/enter_insurance.dart';
-import 'package:Medicall/screens/provider_flow/account/accepted_insurance/accepted_insurance.dart';
+import 'package:Medicall/screens/provider_flow/account/accepted_insurances/accepted_insurances.dart';
 import 'package:Medicall/screens/provider_flow/account/provider_account.dart';
 import 'package:Medicall/screens/provider_flow/account/select_services/select_services.dart';
 import 'package:Medicall/screens/provider_flow/account/stripe_connect/stripe_connect.dart';
@@ -161,7 +161,7 @@ class Routes {
   static const emailAssistant = '/email-assistant';
   static const closeChat = '/close-chat';
   static const verifyInsurance = '/verify-insurance';
-  static const acceptedInsurance = '/accepted-insurance';
+  static const acceptedInsurances = '/accepted-insurances';
 }
 
 /// The word 'consult' and 'visit' are used separately, but mean the exact
@@ -658,11 +658,11 @@ class Router {
           fullscreenDialog: true,
         );
 
-      case Routes.acceptedInsurance:
+      case Routes.acceptedInsurances:
         final Map<String, dynamic> mapArgs = args;
         final UpdateProviderInfoViewModel model = mapArgs['model'];
         return MaterialPageRoute<dynamic>(
-          builder: (context) => AcceptedInsurance.create(context, model),
+          builder: (context) => AcceptedInsurances.create(context, model),
           settings: settings,
           fullscreenDialog: true,
         );
