@@ -90,6 +90,7 @@ class _EnterInsuranceScreenState extends State<EnterInsuranceScreen> {
           context: context,
           symptom: symptom,
           state: state,
+          insurance: model.insurance,
         );
       }
     } catch (e) {

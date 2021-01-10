@@ -19,19 +19,26 @@ import 'package:provider/provider.dart';
 class SelectProviderScreen extends StatelessWidget {
   final Symptom symptom;
   final String state;
+  final String insurance;
 
-  const SelectProviderScreen({@required this.symptom, @required this.state});
+  const SelectProviderScreen({
+    @required this.symptom,
+    @required this.state,
+    @required this.insurance,
+  });
 
   static Future<void> show({
     BuildContext context,
     Symptom symptom,
     String state,
+    String insurance,
   }) async {
     await Navigator.of(context).pushNamed(
       Routes.selectProvider,
       arguments: {
         'symptom': symptom,
         'state': state,
+        'insurance': insurance,
       },
     );
   }
