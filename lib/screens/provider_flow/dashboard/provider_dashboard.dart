@@ -7,6 +7,7 @@ import 'package:Medicall/components/drawer_menu/drawer_menu.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/user/provider_user_model.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/provider_flow/account/accepted_insurances/accepted_insurances.dart';
 import 'package:Medicall/screens/provider_flow/account/stripe_connect/stripe_connect.dart';
 import 'package:Medicall/screens/provider_flow/dashboard/provider_dashboard_list_item.dart';
 import 'package:Medicall/screens/provider_flow/dashboard/provider_dashboard_view_model.dart';
@@ -120,6 +121,29 @@ class ProviderDashboardScreen extends StatelessWidget {
         height: height * 0.1,
       ),
     ];
+  }
+
+  Widget _buildAcceptedInsurancesHeader() {
+    return StreamBuilder<Object>(
+        stream: null,
+        builder: (context, snapshot) {
+          return Column(
+            children: [
+              Text(
+                'You have not selected your accepted insurances yet',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.headline6,
+              ),
+              SizedBox(height: 24),
+              ReusableRaisedButton(
+                title: 'Select my insurances',
+                onPressed: () {
+                  AcceptedInsurances.show(context: context);
+                },
+              )
+            ],
+          );
+        });
   }
 
   Widget _buildStripeAuthorizedHeader() {

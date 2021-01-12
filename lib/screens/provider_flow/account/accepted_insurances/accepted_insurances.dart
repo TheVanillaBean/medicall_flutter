@@ -91,6 +91,7 @@ class AcceptedInsurances extends StatelessWidget {
                 ),
                 wrapped: true,
                 choiceActiveStyle: C2ChoiceStyle(
+                  borderRadius: BorderRadius.circular(10),
                   color: Theme.of(context).colorScheme.primary,
                 ),
               ),

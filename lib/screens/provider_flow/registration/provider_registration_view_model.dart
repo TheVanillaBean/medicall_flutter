@@ -38,6 +38,17 @@ class ProviderRegistrationViewModel extends ProviderProfileViewModelBase {
   bool isLoading;
   bool submitted;
 
+  List<String> selectInsurances = [
+    'UnitedHealthcare',
+    'BlueCrossBlueShield',
+    'Aetna',
+    'Anthem',
+    'Humana',
+    'Cigna',
+  ];
+
+  List<String> acceptedInsurances = [];
+
   ProviderRegistrationViewModel({
     @required this.nonAuthDatabase,
     @required this.auth,
@@ -79,6 +90,7 @@ class ProviderRegistrationViewModel extends ProviderProfileViewModelBase {
         cityValidator.isValid(mailingCity) &&
         zipCodeValidator.isValid(mailingZipCode) &&
         professionalTitleValidator.isValid(professionalTitle) &&
+        acceptedInsurances.length > 0 &&
         !isLoading;
   }
 

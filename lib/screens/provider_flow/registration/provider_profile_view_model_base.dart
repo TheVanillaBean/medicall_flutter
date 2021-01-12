@@ -140,6 +140,17 @@ abstract class ProviderProfileViewModelBase
     "WY"
   ];
 
+  List<String> selectInsurances = [
+    'UnitedHealthcare',
+    'BlueCrossBlueShield',
+    'Aetna',
+    'Anthem',
+    'Humana',
+    'Cigna',
+  ];
+
+  List<String> acceptedInsurances = [];
+
   ProviderProfileViewModelBase({
     this.email = '',
     this.password = '',
@@ -377,6 +388,7 @@ abstract class ProviderProfileViewModelBase
     GoogleAuthModel googleAuthModel,
     AppleSignInModel appleSignInModel,
     List<Asset> profileImage,
+    List<String> acceptedInsurances,
   }) {
     this.email = email ?? this.email;
     this.password = password ?? this.password;
@@ -404,6 +416,7 @@ abstract class ProviderProfileViewModelBase
     this.submitted = submitted ?? this.submitted;
     this.googleAuthModel = googleAuthModel ?? this.googleAuthModel;
     this.appleSignInModel = appleSignInModel ?? this.appleSignInModel;
+    this.acceptedInsurances = acceptedInsurances ?? this.acceptedInsurances;
     notifyListeners();
   }
 }
