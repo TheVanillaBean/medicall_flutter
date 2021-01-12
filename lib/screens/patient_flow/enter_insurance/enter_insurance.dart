@@ -1,11 +1,12 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/symptom_model.dart';
+import 'package:Medicall/models/user/patient_user_model.dart';
 import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
+import 'package:Medicall/screens/patient_flow/enter_insurance/enter_insurance_view_model.dart';
 import 'package:Medicall/screens/patient_flow/select_provider/select_provider.dart';
-import 'package:Medicall/screens/patient_flow/zip_code_verify/enter_insurance_view_model.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reclassify_visit/reclassify_visit.dart';
 import 'package:Medicall/screens/provider_flow/visit_review_screens/visit_review/reusable_widgets/direct_select.dart';
 import 'package:Medicall/screens/shared/welcome.dart';
@@ -86,10 +87,13 @@ class _EnterInsuranceScreenState extends State<EnterInsuranceScreen> {
       String state = await model.validateZipCodeAndInsurance();
 
       if (state != null) {
+        (model.tempUserProvider.user as PatientUser).insurance =
+            model.insurance;
         SelectProviderScreen.show(
           context: context,
           symptom: symptom,
           state: state,
+          insurance: model.insurance,
         );
       }
     } catch (e) {
@@ -236,7 +240,7 @@ class _EnterInsuranceScreenState extends State<EnterInsuranceScreen> {
       SizedBox(height: 8),
       ReusableRaisedButton(
         color: Theme.of(context).colorScheme.primary,
-        title: "Enter your email",
+        title: "Submit email",
         onPressed: _addEmailToWaitList,
       ),
     ];

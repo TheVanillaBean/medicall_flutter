@@ -21,6 +21,7 @@ import 'package:Medicall/screens/patient_flow/account/update_patient_info/update
 import 'package:Medicall/screens/patient_flow/account/update_photo_id.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/patient_flow/drivers_license/photo_id.dart';
+import 'package:Medicall/screens/patient_flow/enter_insurance/enter_insurance.dart';
 import 'package:Medicall/screens/patient_flow/patient_prescriptions/patient_prescriptions.dart';
 import 'package:Medicall/screens/patient_flow/personal_info/personal_info.dart';
 import 'package:Medicall/screens/patient_flow/previous_visits/previous_visits.dart';
@@ -45,7 +46,6 @@ import 'package:Medicall/screens/patient_flow/visit_details/visit_non_prescripti
 import 'package:Medicall/screens/patient_flow/visit_details/visit_prescriptions.dart';
 import 'package:Medicall/screens/patient_flow/visit_details/visit_treatment_recommendations.dart';
 import 'package:Medicall/screens/patient_flow/visit_payment/make_payment.dart';
-import 'package:Medicall/screens/patient_flow/zip_code_verify/enter_insurance.dart';
 import 'package:Medicall/screens/provider_flow/account/accepted_insurances/accepted_insurances.dart';
 import 'package:Medicall/screens/provider_flow/account/provider_account.dart';
 import 'package:Medicall/screens/provider_flow/account/select_services/select_services.dart';
@@ -382,10 +382,12 @@ class Router {
         final Map<String, dynamic> mapArgs = args;
         final Symptom symptom = mapArgs['symptom'];
         final String state = mapArgs['state'];
+        final String insurance = mapArgs['insurance'];
         return MaterialPageRoute<dynamic>(
           builder: (context) => SelectProviderScreen(
             symptom: symptom,
             state: state,
+            insurance: insurance,
           ),
           settings: settings,
           fullscreenDialog: true,
@@ -394,10 +396,12 @@ class Router {
         final Map<String, dynamic> mapArgs = args;
         final Symptom symptom = mapArgs['symptom'];
         final ProviderUser provider = mapArgs['provider'];
+        final bool inNetwork = mapArgs['inNetwork'];
         return MaterialPageRoute<dynamic>(
           builder: (context) => ProviderDetailScreen(
             symptom: symptom,
             provider: provider,
+            inNetwork: inNetwork,
           ),
           settings: settings,
           fullscreenDialog: true,

@@ -6,10 +6,16 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ProviderListItem extends StatelessWidget {
-  const ProviderListItem({Key key, @required this.provider, this.onTap})
-      : super(key: key);
+  const ProviderListItem({
+    Key key,
+    @required this.provider,
+    @required this.inNetwork,
+    this.onTap,
+  }) : super(key: key);
+
   final ProviderUser provider;
   final VoidCallback onTap;
+  final bool inNetwork;
 
   @override
   Widget build(BuildContext context) {
@@ -47,10 +53,22 @@ class ProviderListItem extends StatelessWidget {
                 : '${provider.mailingAddress} \n${provider.mailingAddressLine2} \n${provider.mailingCity}, ${provider.mailingState} ${provider.mailingZipCode}',
             style: Theme.of(context).textTheme.caption,
           ),
-          trailing: Icon(
-            Icons.chevron_right,
-            color: Colors.grey,
-            size: 25.0,
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                inNetwork ? "See Price" : "\$75",
+                style: Theme.of(context).textTheme.caption,
+              ),
+              SizedBox(
+                width: 8,
+              ),
+              Icon(
+                Icons.chevron_right,
+                color: Colors.grey,
+                size: 25.0,
+              ),
+            ],
           ),
           onTap: onTap,
         ),

@@ -64,6 +64,7 @@ class EnterInsuranceViewModel with EmailAndPasswordValidators, ChangeNotifier {
       }
       String alreadyInArea = await this.areProvidersInArea(zipcode);
       if (alreadyInArea != null) {
+        this.updateWith(showEmailField: false);
         throw PlatformException(
             code: 'ERROR', message: 'We are already in your area :)');
       }
@@ -90,12 +91,10 @@ class EnterInsuranceViewModel with EmailAndPasswordValidators, ChangeNotifier {
         this.tempUserProvider.user.mailingZipCode = this.zipcode;
         this.tempUserProvider.user.mailingState = state;
         return state;
-      } else {
-        throw "You must agree to the waiver before proceeding";
       }
       this.updateWith(showEmailField: false);
     } else {
-      this.updateWith(showEmailField: true);
+      this.updateWith(showEmailField: true, showInsuranceWidgets: false);
     }
     return null;
   }

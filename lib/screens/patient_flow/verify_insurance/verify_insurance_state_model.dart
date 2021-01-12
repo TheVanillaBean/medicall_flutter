@@ -25,6 +25,8 @@ class VerifyInsuranceStateModel with ChangeNotifier {
     String url =
         'https://insurance-fc912.firebaseapp.com/?sessionToken=${result.data['session_token']}';
 
+    updateWith(isLoading: false);
+
     return url;
   }
 

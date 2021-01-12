@@ -8,6 +8,7 @@ import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/patient_flow/registration/registration.dart';
 import 'package:Medicall/screens/patient_flow/start_visit/start_visit.dart';
+import 'package:Medicall/screens/patient_flow/verify_insurance/verify_insurance.dart';
 import 'package:Medicall/screens/shared/welcome.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
@@ -19,22 +20,26 @@ import 'package:provider/provider.dart';
 class ProviderDetailScreen extends StatelessWidget {
   final Symptom symptom;
   final ProviderUser provider;
+  final bool inNetwork;
 
   const ProviderDetailScreen({
     @required this.symptom,
     @required this.provider,
+    @required this.inNetwork,
   });
 
   static Future<void> show({
     BuildContext context,
     Symptom symptom,
     ProviderUser provider,
+    bool inNetwork,
   }) async {
     await Navigator.of(context).pushNamed(
       Routes.providerDetail,
       arguments: {
         'symptom': symptom,
         'provider': provider,
+        'inNetwork': inNetwork
       },
     );
   }
@@ -112,10 +117,15 @@ class ProviderDetailScreen extends StatelessWidget {
                         price: 49,
                       );
                       if (currentUser != null) {
-                        StartVisitScreen.show(
-                          context: context,
-                          consult: consult,
-                        );
+                        if (inNetwork) {
+                          VerifyInsurance.show(
+                              context: context, pushReplaceNamed: false);
+                        } else {
+                          StartVisitScreen.show(
+                            context: context,
+                            consult: consult,
+                          );
+                        }
                       } else {
                         tempUserProvider.consult = consult;
                         RegistrationScreen.show(context: context);

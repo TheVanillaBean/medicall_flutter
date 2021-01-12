@@ -1,9 +1,10 @@
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/symptom_model.dart';
+import 'package:Medicall/models/user/patient_user_model.dart';
 import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
-import 'package:Medicall/screens/patient_flow/verify_insurance/verify_insurance.dart';
-import 'package:Medicall/screens/patient_flow/zip_code_verify/enter_insurance.dart';
+import 'package:Medicall/screens/patient_flow/enter_insurance/enter_insurance.dart';
+import 'package:Medicall/screens/patient_flow/select_provider/select_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -138,16 +139,12 @@ class SymptomBody extends StatelessWidget {
             title: 'Explore Providers',
             onPressed: () async {
               if (medicallUser != null && medicallUser.uid.length > 0) {
-                VerifyInsurance.show(
+                SelectProviderScreen.show(
                   context: context,
-                  pushReplaceNamed: false,
                   symptom: symptom,
+                  state: medicallUser.mailingState,
+                  insurance: (medicallUser as PatientUser).insurance,
                 );
-                // SelectProviderScreen.show(
-                //   context: context,
-                //   symptom: symptom,
-                //   state: medicallUser.mailingState,
-                // );
               } else {
                 EnterInsuranceScreen.show(context: context, symptom: symptom);
               }
