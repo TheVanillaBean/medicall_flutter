@@ -79,7 +79,7 @@ class VerifyInsurance extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Text(
-            "Before you can select a doctor, we must verify you insurance first.",
+            "Press this button to verify your insurance and get your real-time cost.",
             style: TextStyle(color: Colors.black87, fontSize: 15),
             textAlign: TextAlign.center,
           ),

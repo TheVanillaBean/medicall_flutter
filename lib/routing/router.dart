@@ -394,10 +394,12 @@ class Router {
         final Map<String, dynamic> mapArgs = args;
         final Symptom symptom = mapArgs['symptom'];
         final ProviderUser provider = mapArgs['provider'];
+        final bool inNetwork = mapArgs['inNetwork'];
         return MaterialPageRoute<dynamic>(
           builder: (context) => ProviderDetailScreen(
             symptom: symptom,
             provider: provider,
+            inNetwork: inNetwork,
           ),
           settings: settings,
           fullscreenDialog: true,

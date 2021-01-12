@@ -71,41 +71,110 @@ class SelectProviderScreen extends StatelessWidget {
                 })
           ]),
       body: StreamBuilder(
-        stream: db.getAllProvidersWithInsurance(
-            state: state, symptom: this.symptom.name, insurance: insurance),
+        stream: db.getAllProviders(state: state, symptom: this.symptom.name),
         builder:
             (BuildContext context, AsyncSnapshot<List<ProviderUser>> snapshot) {
-          return Stack(
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.fromLTRB(25, 5, 25, 5),
-                child: Text(
-                  'Great news! We are in your area. Check out the dermatologist who can help you today.',
-                  style: Theme.of(context).textTheme.bodyText1,
-                ),
+          List<ProviderUser> inNetworkProviders = [];
+          List<ProviderUser> outNetworkProviders = [];
+          if (snapshot.hasData) {
+            inNetworkProviders = snapshot.data
+                .where((provider) =>
+                    provider.acceptedInsurances.contains(this.insurance))
+                .toList();
+            outNetworkProviders = snapshot.data
+                .where((provider) =>
+                    !provider.acceptedInsurances.contains(this.insurance))
+                .toList();
+          }
+          return Column(
+            children: [
+              _buildInNetworkList(context, inNetworkProviders),
+              SizedBox(
+                height: 40,
               ),
-              Padding(
-                padding: EdgeInsets.only(top: 60),
-                child: ListItemsBuilder<ProviderUser>(
-                  snapshot: snapshot,
-                  emptyContentWidget: const EmptyContent(
-                    title: 'There are no providers in your area',
-                    message: '',
-                  ),
-                  itemBuilder: (context, provider) => ProviderListItem(
-                    provider: provider,
-                    onTap: () => ProviderDetailScreen.show(
-                      context: context,
-                      provider: provider,
-                      symptom: symptom,
-                    ),
-                  ),
-                ),
-              )
+              _buildOutNetworkList(context, outNetworkProviders),
             ],
           );
         },
       ),
+    );
+  }
+
+  Stack _buildInNetworkList(
+      BuildContext context, List<ProviderUser> inNetworkProviders) {
+    return Stack(
+      children: <Widget>[
+        Center(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(25, 5, 25, 5),
+            child: Text(
+              'Providers Available With Your Insurance',
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(top: 60),
+          child: ListItemsBuilder<ProviderUser>(
+            snapshot: null,
+            itemsList: inNetworkProviders,
+            emptyContentWidget: const EmptyContent(
+              title: '',
+              message:
+                  'Medicall does not currently have providers who take your insurance',
+            ),
+            itemBuilder: (context, provider) => ProviderListItem(
+              provider: provider,
+              inNetwork: true,
+              onTap: () => ProviderDetailScreen.show(
+                context: context,
+                provider: provider,
+                symptom: symptom,
+                inNetwork: true,
+              ),
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  Stack _buildOutNetworkList(
+      BuildContext context, List<ProviderUser> outNetworkProviders) {
+    return Stack(
+      children: <Widget>[
+        Center(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(25, 5, 25, 5),
+            child: Text(
+              'No Insurance Required',
+              style: Theme.of(context).textTheme.bodyText1,
+            ),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(top: 60),
+          child: ListItemsBuilder<ProviderUser>(
+            snapshot: null,
+            itemsList: outNetworkProviders,
+            emptyContentWidget: const EmptyContent(
+              title:
+                  'Medicall does not currently have providers who do not take your insurance',
+              message: '',
+            ),
+            itemBuilder: (context, provider) => ProviderListItem(
+              provider: provider,
+              inNetwork: false,
+              onTap: () => ProviderDetailScreen.show(
+                context: context,
+                provider: provider,
+                symptom: symptom,
+                inNetwork: false,
+              ),
+            ),
+          ),
+        )
+      ],
     );
   }
 }
