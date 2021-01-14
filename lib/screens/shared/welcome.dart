@@ -1,7 +1,7 @@
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/Shared/Login/login.dart';
 import 'package:Medicall/screens/patient_flow/symptoms_list/symptoms.dart';
 import 'package:Medicall/screens/provider_flow/registration/provider_registration.dart';
-import 'package:Medicall/screens/shared/login/login.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -19,7 +19,7 @@ class WelcomeScreen extends StatelessWidget {
       body: Stack(
         children: [
           Padding(
-            padding: EdgeInsets.fromLTRB(0, 40, 0, 35),
+            padding: EdgeInsets.fromLTRB(0, 20, 0, 35),
             child: IntroductionScreen(
               pages: [
                 PageViewModel(
@@ -30,7 +30,7 @@ class WelcomeScreen extends StatelessWidget {
                     children: [
                       SizedBox(
                         width: 160,
-                        height: ScreenUtil.screenHeight * .05,
+                        height: 80,
                         child: Image.asset(
                           'assets/icon/letter_mark.png',
                         ),
@@ -83,22 +83,22 @@ class WelcomeScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(25.0),
                 ),
               ),
-              showSkipButton: true,
-              skip: FlatButton(
-                child: Text("Login"),
-                onPressed: () => LoginScreen.show(context: context),
-              ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 16),
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: FlatButton(
-                child: Text("Register as a healthcare provider"),
-                onPressed: () =>
-                    ProviderRegistrationScreen.show(context: context),
-              ),
+          Positioned(
+            bottom: ScreenUtil.screenHeightDp * 0.075,
+            left: 10,
+            child: FlatButton(
+              child: Text("Login"),
+              onPressed: () => LoginScreen.show(context: context),
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: FlatButton(
+              child: Text("Register as a healthcare provider"),
+              onPressed: () =>
+                  ProviderRegistrationScreen.show(context: context),
             ),
           ),
         ],
