@@ -65,9 +65,23 @@ class EnterInsuranceScreen extends StatefulWidget {
   _EnterInsuranceScreenState createState() => _EnterInsuranceScreenState();
 }
 
-class _EnterInsuranceScreenState extends State<EnterInsuranceScreen> {
+class _EnterInsuranceScreenState extends State<EnterInsuranceScreen>
+    with SingleTickerProviderStateMixin {
   EnterInsuranceViewModel get model => widget.model;
   Symptom get symptom => widget.symptom;
+  AnimationController controller;
+  Animation<Offset> offset;
+
+  @override
+  void initState() {
+    super.initState();
+
+    controller =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 500));
+
+    offset = Tween<Offset>(begin: Offset(0.0, 0.0), end: Offset(-0.5, 0.0))
+        .animate(controller);
+  }
 
   final GlobalKey<FormBuilderState> formKey = GlobalKey<FormBuilderState>();
 
@@ -163,7 +177,7 @@ class _EnterInsuranceScreenState extends State<EnterInsuranceScreen> {
             height: 20,
           ),
           _buildZipCodeForm(),
-          if (model.showInsuranceWidgets) ..._buildInsuranceWidgets()
+          _buildInsuranceWidgets(model.showInsuranceWidgets),
         ],
       ),
       SizedBox(
@@ -171,7 +185,6 @@ class _EnterInsuranceScreenState extends State<EnterInsuranceScreen> {
       ),
       _buildVerifyButton(),
       if (model.showEmailField) ..._buildNotifyTextField(),
-      if (model.showInsuranceWidgets) _buildInsuranceWaiverCheckbox(context),
     ];
   }
 
@@ -182,6 +195,9 @@ class _EnterInsuranceScreenState extends State<EnterInsuranceScreen> {
       keyboardType: TextInputType.number,
       readOnly: false,
       onChanged: model.updateZipcode,
+      onSubmitted: (state) {
+        _submit();
+      },
       decoration: InputDecoration(
         counterText: "",
         filled: true,
@@ -246,37 +262,54 @@ class _EnterInsuranceScreenState extends State<EnterInsuranceScreen> {
     ];
   }
 
-  List<Widget> _buildInsuranceWidgets() {
-    return [
-      SizedBox(height: 32),
-      Text(
-        'Please enter your insurance',
-        style: Theme.of(context).textTheme.headline5,
-      ),
-      SizedBox(
-        height: 8,
-      ),
-      Center(
-        child: Text(
-          "This helps us show you the doctors covered by your plan.",
-          style: Theme.of(context).textTheme.bodyText2,
-        ),
-      ),
-      SizedBox(
-        height: 8,
-      ),
-      DirectSelect(
-        itemExtent: 60.0,
-        selectedIndex: model.selectedItemIndex,
-        child: CustomSelectionItem(
-          isForList: false,
-          title: model.insurance,
-        ),
-        onSelectedItemChanged: (index) =>
-            model.updateWith(selectedItemIndex: index),
-        items: _buildInsuranceListItem(),
-      ),
-    ];
+  Widget _buildInsuranceWidgets(bool loading) {
+    switch (controller.status) {
+      case AnimationStatus.completed:
+        controller.reverse();
+        break;
+      case AnimationStatus.dismissed:
+        controller.forward();
+        break;
+      default:
+    }
+    return AnimatedOpacity(
+        opacity: loading ? 1 : 0,
+        duration: Duration(milliseconds: 500),
+        child: SlideTransition(
+            position: offset,
+            child: Column(
+              children: [
+                SizedBox(height: 32),
+                Text(
+                  'Please enter your insurance',
+                  style: Theme.of(context).textTheme.headline5,
+                ),
+                SizedBox(
+                  height: 8,
+                ),
+                Center(
+                  child: Text(
+                    "This helps us show you the doctors covered by your plan.",
+                    style: Theme.of(context).textTheme.bodyText2,
+                  ),
+                ),
+                SizedBox(
+                  height: 8,
+                ),
+                DirectSelect(
+                  itemExtent: 60.0,
+                  selectedIndex: model.selectedItemIndex,
+                  child: CustomSelectionItem(
+                    isForList: false,
+                    title: model.insurance,
+                  ),
+                  onSelectedItemChanged: (index) =>
+                      model.updateWith(selectedItemIndex: index),
+                  items: _buildInsuranceListItem(),
+                ),
+                _buildInsuranceWaiverCheckbox(context),
+              ],
+            )));
   }
 
   Widget _buildInsuranceWaiverCheckbox(BuildContext context) {
