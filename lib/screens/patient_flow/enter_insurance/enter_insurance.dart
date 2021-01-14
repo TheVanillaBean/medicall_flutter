@@ -265,10 +265,14 @@ class _EnterInsuranceScreenState extends State<EnterInsuranceScreen>
   Widget _buildInsuranceWidgets(bool loading) {
     switch (controller.status) {
       case AnimationStatus.completed:
-        controller.reverse();
+        if (loading) {
+          controller.reverse();
+        }
         break;
       case AnimationStatus.dismissed:
-        controller.forward();
+        if (!loading) {
+          controller.forward();
+        }
         break;
       default:
     }
