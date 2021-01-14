@@ -88,11 +88,11 @@ class SelectProviderScreen extends StatelessWidget {
           }
           return Column(
             children: [
-              _buildInNetworkList(context, inNetworkProviders),
-              SizedBox(
-                height: 40,
-              ),
-              _buildOutNetworkList(context, outNetworkProviders),
+              inNetworkProviders.length > 0
+                  ? _buildInNetworkList(context, inNetworkProviders)
+                  : outNetworkProviders.length > 0
+                      ? _buildOutNetworkList(context, outNetworkProviders)
+                      : Text("None found, check back at a later date."),
             ],
           );
         },
@@ -104,34 +104,22 @@ class SelectProviderScreen extends StatelessWidget {
       BuildContext context, List<ProviderUser> inNetworkProviders) {
     return Stack(
       children: <Widget>[
-        Center(
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(25, 5, 25, 5),
-            child: Text(
-              'Providers Available With Your Insurance',
-              style: Theme.of(context).textTheme.bodyText1,
-            ),
+        ListItemsBuilder<ProviderUser>(
+          snapshot: null,
+          itemsList: inNetworkProviders,
+          emptyContentWidget: const EmptyContent(
+            title: '',
+            message:
+                'Medicall does not currently have providers who take your insurance',
           ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(top: 60),
-          child: ListItemsBuilder<ProviderUser>(
-            snapshot: null,
-            itemsList: inNetworkProviders,
-            emptyContentWidget: const EmptyContent(
-              title: '',
-              message:
-                  'Medicall does not currently have providers who take your insurance',
-            ),
-            itemBuilder: (context, provider) => ProviderListItem(
+          itemBuilder: (context, provider) => ProviderListItem(
+            provider: provider,
+            inNetwork: true,
+            onTap: () => ProviderDetailScreen.show(
+              context: context,
               provider: provider,
+              symptom: symptom,
               inNetwork: true,
-              onTap: () => ProviderDetailScreen.show(
-                context: context,
-                provider: provider,
-                symptom: symptom,
-                inNetwork: true,
-              ),
             ),
           ),
         )
@@ -143,34 +131,22 @@ class SelectProviderScreen extends StatelessWidget {
       BuildContext context, List<ProviderUser> outNetworkProviders) {
     return Stack(
       children: <Widget>[
-        Center(
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(25, 5, 25, 5),
-            child: Text(
-              'No Insurance Required',
-              style: Theme.of(context).textTheme.bodyText1,
-            ),
+        ListItemsBuilder<ProviderUser>(
+          snapshot: null,
+          itemsList: outNetworkProviders,
+          emptyContentWidget: const EmptyContent(
+            title:
+                'Medicall does not currently have providers who do not take your insurance',
+            message: '',
           ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(top: 60),
-          child: ListItemsBuilder<ProviderUser>(
-            snapshot: null,
-            itemsList: outNetworkProviders,
-            emptyContentWidget: const EmptyContent(
-              title:
-                  'Medicall does not currently have providers who do not take your insurance',
-              message: '',
-            ),
-            itemBuilder: (context, provider) => ProviderListItem(
+          itemBuilder: (context, provider) => ProviderListItem(
+            provider: provider,
+            inNetwork: false,
+            onTap: () => ProviderDetailScreen.show(
+              context: context,
               provider: provider,
+              symptom: symptom,
               inNetwork: false,
-              onTap: () => ProviderDetailScreen.show(
-                context: context,
-                provider: provider,
-                symptom: symptom,
-                inNetwork: false,
-              ),
             ),
           ),
         )

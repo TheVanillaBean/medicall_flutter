@@ -53,22 +53,44 @@ class ProviderListItem extends StatelessWidget {
                 : '${provider.mailingAddress} \n${provider.mailingAddressLine2} \n${provider.mailingCity}, ${provider.mailingState} ${provider.mailingZipCode}',
             style: Theme.of(context).textTheme.caption,
           ),
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                inNetwork ? "See Price" : "\$75",
-                style: Theme.of(context).textTheme.caption,
-              ),
-              SizedBox(
-                width: 8,
-              ),
-              Icon(
-                Icons.chevron_right,
-                color: Colors.grey,
-                size: 25.0,
-              ),
-            ],
+          trailing: Container(
+            width: 103,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          inNetwork ? "See Price" : "\$75",
+                          style: Theme.of(context).textTheme.button,
+                        ),
+                      ],
+                    ),
+                    Text(
+                      inNetwork ? "with insurance" : "no insurance",
+                      style: Theme.of(context)
+                          .textTheme
+                          .caption
+                          .copyWith(fontSize: 10),
+                    ),
+                  ],
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.chevron_right,
+                      color: Colors.grey,
+                      size: 25.0,
+                    ),
+                  ],
+                )
+              ],
+            ),
           ),
           onTap: onTap,
         ),
