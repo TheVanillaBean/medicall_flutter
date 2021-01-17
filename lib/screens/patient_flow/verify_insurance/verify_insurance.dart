@@ -2,6 +2,7 @@ import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/patient_flow/start_visit/start_visit.dart';
 import 'package:Medicall/screens/patient_flow/verify_insurance/verify_insurance_state_model.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/user_provider.dart';
@@ -55,7 +56,15 @@ class _VerifyInsuranceState extends State<VerifyInsurance> {
 
   Future<void> _submit() async {
     try {
-      await model.calculateCostWithInsurance();
+      if (this.model.showCostLabel) {
+        model.consult.price = model.estimatedCost;
+        StartVisitScreen.show(
+          context: context,
+          consult: model.consult,
+        );
+      } else {
+        await model.calculateCostWithInsurance();
+      }
     } catch (e) {
       AppUtil().showFlushBar(e, context);
     }
@@ -103,9 +112,9 @@ class _VerifyInsuranceState extends State<VerifyInsurance> {
       ),
       SizedBox(height: 8),
       _buildMemberIDForm(),
+      if (model.showCostLabel) ..._buildCostLabel(),
       SizedBox(height: 16),
       _buildCalculateButton(),
-      if (model.showCostLabel) ..._buildCostLabel(),
       if (model.isLoading)
         Center(
           child: CircularProgressIndicator(),
@@ -117,7 +126,7 @@ class _VerifyInsuranceState extends State<VerifyInsurance> {
     return TextField(
       minLines: 1,
       keyboardType: TextInputType.text,
-      readOnly: false,
+      readOnly: model.showCostLabel,
       onChanged: model.updateMemberID,
       onSubmitted: (state) {
         _submit();

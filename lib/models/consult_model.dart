@@ -58,7 +58,7 @@ class Consult {
   String uid;
   final String providerId;
   String symptom;
-  final int price;
+  int price;
   final DateTime date;
   String patientId;
   ConsultStatus state;
