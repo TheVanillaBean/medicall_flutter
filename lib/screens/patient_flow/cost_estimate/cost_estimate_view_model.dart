@@ -4,7 +4,7 @@ import 'package:Medicall/services/user_provider.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/foundation.dart';
 
-class VerifyInsuranceStateModel with ChangeNotifier {
+class CostEstimateViewModel with ChangeNotifier {
   final AuthBase auth;
   final UserProvider userProvider;
   final Consult consult;
@@ -13,7 +13,7 @@ class VerifyInsuranceStateModel with ChangeNotifier {
   int estimatedCost;
   bool isLoading;
 
-  VerifyInsuranceStateModel({
+  CostEstimateViewModel({
     @required this.auth,
     @required this.userProvider,
     @required this.consult,
@@ -22,7 +22,7 @@ class VerifyInsuranceStateModel with ChangeNotifier {
     this.isLoading = false,
   });
 
-  Future<String> calculateCostWithInsurance() async {
+  Future<void> calculateCostWithInsurance() async {
     final HttpsCallable callable = CloudFunctions.instance
         .getHttpsCallable(functionName: 'calculateCostWithInsurance')
           ..timeout = const Duration(seconds: 30);

@@ -19,6 +19,7 @@ import 'package:Medicall/screens/patient_flow/account/payment_detail/summary_pay
 import 'package:Medicall/screens/patient_flow/account/update_patient_info/update_patient_info_screen.dart';
 import 'package:Medicall/screens/patient_flow/account/update_patient_info/update_patient_info_view_model.dart';
 import 'package:Medicall/screens/patient_flow/account/update_photo_id.dart';
+import 'package:Medicall/screens/patient_flow/cost_estimate/cost_estimate.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/patient_flow/drivers_license/photo_id.dart';
 import 'package:Medicall/screens/patient_flow/enter_insurance/enter_insurance.dart';
@@ -34,7 +35,6 @@ import 'package:Medicall/screens/patient_flow/symptoms_list/cosmetic_symptoms.da
 import 'package:Medicall/screens/patient_flow/symptoms_list/symptom_detail.dart';
 import 'package:Medicall/screens/patient_flow/symptoms_list/symptoms.dart';
 import 'package:Medicall/screens/patient_flow/update_medical_history/view_medical_history.dart';
-import 'package:Medicall/screens/patient_flow/verify_insurance/verify_insurance.dart';
 import 'package:Medicall/screens/patient_flow/video_notes_from_provider/video_notes_from_provider.dart';
 import 'package:Medicall/screens/patient_flow/visit_confirmed/confirm_consult.dart';
 import 'package:Medicall/screens/patient_flow/visit_details/card_select.dart';
@@ -374,7 +374,7 @@ class Router {
         final Map<String, dynamic> mapArgs = args;
         final Consult consult = mapArgs['consult'];
         return MaterialPageRoute<dynamic>(
-          builder: (context) => VerifyInsurance.create(context, consult),
+          builder: (context) => CostEstimate.create(context, consult),
           settings: settings,
           fullscreenDialog: true,
         );

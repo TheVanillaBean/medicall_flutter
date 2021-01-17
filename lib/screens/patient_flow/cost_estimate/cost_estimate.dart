@@ -2,8 +2,8 @@ import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/patient_flow/cost_estimate/cost_estimate_view_model.dart';
 import 'package:Medicall/screens/patient_flow/start_visit/start_visit.dart';
-import 'package:Medicall/screens/patient_flow/verify_insurance/verify_insurance_state_model.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
@@ -11,23 +11,23 @@ import 'package:flutter/material.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:provider/provider.dart';
 
-class VerifyInsurance extends StatefulWidget {
-  final VerifyInsuranceStateModel model;
+class CostEstimate extends StatefulWidget {
+  final CostEstimateViewModel model;
 
-  const VerifyInsurance({@required this.model});
+  const CostEstimate({@required this.model});
 
   static Widget create(BuildContext context, Consult consult) {
     final AuthBase auth = Provider.of<AuthBase>(context, listen: false);
     final UserProvider userProvider =
         Provider.of<UserProvider>(context, listen: false);
-    return ChangeNotifierProvider<VerifyInsuranceStateModel>(
-      create: (context) => VerifyInsuranceStateModel(
+    return ChangeNotifierProvider<CostEstimateViewModel>(
+      create: (context) => CostEstimateViewModel(
         auth: auth,
         userProvider: userProvider,
         consult: consult,
       ),
-      child: Consumer<VerifyInsuranceStateModel>(
-        builder: (_, model, __) => VerifyInsurance(
+      child: Consumer<CostEstimateViewModel>(
+        builder: (_, model, __) => CostEstimate(
           model: model,
         ),
       ),
@@ -48,11 +48,11 @@ class VerifyInsurance extends StatefulWidget {
   }
 
   @override
-  _VerifyInsuranceState createState() => _VerifyInsuranceState();
+  _CostEstimateState createState() => _CostEstimateState();
 }
 
-class _VerifyInsuranceState extends State<VerifyInsurance> {
-  VerifyInsuranceStateModel get model => widget.model;
+class _CostEstimateState extends State<CostEstimate> {
+  CostEstimateViewModel get model => widget.model;
 
   Future<void> _submit() async {
     try {

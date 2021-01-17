@@ -5,10 +5,10 @@ import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/models/user/patient_user_model.dart';
 import 'package:Medicall/models/user/provider_user_model.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/patient_flow/cost_estimate/cost_estimate.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/patient_flow/registration/registration.dart';
 import 'package:Medicall/screens/patient_flow/start_visit/start_visit.dart';
-import 'package:Medicall/screens/patient_flow/verify_insurance/verify_insurance.dart';
 import 'package:Medicall/screens/shared/welcome.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
@@ -118,7 +118,7 @@ class ProviderDetailScreen extends StatelessWidget {
                       );
                       if (currentUser != null) {
                         if (inNetwork) {
-                          VerifyInsurance.show(
+                          CostEstimate.show(
                             context: context,
                             pushReplaceNamed: false,
                             consult: consult,
