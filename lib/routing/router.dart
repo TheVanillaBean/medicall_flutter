@@ -372,9 +372,9 @@ class Router {
         );
       case Routes.verifyInsurance:
         final Map<String, dynamic> mapArgs = args;
-        final Symptom symptom = mapArgs['symptom'];
+        final Consult consult = mapArgs['consult'];
         return MaterialPageRoute<dynamic>(
-          builder: (context) => VerifyInsurance.create(context, symptom),
+          builder: (context) => VerifyInsurance.create(context, consult),
           settings: settings,
           fullscreenDialog: true,
         );

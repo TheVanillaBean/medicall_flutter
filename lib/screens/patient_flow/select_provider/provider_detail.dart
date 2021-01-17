@@ -119,7 +119,10 @@ class ProviderDetailScreen extends StatelessWidget {
                       if (currentUser != null) {
                         if (inNetwork) {
                           VerifyInsurance.show(
-                              context: context, pushReplaceNamed: false);
+                            context: context,
+                            pushReplaceNamed: false,
+                            consult: consult,
+                          );
                         } else {
                           StartVisitScreen.show(
                             context: context,
