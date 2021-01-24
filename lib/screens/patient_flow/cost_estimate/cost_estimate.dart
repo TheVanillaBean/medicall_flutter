@@ -115,6 +115,7 @@ class _CostEstimateState extends State<CostEstimate> {
       if (model.showCostLabel) ..._buildCostLabel(),
       SizedBox(height: 16),
       _buildCalculateButton(),
+      if (true) ..._buildReferralUI(),
       if (model.isLoading)
         Center(
           child: CircularProgressIndicator(),
@@ -166,6 +167,47 @@ class _CostEstimateState extends State<CostEstimate> {
         ),
       ),
       SizedBox(height: 8),
+    ];
+  }
+
+  List<Widget> _buildReferralUI() {
+    return [
+      SizedBox(
+        height: 24,
+      ),
+      Center(
+        child: Text(
+          "Referral Needed:",
+          style: Theme.of(context).textTheme.headline6,
+        ),
+      ),
+      SizedBox(
+        height: 16,
+      ),
+      Center(
+        child: Text(
+          "Would you like us to send your PCP an email requesting a referral so see this doctor or would you like to proceed with the visit without using insurance (\$75 cost)?",
+          style: Theme.of(context).textTheme.bodyText1,
+        ),
+      ),
+      SizedBox(
+        height: 12,
+      ),
+      Center(
+        child: ReusableRaisedButton(
+          title: "Request referral",
+          onPressed: () => {},
+        ),
+      ),
+      SizedBox(
+        height: 12,
+      ),
+      Center(
+        child: ReusableRaisedButton(
+          title: "Proceed without insurance",
+          onPressed: () => {},
+        ),
+      ),
     ];
   }
 }

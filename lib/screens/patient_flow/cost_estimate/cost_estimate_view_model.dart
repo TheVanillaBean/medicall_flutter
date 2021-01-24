@@ -23,6 +23,7 @@ class CostEstimateViewModel with ChangeNotifier {
   });
 
   Future<void> calculateCostWithInsurance() async {
+    this.updateWith(isLoading: true);
     final HttpsCallable callable = CloudFunctions.instance
         .getHttpsCallable(functionName: 'calculateCostWithInsurance')
           ..timeout = const Duration(seconds: 30);
@@ -36,6 +37,8 @@ class CostEstimateViewModel with ChangeNotifier {
     };
 
     final HttpsCallableResult result = await callable.call(parameters);
+
+    this.updateWith(isLoading: false);
 
     if (!result.data["success"]) {
       throw "There was an error calculating the cost for this visit";
