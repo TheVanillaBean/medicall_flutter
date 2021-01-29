@@ -166,7 +166,7 @@ class MakePayment extends StatelessWidget {
             ),
           ),
           Expanded(
-            flex: this.model.consultPaid ? 2 : 1,
+            flex: this.model.consultPaid ? 1 : 2,
             child: RichText(
               text: TextSpan(
                 children: [
@@ -178,7 +178,7 @@ class MakePayment extends StatelessWidget {
                       color: Theme.of(context).colorScheme.primary,
                     ),
               ),
-              maxLines: 2,
+              maxLines: 1,
               textAlign: TextAlign.right,
             ),
           ),

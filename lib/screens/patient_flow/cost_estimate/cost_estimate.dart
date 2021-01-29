@@ -3,8 +3,10 @@ import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/patient_flow/cost_estimate/cost_estimate_view_model.dart';
+import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/patient_flow/start_visit/start_visit.dart';
 import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
@@ -72,12 +74,28 @@ class _CostEstimateState extends State<CostEstimate> {
 
   @override
   Widget build(BuildContext context) {
+    final TempUserProvider tempUserProvider =
+        Provider.of<TempUserProvider>(context, listen: false);
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
-        type: AppBarType.Back,
-        title: "Your Cost With Insurance",
-        theme: Theme.of(context),
-      ),
+          type: AppBarType.Back,
+          title: "Your Insurance Cost",
+          theme: Theme.of(context),
+          actions: [
+            IconButton(
+                icon: Icon(
+                  Icons.home,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                onPressed: () {
+                  if (tempUserProvider.consult != null) {
+                    PatientDashboardScreen.show(
+                        context: context, pushReplaceNamed: true);
+                  } else {
+                    Navigator.pop(context);
+                  }
+                })
+          ]),
       body: KeyboardDismisser(
         child: SingleChildScrollView(
           child: Container(

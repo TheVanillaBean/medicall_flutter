@@ -4,8 +4,8 @@ import 'package:Medicall/screens/landing_page/auth_widget_builder.dart';
 import 'package:Medicall/screens/landing_page/firebase_notifications_handler.dart';
 import 'package:Medicall/screens/landing_page/landing_page.dart';
 import 'package:Medicall/screens/landing_page/version_checker.dart';
+import 'package:Medicall/screens/patient_flow/cost_estimate/cost_estimate.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
-import 'package:Medicall/screens/patient_flow/start_visit/start_visit.dart';
 import 'package:Medicall/screens/provider_flow/account/provider_account.dart';
 import 'package:Medicall/screens/provider_flow/dashboard/provider_dashboard.dart';
 import 'package:Medicall/screens/shared/welcome.dart';
@@ -148,8 +148,9 @@ class MedicallApp extends StatelessWidget {
                           : PatientDashboardScreen.create(context),
                   providerPhotoBuilder: (context) =>
                       ProviderAccountScreen.create(context),
-                  startVisitBuilder: (context) => StartVisitScreen(
-                    consult: tempUserProvider.consult,
+                  startVisitBuilder: (context) => CostEstimate.create(
+                    context,
+                    tempUserProvider.consult,
                   ),
                 ),
               ),

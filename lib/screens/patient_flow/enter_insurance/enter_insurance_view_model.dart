@@ -23,9 +23,18 @@ class EnterInsuranceViewModel with EmailAndPasswordValidators, ChangeNotifier {
   int selectedItemIndex;
   List<String> insuranceOptions = [
     'Proceed without insurance',
+    'Aetna',
+    'AllWays Health Plan',
+    'Blue Cross and Blue Shield of Massachusetts',
+    'Cigna',
+    'Fallon Community Health Plan',
+    'Harvard Pilgrim Health Care',
+    'Health Plans Inc.',
+    'Humana',
     'Medicare',
-    'BlueCross',
-    'Aetna'
+    'Tufts Health Plan',
+    'UnitedHealthcare',
+    'AARP Medicare Replacement',
   ];
 
   bool waiverCheck;
