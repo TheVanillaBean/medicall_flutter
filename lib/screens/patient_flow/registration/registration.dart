@@ -1,9 +1,9 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
-import 'package:Medicall/common_widgets/custom_date_picker_formfield.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/common_widgets/sign_in_button.dart';
 import 'package:Medicall/common_widgets/social_sign_in_button.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/patient_flow/registration/birthday_textfield.dart';
 import 'package:Medicall/screens/patient_flow/registration/registration_view_model.dart';
 import 'package:Medicall/screens/shared/login/login.dart';
 import 'package:Medicall/services/auth.dart';
@@ -347,14 +347,23 @@ class _RegistrationScreenState extends State<RegistrationScreen>
   }
 
   Widget _buildBirthDateTextField() {
-    return CustomDatePickerFormField(
+    return BirthdayTextField(
       inputFormatters: [dobTextInputFormatter],
       labelText: 'Date of Birth',
       hint: 'mm/dd/yyyy',
+      fillColor: Colors.grey.withAlpha(40),
+      filled: model.googleAuthModel != null || model.appleSignInModel != null
+          ? false
+          : true,
+      icon: Icon(
+        Icons.date_range,
+        color: Theme.of(context).colorScheme.onSurface.withAlpha(150),
+      ),
       keyboardType: TextInputType.datetime,
       errorText: model.patientDobErrorText,
       initialDate: model.initialDatePickerDate,
       onChanged: model.updateBirthDate,
+      enabled: model.isLoading == false,
     );
   }
 

@@ -7,7 +7,6 @@ import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/firebase_storage_service.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/validators.dart';
-import 'package:dash_chat/dash_chat.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
@@ -19,18 +18,12 @@ abstract class PersonalInfoVMProperties {
 
 class PersonalInfoViewModel extends PropertyChangeNotifier
     with
-        FirstNameValidators,
-        LastNameValidators,
         PhoneValidators,
-        DobValidators,
         AddressValidators,
         CityValidators,
         StateValidators,
         ZipCodeValidators {
-  String firstName;
-  String lastName;
   String phoneNumber;
-  DateTime birthDate = DateTime.now();
   String billingAddress;
   String billingAddressLine2;
   String city;
@@ -118,10 +111,7 @@ class PersonalInfoViewModel extends PropertyChangeNotifier
     @required this.userProvider,
     @required this.firestoreDatabase,
     @required this.firebaseStorageService,
-    this.firstName = '',
-    this.lastName = '',
     this.phoneNumber = '',
-    this.birthDate,
     this.billingAddress = '',
     this.billingAddressLine2 = '',
     this.city = '',
@@ -138,34 +128,13 @@ class PersonalInfoViewModel extends PropertyChangeNotifier
   }
 
   bool get canSubmit {
-    return firstNameValidator.isValid(firstName) &&
-        lastNameValidator.isValid(lastName) &&
-        phoneNumberEmptyValidator.isValid(phoneNumber) &&
+    return phoneNumberEmptyValidator.isValid(phoneNumber) &&
         billingAddressValidator.isValid(billingAddress) &&
         cityValidator.isValid(city) &&
         stateValidator.isValid(state) &&
         zipCodeValidator.isValid(zipCode) &&
-        dobValidator.isValid(birthDate) &&
         this.profileImage != null &&
         !isLoading;
-  }
-
-  String get birthday {
-    final f = new DateFormat('MM/dd/yyyy');
-    return this.birthDate.year <= DateTime.now().year - 18
-        ? "${f.format(this.birthDate)}"
-        : "Please Select";
-  }
-
-  String get firstNameErrorText {
-    bool showErrorText =
-        this.submitted && !firstNameValidator.isValid(firstName);
-    return showErrorText ? fNameErrorText : null;
-  }
-
-  String get lastNameErrorText {
-    bool showErrorText = this.submitted && !lastNameValidator.isValid(lastName);
-    return showErrorText ? lNameErrorText : null;
   }
 
   String get phoneNumberErrorText {
@@ -195,16 +164,8 @@ class PersonalInfoViewModel extends PropertyChangeNotifier
     return showErrorText ? zipCodeErrorText : null;
   }
 
-  String get patientDobErrorText {
-    bool showErrorText = this.submitted && !dobValidator.isValid(birthDate);
-    return showErrorText ? dobErrorText : null;
-  }
-
-  void updateFirstName(String firstName) => updateWith(firstName: firstName);
-  void updateLastName(String lastName) => updateWith(lastName: lastName);
   void updatePhoneNumber(String phoneNumber) =>
       updateWith(phoneNumber: phoneNumber);
-  void updateBirthDate(DateTime birthDate) => updateWith(birthDate: birthDate);
   void updateBillingAddress(String billingAddress) =>
       updateWith(billingAddress: billingAddress);
   void updateBillingAddressLine2(String billingAddressLine2) =>
@@ -213,20 +174,6 @@ class PersonalInfoViewModel extends PropertyChangeNotifier
   void updateState(String state) => updateWith(state: state);
   void updateZipCode(String zipCode) => updateWith(zipCode: zipCode);
   void updateCheckValue(bool checkValue) => updateWith(checkValue: checkValue);
-
-  DateTime get initialDatePickerDate {
-    final DateTime currentDate = DateTime.now();
-
-    this.birthDate = this.birthDate == null ? currentDate : this.birthDate;
-
-    return this.birthDate.year <= DateTime.now().year - 18
-        ? this.birthDate
-        : DateTime(
-            currentDate.year - 18,
-            currentDate.month,
-            currentDate.day,
-          );
-  }
 
   Future<void> submit() async {
     updateWith(submitted: true);
@@ -243,12 +190,9 @@ class PersonalInfoViewModel extends PropertyChangeNotifier
 
     updateWith(isLoading: true);
     PatientUser medicallUser = userProvider.user;
-    medicallUser.firstName = this.firstName;
-    medicallUser.lastName = this.lastName;
     medicallUser.phoneNumber = this.phoneNumber;
     medicallUser.mailingAddress = this.billingAddress;
     medicallUser.mailingAddressLine2 = this.billingAddressLine2;
-    medicallUser.dob = this.birthday;
     medicallUser.mailingState = this.state;
     medicallUser.mailingCity = this.city;
     medicallUser.mailingZipCode = this.zipCode;
@@ -269,10 +213,7 @@ class PersonalInfoViewModel extends PropertyChangeNotifier
   }
 
   void updateWith({
-    String firstName,
-    String lastName,
     String phoneNumber,
-    DateTime birthDate,
     String billingAddress,
     String billingAddressLine2,
     String city,
@@ -283,10 +224,7 @@ class PersonalInfoViewModel extends PropertyChangeNotifier
     bool checkValue,
     AssetEntity profileImage,
   }) {
-    this.firstName = firstName ?? this.firstName;
-    this.lastName = lastName ?? this.lastName;
     this.phoneNumber = phoneNumber ?? this.phoneNumber;
-    this.birthDate = birthDate ?? this.birthDate;
     this.billingAddress = billingAddress ?? this.billingAddress;
     this.billingAddressLine2 = billingAddressLine2 ?? this.billingAddressLine2;
     this.city = city ?? this.city;
