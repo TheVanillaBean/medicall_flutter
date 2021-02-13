@@ -64,14 +64,9 @@ class PersonalInfoScreen extends StatefulWidget {
 }
 
 class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
-  final TextEditingController _firstNameController = TextEditingController();
-  final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _billingAddressController =
       TextEditingController();
   final TextEditingController _zipCodeController = TextEditingController();
-
-  final FocusNode _firstNameFocusNode = FocusNode();
-  final FocusNode _lastNameFocusNode = FocusNode();
   final FocusNode _billingAddressFocusNode = FocusNode();
   final FocusNode _zipCodeFocusNode = FocusNode();
 
@@ -80,12 +75,8 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
 
   @override
   void dispose() {
-    _firstNameController.dispose();
-    _lastNameController.dispose();
     _billingAddressController.dispose();
     _zipCodeController.dispose();
-    _firstNameFocusNode.dispose();
-    _lastNameFocusNode.dispose();
     _billingAddressFocusNode.dispose();
     _zipCodeFocusNode.dispose();
     super.dispose();
