@@ -373,8 +373,10 @@ class Router {
       case Routes.verifyInsurance:
         final Map<String, dynamic> mapArgs = args;
         final Consult consult = mapArgs['consult'];
+        final String insurance = mapArgs['insurance'];
         return MaterialPageRoute<dynamic>(
-          builder: (context) => CostEstimate.create(context, consult),
+          builder: (context) =>
+              CostEstimate.create(context, consult, insurance),
           settings: settings,
           fullscreenDialog: true,
         );
@@ -396,12 +398,12 @@ class Router {
         final Map<String, dynamic> mapArgs = args;
         final Symptom symptom = mapArgs['symptom'];
         final ProviderUser provider = mapArgs['provider'];
-        final bool inNetwork = mapArgs['inNetwork'];
+        final String insurance = mapArgs['insurance'];
         return MaterialPageRoute<dynamic>(
           builder: (context) => ProviderDetailScreen(
             symptom: symptom,
             provider: provider,
-            inNetwork: inNetwork,
+            insurance: insurance,
           ),
           settings: settings,
           fullscreenDialog: true,

@@ -119,7 +119,7 @@ class SelectProviderScreen extends StatelessWidget {
               context: context,
               provider: provider,
               symptom: symptom,
-              inNetwork: true,
+              insurance: this.insurance,
             ),
           ),
         )
@@ -146,7 +146,7 @@ class SelectProviderScreen extends StatelessWidget {
               context: context,
               provider: provider,
               symptom: symptom,
-              inNetwork: false,
+              insurance: this.insurance,
             ),
           ),
         )

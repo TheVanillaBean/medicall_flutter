@@ -17,6 +17,7 @@ class TempUserProvider {
   List<Asset> images;
   Consult consult;
   Symptom symptom;
+  String insurance;
 
   MedicallUser get user => _userType == USER_TYPE.PATIENT
       ? _user as PatientUser

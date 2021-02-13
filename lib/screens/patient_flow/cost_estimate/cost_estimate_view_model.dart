@@ -8,6 +8,7 @@ class CostEstimateViewModel with ChangeNotifier {
   final AuthBase auth;
   final UserProvider userProvider;
   final Consult consult;
+  final String insurance;
 
   String memberId;
   int estimatedCost;
@@ -17,6 +18,7 @@ class CostEstimateViewModel with ChangeNotifier {
     @required this.auth,
     @required this.userProvider,
     @required this.consult,
+    @required this.insurance,
     this.memberId = "",
     this.estimatedCost = 0,
     this.isLoading = false,
@@ -25,7 +27,7 @@ class CostEstimateViewModel with ChangeNotifier {
   Future<void> calculateCostWithInsurance() async {
     this.updateWith(isLoading: true);
     final HttpsCallable callable = CloudFunctions.instance
-        .getHttpsCallable(functionName: 'calculateCostWithInsurance')
+        .getHttpsCallable(functionName: 'retrieveCoverage')
           ..timeout = const Duration(seconds: 30);
 
     Map<String, dynamic> parameters = {};
@@ -34,6 +36,7 @@ class CostEstimateViewModel with ChangeNotifier {
       'patient_id': this.userProvider.user.uid,
       'provider_uid': this.consult.providerId,
       'member_id': this.memberId,
+      'insurance': this.insurance,
     };
 
     final HttpsCallableResult result = await callable.call(parameters);

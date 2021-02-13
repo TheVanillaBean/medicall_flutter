@@ -18,7 +18,11 @@ class CostEstimate extends StatefulWidget {
 
   const CostEstimate({@required this.model});
 
-  static Widget create(BuildContext context, Consult consult) {
+  static Widget create(
+    BuildContext context,
+    Consult consult,
+    String insurance,
+  ) {
     final AuthBase auth = Provider.of<AuthBase>(context, listen: false);
     final UserProvider userProvider =
         Provider.of<UserProvider>(context, listen: false);
@@ -27,6 +31,7 @@ class CostEstimate extends StatefulWidget {
         auth: auth,
         userProvider: userProvider,
         consult: consult,
+        insurance: insurance,
       ),
       child: Consumer<CostEstimateViewModel>(
         builder: (_, model, __) => CostEstimate(
@@ -40,11 +45,13 @@ class CostEstimate extends StatefulWidget {
     BuildContext context,
     bool pushReplaceNamed = true,
     Consult consult,
+    String insurance,
   }) async {
     await Navigator.of(context).pushNamed(
       Routes.verifyInsurance,
       arguments: {
         'consult': consult,
+        'insurance': insurance,
       },
     );
   }

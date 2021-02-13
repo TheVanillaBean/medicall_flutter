@@ -20,26 +20,26 @@ import 'package:provider/provider.dart';
 class ProviderDetailScreen extends StatelessWidget {
   final Symptom symptom;
   final ProviderUser provider;
-  final bool inNetwork;
+  final String insurance;
 
   const ProviderDetailScreen({
     @required this.symptom,
     @required this.provider,
-    @required this.inNetwork,
+    @required this.insurance,
   });
 
   static Future<void> show({
     BuildContext context,
     Symptom symptom,
     ProviderUser provider,
-    bool inNetwork,
+    String insurance,
   }) async {
     await Navigator.of(context).pushNamed(
       Routes.providerDetail,
       arguments: {
         'symptom': symptom,
         'provider': provider,
-        'inNetwork': inNetwork
+        'insurance': insurance
       },
     );
   }
@@ -117,11 +117,12 @@ class ProviderDetailScreen extends StatelessWidget {
                         price: 49,
                       );
                       if (currentUser != null) {
-                        if (inNetwork) {
+                        if (this.insurance != null) {
                           CostEstimate.show(
                             context: context,
                             pushReplaceNamed: false,
                             consult: consult,
+                            insurance: insurance,
                           );
                         } else {
                           StartVisitScreen.show(
@@ -131,6 +132,7 @@ class ProviderDetailScreen extends StatelessWidget {
                         }
                       } else {
                         tempUserProvider.consult = consult;
+                        tempUserProvider.insurance = insurance;
                         RegistrationScreen.show(context: context);
                       }
                     },
