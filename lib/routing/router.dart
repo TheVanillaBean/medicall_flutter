@@ -19,6 +19,7 @@ import 'package:Medicall/screens/patient_flow/account/payment_detail/summary_pay
 import 'package:Medicall/screens/patient_flow/account/update_patient_info/update_patient_info_screen.dart';
 import 'package:Medicall/screens/patient_flow/account/update_patient_info/update_patient_info_view_model.dart';
 import 'package:Medicall/screens/patient_flow/account/update_photo_id.dart';
+import 'package:Medicall/screens/patient_flow/cost_estimate/cost_estimate.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/patient_flow/drivers_license/photo_id.dart';
 import 'package:Medicall/screens/patient_flow/enter_insurance/enter_insurance.dart';
@@ -161,6 +162,7 @@ class Routes {
   static const emailAssistant = '/email-assistant';
   static const closeChat = '/close-chat';
   static const verifyInsurance = '/verify-insurance';
+  static const costEstimate = '/cost-estimate';
   static const acceptedInsurances = '/accepted-insurances';
 }
 
@@ -377,6 +379,16 @@ class Router {
         return MaterialPageRoute<dynamic>(
           builder: (context) =>
               EnterMemberId.create(context, consult, insurance),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case Routes.costEstimate:
+        final Map<String, dynamic> mapArgs = args;
+        final Consult consult = mapArgs['consult'];
+        final String insurance = mapArgs['insurance'];
+        return MaterialPageRoute<dynamic>(
+          builder: (context) =>
+              CostEstimate.create(context, consult, insurance),
           settings: settings,
           fullscreenDialog: true,
         );
