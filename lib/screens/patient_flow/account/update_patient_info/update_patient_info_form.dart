@@ -9,6 +9,8 @@ import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
 
 enum PatientProfileInputType {
+  NAME,
+  DOB,
   PHONE,
   ADDRESS,
 }
@@ -50,7 +52,44 @@ class _UpdatePatientInfoFormState extends State<UpdatePatientInfoForm> {
       listen: false,
     );
 
-    if (model.patientProfileInputType == PatientProfileInputType.PHONE) {
+    if (model.patientProfileInputType == PatientProfileInputType.NAME) {
+      return Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              PersonalInfoTextField(
+                initialText: userProvider.user.firstName,
+                labelText: 'First Name',
+                hint: 'Jane',
+                errorText: model.firstNameErrorText,
+                onChanged: model.updateFirstName,
+              ),
+              PersonalInfoTextField(
+                initialText: userProvider.user.lastName,
+                labelText: 'Last Name',
+                hint: 'Doe',
+                errorText: model.lastNameErrorText,
+                onChanged: model.updateLastName,
+              ),
+              SizedBox(height: 30),
+              ReusableRaisedButton(
+                title: 'Save',
+                onPressed: !model.isLoading
+                    ? () {
+                        if (_formKey.currentState.validate()) {
+                          _submit(model);
+                        }
+                      }
+                    : null,
+              ),
+              SizedBox(height: 70),
+              if (model.isLoading)
+                Container(
+                    margin: EdgeInsets.symmetric(vertical: 24),
+                    child: CircularProgressIndicator()),
+            ],
+          ));
+    } else if (model.patientProfileInputType == PatientProfileInputType.PHONE) {
       return Form(
           key: _formKey,
           child: Column(

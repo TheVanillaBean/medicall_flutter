@@ -165,6 +165,8 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
                 color: Theme.of(context).colorScheme.primary,
               ),
             ),
+            _buildNameCard(medicallUser),
+            Divider(height: 0.5, thickness: 1),
             _buildEmailCard(medicallUser),
             Divider(height: 0.5, thickness: 1),
             _buildPhoneCard(medicallUser),
@@ -269,6 +271,24 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
     return ReusableAccountCard(
       leading: 'Email:',
       title: medicallUser.email,
+    );
+  }
+
+  Widget _buildNameCard(MedicallUser medicallUser) {
+    return ReusableAccountCard(
+      leading: 'Name:',
+      title: '${medicallUser.firstName} ${medicallUser.lastName}',
+      trailing: IconButton(
+        icon: Icon(Icons.create, size: 20),
+        onPressed: () {
+          model.patientProfileInputType = PatientProfileInputType.NAME;
+          model.initName();
+          UpdatePatientInfoScreen.show(
+            context: context,
+            model: model,
+          );
+        },
+      ),
     );
   }
 
