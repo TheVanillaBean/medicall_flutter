@@ -1,12 +1,14 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
+import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/models/user/patient_user_model.dart';
 import 'package:Medicall/models/user/provider_user_model.dart';
 import 'package:Medicall/routing/router.dart';
-import 'package:Medicall/screens/patient_flow/cost_estimate/cost_estimate.dart';
+import 'package:Medicall/screens/patient_flow/account/patient_account.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
+import 'package:Medicall/screens/patient_flow/enter_member_id/enter_member_id.dart';
 import 'package:Medicall/screens/patient_flow/registration/registration.dart';
 import 'package:Medicall/screens/patient_flow/start_visit/start_visit.dart';
 import 'package:Medicall/screens/shared/welcome.dart';
@@ -108,7 +110,7 @@ class ProviderDetailScreen extends StatelessWidget {
                   width: ScreenUtil.screenWidthDp - 60,
                   child: ReusableRaisedButton(
                     title: "Start Visit",
-                    onPressed: () {
+                    onPressed: () async {
                       Consult consult = Consult(
                         providerId: provider.uid,
                         providerUser: provider,
@@ -117,18 +119,24 @@ class ProviderDetailScreen extends StatelessWidget {
                         price: 49,
                       );
                       if (currentUser != null) {
-                        if (this.insurance != null) {
-                          CostEstimate.show(
-                            context: context,
-                            pushReplaceNamed: false,
-                            consult: consult,
-                            insurance: insurance,
-                          );
+                        if (minimumDataEntered(currentUser)) {
+                          if (this.insurance != null) {
+                            EnterMemberId.show(
+                              context: context,
+                              pushReplaceNamed: false,
+                              consult: consult,
+                              insurance: insurance,
+                            );
+                          } else {
+                            StartVisitScreen.show(
+                              context: context,
+                              consult: consult,
+                            );
+                          }
                         } else {
-                          StartVisitScreen.show(
-                            context: context,
-                            consult: consult,
-                          );
+                          if (await showMinInfoNeededDialog(context)) {
+                            PatientAccountScreen.show(context: context);
+                          }
                         }
                       } else {
                         tempUserProvider.consult = consult;
@@ -142,6 +150,28 @@ class ProviderDetailScreen extends StatelessWidget {
             ),
           ],
         ));
+  }
+
+  bool minimumDataEntered(PatientUser currentUser) {
+    return currentUser.firstName.length > 0 &&
+        currentUser.lastName.length > 0 &&
+        currentUser.dob.length > 0;
+  }
+
+  Future<bool> showMinInfoNeededDialog(BuildContext context) async {
+    bool didPressYes = await PlatformAlertDialog(
+      title: "Go to account screen?",
+      content:
+          "In order to create a visit, you must first enter your first name, last name, and date of birth.",
+      defaultActionText: "Continue",
+      cancelActionText: "No, stay",
+    ).show(context);
+
+    if (didPressYes) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   List<Widget> _buildChildren(

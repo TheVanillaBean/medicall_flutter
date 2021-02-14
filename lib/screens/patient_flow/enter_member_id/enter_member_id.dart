@@ -2,8 +2,8 @@ import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
-import 'package:Medicall/screens/patient_flow/cost_estimate/cost_estimate_view_model.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
+import 'package:Medicall/screens/patient_flow/enter_member_id/enter_member_id_view_model.dart';
 import 'package:Medicall/screens/patient_flow/start_visit/start_visit.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
@@ -13,10 +13,10 @@ import 'package:flutter/material.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:provider/provider.dart';
 
-class CostEstimate extends StatefulWidget {
-  final CostEstimateViewModel model;
+class EnterMemberId extends StatefulWidget {
+  final EnterMemberIdViewModel model;
 
-  const CostEstimate({@required this.model});
+  const EnterMemberId({@required this.model});
 
   static Widget create(
     BuildContext context,
@@ -26,15 +26,15 @@ class CostEstimate extends StatefulWidget {
     final AuthBase auth = Provider.of<AuthBase>(context, listen: false);
     final UserProvider userProvider =
         Provider.of<UserProvider>(context, listen: false);
-    return ChangeNotifierProvider<CostEstimateViewModel>(
-      create: (context) => CostEstimateViewModel(
+    return ChangeNotifierProvider<EnterMemberIdViewModel>(
+      create: (context) => EnterMemberIdViewModel(
         auth: auth,
         userProvider: userProvider,
         consult: consult,
         insurance: insurance,
       ),
-      child: Consumer<CostEstimateViewModel>(
-        builder: (_, model, __) => CostEstimate(
+      child: Consumer<EnterMemberIdViewModel>(
+        builder: (_, model, __) => EnterMemberId(
           model: model,
         ),
       ),
@@ -57,11 +57,11 @@ class CostEstimate extends StatefulWidget {
   }
 
   @override
-  _CostEstimateState createState() => _CostEstimateState();
+  _EnterMemberIdState createState() => _EnterMemberIdState();
 }
 
-class _CostEstimateState extends State<CostEstimate> {
-  CostEstimateViewModel get model => widget.model;
+class _EnterMemberIdState extends State<EnterMemberId> {
+  EnterMemberIdViewModel get model => widget.model;
 
   Future<void> _submit() async {
     try {

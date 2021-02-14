@@ -19,10 +19,10 @@ import 'package:Medicall/screens/patient_flow/account/payment_detail/summary_pay
 import 'package:Medicall/screens/patient_flow/account/update_patient_info/update_patient_info_screen.dart';
 import 'package:Medicall/screens/patient_flow/account/update_patient_info/update_patient_info_view_model.dart';
 import 'package:Medicall/screens/patient_flow/account/update_photo_id.dart';
-import 'package:Medicall/screens/patient_flow/cost_estimate/cost_estimate.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/patient_flow/drivers_license/photo_id.dart';
 import 'package:Medicall/screens/patient_flow/enter_insurance/enter_insurance.dart';
+import 'package:Medicall/screens/patient_flow/enter_member_id/enter_member_id.dart';
 import 'package:Medicall/screens/patient_flow/patient_prescriptions/patient_prescriptions.dart';
 import 'package:Medicall/screens/patient_flow/personal_info/personal_info.dart';
 import 'package:Medicall/screens/patient_flow/previous_visits/previous_visits.dart';
@@ -376,7 +376,7 @@ class Router {
         final String insurance = mapArgs['insurance'];
         return MaterialPageRoute<dynamic>(
           builder: (context) =>
-              CostEstimate.create(context, consult, insurance),
+              EnterMemberId.create(context, consult, insurance),
           settings: settings,
           fullscreenDialog: true,
         );

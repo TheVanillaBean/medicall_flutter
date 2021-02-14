@@ -4,7 +4,7 @@ import 'package:Medicall/services/user_provider.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/foundation.dart';
 
-class CostEstimateViewModel with ChangeNotifier {
+class EnterMemberIdViewModel with ChangeNotifier {
   final AuthBase auth;
   final UserProvider userProvider;
   final Consult consult;
@@ -14,7 +14,7 @@ class CostEstimateViewModel with ChangeNotifier {
   int estimatedCost;
   bool isLoading;
 
-  CostEstimateViewModel({
+  EnterMemberIdViewModel({
     @required this.auth,
     @required this.userProvider,
     @required this.consult,
