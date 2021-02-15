@@ -1,4 +1,5 @@
 import 'package:Medicall/models/consult_model.dart';
+import 'package:Medicall/models/insurance_info.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:cloud_functions/cloud_functions.dart';
@@ -8,7 +9,7 @@ class CostEstimateViewModel with ChangeNotifier {
   final AuthBase auth;
   final UserProvider userProvider;
   final Consult consult;
-  final String insurance;
+  final InsuranceInfo insurance;
 
   String memberId;
   int estimatedCost;

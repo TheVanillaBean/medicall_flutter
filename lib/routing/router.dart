@@ -7,6 +7,7 @@ import 'package:Medicall/models/consult-review/diagnosis_options_model.dart';
 import 'package:Medicall/models/consult-review/treatment_options.dart';
 import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:Medicall/models/consult_model.dart';
+import 'package:Medicall/models/insurance_info.dart';
 import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/models/user/patient_user_model.dart';
 import 'package:Medicall/models/user/provider_user_model.dart';
@@ -385,7 +386,7 @@ class Router {
       case Routes.costEstimate:
         final Map<String, dynamic> mapArgs = args;
         final Consult consult = mapArgs['consult'];
-        final String insurance = mapArgs['insurance'];
+        final InsuranceInfo insurance = mapArgs['insurance_info'];
         return MaterialPageRoute<dynamic>(
           builder: (context) =>
               CostEstimate.create(context, consult, insurance),

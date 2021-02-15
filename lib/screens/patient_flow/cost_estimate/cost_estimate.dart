@@ -1,6 +1,7 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/consult_model.dart';
+import 'package:Medicall/models/insurance_info.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/patient_flow/start_visit/start_visit.dart';
@@ -22,7 +23,7 @@ class CostEstimate extends StatefulWidget {
   static Widget create(
     BuildContext context,
     Consult consult,
-    String insurance,
+    InsuranceInfo insurance,
   ) {
     final AuthBase auth = Provider.of<AuthBase>(context, listen: false);
     final UserProvider userProvider =
@@ -46,13 +47,13 @@ class CostEstimate extends StatefulWidget {
     BuildContext context,
     bool pushReplaceNamed = true,
     Consult consult,
-    String insurance,
+    InsuranceInfo insuranceInfo,
   }) async {
     await Navigator.of(context).pushNamed(
       Routes.verifyInsurance,
       arguments: {
         'consult': consult,
-        'insurance': insurance,
+        'insurance': insuranceInfo,
       },
     );
   }

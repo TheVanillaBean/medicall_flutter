@@ -2,6 +2,7 @@ import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/patient_flow/cost_estimate/cost_estimate.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/patient_flow/enter_member_id/enter_member_id_view_model.dart';
 import 'package:Medicall/services/auth.dart';
@@ -64,11 +65,7 @@ class _EnterMemberIdState extends State<EnterMemberId> {
   Future<void> _submit() async {
     try {
       if (this.model.successfullyValidatedInsurance) {
-        // model.consult.price = model.estimatedCost;
-        // StartVisitScreen.show(
-        //   context: context,
-        //   consult: model.consult,
-        // );
+        CostEstimate.show(context: context, insuranceInfo: model.insuranceInfo);
       } else {
         await model.calculateCostWithInsurance();
       }

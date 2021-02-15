@@ -1,4 +1,5 @@
 import 'package:Medicall/models/consult_model.dart';
+import 'package:Medicall/models/insurance_info.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:cloud_functions/cloud_functions.dart';
@@ -14,6 +15,7 @@ class EnterMemberIdViewModel with ChangeNotifier {
   String errorMessage;
   bool isLoading;
   bool successfullyValidatedInsurance;
+  InsuranceInfo insuranceInfo;
 
   EnterMemberIdViewModel({
     @required this.auth,
@@ -24,6 +26,7 @@ class EnterMemberIdViewModel with ChangeNotifier {
     this.errorMessage = "",
     this.isLoading = false,
     this.successfullyValidatedInsurance = false,
+    this.insuranceInfo,
   });
 
   Future<void> calculateCostWithInsurance() async {
@@ -49,7 +52,26 @@ class EnterMemberIdViewModel with ChangeNotifier {
       throw result.data["message"]["message"];
     }
 
-    this.updateWith(successfullyValidatedInsurance: true, errorMessage: "");
+    InsuranceInfo insuranceInfo;
+
+    if (result.data["code"] == 2) {
+      insuranceInfo = InsuranceInfo(
+        coverageResponse: CoverageResponse.ReferralNeeded,
+        insurance: this.insurance,
+        providerName:
+            "${result.data["referral_info"]["first_name"]} ${result.data["referral_info"]["last_name"]}",
+      );
+    } else if (result.data["code"] == 1) {
+      insuranceInfo = InsuranceInfo(
+        coverageResponse: CoverageResponse.ValidCostEstimate,
+        insurance: this.insurance,
+      );
+    }
+
+    this.updateWith(
+        successfullyValidatedInsurance: true,
+        insuranceInfo: insuranceInfo,
+        errorMessage: "");
   }
 
   String get continueBtnText {
@@ -75,12 +97,14 @@ class EnterMemberIdViewModel with ChangeNotifier {
     String errorMessage,
     bool successfullyValidatedInsurance,
     bool isLoading,
+    InsuranceInfo insuranceInfo,
   }) {
     this.memberId = memberId ?? this.memberId;
     this.errorMessage = errorMessage ?? this.errorMessage;
     this.isLoading = isLoading ?? this.isLoading;
     this.successfullyValidatedInsurance =
         successfullyValidatedInsurance ?? this.successfullyValidatedInsurance;
+    this.insuranceInfo = insuranceInfo ?? this.insuranceInfo;
     notifyListeners();
   }
 }
