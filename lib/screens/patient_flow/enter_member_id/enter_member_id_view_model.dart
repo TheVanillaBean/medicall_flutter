@@ -11,8 +11,9 @@ class EnterMemberIdViewModel with ChangeNotifier {
   final String insurance;
 
   String memberId;
-  int estimatedCost;
+  String errorMessage;
   bool isLoading;
+  bool successfullyValidatedInsurance;
 
   EnterMemberIdViewModel({
     @required this.auth,
@@ -20,8 +21,9 @@ class EnterMemberIdViewModel with ChangeNotifier {
     @required this.consult,
     @required this.insurance,
     this.memberId = "",
-    this.estimatedCost = 0,
+    this.errorMessage = "",
     this.isLoading = false,
+    this.successfullyValidatedInsurance = false,
   });
 
   Future<void> calculateCostWithInsurance() async {
@@ -43,28 +45,42 @@ class EnterMemberIdViewModel with ChangeNotifier {
 
     this.updateWith(isLoading: false);
 
-    if (!result.data["success"]) {
-      throw "There was an error calculating the cost for this visit";
+    if (result.data["error"]) {
+      throw result.data["message"]["message"];
     }
 
-    this.updateWith(
-        estimatedCost: result.data["cost_estimates"][0]["cost_estimate"]);
+    this.updateWith(successfullyValidatedInsurance: true, errorMessage: "");
   }
 
-  bool get showCostLabel {
-    return estimatedCost > 0;
+  String get continueBtnText {
+    return this.successfullyValidatedInsurance
+        ? "Continue"
+        : "Verify Insurance";
+  }
+
+  String get labelText {
+    return this.successfullyValidatedInsurance
+        ? "Your insurance has been successfully verified! Press continue to be shown your cost estimate."
+        : this.errorMessage;
+  }
+
+  bool get showErrorMessage {
+    return this.errorMessage.length > 0;
   }
 
   void updateMemberID(String memberId) => updateWith(memberId: memberId);
 
   void updateWith({
     String memberId,
-    int estimatedCost,
+    String errorMessage,
+    bool successfullyValidatedInsurance,
     bool isLoading,
   }) {
     this.memberId = memberId ?? this.memberId;
-    this.estimatedCost = estimatedCost ?? this.estimatedCost;
+    this.errorMessage = errorMessage ?? this.errorMessage;
     this.isLoading = isLoading ?? this.isLoading;
+    this.successfullyValidatedInsurance =
+        successfullyValidatedInsurance ?? this.successfullyValidatedInsurance;
     notifyListeners();
   }
 }

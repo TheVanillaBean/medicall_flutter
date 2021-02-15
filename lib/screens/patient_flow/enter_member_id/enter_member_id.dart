@@ -4,11 +4,9 @@ import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/patient_flow/enter_member_id/enter_member_id_view_model.dart';
-import 'package:Medicall/screens/patient_flow/start_visit/start_visit.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
-import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:provider/provider.dart';
@@ -65,17 +63,17 @@ class _EnterMemberIdState extends State<EnterMemberId> {
 
   Future<void> _submit() async {
     try {
-      if (this.model.showCostLabel) {
-        model.consult.price = model.estimatedCost;
-        StartVisitScreen.show(
-          context: context,
-          consult: model.consult,
-        );
+      if (this.model.successfullyValidatedInsurance) {
+        // model.consult.price = model.estimatedCost;
+        // StartVisitScreen.show(
+        //   context: context,
+        //   consult: model.consult,
+        // );
       } else {
         await model.calculateCostWithInsurance();
       }
     } catch (e) {
-      AppUtil().showFlushBar(e, context);
+      model.updateWith(successfullyValidatedInsurance: false, errorMessage: e);
     }
   }
 
@@ -137,10 +135,11 @@ class _EnterMemberIdState extends State<EnterMemberId> {
       ),
       SizedBox(height: 8),
       _buildMemberIDForm(),
-      if (model.showCostLabel) ..._buildCostLabel(),
+      if (model.showErrorMessage || model.successfullyValidatedInsurance)
+        ..._buildResponseLabel(),
       SizedBox(height: 16),
-      _buildCalculateButton(),
-      if (true) ..._buildReferralUI(),
+      _buildVerifyButton(),
+      SizedBox(height: 16),
       if (model.isLoading)
         Center(
           child: CircularProgressIndicator(),
@@ -152,10 +151,10 @@ class _EnterMemberIdState extends State<EnterMemberId> {
     return TextField(
       minLines: 1,
       keyboardType: TextInputType.text,
-      readOnly: model.showCostLabel,
+      readOnly: false,
       onChanged: model.updateMemberID,
-      onSubmitted: (state) {
-        _submit();
+      onSubmitted: (state) async {
+        await _submit();
       },
       decoration: InputDecoration(
         counterText: "",
@@ -167,72 +166,26 @@ class _EnterMemberIdState extends State<EnterMemberId> {
     );
   }
 
-  Widget _buildCalculateButton() {
+  Widget _buildVerifyButton() {
     return ReusableRaisedButton(
-      title: "Continue",
+      title: this.model.continueBtnText,
       onPressed: _submit,
     );
   }
 
-  List<Widget> _buildCostLabel() {
+  List<Widget> _buildResponseLabel() {
     return [
       SizedBox(
         height: 24,
       ),
       Center(
         child: Text(
-          "Your real time cost estimate:",
-          style: Theme.of(context).textTheme.headline6,
-        ),
-      ),
-      Center(
-        child: Text(
-          "\$${model.estimatedCost}",
-          style: Theme.of(context).textTheme.bodyText1,
+          "${model.labelText}",
+          style: Theme.of(context).textTheme.headline5,
+          textAlign: TextAlign.center,
         ),
       ),
       SizedBox(height: 8),
-    ];
-  }
-
-  List<Widget> _buildReferralUI() {
-    return [
-      SizedBox(
-        height: 24,
-      ),
-      Center(
-        child: Text(
-          "Referral Needed:",
-          style: Theme.of(context).textTheme.headline6,
-        ),
-      ),
-      SizedBox(
-        height: 16,
-      ),
-      Center(
-        child: Text(
-          "Would you like us to send your PCP an email requesting a referral so see this doctor or would you like to proceed with the visit without using insurance (\$75 cost)?",
-          style: Theme.of(context).textTheme.bodyText1,
-        ),
-      ),
-      SizedBox(
-        height: 12,
-      ),
-      Center(
-        child: ReusableRaisedButton(
-          title: "Request referral",
-          onPressed: () => {},
-        ),
-      ),
-      SizedBox(
-        height: 12,
-      ),
-      Center(
-        child: ReusableRaisedButton(
-          title: "Proceed without insurance",
-          onPressed: () => {},
-        ),
-      ),
     ];
   }
 }

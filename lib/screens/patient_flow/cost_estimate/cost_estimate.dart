@@ -3,7 +3,6 @@ import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
-import 'package:Medicall/screens/patient_flow/enter_member_id/enter_member_id_view_model.dart';
 import 'package:Medicall/screens/patient_flow/start_visit/start_visit.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
@@ -13,8 +12,10 @@ import 'package:flutter/material.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:provider/provider.dart';
 
+import 'cost_estimate_view_model.dart';
+
 class CostEstimate extends StatefulWidget {
-  final EnterMemberIdViewModel model;
+  final CostEstimateViewModel model;
 
   const CostEstimate({@required this.model});
 
@@ -26,14 +27,14 @@ class CostEstimate extends StatefulWidget {
     final AuthBase auth = Provider.of<AuthBase>(context, listen: false);
     final UserProvider userProvider =
         Provider.of<UserProvider>(context, listen: false);
-    return ChangeNotifierProvider<EnterMemberIdViewModel>(
-      create: (context) => EnterMemberIdViewModel(
+    return ChangeNotifierProvider<CostEstimateViewModel>(
+      create: (context) => CostEstimateViewModel(
         auth: auth,
         userProvider: userProvider,
         consult: consult,
         insurance: insurance,
       ),
-      child: Consumer<EnterMemberIdViewModel>(
+      child: Consumer<CostEstimateViewModel>(
         builder: (_, model, __) => CostEstimate(
           model: model,
         ),
@@ -61,7 +62,7 @@ class CostEstimate extends StatefulWidget {
 }
 
 class _CostEstimateState extends State<CostEstimate> {
-  EnterMemberIdViewModel get model => widget.model;
+  CostEstimateViewModel get model => widget.model;
 
   Future<void> _submit() async {
     try {
