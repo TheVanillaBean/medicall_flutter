@@ -81,7 +81,7 @@ class _EnterMemberIdState extends State<EnterMemberId> {
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
           type: AppBarType.Back,
-          title: "Your Insurance Cost",
+          title: "Determine Insurance Cost",
           theme: Theme.of(context),
           actions: [
             IconButton(
@@ -102,7 +102,7 @@ class _EnterMemberIdState extends State<EnterMemberId> {
         child: SingleChildScrollView(
           child: Container(
             color: Colors.white,
-            padding: EdgeInsets.symmetric(vertical: 24, horizontal: 24),
+            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: () {
@@ -122,7 +122,7 @@ class _EnterMemberIdState extends State<EnterMemberId> {
   List<Widget> _buildChildren() {
     return <Widget>[
       SizedBox(
-        height: 60,
+        height: 32,
       ),
       Center(
         child: Text(

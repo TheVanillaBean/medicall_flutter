@@ -8,7 +8,6 @@ import 'package:Medicall/screens/patient_flow/start_visit/start_visit.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
-import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:provider/provider.dart';
@@ -23,7 +22,7 @@ class CostEstimate extends StatefulWidget {
   static Widget create(
     BuildContext context,
     Consult consult,
-    InsuranceInfo insurance,
+    InsuranceInfo insuranceInfo,
   ) {
     final AuthBase auth = Provider.of<AuthBase>(context, listen: false);
     final UserProvider userProvider =
@@ -33,7 +32,7 @@ class CostEstimate extends StatefulWidget {
         auth: auth,
         userProvider: userProvider,
         consult: consult,
-        insurance: insurance,
+        insuranceInfo: insuranceInfo,
       ),
       child: Consumer<CostEstimateViewModel>(
         builder: (_, model, __) => CostEstimate(
@@ -50,10 +49,10 @@ class CostEstimate extends StatefulWidget {
     InsuranceInfo insuranceInfo,
   }) async {
     await Navigator.of(context).pushNamed(
-      Routes.verifyInsurance,
+      Routes.costEstimate,
       arguments: {
         'consult': consult,
-        'insurance': insuranceInfo,
+        'insurance_info': insuranceInfo,
       },
     );
   }
@@ -66,19 +65,24 @@ class _CostEstimateState extends State<CostEstimate> {
   CostEstimateViewModel get model => widget.model;
 
   Future<void> _submit() async {
-    try {
-      if (this.model.showCostLabel) {
-        model.consult.price = model.estimatedCost;
-        StartVisitScreen.show(
-          context: context,
-          consult: model.consult,
-        );
-      } else {
-        await model.calculateCostWithInsurance();
-      }
-    } catch (e) {
-      AppUtil().showFlushBar(e, context);
-    }
+    model.consult.price = model.insuranceInfo.costEstimate;
+    //model.consult.insurance
+    StartVisitScreen.show(
+      context: context,
+      consult: model.consult,
+    );
+  }
+
+  Future<void> _submitReferral() async {
+
+  }
+
+  Future<void> _proceedWithoutInsurance() async {
+    model.consult.price = model.insuranceInfo.costEstimate;
+    StartVisitScreen.show(
+      context: context,
+      consult: model.consult,
+    );
   }
 
   @override
@@ -109,7 +113,7 @@ class _CostEstimateState extends State<CostEstimate> {
         child: SingleChildScrollView(
           child: Container(
             color: Colors.white,
-            padding: EdgeInsets.symmetric(vertical: 24, horizontal: 24),
+            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: () {
@@ -129,20 +133,15 @@ class _CostEstimateState extends State<CostEstimate> {
   List<Widget> _buildChildren() {
     return <Widget>[
       SizedBox(
-        height: 60,
+        height: 32,
       ),
-      Center(
-        child: Text(
-          "Enter your Member ID",
-          style: Theme.of(context).textTheme.headline6,
-        ),
-      ),
-      SizedBox(height: 8),
-      _buildMemberIDForm(),
-      if (model.showCostLabel) ..._buildCostLabel(),
+      if (model.insuranceInfo.coverageResponse ==
+          CoverageResponse.ValidCostEstimate)
+        ..._buildValidCostLabel()
+      else if (model.insuranceInfo.coverageResponse ==
+          CoverageResponse.ReferralNeeded)
+        ..._buildReferralUI(),
       SizedBox(height: 16),
-      _buildCalculateButton(),
-      if (true) ..._buildReferralUI(),
       if (model.isLoading)
         Center(
           child: CircularProgressIndicator(),
@@ -150,37 +149,15 @@ class _CostEstimateState extends State<CostEstimate> {
     ];
   }
 
-  Widget _buildMemberIDForm() {
-    return TextField(
-      minLines: 1,
-      keyboardType: TextInputType.text,
-      readOnly: model.showCostLabel,
-      onChanged: model.updateMemberID,
-      onSubmitted: (state) {
-        _submit();
-      },
-      decoration: InputDecoration(
-        counterText: "",
-        filled: true,
-        fillColor: Colors.grey.withAlpha(20),
-        labelText: 'Member ID',
-        labelStyle: TextStyle(color: Colors.black45),
-      ),
-    );
-  }
-
-  Widget _buildCalculateButton() {
+  Widget _buildContinueButton() {
     return ReusableRaisedButton(
       title: "Continue",
       onPressed: _submit,
     );
   }
 
-  List<Widget> _buildCostLabel() {
+  List<Widget> _buildValidCostLabel() {
     return [
-      SizedBox(
-        height: 24,
-      ),
       Center(
         child: Text(
           "Your real time cost estimate:",
@@ -189,19 +166,17 @@ class _CostEstimateState extends State<CostEstimate> {
       ),
       Center(
         child: Text(
-          "\$${model.estimatedCost}",
+          "\$${model.insuranceInfo.costEstimate}",
           style: Theme.of(context).textTheme.bodyText1,
         ),
       ),
       SizedBox(height: 8),
+      _buildContinueButton(),
     ];
   }
 
   List<Widget> _buildReferralUI() {
     return [
-      SizedBox(
-        height: 24,
-      ),
       Center(
         child: Text(
           "Referral Needed:",
@@ -213,17 +188,17 @@ class _CostEstimateState extends State<CostEstimate> {
       ),
       Center(
         child: Text(
-          "Would you like us to send your PCP an email requesting a referral so see this doctor or would you like to proceed with the visit without using insurance (\$75 cost)?",
+          "Your insurance plan is an HMO, which means that you need a referral from your primary care provider (PCP) before your insurance will pay for this visit (i.e. your PCP has to explicitly approve this visit). Would you like us to do this on your behalf? By doing so, you will have to pay our full price of \$75.00 right now, but when we handle the insurance processing, we will reimburse your account with the appropriate funds based on what your insurance covers. This is a tedious process, but our aim is to make it as transparent as possible. If you have any questions, please email omar@medicall.com and we will respond quickly. You also have the option to proceed without using insurance.",
           style: Theme.of(context).textTheme.bodyText1,
         ),
       ),
       SizedBox(
-        height: 12,
+        height: 16,
       ),
       Center(
         child: ReusableRaisedButton(
           title: "Request referral",
-          onPressed: () => {},
+          onPressed: _submitReferral,
         ),
       ),
       SizedBox(
@@ -232,7 +207,7 @@ class _CostEstimateState extends State<CostEstimate> {
       Center(
         child: ReusableRaisedButton(
           title: "Proceed without insurance",
-          onPressed: () => {},
+          onPressed: _proceedWithoutInsurance,
         ),
       ),
     ];
