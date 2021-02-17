@@ -56,6 +56,7 @@ class EnterMemberIdViewModel with ChangeNotifier {
 
     if (result.data["code"] == 2) {
       insuranceInfo = InsuranceInfo(
+        memberId: memberId,
         coverageResponse: CoverageResponse.ReferralNeeded,
         insurance: this.insurance,
         providerName:
@@ -63,8 +64,10 @@ class EnterMemberIdViewModel with ChangeNotifier {
       );
     } else if (result.data["code"] == 1) {
       insuranceInfo = InsuranceInfo(
+        memberId: memberId,
         coverageResponse: CoverageResponse.ValidCostEstimate,
         insurance: this.insurance,
+        costEstimate: result.data["cost_estimate"] ?? -1,
       );
     }
 

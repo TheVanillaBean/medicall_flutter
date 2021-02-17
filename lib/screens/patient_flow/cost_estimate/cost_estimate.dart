@@ -65,20 +65,20 @@ class _CostEstimateState extends State<CostEstimate> {
   CostEstimateViewModel get model => widget.model;
 
   Future<void> _submit() async {
-    model.consult.price = model.insuranceInfo.costEstimate;
-    //model.consult.insurance
+    if (model.insuranceInfo.costEstimate > -1) {
+      model.consult.price = model.insuranceInfo.costEstimate;
+    }
+    model.consult.insurancePayment = true;
+    model.consult.insuranceInfo = model.insuranceInfo;
     StartVisitScreen.show(
       context: context,
       consult: model.consult,
     );
   }
 
-  Future<void> _submitReferral() async {
-
-  }
+  Future<void> _submitReferral() async {}
 
   Future<void> _proceedWithoutInsurance() async {
-    model.consult.price = model.insuranceInfo.costEstimate;
     StartVisitScreen.show(
       context: context,
       consult: model.consult,

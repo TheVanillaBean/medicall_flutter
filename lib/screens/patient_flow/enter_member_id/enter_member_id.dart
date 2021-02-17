@@ -9,6 +9,7 @@ import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:provider/provider.dart';
 
@@ -65,12 +66,24 @@ class _EnterMemberIdState extends State<EnterMemberId> {
   Future<void> _submit() async {
     try {
       if (this.model.successfullyValidatedInsurance) {
-        CostEstimate.show(context: context, insuranceInfo: model.insuranceInfo);
+        CostEstimate.show(
+          context: context,
+          consult: model.consult,
+          insuranceInfo: model.insuranceInfo,
+        );
       } else {
         await model.calculateCostWithInsurance();
       }
+    } on PlatformException catch (e) {
+      model.updateWith(
+          successfullyValidatedInsurance: false,
+          errorMessage: "Failed to connect to server",
+          isLoading: false);
     } catch (e) {
-      model.updateWith(successfullyValidatedInsurance: false, errorMessage: e);
+      model.updateWith(
+          successfullyValidatedInsurance: false,
+          errorMessage: e,
+          isLoading: false);
     }
   }
 
@@ -81,7 +94,7 @@ class _EnterMemberIdState extends State<EnterMemberId> {
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
           type: AppBarType.Back,
-          title: "Determine Insurance Cost",
+          title: "Verify Insurance",
           theme: Theme.of(context),
           actions: [
             IconButton(
