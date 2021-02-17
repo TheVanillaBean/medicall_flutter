@@ -1,3 +1,4 @@
+import 'package:Medicall/models/insurance_info.dart';
 import 'package:Medicall/models/questionnaire/question_model.dart';
 import 'package:Medicall/models/user/patient_user_model.dart';
 import 'package:Medicall/models/user/provider_user_model.dart';
@@ -70,9 +71,11 @@ class Consult {
   int providerMessageNotifications;
   int patientReviewNotifications;
   int patientMessageNotifications;
-  bool assistantEmailed = false;
+  bool assistantEmailed;
   Map<String, dynamic> chatClosed;
   Map<String, dynamic> visitIssue;
+  bool insurancePayment;
+  InsuranceInfo insuranceInfo;
 
   //not serialized
   PatientUser patientUser;
@@ -104,6 +107,8 @@ class Consult {
     this.assistantEmailed = false,
     this.chatClosed,
     this.visitIssue,
+    this.insurancePayment = false,
+    this.insuranceInfo,
   });
 
   factory Consult.fromMap(Map<String, dynamic> data, String documentId) {
@@ -151,6 +156,13 @@ class Consult {
       );
     }
 
+    final bool insurancePayment = data['insurance_payment'] ?? false;
+
+    InsuranceInfo insuranceInfo;
+    if (insurancePayment) {
+      insuranceInfo = InsuranceInfo.fromMap(data['insurance_info']);
+    }
+
     return Consult(
       uid: documentId,
       providerId: providerId,
@@ -169,6 +181,8 @@ class Consult {
       assistantEmailed: assistantEmailed,
       chatClosed: chatClosed,
       visitIssue: visitIssue,
+      insurancePayment: insurancePayment,
+      insuranceInfo: insuranceInfo,
     );
   }
 
@@ -185,6 +199,7 @@ class Consult {
       'patient_review_notifications': patientReviewNotifications,
       'provider_review_notifications': providerReviewNotifications,
       'provider_message_notifications': providerMessageNotifications,
+      'insurance_payment': insurancePayment
     };
     if (providerReclassified) {
       baseToMap.addAll({
@@ -204,6 +219,11 @@ class Consult {
     if (visitIssue != null) {
       baseToMap.addAll({
         'visit_issue': visitIssue,
+      });
+    }
+    if (insurancePayment) {
+      baseToMap.addAll({
+        'insurance_info': insuranceInfo.toMap(),
       });
     }
     return baseToMap;
