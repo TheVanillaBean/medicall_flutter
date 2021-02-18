@@ -71,7 +71,7 @@ class ProviderListItem extends StatelessWidget {
                       ],
                     ),
                     Text(
-                      inNetwork ? "with insurance" : "no insurance",
+                      inNetwork ? "with insurance" : "out-of-network",
                       style: Theme.of(context)
                           .textTheme
                           .caption

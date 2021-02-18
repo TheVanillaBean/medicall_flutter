@@ -97,6 +97,7 @@ class _EnterInsuranceScreenState extends State<EnterInsuranceScreen>
   }
 
   Future<void> _submit() async {
+    FocusScope.of(context).unfocus();
     try {
       String state = await model.validateZipCodeAndInsurance();
 
@@ -177,7 +178,8 @@ class _EnterInsuranceScreenState extends State<EnterInsuranceScreen>
             height: 20,
           ),
           _buildZipCodeForm(),
-          _buildInsuranceWidgets(model.showInsuranceWidgets),
+          if (model.showInsuranceWidgets)
+            _buildInsuranceWidgets(model.showInsuranceWidgets),
         ],
       ),
       SizedBox(
