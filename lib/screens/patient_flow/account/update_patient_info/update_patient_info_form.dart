@@ -2,6 +2,7 @@ import 'package:Medicall/common_widgets/custom_dropdown_formfield.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/screens/patient_flow/account/update_patient_info/update_patient_info_view_model.dart';
 import 'package:Medicall/screens/patient_flow/personal_info/personal_info_text_field.dart';
+import 'package:Medicall/screens/patient_flow/registration/birthday_textfield.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
@@ -70,6 +71,47 @@ class _UpdatePatientInfoFormState extends State<UpdatePatientInfoForm> {
                 hint: 'Doe',
                 errorText: model.lastNameErrorText,
                 onChanged: model.updateLastName,
+              ),
+              SizedBox(height: 30),
+              ReusableRaisedButton(
+                title: 'Save',
+                onPressed: !model.isLoading
+                    ? () {
+                        if (_formKey.currentState.validate()) {
+                          _submit(model);
+                        }
+                      }
+                    : null,
+              ),
+              SizedBox(height: 70),
+              if (model.isLoading)
+                Container(
+                    margin: EdgeInsets.symmetric(vertical: 24),
+                    child: CircularProgressIndicator()),
+            ],
+          ));
+    } else if (model.patientProfileInputType == PatientProfileInputType.DOB) {
+      return Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 30),
+                child: BirthdayTextField(
+                  inputFormatters: [dobTextInputFormatter],
+                  labelText: 'Date of Birth',
+                  hint: 'mm/dd/yyyy',
+                  fillColor: Colors.grey.withAlpha(40),
+                  // icon: Icon(
+                  //   Icons.date_range,
+                  //   color: Theme.of(context).colorScheme.onSurface.withAlpha(150),
+                  // ),
+                  keyboardType: TextInputType.datetime,
+                  errorText: model.patientDobErrorText,
+                  initialDate: model.initialDatePickerDate,
+                  onChanged: model.updateBirthDate,
+                  enabled: model.isLoading == false,
+                ),
               ),
               SizedBox(height: 30),
               ReusableRaisedButton(

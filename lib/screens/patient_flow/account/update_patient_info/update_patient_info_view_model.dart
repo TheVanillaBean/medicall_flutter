@@ -8,6 +8,7 @@ import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/validators.dart';
 import 'package:dash_chat/dash_chat.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class UpdatePatientInfoViewModel
     with
@@ -146,6 +147,14 @@ class UpdatePatientInfoViewModel
     this.phoneNumber = userProvider.user.phoneNumber;
   }
 
+  void initBirthDate() {
+    try {
+      this.birthDate = DateFormat.yMd().parse(userProvider.user.dob);
+    } catch (e) {
+      this.birthDate = DateTime.now();
+    }
+  }
+
   bool get canSubmit {
     if (this.patientProfileInputType == PatientProfileInputType.NAME) {
       return firstNameValidator.isValid(firstName) &&
@@ -160,6 +169,8 @@ class UpdatePatientInfoViewModel
           stateValidator.isValid(mailingState) &&
           zipCodeValidator.isValid(mailingZipCode) &&
           submitted;
+    } else if (this.patientProfileInputType == PatientProfileInputType.DOB) {
+      return dobValidator.isValid(birthDate) && submitted;
     }
     return false;
   }
@@ -214,6 +225,20 @@ class UpdatePatientInfoViewModel
     return showErrorText ? zipCodeErrorText : null;
   }
 
+  DateTime get initialDatePickerDate {
+    final DateTime currentDate = DateTime.now();
+
+    this.birthDate = this.birthDate == null ? currentDate : this.birthDate;
+
+    return this.birthDate.year <= DateTime.now().year - 18
+        ? this.birthDate
+        : DateTime(
+            currentDate.year - 18,
+            currentDate.month,
+            currentDate.day,
+          );
+  }
+
   void updateFirstName(String firstName) => updateWith(firstName: firstName);
   void updateLastName(String lastName) => updateWith(lastName: lastName);
   void updateBirthDate(DateTime birthDate) => updateWith(birthDate: birthDate);
@@ -250,6 +275,8 @@ class UpdatePatientInfoViewModel
       medicallUser.firstName = this.firstName;
       medicallUser.lastName = this.lastName;
       medicallUser.fullName = '${this.firstName} ${this.lastName}';
+    } else if (this.patientProfileInputType == PatientProfileInputType.DOB) {
+      medicallUser.dob = this.birthday;
     }
     await updateUserDetails(medicallUser);
 

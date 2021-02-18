@@ -167,6 +167,8 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
             ),
             _buildNameCard(medicallUser),
             Divider(height: 0.5, thickness: 1),
+            _buildBirthdayCard(medicallUser),
+            Divider(height: 0.5, thickness: 1),
             _buildEmailCard(medicallUser),
             Divider(height: 0.5, thickness: 1),
             _buildPhoneCard(medicallUser),
@@ -283,6 +285,24 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
         onPressed: () {
           model.patientProfileInputType = PatientProfileInputType.NAME;
           model.initName();
+          UpdatePatientInfoScreen.show(
+            context: context,
+            model: model,
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildBirthdayCard(MedicallUser medicallUser) {
+    return ReusableAccountCard(
+      leading: 'Date of Birth:',
+      title: medicallUser.dob,
+      trailing: IconButton(
+        icon: Icon(Icons.create, size: 20),
+        onPressed: () {
+          model.patientProfileInputType = PatientProfileInputType.DOB;
+          model.initBirthDate();
           UpdatePatientInfoScreen.show(
             context: context,
             model: model,
