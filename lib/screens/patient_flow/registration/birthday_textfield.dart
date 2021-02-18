@@ -58,6 +58,7 @@ class BirthdayTextField extends StatelessWidget {
         border: InputBorder.none,
         enabled: enabled,
       ),
+      initialValue: initialDateFormatted,
       keyboardType: keyboardType,
       onChanged: (val) => onChanged(
         convertToDate(val),
@@ -73,5 +74,10 @@ class BirthdayTextField extends StatelessWidget {
     } catch (e) {
       return null;
     }
+  }
+
+  String get initialDateFormatted {
+    final f = new DateFormat('MM/dd/yyyy');
+    return "${f.format(this.initialDate)}";
   }
 }

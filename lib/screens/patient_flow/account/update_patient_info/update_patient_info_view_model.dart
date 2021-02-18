@@ -6,10 +6,15 @@ import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/validators.dart';
+import 'package:dash_chat/dash_chat.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class UpdatePatientInfoViewModel
     with
+        FirstNameValidators,
+        LastNameValidators,
+        DobValidators,
         PhoneValidators,
         AddressValidators,
         CityValidators,
@@ -23,6 +28,9 @@ class UpdatePatientInfoViewModel
   @required
   PatientProfileInputType patientProfileInputType;
 
+  String firstName;
+  String lastName;
+  DateTime birthDate = DateTime.now();
   String phoneNumber;
   String billingAddress;
   String billingAddressLine2;
@@ -103,6 +111,9 @@ class UpdatePatientInfoViewModel
     @required this.firestoreDatabase,
     @required this.userProvider,
     this.patientProfileInputType = PatientProfileInputType.PHONE,
+    this.firstName = '',
+    this.lastName = '',
+    this.birthDate,
     this.phoneNumber = '',
     this.billingAddress = '',
     this.billingAddressLine2 = '',
@@ -118,6 +129,12 @@ class UpdatePatientInfoViewModel
   }
 
   ///Set initial values
+
+  void initName() {
+    this.firstName = userProvider.user.firstName;
+    this.lastName = userProvider.user.lastName;
+  }
+
   void initAddress() {
     this.billingAddress = userProvider.user.mailingAddress;
     this.billingAddressLine2 = userProvider.user.mailingAddressLine2;
@@ -130,8 +147,20 @@ class UpdatePatientInfoViewModel
     this.phoneNumber = userProvider.user.phoneNumber;
   }
 
+  void initBirthDate() {
+    try {
+      this.birthDate = DateFormat.yMd().parse(userProvider.user.dob);
+    } catch (e) {
+      this.birthDate = DateTime.now();
+    }
+  }
+
   bool get canSubmit {
-    if (this.patientProfileInputType == PatientProfileInputType.PHONE) {
+    if (this.patientProfileInputType == PatientProfileInputType.NAME) {
+      return firstNameValidator.isValid(firstName) &&
+          lastNameValidator.isValid(lastName) &&
+          submitted;
+    } else if (this.patientProfileInputType == PatientProfileInputType.PHONE) {
       return phoneNumberLengthValidator.isValid(phoneNumber) && submitted;
     } else if (this.patientProfileInputType ==
         PatientProfileInputType.ADDRESS) {
@@ -140,8 +169,33 @@ class UpdatePatientInfoViewModel
           stateValidator.isValid(mailingState) &&
           zipCodeValidator.isValid(mailingZipCode) &&
           submitted;
+    } else if (this.patientProfileInputType == PatientProfileInputType.DOB) {
+      return dobValidator.isValid(birthDate) && submitted;
     }
     return false;
+  }
+
+  String get firstNameErrorText {
+    bool showErrorText =
+        this.submitted && !firstNameValidator.isValid(firstName);
+    return showErrorText ? fNameErrorText : null;
+  }
+
+  String get lastNameErrorText {
+    bool showErrorText = this.submitted && !lastNameValidator.isValid(lastName);
+    return showErrorText ? lNameErrorText : null;
+  }
+
+  String get patientDobErrorText {
+    bool showErrorText = this.submitted && !dobValidator.isValid(birthDate);
+    return showErrorText ? dobErrorText : null;
+  }
+
+  String get birthday {
+    final f = new DateFormat('MM/dd/yyyy');
+    return this.birthDate.year <= DateTime.now().year - 18
+        ? "${f.format(this.birthDate)}"
+        : "Please Select";
   }
 
   String get phoneNumberErrorText {
@@ -171,6 +225,23 @@ class UpdatePatientInfoViewModel
     return showErrorText ? zipCodeErrorText : null;
   }
 
+  DateTime get initialDatePickerDate {
+    final DateTime currentDate = DateTime.now();
+
+    this.birthDate = this.birthDate == null ? currentDate : this.birthDate;
+
+    return this.birthDate.year <= DateTime.now().year - 18
+        ? this.birthDate
+        : DateTime(
+            currentDate.year - 18,
+            currentDate.month,
+            currentDate.day,
+          );
+  }
+
+  void updateFirstName(String firstName) => updateWith(firstName: firstName);
+  void updateLastName(String lastName) => updateWith(lastName: lastName);
+  void updateBirthDate(DateTime birthDate) => updateWith(birthDate: birthDate);
   void updatePhoneNumber(String phoneNumber) =>
       updateWith(phoneNumber: phoneNumber);
   void updateBillingAddress(String billingAddress) =>
@@ -200,6 +271,12 @@ class UpdatePatientInfoViewModel
       medicallUser.mailingCity = this.mailingCity;
       medicallUser.mailingState = this.mailingState;
       medicallUser.mailingZipCode = this.mailingZipCode;
+    } else if (this.patientProfileInputType == PatientProfileInputType.NAME) {
+      medicallUser.firstName = this.firstName;
+      medicallUser.lastName = this.lastName;
+      medicallUser.fullName = '${this.firstName} ${this.lastName}';
+    } else if (this.patientProfileInputType == PatientProfileInputType.DOB) {
+      medicallUser.dob = this.birthday;
     }
     await updateUserDetails(medicallUser);
 
@@ -212,6 +289,9 @@ class UpdatePatientInfoViewModel
   }
 
   void updateWith({
+    String firstName,
+    String lastName,
+    DateTime birthDate,
     String phoneNumber,
     String billingAddress,
     String billingAddressLine2,
@@ -222,6 +302,9 @@ class UpdatePatientInfoViewModel
     bool submitted,
     bool checkValue,
   }) {
+    this.firstName = firstName ?? this.firstName;
+    this.lastName = lastName ?? this.lastName;
+    this.birthDate = birthDate ?? this.birthDate;
     this.phoneNumber = phoneNumber ?? this.phoneNumber;
     this.billingAddress = billingAddress ?? this.billingAddress;
     this.billingAddressLine2 = billingAddressLine2 ?? this.billingAddressLine2;
