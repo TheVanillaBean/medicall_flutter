@@ -1,12 +1,13 @@
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/insurance_info.dart';
-import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/models/user/patient_user_model.dart';
+import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/foundation.dart';
 
 class EnterMemberIdViewModel with ChangeNotifier {
-  final AuthBase auth;
+  final FirestoreDatabase database;
   final UserProvider userProvider;
   final Consult consult;
   final String insurance;
@@ -18,7 +19,7 @@ class EnterMemberIdViewModel with ChangeNotifier {
   InsuranceInfo insuranceInfo;
 
   EnterMemberIdViewModel({
-    @required this.auth,
+    @required this.database,
     @required this.userProvider,
     @required this.consult,
     @required this.insurance,
@@ -27,7 +28,9 @@ class EnterMemberIdViewModel with ChangeNotifier {
     this.isLoading = false,
     this.successfullyValidatedInsurance = false,
     this.insuranceInfo,
-  });
+  }) {
+    this.memberId = (userProvider.user as PatientUser).memberId;
+  }
 
   Future<void> calculateCostWithInsurance() async {
     this.updateWith(isLoading: true);
@@ -75,6 +78,11 @@ class EnterMemberIdViewModel with ChangeNotifier {
         successfullyValidatedInsurance: true,
         insuranceInfo: insuranceInfo,
         errorMessage: "");
+  }
+
+  Future<void> saveMemberId() async {
+    (userProvider.user as PatientUser).memberId = this.memberId;
+    await database.setUser(userProvider.user);
   }
 
   String get continueBtnText {

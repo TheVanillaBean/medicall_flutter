@@ -5,7 +5,7 @@ import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/patient_flow/cost_estimate/cost_estimate.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/patient_flow/enter_member_id/enter_member_id_view_model.dart';
-import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
@@ -23,12 +23,13 @@ class EnterMemberId extends StatefulWidget {
     Consult consult,
     String insurance,
   ) {
-    final AuthBase auth = Provider.of<AuthBase>(context, listen: false);
+    final FirestoreDatabase database =
+        Provider.of<FirestoreDatabase>(context, listen: false);
     final UserProvider userProvider =
         Provider.of<UserProvider>(context, listen: false);
     return ChangeNotifierProvider<EnterMemberIdViewModel>(
       create: (context) => EnterMemberIdViewModel(
-        auth: auth,
+        database: database,
         userProvider: userProvider,
         consult: consult,
         insurance: insurance,
@@ -66,6 +67,7 @@ class _EnterMemberIdState extends State<EnterMemberId> {
   Future<void> _submit() async {
     try {
       if (this.model.successfullyValidatedInsurance) {
+        await model.saveMemberId();
         CostEstimate.show(
           context: context,
           consult: model.consult,
@@ -158,14 +160,12 @@ class _EnterMemberIdState extends State<EnterMemberId> {
   }
 
   Widget _buildMemberIDForm() {
-    return TextField(
+    return TextFormField(
+      initialValue: this.model.memberId,
       minLines: 1,
       keyboardType: TextInputType.text,
       readOnly: false,
       onChanged: model.updateMemberID,
-      onSubmitted: (state) async {
-        await _submit();
-      },
       decoration: InputDecoration(
         counterText: "",
         filled: true,
