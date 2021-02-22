@@ -1,4 +1,5 @@
 import 'package:Medicall/models/symptom_model.dart';
+import 'package:Medicall/models/user/patient_user_model.dart';
 import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/non_auth_firestore_db.dart';
@@ -60,8 +61,14 @@ class EnterInsuranceViewModel with EmailAndPasswordValidators, ChangeNotifier {
     return showErrorText ? invalidEmailErrorText : "";
   }
 
-  bool get noInsuranceSelected {
+  bool get proceedWithoutInsuranceSelected {
     return this.selectedItemIndex == 1;
+  }
+
+  bool get isWaiverUncheckedButNeedsToBe {
+    return this.showInsuranceWidgets &&
+        this.proceedWithoutInsuranceSelected &&
+        !this.waiverCheck;
   }
 
   void updateEmail(String email) => updateWith(email: email);
@@ -76,9 +83,10 @@ class EnterInsuranceViewModel with EmailAndPasswordValidators, ChangeNotifier {
         throw PlatformException(
             code: 'ERROR', message: 'Please enter a valid zipcode');
       }
-      String alreadyInArea = await this.areProvidersInArea(zipcode);
+      String alreadyInArea = await this.areProvidersInArea(
+          zipcode); //technically the email UI only shows if they have already submitted a zipcode and this function is called, but we call again for safety
       if (alreadyInArea != null) {
-        this.updateWith(showEmailField: false);
+        this.updateWith(showEmailField: false, isLoading: false);
         throw PlatformException(
             code: 'ERROR', message: 'We are already in your area :)');
       }
@@ -100,15 +108,27 @@ class EnterInsuranceViewModel with EmailAndPasswordValidators, ChangeNotifier {
   Future<String> validateZipCodeAndInsurance() async {
     String state = await this.areProvidersInArea(this.zipcode);
     if (state != null) {
-      if (showInsuranceWidgets) {
-        this.tempUserProvider.setUser(userType: USER_TYPE.PATIENT);
-        this.tempUserProvider.user.mailingZipCode = this.zipcode;
-        this.tempUserProvider.user.mailingState = state;
-        return state;
+      if (this.showInsuranceWidgets) {
+        if (isWaiverUncheckedButNeedsToBe) {
+          throw "You have to agree to the insurance waiver before continuing";
+        } else if (this.showInsuranceWidgets && this.selectedItemIndex == 0) {
+          throw "Please select an insurance option";
+        } else {
+          this.tempUserProvider.setUser(userType: USER_TYPE.PATIENT);
+          this.tempUserProvider.user.mailingZipCode = this.zipcode;
+          this.tempUserProvider.user.mailingState = state;
+          (this.tempUserProvider.user as PatientUser).insurance =
+              this.insurance;
+          return state;
+        }
       }
-      this.updateWith(showEmailField: false);
+      this.updateWith(showEmailField: false, showInsuranceWidgets: true);
     } else {
-      this.updateWith(showEmailField: true, showInsuranceWidgets: false);
+      this.updateWith(
+          showEmailField: true,
+          showInsuranceWidgets: false,
+          waiverCheck: false,
+          selectedItemIndex: 0);
     }
     return null;
   }
@@ -240,12 +260,9 @@ class EnterInsuranceViewModel with EmailAndPasswordValidators, ChangeNotifier {
     for (var state in states) {
       String enteredState = getState();
       if (state == enteredState) {
-        updateWith(showInsuranceWidgets: true);
         return state;
       }
     }
-
-    updateWith(showInsuranceWidgets: false);
     return null;
   }
 

@@ -1,7 +1,6 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/symptom_model.dart';
-import 'package:Medicall/models/user/patient_user_model.dart';
 import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
@@ -98,32 +97,19 @@ class _EnterInsuranceScreenState extends State<EnterInsuranceScreen>
 
   Future<void> _submit() async {
     FocusScope.of(context).unfocus();
-    if (model.showInsuranceWidgets &&
-        model.noInsuranceSelected &&
-        !model.waiverCheck) {
-      AppUtil().showFlushBar(
-          "You have to agree to the insurance waiver before continuing",
-          context);
-    } else {
-      if (model.showInsuranceWidgets && model.selectedItemIndex == 0) {
-        AppUtil().showFlushBar("Please select an insurance option", context);
-      }
-      try {
-        String state = await model.validateZipCodeAndInsurance();
+    try {
+      String state = await model.validateZipCodeAndInsurance();
 
-        if (state != null) {
-          (model.tempUserProvider.user as PatientUser).insurance =
-              model.insurance;
-          SelectProviderScreen.show(
-            context: context,
-            symptom: symptom,
-            state: state,
-            insurance: model.insurance,
-          );
-        }
-      } catch (e) {
-        AppUtil().showFlushBar(e, context);
+      if (state != null) {
+        SelectProviderScreen.show(
+          context: context,
+          symptom: symptom,
+          state: state,
+          insurance: model.insurance,
+        );
       }
+    } catch (e) {
+      AppUtil().showFlushBar(e, context);
     }
   }
 
@@ -196,7 +182,8 @@ class _EnterInsuranceScreenState extends State<EnterInsuranceScreen>
       SizedBox(
         height: 24,
       ),
-      if (model.noInsuranceSelected) _buildInsuranceWaiverCheckbox(),
+      if (model.proceedWithoutInsuranceSelected)
+        _buildInsuranceWaiverCheckbox(),
       _buildVerifyButton(),
       if (model.showEmailField) ..._buildNotifyTextField(),
     ];
