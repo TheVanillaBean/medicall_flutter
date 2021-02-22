@@ -86,7 +86,7 @@ class StartVisitScreen extends StatelessWidget {
                   children: <Widget>[
                     if ((userProvider.user as PatientUser).hasMedicalHistory)
                       Text(
-                        "We will ask a few questions, starting with general medical history if your's has changed since your last visit and after we will focus on specific visit questions.",
+                        "We will ask a few questions, starting with general medical history if yours has changed since your last visit and after we will focus on specific visit questions.",
                         style: Theme.of(context).textTheme.bodyText1,
                       ),
                     if (!(userProvider.user as PatientUser).hasMedicalHistory)

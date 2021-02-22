@@ -8,9 +8,11 @@ import 'package:Medicall/screens/patient_flow/start_visit/start_visit.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
+import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:provider/provider.dart';
+import 'package:super_rich_text/super_rich_text.dart';
 
 import 'cost_estimate_view_model.dart';
 
@@ -76,13 +78,36 @@ class _CostEstimateState extends State<CostEstimate> {
     );
   }
 
-  Future<void> _submitReferral() async {}
+  Future<void> _submitReferral() async {
+    try {
+      if (await this.model.requestReferral()) {
+        StartVisitScreen.show(
+          context: context,
+          consult: model.consult,
+        );
+      } else {
+        AppUtil().showFlushBar(
+            "There was an issue requesting a referral for you. Please contact omar@medicall.com",
+            context);
+        model.updateWith(isLoading: false);
+      }
+    } catch (e) {
+      AppUtil().showFlushBar(e, context);
+      model.updateWith(isLoading: false);
+    }
+  }
 
   Future<void> _proceedWithoutInsurance() async {
-    StartVisitScreen.show(
-      context: context,
-      consult: model.consult,
-    );
+    if (model.waiverCheck) {
+      StartVisitScreen.show(
+        context: context,
+        consult: model.consult,
+      );
+    } else {
+      AppUtil().showFlushBar(
+          "You have to agree to the insurance waiver before continuing",
+          context);
+    }
   }
 
   @override
@@ -142,6 +167,7 @@ class _CostEstimateState extends State<CostEstimate> {
           CoverageResponse.ReferralNeeded)
         ..._buildReferralUI(),
       SizedBox(height: 16),
+      if (model.waiverCheck) _buildInsuranceWaiverCheckbox(),
       if (model.isLoading)
         Center(
           child: CircularProgressIndicator(),
@@ -153,6 +179,15 @@ class _CostEstimateState extends State<CostEstimate> {
     return ReusableRaisedButton(
       title: "Continue",
       onPressed: _submit,
+    );
+  }
+
+  Widget _buildOOPButton() {
+    return Center(
+      child: ReusableRaisedButton(
+        title: "Proceed without insurance",
+        onPressed: _proceedWithoutInsurance,
+      ),
     );
   }
 
@@ -172,6 +207,8 @@ class _CostEstimateState extends State<CostEstimate> {
       ),
       SizedBox(height: 8),
       _buildContinueButton(),
+      SizedBox(height: 12),
+      _buildOOPButton(),
     ];
   }
 
@@ -201,15 +238,47 @@ class _CostEstimateState extends State<CostEstimate> {
           onPressed: _submitReferral,
         ),
       ),
-      SizedBox(
-        height: 12,
-      ),
-      Center(
-        child: ReusableRaisedButton(
-          title: "Proceed without insurance",
-          onPressed: _proceedWithoutInsurance,
-        ),
-      ),
+      SizedBox(height: 12),
+      _buildOOPButton(),
     ];
+  }
+
+  Widget _buildInsuranceWaiverCheckbox() {
+    return Column(
+      children: [
+        Center(
+          child: Text(
+            "To proceed without insurance you will have to agree to our insurance waiver, which ensures that you agree not to file an insurance claim separately after completing this visit. This waiver protects our doctors from any legal issues (between them and insurance companies) that may arise from this.",
+            style: Theme.of(context).textTheme.bodyText1,
+          ),
+        ),
+        SizedBox(
+          height: 16,
+        ),
+        CheckboxListTile(
+          title: Title(
+            color: Colors.blue,
+            child: SuperRichText(
+              text: 'I agree to Medicall’s <waiver>Insurance Waiver<waiver>.',
+              style: Theme.of(context).textTheme.bodyText2,
+              othersMarkers: [
+                MarkerText.withSameFunction(
+                  marker: '<waiver>',
+                  function: () => Navigator.of(context).pushNamed('/terms'),
+                  onError: (msg) => print('$msg'),
+                  style: TextStyle(
+                      color: Colors.blue, decoration: TextDecoration.underline),
+                ),
+              ],
+            ),
+          ),
+          value: model.waiverCheck,
+          onChanged: (waiverCheck) =>
+              model.updateWith(waiverCheck: waiverCheck),
+          controlAffinity: ListTileControlAffinity.leading,
+          activeColor: Theme.of(context).colorScheme.primary,
+        ),
+      ],
+    );
   }
 }

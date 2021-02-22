@@ -111,20 +111,6 @@ class RegistrationViewModel
       updateWith(confirmPassword: password);
   void updateCheckValue(bool checkValue) => updateWith(checkValue: checkValue);
 
-  DateTime get initialDatePickerDate {
-    final DateTime currentDate = DateTime.now();
-
-    this.birthDate = this.birthDate == null ? currentDate : this.birthDate;
-
-    return this.birthDate.year <= DateTime.now().year - 18
-        ? this.birthDate
-        : DateTime(
-            currentDate.year - 18,
-            currentDate.month,
-            currentDate.day,
-          );
-  }
-
   Future<void> submit() async {
     updateWith(submitted: true);
     if (!checkValue) {

@@ -77,6 +77,9 @@ class BirthdayTextField extends StatelessWidget {
   }
 
   String get initialDateFormatted {
+    if (this.initialDate == null) {
+      return "";
+    }
     final f = new DateFormat('MM/dd/yyyy');
     return "${f.format(this.initialDate)}";
   }

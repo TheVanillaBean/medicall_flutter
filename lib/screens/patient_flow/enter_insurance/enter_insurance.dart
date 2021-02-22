@@ -98,21 +98,32 @@ class _EnterInsuranceScreenState extends State<EnterInsuranceScreen>
 
   Future<void> _submit() async {
     FocusScope.of(context).unfocus();
-    try {
-      String state = await model.validateZipCodeAndInsurance();
-
-      if (state != null) {
-        (model.tempUserProvider.user as PatientUser).insurance =
-            model.insurance;
-        SelectProviderScreen.show(
-          context: context,
-          symptom: symptom,
-          state: state,
-          insurance: model.insurance,
-        );
+    if (model.showInsuranceWidgets &&
+        model.noInsuranceSelected &&
+        !model.waiverCheck) {
+      AppUtil().showFlushBar(
+          "You have to agree to the insurance waiver before continuing",
+          context);
+    } else {
+      if (model.showInsuranceWidgets && model.selectedItemIndex == 0) {
+        AppUtil().showFlushBar("Please select an insurance option", context);
       }
-    } catch (e) {
-      AppUtil().showFlushBar(e, context);
+      try {
+        String state = await model.validateZipCodeAndInsurance();
+
+        if (state != null) {
+          (model.tempUserProvider.user as PatientUser).insurance =
+              model.insurance;
+          SelectProviderScreen.show(
+            context: context,
+            symptom: symptom,
+            state: state,
+            insurance: model.insurance,
+          );
+        }
+      } catch (e) {
+        AppUtil().showFlushBar(e, context);
+      }
     }
   }
 
@@ -185,6 +196,7 @@ class _EnterInsuranceScreenState extends State<EnterInsuranceScreen>
       SizedBox(
         height: 24,
       ),
+      if (model.noInsuranceSelected) _buildInsuranceWaiverCheckbox(),
       _buildVerifyButton(),
       if (model.showEmailField) ..._buildNotifyTextField(),
     ];
@@ -279,67 +291,82 @@ class _EnterInsuranceScreenState extends State<EnterInsuranceScreen>
       default:
     }
     return AnimatedOpacity(
-        opacity: loading ? 1 : 0,
-        duration: Duration(milliseconds: 500),
-        child: SlideTransition(
-            position: offset,
-            child: Column(
-              children: [
-                SizedBox(height: 32),
-                Text(
-                  'Please enter your insurance',
-                  style: Theme.of(context).textTheme.headline5,
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                Center(
-                  child: Text(
-                    "This helps us show you the doctors covered by your plan.",
-                    style: Theme.of(context).textTheme.bodyText2,
-                  ),
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                DirectSelect(
-                  itemExtent: 60.0,
-                  selectedIndex: model.selectedItemIndex,
-                  child: CustomSelectionItem(
-                    isForList: false,
-                    title: model.insurance,
-                  ),
-                  onSelectedItemChanged: (index) =>
-                      model.updateWith(selectedItemIndex: index),
-                  items: _buildInsuranceListItem(),
-                ),
-                _buildInsuranceWaiverCheckbox(context),
-              ],
-            )));
-  }
-
-  Widget _buildInsuranceWaiverCheckbox(BuildContext context) {
-    return CheckboxListTile(
-      title: Title(
-        color: Colors.blue,
-        child: SuperRichText(
-          text: 'I agree to Medicall’s <waiver>Insurance Waiver<waiver>.',
-          style: Theme.of(context).textTheme.bodyText2,
-          othersMarkers: [
-            MarkerText.withSameFunction(
-              marker: '<waiver>',
-              function: () => Navigator.of(context).pushNamed('/terms'),
-              onError: (msg) => print('$msg'),
-              style: TextStyle(
-                  color: Colors.blue, decoration: TextDecoration.underline),
+      opacity: loading ? 1 : 0,
+      duration: Duration(milliseconds: 500),
+      child: SlideTransition(
+        position: offset,
+        child: Column(
+          children: [
+            SizedBox(height: 32),
+            Text(
+              'Please enter your insurance',
+              style: Theme.of(context).textTheme.headline5,
+            ),
+            SizedBox(
+              height: 8,
+            ),
+            Center(
+              child: Text(
+                "This helps us show you the doctors covered by your plan.",
+                style: Theme.of(context).textTheme.bodyText2,
+              ),
+            ),
+            SizedBox(
+              height: 8,
+            ),
+            DirectSelect(
+              itemExtent: 60.0,
+              selectedIndex: model.selectedItemIndex,
+              child: CustomSelectionItem(
+                isForList: false,
+                title: model.insurance,
+              ),
+              onSelectedItemChanged: (index) =>
+                  model.updateWith(selectedItemIndex: index),
+              items: _buildInsuranceListItem(),
             ),
           ],
         ),
       ),
-      value: model.waiverCheck,
-      onChanged: (waiverCheck) => model.updateWith(waiverCheck: waiverCheck),
-      controlAffinity: ListTileControlAffinity.leading,
-      activeColor: Theme.of(context).colorScheme.primary,
+    );
+  }
+
+  Widget _buildInsuranceWaiverCheckbox() {
+    return Column(
+      children: [
+        Center(
+          child: Text(
+            "To proceed without insurance you will have to agree to our insurance waiver, which ensures that you agree not to file an insurance claim separately after completing this visit. This waiver protects our doctors from any legal issues (between them and insurance companies) that may arise from this.",
+            style: Theme.of(context).textTheme.bodyText1,
+          ),
+        ),
+        SizedBox(
+          height: 16,
+        ),
+        CheckboxListTile(
+          title: Title(
+            color: Colors.blue,
+            child: SuperRichText(
+              text: 'I agree to Medicall’s <waiver>Insurance Waiver<waiver>.',
+              style: Theme.of(context).textTheme.bodyText2,
+              othersMarkers: [
+                MarkerText.withSameFunction(
+                  marker: '<waiver>',
+                  function: () => Navigator.of(context).pushNamed('/terms'),
+                  onError: (msg) => print('$msg'),
+                  style: TextStyle(
+                      color: Colors.blue, decoration: TextDecoration.underline),
+                ),
+              ],
+            ),
+          ),
+          value: model.waiverCheck,
+          onChanged: (waiverCheck) =>
+              model.updateWith(waiverCheck: waiverCheck),
+          controlAffinity: ListTileControlAffinity.leading,
+          activeColor: Theme.of(context).colorScheme.primary,
+        ),
+      ],
     );
   }
 

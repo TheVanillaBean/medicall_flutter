@@ -361,7 +361,6 @@ class _RegistrationScreenState extends State<RegistrationScreen>
       ),
       keyboardType: TextInputType.datetime,
       errorText: model.patientDobErrorText,
-      initialDate: model.initialDatePickerDate,
       onChanged: model.updateBirthDate,
       enabled: model.isLoading == false,
     );

@@ -22,6 +22,7 @@ class EnterInsuranceViewModel with EmailAndPasswordValidators, ChangeNotifier {
   String insurance;
   int selectedItemIndex;
   List<String> insuranceOptions = [
+    'Please Select',
     'Proceed without insurance',
     'Aetna',
     'AllWays Health Plan',
@@ -57,6 +58,10 @@ class EnterInsuranceViewModel with EmailAndPasswordValidators, ChangeNotifier {
   String get emailErrorText {
     bool showErrorText = isLoading && !emailValidator.isValid(email);
     return showErrorText ? invalidEmailErrorText : "";
+  }
+
+  bool get noInsuranceSelected {
+    return this.selectedItemIndex == 1;
   }
 
   void updateEmail(String email) => updateWith(email: email);
@@ -95,7 +100,7 @@ class EnterInsuranceViewModel with EmailAndPasswordValidators, ChangeNotifier {
   Future<String> validateZipCodeAndInsurance() async {
     String state = await this.areProvidersInArea(this.zipcode);
     if (state != null) {
-      if (showInsuranceWidgets && waiverCheck) {
+      if (showInsuranceWidgets) {
         this.tempUserProvider.setUser(userType: USER_TYPE.PATIENT);
         this.tempUserProvider.user.mailingZipCode = this.zipcode;
         this.tempUserProvider.user.mailingState = state;
