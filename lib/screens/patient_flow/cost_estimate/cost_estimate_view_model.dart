@@ -44,8 +44,8 @@ class CostEstimateViewModel with ChangeNotifier {
 
     this.updateWith(isLoading: false);
 
-    if (result.data["error"]) {
-      throw result.data["message"]["message"];
+    if (result.data["data"] != "Service OK") {
+      throw "There was an issue requesting a referral for you. Please contact omar@medicall.com";
     }
 
     return true;

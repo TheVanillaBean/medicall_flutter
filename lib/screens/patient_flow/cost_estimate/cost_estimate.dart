@@ -81,10 +81,7 @@ class _CostEstimateState extends State<CostEstimate> {
   Future<void> _submitReferral() async {
     try {
       if (await this.model.requestReferral()) {
-        StartVisitScreen.show(
-          context: context,
-          consult: model.consult,
-        );
+        _submit();
       } else {
         AppUtil().showFlushBar(
             "There was an issue requesting a referral for you. Please contact omar@medicall.com",
@@ -93,7 +90,6 @@ class _CostEstimateState extends State<CostEstimate> {
       }
     } catch (e) {
       AppUtil().showFlushBar(e, context);
-      model.updateWith(isLoading: false);
     }
   }
 
@@ -167,7 +163,7 @@ class _CostEstimateState extends State<CostEstimate> {
           CoverageResponse.ReferralNeeded)
         ..._buildReferralUI(),
       SizedBox(height: 16),
-      if (model.waiverCheck) _buildInsuranceWaiverCheckbox(),
+      _buildInsuranceWaiverCheckbox(),
       if (model.isLoading)
         Center(
           child: CircularProgressIndicator(),

@@ -64,6 +64,7 @@ class EnterMemberIdViewModel with ChangeNotifier {
         insurance: this.insurance,
         providerName:
             "${result.data["referral_info"]["first_name"]} ${result.data["referral_info"]["last_name"]}",
+        costEstimate: 75,
       );
     } else if (result.data["code"] == 1) {
       insuranceInfo = InsuranceInfo(
