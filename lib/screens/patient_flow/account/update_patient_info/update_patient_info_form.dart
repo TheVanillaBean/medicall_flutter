@@ -14,6 +14,7 @@ enum PatientProfileInputType {
   DOB,
   PHONE,
   ADDRESS,
+  INSURANCE,
 }
 
 class UpdatePatientInfoForm extends StatefulWidget {
@@ -223,6 +224,38 @@ class _UpdatePatientInfoFormState extends State<UpdatePatientInfoForm> {
                     child: CircularProgressIndicator()),
             ],
           ));
+    } else if (model.patientProfileInputType ==
+        PatientProfileInputType.INSURANCE) {
+      return Form(
+        key: _formKey,
+        child: Column(
+          children: [
+            CustomDropdownFormField(
+              labelText: 'Insurance',
+              items: model.insuranceOptions,
+              //errorText: model.insuranceErrorText,
+              selectedItem: model.insurance,
+              onChanged: model.updateInsurance,
+            ),
+            SizedBox(height: 30),
+            ReusableRaisedButton(
+              title: 'Save',
+              onPressed: !model.isLoading
+                  ? () {
+                      if (_formKey.currentState.validate()) {
+                        _submit(model);
+                      }
+                    }
+                  : null,
+            ),
+            SizedBox(height: 70),
+            if (model.isLoading)
+              Container(
+                  margin: EdgeInsets.symmetric(vertical: 24),
+                  child: CircularProgressIndicator()),
+          ],
+        ),
+      );
     } else {
       return Center(
         child: Text("An error occurred",

@@ -20,6 +20,7 @@ class UpdatePatientInfoViewModel
         CityValidators,
         StateValidators,
         ZipCodeValidators,
+        InsuranceValidators,
         ChangeNotifier {
   final AuthBase auth;
   final FirestoreDatabase firestoreDatabase;
@@ -37,6 +38,7 @@ class UpdatePatientInfoViewModel
   String mailingCity;
   String mailingState;
   String mailingZipCode;
+  String insurance;
 
   bool isLoading;
   bool submitted;
@@ -106,6 +108,22 @@ class UpdatePatientInfoViewModel
     "WY"
   ];
 
+  List<String> insuranceOptions = [
+    'Proceed without insurance',
+    'Aetna',
+    'AllWays Health Plan',
+    'Blue Cross and Blue Shield of Massachusetts',
+    'Cigna',
+    'Fallon Community Health Plan',
+    'Harvard Pilgrim Health Care',
+    'Health Plans Inc.',
+    'Humana',
+    'Medicare',
+    'Tufts Health Plan',
+    'UnitedHealthcare',
+    'AARP Medicare Replacement',
+  ];
+
   UpdatePatientInfoViewModel({
     @required this.auth,
     @required this.firestoreDatabase,
@@ -120,6 +138,7 @@ class UpdatePatientInfoViewModel
     this.mailingCity = '',
     this.mailingState = '',
     this.mailingZipCode = '',
+    this.insurance = '',
     this.isLoading = false,
     this.submitted = false,
   });
@@ -155,6 +174,10 @@ class UpdatePatientInfoViewModel
     }
   }
 
+  void initInsurance() {
+    this.insurance = userProvider.user.insurance;
+  }
+
   bool get canSubmit {
     if (this.patientProfileInputType == PatientProfileInputType.NAME) {
       return firstNameValidator.isValid(firstName) &&
@@ -171,6 +194,9 @@ class UpdatePatientInfoViewModel
           submitted;
     } else if (this.patientProfileInputType == PatientProfileInputType.DOB) {
       return dobValidator.isValid(birthDate) && submitted;
+    } else if (this.patientProfileInputType ==
+        PatientProfileInputType.INSURANCE) {
+      return insuranceValidator.isValid(insurance) && submitted;
     }
     return false;
   }
@@ -220,6 +246,11 @@ class UpdatePatientInfoViewModel
     return showErrorText ? stateErrorText : null;
   }
 
+  String get patientInsuranceErrorText {
+    bool showErrorText = submitted && !insuranceValidator.isValid(insurance);
+    return showErrorText ? insuranceErrorText : null;
+  }
+
   String get patientZipCodeErrorText {
     bool showErrorText = submitted && !zipCodeValidator.isValid(mailingZipCode);
     return showErrorText ? zipCodeErrorText : null;
@@ -254,6 +285,7 @@ class UpdatePatientInfoViewModel
       updateWith(mailingState: mailingState);
   void updateMailingZipCode(String mailingZipCode) =>
       updateWith(mailingZipCode: mailingZipCode);
+  void updateInsurance(String insurance) => updateWith(insurance: insurance);
 
   Future<void> submit() async {
     updateWith(submitted: true);
@@ -277,6 +309,9 @@ class UpdatePatientInfoViewModel
       medicallUser.fullName = '${this.firstName} ${this.lastName}';
     } else if (this.patientProfileInputType == PatientProfileInputType.DOB) {
       medicallUser.dob = this.birthday;
+    } else if (this.patientProfileInputType ==
+        PatientProfileInputType.INSURANCE) {
+      medicallUser.insurance = this.insurance;
     }
     await updateUserDetails(medicallUser);
 
@@ -298,6 +333,7 @@ class UpdatePatientInfoViewModel
     String mailingCity,
     String mailingState,
     String mailingZipCode,
+    String insurance,
     bool isLoading,
     bool submitted,
     bool checkValue,
@@ -311,6 +347,7 @@ class UpdatePatientInfoViewModel
     this.mailingCity = mailingCity ?? this.mailingCity;
     this.mailingState = mailingState ?? this.mailingState;
     this.mailingZipCode = mailingZipCode ?? this.mailingZipCode;
+    this.insurance = insurance ?? this.insurance;
     this.isLoading = isLoading ?? this.isLoading;
     this.submitted = submitted ?? this.submitted;
     notifyListeners();

@@ -175,6 +175,8 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
             Divider(height: 0.5, thickness: 1),
             _buildBillingAddressCard(medicallUser),
             Divider(height: 0.5, thickness: 1),
+            _buildInsuranceCard(medicallUser),
+            Divider(height: 0.5, thickness: 1),
             _buildPaymentMethodsCard(context),
             Divider(height: 0.5, thickness: 1),
             _buildMedicalHistoryCard(context),
@@ -240,6 +242,23 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
           onPressed: () {
             model.patientProfileInputType = PatientProfileInputType.ADDRESS;
             model.initAddress();
+            UpdatePatientInfoScreen.show(
+              context: context,
+              model: model,
+            );
+          }),
+    );
+  }
+
+  Widget _buildInsuranceCard(MedicallUser medicallUser) {
+    return ReusableAccountCard(
+      leading: 'Insurance:',
+      title: medicallUser.insurance,
+      trailing: IconButton(
+          icon: Icon(Icons.create, size: 20),
+          onPressed: () {
+            model.patientProfileInputType = PatientProfileInputType.INSURANCE;
+            model.initInsurance();
             UpdatePatientInfoScreen.show(
               context: context,
               model: model,

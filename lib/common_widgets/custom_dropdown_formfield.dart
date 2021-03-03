@@ -74,6 +74,7 @@ class CustomDropdownFormField extends StatelessWidget {
             isEmpty: selectedItem == '',
             child: DropdownButtonHideUnderline(
               child: DropdownButton(
+                isExpanded: true,
                 value: selectedItem.isNotEmpty ? selectedItem : null,
                 isDense: true,
                 onChanged: onChanged,
@@ -83,6 +84,8 @@ class CustomDropdownFormField extends StatelessWidget {
                       value: value,
                       child: Text(
                         value,
+                        softWrap: true,
+                        maxLines: 3,
                         style: Theme.of(context).textTheme.bodyText1,
                       ),
                     );
