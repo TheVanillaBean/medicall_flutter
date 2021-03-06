@@ -34,7 +34,8 @@ class _VersionCheckerState extends State<VersionChecker> {
       String appVersion = await GetVersion.projectVersion;
 
       VersionInfo version = await db.versionInfoStream();
-
+      //TODO: this checks app version in pubspec vs iosVersion need to tie them
+      //together if one changes the other should as well
       Version currentVersion = Version.parse(appVersion);
       Version latestVersion = Version.parse(version.iosVersionNumber);
       if (currentVersion >= latestVersion) {

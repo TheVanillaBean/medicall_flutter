@@ -64,7 +64,6 @@ class CosmeticSymptomsScreen extends StatelessWidget {
       drawer: DrawerMenu(),
       body: Column(
         children: <Widget>[
-          buildVisitFeeContainer(context),
           Expanded(
             child: ListItemsBuilder<Symptom>(
               snapshot: null,

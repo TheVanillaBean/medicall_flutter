@@ -76,9 +76,9 @@ class SymptomBody extends StatelessWidget {
     return SliverFillRemaining(
       hasScrollBody: false,
       child: Container(
-        padding: EdgeInsets.fromLTRB(40, 40, 40, 40),
+        padding: EdgeInsets.fromLTRB(40, 20, 40, 10),
         color: Colors.white,
-        child: Column(
+        child: Stack(
           children: _buildChildren(context, medicallUser),
         ),
       ),
@@ -87,71 +87,81 @@ class SymptomBody extends StatelessWidget {
 
   List<Widget> _buildChildren(BuildContext context, MedicallUser medicallUser) {
     return <Widget>[
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Container(
-            child: Text(
-              "${symptom.name}",
-              style: Theme.of(context).textTheme.headline6.copyWith(
-                    fontSize: 24,
-                  ),
-            ),
-          ),
-        ],
+      Container(
+        child: Text(
+          "${symptom.name}",
+          style: Theme.of(context).textTheme.headline6.copyWith(
+                fontSize: 24,
+              ),
+        ),
       ),
-      SizedBox(
-        height: 16,
-      ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Container(
-            child: Text(
-              'Price',
-              style: Theme.of(context).textTheme.headline5,
-            ),
-          ),
-          Container(
+      Visibility(
+        visible: symptom.category == 'cosmetic',
+        child: Align(
+          alignment: FractionalOffset.topRight,
+          child: Container(
             child: Text(
               "\$" + symptom.price.toString(),
               style: Theme.of(context).textTheme.headline5,
             ),
-          )
-        ],
-      ),
-      Padding(
-          padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-          child: Divider(
-            thickness: 1,
-          )),
-      Container(
-        child: Text(
-          symptom.description,
-          style: Theme.of(context).textTheme.bodyText1,
-        ),
-      ),
-      SizedBox(height: 80),
-      Expanded(
-        child: Align(
-          alignment: FractionalOffset.bottomCenter,
-          child: ReusableRaisedButton(
-            title: 'Explore Providers',
-            onPressed: () async {
-              if (medicallUser != null && medicallUser.uid.length > 0) {
-                SelectProviderScreen.show(
-                  context: context,
-                  symptom: symptom,
-                  state: medicallUser.mailingState,
-                  insurance: (medicallUser as PatientUser).insurance,
-                );
-              } else {
-                EnterInsuranceScreen.show(context: context, symptom: symptom);
-              }
-            },
           ),
         ),
       ),
+      Align(
+        alignment: FractionalOffset.center,
+        child: Container(
+          height: 300,
+          child: Text(
+            symptom.description,
+            style: Theme.of(context).textTheme.bodyText1,
+          ),
+        ),
+      ),
+      Align(
+          alignment: FractionalOffset.bottomCenter,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Visibility(
+                visible: symptom.category != 'cosmetic',
+                child: ReusableRaisedButton(
+                  title: 'I have insurance',
+                  onPressed: () async {
+                    if (medicallUser != null && medicallUser.uid.length > 0) {
+                      SelectProviderScreen.show(
+                        context: context,
+                        symptom: symptom,
+                        state: medicallUser.mailingState,
+                        insurance: (medicallUser as PatientUser).insurance,
+                      );
+                    } else {
+                      EnterInsuranceScreen.show(
+                          context: context, symptom: symptom);
+                    }
+                  },
+                ),
+              ),
+              SizedBox(height: 10),
+              ReusableRaisedButton(
+                title: symptom.category != 'cosmetic'
+                    ? 'No insurance/Out of network \$85'
+                    : 'Continue',
+                onPressed: () async {
+                  if (medicallUser != null && medicallUser.uid.length > 0) {
+                    SelectProviderScreen.show(
+                      context: context,
+                      symptom: symptom,
+                      state: medicallUser.mailingState,
+                      insurance: (medicallUser as PatientUser).insurance,
+                    );
+                  } else {
+                    EnterInsuranceScreen.show(
+                        context: context, symptom: symptom);
+                  }
+                },
+              ),
+            ],
+          )),
     ];
   }
 }

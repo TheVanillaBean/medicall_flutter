@@ -78,7 +78,6 @@ class SymptomsScreen extends StatelessWidget {
         builder: (BuildContext context, AsyncSnapshot<List<Symptom>> snapshot) {
           return Column(
             children: <Widget>[
-              buildVisitFeeContainer(context),
               Expanded(
                 child: ListItemsBuilder<Symptom>(
                   snapshot: snapshot,
