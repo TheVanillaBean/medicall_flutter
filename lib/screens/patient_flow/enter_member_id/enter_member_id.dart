@@ -1,4 +1,5 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
+import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
@@ -123,8 +124,7 @@ class _EnterMemberIdState extends State<EnterMemberId> {
               onTap: () {
                 FocusScope.of(context).requestFocus(new FocusNode());
               },
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Stack(
                 children: _buildChildren(),
               ),
             ),
@@ -136,26 +136,33 @@ class _EnterMemberIdState extends State<EnterMemberId> {
 
   List<Widget> _buildChildren() {
     return <Widget>[
-      SizedBox(
-        height: 32,
+      Stack(
+        children: [
+          Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Align(
+                alignment: Alignment.topCenter,
+                child: Text(
+                  "Enter your Member ID",
+                  style: Theme.of(context).textTheme.headline6,
+                ),
+              ),
+              Container(
+                  height: 200,
+                  alignment: Alignment.center,
+                  child: _buildMemberIDForm()),
+              _buildVerifyButton(),
+            ],
+          ),
+          if (model.showErrorMessage || model.successfullyValidatedInsurance)
+            ..._buildResponseLabel(),
+          if (model.isLoading)
+            Center(
+              child: CircularProgressIndicator(),
+            ),
+        ],
       ),
-      Center(
-        child: Text(
-          "Enter your Member ID",
-          style: Theme.of(context).textTheme.headline6,
-        ),
-      ),
-      SizedBox(height: 8),
-      _buildMemberIDForm(),
-      if (model.showErrorMessage || model.successfullyValidatedInsurance)
-        ..._buildResponseLabel(),
-      SizedBox(height: 16),
-      _buildVerifyButton(),
-      SizedBox(height: 16),
-      if (model.isLoading)
-        Center(
-          child: CircularProgressIndicator(),
-        ),
     ];
   }
 
@@ -185,17 +192,26 @@ class _EnterMemberIdState extends State<EnterMemberId> {
 
   List<Widget> _buildResponseLabel() {
     return [
-      SizedBox(
-        height: 24,
-      ),
-      Center(
-        child: Text(
+      AlertDialog(
+        title: Text(
           "${model.labelText}",
           style: Theme.of(context).textTheme.headline5,
           textAlign: TextAlign.center,
         ),
+        actions: [
+          PlatformAlertDialogAction(
+            child: Text(
+              "Exit",
+              style: Theme.of(context).textTheme.headline6,
+            ),
+            onPressed: () {
+              widget.model.successfullyValidatedInsurance = false;
+              widget.model.errorMessage = "";
+              setState(() {});
+            },
+          ),
+        ],
       ),
-      SizedBox(height: 8),
     ];
   }
 }

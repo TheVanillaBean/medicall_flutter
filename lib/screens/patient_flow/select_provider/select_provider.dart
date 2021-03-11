@@ -75,12 +75,16 @@ class SelectProviderScreen extends StatelessWidget {
         builder:
             (BuildContext context, AsyncSnapshot<List<ProviderUser>> snapshot) {
           List<ProviderUser> inNetworkProviders = [];
+          List<ProviderUser> noInsuranceProviders = [];
           List<ProviderUser> outNetworkProviders = [];
           if (snapshot.hasData) {
             inNetworkProviders = snapshot.data
                 .where((provider) =>
                     provider.acceptedInsurances.contains(this.insurance))
                 .toList();
+            //if insurance null/user had no isurance, return doctors in your area
+            noInsuranceProviders = snapshot.data.toList();
+
             outNetworkProviders = snapshot.data
                 .where((provider) =>
                     !provider.acceptedInsurances.contains(this.insurance))
@@ -92,7 +96,10 @@ class SelectProviderScreen extends StatelessWidget {
                   ? _buildInNetworkList(context, inNetworkProviders)
                   : outNetworkProviders.length > 0
                       ? _buildOutNetworkList(context, outNetworkProviders)
-                      : Text("None found, check back at a later date."),
+                      : noInsuranceProviders.length > 0
+                          ? _buildNoInsuranceProviders(
+                              context, noInsuranceProviders)
+                          : Text("None found, check back at a later date."),
             ],
           );
         },
@@ -120,6 +127,33 @@ class SelectProviderScreen extends StatelessWidget {
               provider: provider,
               symptom: symptom,
               insurance: this.insurance,
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  Stack _buildNoInsuranceProviders(
+      BuildContext context, List<ProviderUser> noInsuranceProviders) {
+    return Stack(
+      children: <Widget>[
+        ListItemsBuilder<ProviderUser>(
+          snapshot: null,
+          itemsList: noInsuranceProviders,
+          emptyContentWidget: const EmptyContent(
+            title: '',
+            message:
+                'Medicall does not currently have providers who take your insurance',
+          ),
+          itemBuilder: (context, provider) => ProviderListItem(
+            provider: provider,
+            inNetwork: false,
+            onTap: () => ProviderDetailScreen.show(
+              context: context,
+              provider: provider,
+              symptom: symptom,
+              insurance: null,
             ),
           ),
         )
