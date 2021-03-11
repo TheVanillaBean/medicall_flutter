@@ -25,6 +25,18 @@ class CostEstimateViewModel with ChangeNotifier {
     this.waiverCheck = false,
   });
 
+  bool get costEstimateGreaterThanSelfPay {
+    return this.insuranceInfo.coverageResponse ==
+            CoverageResponse.ValidCostEstimate &&
+        this.insuranceInfo.costEstimate > 75;
+  }
+
+  bool get costEstimateLessThanSelfPay {
+    return this.insuranceInfo.coverageResponse ==
+            CoverageResponse.ValidCostEstimate &&
+        this.insuranceInfo.costEstimate < 75;
+  }
+
   Future<bool> requestReferral() async {
     this.updateWith(isLoading: true);
     final callable = CloudFunctions.instance

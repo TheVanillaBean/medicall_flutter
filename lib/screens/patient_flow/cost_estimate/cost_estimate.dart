@@ -4,6 +4,7 @@ import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/insurance_info.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
+import 'package:Medicall/screens/patient_flow/select_provider/select_provider.dart';
 import 'package:Medicall/screens/patient_flow/start_visit/start_visit.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
@@ -76,6 +77,18 @@ class _CostEstimateState extends State<CostEstimate> {
       context: context,
       consult: model.consult,
     );
+  }
+
+  Future<void> _viewOutOfNetworkProviders() async {
+    // if (model.insuranceInfo.costEstimate > -1) {
+    //   model.consult.price = model.insuranceInfo.costEstimate;
+    // }
+    // model.consult.insurancePayment = true;
+    // model.consult.insuranceInfo = model.insuranceInfo;
+    // SelectProviderScreen.show(
+    //   context: context,
+    //   symptom: model.consult.symptom,
+    // );
   }
 
   Future<void> _submitReferral() async {
@@ -156,9 +169,10 @@ class _CostEstimateState extends State<CostEstimate> {
       SizedBox(
         height: 32,
       ),
-      if (model.insuranceInfo.coverageResponse ==
-          CoverageResponse.ValidCostEstimate)
-        ..._buildValidCostLabel()
+      if (model.costEstimateGreaterThanSelfPay)
+        ..._buildEstimateGreaterThanSelfPayUI()
+      else if (model.costEstimateLessThanSelfPay)
+        ..._buildValidCostUI()
       else if (model.insuranceInfo.coverageResponse ==
           CoverageResponse.ReferralNeeded)
         ..._buildReferralUI(),
@@ -187,7 +201,7 @@ class _CostEstimateState extends State<CostEstimate> {
     );
   }
 
-  List<Widget> _buildValidCostLabel() {
+  List<Widget> _buildValidCostUI() {
     return [
       Center(
         child: Text(
@@ -276,5 +290,41 @@ class _CostEstimateState extends State<CostEstimate> {
         ),
       ],
     );
+  }
+
+  List<Widget> _buildEstimateGreaterThanSelfPayUI() {
+    return [
+      Center(
+        child: Text(
+          "Your real time cost estimate: \$${model.insuranceInfo.costEstimate}",
+          style: Theme.of(context).textTheme.headline6,
+        ),
+      ),
+      SizedBox(
+        height: 16,
+      ),
+      Center(
+        child: Text(
+          "It appears that your real time cost estimate is greater than \$75. To lower your cost, you have an option to choose out-of-network providers that may offer you greater savings compared to in-network providers contracted with your insurance.\n\nPlease select how you would like to proceed:",
+          style: Theme.of(context).textTheme.bodyText1,
+        ),
+      ),
+      SizedBox(
+        height: 16,
+      ),
+      Center(
+        child: ReusableRaisedButton(
+          title: "Proceed with out-of-network providers",
+          onPressed: _viewOutOfNetworkProviders,
+        ),
+      ),
+      SizedBox(height: 12),
+      Center(
+        child: ReusableRaisedButton(
+          title: "Proceed with my insurance",
+          onPressed: _submit,
+        ),
+      ),
+    ];
   }
 }
