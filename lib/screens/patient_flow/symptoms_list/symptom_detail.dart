@@ -152,7 +152,7 @@ class SymptomBody extends StatelessWidget {
                       context: context,
                       symptom: symptom,
                       state: medicallUser.mailingState,
-                      insurance: (medicallUser as PatientUser).insurance,
+                      insurance: null,
                     );
                   } else {
                     EnterInsuranceScreen.show(
