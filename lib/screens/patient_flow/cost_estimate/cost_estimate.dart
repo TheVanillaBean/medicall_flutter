@@ -174,6 +174,9 @@ class _CostEstimateState extends State<CostEstimate> {
       else if (model.costEstimateLessThanSelfPay)
         ..._buildValidCostUI()
       else if (model.insuranceInfo.coverageResponse ==
+          CoverageResponse.NoCostEstimate)
+        ..._buildInvalidCostUI()
+      else if (model.insuranceInfo.coverageResponse ==
           CoverageResponse.ReferralNeeded)
         ..._buildReferralUI(),
       SizedBox(height: 16),
@@ -205,7 +208,7 @@ class _CostEstimateState extends State<CostEstimate> {
     return [
       Center(
         child: Text(
-          "Your real time cost estimate:",
+          "Your real-time cost estimate:",
           style: Theme.of(context).textTheme.headline6,
         ),
       ),
@@ -219,6 +222,34 @@ class _CostEstimateState extends State<CostEstimate> {
       _buildContinueButton(),
       SizedBox(height: 12),
       _buildOOPButton(),
+    ];
+  }
+
+  List<Widget> _buildInvalidCostUI() {
+    return [
+      Center(
+        child: Text(
+          "We were not able to determine your real-time cost. You now have an option to obtain a true cost estimate from your doctor or proceed with out-of-network providers.\n\n"
+          "Please select how you would like to proceed:",
+          style: Theme.of(context).textTheme.headline6,
+        ),
+      ),
+      SizedBox(
+        height: 16,
+      ),
+      Center(
+        child: ReusableRaisedButton(
+          title: "Obtain true cost estimate from my doctor",
+          onPressed: _submit,
+        ),
+      ),
+      SizedBox(height: 12),
+      Center(
+        child: ReusableRaisedButton(
+          title: "Proceed with out-of-network providers",
+          onPressed: _viewOutOfNetworkProviders,
+        ),
+      ),
     ];
   }
 
