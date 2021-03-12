@@ -106,6 +106,9 @@ class _EnterInsuranceScreenState extends State<EnterInsuranceScreen>
           symptom: symptom,
           state: state,
           insurance: model.insurance,
+          filter: model.proceedWithoutInsuranceSelected
+              ? SelectProviderFilter.NoInsurance
+              : SelectProviderFilter.InNetwork,
         );
       }
     } catch (e) {

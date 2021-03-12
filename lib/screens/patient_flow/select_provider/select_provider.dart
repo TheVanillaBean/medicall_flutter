@@ -16,15 +16,23 @@ import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+enum SelectProviderFilter {
+  InNetwork,
+  OutOfNetwork,
+  NoInsurance,
+}
+
 class SelectProviderScreen extends StatelessWidget {
   final Symptom symptom;
   final String state;
   final String insurance;
+  final SelectProviderFilter filter;
 
   const SelectProviderScreen({
     @required this.symptom,
     @required this.state,
     @required this.insurance,
+    @required this.filter,
   });
 
   static Future<void> show({
@@ -32,6 +40,7 @@ class SelectProviderScreen extends StatelessWidget {
     Symptom symptom,
     String state,
     String insurance,
+    SelectProviderFilter filter,
   }) async {
     await Navigator.of(context).pushNamed(
       Routes.selectProvider,
@@ -39,6 +48,7 @@ class SelectProviderScreen extends StatelessWidget {
         'symptom': symptom,
         'state': state,
         'insurance': insurance,
+        'filter': filter,
       },
     );
   }
@@ -74,33 +84,36 @@ class SelectProviderScreen extends StatelessWidget {
         stream: db.getAllProviders(state: state, symptom: this.symptom.name),
         builder:
             (BuildContext context, AsyncSnapshot<List<ProviderUser>> snapshot) {
-          List<ProviderUser> inNetworkProviders = [];
-          List<ProviderUser> noInsuranceProviders = [];
-          List<ProviderUser> outNetworkProviders = [];
+          List<ProviderUser> filteredProviders = [];
           if (snapshot.hasData) {
-            inNetworkProviders = snapshot.data
-                .where((provider) =>
-                    provider.acceptedInsurances.contains(this.insurance))
-                .toList();
-            //if insurance null/user had no isurance, return doctors in your area
-            noInsuranceProviders = snapshot.data.toList();
+            if (this.filter == SelectProviderFilter.InNetwork) {
+              filteredProviders = snapshot.data
+                  .where((provider) =>
+                      provider.acceptedInsurances.contains(this.insurance))
+                  .toList();
+              return _buildInNetworkList(context, filteredProviders);
+            } else if (this.filter == SelectProviderFilter.OutOfNetwork) {
+              filteredProviders = snapshot.data
+                  .where((provider) =>
+                      !provider.acceptedInsurances.contains(this.insurance))
+                  .toList();
+              return _buildOutNetworkList(context, filteredProviders);
+            } else if (this.filter == SelectProviderFilter.NoInsurance) {
+              filteredProviders = snapshot.data.toList();
+              return _buildNoInsuranceList(context, filteredProviders);
+            }
 
-            outNetworkProviders = snapshot.data
-                .where((provider) =>
-                    !provider.acceptedInsurances.contains(this.insurance))
-                .toList();
+            return Center(
+              child: Text("An error has occurred."),
+            );
           }
-          return Column(
-            children: [
-              inNetworkProviders.length > 0
-                  ? _buildInNetworkList(context, inNetworkProviders)
-                  : outNetworkProviders.length > 0
-                      ? _buildOutNetworkList(context, outNetworkProviders)
-                      : noInsuranceProviders.length > 0
-                          ? _buildNoInsuranceProviders(
-                              context, noInsuranceProviders)
-                          : Text("None found, check back at a later date."),
-            ],
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(),
+              ],
+            ),
           );
         },
       ),
@@ -134,7 +147,7 @@ class SelectProviderScreen extends StatelessWidget {
     );
   }
 
-  Stack _buildNoInsuranceProviders(
+  Stack _buildNoInsuranceList(
       BuildContext context, List<ProviderUser> noInsuranceProviders) {
     return Stack(
       children: <Widget>[
@@ -143,8 +156,7 @@ class SelectProviderScreen extends StatelessWidget {
           itemsList: noInsuranceProviders,
           emptyContentWidget: const EmptyContent(
             title: '',
-            message:
-                'Medicall does not currently have providers who take your insurance',
+            message: 'Medicall does not currently have any providers',
           ),
           itemBuilder: (context, provider) => ProviderListItem(
             provider: provider,

@@ -398,11 +398,13 @@ class Router {
         final Symptom symptom = mapArgs['symptom'];
         final String state = mapArgs['state'];
         final String insurance = mapArgs['insurance'];
+        final SelectProviderFilter filter = mapArgs['filter'];
         return MaterialPageRoute<dynamic>(
           builder: (context) => SelectProviderScreen(
             symptom: symptom,
             state: state,
             insurance: insurance,
+            filter: filter,
           ),
           settings: settings,
           fullscreenDialog: true,
