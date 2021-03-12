@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/empty_content.dart';
 import 'package:Medicall/common_widgets/list_items_builder.dart';
-import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/models/user/provider_user_model.dart';
 import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
@@ -23,7 +22,7 @@ enum SelectProviderFilter {
 }
 
 class SelectProviderScreen extends StatelessWidget {
-  final Symptom symptom;
+  final String symptom;
   final String state;
   final String insurance;
   final SelectProviderFilter filter;
@@ -37,7 +36,7 @@ class SelectProviderScreen extends StatelessWidget {
 
   static Future<void> show({
     BuildContext context,
-    Symptom symptom,
+    String symptom,
     String state,
     String insurance,
     SelectProviderFilter filter,
@@ -81,7 +80,7 @@ class SelectProviderScreen extends StatelessWidget {
                 })
           ]),
       body: StreamBuilder(
-        stream: db.getAllProviders(state: state, symptom: this.symptom.name),
+        stream: db.getAllProviders(state: state, symptom: this.symptom),
         builder:
             (BuildContext context, AsyncSnapshot<List<ProviderUser>> snapshot) {
           List<ProviderUser> filteredProviders = [];

@@ -1,14 +1,15 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
-import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/patient_flow/cost_estimate/cost_estimate.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/patient_flow/enter_member_id/enter_member_id_view_model.dart';
+import 'package:Medicall/screens/patient_flow/select_provider/select_provider.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
+import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
@@ -69,6 +70,7 @@ class _EnterMemberIdState extends State<EnterMemberId> {
     try {
       if (this.model.successfullyValidatedInsurance) {
         await model.saveMemberId();
+        this.model.updateWith(successfullyValidatedInsurance: false);
         CostEstimate.show(
           context: context,
           consult: model.consult,
@@ -87,6 +89,33 @@ class _EnterMemberIdState extends State<EnterMemberId> {
           successfullyValidatedInsurance: false,
           errorMessage: e,
           isLoading: false);
+    }
+  }
+
+  Future<void> _viewOutOfNetworkProviders() async {
+    SelectProviderScreen.show(
+      context: context,
+      symptom: model.consult.symptom,
+      insurance: model.insurance,
+      state: model.userProvider.user.mailingState,
+      filter: SelectProviderFilter.OutOfNetwork,
+    );
+  }
+
+  Future<void> _requestMedicallSupport() async {
+    try {
+      if (await this.model.requestMedicallSupport()) {
+        await model.saveMemberId();
+        AppUtil().showFlushBar(
+            "You have successfully requested Medicall support. You will receive a response email within 24 hours.",
+            context);
+      } else {
+        AppUtil().showFlushBar(
+            "There was an issue requesting Medicall support for you. Please contact omar@medicall.com",
+            context);
+      }
+    } catch (e) {
+      AppUtil().showFlushBar(e, context);
     }
   }
 
@@ -124,7 +153,8 @@ class _EnterMemberIdState extends State<EnterMemberId> {
               onTap: () {
                 FocusScope.of(context).requestFocus(new FocusNode());
               },
-              child: Stack(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: _buildChildren(),
               ),
             ),
@@ -136,33 +166,27 @@ class _EnterMemberIdState extends State<EnterMemberId> {
 
   List<Widget> _buildChildren() {
     return <Widget>[
-      Stack(
-        children: [
-          Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Align(
-                alignment: Alignment.topCenter,
-                child: Text(
-                  "Enter your Member ID",
-                  style: Theme.of(context).textTheme.headline6,
-                ),
-              ),
-              Container(
-                  height: 200,
-                  alignment: Alignment.center,
-                  child: _buildMemberIDForm()),
-              _buildVerifyButton(),
-            ],
-          ),
-          if (model.showErrorMessage || model.successfullyValidatedInsurance)
-            ..._buildResponseLabel(),
-          if (model.isLoading)
-            Center(
-              child: CircularProgressIndicator(),
-            ),
-        ],
+      SizedBox(
+        height: 32,
       ),
+      Center(
+        child: Text(
+          "Enter your Member ID",
+          style: Theme.of(context).textTheme.headline6,
+        ),
+      ),
+      SizedBox(height: 8),
+      _buildMemberIDForm(),
+      if (model.showErrorMessage || model.successfullyValidatedInsurance)
+        ..._buildResponseLabel(),
+      if (model.showErrorMessage) ..._buildEligibleErrorUI(),
+      SizedBox(height: 16),
+      if (!model.showErrorMessage) _buildVerifyButton(),
+      SizedBox(height: 16),
+      if (model.isLoading)
+        Center(
+          child: CircularProgressIndicator(),
+        ),
     ];
   }
 
@@ -192,25 +216,44 @@ class _EnterMemberIdState extends State<EnterMemberId> {
 
   List<Widget> _buildResponseLabel() {
     return [
-      AlertDialog(
-        title: Text(
+      SizedBox(
+        height: 24,
+      ),
+      Center(
+        child: Text(
           "${model.labelText}",
           style: Theme.of(context).textTheme.headline5,
           textAlign: TextAlign.center,
         ),
-        actions: [
-          PlatformAlertDialogAction(
-            child: Text(
-              "Exit",
-              style: Theme.of(context).textTheme.headline6,
-            ),
-            onPressed: () {
-              widget.model.successfullyValidatedInsurance = false;
-              widget.model.errorMessage = "";
-              setState(() {});
-            },
-          ),
-        ],
+      ),
+      SizedBox(height: 8),
+    ];
+  }
+
+  List<Widget> _buildEligibleErrorUI() {
+    return [
+      Center(
+        child: Text(
+          "Would you like to email Medicall customer support and/or proceed with out-of-network providers?\n\n"
+          "Please select how you would like to proceed:",
+          style: Theme.of(context).textTheme.bodyText1,
+        ),
+      ),
+      SizedBox(
+        height: 16,
+      ),
+      Center(
+        child: ReusableRaisedButton(
+          title: "Email Support",
+          onPressed: !model.requestedSupport ? _requestMedicallSupport : null,
+        ),
+      ),
+      SizedBox(height: 12),
+      Center(
+        child: ReusableRaisedButton(
+          title: "Proceed out-of-network",
+          onPressed: _viewOutOfNetworkProviders,
+        ),
       ),
     ];
   }

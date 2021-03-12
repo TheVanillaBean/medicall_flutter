@@ -2,7 +2,6 @@ import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/consult_model.dart';
-import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/models/user/patient_user_model.dart';
 import 'package:Medicall/models/user/provider_user_model.dart';
 import 'package:Medicall/routing/router.dart';
@@ -20,7 +19,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 class ProviderDetailScreen extends StatelessWidget {
-  final Symptom symptom;
+  final String symptom;
   final ProviderUser provider;
   final String insurance;
 
@@ -32,7 +31,7 @@ class ProviderDetailScreen extends StatelessWidget {
 
   static Future<void> show({
     BuildContext context,
-    Symptom symptom,
+    String symptom,
     ProviderUser provider,
     String insurance,
   }) async {
@@ -114,7 +113,7 @@ class ProviderDetailScreen extends StatelessWidget {
                       Consult consult = Consult(
                         providerId: provider.uid,
                         providerUser: provider,
-                        symptom: symptom.name,
+                        symptom: symptom,
                         date: DateTime.now(),
                         price: 49,
                       );

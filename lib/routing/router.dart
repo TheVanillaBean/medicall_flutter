@@ -395,7 +395,7 @@ class Router {
         );
       case Routes.selectProvider:
         final Map<String, dynamic> mapArgs = args;
-        final Symptom symptom = mapArgs['symptom'];
+        final String symptom = mapArgs['symptom'];
         final String state = mapArgs['state'];
         final String insurance = mapArgs['insurance'];
         final SelectProviderFilter filter = mapArgs['filter'];
@@ -411,7 +411,7 @@ class Router {
         );
       case Routes.providerDetail:
         final Map<String, dynamic> mapArgs = args;
-        final Symptom symptom = mapArgs['symptom'];
+        final String symptom = mapArgs['symptom'];
         final ProviderUser provider = mapArgs['provider'];
         final String insurance = mapArgs['insurance'];
         return MaterialPageRoute<dynamic>(

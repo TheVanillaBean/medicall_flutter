@@ -103,7 +103,7 @@ class _EnterInsuranceScreenState extends State<EnterInsuranceScreen>
       if (state != null) {
         SelectProviderScreen.show(
           context: context,
-          symptom: symptom,
+          symptom: symptom.name,
           state: state,
           insurance: model.insurance,
           filter: model.proceedWithoutInsuranceSelected

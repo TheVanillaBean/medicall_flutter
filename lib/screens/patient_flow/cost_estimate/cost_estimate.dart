@@ -80,15 +80,13 @@ class _CostEstimateState extends State<CostEstimate> {
   }
 
   Future<void> _viewOutOfNetworkProviders() async {
-    // if (model.insuranceInfo.costEstimate > -1) {
-    //   model.consult.price = model.insuranceInfo.costEstimate;
-    // }
-    // model.consult.insurancePayment = true;
-    // model.consult.insuranceInfo = model.insuranceInfo;
-    // SelectProviderScreen.show(
-    //   context: context,
-    //   symptom: model.consult.symptom,
-    // );
+    SelectProviderScreen.show(
+      context: context,
+      symptom: model.consult.symptom,
+      insurance: model.insuranceInfo.insurance,
+      state: model.userProvider.user.mailingState,
+      filter: SelectProviderFilter.OutOfNetwork,
+    );
   }
 
   Future<void> _submitReferral() async {
@@ -116,6 +114,22 @@ class _CostEstimateState extends State<CostEstimate> {
       AppUtil().showFlushBar(
           "You have to agree to the insurance waiver before continuing",
           context);
+    }
+  }
+
+  Future<void> _obtainTrueCostEstimate() async {
+    try {
+      if (await this.model.requestCostEstimate()) {
+        AppUtil().showFlushBar(
+            "You have successfully requested a cost estimate. You will receive a response email within 48 hours.",
+            context);
+      } else {
+        AppUtil().showFlushBar(
+            "There was an issue requesting a a cost estimate for you. Please contact omar@medicall.com",
+            context);
+      }
+    } catch (e) {
+      AppUtil().showFlushBar(e, context);
     }
   }
 
@@ -180,7 +194,7 @@ class _CostEstimateState extends State<CostEstimate> {
           CoverageResponse.ReferralNeeded)
         ..._buildReferralUI(),
       SizedBox(height: 16),
-      _buildInsuranceWaiverCheckbox(),
+      //_buildInsuranceWaiverCheckbox(),
       if (model.isLoading)
         Center(
           child: CircularProgressIndicator(),
@@ -231,7 +245,7 @@ class _CostEstimateState extends State<CostEstimate> {
         child: Text(
           "We were not able to determine your real-time cost. You now have an option to obtain a true cost estimate from your doctor or proceed with out-of-network providers.\n\n"
           "Please select how you would like to proceed:",
-          style: Theme.of(context).textTheme.headline6,
+          style: Theme.of(context).textTheme.bodyText1,
         ),
       ),
       SizedBox(
@@ -239,15 +253,52 @@ class _CostEstimateState extends State<CostEstimate> {
       ),
       Center(
         child: ReusableRaisedButton(
-          title: "Obtain true cost estimate from my doctor",
-          onPressed: _submit,
+          title: "Obtain true cost estimate",
+          onPressed:
+              !model.requestedCostEstimate ? _obtainTrueCostEstimate : null,
         ),
       ),
       SizedBox(height: 12),
       Center(
         child: ReusableRaisedButton(
+          title: "Proceed out-of-network",
+          onPressed: _viewOutOfNetworkProviders,
+        ),
+      ),
+    ];
+  }
+
+  List<Widget> _buildEstimateGreaterThanSelfPayUI() {
+    return [
+      Center(
+        child: Text(
+          "Your real time cost estimate: \$${model.insuranceInfo.costEstimate}",
+          style: Theme.of(context).textTheme.headline6,
+        ),
+      ),
+      SizedBox(
+        height: 16,
+      ),
+      Center(
+        child: Text(
+          "It appears that your real time cost estimate is greater than \$75. To lower your cost, you have an option to choose out-of-network providers that may offer you greater savings compared to in-network providers contracted with your insurance.\n\nPlease select how you would like to proceed:",
+          style: Theme.of(context).textTheme.bodyText1,
+        ),
+      ),
+      SizedBox(
+        height: 16,
+      ),
+      Center(
+        child: ReusableRaisedButton(
           title: "Proceed with out-of-network providers",
           onPressed: _viewOutOfNetworkProviders,
+        ),
+      ),
+      SizedBox(height: 12),
+      Center(
+        child: ReusableRaisedButton(
+          title: "Proceed with my insurance",
+          onPressed: _submit,
         ),
       ),
     ];
@@ -321,41 +372,5 @@ class _CostEstimateState extends State<CostEstimate> {
         ),
       ],
     );
-  }
-
-  List<Widget> _buildEstimateGreaterThanSelfPayUI() {
-    return [
-      Center(
-        child: Text(
-          "Your real time cost estimate: \$${model.insuranceInfo.costEstimate}",
-          style: Theme.of(context).textTheme.headline6,
-        ),
-      ),
-      SizedBox(
-        height: 16,
-      ),
-      Center(
-        child: Text(
-          "It appears that your real time cost estimate is greater than \$75. To lower your cost, you have an option to choose out-of-network providers that may offer you greater savings compared to in-network providers contracted with your insurance.\n\nPlease select how you would like to proceed:",
-          style: Theme.of(context).textTheme.bodyText1,
-        ),
-      ),
-      SizedBox(
-        height: 16,
-      ),
-      Center(
-        child: ReusableRaisedButton(
-          title: "Proceed with out-of-network providers",
-          onPressed: _viewOutOfNetworkProviders,
-        ),
-      ),
-      SizedBox(height: 12),
-      Center(
-        child: ReusableRaisedButton(
-          title: "Proceed with my insurance",
-          onPressed: _submit,
-        ),
-      ),
-    ];
   }
 }

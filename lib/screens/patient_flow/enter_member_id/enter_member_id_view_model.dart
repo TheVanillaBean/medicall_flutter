@@ -18,6 +18,8 @@ class EnterMemberIdViewModel with ChangeNotifier {
   bool successfullyValidatedInsurance;
   InsuranceInfo insuranceInfo;
 
+  bool requestedSupport;
+
   EnterMemberIdViewModel({
     @required this.database,
     @required this.userProvider,
@@ -28,6 +30,7 @@ class EnterMemberIdViewModel with ChangeNotifier {
     this.isLoading = false,
     this.successfullyValidatedInsurance = false,
     this.insuranceInfo,
+    this.requestedSupport = false,
   }) {
     this.memberId = (userProvider.user as PatientUser).memberId;
   }
@@ -51,8 +54,12 @@ class EnterMemberIdViewModel with ChangeNotifier {
 
     this.updateWith(isLoading: false);
 
-    if (result.data["error"]) {
-      throw result.data["message"]["message"];
+    if (result.data["error"] && result.data["code"] != 5) {
+      if (result.data["code"] == 2) {
+        throw result.data["message"]["message"];
+      } else {
+        throw result.data["message"];
+      }
     }
 
     InsuranceInfo insuranceInfo;
@@ -73,6 +80,13 @@ class EnterMemberIdViewModel with ChangeNotifier {
         insurance: this.insurance,
         costEstimate: result.data["cost_estimate"] ?? -1,
       );
+    } else if (result.data["code"] == 5) {
+      insuranceInfo = InsuranceInfo(
+        memberId: memberId,
+        coverageResponse: CoverageResponse.NoCostEstimate,
+        insurance: this.insurance,
+        costEstimate: -1,
+      );
     }
 
     this.updateWith(
@@ -84,6 +98,33 @@ class EnterMemberIdViewModel with ChangeNotifier {
   Future<void> saveMemberId() async {
     (userProvider.user as PatientUser).memberId = this.memberId;
     await database.setUser(userProvider.user);
+  }
+
+  Future<bool> requestMedicallSupport() async {
+    this.updateWith(isLoading: true, requestedSupport: true);
+    final callable = CloudFunctions.instance
+        .getHttpsCallable(functionName: 'requestMedicallSupport')
+          ..timeout = const Duration(seconds: 30);
+
+    Map<String, dynamic> parameters = {};
+
+    parameters = <String, dynamic>{
+      'patient_id': this.userProvider.user.uid,
+      'provider_uid': this.consult.providerId,
+      'member_id': this.memberId,
+      'insurance': this.insurance,
+    };
+
+    final HttpsCallableResult result = await callable.call(parameters);
+
+    this.updateWith(isLoading: false);
+
+    if (result.data["data"] != "Service OK") {
+      this.updateWith(requestedSupport: false);
+      throw "There was an issue requesting Medicall support for you. Please contact omar@medicall.com";
+    }
+
+    return true;
   }
 
   String get continueBtnText {
@@ -110,6 +151,7 @@ class EnterMemberIdViewModel with ChangeNotifier {
     bool successfullyValidatedInsurance,
     bool isLoading,
     InsuranceInfo insuranceInfo,
+    bool requestedSupport,
   }) {
     this.memberId = memberId ?? this.memberId;
     this.errorMessage = errorMessage ?? this.errorMessage;
@@ -117,6 +159,7 @@ class EnterMemberIdViewModel with ChangeNotifier {
     this.successfullyValidatedInsurance =
         successfullyValidatedInsurance ?? this.successfullyValidatedInsurance;
     this.insuranceInfo = insuranceInfo ?? this.insuranceInfo;
+    this.requestedSupport = requestedSupport ?? this.requestedSupport;
     notifyListeners();
   }
 }

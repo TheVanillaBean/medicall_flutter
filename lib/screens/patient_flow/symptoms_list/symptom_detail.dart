@@ -144,7 +144,7 @@ class SymptomBody extends StatelessWidget {
               if (medicallUser != null && medicallUser.uid.length > 0) {
                 SelectProviderScreen.show(
                   context: context,
-                  symptom: symptom,
+                  symptom: symptom.name,
                   state: medicallUser.mailingState,
                   insurance: (medicallUser as PatientUser).insurance,
                   filter: (medicallUser as PatientUser).insurance ==
