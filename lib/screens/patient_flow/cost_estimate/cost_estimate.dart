@@ -1,4 +1,5 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
+import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/insurance_info.dart';
@@ -13,7 +14,6 @@ import 'package:Medicall/util/app_util.dart';
 import 'package:flutter/material.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:provider/provider.dart';
-import 'package:super_rich_text/super_rich_text.dart';
 
 import 'cost_estimate_view_model.dart';
 
@@ -65,6 +65,9 @@ class CostEstimate extends StatefulWidget {
 }
 
 class _CostEstimateState extends State<CostEstimate> {
+  final TextEditingController _pcpController = TextEditingController();
+  final FocusNode _pcpFocusNode = FocusNode();
+
   CostEstimateViewModel get model => widget.model;
 
   Future<void> _submit() async {
@@ -92,7 +95,20 @@ class _CostEstimateState extends State<CostEstimate> {
   Future<void> _submitReferral() async {
     try {
       if (await this.model.requestReferral()) {
-        _submit();
+        bool didPressYes = await PlatformAlertDialog(
+          title: "Proceed with visit",
+          content:
+              "You have successfully requested a referral and you will receive a follow up email within 24 hours. In the meantime, you can still proceed with filling out visit information. You will only be asked to pay once your referral is approved.",
+          defaultActionText: "Yes, proceed",
+          cancelActionText: "No, stay",
+        ).show(context);
+
+        if (didPressYes) {
+          _submit();
+          return false;
+        } else {
+          return false;
+        }
       } else {
         AppUtil().showFlushBar(
             "There was an issue requesting a referral for you. Please contact omar@medicall.com",
@@ -101,19 +117,6 @@ class _CostEstimateState extends State<CostEstimate> {
       }
     } catch (e) {
       AppUtil().showFlushBar(e, context);
-    }
-  }
-
-  Future<void> _proceedWithoutInsurance() async {
-    if (model.waiverCheck) {
-      StartVisitScreen.show(
-        context: context,
-        consult: model.consult,
-      );
-    } else {
-      AppUtil().showFlushBar(
-          "You have to agree to the insurance waiver before continuing",
-          context);
     }
   }
 
@@ -194,7 +197,6 @@ class _CostEstimateState extends State<CostEstimate> {
           CoverageResponse.ReferralNeeded)
         ..._buildReferralUI(),
       SizedBox(height: 16),
-      //_buildInsuranceWaiverCheckbox(),
       if (model.isLoading)
         Center(
           child: CircularProgressIndicator(),
@@ -209,11 +211,11 @@ class _CostEstimateState extends State<CostEstimate> {
     );
   }
 
-  Widget _buildOOPButton() {
+  Widget _buildOONButton() {
     return Center(
       child: ReusableRaisedButton(
-        title: "Proceed without insurance",
-        onPressed: _proceedWithoutInsurance,
+        title: "Proceed with out-of-network providers",
+        onPressed: _viewOutOfNetworkProviders,
       ),
     );
   }
@@ -235,7 +237,7 @@ class _CostEstimateState extends State<CostEstimate> {
       SizedBox(height: 8),
       _buildContinueButton(),
       SizedBox(height: 12),
-      _buildOOPButton(),
+      _buildOONButton(),
     ];
   }
 
@@ -288,12 +290,7 @@ class _CostEstimateState extends State<CostEstimate> {
       SizedBox(
         height: 16,
       ),
-      Center(
-        child: ReusableRaisedButton(
-          title: "Proceed with out-of-network providers",
-          onPressed: _viewOutOfNetworkProviders,
-        ),
-      ),
+      _buildOONButton(),
       SizedBox(height: 12),
       Center(
         child: ReusableRaisedButton(
@@ -304,7 +301,82 @@ class _CostEstimateState extends State<CostEstimate> {
     ];
   }
 
+  //Referral UI
+
   List<Widget> _buildReferralUI() {
+    List<Widget> referralUI = [];
+    if (model.insuranceInfo.providerName != null) {
+      referralUI.addAll(_buildPCPValidationUI());
+      if (model.showPCPTextField) {
+        referralUI.add(_buildPCPTextField());
+      }
+    } else {
+      referralUI.add(_buildPCPTextField());
+    }
+
+    if (model.pcp.isNotEmpty) {
+      referralUI.addAll(_buildRequestReferralUI());
+    }
+
+    return referralUI;
+  }
+
+  List<Widget> _buildPCPValidationUI() {
+    return [
+      Center(
+        child: Text(
+          "Is ${model.insuranceInfo.providerName} your Primary Care Provider (PCP)?",
+          style: Theme.of(context).textTheme.bodyText1,
+        ),
+      ),
+      SizedBox(
+        height: 16,
+      ),
+      ReusableRaisedButton(
+        title: "Yes",
+        onPressed: () => model.updateWith(
+            showPCPTextField: false, pcp: model.insuranceInfo.providerName),
+      ),
+      SizedBox(height: 12),
+      ReusableRaisedButton(
+        title: "No",
+        onPressed: () => model.updateWith(showPCPTextField: true),
+      ),
+      SizedBox(
+        height: 16,
+      ),
+    ];
+  }
+
+  Widget _buildPCPTextField() {
+    return Center(
+      child: TextField(
+        controller: _pcpController,
+        focusNode: _pcpFocusNode,
+        autocorrect: false,
+        style: Theme.of(context).textTheme.bodyText1,
+        keyboardType: TextInputType.name,
+        onChanged: model.updatePCP,
+        decoration: InputDecoration(
+          labelText: 'Full Name',
+          hintText: 'Jane Doe',
+          fillColor: Colors.grey.withAlpha(40),
+          filled: false,
+          prefixIcon: Icon(
+            Icons.person,
+            color: Theme.of(context).colorScheme.onSurface.withAlpha(150),
+          ),
+          disabledBorder: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          border: InputBorder.none,
+          errorText: model.pcpErrorText,
+          enabled: !model.isLoading,
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _buildRequestReferralUI() {
     return [
       Center(
         child: Text(
@@ -317,7 +389,7 @@ class _CostEstimateState extends State<CostEstimate> {
       ),
       Center(
         child: Text(
-          "Your insurance plan is an HMO, which means that you need a referral from your primary care provider (PCP) before your insurance will pay for this visit (i.e. your PCP has to explicitly approve this visit). Would you like us to do this on your behalf? By doing so, you will have to pay our full price of \$75.00 right now, but when we handle the insurance processing, we will reimburse your account with the appropriate funds based on what your insurance covers. This is a tedious process, but our aim is to make it as transparent as possible. If you have any questions, please email omar@medicall.com and we will respond quickly. You also have the option to proceed without using insurance.",
+          "Your insurance plan is an HMO, which means that you need a referral from your primary care provider (PCP) before your insurance will pay for this visit (i.e. your PCP has to explicitly approve this visit). Would you like us to do this on your behalf? You can still proceed with this visit, but you will only be required to pay once a referral is granted.",
           style: Theme.of(context).textTheme.bodyText1,
         ),
       ),
@@ -331,46 +403,7 @@ class _CostEstimateState extends State<CostEstimate> {
         ),
       ),
       SizedBox(height: 12),
-      _buildOOPButton(),
+      _buildOONButton(),
     ];
-  }
-
-  Widget _buildInsuranceWaiverCheckbox() {
-    return Column(
-      children: [
-        Center(
-          child: Text(
-            "To proceed without insurance you will have to agree to our insurance waiver, which ensures that you agree not to file an insurance claim separately after completing this visit. This waiver protects our doctors from any legal issues (between them and insurance companies) that may arise from this.",
-            style: Theme.of(context).textTheme.bodyText1,
-          ),
-        ),
-        SizedBox(
-          height: 16,
-        ),
-        CheckboxListTile(
-          title: Title(
-            color: Colors.blue,
-            child: SuperRichText(
-              text: 'I agree to Medicall’s <waiver>Insurance Waiver<waiver>.',
-              style: Theme.of(context).textTheme.bodyText2,
-              othersMarkers: [
-                MarkerText.withSameFunction(
-                  marker: '<waiver>',
-                  function: () => Navigator.of(context).pushNamed('/terms'),
-                  onError: (msg) => print('$msg'),
-                  style: TextStyle(
-                      color: Colors.blue, decoration: TextDecoration.underline),
-                ),
-              ],
-            ),
-          ),
-          value: model.waiverCheck,
-          onChanged: (waiverCheck) =>
-              model.updateWith(waiverCheck: waiverCheck),
-          controlAffinity: ListTileControlAffinity.leading,
-          activeColor: Theme.of(context).colorScheme.primary,
-        ),
-      ],
-    );
   }
 }

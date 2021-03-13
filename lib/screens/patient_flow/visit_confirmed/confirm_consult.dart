@@ -17,7 +17,6 @@ class ConfirmConsult extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        resizeToAvoidBottomPadding: false,
         appBar: CustomAppBar.getAppBar(
           type: AppBarType.Back,
           title: "Consult Confirmed",

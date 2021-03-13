@@ -2,10 +2,11 @@ import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/insurance_info.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/user_provider.dart';
+import 'package:Medicall/util/validators.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/foundation.dart';
 
-class CostEstimateViewModel with ChangeNotifier {
+class CostEstimateViewModel with FullNameValidator, ChangeNotifier {
   final AuthBase auth;
   final UserProvider userProvider;
   final Consult consult;
@@ -17,6 +18,10 @@ class CostEstimateViewModel with ChangeNotifier {
 
   bool requestedCostEstimate;
 
+  String pcp;
+
+  bool showPCPTextField;
+
   CostEstimateViewModel({
     @required this.auth,
     @required this.userProvider,
@@ -26,7 +31,19 @@ class CostEstimateViewModel with ChangeNotifier {
     this.showWaiver = false,
     this.waiverCheck = false,
     this.requestedCostEstimate = false,
+    this.pcp = "",
+    this.showPCPTextField = false,
   });
+
+  bool get canSubmit {
+    return fullNameValidator.isValid(pcp) && !isLoading;
+  }
+
+  String get pcpErrorText {
+    bool showErrorText =
+        !this.isLoading && !fullNameValidator.isValid(this.pcp);
+    return showErrorText ? fNameErrorText : null;
+  }
 
   bool get costEstimateGreaterThanSelfPay {
     return this.insuranceInfo.coverageResponse ==
@@ -93,17 +110,23 @@ class CostEstimateViewModel with ChangeNotifier {
     return true;
   }
 
+  void updatePCP(String pcp) => updateWith(pcp: pcp);
+
   void updateWith({
     bool isLoading,
     bool showWaiver,
     bool waiverCheck,
     bool requestedCostEstimate,
+    String pcp,
+    bool showPCPTextField,
   }) {
     this.isLoading = isLoading ?? this.isLoading;
     this.showWaiver = showWaiver ?? this.showWaiver;
     this.waiverCheck = waiverCheck ?? this.waiverCheck;
     this.requestedCostEstimate =
         requestedCostEstimate ?? this.requestedCostEstimate;
+    this.pcp = pcp ?? this.pcp;
+    this.showPCPTextField = showPCPTextField ?? this.showPCPTextField;
     notifyListeners();
   }
 }

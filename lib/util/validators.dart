@@ -320,3 +320,8 @@ class SMSCodeStringValidator implements StringValidator {
     return value.length >= 6;
   }
 }
+
+class FullNameValidator {
+  final StringValidator fullNameValidator = NonEmptyStringValidator();
+  final String fNameErrorText = 'Please enter your PCP\'s full name';
+}
