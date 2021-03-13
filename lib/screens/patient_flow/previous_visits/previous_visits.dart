@@ -81,7 +81,8 @@ class PreviousVisits extends StatelessWidget {
             snapshot: consultSnapshot,
             itemBuilder: (context, consult) => PreviousVisitsListItem(
               consult: consult,
-              onTap: () => consult.state == ConsultStatus.PendingPayment
+              onTap: () => consult.state == ConsultStatus.PendingPayment ||
+                      consult.state == ConsultStatus.ReferralRequested
                   ? _navigateToVisitPayment(context, consult)
                   : VisitDetailsOverview.show(
                       context: context,

@@ -1,6 +1,7 @@
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/insurance_info.dart';
 import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/validators.dart';
 import 'package:cloud_functions/cloud_functions.dart';
@@ -9,6 +10,7 @@ import 'package:flutter/foundation.dart';
 class CostEstimateViewModel with FullNameValidator, ChangeNotifier {
   final AuthBase auth;
   final UserProvider userProvider;
+  final FirestoreDatabase firestoreDatabase;
   final Consult consult;
   final InsuranceInfo insuranceInfo;
 
@@ -25,6 +27,7 @@ class CostEstimateViewModel with FullNameValidator, ChangeNotifier {
   CostEstimateViewModel({
     @required this.auth,
     @required this.userProvider,
+    @required this.firestoreDatabase,
     @required this.consult,
     @required this.insuranceInfo,
     this.isLoading = false,
@@ -106,6 +109,15 @@ class CostEstimateViewModel with FullNameValidator, ChangeNotifier {
     if (result.data["data"] != "Service OK") {
       throw "There was an issue requesting a referral for you. Please contact omar@medicall.com";
     }
+
+    if (this.insuranceInfo.costEstimate > -1) {
+      this.consult.price = this.insuranceInfo.costEstimate;
+    }
+    this.consult.insurancePayment = true;
+    this.consult.insuranceInfo = this.insuranceInfo;
+    this.consult.state = ConsultStatus.ReferralRequested;
+
+    firestoreDatabase.saveConsult(consult: consult);
 
     return true;
   }

@@ -8,6 +8,7 @@ import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/patient_flow/select_provider/select_provider.dart';
 import 'package:Medicall/screens/patient_flow/start_visit/start_visit.dart';
 import 'package:Medicall/services/auth.dart';
+import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
@@ -30,10 +31,13 @@ class CostEstimate extends StatefulWidget {
     final AuthBase auth = Provider.of<AuthBase>(context, listen: false);
     final UserProvider userProvider =
         Provider.of<UserProvider>(context, listen: false);
+    final FirestoreDatabase database =
+        Provider.of<FirestoreDatabase>(context, listen: false);
     return ChangeNotifierProvider<CostEstimateViewModel>(
       create: (context) => CostEstimateViewModel(
         auth: auth,
         userProvider: userProvider,
+        firestoreDatabase: database,
         consult: consult,
         insuranceInfo: insuranceInfo,
       ),
@@ -104,7 +108,10 @@ class _CostEstimateState extends State<CostEstimate> {
         ).show(context);
 
         if (didPressYes) {
-          _submit();
+          StartVisitScreen.show(
+            context: context,
+            consult: model.consult,
+          );
           return false;
         } else {
           return false;
@@ -378,6 +385,19 @@ class _CostEstimateState extends State<CostEstimate> {
 
   List<Widget> _buildRequestReferralUI() {
     return [
+      Center(
+        child: Text(
+          "Your real-time cost estimate:",
+          style: Theme.of(context).textTheme.headline6,
+        ),
+      ),
+      Center(
+        child: Text(
+          "\$${model.insuranceInfo.costEstimate}",
+          style: Theme.of(context).textTheme.bodyText1,
+        ),
+      ),
+      SizedBox(height: 8),
       Center(
         child: Text(
           "Referral Needed:",

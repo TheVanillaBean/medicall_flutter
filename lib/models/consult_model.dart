@@ -13,6 +13,7 @@ enum ConsultStatus {
   InReview,
   Completed,
   Signed,
+  ReferralRequested,
 }
 
 extension EnumParser on String {
