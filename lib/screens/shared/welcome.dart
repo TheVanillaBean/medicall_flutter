@@ -43,9 +43,9 @@ class WelcomeScreen extends StatelessWidget {
                   ),
                 ),
                 PageViewModel(
-                  title: "No Insurance Required",
+modifi                  title: "Use Your Insurance",
                   body:
-                      "Low cost visit fee. No insurance headaches. Just transparent pricing.",
+                      "Use your insurance coverage to get your visit covered! No insurance? No problem! Get a visit for a low price today.",
                   image: Center(
                     child:
                         Image.asset("assets/images/insurance.png", height: 250),
@@ -55,9 +55,9 @@ class WelcomeScreen extends StatelessWidget {
                   ),
                 ),
                 PageViewModel(
-                  title: "Free 2-day Shipping",
+                  title: "Send Your Prescription Anywhere",
                   body:
-                      "If you need a prescription, we offer them at wholesale prices and ship them to your door for free.",
+                      "If you need a prescription, we can send it the pharmacy of your choice. That includes a pharmacy down the street or a mail order pharmacy that will deliver to your door.",
                   image: Center(
                     child:
                         Image.asset("assets/images/shipping.png", height: 250),
