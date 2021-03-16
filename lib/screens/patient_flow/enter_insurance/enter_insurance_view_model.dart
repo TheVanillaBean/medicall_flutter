@@ -65,6 +65,21 @@ class EnterInsuranceViewModel with EmailAndPasswordValidators, ChangeNotifier {
     return this.selectedItemIndex == 1;
   }
 
+  bool get proceedWithInsuranceSelected {
+    return this.selectedItemIndex == 2 ||
+        this.selectedItemIndex == 3 ||
+        this.selectedItemIndex == 4 ||
+        this.selectedItemIndex == 5 ||
+        this.selectedItemIndex == 6 ||
+        this.selectedItemIndex == 7 ||
+        this.selectedItemIndex == 8 ||
+        this.selectedItemIndex == 9 ||
+        this.selectedItemIndex == 10 ||
+        this.selectedItemIndex == 11 ||
+        this.selectedItemIndex == 12 ||
+        this.selectedItemIndex == 13;
+  }
+
   bool get isWaiverUncheckedButNeedsToBe {
     return this.showInsuranceWidgets &&
         this.proceedWithoutInsuranceSelected &&

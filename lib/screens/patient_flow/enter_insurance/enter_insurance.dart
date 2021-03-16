@@ -14,6 +14,7 @@ import 'package:Medicall/services/non_auth_firestore_db.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
@@ -180,6 +181,8 @@ class _EnterInsuranceScreenState extends State<EnterInsuranceScreen>
           _buildZipCodeForm(),
           if (model.showInsuranceWidgets)
             _buildInsuranceWidgets(model.showInsuranceWidgets),
+          if (model.showInsuranceWidgets && model.proceedWithInsuranceSelected)
+            _buildMedicaidDialog(model.proceedWithInsuranceSelected),
         ],
       ),
       SizedBox(
@@ -358,6 +361,90 @@ class _EnterInsuranceScreenState extends State<EnterInsuranceScreen>
         ),
       ],
     );
+  }
+
+  Widget _buildMedicaidDialog(bool loading) {
+    return AnimatedOpacity(
+      opacity: loading ? 1 : 0,
+      duration: Duration(milliseconds: 500),
+      child: SlideTransition(
+        position: offset,
+        child: Column(
+          children: [
+            SizedBox(height: 32),
+            Text(
+              'Is this a limited network or Medicaid plan?',
+              style: Theme.of(context).textTheme.headline5,
+            ),
+            SizedBox(
+              height: 16,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                OutlinedButton(
+                  child: Text(
+                    'Yes',
+                    style: Theme.of(context).textTheme.bodyText1,
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    primary: Theme.of(context).colorScheme.primary,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(8))),
+                  ),
+                  onPressed: () {
+                    _buildMedicaidAlertDialog(context);
+                  },
+                ),
+                SizedBox(width: 48),
+                OutlinedButton(
+                  onPressed: () {},
+                  child: Text(
+                    'No',
+                    style: Theme.of(context).textTheme.bodyText1,
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    primary: Theme.of(context).colorScheme.primary,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(8))),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 18),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _buildMedicaidAlertDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        child: CupertinoAlertDialog(
+          title: Text(
+            "Medicall currently does not support limited network or Medicaid plans.\n",
+            style: Theme.of(context).textTheme.bodyText1,
+          ),
+          content: Text(
+            "Would you like to proceed without insurance?",
+            style: Theme.of(context).textTheme.bodyText1,
+          ),
+          actions: <Widget>[
+            CupertinoDialogAction(
+                textStyle: Theme.of(context).textTheme.bodyText1,
+                isDefaultAction: true,
+                onPressed: () {},
+                child: Text("Yes")),
+            CupertinoDialogAction(
+                textStyle: Theme.of(context).textTheme.bodyText1,
+                isDefaultAction: true,
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text("No")),
+          ],
+        ));
   }
 
   List<Widget> _buildInsuranceListItem() {
