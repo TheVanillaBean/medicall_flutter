@@ -182,7 +182,7 @@ class _EnterInsuranceScreenState extends State<EnterInsuranceScreen>
           if (model.showInsuranceWidgets)
             _buildInsuranceWidgets(model.showInsuranceWidgets),
           if (model.showInsuranceWidgets && model.proceedWithInsuranceSelected)
-            _buildMedicaidDialog(model.proceedWithInsuranceSelected),
+            _buildMedicaidWidget(),
         ],
       ),
       SizedBox(
@@ -190,7 +190,8 @@ class _EnterInsuranceScreenState extends State<EnterInsuranceScreen>
       ),
       if (model.proceedWithoutInsuranceSelected)
         _buildInsuranceWaiverCheckbox(),
-      _buildVerifyButton(),
+      if (model.proceedWithoutInsuranceSelected || !model.showInsuranceWidgets)
+        _buildVerifyButton(),
       if (model.showEmailField) ..._buildNotifyTextField(),
     ];
   }
@@ -363,58 +364,37 @@ class _EnterInsuranceScreenState extends State<EnterInsuranceScreen>
     );
   }
 
-  Widget _buildMedicaidDialog(bool loading) {
-    return AnimatedOpacity(
-      opacity: loading ? 1 : 0,
-      duration: Duration(milliseconds: 500),
-      child: SlideTransition(
-        position: offset,
-        child: Column(
+  Widget _buildMedicaidWidget() {
+    return Column(
+      children: [
+        SizedBox(height: 32),
+        Text(
+          'Is this a limited network or Medicaid plan?',
+          style: Theme.of(context).textTheme.headline5,
+          textAlign: TextAlign.center,
+        ),
+        SizedBox(
+          height: 24,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(height: 32),
-            Text(
-              'Is this a limited network or Medicaid plan?',
-              style: Theme.of(context).textTheme.headline5,
+            ReusableRaisedButton(
+              width: 150,
+              title: 'Yes',
+              onPressed: () {
+                _buildMedicaidAlertDialog(context);
+              },
             ),
-            SizedBox(
-              height: 16,
+            SizedBox(width: 24),
+            ReusableRaisedButton(
+              width: 150,
+              title: 'No',
+              onPressed: _submit,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                OutlinedButton(
-                  child: Text(
-                    'Yes',
-                    style: Theme.of(context).textTheme.bodyText1,
-                  ),
-                  style: OutlinedButton.styleFrom(
-                    primary: Theme.of(context).colorScheme.primary,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(8))),
-                  ),
-                  onPressed: () {
-                    _buildMedicaidAlertDialog(context);
-                  },
-                ),
-                SizedBox(width: 48),
-                OutlinedButton(
-                  onPressed: () {},
-                  child: Text(
-                    'No',
-                    style: Theme.of(context).textTheme.bodyText1,
-                  ),
-                  style: OutlinedButton.styleFrom(
-                    primary: Theme.of(context).colorScheme.primary,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(8))),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 18),
           ],
         ),
-      ),
+      ],
     );
   }
 
@@ -427,22 +407,28 @@ class _EnterInsuranceScreenState extends State<EnterInsuranceScreen>
             style: Theme.of(context).textTheme.bodyText1,
           ),
           content: Text(
-            "Would you like to proceed without insurance?",
+            "Please select 'Yes' if you would like to proceed without insurance.\n\n"
+            "Please select 'No' if you do not wish to use Medicall services at this time.",
             style: Theme.of(context).textTheme.bodyText1,
           ),
           actions: <Widget>[
             CupertinoDialogAction(
-                textStyle: Theme.of(context).textTheme.bodyText1,
-                isDefaultAction: true,
-                onPressed: () {},
-                child: Text("Yes")),
+              child: Text("Yes"),
+              textStyle: Theme.of(context).textTheme.bodyText1,
+              isDefaultAction: false,
+              onPressed: () {
+                model.updateWith(selectedItemIndex: 1);
+                Navigator.pop(context);
+              },
+            ),
             CupertinoDialogAction(
-                textStyle: Theme.of(context).textTheme.bodyText1,
-                isDefaultAction: true,
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text("No")),
+              child: Text("No"),
+              textStyle: Theme.of(context).textTheme.bodyText1,
+              isDefaultAction: false,
+              onPressed: () {
+                WelcomeScreen.show(context: context);
+              },
+            ),
           ],
         ));
   }
