@@ -77,6 +77,7 @@ class Consult {
   Map<String, dynamic> visitIssue;
   bool insurancePayment;
   InsuranceInfo insuranceInfo;
+  bool seenDoctorInPastThreeYears;
 
   //not serialized
   PatientUser patientUser;
@@ -110,6 +111,7 @@ class Consult {
     this.visitIssue,
     this.insurancePayment = false,
     this.insuranceInfo,
+    this.seenDoctorInPastThreeYears = false,
   });
 
   factory Consult.fromMap(Map<String, dynamic> data, String documentId) {
@@ -164,6 +166,8 @@ class Consult {
       insuranceInfo = InsuranceInfo.fromMap(data['insurance_info']);
     }
 
+    final bool seenDoctor = data['seen_doctor_past_three_years'] ?? false;
+
     return Consult(
       uid: documentId,
       providerId: providerId,
@@ -184,6 +188,7 @@ class Consult {
       visitIssue: visitIssue,
       insurancePayment: insurancePayment,
       insuranceInfo: insuranceInfo,
+      seenDoctorInPastThreeYears: seenDoctor,
     );
   }
 
@@ -200,7 +205,8 @@ class Consult {
       'patient_review_notifications': patientReviewNotifications,
       'provider_review_notifications': providerReviewNotifications,
       'provider_message_notifications': providerMessageNotifications,
-      'insurance_payment': insurancePayment
+      'insurance_payment': insurancePayment,
+      'seen_doctor_past_three_years': seenDoctorInPastThreeYears,
     };
     if (providerReclassified) {
       baseToMap.addAll({
