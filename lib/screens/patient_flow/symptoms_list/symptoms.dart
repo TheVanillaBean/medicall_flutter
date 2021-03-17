@@ -113,7 +113,7 @@ class SymptomsScreen extends StatelessWidget {
       child: Column(
         children: <Widget>[
           Text(
-            'Prices are dependent on your insurance plan. Out of network visits are \$75.',
+            'Prices are dependent on your insurance plan. You may also get a visit without insurance for as low as \$75.',
             style: Theme.of(context).textTheme.bodyText2,
             textAlign: TextAlign.center,
           ),

@@ -14,6 +14,7 @@ import 'package:Medicall/services/non_auth_firestore_db.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
@@ -180,6 +181,8 @@ class _EnterInsuranceScreenState extends State<EnterInsuranceScreen>
           _buildZipCodeForm(),
           if (model.showInsuranceWidgets)
             _buildInsuranceWidgets(model.showInsuranceWidgets),
+          if (model.showInsuranceWidgets && model.proceedWithInsuranceSelected)
+            _buildMedicaidWidget(),
         ],
       ),
       SizedBox(
@@ -187,7 +190,8 @@ class _EnterInsuranceScreenState extends State<EnterInsuranceScreen>
       ),
       if (model.proceedWithoutInsuranceSelected)
         _buildInsuranceWaiverCheckbox(),
-      _buildVerifyButton(),
+      if (model.proceedWithoutInsuranceSelected || !model.showInsuranceWidgets)
+        _buildVerifyButton(),
       if (model.showEmailField) ..._buildNotifyTextField(),
     ];
   }
@@ -326,7 +330,10 @@ class _EnterInsuranceScreenState extends State<EnterInsuranceScreen>
       children: [
         Center(
           child: Text(
-            "To proceed without insurance you will have to agree to our insurance waiver, which ensures that you agree not to file an insurance claim separately after completing this visit. This waiver protects our doctors from any legal issues (between them and insurance companies) that may arise from this.",
+            "To proceed without insurance, you will have to agree to our insurance waiver, "
+            "which ensures that you agree not to file an insurance claim separately after "
+            "completing this visit. This waiver protects our doctors from any legal issues "
+            "(between them and insurance companies) that may arise from this.",
             style: Theme.of(context).textTheme.bodyText1,
           ),
         ),
@@ -358,6 +365,75 @@ class _EnterInsuranceScreenState extends State<EnterInsuranceScreen>
         ),
       ],
     );
+  }
+
+  Widget _buildMedicaidWidget() {
+    return Column(
+      children: [
+        SizedBox(height: 32),
+        Text(
+          'Is this a limited network or Medicaid plan?',
+          style: Theme.of(context).textTheme.headline5,
+          textAlign: TextAlign.center,
+        ),
+        SizedBox(
+          height: 24,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ReusableRaisedButton(
+              width: 150,
+              title: 'Yes',
+              onPressed: () {
+                _buildMedicaidAlertDialog(context);
+              },
+            ),
+            SizedBox(width: 24),
+            ReusableRaisedButton(
+              width: 150,
+              title: 'No',
+              onPressed: _submit,
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  void _buildMedicaidAlertDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        child: CupertinoAlertDialog(
+          title: Text(
+            "Medicall currently does not support limited network or Medicaid plans.\n",
+            style: Theme.of(context).textTheme.bodyText1,
+          ),
+          content: Text(
+            "Please select 'Yes' if you would like to proceed without insurance for as low as \$75.\n\n"
+            "Please select 'No' if you do not wish to use Medicall services at this time.",
+            style: Theme.of(context).textTheme.bodyText1,
+          ),
+          actions: <Widget>[
+            CupertinoDialogAction(
+              child: Text("Yes"),
+              textStyle: Theme.of(context).textTheme.bodyText1,
+              isDefaultAction: false,
+              onPressed: () {
+                model.updateWith(selectedItemIndex: 1);
+                Navigator.pop(context);
+              },
+            ),
+            CupertinoDialogAction(
+              child: Text("No"),
+              textStyle: Theme.of(context).textTheme.bodyText1,
+              isDefaultAction: false,
+              onPressed: () {
+                WelcomeScreen.show(context: context);
+              },
+            ),
+          ],
+        ));
   }
 
   List<Widget> _buildInsuranceListItem() {
