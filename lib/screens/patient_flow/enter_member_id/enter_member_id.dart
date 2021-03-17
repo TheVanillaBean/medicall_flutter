@@ -234,7 +234,7 @@ class _EnterMemberIdState extends State<EnterMemberId> {
     return [
       Center(
         child: Text(
-          "Would you like to email Medicall customer support and/or proceed with out-of-network providers?\n\n"
+          "Would you like to email Medicall customer support and/or proceed without insurance?\n\n"
           "Please select how you would like to proceed:",
           style: Theme.of(context).textTheme.bodyText1,
         ),
@@ -251,7 +251,7 @@ class _EnterMemberIdState extends State<EnterMemberId> {
       SizedBox(height: 12),
       Center(
         child: ReusableRaisedButton(
-          title: "Proceed out-of-network",
+          title: "Get a visit now without insurance for as low as \$75",
           onPressed: _viewOutOfNetworkProviders,
         ),
       ),

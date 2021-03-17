@@ -221,7 +221,7 @@ class _CostEstimateState extends State<CostEstimate> {
   Widget _buildOONButton() {
     return Center(
       child: ReusableRaisedButton(
-        title: "Proceed with out-of-network providers",
+        title: "Get a visit now without insurance for as low as \$75",
         onPressed: _viewOutOfNetworkProviders,
       ),
     );
@@ -252,7 +252,7 @@ class _CostEstimateState extends State<CostEstimate> {
     return [
       Center(
         child: Text(
-          "We were not able to determine your real-time cost. You now have an option to obtain a true cost estimate from your doctor or proceed with out-of-network providers.\n\n"
+          "We were not able to determine your real-time cost. You now have an option to obtain a true cost estimate from your doctor or proceed without insurance.\n\n"
           "Please select how you would like to proceed:",
           style: Theme.of(context).textTheme.bodyText1,
         ),
@@ -270,7 +270,7 @@ class _CostEstimateState extends State<CostEstimate> {
       SizedBox(height: 12),
       Center(
         child: ReusableRaisedButton(
-          title: "Proceed out-of-network",
+          title: "Get a visit now without insurance for as low as \$75",
           onPressed: _viewOutOfNetworkProviders,
         ),
       ),
@@ -290,7 +290,10 @@ class _CostEstimateState extends State<CostEstimate> {
       ),
       Center(
         child: Text(
-          "It appears that your real time cost estimate is greater than \$75. To lower your cost, you have an option to choose out-of-network providers that may offer you greater savings compared to in-network providers contracted with your insurance.\n\nPlease select how you would like to proceed:",
+          "It appears that your real time cost estimate is greater than \$75. "
+          "To lower your cost, you have an option to choose out-of-network providers "
+          "that may offer you greater savings compared to in-network providers contracted "
+          "with your insurance.\n\nPlease select how you would like to proceed:",
           style: Theme.of(context).textTheme.bodyText1,
         ),
       ),
@@ -409,7 +412,12 @@ class _CostEstimateState extends State<CostEstimate> {
       ),
       Center(
         child: Text(
-          "Your insurance plan is an HMO, which means that you need a referral from your primary care provider (PCP) before your insurance will pay for this visit (i.e. your PCP has to explicitly approve this visit). Would you like us to do this on your behalf? You can still proceed with this visit, but you will only be required to pay once a referral is granted.",
+          "Your insurance plan is an HMO, which means that you need a referral "
+          "from your primary care provider (PCP) before your insurance "
+          "will pay for this visit (i.e. your PCP has to explicitly "
+          "approve this visit). Would you like us to do this on your "
+          "behalf? You can still proceed with this visit, "
+          "but you will only be required to pay once a referral is granted.",
           style: Theme.of(context).textTheme.bodyText1,
         ),
       ),
