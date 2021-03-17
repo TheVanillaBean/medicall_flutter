@@ -221,7 +221,7 @@ class _CostEstimateState extends State<CostEstimate> {
   Widget _buildOONButton() {
     return Center(
       child: ReusableRaisedButton(
-        title: "Get a visit now without insurance for as low as \$75",
+        title: "Proceed without insurance for \$75+",
         onPressed: _viewOutOfNetworkProviders,
       ),
     );
@@ -241,10 +241,10 @@ class _CostEstimateState extends State<CostEstimate> {
           style: Theme.of(context).textTheme.bodyText1,
         ),
       ),
-      SizedBox(height: 8),
+      SizedBox(height: 16),
       _buildContinueButton(),
-      SizedBox(height: 12),
-      _buildOONButton(),
+      //SizedBox(height: 12),
+      //_buildOONButton(),
     ];
   }
 
@@ -252,7 +252,10 @@ class _CostEstimateState extends State<CostEstimate> {
     return [
       Center(
         child: Text(
-          "We were not able to determine your real-time cost. You now have an option to obtain a true cost estimate from your doctor or proceed without insurance.\n\n"
+          "We were not able to determine the cost for your visit. "
+          "You can get a visit now without using insurance or you "
+          "can contact your doctor’s office to get the visit cost "
+          "(may take up to 1 business day).\n\n"
           "Please select how you would like to proceed:",
           style: Theme.of(context).textTheme.bodyText1,
         ),
@@ -262,15 +265,15 @@ class _CostEstimateState extends State<CostEstimate> {
       ),
       Center(
         child: ReusableRaisedButton(
-          title: "Obtain true cost estimate",
+          title: "Obtain visit cost",
           onPressed:
               !model.requestedCostEstimate ? _obtainTrueCostEstimate : null,
         ),
       ),
-      SizedBox(height: 12),
+      SizedBox(height: 16),
       Center(
         child: ReusableRaisedButton(
-          title: "Get a visit now without insurance for as low as \$75",
+          title: "Proceed without insurance for \$75+",
           onPressed: _viewOutOfNetworkProviders,
         ),
       ),
@@ -291,8 +294,8 @@ class _CostEstimateState extends State<CostEstimate> {
       Center(
         child: Text(
           "It appears that your real time cost estimate is greater than \$75. "
-          "To lower your cost, you have an option to choose out-of-network providers "
-          "that may offer you greater savings compared to in-network providers contracted "
+          "To lower your cost, you have an option to proceed without insurance "
+          "which may offer you greater savings (as low as \$75) compared to in-network providers contracted "
           "with your insurance.\n\nPlease select how you would like to proceed:",
           style: Theme.of(context).textTheme.bodyText1,
         ),
@@ -417,7 +420,8 @@ class _CostEstimateState extends State<CostEstimate> {
           "will pay for this visit (i.e. your PCP has to explicitly "
           "approve this visit). Would you like us to do this on your "
           "behalf? You can still proceed with this visit, "
-          "but you will only be required to pay once a referral is granted.",
+          "but you will only be required to pay once a referral is granted.\n\n"
+          "Optionally, you can proceed without insurance for as low as \$75.",
           style: Theme.of(context).textTheme.bodyText1,
         ),
       ),

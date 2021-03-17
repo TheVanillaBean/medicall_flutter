@@ -330,7 +330,10 @@ class _EnterInsuranceScreenState extends State<EnterInsuranceScreen>
       children: [
         Center(
           child: Text(
-            "To proceed without insurance you will have to agree to our insurance waiver, which ensures that you agree not to file an insurance claim separately after completing this visit. This waiver protects our doctors from any legal issues (between them and insurance companies) that may arise from this.",
+            "To proceed without insurance, you will have to agree to our insurance waiver, "
+            "which ensures that you agree not to file an insurance claim separately after "
+            "completing this visit. This waiver protects our doctors from any legal issues "
+            "(between them and insurance companies) that may arise from this.",
             style: Theme.of(context).textTheme.bodyText1,
           ),
         ),
@@ -407,7 +410,7 @@ class _EnterInsuranceScreenState extends State<EnterInsuranceScreen>
             style: Theme.of(context).textTheme.bodyText1,
           ),
           content: Text(
-            "Please select 'Yes' if you would like to proceed without insurance.\n\n"
+            "Please select 'Yes' if you would like to proceed without insurance for as low as \$75.\n\n"
             "Please select 'No' if you do not wish to use Medicall services at this time.",
             style: Theme.of(context).textTheme.bodyText1,
           ),
