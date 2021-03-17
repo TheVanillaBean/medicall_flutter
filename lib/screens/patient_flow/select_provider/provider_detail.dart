@@ -115,7 +115,7 @@ class ProviderDetailScreen extends StatelessWidget {
                         providerUser: provider,
                         symptom: symptom,
                         date: DateTime.now(),
-                        price: 49,
+                        price: 75,
                       );
                       if (currentUser != null) {
                         if (minimumDataEntered(currentUser)) {

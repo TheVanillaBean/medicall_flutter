@@ -78,6 +78,9 @@ class _CostEstimateState extends State<CostEstimate> {
     if (model.insuranceInfo.costEstimate > -1) {
       model.consult.price = model.insuranceInfo.costEstimate;
     }
+    if (model.insuranceInfo.coverageResponse == CoverageResponse.Medicare) {
+      model.consult.price = 20;
+    }
     model.consult.insurancePayment = true;
     model.consult.insuranceInfo = model.insuranceInfo;
     StartVisitScreen.show(
@@ -193,6 +196,8 @@ class _CostEstimateState extends State<CostEstimate> {
       SizedBox(
         height: 32,
       ),
+      if (model.insuranceInfo.coverageResponse == CoverageResponse.Medicare)
+        ..._buildMedicareUI(),
       if (model.costEstimateGreaterThanSelfPay)
         ..._buildEstimateGreaterThanSelfPayUI()
       else if (model.costEstimateLessThanSelfPay)
@@ -243,8 +248,20 @@ class _CostEstimateState extends State<CostEstimate> {
       ),
       SizedBox(height: 8),
       _buildContinueButton(),
+    ];
+  }
+
+  List<Widget> _buildMedicareUI() {
+    return [
+      Center(
+        child: Text(
+          "Due to this insurance being Medicare, the cost cannot be determined until the final billing process. As such, we will place a \$20 hold on your card during the payment step. We will send you the cost once your doctors billing staff completes the billing for this visit. We know this seems odd, but it is unfortunately the way Medicare billing is processed.",
+          style: Theme.of(context).textTheme.bodyText1,
+        ),
+      ),
+      SizedBox(height: 8),
+      _buildContinueButton(),
       SizedBox(height: 12),
-      _buildOONButton(),
     ];
   }
 

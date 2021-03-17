@@ -43,7 +43,7 @@ class WelcomeScreen extends StatelessWidget {
                   ),
                 ),
                 PageViewModel(
-modifi                  title: "Use Your Insurance",
+                  title: "Use Your Insurance",
                   body:
                       "Use your insurance coverage to get your visit covered! No insurance? No problem! Get a visit for a low price today.",
                   image: Center(

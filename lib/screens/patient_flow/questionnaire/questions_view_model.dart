@@ -98,7 +98,7 @@ class QuestionsViewModel extends PropertyChangeNotifier
     this.submitted = true;
     notifyListeners(QuestionVMProperties.questionPageView);
     consult.patientId = (await this.auth.currentUser()).uid;
-    if (consult.state != null &&
+    if (consult.state == null ||
         consult.state != ConsultStatus.ReferralRequested) {
       consult.state = ConsultStatus.PendingPayment;
     }

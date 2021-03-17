@@ -89,6 +89,16 @@ class EnterMemberIdViewModel with ChangeNotifier {
       );
     }
 
+    //Medicare is handled differently so override the above conditions if Medicare visit
+    if (this.insurance == "AARP Medicare Replacement") {
+      insuranceInfo = InsuranceInfo(
+        memberId: memberId,
+        coverageResponse: CoverageResponse.Medicare,
+        insurance: this.insurance,
+        costEstimate: -1,
+      );
+    }
+
     this.updateWith(
         successfullyValidatedInsurance: true,
         insuranceInfo: insuranceInfo,

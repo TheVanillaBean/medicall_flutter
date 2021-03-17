@@ -1,6 +1,7 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/coupon.dart';
+import 'package:Medicall/models/insurance_info.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/patient_flow/account/payment_detail/payment_detail.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
@@ -54,10 +55,6 @@ class MakePayment extends StatelessWidget {
 
   Future<void> _payPressed(BuildContext context) async {
     if (await model.processPayment()) {
-      if (!model.skipCheckout) {
-        AppUtil().showFlushBar(
-            "Your payment has been successfully processed!", context);
-      }
       ConfirmConsult.show(context: context);
     } else {
       AppUtil()
@@ -134,6 +131,10 @@ class MakePayment extends StatelessWidget {
                   SizedBox(height: 24),
                   if (model.consult.state != ConsultStatus.ReferralRequested)
                     _buildCheckoutButton(context),
+                  if (model.consult.insuranceInfo.coverageResponse ==
+                          CoverageResponse.Medicare &&
+                      model.coupon == null)
+                    _buildMedicareLabel(context),
                   SizedBox(height: 24),
                   if (model.isLoading && !model.userHasCards)
                     CircularProgressIndicator(),
@@ -502,6 +503,17 @@ class MakePayment extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
         onPressed: model.canSubmit ? () => _payPressed(context) : null,
+      ),
+    );
+  }
+
+  Widget _buildMedicareLabel(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 8),
+      child: Text(
+        "* Because this is a Medicare visit, you will not be charged now, but instead a \$20 hold will be placed on your card.",
+        textAlign: TextAlign.center,
+        style: Theme.of(context).textTheme.bodyText2,
       ),
     );
   }
