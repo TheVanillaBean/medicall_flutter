@@ -35,7 +35,7 @@ class EnterMemberIdViewModel with ChangeNotifier {
     this.memberId = (userProvider.user as PatientUser).memberId;
   }
 
-  Future<void> calculateCostWithInsurance() async {
+  Future<bool> calculateCostWithInsurance() async {
     this.updateWith(isLoading: true);
     final HttpsCallable callable = CloudFunctions.instance
         .getHttpsCallable(functionName: 'retrieveCoverage')
@@ -103,6 +103,8 @@ class EnterMemberIdViewModel with ChangeNotifier {
         successfullyValidatedInsurance: true,
         insuranceInfo: insuranceInfo,
         errorMessage: "");
+
+    return true;
   }
 
   Future<void> saveMemberId() async {

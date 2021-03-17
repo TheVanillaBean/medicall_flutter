@@ -236,7 +236,7 @@ class _CostEstimateState extends State<CostEstimate> {
     return [
       Center(
         child: Text(
-          "Your real-time cost estimate:",
+          "Your cost for this visit:",
           style: Theme.of(context).textTheme.headline6,
         ),
       ),
@@ -410,7 +410,7 @@ class _CostEstimateState extends State<CostEstimate> {
     return [
       Center(
         child: Text(
-          "Your real-time cost estimate:",
+          "Your cost for this visit:",
           style: Theme.of(context).textTheme.headline6,
         ),
       ),

@@ -86,8 +86,9 @@ class SymptomBody extends StatelessWidget {
   }
 
   List<Widget> _buildChildren(BuildContext context, MedicallUser medicallUser) {
-    String price =
-        symptom.category == "cosmetic" ? "\$${symptom.price}" : "Variable";
+    String price = symptom.category == "cosmetic"
+        ? "\$${symptom.price}"
+        : "check with insurance";
     return <Widget>[
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -117,7 +118,9 @@ class SymptomBody extends StatelessWidget {
           Container(
             child: Text(
               price,
-              style: Theme.of(context).textTheme.headline5,
+              style: Theme.of(context).textTheme.headline5.copyWith(
+                    fontSize: 16,
+                  ),
             ),
           )
         ],

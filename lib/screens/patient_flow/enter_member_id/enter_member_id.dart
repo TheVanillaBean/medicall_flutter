@@ -77,7 +77,15 @@ class _EnterMemberIdState extends State<EnterMemberId> {
           insuranceInfo: model.insuranceInfo,
         );
       } else {
-        await model.calculateCostWithInsurance();
+        if (await model.calculateCostWithInsurance()) {
+          await model.saveMemberId();
+          this.model.updateWith(successfullyValidatedInsurance: false);
+          CostEstimate.show(
+            context: context,
+            consult: model.consult,
+            insuranceInfo: model.insuranceInfo,
+          );
+        }
       }
     } on PlatformException catch (e) {
       model.updateWith(
@@ -177,8 +185,7 @@ class _EnterMemberIdState extends State<EnterMemberId> {
       ),
       SizedBox(height: 8),
       _buildMemberIDForm(),
-      if (model.showErrorMessage || model.successfullyValidatedInsurance)
-        ..._buildResponseLabel(),
+      if (model.showErrorMessage) ..._buildResponseLabel(),
       if (model.showErrorMessage) ..._buildEligibleErrorUI(),
       SizedBox(height: 16),
       if (!model.showErrorMessage) _buildVerifyButton(),
