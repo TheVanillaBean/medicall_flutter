@@ -69,7 +69,7 @@ class EnterMemberIdViewModel with ChangeNotifier {
         memberId: memberId,
         coverageResponse: CoverageResponse.ReferralNeeded,
         insurance: this.insurance,
-        providerName:
+        pcpName:
             "${result.data["referral_info"]["first_name"]} ${result.data["referral_info"]["last_name"]}",
         costEstimate: result.data["cost_estimate"] ?? -1,
       );

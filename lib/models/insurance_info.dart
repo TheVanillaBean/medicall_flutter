@@ -21,7 +21,7 @@ extension EnumParser on String {
 class InsuranceInfo {
   final CoverageResponse coverageResponse;
   final String insurance;
-  final String providerName;
+  final String pcpName;
   final int costEstimate;
   final String memberId;
 
@@ -29,7 +29,7 @@ class InsuranceInfo {
     @required this.coverageResponse,
     @required this.insurance,
     @required this.memberId,
-    this.providerName,
+    this.pcpName,
     this.costEstimate = -1,
   });
 
@@ -43,12 +43,14 @@ class InsuranceInfo {
     final String insurance = data['insurance'];
     final String memberId = data['member_id'];
     final int costEstimate = data['cost_estimate'];
+    final String pcpName = data['pcp_name'];
 
     return InsuranceInfo(
       coverageResponse: coverageResponse,
       insurance: insurance,
       memberId: memberId,
       costEstimate: costEstimate,
+      pcpName: pcpName,
     );
   }
 
@@ -58,6 +60,7 @@ class InsuranceInfo {
       'insurance': insurance,
       'member_id': memberId,
       'cost_estimate': costEstimate,
+      'pcp_name': pcpName,
     };
     return baseToMap;
   }

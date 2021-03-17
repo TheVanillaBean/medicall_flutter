@@ -100,6 +100,7 @@ class CostEstimateViewModel with FullNameValidator, ChangeNotifier {
       'provider_uid': this.consult.providerId,
       'member_id': this.insuranceInfo.memberId,
       'insurance': this.insuranceInfo.insurance,
+      'pcp_name': this.insuranceInfo.pcpName,
     };
 
     final HttpsCallableResult result = await callable.call(parameters);

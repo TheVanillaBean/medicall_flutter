@@ -335,7 +335,7 @@ class _CostEstimateState extends State<CostEstimate> {
 
   List<Widget> _buildReferralUI() {
     List<Widget> referralUI = [];
-    if (model.insuranceInfo.providerName != null) {
+    if (model.insuranceInfo.pcpName != null) {
       referralUI.addAll(_buildPCPValidationUI());
       if (model.showPCPTextField) {
         referralUI.add(_buildPCPTextField());
@@ -355,7 +355,7 @@ class _CostEstimateState extends State<CostEstimate> {
     return [
       Center(
         child: Text(
-          "Is ${model.insuranceInfo.providerName} your Primary Care Provider (PCP)?",
+          "Is ${model.insuranceInfo.pcpName} your Primary Care Provider (PCP)?",
           style: Theme.of(context).textTheme.bodyText1,
         ),
       ),
@@ -365,7 +365,7 @@ class _CostEstimateState extends State<CostEstimate> {
       ReusableRaisedButton(
         title: "Yes",
         onPressed: () => model.updateWith(
-            showPCPTextField: false, pcp: model.insuranceInfo.providerName),
+            showPCPTextField: false, pcp: model.insuranceInfo.pcpName),
       ),
       SizedBox(height: 12),
       ReusableRaisedButton(
