@@ -73,6 +73,12 @@ class WelcomeScreen extends StatelessWidget {
                 "Let's Go!",
                 style: TextStyle(fontWeight: FontWeight.w600),
               ),
+              showSkipButton: true,
+              onSkip: () => LoginScreen.show(context: context),
+              skip: Text(
+                "Login",
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
               dotsDecorator: DotsDecorator(
                 size: Size.square(10.0),
                 activeSize: Size(20.0, 10.0),
@@ -83,14 +89,6 @@ class WelcomeScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(25.0),
                 ),
               ),
-            ),
-          ),
-          Positioned(
-            bottom: ScreenUtil.screenHeightDp * 0.075,
-            left: 10,
-            child: FlatButton(
-              child: Text("Login"),
-              onPressed: () => LoginScreen.show(context: context),
             ),
           ),
           Align(
