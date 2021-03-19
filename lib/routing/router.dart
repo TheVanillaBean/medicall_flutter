@@ -24,6 +24,7 @@ import 'package:Medicall/screens/patient_flow/cost_estimate/cost_estimate.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/patient_flow/drivers_license/photo_id.dart';
 import 'package:Medicall/screens/patient_flow/enter_insurance/enter_insurance.dart';
+import 'package:Medicall/screens/patient_flow/enter_member_id/coverage_issue.dart';
 import 'package:Medicall/screens/patient_flow/enter_member_id/enter_member_id.dart';
 import 'package:Medicall/screens/patient_flow/patient_prescriptions/patient_prescriptions.dart';
 import 'package:Medicall/screens/patient_flow/personal_info/personal_info.dart';
@@ -165,6 +166,7 @@ class Routes {
   static const verifyInsurance = '/verify-insurance';
   static const costEstimate = '/cost-estimate';
   static const acceptedInsurances = '/accepted-insurances';
+  static const coverageIssue = '/coverage-issue';
 }
 
 /// The word 'consult' and 'visit' are used separately, but mean the exact
@@ -383,6 +385,24 @@ class Router {
           settings: settings,
           fullscreenDialog: true,
         );
+
+      case Routes.coverageIssue:
+        final Map<String, dynamic> mapArgs = args;
+        final String errorMessage = mapArgs['errorMessage'];
+        final Consult consult = mapArgs['consult'];
+        final String insurance = mapArgs['insurance'];
+        final String memberId = mapArgs['memberId'];
+        return MaterialPageRoute(
+          builder: (context) => CoverageIssue(
+            errorMessage: errorMessage,
+            consult: consult,
+            insurance: insurance,
+            memberId: memberId,
+          ),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+
       case Routes.costEstimate:
         final Map<String, dynamic> mapArgs = args;
         final Consult consult = mapArgs['consult'];

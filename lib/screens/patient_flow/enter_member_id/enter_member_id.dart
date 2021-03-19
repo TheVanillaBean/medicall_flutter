@@ -4,6 +4,7 @@ import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/patient_flow/cost_estimate/cost_estimate.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
+import 'package:Medicall/screens/patient_flow/enter_member_id/coverage_issue.dart';
 import 'package:Medicall/screens/patient_flow/enter_member_id/enter_member_id_view_model.dart';
 import 'package:Medicall/screens/patient_flow/select_provider/select_provider.dart';
 import 'package:Medicall/services/database.dart';
@@ -68,7 +69,7 @@ class _EnterMemberIdState extends State<EnterMemberId> {
 
   Future<void> _submit() async {
     try {
-      if (this.model.successfullyValidatedInsurance) {
+      if (await model.calculateCostWithInsurance()) {
         await model.saveMemberId();
         this.model.updateWith(successfullyValidatedInsurance: false);
         CostEstimate.show(
@@ -76,54 +77,23 @@ class _EnterMemberIdState extends State<EnterMemberId> {
           consult: model.consult,
           insuranceInfo: model.insuranceInfo,
         );
-      } else {
-        if (await model.calculateCostWithInsurance()) {
-          await model.saveMemberId();
-          this.model.updateWith(successfullyValidatedInsurance: false);
-          CostEstimate.show(
-            context: context,
-            consult: model.consult,
-            insuranceInfo: model.insuranceInfo,
-          );
-        }
       }
     } on PlatformException catch (e) {
-      model.updateWith(
-          successfullyValidatedInsurance: false,
-          errorMessage: "Failed to connect to server",
-          isLoading: false);
+      CoverageIssue.show(
+        context: context,
+        errorMessage: "Failed to connect to server",
+        consult: model.consult,
+        insurance: model.insurance,
+        memberId: model.memberId,
+      );
     } catch (e) {
-      model.updateWith(
-          successfullyValidatedInsurance: false,
-          errorMessage: e,
-          isLoading: false);
-    }
-  }
-
-  Future<void> _viewOutOfNetworkProviders() async {
-    SelectProviderScreen.show(
-      context: context,
-      symptom: model.consult.symptom,
-      insurance: model.insurance,
-      state: model.userProvider.user.mailingState,
-      filter: SelectProviderFilter.OutOfNetwork,
-    );
-  }
-
-  Future<void> _requestMedicallSupport() async {
-    try {
-      if (await this.model.requestMedicallSupport()) {
-        await model.saveMemberId();
-        AppUtil().showFlushBar(
-            "You have successfully requested Medicall support. You will receive a response email within 24 hours.",
-            context);
-      } else {
-        AppUtil().showFlushBar(
-            "There was an issue requesting Medicall support for you. Please contact omar@medicall.com",
-            context);
-      }
-    } catch (e) {
-      AppUtil().showFlushBar(e, context);
+      CoverageIssue.show(
+        context: context,
+        errorMessage: e,
+        consult: model.consult,
+        insurance: model.insurance,
+        memberId: model.memberId,
+      );
     }
   }
 
@@ -185,10 +155,8 @@ class _EnterMemberIdState extends State<EnterMemberId> {
       ),
       SizedBox(height: 8),
       _buildMemberIDForm(),
-      if (model.showErrorMessage) ..._buildResponseLabel(),
-      if (model.showErrorMessage) ..._buildEligibleErrorUI(),
       SizedBox(height: 16),
-      if (!model.showErrorMessage) _buildVerifyButton(),
+      _buildVerifyButton(),
       SizedBox(height: 16),
       if (model.isLoading)
         Center(
@@ -219,49 +187,5 @@ class _EnterMemberIdState extends State<EnterMemberId> {
       title: this.model.continueBtnText,
       onPressed: _submit,
     );
-  }
-
-  List<Widget> _buildResponseLabel() {
-    return [
-      SizedBox(
-        height: 24,
-      ),
-      Center(
-        child: Text(
-          "${model.labelText}",
-          style: Theme.of(context).textTheme.headline5,
-          textAlign: TextAlign.center,
-        ),
-      ),
-      SizedBox(height: 8),
-    ];
-  }
-
-  List<Widget> _buildEligibleErrorUI() {
-    return [
-      Center(
-        child: Text(
-          "Would you like to email Medicall customer support and/or proceed without insurance for as low as \$75?\n\n"
-          "Please select how you would like to proceed:",
-          style: Theme.of(context).textTheme.bodyText1,
-        ),
-      ),
-      SizedBox(
-        height: 16,
-      ),
-      Center(
-        child: ReusableRaisedButton(
-          title: "Email Support",
-          onPressed: !model.requestedSupport ? _requestMedicallSupport : null,
-        ),
-      ),
-      SizedBox(height: 12),
-      Center(
-        child: ReusableRaisedButton(
-          title: "Proceed without insurance for \$75+",
-          onPressed: _viewOutOfNetworkProviders,
-        ),
-      ),
-    ];
   }
 }
