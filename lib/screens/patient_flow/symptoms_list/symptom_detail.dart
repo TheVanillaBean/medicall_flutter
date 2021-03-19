@@ -106,35 +106,57 @@ class SymptomBody extends StatelessWidget {
       SizedBox(
         height: 16,
       ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Container(
-            child: Text(
-              'Price',
-              style: Theme.of(context).textTheme.headline5,
-            ),
-          ),
-          Container(
-            child: Text(
-              price,
-              style: Theme.of(context).textTheme.headline5.copyWith(
-                    fontSize: 16,
-                  ),
-            ),
-          )
-        ],
-      ),
-      Padding(
-        padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-        child: Divider(
-          thickness: 1,
-        ),
-      ),
+      // Row(
+      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //   children: <Widget>[
+      //     Container(
+      //       child: Text(
+      //         'Price',
+      //         style: Theme.of(context).textTheme.headline5,
+      //       ),
+      //     ),
+      //     Container(
+      //       child: Text(
+      //         price,
+      //         style: Theme.of(context).textTheme.headline5.copyWith(
+      //               fontSize: 16,
+      //             ),
+      //       ),
+      //     )
+      //   ],
+      // ),
+      // Padding(
+      //   padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+      //   child: Divider(
+      //     thickness: 1,
+      //   ),
+      // ),
       Container(
         child: Text(
           symptom.description,
           style: Theme.of(context).textTheme.bodyText1,
+        ),
+      ),
+      Align(
+        alignment: Alignment.topLeft,
+        child: Text(
+          'What you should expect next:',
+          style: Theme.of(context).textTheme.headline5,
+          textAlign: TextAlign.left,
+        ),
+      ),
+      SizedBox(
+        height: 6,
+      ),
+      Align(
+        alignment: Alignment.topLeft,
+        child: Text(
+          'After you choose your provider, you will have an option to provide your insurance '
+          'information or proceed without insurance for as low as \$75. Next, you will answer a few questions about '
+          'your health and your current symptoms. Your provider will evaluate this information and contact you through '
+          'this app with a detailed diagnosis and treatment recommendation.',
+          style: Theme.of(context).textTheme.bodyText1,
+          textAlign: TextAlign.left,
         ),
       ),
       SizedBox(height: 80),
