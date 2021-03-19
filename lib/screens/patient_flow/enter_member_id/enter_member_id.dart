@@ -71,7 +71,6 @@ class _EnterMemberIdState extends State<EnterMemberId> {
     try {
       if (await model.calculateCostWithInsurance()) {
         await model.saveMemberId();
-        this.model.updateWith(successfullyValidatedInsurance: false);
         CostEstimate.show(
           context: context,
           consult: model.consult,
@@ -184,7 +183,7 @@ class _EnterMemberIdState extends State<EnterMemberId> {
 
   Widget _buildVerifyButton() {
     return ReusableRaisedButton(
-      title: this.model.continueBtnText,
+      title: "Verify Insurance",
       onPressed: _submit,
     );
   }
