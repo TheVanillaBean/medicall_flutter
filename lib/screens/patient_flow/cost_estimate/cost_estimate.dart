@@ -1,9 +1,9 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
-import 'package:Medicall/common_widgets/platform_alert_dialog.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/insurance_info.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/patient_flow/cost_estimate/request_referral.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/patient_flow/select_provider/select_provider.dart';
 import 'package:Medicall/screens/patient_flow/start_visit/start_visit.dart';
@@ -18,7 +18,7 @@ import 'package:provider/provider.dart';
 
 import 'cost_estimate_view_model.dart';
 
-class CostEstimate extends StatefulWidget {
+class CostEstimate extends StatelessWidget {
   final CostEstimateViewModel model;
 
   const CostEstimate({@required this.model});
@@ -64,17 +64,7 @@ class CostEstimate extends StatefulWidget {
     );
   }
 
-  @override
-  _CostEstimateState createState() => _CostEstimateState();
-}
-
-class _CostEstimateState extends State<CostEstimate> {
-  final TextEditingController _pcpController = TextEditingController();
-  final FocusNode _pcpFocusNode = FocusNode();
-
-  CostEstimateViewModel get model => widget.model;
-
-  Future<void> _submit() async {
+  Future<void> _submit(BuildContext context) async {
     if (model.insuranceInfo.costEstimate > -1) {
       model.consult.price = model.insuranceInfo.costEstimate;
     }
@@ -89,7 +79,7 @@ class _CostEstimateState extends State<CostEstimate> {
     );
   }
 
-  Future<void> _viewOutOfNetworkProviders() async {
+  Future<void> _viewOutOfNetworkProviders(BuildContext context) async {
     SelectProviderScreen.show(
       context: context,
       symptom: model.consult.symptom,
@@ -99,38 +89,7 @@ class _CostEstimateState extends State<CostEstimate> {
     );
   }
 
-  Future<void> _submitReferral() async {
-    try {
-      if (await this.model.requestReferral()) {
-        bool didPressYes = await PlatformAlertDialog(
-          title: "Proceed with visit",
-          content:
-              "You have successfully requested a referral and you will receive a follow up email within 24 hours. In the meantime, you can still proceed with filling out visit information. You will only be asked to pay once your referral is approved.",
-          defaultActionText: "Yes, proceed",
-          cancelActionText: "No, stay",
-        ).show(context);
-
-        if (didPressYes) {
-          StartVisitScreen.show(
-            context: context,
-            consult: model.consult,
-          );
-          return false;
-        } else {
-          return false;
-        }
-      } else {
-        AppUtil().showFlushBar(
-            "There was an issue requesting a referral for you. Please contact omar@medicall.com",
-            context);
-        model.updateWith(isLoading: false);
-      }
-    } catch (e) {
-      AppUtil().showFlushBar(e, context);
-    }
-  }
-
-  Future<void> _obtainTrueCostEstimate() async {
+  Future<void> _obtainTrueCostEstimate(BuildContext context) async {
     try {
       if (await this.model.requestCostEstimate()) {
         AppUtil().showFlushBar(
@@ -144,6 +103,13 @@ class _CostEstimateState extends State<CostEstimate> {
     } catch (e) {
       AppUtil().showFlushBar(e, context);
     }
+  }
+
+  Future<void> _navigateToRequestReferral(BuildContext context) async {
+    RequestReferral.show(
+        context: context,
+        consult: this.model.consult,
+        insuranceInfo: this.model.insuranceInfo);
   }
 
   @override
@@ -182,7 +148,7 @@ class _CostEstimateState extends State<CostEstimate> {
               },
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: _buildChildren(),
+                children: _buildChildren(context),
               ),
             ),
           ),
@@ -191,23 +157,23 @@ class _CostEstimateState extends State<CostEstimate> {
     );
   }
 
-  List<Widget> _buildChildren() {
+  List<Widget> _buildChildren(BuildContext context) {
     return <Widget>[
       SizedBox(
         height: 32,
       ),
       if (model.insuranceInfo.coverageResponse == CoverageResponse.Medicare)
-        ..._buildMedicareUI(),
+        ..._buildMedicareUI(context),
       if (model.costEstimateGreaterThanSelfPay)
-        ..._buildEstimateGreaterThanSelfPayUI()
+        ..._buildEstimateGreaterThanSelfPayUI(context)
       else if (model.costEstimateLessThanSelfPay)
-        ..._buildValidCostUI()
+        ..._buildValidCostUI(context)
       else if (model.insuranceInfo.coverageResponse ==
           CoverageResponse.NoCostEstimate)
-        ..._buildInvalidCostUI()
+        ..._buildInvalidCostUI(context)
       else if (model.insuranceInfo.coverageResponse ==
           CoverageResponse.ReferralNeeded)
-        ..._buildReferralUI(),
+        ..._buildRequestReferralUI(context),
       SizedBox(height: 16),
       if (model.isLoading)
         Center(
@@ -216,23 +182,23 @@ class _CostEstimateState extends State<CostEstimate> {
     ];
   }
 
-  Widget _buildContinueButton() {
+  Widget _buildContinueButton(BuildContext context) {
     return ReusableRaisedButton(
       title: "Continue",
-      onPressed: _submit,
+      onPressed: () => _submit(context),
     );
   }
 
-  Widget _buildOONButton() {
+  Widget _buildOONButton(BuildContext context) {
     return Center(
       child: ReusableRaisedButton(
         title: "Proceed without insurance for \$75+",
-        onPressed: _viewOutOfNetworkProviders,
+        onPressed: () => _viewOutOfNetworkProviders(context),
       ),
     );
   }
 
-  List<Widget> _buildValidCostUI() {
+  List<Widget> _buildValidCostUI(BuildContext context) {
     return [
       Center(
         child: Text(
@@ -247,11 +213,11 @@ class _CostEstimateState extends State<CostEstimate> {
         ),
       ),
       SizedBox(height: 16),
-      _buildContinueButton(),
+      _buildContinueButton(context),
     ];
   }
 
-  List<Widget> _buildMedicareUI() {
+  List<Widget> _buildMedicareUI(BuildContext context) {
     return [
       Center(
         child: Text(
@@ -260,12 +226,12 @@ class _CostEstimateState extends State<CostEstimate> {
         ),
       ),
       SizedBox(height: 8),
-      _buildContinueButton(),
+      _buildContinueButton(context),
       SizedBox(height: 12),
     ];
   }
 
-  List<Widget> _buildInvalidCostUI() {
+  List<Widget> _buildInvalidCostUI(BuildContext context) {
     return [
       Center(
         child: Text(
@@ -283,21 +249,22 @@ class _CostEstimateState extends State<CostEstimate> {
       Center(
         child: ReusableRaisedButton(
           title: "Obtain visit cost",
-          onPressed:
-              !model.requestedCostEstimate ? _obtainTrueCostEstimate : null,
+          onPressed: !model.requestedCostEstimate
+              ? () => _obtainTrueCostEstimate
+              : null,
         ),
       ),
       SizedBox(height: 16),
       Center(
         child: ReusableRaisedButton(
           title: "Proceed without insurance for \$75+",
-          onPressed: _viewOutOfNetworkProviders,
+          onPressed: () => _viewOutOfNetworkProviders,
         ),
       ),
     ];
   }
 
-  List<Widget> _buildEstimateGreaterThanSelfPayUI() {
+  List<Widget> _buildEstimateGreaterThanSelfPayUI(BuildContext context) {
     return [
       Center(
         child: Text(
@@ -320,93 +287,18 @@ class _CostEstimateState extends State<CostEstimate> {
       SizedBox(
         height: 16,
       ),
-      _buildOONButton(),
+      _buildOONButton(context),
       SizedBox(height: 12),
       Center(
         child: ReusableRaisedButton(
           title: "Proceed with my insurance",
-          onPressed: _submit,
+          onPressed: () => _submit(context),
         ),
       ),
     ];
   }
 
-  //Referral UI
-
-  List<Widget> _buildReferralUI() {
-    List<Widget> referralUI = [];
-    if (model.insuranceInfo.pcpName != null) {
-      referralUI.addAll(_buildPCPValidationUI());
-      if (model.showPCPTextField) {
-        referralUI.add(_buildPCPTextField());
-      }
-    } else {
-      referralUI.add(_buildPCPTextField());
-    }
-
-    if (model.pcp.isNotEmpty) {
-      referralUI.addAll(_buildRequestReferralUI());
-    }
-
-    return referralUI;
-  }
-
-  List<Widget> _buildPCPValidationUI() {
-    return [
-      Center(
-        child: Text(
-          "Is ${model.insuranceInfo.pcpName} your Primary Care Provider (PCP)?",
-          style: Theme.of(context).textTheme.bodyText1,
-        ),
-      ),
-      SizedBox(
-        height: 16,
-      ),
-      ReusableRaisedButton(
-        title: "Yes",
-        onPressed: () => model.updateWith(
-            showPCPTextField: false, pcp: model.insuranceInfo.pcpName),
-      ),
-      SizedBox(height: 12),
-      ReusableRaisedButton(
-        title: "No",
-        onPressed: () => model.updateWith(showPCPTextField: true),
-      ),
-      SizedBox(
-        height: 16,
-      ),
-    ];
-  }
-
-  Widget _buildPCPTextField() {
-    return Center(
-      child: TextField(
-        controller: _pcpController,
-        focusNode: _pcpFocusNode,
-        autocorrect: false,
-        style: Theme.of(context).textTheme.bodyText1,
-        keyboardType: TextInputType.name,
-        onChanged: model.updatePCP,
-        decoration: InputDecoration(
-          labelText: 'Full Name',
-          hintText: 'Jane Doe',
-          fillColor: Colors.grey.withAlpha(40),
-          filled: false,
-          prefixIcon: Icon(
-            Icons.person,
-            color: Theme.of(context).colorScheme.onSurface.withAlpha(150),
-          ),
-          disabledBorder: InputBorder.none,
-          enabledBorder: InputBorder.none,
-          border: InputBorder.none,
-          errorText: model.pcpErrorText,
-          enabled: !model.isLoading,
-        ),
-      ),
-    );
-  }
-
-  List<Widget> _buildRequestReferralUI() {
+  List<Widget> _buildRequestReferralUI(BuildContext context) {
     return [
       Center(
         child: Text(
@@ -432,13 +324,7 @@ class _CostEstimateState extends State<CostEstimate> {
       ),
       Center(
         child: Text(
-          "Your insurance plan is an HMO, which means that you need a referral "
-          "from your primary care provider (PCP) before your insurance "
-          "will pay for this visit (i.e. your PCP has to explicitly "
-          "approve this visit). Would you like us to do this on your "
-          "behalf? You can still proceed with this visit, "
-          "but you will only be required to pay once a referral is granted.\n\n"
-          "Optionally, you can proceed without insurance for as low as \$75.",
+          "Your insurance company requires a referral. You can still complete today’s visit, but your doctor won’t review it (and you won’t be charged) until the insurance company approves the referral. Optionally, you can proceed without insurance for as low as \$75.",
           style: Theme.of(context).textTheme.bodyText1,
         ),
       ),
@@ -448,11 +334,13 @@ class _CostEstimateState extends State<CostEstimate> {
       Center(
         child: ReusableRaisedButton(
           title: "Request referral",
-          onPressed: _submitReferral,
+          onPressed: model.consult.state != ConsultStatus.ReferralRequested
+              ? () => _navigateToRequestReferral(context)
+              : null,
         ),
       ),
       SizedBox(height: 12),
-      _buildOONButton(),
+      _buildOONButton(context),
     ];
   }
 }

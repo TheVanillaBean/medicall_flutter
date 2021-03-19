@@ -21,6 +21,7 @@ import 'package:Medicall/screens/patient_flow/account/update_patient_info/update
 import 'package:Medicall/screens/patient_flow/account/update_patient_info/update_patient_info_view_model.dart';
 import 'package:Medicall/screens/patient_flow/account/update_photo_id.dart';
 import 'package:Medicall/screens/patient_flow/cost_estimate/cost_estimate.dart';
+import 'package:Medicall/screens/patient_flow/cost_estimate/request_referral.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/patient_flow/drivers_license/photo_id.dart';
 import 'package:Medicall/screens/patient_flow/enter_insurance/enter_insurance.dart';
@@ -165,6 +166,7 @@ class Routes {
   static const closeChat = '/close-chat';
   static const verifyInsurance = '/verify-insurance';
   static const costEstimate = '/cost-estimate';
+  static const requestReferral = '/request-referral';
   static const acceptedInsurances = '/accepted-insurances';
   static const coverageIssue = '/coverage-issue';
 }
@@ -410,6 +412,16 @@ class Router {
         return MaterialPageRoute<dynamic>(
           builder: (context) =>
               CostEstimate.create(context, consult, insurance),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case Routes.requestReferral:
+        final Map<String, dynamic> mapArgs = args;
+        final Consult consult = mapArgs['consult'];
+        final InsuranceInfo insurance = mapArgs['insurance_info'];
+        return MaterialPageRoute<dynamic>(
+          builder: (context) =>
+              RequestReferral(consult: consult, insuranceInfo: insurance),
           settings: settings,
           fullscreenDialog: true,
         );
