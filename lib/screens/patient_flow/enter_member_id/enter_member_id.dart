@@ -7,6 +7,7 @@ import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/patient_flow/enter_member_id/coverage_issue.dart';
 import 'package:Medicall/screens/patient_flow/enter_member_id/enter_member_id_view_model.dart';
 import 'package:Medicall/screens/patient_flow/select_provider/select_provider.dart';
+import 'package:Medicall/screens/tflite/tflite_cam.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
@@ -161,11 +162,21 @@ class _EnterMemberIdState extends State<EnterMemberId> {
         Center(
           child: CircularProgressIndicator(),
         ),
+      // temp go to tensorflow lite camera
+      FlatButton.icon(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => TfliteCam(title:'tensorflow test')),
+            );
+          },
+          icon: Icon(Icons.camera_alt),
+          label: Text('tensorflow lite camera'))
     ];
   }
 
   Widget _buildMemberIDForm() {
-    return TextFormField(
+    return TextFormField( 
       initialValue: this.model.memberId,
       minLines: 1,
       keyboardType: TextInputType.text,

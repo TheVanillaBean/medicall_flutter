@@ -1,0 +1,266 @@
+Abscess
+Acanthosis Nigricans
+Acne Conglobata
+Acne Excoriee
+Acne Fulminans
+Acne Keloidalis Nuchae
+Acne Vulgaris
+Acral Lentiginous Melanoma
+Acrochordon
+Actinic Cheilitis
+Actinic Keratosis
+Allergic Contact Dermatitis
+Alopecia Areata
+Amelanotic Melanoma
+Anagen Effluvium
+Angioedema
+Angiofibroma
+Angiokeratoma
+Angular Cheilitis
+Aphthous Stomatitis
+Ashy Dermatosis
+Asteatotic Dermatitis
+Atopic Dermatitis
+Atypical Fibroxanthoma
+Atypical Nevus
+Balanitis Xerotica Obliterans
+Basal Cell Carcinoma
+Beau Lines
+Becker Nevus
+Bedbug Bite
+Benign Nevi
+Blue Nevus
+Bowenoid Papulosis
+Bullous Pemphigoid
+Buschke-Lowenstein Tumor
+Cafe Au Lait Macules
+Calciphylaxis
+Callus
+Candida - Penis
+Candida Albicans
+Capillaritis
+Cellulitis
+Cheilitis
+Chilblains
+Chondrodermatitis Nodularis Helicis
+Clark Nevus Or Dysplastic Nevus
+Clear Cell Acanthoma
+Clubbing Of Nails
+Combined Naevus
+Compound Melanocytic Naevus
+Condyloma Lata
+Confluent And Reticulated Papillomatosis
+Congenital Nevus
+Connective Tissue Nevi
+Cutaneous T-Cell Lymphoma
+Darier Disease - Nail
+Darier Disease
+Delusions Of Parasitosis
+Demodex Folliculitis
+Dermatitis Herpetiformis
+Dermatofibroma
+Dermatofibrosarcoma Protuberans
+Dermatomyositis - Capillary
+Dermatomyositis - Gottrons Papules
+Dermatomyositis - Heliotrope
+Dermatomyositis - Shawl Sign
+Dermatomyositis
+Dermatosis Papulosa Nigra
+Dermographism
+Diffuse Large B-Cell Lymphoma
+Dilated Pore Of Winer
+Discoid Lupus Erythematosus
+Dissecting Cellulitis Of Scalp
+Disseminated Superficial Actinic Porokeratosis
+Drug Eruptions
+Drug-Induced Pigmentation
+Dyshidrotic Eczema
+Dysplasic Naevi
+Ecthyma
+Eczema Herpeticum
+Ephelides
+Epidermal Inclusion Cyst
+Epidermolysis Bullosa Acquisita
+Erosio Interdigitalis Blastomycetica
+Eruptive Xanthoma
+Erysipelas
+Erythema Annulare Centrifugum
+Erythema Gyratum Repens
+Erythema Infectiosum
+Erythema Migrans - Lyme Disease
+Erythema Multiforme
+Erythema Nodosum
+Erythrasma
+Extramammary Paget Disease
+Factitial Dermatitis
+Female Pattern Alopecia
+Fixed Drug Eruption
+Folliculitis
+Frontal Fibrosing Alopecia
+Gianotti-Crosti Syndrome
+Glomus Tumor
+Granular Cell Tumor
+Granuloma Annulare
+Granuloma Faciale
+Hailey-Hailey Disease
+Halo Nevus
+Hand Dermatitis
+Hand, Foot And Mouth Disease - Mouth
+Hand, Foot And Mouth Disease
+Hemangioma
+Herpes Simplex Virus
+Herpes Zoster
+Hidradenitis Suppurativa
+Hirsutism
+Hypertrichosis
+Iga Pemphigus
+Immune Thrombocytopenic Purpura
+Impetigo
+Ingrown Toenail
+Intertrigo
+Irritant Contact Dermatitis
+Juvenile Xanthogranuloma
+Keloid
+Keratoacanthoma
+Keratosis Pilaris
+Lentigo Maligna
+Lentigo
+Leukocytoclastic Vasculitis
+Lichen Planopilaris
+Lichen Planus - Mucosa
+Lichen Planus - Nail
+Lichen Planus Pigmentosus
+Lichen Planus
+Lichen Sclerosus
+Lichen Simplex Chronicus
+Lichenoid Drug Eruption
+Lichenoid Keratosis
+Linear Iga Bullous Dermatosis
+Lipoma
+Livedo Reticularis
+Longitudinal Melanonychia
+Longitudinal Nail Ridging
+Lymphomatoid Papulosis
+Macular Amyloidosis
+Majocchi Granuloma
+Male Pattern Alopecia
+Median Nail Dystrophy
+Mees Lines
+Melanoma
+Melasma
+Merkel Cell Carcinoma
+Milia
+Molluscum Contagiosum
+Morphea
+Myxoid Cyst
+Naevus Spilus
+Nail Biting
+Nail Candidiasis
+Nail Pterygium - Dorsal
+Nail Pterygium - Ventral
+Necrobiosis Lipoidica
+Neurofibromas
+Neurotic Excoriations
+Nevus Anemicus
+Nevus Comedonicus
+Nevus Depigmentosus
+Nevus Of Ito
+Nevus Of Ota
+Nevus Sebaceus
+Nummular Dermatitis
+Onycholysis
+Onychomadesis
+Onychomycosis
+Onychopapilloma
+Onychorrhexis
+Panniculitis
+Paronychia
+Parvovirus B19 Infection
+Pemphigus Foliaceus
+Pemphigus Vegetans
+Pemphigus Vulgaris
+Perioral Dermatitis
+Periungual Fibroma
+Pilar Cyst
+Pilomatricoma
+Pilonidal Abscess
+Pincer Nails
+Pityriasis Rosea
+Pityriasis Rubra Pilaris - Cutaneous
+Pityriasis Rubra Pilaris - Palmoplantar
+Plane Xanthomas
+Poliosis
+Porphyria Cutanea Tarda
+Port-Wine Stain
+Preseptal Cellulitis
+Primary Syphilis
+Prurigo Nodularis
+Pseudomonas Aeruginosa - Nail
+Psoriasis - Guttate
+Psoriasis - Nail
+Psoriasis
+Raynaud Phenomenon
+Rheumatoid Arthritis
+Rocky Mountain Spotted Fever
+Rosacea
+Roseola
+Salmon Patch
+Sarcoidisis - Cutaneous
+Sarcoidosis
+Scabies - Crusted
+Scabies
+Scar - Pitted
+Scar
+Scleroderma
+Sebaceous Hyperplasia
+Seborrheic Dermatitis
+Seborrheic Keratosis
+Secondary Syphilis
+Secondary syphilis - alopecia
+Segmental Vitiligo
+Spitz Nevus
+Sporotrichosis
+Squamous Cell Carcinoma - Cutaneous Horn
+Squamous Cell Carcinoma Cutaneous
+Squamous Cell Carcinoma in situ
+Staphylococcal Scalded Skin Syndrome
+Stasis Dermatitis
+Steroid Atrophy
+Stevens-Johnson Syndrome
+Striae
+Stucco Keratosis
+Subacute Cutaneous Lupus Erythematosus
+Subungual Exostosis
+Subungual Hematoma
+Subungual Melanoma
+Syringoma
+Systemic Lupus Erythematosus
+Systemic Lupus Erythematous - Malar Rash
+Telangiectases
+Telogen Effluvium
+Terra Firma-Forme Dermatosis
+Terry Nails
+Tinea Barbae
+Tinea Capitis
+Tinea Corporis
+Tinea Cruris
+Tinea Faciei
+Tinea Manus
+Tinea Pedis
+Tinea Versicolor
+Toxic Epidermal Necrolysis
+Traction Alopecia
+Urticaria - Papular
+Urticaria
+Vasculitis
+Venous Lake
+Venous Ulcer
+Viral Exanthem
+Vitiligo
+Wart - Body
+Wart - Face
+Wart - Foot
+Wart - Hand
+Xanthoma Tuberosum
+Xerosis
+Yellow Nail Syndrome
