@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:camera/camera.dart';
 import 'package:Medicall/models/tflite/result_model.dart';
+import 'package:camera/camera.dart';
 import 'package:tflite/tflite.dart';
 
 import 'app_helper.dart';
@@ -26,7 +26,9 @@ class TFLiteHelper {
             bytesList: image.planes.map((plane) {
               return plane.bytes;
             }).toList(),
-            numResults: 5)
+            imageHeight: image.height,
+            imageWidth: image.width,
+            numResults: 2)
         .then((value) {
       if (value.isNotEmpty) {
         AppHelper.log("classifyImage", "Results loaded. ${value.length}");

@@ -1,8 +1,10 @@
+import 'dart:async';
+
+import 'package:Medicall/models/tflite/app_helper.dart';
+import 'package:Medicall/models/tflite/tflite_helper.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:Medicall/models/tflite/app_helper.dart';
-import 'package:Medicall/models/tflite/tflite_helper.dart';
 
 class CameraHelper {
   static CameraController camera;
