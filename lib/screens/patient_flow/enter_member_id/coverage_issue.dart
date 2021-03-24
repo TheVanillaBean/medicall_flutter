@@ -174,6 +174,13 @@ class _CoverageIssueState extends State<CoverageIssue> {
                 onPressed: () => _viewOutOfNetworkProviders(userProvider),
               ),
             ),
+            SizedBox(
+              height: 16,
+            ),
+            if (this.isLoading)
+              Center(
+                child: CircularProgressIndicator(),
+              ),
           ],
         ),
       ),

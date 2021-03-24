@@ -43,7 +43,7 @@ class InsuranceInfo {
     final String insurance = data['insurance'];
     final String memberId = data['member_id'];
     final int costEstimate = data['cost_estimate'];
-    final String pcpName = data['pcp_name'];
+    final String pcpName = data['pcp_name'] ?? null;
 
     return InsuranceInfo(
       coverageResponse: coverageResponse,
@@ -60,8 +60,12 @@ class InsuranceInfo {
       'insurance': insurance,
       'member_id': memberId,
       'cost_estimate': costEstimate,
-      'pcp_name': pcpName,
     };
+    if (this.pcpName != null) {
+      baseToMap.addAll({
+        'pcp_name': pcpName,
+      });
+    }
     return baseToMap;
   }
 }

@@ -158,9 +158,10 @@ class StartVisitScreen extends StatelessWidget {
   Future<void> _buildSeenDoctorAlertDialog(BuildContext context) {
     return showDialog(
       context: context,
+      barrierDismissible: false,
       child: CupertinoAlertDialog(
         title: Text(
-          "Have you seen Dr. ${this.consult.providerUser.fullName} in the past years?",
+          "Have you seen Dr. ${this.consult.providerUser.fullName} in the past 3 years?",
           style: Theme.of(context).textTheme.bodyText1,
         ),
         actions: <Widget>[

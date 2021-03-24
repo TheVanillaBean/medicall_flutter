@@ -237,9 +237,8 @@ class CostEstimate extends StatelessWidget {
         child: Text(
           "We were not able to determine the cost for your visit. "
           "You can get a visit now without using insurance or you "
-          "can contact your doctor’s office to get the visit cost "
-          "(may take up to 1 business day).\n\n"
-          "Please select how you would like to proceed:",
+          "can contact this doctor’s office to get the visit cost "
+          "(may take up to 1 business day).\n",
           style: Theme.of(context).textTheme.bodyText1,
         ),
       ),
@@ -250,7 +249,7 @@ class CostEstimate extends StatelessWidget {
         child: ReusableRaisedButton(
           title: "Obtain visit cost",
           onPressed: !model.requestedCostEstimate
-              ? () => _obtainTrueCostEstimate
+              ? () => _obtainTrueCostEstimate(context)
               : null,
         ),
       ),
@@ -258,7 +257,7 @@ class CostEstimate extends StatelessWidget {
       Center(
         child: ReusableRaisedButton(
           title: "Proceed without insurance for \$75+",
-          onPressed: () => _viewOutOfNetworkProviders,
+          onPressed: () => _viewOutOfNetworkProviders(context),
         ),
       ),
     ];
@@ -268,7 +267,7 @@ class CostEstimate extends StatelessWidget {
     return [
       Center(
         child: Text(
-          "Your real time cost estimate: \$${model.insuranceInfo.costEstimate}",
+          "Your cost for this visit: \$${model.insuranceInfo.costEstimate}",
           style: Theme.of(context).textTheme.headline6,
         ),
       ),
@@ -277,10 +276,9 @@ class CostEstimate extends StatelessWidget {
       ),
       Center(
         child: Text(
-          "It appears that your real time cost estimate is greater than \$75. "
-          "To lower your cost, you have an option to proceed without insurance "
-          "which may offer you greater savings (as low as \$75) compared to in-network providers contracted "
-          "with your insurance.\n\nPlease select how you would like to proceed:",
+          "To lower your cost, you have an option to proceed without insurance, "
+          "which is cheaper in your case (as low as \$75) compared to in-network providers contracted "
+          "with your insurance.\n",
           style: Theme.of(context).textTheme.bodyText1,
         ),
       ),
@@ -324,7 +322,7 @@ class CostEstimate extends StatelessWidget {
       ),
       Center(
         child: Text(
-          "Your insurance company requires a referral. You can still complete today’s visit, but your doctor won’t review it (and you won’t be charged) until the insurance company approves the referral. Optionally, you can proceed without insurance for as low as \$75.",
+          "Your insurance company requires a referral. You can still complete today’s visit, but your doctor will not review it (and you will not be charged) until the insurance company approves the referral. If you do not want to wait for a referral, you can proceed without insurance for as low as \$75.",
           style: Theme.of(context).textTheme.bodyText1,
         ),
       ),

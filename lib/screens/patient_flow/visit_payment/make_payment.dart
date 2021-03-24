@@ -92,6 +92,11 @@ class MakePayment extends StatelessWidget {
     if (this.model.refreshCards) {
       this.model.retrieveCards();
     }
+
+    String title = model.consult.state != ConsultStatus.ReferralRequested
+        ? "Please confirm your payment details and pay below for your visit with ${this.model.consult.providerUser.fullName}, ${this.model.consult.providerUser.professionalTitle}"
+        : "Please select a payment method to continue. You will not be charged right now. Once the referral is granted, you will then be asked to pay for this visit.";
+
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
         type: AppBarType.Close,
@@ -116,7 +121,7 @@ class MakePayment extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 30),
                     child: Text(
-                      "Please confirm your payment details and pay below for your visit with ${this.model.consult.providerUser.fullName}, ${this.model.consult.providerUser.professionalTitle}",
+                      title,
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.bodyText2,
                     ),
@@ -131,6 +136,8 @@ class MakePayment extends StatelessWidget {
                   SizedBox(height: 24),
                   if (model.consult.state != ConsultStatus.ReferralRequested)
                     _buildCheckoutButton(context),
+                  if (model.consult.state == ConsultStatus.ReferralRequested)
+                    _buildContinueButton(context),
                   if (model.consult.insuranceInfo.coverageResponse ==
                           CoverageResponse.Medicare &&
                       model.coupon == null)
@@ -503,6 +510,27 @@ class MakePayment extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
         onPressed: model.canSubmit ? () => _payPressed(context) : null,
+      ),
+    );
+  }
+
+  //For referrals that have not been paid for yet
+  Widget _buildContinueButton(BuildContext context) {
+    return SizedBox(
+      height: 50,
+      width: 200,
+      child: RoundedLoadingButton(
+        controller: model.btnController,
+        color: Theme.of(context).colorScheme.primary,
+        child: Text(
+          'Continue',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        onPressed: () => PatientDashboardScreen.show(context: context),
       ),
     );
   }
