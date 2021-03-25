@@ -1,4 +1,6 @@
 import 'package:Medicall/models/symptom_model.dart';
+import 'package:Medicall/models/user/patient_user_model.dart';
+import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/non_auth_firestore_db.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
@@ -6,7 +8,7 @@ import 'package:Medicall/util/validators.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 
-class ZipCodeViewModel with EmailAndPasswordValidators, ChangeNotifier {
+class EnterInsuranceViewModel with EmailAndPasswordValidators, ChangeNotifier {
   final AuthBase auth;
   final NonAuthDatabase nonAuthDatabase;
   final Symptom symptom;
@@ -17,7 +19,29 @@ class ZipCodeViewModel with EmailAndPasswordValidators, ChangeNotifier {
   String zipcode;
   bool isLoading;
 
-  ZipCodeViewModel({
+  bool showInsuranceWidgets;
+  String insurance;
+  int selectedItemIndex;
+  List<String> insuranceOptions = [
+    'Please Select',
+    'Proceed without insurance',
+    'Aetna',
+    'AllWays Health Plan',
+    'Blue Cross and Blue Shield of Massachusetts',
+    'Cigna',
+    'Fallon Community Health Plan',
+    'Harvard Pilgrim Health Care',
+    'Health Plans Inc.',
+    'Humana',
+    'Medicare',
+    'Tufts Health Plan',
+    'UnitedHealthcare',
+    'AARP Medicare Replacement',
+  ];
+
+  bool waiverCheck;
+
+  EnterInsuranceViewModel({
     @required this.nonAuthDatabase,
     @required this.symptom,
     @required this.auth,
@@ -26,6 +50,10 @@ class ZipCodeViewModel with EmailAndPasswordValidators, ChangeNotifier {
     this.email = '',
     this.zipcode = '',
     this.isLoading = false,
+    this.waiverCheck = false,
+    this.insurance = '',
+    this.selectedItemIndex = 0,
+    this.showInsuranceWidgets = false,
   });
 
   String get emailErrorText {
@@ -33,10 +61,35 @@ class ZipCodeViewModel with EmailAndPasswordValidators, ChangeNotifier {
     return showErrorText ? invalidEmailErrorText : "";
   }
 
+  bool get proceedWithoutInsuranceSelected {
+    return this.selectedItemIndex == 1;
+  }
+
+  bool get proceedWithInsuranceSelected {
+    return this.selectedItemIndex == 2 ||
+        this.selectedItemIndex == 3 ||
+        this.selectedItemIndex == 4 ||
+        this.selectedItemIndex == 5 ||
+        this.selectedItemIndex == 6 ||
+        this.selectedItemIndex == 7 ||
+        this.selectedItemIndex == 8 ||
+        this.selectedItemIndex == 9 ||
+        this.selectedItemIndex == 10 ||
+        this.selectedItemIndex == 11 ||
+        this.selectedItemIndex == 12 ||
+        this.selectedItemIndex == 13;
+  }
+
+  bool get isWaiverUncheckedButNeedsToBe {
+    return this.showInsuranceWidgets &&
+        this.proceedWithoutInsuranceSelected &&
+        !this.waiverCheck;
+  }
+
   void updateEmail(String email) => updateWith(email: email);
   void updateZipcode(String zipcode) => updateWith(zipcode: zipcode);
 
-  Future<void> submit() async {
+  Future<void> addEmailToWaitList() async {
     updateWith(isLoading: true);
 
     try {
@@ -45,8 +98,10 @@ class ZipCodeViewModel with EmailAndPasswordValidators, ChangeNotifier {
         throw PlatformException(
             code: 'ERROR', message: 'Please enter a valid zipcode');
       }
-      String alreadyInArea = await this.areProvidersInArea(zipcode);
+      String alreadyInArea = await this.areProvidersInArea(
+          zipcode); //technically the email UI only shows if they have already submitted a zipcode and this function is called, but we call again for safety
       if (alreadyInArea != null) {
+        this.updateWith(showEmailField: false, isLoading: false);
         throw PlatformException(
             code: 'ERROR', message: 'We are already in your area :)');
       }
@@ -63,6 +118,34 @@ class ZipCodeViewModel with EmailAndPasswordValidators, ChangeNotifier {
       updateWith(isLoading: false);
       rethrow;
     }
+  }
+
+  Future<String> validateZipCodeAndInsurance() async {
+    String state = await this.areProvidersInArea(this.zipcode);
+    if (state != null) {
+      if (this.showInsuranceWidgets) {
+        if (isWaiverUncheckedButNeedsToBe) {
+          throw "You have to agree to the insurance waiver before continuing";
+        } else if (this.showInsuranceWidgets && this.selectedItemIndex == 0) {
+          throw "Please select an insurance option";
+        } else {
+          this.tempUserProvider.setUser(userType: USER_TYPE.PATIENT);
+          this.tempUserProvider.user.mailingZipCode = this.zipcode;
+          this.tempUserProvider.user.mailingState = state;
+          (this.tempUserProvider.user as PatientUser).insurance =
+              this.insurance;
+          return state;
+        }
+      }
+      this.updateWith(showEmailField: false, showInsuranceWidgets: true);
+    } else {
+      this.updateWith(
+          showEmailField: true,
+          showInsuranceWidgets: false,
+          waiverCheck: false,
+          selectedItemIndex: 0);
+    }
+    return null;
   }
 
   String getState() {
@@ -195,7 +278,6 @@ class ZipCodeViewModel with EmailAndPasswordValidators, ChangeNotifier {
         return state;
       }
     }
-
     return null;
   }
 
@@ -204,11 +286,20 @@ class ZipCodeViewModel with EmailAndPasswordValidators, ChangeNotifier {
     String email,
     String zipcode,
     bool isLoading,
+    bool showInsuranceWidgets,
+    int selectedItemIndex,
+    bool waiverCheck,
+    bool zipCodeFieldEnabled,
   }) {
     this.showEmailField = showEmailField ?? this.showEmailField;
     this.email = email ?? this.email;
     this.zipcode = zipcode ?? this.zipcode;
     this.isLoading = isLoading ?? this.isLoading;
+    this.selectedItemIndex = selectedItemIndex ?? this.selectedItemIndex;
+    this.insurance = this.insuranceOptions[this.selectedItemIndex];
+    this.showInsuranceWidgets =
+        showInsuranceWidgets ?? this.showInsuranceWidgets;
+    this.waiverCheck = waiverCheck ?? this.waiverCheck;
     notifyListeners();
   }
 }

@@ -78,7 +78,6 @@ class SymptomsScreen extends StatelessWidget {
         builder: (BuildContext context, AsyncSnapshot<List<Symptom>> snapshot) {
           return Column(
             children: <Widget>[
-              buildVisitFeeContainer(context),
               Expanded(
                 child: ListItemsBuilder<Symptom>(
                   snapshot: snapshot,
@@ -114,17 +113,9 @@ class SymptomsScreen extends StatelessWidget {
       child: Column(
         children: <Widget>[
           Text(
-            'Visit Fee: \$65',
-            style: Theme.of(context).textTheme.headline5,
-          ),
-          Text(
-            'No Insurance Needed',
-            style: Theme.of(context).textTheme.subtitle2,
-          ),
-          SizedBox(height: 16),
-          Text(
-            'This is the price for the provider\'s services. Prescriptions or in person follow-up care not included.',
+            'Prices are dependent on your insurance plan. You may also get a visit without insurance for as low as \$75.',
             style: Theme.of(context).textTheme.bodyText2,
+            textAlign: TextAlign.center,
           ),
         ],
       ),

@@ -1,3 +1,4 @@
+import 'package:Medicall/models/insurance_info.dart';
 import 'package:Medicall/models/questionnaire/question_model.dart';
 import 'package:Medicall/models/user/patient_user_model.dart';
 import 'package:Medicall/models/user/provider_user_model.dart';
@@ -12,6 +13,7 @@ enum ConsultStatus {
   InReview,
   Completed,
   Signed,
+  ReferralRequested,
 }
 
 extension EnumParser on String {
@@ -58,7 +60,7 @@ class Consult {
   String uid;
   final String providerId;
   String symptom;
-  final int price;
+  int price;
   final DateTime date;
   String patientId;
   ConsultStatus state;
@@ -70,9 +72,12 @@ class Consult {
   int providerMessageNotifications;
   int patientReviewNotifications;
   int patientMessageNotifications;
-  bool assistantEmailed = false;
+  bool assistantEmailed;
   Map<String, dynamic> chatClosed;
   Map<String, dynamic> visitIssue;
+  bool insurancePayment;
+  InsuranceInfo insuranceInfo;
+  bool seenDoctorInPastThreeYears;
 
   //not serialized
   PatientUser patientUser;
@@ -88,7 +93,7 @@ class Consult {
     @required this.symptom,
     this.uid,
     this.patientId,
-    this.price = 49,
+    this.price,
     this.date,
     this.state,
     this.questions = const <Question>[],
@@ -104,6 +109,9 @@ class Consult {
     this.assistantEmailed = false,
     this.chatClosed,
     this.visitIssue,
+    this.insurancePayment = false,
+    this.insuranceInfo,
+    this.seenDoctorInPastThreeYears = false,
   });
 
   factory Consult.fromMap(Map<String, dynamic> data, String documentId) {
@@ -151,6 +159,15 @@ class Consult {
       );
     }
 
+    final bool insurancePayment = data['insurance_payment'] ?? false;
+
+    InsuranceInfo insuranceInfo;
+    if (insurancePayment) {
+      insuranceInfo = InsuranceInfo.fromMap(data['insurance_info']);
+    }
+
+    final bool seenDoctor = data['seen_doctor_past_three_years'] ?? false;
+
     return Consult(
       uid: documentId,
       providerId: providerId,
@@ -169,6 +186,9 @@ class Consult {
       assistantEmailed: assistantEmailed,
       chatClosed: chatClosed,
       visitIssue: visitIssue,
+      insurancePayment: insurancePayment,
+      insuranceInfo: insuranceInfo,
+      seenDoctorInPastThreeYears: seenDoctor,
     );
   }
 
@@ -185,6 +205,8 @@ class Consult {
       'patient_review_notifications': patientReviewNotifications,
       'provider_review_notifications': providerReviewNotifications,
       'provider_message_notifications': providerMessageNotifications,
+      'insurance_payment': insurancePayment,
+      'seen_doctor_past_three_years': seenDoctorInPastThreeYears,
     };
     if (providerReclassified) {
       baseToMap.addAll({
@@ -204,6 +226,11 @@ class Consult {
     if (visitIssue != null) {
       baseToMap.addAll({
         'visit_issue': visitIssue,
+      });
+    }
+    if (insurancePayment) {
+      baseToMap.addAll({
+        'insurance_info': insuranceInfo.toMap(),
       });
     }
     return baseToMap;

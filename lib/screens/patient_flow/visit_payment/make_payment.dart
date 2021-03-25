@@ -1,6 +1,7 @@
 import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/coupon.dart';
+import 'package:Medicall/models/insurance_info.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/patient_flow/account/payment_detail/payment_detail.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
@@ -54,10 +55,6 @@ class MakePayment extends StatelessWidget {
 
   Future<void> _payPressed(BuildContext context) async {
     if (await model.processPayment()) {
-      if (!model.skipCheckout) {
-        AppUtil().showFlushBar(
-            "Your payment has been successfully processed!", context);
-      }
       ConfirmConsult.show(context: context);
     } else {
       AppUtil()
@@ -95,6 +92,11 @@ class MakePayment extends StatelessWidget {
     if (this.model.refreshCards) {
       this.model.retrieveCards();
     }
+
+    String title = model.consult.state != ConsultStatus.ReferralRequested
+        ? "Please confirm your payment details and pay below for your visit with ${this.model.consult.providerUser.fullName}, ${this.model.consult.providerUser.professionalTitle}"
+        : "Please select a payment method to continue. You will not be charged right now. Once the referral is granted, you will then be asked to pay for this visit.";
+
     return Scaffold(
       appBar: CustomAppBar.getAppBar(
         type: AppBarType.Close,
@@ -119,7 +121,7 @@ class MakePayment extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 30),
                     child: Text(
-                      "Please confirm your payment details and pay below for your visit with ${this.model.consult.providerUser.fullName}, ${this.model.consult.providerUser.professionalTitle}",
+                      title,
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.bodyText2,
                     ),
@@ -132,7 +134,14 @@ class MakePayment extends StatelessWidget {
                   SizedBox(height: 18),
                   _buildPaymentDetail(context: context),
                   SizedBox(height: 24),
-                  _buildCheckoutButton(context),
+                  if (model.consult.state != ConsultStatus.ReferralRequested)
+                    _buildCheckoutButton(context),
+                  if (model.consult.state == ConsultStatus.ReferralRequested)
+                    _buildContinueButton(context),
+                  if (model.consult.insuranceInfo.coverageResponse ==
+                          CoverageResponse.Medicare &&
+                      model.coupon == null)
+                    _buildMedicareLabel(context),
                   SizedBox(height: 24),
                   if (model.isLoading && !model.userHasCards)
                     CircularProgressIndicator(),
@@ -166,7 +175,7 @@ class MakePayment extends StatelessWidget {
             ),
           ),
           Expanded(
-            flex: this.model.consultPaid ? 2 : 1,
+            flex: this.model.consultPaid ? 1 : 2,
             child: RichText(
               text: TextSpan(
                 children: [
@@ -178,7 +187,7 @@ class MakePayment extends StatelessWidget {
                       color: Theme.of(context).colorScheme.primary,
                     ),
               ),
-              maxLines: 2,
+              maxLines: 1,
               textAlign: TextAlign.right,
             ),
           ),
@@ -501,6 +510,38 @@ class MakePayment extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
         onPressed: model.canSubmit ? () => _payPressed(context) : null,
+      ),
+    );
+  }
+
+  //For referrals that have not been paid for yet
+  Widget _buildContinueButton(BuildContext context) {
+    return SizedBox(
+      height: 50,
+      width: 200,
+      child: RoundedLoadingButton(
+        controller: model.btnController,
+        color: Theme.of(context).colorScheme.primary,
+        child: Text(
+          'Continue',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        onPressed: () => PatientDashboardScreen.show(context: context),
+      ),
+    );
+  }
+
+  Widget _buildMedicareLabel(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 8),
+      child: Text(
+        "* Because this is a Medicare visit, you will not be charged now, but instead a \$20 hold will be placed on your card.",
+        textAlign: TextAlign.center,
+        style: Theme.of(context).textTheme.bodyText2,
       ),
     );
   }

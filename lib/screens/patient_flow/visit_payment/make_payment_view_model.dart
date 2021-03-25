@@ -1,5 +1,6 @@
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/coupon.dart';
+import 'package:Medicall/models/insurance_info.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/stripe_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
@@ -72,11 +73,21 @@ class MakePaymentViewModel with ChangeNotifier {
     PaymentIntentResult paymentIntentResult;
 
     if (this.coupon == null) {
-      paymentIntentResult = await this.stripeProvider.chargePaymentForConsult(
-            price: this.consult.price,
-            paymentMethodId: this.selectedPaymentMethod.id,
-            consultId: this.consult.uid,
-          );
+      if (this.consult.insuranceInfo.coverageResponse ==
+          CoverageResponse.Medicare) {
+        paymentIntentResult = await this.stripeProvider.chargePaymentForConsult(
+              price: this.consult.price,
+              paymentMethodId: this.selectedPaymentMethod.id,
+              consultId: this.consult.uid,
+              placeHold: true,
+            );
+      } else {
+        paymentIntentResult = await this.stripeProvider.chargePaymentForConsult(
+              price: this.consult.price,
+              paymentMethodId: this.selectedPaymentMethod.id,
+              consultId: this.consult.uid,
+            );
+      }
     } else {
       paymentIntentResult = await this.stripeProvider.chargePaymentForConsult(
             price: this.consult.price,
@@ -88,7 +99,8 @@ class MakePaymentViewModel with ChangeNotifier {
     }
 
     updateWith(isLoading: false);
-    if (paymentIntentResult.status == "succeeded") {
+    if (paymentIntentResult.status == "succeeded" ||
+        paymentIntentResult.status == "requires_capture") {
       this.updateConsultStatus();
       return true;
     } else {

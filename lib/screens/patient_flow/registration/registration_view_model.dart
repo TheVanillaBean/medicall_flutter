@@ -6,16 +6,26 @@ import 'package:Medicall/services/non_auth_firestore_db.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/util/validators.dart';
 import 'package:apple_sign_in/scope.dart';
+import 'package:dash_chat/dash_chat.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 
-class RegistrationViewModel with EmailAndPasswordValidators, ChangeNotifier {
+class RegistrationViewModel
+    with
+        EmailAndPasswordValidators,
+        FirstNameValidators,
+        LastNameValidators,
+        DobValidators,
+        ChangeNotifier {
   final NonAuthDatabase nonAuthDatabase;
   final AuthBase auth;
   final TempUserProvider tempUserProvider;
 
+  String firstName;
+  String lastName;
+  DateTime birthDate = DateTime.now();
   String email;
   String password;
   String confirmPassword;
@@ -30,6 +40,9 @@ class RegistrationViewModel with EmailAndPasswordValidators, ChangeNotifier {
     @required this.nonAuthDatabase,
     @required this.auth,
     @required this.tempUserProvider,
+    this.lastName = '',
+    this.firstName = '',
+    this.birthDate,
     this.email = '',
     this.password = '',
     this.confirmPassword = '',
@@ -43,9 +56,35 @@ class RegistrationViewModel with EmailAndPasswordValidators, ChangeNotifier {
   }
 
   bool get canSubmit {
-    return emailValidator.isValid(email) &&
+    return firstNameValidator.isValid(firstName) &&
+        lastNameValidator.isValid(lastName) &&
+        dobValidator.isValid(birthDate) &&
+        emailValidator.isValid(email) &&
         passwordValidator.isValid(password) &&
         !isLoading;
+  }
+
+  String get firstNameErrorText {
+    bool showErrorText =
+        this.submitted && !firstNameValidator.isValid(firstName);
+    return showErrorText ? fNameErrorText : null;
+  }
+
+  String get lastNameErrorText {
+    bool showErrorText = this.submitted && !lastNameValidator.isValid(lastName);
+    return showErrorText ? lNameErrorText : null;
+  }
+
+  String get patientDobErrorText {
+    bool showErrorText = this.submitted && !dobValidator.isValid(birthDate);
+    return showErrorText ? dobErrorText : null;
+  }
+
+  String get birthday {
+    final f = new DateFormat('MM/dd/yyyy');
+    return this.birthDate.year <= DateTime.now().year - 18
+        ? "${f.format(this.birthDate)}"
+        : "Please Select";
   }
 
   String get passwordErrorText {
@@ -63,6 +102,9 @@ class RegistrationViewModel with EmailAndPasswordValidators, ChangeNotifier {
     return showErrorText ? invalidEmailErrorText : "";
   }
 
+  void updateFirstName(String firstName) => updateWith(firstName: firstName);
+  void updateLastName(String lastName) => updateWith(lastName: lastName);
+  void updateBirthDate(DateTime birthDate) => updateWith(birthDate: birthDate);
   void updateEmail(String email) => updateWith(email: email);
   void updatePassword(String password) => updateWith(password: password);
   void updateConfirmPassword(String password) =>
@@ -73,7 +115,7 @@ class RegistrationViewModel with EmailAndPasswordValidators, ChangeNotifier {
     updateWith(submitted: true);
     if (!checkValue) {
       this.verificationStatus.updateStatus(
-          "You have to agree to the Terms and Conditions, as well as the Privacy policy before signing in");
+          "You have to agree to the Terms and Conditions, as well as the Privacy Policy before signing in");
       return;
     }
 
@@ -93,6 +135,9 @@ class RegistrationViewModel with EmailAndPasswordValidators, ChangeNotifier {
             email: this.email, password: this.password);
         tempUserProvider.user.uid = user.uid;
         tempUserProvider.user.email = this.email;
+        tempUserProvider.user.firstName = this.firstName;
+        tempUserProvider.user.lastName = this.lastName;
+        tempUserProvider.user.dob = this.birthday;
         updateWith(submitted: false, isLoading: false);
         saveUserDetails(user);
       } else {
@@ -175,6 +220,9 @@ class RegistrationViewModel with EmailAndPasswordValidators, ChangeNotifier {
   }
 
   void updateWith({
+    String firstName,
+    String lastName,
+    DateTime birthDate,
     String email,
     String password,
     String confirmPassword,
@@ -184,6 +232,9 @@ class RegistrationViewModel with EmailAndPasswordValidators, ChangeNotifier {
     GoogleAuthModel googleAuthModel,
     AppleSignInModel appleSignInModel,
   }) {
+    this.firstName = firstName ?? this.firstName;
+    this.lastName = lastName ?? this.lastName;
+    this.birthDate = birthDate ?? this.birthDate;
     this.email = email ?? this.email;
     this.password = password ?? this.password;
     this.confirmPassword = confirmPassword ?? this.confirmPassword;

@@ -165,11 +165,17 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
                 color: Theme.of(context).colorScheme.primary,
               ),
             ),
+            _buildNameCard(medicallUser),
+            Divider(height: 0.5, thickness: 1),
+            _buildBirthdayCard(medicallUser),
+            Divider(height: 0.5, thickness: 1),
             _buildEmailCard(medicallUser),
             Divider(height: 0.5, thickness: 1),
             _buildPhoneCard(medicallUser),
             Divider(height: 0.5, thickness: 1),
             _buildBillingAddressCard(medicallUser),
+            Divider(height: 0.5, thickness: 1),
+            _buildInsuranceCard(medicallUser),
             Divider(height: 0.5, thickness: 1),
             _buildPaymentMethodsCard(context),
             Divider(height: 0.5, thickness: 1),
@@ -244,6 +250,23 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
     );
   }
 
+  Widget _buildInsuranceCard(MedicallUser medicallUser) {
+    return ReusableAccountCard(
+      leading: 'Insurance:',
+      title: medicallUser.insurance,
+      trailing: IconButton(
+          icon: Icon(Icons.create, size: 20),
+          onPressed: () {
+            model.patientProfileInputType = PatientProfileInputType.INSURANCE;
+            model.initInsurance();
+            UpdatePatientInfoScreen.show(
+              context: context,
+              model: model,
+            );
+          }),
+    );
+  }
+
   Widget _buildPhoneCard(MedicallUser medicallUser) {
     return ReusableAccountCard(
       leading: 'Phone:',
@@ -269,6 +292,42 @@ class _PatientAccountScreenState extends State<PatientAccountScreen> {
     return ReusableAccountCard(
       leading: 'Email:',
       title: medicallUser.email,
+    );
+  }
+
+  Widget _buildNameCard(MedicallUser medicallUser) {
+    return ReusableAccountCard(
+      leading: 'Name:',
+      title: '${medicallUser.firstName} ${medicallUser.lastName}',
+      trailing: IconButton(
+        icon: Icon(Icons.create, size: 20),
+        onPressed: () {
+          model.patientProfileInputType = PatientProfileInputType.NAME;
+          model.initName();
+          UpdatePatientInfoScreen.show(
+            context: context,
+            model: model,
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildBirthdayCard(MedicallUser medicallUser) {
+    return ReusableAccountCard(
+      leading: 'Date of Birth:',
+      title: medicallUser.dob,
+      trailing: IconButton(
+        icon: Icon(Icons.create, size: 20),
+        onPressed: () {
+          model.patientProfileInputType = PatientProfileInputType.DOB;
+          model.initBirthDate();
+          UpdatePatientInfoScreen.show(
+            context: context,
+            model: model,
+          );
+        },
+      ),
     );
   }
 

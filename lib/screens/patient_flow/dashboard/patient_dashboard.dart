@@ -220,7 +220,9 @@ class PatientDashboardScreen extends StatelessWidget {
                     ),
                     itemBuilder: (context, consult) => PatientDashboardListItem(
                       consult: consult,
-                      onTap: () => consult.state == ConsultStatus.PendingPayment
+                      onTap: () => consult.state ==
+                                  ConsultStatus.PendingPayment ||
+                              consult.state == ConsultStatus.ReferralRequested
                           ? _navigateToVisitPayment(context, consult)
                           : VisitDetailsOverview.show(
                               context: context,

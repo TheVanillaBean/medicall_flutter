@@ -4,7 +4,7 @@ import 'package:Medicall/screens/provider_flow/registration/provider_custom_text
 import 'package:Medicall/screens/provider_flow/registration/provider_profile_view_model_base.dart';
 import 'package:Medicall/screens/provider_flow/registration/provider_registration_view_model.dart';
 import 'package:Medicall/util/app_util.dart';
-import 'package:dash_chat/dash_chat.dart';
+import 'package:chips_choice/chips_choice.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
@@ -167,7 +167,36 @@ class _ProviderRegistrationFormState extends State<ProviderRegistrationForm>
             selectedItem: model.boardCertified,
             errorText: model.boardCertificationErrorText,
           ),
-          SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.only(top: 20),
+            child: Center(
+              child: Text(
+                'Please select insurances you accept:',
+                style: Theme.of(context).textTheme.bodyText1,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              alignment: Alignment.center,
+              child: ChipsChoice<String>.multiple(
+                value: model.acceptedInsurances,
+                onChanged: (val) => model.updateWith(acceptedInsurances: val),
+                choiceItems: C2Choice.listFrom<String, String>(
+                  source: model.selectInsurances,
+                  value: (i, v) => v,
+                  label: (i, v) => v,
+                ),
+                wrapped: true,
+                choiceActiveStyle: C2ChoiceStyle(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 12),
           Container(
             child: ExcludeSemantics(
               child: _buildTermsCheckbox(model),

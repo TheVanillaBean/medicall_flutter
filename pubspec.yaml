@@ -1,7 +1,7 @@
 name: Medicall
 description: Telemedicine for everyone.
 
-version: 1.0.2+1
+version: 1.0.418
 
 environment:
   sdk: ">=2.10.0 <3.0.0"
@@ -83,6 +83,8 @@ dependencies:
   scrollable_positioned_list: ^0.1.7
   cupertino_icons: ^1.0.0
   video_thumbnail_generator: ^0.0.6
+  multiselect_formfield: ^0.1.5
+  chips_choice: ^2.0.1
 
 dependency_overrides:
   intl: ^0.16.1

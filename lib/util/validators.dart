@@ -51,6 +51,28 @@ class ProfessionalTitleValidator implements StringValidator {
   }
 }
 
+class InsuranceValidator implements StringValidator {
+  List<String> insuranceOptions = [
+    'Proceed without insurance',
+    'Aetna',
+    'AllWays Health Plan',
+    'Blue Cross and Blue Shield of Massachusetts',
+    'Cigna',
+    'Fallon Community Health Plan',
+    'Harvard Pilgrim Health Care',
+    'Health Plans Inc.',
+    'Humana',
+    'Medicare',
+    'Tufts Health Plan',
+    'UnitedHealthcare',
+    'AARP Medicare Replacement',
+  ];
+  @override
+  bool isValid(String value) {
+    return insuranceOptions.contains(value);
+  }
+}
+
 class StateValidator implements StringValidator {
   List<String> states = [
     "AK",
@@ -209,6 +231,11 @@ class ZipCodeValidators {
   final String zipCodeErrorText = 'Please enter a valid zip code';
 }
 
+class InsuranceValidators {
+  final StringValidator insuranceValidator = InsuranceValidator();
+  final String insuranceErrorText = 'Please select your insurance';
+}
+
 class ProfessionalTitleValidators {
   final StringValidator professionalTitleValidator =
       ProfessionalTitleValidator();
@@ -292,4 +319,9 @@ class SMSCodeStringValidator implements StringValidator {
   bool isValid(String value) {
     return value.length >= 6;
   }
+}
+
+class FullNameValidator {
+  final StringValidator fullNameValidator = NonEmptyStringValidator();
+  final String fNameErrorText = 'Please enter your PCP\'s full name';
 }

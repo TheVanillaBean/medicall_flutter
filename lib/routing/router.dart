@@ -7,6 +7,7 @@ import 'package:Medicall/models/consult-review/diagnosis_options_model.dart';
 import 'package:Medicall/models/consult-review/treatment_options.dart';
 import 'package:Medicall/models/consult-review/visit_review_model.dart';
 import 'package:Medicall/models/consult_model.dart';
+import 'package:Medicall/models/insurance_info.dart';
 import 'package:Medicall/models/symptom_model.dart';
 import 'package:Medicall/models/user/patient_user_model.dart';
 import 'package:Medicall/models/user/provider_user_model.dart';
@@ -19,8 +20,13 @@ import 'package:Medicall/screens/patient_flow/account/payment_detail/summary_pay
 import 'package:Medicall/screens/patient_flow/account/update_patient_info/update_patient_info_screen.dart';
 import 'package:Medicall/screens/patient_flow/account/update_patient_info/update_patient_info_view_model.dart';
 import 'package:Medicall/screens/patient_flow/account/update_photo_id.dart';
+import 'package:Medicall/screens/patient_flow/cost_estimate/cost_estimate.dart';
+import 'package:Medicall/screens/patient_flow/cost_estimate/request_referral.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/patient_flow/drivers_license/photo_id.dart';
+import 'package:Medicall/screens/patient_flow/enter_insurance/enter_insurance.dart';
+import 'package:Medicall/screens/patient_flow/enter_member_id/coverage_issue.dart';
+import 'package:Medicall/screens/patient_flow/enter_member_id/enter_member_id.dart';
 import 'package:Medicall/screens/patient_flow/patient_prescriptions/patient_prescriptions.dart';
 import 'package:Medicall/screens/patient_flow/personal_info/personal_info.dart';
 import 'package:Medicall/screens/patient_flow/previous_visits/previous_visits.dart';
@@ -44,7 +50,7 @@ import 'package:Medicall/screens/patient_flow/visit_details/visit_non_prescripti
 import 'package:Medicall/screens/patient_flow/visit_details/visit_prescriptions.dart';
 import 'package:Medicall/screens/patient_flow/visit_details/visit_treatment_recommendations.dart';
 import 'package:Medicall/screens/patient_flow/visit_payment/make_payment.dart';
-import 'package:Medicall/screens/patient_flow/zip_code_verify/zip_code_verify.dart';
+import 'package:Medicall/screens/provider_flow/account/accepted_insurances/accepted_insurances.dart';
 import 'package:Medicall/screens/provider_flow/account/provider_account.dart';
 import 'package:Medicall/screens/provider_flow/account/select_services/select_services.dart';
 import 'package:Medicall/screens/provider_flow/account/stripe_connect/stripe_connect.dart';
@@ -158,6 +164,11 @@ class Routes {
   static const videoPlayer = '/video-player';
   static const emailAssistant = '/email-assistant';
   static const closeChat = '/close-chat';
+  static const verifyInsurance = '/verify-insurance';
+  static const costEstimate = '/cost-estimate';
+  static const requestReferral = '/request-referral';
+  static const acceptedInsurances = '/accepted-insurances';
+  static const coverageIssue = '/coverage-issue';
 }
 
 /// The word 'consult' and 'visit' are used separately, but mean the exact
@@ -362,30 +373,84 @@ class Router {
         final Map<String, dynamic> mapArgs = args;
         final Symptom symptom = mapArgs['symptom'];
         return MaterialPageRoute<dynamic>(
-          builder: (context) => ZipCodeVerifyScreen.create(context, symptom),
+          builder: (context) => EnterInsuranceScreen.create(context, symptom),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case Routes.verifyInsurance:
+        final Map<String, dynamic> mapArgs = args;
+        final Consult consult = mapArgs['consult'];
+        final String insurance = mapArgs['insurance'];
+        return MaterialPageRoute<dynamic>(
+          builder: (context) =>
+              EnterMemberId.create(context, consult, insurance),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+
+      case Routes.coverageIssue:
+        final Map<String, dynamic> mapArgs = args;
+        final String errorMessage = mapArgs['errorMessage'];
+        final Consult consult = mapArgs['consult'];
+        final String insurance = mapArgs['insurance'];
+        final String memberId = mapArgs['memberId'];
+        return MaterialPageRoute(
+          builder: (context) => CoverageIssue(
+            errorMessage: errorMessage,
+            consult: consult,
+            insurance: insurance,
+            memberId: memberId,
+          ),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+
+      case Routes.costEstimate:
+        final Map<String, dynamic> mapArgs = args;
+        final Consult consult = mapArgs['consult'];
+        final InsuranceInfo insurance = mapArgs['insurance_info'];
+        return MaterialPageRoute<dynamic>(
+          builder: (context) =>
+              CostEstimate.create(context, consult, insurance),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case Routes.requestReferral:
+        final Map<String, dynamic> mapArgs = args;
+        final Consult consult = mapArgs['consult'];
+        final InsuranceInfo insurance = mapArgs['insurance_info'];
+        return MaterialPageRoute<dynamic>(
+          builder: (context) =>
+              RequestReferral(consult: consult, insuranceInfo: insurance),
           settings: settings,
           fullscreenDialog: true,
         );
       case Routes.selectProvider:
         final Map<String, dynamic> mapArgs = args;
-        final Symptom symptom = mapArgs['symptom'];
+        final String symptom = mapArgs['symptom'];
         final String state = mapArgs['state'];
+        final String insurance = mapArgs['insurance'];
+        final SelectProviderFilter filter = mapArgs['filter'];
         return MaterialPageRoute<dynamic>(
           builder: (context) => SelectProviderScreen(
             symptom: symptom,
             state: state,
+            insurance: insurance,
+            filter: filter,
           ),
           settings: settings,
           fullscreenDialog: true,
         );
       case Routes.providerDetail:
         final Map<String, dynamic> mapArgs = args;
-        final Symptom symptom = mapArgs['symptom'];
+        final String symptom = mapArgs['symptom'];
         final ProviderUser provider = mapArgs['provider'];
+        final String insurance = mapArgs['insurance'];
         return MaterialPageRoute<dynamic>(
           builder: (context) => ProviderDetailScreen(
             symptom: symptom,
             provider: provider,
+            insurance: insurance,
           ),
           settings: settings,
           fullscreenDialog: true,
@@ -642,6 +707,15 @@ class Router {
         final UpdateProviderInfoViewModel model = mapArgs['model'];
         return MaterialPageRoute<dynamic>(
           builder: (context) => SelectServices.create(context, model),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+
+      case Routes.acceptedInsurances:
+        final Map<String, dynamic> mapArgs = args;
+        final UpdateProviderInfoViewModel model = mapArgs['model'];
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => AcceptedInsurances.create(context, model),
           settings: settings,
           fullscreenDialog: true,
         );

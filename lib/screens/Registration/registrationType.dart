@@ -9,7 +9,6 @@ class RegistrationTypeScreen extends StatelessWidget {
     final tempUserProvider = Provider.of<TempUserProvider>(context);
 
     return Scaffold(
-        resizeToAvoidBottomPadding: false,
         appBar: AppBar(
           centerTitle: true,
           leading: IconButton(

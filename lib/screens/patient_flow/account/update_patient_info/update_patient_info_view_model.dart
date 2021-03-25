@@ -6,15 +6,21 @@ import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/validators.dart';
+import 'package:dash_chat/dash_chat.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class UpdatePatientInfoViewModel
     with
+        FirstNameValidators,
+        LastNameValidators,
+        DobValidators,
         PhoneValidators,
         AddressValidators,
         CityValidators,
         StateValidators,
         ZipCodeValidators,
+        InsuranceValidators,
         ChangeNotifier {
   final AuthBase auth;
   final FirestoreDatabase firestoreDatabase;
@@ -23,12 +29,16 @@ class UpdatePatientInfoViewModel
   @required
   PatientProfileInputType patientProfileInputType;
 
+  String firstName;
+  String lastName;
+  DateTime birthDate = DateTime.now();
   String phoneNumber;
   String billingAddress;
   String billingAddressLine2;
   String mailingCity;
   String mailingState;
   String mailingZipCode;
+  String insurance;
 
   bool isLoading;
   bool submitted;
@@ -98,17 +108,37 @@ class UpdatePatientInfoViewModel
     "WY"
   ];
 
+  List<String> insuranceOptions = [
+    'Proceed without insurance',
+    'Aetna',
+    'AllWays Health Plan',
+    'Blue Cross and Blue Shield of Massachusetts',
+    'Cigna',
+    'Fallon Community Health Plan',
+    'Harvard Pilgrim Health Care',
+    'Health Plans Inc.',
+    'Humana',
+    'Medicare',
+    'Tufts Health Plan',
+    'UnitedHealthcare',
+    'AARP Medicare Replacement',
+  ];
+
   UpdatePatientInfoViewModel({
     @required this.auth,
     @required this.firestoreDatabase,
     @required this.userProvider,
     this.patientProfileInputType = PatientProfileInputType.PHONE,
+    this.firstName = '',
+    this.lastName = '',
+    this.birthDate,
     this.phoneNumber = '',
     this.billingAddress = '',
     this.billingAddressLine2 = '',
     this.mailingCity = '',
     this.mailingState = '',
     this.mailingZipCode = '',
+    this.insurance = '',
     this.isLoading = false,
     this.submitted = false,
   });
@@ -118,6 +148,12 @@ class UpdatePatientInfoViewModel
   }
 
   ///Set initial values
+
+  void initName() {
+    this.firstName = userProvider.user.firstName;
+    this.lastName = userProvider.user.lastName;
+  }
+
   void initAddress() {
     this.billingAddress = userProvider.user.mailingAddress;
     this.billingAddressLine2 = userProvider.user.mailingAddressLine2;
@@ -130,8 +166,24 @@ class UpdatePatientInfoViewModel
     this.phoneNumber = userProvider.user.phoneNumber;
   }
 
+  void initBirthDate() {
+    try {
+      this.birthDate = DateFormat.yMd().parse(userProvider.user.dob);
+    } catch (e) {
+      this.birthDate = DateTime.now();
+    }
+  }
+
+  void initInsurance() {
+    this.insurance = userProvider.user.insurance;
+  }
+
   bool get canSubmit {
-    if (this.patientProfileInputType == PatientProfileInputType.PHONE) {
+    if (this.patientProfileInputType == PatientProfileInputType.NAME) {
+      return firstNameValidator.isValid(firstName) &&
+          lastNameValidator.isValid(lastName) &&
+          submitted;
+    } else if (this.patientProfileInputType == PatientProfileInputType.PHONE) {
       return phoneNumberLengthValidator.isValid(phoneNumber) && submitted;
     } else if (this.patientProfileInputType ==
         PatientProfileInputType.ADDRESS) {
@@ -140,8 +192,36 @@ class UpdatePatientInfoViewModel
           stateValidator.isValid(mailingState) &&
           zipCodeValidator.isValid(mailingZipCode) &&
           submitted;
+    } else if (this.patientProfileInputType == PatientProfileInputType.DOB) {
+      return dobValidator.isValid(birthDate) && submitted;
+    } else if (this.patientProfileInputType ==
+        PatientProfileInputType.INSURANCE) {
+      return insuranceValidator.isValid(insurance) && submitted;
     }
     return false;
+  }
+
+  String get firstNameErrorText {
+    bool showErrorText =
+        this.submitted && !firstNameValidator.isValid(firstName);
+    return showErrorText ? fNameErrorText : null;
+  }
+
+  String get lastNameErrorText {
+    bool showErrorText = this.submitted && !lastNameValidator.isValid(lastName);
+    return showErrorText ? lNameErrorText : null;
+  }
+
+  String get patientDobErrorText {
+    bool showErrorText = this.submitted && !dobValidator.isValid(birthDate);
+    return showErrorText ? dobErrorText : null;
+  }
+
+  String get birthday {
+    final f = new DateFormat('MM/dd/yyyy');
+    return this.birthDate.year <= DateTime.now().year - 18
+        ? "${f.format(this.birthDate)}"
+        : "Please Select";
   }
 
   String get phoneNumberErrorText {
@@ -166,11 +246,33 @@ class UpdatePatientInfoViewModel
     return showErrorText ? stateErrorText : null;
   }
 
+  String get patientInsuranceErrorText {
+    bool showErrorText = submitted && !insuranceValidator.isValid(insurance);
+    return showErrorText ? insuranceErrorText : null;
+  }
+
   String get patientZipCodeErrorText {
     bool showErrorText = submitted && !zipCodeValidator.isValid(mailingZipCode);
     return showErrorText ? zipCodeErrorText : null;
   }
 
+  DateTime get initialDatePickerDate {
+    final DateTime currentDate = DateTime.now();
+
+    this.birthDate = this.birthDate == null ? currentDate : this.birthDate;
+
+    return this.birthDate.year <= DateTime.now().year - 18
+        ? this.birthDate
+        : DateTime(
+            currentDate.year - 18,
+            currentDate.month,
+            currentDate.day,
+          );
+  }
+
+  void updateFirstName(String firstName) => updateWith(firstName: firstName);
+  void updateLastName(String lastName) => updateWith(lastName: lastName);
+  void updateBirthDate(DateTime birthDate) => updateWith(birthDate: birthDate);
   void updatePhoneNumber(String phoneNumber) =>
       updateWith(phoneNumber: phoneNumber);
   void updateBillingAddress(String billingAddress) =>
@@ -183,6 +285,7 @@ class UpdatePatientInfoViewModel
       updateWith(mailingState: mailingState);
   void updateMailingZipCode(String mailingZipCode) =>
       updateWith(mailingZipCode: mailingZipCode);
+  void updateInsurance(String insurance) => updateWith(insurance: insurance);
 
   Future<void> submit() async {
     updateWith(submitted: true);
@@ -200,6 +303,15 @@ class UpdatePatientInfoViewModel
       medicallUser.mailingCity = this.mailingCity;
       medicallUser.mailingState = this.mailingState;
       medicallUser.mailingZipCode = this.mailingZipCode;
+    } else if (this.patientProfileInputType == PatientProfileInputType.NAME) {
+      medicallUser.firstName = this.firstName;
+      medicallUser.lastName = this.lastName;
+      medicallUser.fullName = '${this.firstName} ${this.lastName}';
+    } else if (this.patientProfileInputType == PatientProfileInputType.DOB) {
+      medicallUser.dob = this.birthday;
+    } else if (this.patientProfileInputType ==
+        PatientProfileInputType.INSURANCE) {
+      medicallUser.insurance = this.insurance;
     }
     await updateUserDetails(medicallUser);
 
@@ -212,22 +324,30 @@ class UpdatePatientInfoViewModel
   }
 
   void updateWith({
+    String firstName,
+    String lastName,
+    DateTime birthDate,
     String phoneNumber,
     String billingAddress,
     String billingAddressLine2,
     String mailingCity,
     String mailingState,
     String mailingZipCode,
+    String insurance,
     bool isLoading,
     bool submitted,
     bool checkValue,
   }) {
+    this.firstName = firstName ?? this.firstName;
+    this.lastName = lastName ?? this.lastName;
+    this.birthDate = birthDate ?? this.birthDate;
     this.phoneNumber = phoneNumber ?? this.phoneNumber;
     this.billingAddress = billingAddress ?? this.billingAddress;
     this.billingAddressLine2 = billingAddressLine2 ?? this.billingAddressLine2;
     this.mailingCity = mailingCity ?? this.mailingCity;
     this.mailingState = mailingState ?? this.mailingState;
     this.mailingZipCode = mailingZipCode ?? this.mailingZipCode;
+    this.insurance = insurance ?? this.insurance;
     this.isLoading = isLoading ?? this.isLoading;
     this.submitted = submitted ?? this.submitted;
     notifyListeners();

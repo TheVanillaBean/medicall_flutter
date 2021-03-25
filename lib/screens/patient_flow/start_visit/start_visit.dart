@@ -7,6 +7,7 @@ import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/patient_flow/questionnaire/questions_screen.dart';
 import 'package:Medicall/services/temp_user_provider.dart';
 import 'package:Medicall/services/user_provider.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:provider/provider.dart';
@@ -86,7 +87,7 @@ class StartVisitScreen extends StatelessWidget {
                   children: <Widget>[
                     if ((userProvider.user as PatientUser).hasMedicalHistory)
                       Text(
-                        "We will ask a few questions, starting with general medical history if your's has changed since your last visit and after we will focus on specific visit questions.",
+                        "We will ask a few questions, starting with general medical history if yours has changed since your last visit and after we will focus on specific visit questions.",
                         style: Theme.of(context).textTheme.bodyText1,
                       ),
                     if (!(userProvider.user as PatientUser).hasMedicalHistory)
@@ -126,6 +127,7 @@ class StartVisitScreen extends StatelessWidget {
                 child: ReusableRaisedButton(
                   title: 'Start Questions',
                   onPressed: () async {
+                    await _buildSeenDoctorAlertDialog(context);
                     if (!(userProvider.user as PatientUser).hasMedicalHistory) {
                       QuestionsScreen.show(
                         context: context,
@@ -149,6 +151,39 @@ class StartVisitScreen extends StatelessWidget {
             SizedBox(height: 20),
           ],
         ),
+      ),
+    );
+  }
+
+  Future<void> _buildSeenDoctorAlertDialog(BuildContext context) {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      child: CupertinoAlertDialog(
+        title: Text(
+          "Have you seen Dr. ${this.consult.providerUser.fullName} in the past 3 years?",
+          style: Theme.of(context).textTheme.bodyText1,
+        ),
+        actions: <Widget>[
+          CupertinoDialogAction(
+            child: Text("Yes"),
+            textStyle: Theme.of(context).textTheme.bodyText1,
+            isDefaultAction: false,
+            onPressed: () {
+              this.consult.seenDoctorInPastThreeYears = true;
+              Navigator.pop(context);
+            },
+          ),
+          CupertinoDialogAction(
+            child: Text("No"),
+            textStyle: Theme.of(context).textTheme.bodyText1,
+            isDefaultAction: false,
+            onPressed: () {
+              this.consult.seenDoctorInPastThreeYears = false;
+              Navigator.pop(context);
+            },
+          ),
+        ],
       ),
     );
   }

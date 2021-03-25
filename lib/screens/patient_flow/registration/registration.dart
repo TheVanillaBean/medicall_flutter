@@ -3,6 +3,7 @@ import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/common_widgets/sign_in_button.dart';
 import 'package:Medicall/common_widgets/social_sign_in_button.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/patient_flow/registration/birthday_textfield.dart';
 import 'package:Medicall/screens/patient_flow/registration/registration_view_model.dart';
 import 'package:Medicall/screens/shared/login/login.dart';
 import 'package:Medicall/services/auth.dart';
@@ -14,6 +15,7 @@ import 'package:apple_sign_in/apple_sign_in_button.dart' as AppleSignInButton;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:provider/provider.dart';
 import 'package:super_rich_text/super_rich_text.dart';
 
@@ -52,21 +54,31 @@ class RegistrationScreen extends StatefulWidget {
 
 class _RegistrationScreenState extends State<RegistrationScreen>
     with VerificationStatus {
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
+  final FocusNode _firstNameFocusNode = FocusNode();
+  final FocusNode _lastNameFocusNode = FocusNode();
   final FocusNode _emailFocusNode = FocusNode();
   final FocusNode _passwordFocusNode = FocusNode();
   final FocusNode _confirmPasswordFocusNode = FocusNode();
 
   RegistrationViewModel get model => widget.model;
 
+  MaskTextInputFormatter dobTextInputFormatter = MaskTextInputFormatter(
+      mask: "##/##/####", filter: {"#": RegExp(r'[0-9]')});
+
   @override
   void dispose() {
+    _firstNameController.dispose();
+    _lastNameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _firstNameFocusNode.dispose();
     _emailFocusNode.dispose();
     _passwordFocusNode.dispose();
     _confirmPasswordFocusNode.dispose();
@@ -217,6 +229,18 @@ class _RegistrationScreenState extends State<RegistrationScreen>
       children: <Widget>[
         Container(
           height: 85,
+          child: _buildFirstNameTextField(),
+        ),
+        Container(
+          height: 85,
+          child: _buildLastNameTextField(),
+        ),
+        Container(
+          height: 85,
+          child: _buildBirthDateTextField(),
+        ),
+        Container(
+          height: 85,
           child: _buildEmailTextField(),
         ),
         Container(
@@ -263,6 +287,82 @@ class _RegistrationScreenState extends State<RegistrationScreen>
         errorText: model.emailErrorText,
         enabled: model.isLoading == false,
       ),
+    );
+  }
+
+  Widget _buildFirstNameTextField() {
+    return TextField(
+      controller: _firstNameController,
+      focusNode: _firstNameFocusNode,
+      autocorrect: false,
+      style: Theme.of(context).textTheme.bodyText1,
+      //keyboardType: TextInputType.emailAddress,
+      onChanged: model.updateFirstName,
+      decoration: InputDecoration(
+        labelText: 'First Name',
+        hintText: 'Jane',
+        fillColor: Colors.grey.withAlpha(40),
+        filled: model.googleAuthModel != null || model.appleSignInModel != null
+            ? false
+            : true,
+        prefixIcon: Icon(
+          Icons.person,
+          color: Theme.of(context).colorScheme.onSurface.withAlpha(150),
+        ),
+        disabledBorder: InputBorder.none,
+        enabledBorder: InputBorder.none,
+        border: InputBorder.none,
+        errorText: model.firstNameErrorText,
+        enabled: model.isLoading == false,
+      ),
+    );
+  }
+
+  Widget _buildLastNameTextField() {
+    return TextField(
+      controller: _lastNameController,
+      focusNode: _lastNameFocusNode,
+      autocorrect: false,
+      style: Theme.of(context).textTheme.bodyText1,
+      //keyboardType: TextInputType.emailAddress,
+      onChanged: model.updateLastName,
+      decoration: InputDecoration(
+        labelText: 'Last Name',
+        hintText: 'Doe',
+        fillColor: Colors.grey.withAlpha(40),
+        filled: model.googleAuthModel != null || model.appleSignInModel != null
+            ? false
+            : true,
+        prefixIcon: Icon(
+          Icons.person,
+          color: Theme.of(context).colorScheme.onSurface.withAlpha(150),
+        ),
+        disabledBorder: InputBorder.none,
+        enabledBorder: InputBorder.none,
+        border: InputBorder.none,
+        errorText: model.lastNameErrorText,
+        enabled: model.isLoading == false,
+      ),
+    );
+  }
+
+  Widget _buildBirthDateTextField() {
+    return BirthdayTextField(
+      inputFormatters: [dobTextInputFormatter],
+      labelText: 'Date of Birth',
+      hint: 'mm/dd/yyyy',
+      fillColor: Colors.grey.withAlpha(40),
+      filled: model.googleAuthModel != null || model.appleSignInModel != null
+          ? false
+          : true,
+      icon: Icon(
+        Icons.date_range,
+        color: Theme.of(context).colorScheme.onSurface.withAlpha(150),
+      ),
+      keyboardType: TextInputType.datetime,
+      errorText: model.patientDobErrorText,
+      onChanged: model.updateBirthDate,
+      enabled: model.isLoading == false,
     );
   }
 

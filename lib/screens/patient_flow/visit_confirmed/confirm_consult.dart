@@ -17,11 +17,11 @@ class ConfirmConsult extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        resizeToAvoidBottomPadding: false,
         appBar: CustomAppBar.getAppBar(
           type: AppBarType.Back,
           title: "Consult Confirmed",
           theme: Theme.of(context),
+          onPressed: () => PatientDashboardScreen.show(context: context),
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),

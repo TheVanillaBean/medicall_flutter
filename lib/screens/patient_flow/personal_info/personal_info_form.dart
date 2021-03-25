@@ -58,33 +58,12 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
         children: <Widget>[
           SizedBox(height: 20),
           PersonalInfoTextField(
-            labelText: 'First Name',
-            hint: 'Jane',
-            errorText: model.firstNameErrorText,
-            onChanged: model.updateFirstName,
-          ),
-          PersonalInfoTextField(
-            labelText: 'Last Name',
-            hint: 'Doe',
-            errorText: model.lastNameErrorText,
-            onChanged: model.updateLastName,
-          ),
-          PersonalInfoTextField(
             inputFormatters: [phoneTextInputFormatter],
             labelText: 'Phone Number',
             hint: '(123)456-7890',
             keyboardType: TextInputType.phone,
             errorText: model.phoneNumberErrorText,
             onChanged: model.updatePhoneNumber,
-          ),
-          CustomDatePickerFormField(
-            inputFormatters: [dobTextInputFormatter],
-            labelText: 'Date of Birth',
-            hint: 'mm/dd/yyyy',
-            keyboardType: TextInputType.datetime,
-            errorText: model.patientDobErrorText,
-            initialDate: model.initialDatePickerDate,
-            onChanged: model.updateBirthDate,
           ),
           PersonalInfoTextField(
             labelText: 'Billing Address',

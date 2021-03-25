@@ -38,6 +38,23 @@ class ProviderRegistrationViewModel extends ProviderProfileViewModelBase {
   bool isLoading;
   bool submitted;
 
+  List<String> selectInsurances = [
+    'Aetna',
+    'AllWays Health Plan',
+    'Blue Cross and Blue Shield of Massachusetts',
+    'Cigna',
+    'Fallon Community Health Plan',
+    'Harvard Pilgrim Health Care',
+    'Health Plans Inc.',
+    'Humana',
+    'Medicare',
+    'Tufts Health Plan',
+    'UnitedHealthcare',
+    'AARP Medicare Replacement',
+  ];
+
+  List<String> acceptedInsurances = [];
+
   ProviderRegistrationViewModel({
     @required this.nonAuthDatabase,
     @required this.auth,
@@ -79,6 +96,7 @@ class ProviderRegistrationViewModel extends ProviderProfileViewModelBase {
         cityValidator.isValid(mailingCity) &&
         zipCodeValidator.isValid(mailingZipCode) &&
         professionalTitleValidator.isValid(professionalTitle) &&
+        acceptedInsurances.length > 0 &&
         !isLoading;
   }
 
@@ -138,6 +156,8 @@ class ProviderRegistrationViewModel extends ProviderProfileViewModelBase {
           "Skin spots",
           "Cosmetic skin issues"
         ];
+        (tempUserProvider.user as ProviderUser).acceptedInsurances =
+            this.acceptedInsurances;
 
         updateWith(submitted: false, isLoading: false);
         saveUserDetails(user);

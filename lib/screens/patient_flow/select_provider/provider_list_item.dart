@@ -6,10 +6,16 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ProviderListItem extends StatelessWidget {
-  const ProviderListItem({Key key, @required this.provider, this.onTap})
-      : super(key: key);
+  const ProviderListItem({
+    Key key,
+    @required this.provider,
+    @required this.inNetwork,
+    this.onTap,
+  }) : super(key: key);
+
   final ProviderUser provider;
   final VoidCallback onTap;
+  final bool inNetwork;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +30,7 @@ class ProviderListItem extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         clipBehavior: Clip.antiAlias,
         child: ListTile(
-          contentPadding: EdgeInsets.fromLTRB(20, 5, 20, 5),
+          contentPadding: EdgeInsets.fromLTRB(10, 5, 10, 5),
           dense: true,
           leading: provider.profilePic.length > 0
               ? displayProfilePicture(extImageProvider, provider.profilePic)
@@ -43,14 +49,46 @@ class ProviderListItem extends StatelessWidget {
           ),
           subtitle: Text(
             provider.mailingAddressLine2 == ''
-                ? '${provider.mailingAddress} \n${provider.mailingCity}, ${provider.mailingState} ${provider.mailingZipCode}'
-                : '${provider.mailingAddress} \n${provider.mailingAddressLine2} \n${provider.mailingCity}, ${provider.mailingState} ${provider.mailingZipCode}',
+                ? '${provider.mailingAddress} ${provider.mailingCity}, ${provider.mailingState} ${provider.mailingZipCode}'
+                : '${provider.mailingAddress} ${provider.mailingAddressLine2} \n${provider.mailingCity}, ${provider.mailingState} ${provider.mailingZipCode}',
             style: Theme.of(context).textTheme.caption,
           ),
-          trailing: Icon(
-            Icons.chevron_right,
-            color: Colors.grey,
-            size: 25.0,
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        "See Price",
+                        style: Theme.of(context).textTheme.button,
+                      ),
+                    ],
+                  ),
+                  Text(
+                    inNetwork ? "with insurance" : "without insurance",
+                    style: Theme.of(context)
+                        .textTheme
+                        .caption
+                        .copyWith(fontSize: 10),
+                  ),
+                ],
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.chevron_right,
+                    color: Colors.grey,
+                    size: 25.0,
+                  ),
+                ],
+              )
+            ],
           ),
           onTap: onTap,
         ),

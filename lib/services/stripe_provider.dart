@@ -58,6 +58,7 @@ class StripeProvider implements StripeProviderBase {
     @required String consultId,
     bool applyCoupon = false,
     String couponCode,
+    bool placeHold = false,
   }) async {
     final HttpsCallable callable = CloudFunctions.instance.getHttpsCallable(
         functionName: 'createPaymentIntentAndChargeForConsultV2')
@@ -79,6 +80,7 @@ class StripeProvider implements StripeProviderBase {
         'payment_method': paymentMethodId,
         'consult_id': consultId,
         'apply_coupon': applyCoupon,
+        'place_hold': placeHold,
       };
     }
 
