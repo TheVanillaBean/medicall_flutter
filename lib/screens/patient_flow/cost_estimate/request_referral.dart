@@ -4,6 +4,7 @@ import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/insurance_info.dart';
 import 'package:Medicall/routing/router.dart';
+import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/patient_flow/select_provider/select_provider.dart';
 import 'package:Medicall/screens/patient_flow/start_visit/start_visit.dart';
 import 'package:Medicall/services/database.dart';
@@ -102,11 +103,11 @@ class _RequestReferralState extends State<RequestReferral> {
     try {
       if (await this.requestReferral(userProvider, firestoreDatabase)) {
         bool didPressYes = await PlatformAlertDialog(
-          title: "Proceed with visit",
+          title: "Continue with visit",
           content:
-              "You have successfully requested a referral and you will receive a follow up email within 24 hours. In the meantime, you can still proceed with filling out visit information. You will only be asked to pay once your referral is approved.",
-          defaultActionText: "Yes, proceed",
-          cancelActionText: "No, stay",
+              "Your request has been submitted and you will get an update within 1 business day. You can continue with your visit or resume after your referral is approved",
+          defaultActionText: "Continue",
+          cancelActionText: "Resume later",
         ).show(context);
 
         if (didPressYes) {
@@ -116,6 +117,8 @@ class _RequestReferralState extends State<RequestReferral> {
           );
           return false;
         } else {
+          await PatientDashboardScreen.show(
+              context: context, pushReplaceNamed: true);
           return false;
         }
       } else {

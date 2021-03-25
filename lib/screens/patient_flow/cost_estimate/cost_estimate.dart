@@ -184,7 +184,7 @@ class CostEstimate extends StatelessWidget {
 
   Widget _buildContinueButton(BuildContext context) {
     return ReusableRaisedButton(
-      title: "Continue",
+      title: "Start Visit",
       onPressed: () => _submit(context),
     );
   }
