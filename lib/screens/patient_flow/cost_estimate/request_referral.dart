@@ -57,6 +57,17 @@ class _RequestReferralState extends State<RequestReferral> {
     );
   }
 
+  Future<void> saveConsult(FirestoreDatabase firestoreDatabase) async {
+    if (widget.insuranceInfo.costEstimate > -1) {
+      widget.consult.price = widget.insuranceInfo.costEstimate;
+    }
+    widget.consult.insurancePayment = true;
+    widget.consult.insuranceInfo = widget.insuranceInfo;
+    widget.consult.state = ConsultStatus.ReferralRequested;
+
+    await firestoreDatabase.saveConsult(consult: widget.consult);
+  }
+
   Future<bool> requestReferral(
       UserProvider userProvider, FirestoreDatabase firestoreDatabase) async {
     this.updateWith(isLoading: true);
@@ -82,14 +93,7 @@ class _RequestReferralState extends State<RequestReferral> {
       throw "There was an issue requesting a referral for you. Please contact omar@medicall.com";
     }
 
-    if (widget.insuranceInfo.costEstimate > -1) {
-      widget.consult.price = widget.insuranceInfo.costEstimate;
-    }
-    widget.consult.insurancePayment = true;
-    widget.consult.insuranceInfo = widget.insuranceInfo;
-    widget.consult.state = ConsultStatus.ReferralRequested;
-
-    firestoreDatabase.saveConsult(consult: widget.consult);
+    await saveConsult(firestoreDatabase);
 
     return true;
   }
@@ -117,6 +121,7 @@ class _RequestReferralState extends State<RequestReferral> {
           );
           return false;
         } else {
+          await saveConsult(firestoreDatabase);
           await PatientDashboardScreen.show(
               context: context, pushReplaceNamed: true);
           return false;
@@ -237,6 +242,14 @@ class _RequestReferralState extends State<RequestReferral> {
       ),
       SizedBox(
         height: 16,
+      ),
+      SizedBox(height: 12),
+      Center(
+        child: ReusableRaisedButton(
+          title: "Resume after getting your PCP verified",
+          onPressed: () => PatientDashboardScreen.show(
+              context: context, pushReplaceNamed: true),
+        ),
       ),
       SizedBox(height: 12),
       Center(
