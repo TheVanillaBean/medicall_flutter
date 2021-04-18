@@ -14,6 +14,7 @@ class ProviderUser extends MedicallUser {
   List<dynamic> selectedServices;
   List<String> acceptedInsurances;
   String assistantEmail;
+  bool nylasConnected;
 
   ProviderUser({
     this.professionalTitle = '',
@@ -29,6 +30,7 @@ class ProviderUser extends MedicallUser {
     this.selectedServices = const [],
     this.assistantEmail = '',
     this.acceptedInsurances = const [],
+    this.nylasConnected = false,
   });
 
   @override
@@ -48,6 +50,7 @@ class ProviderUser extends MedicallUser {
       'selected_services': selectedServices,
       'assistant_email': assistantEmail,
       'accepted_insurances': acceptedInsurances,
+      'nylas_connected': nylasConnected,
     });
     return userMap;
   }
@@ -78,6 +81,8 @@ class ProviderUser extends MedicallUser {
     }
     provider.assistantEmail =
         data['assistant_email'] ?? provider.assistantEmail;
+    provider.nylasConnected =
+        data['nylas_connected'] ?? provider.nylasConnected;
 
     return provider;
   }

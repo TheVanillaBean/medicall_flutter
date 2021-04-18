@@ -57,7 +57,7 @@ class PatientDashboardScreen extends StatelessWidget {
 
   const PatientDashboardScreen({@required this.model});
 
-  void _navigateToVisitScreen(BuildContext context) {
+  void _navigateToVisitScreen(BuildContext context) async {
     SymptomsScreen.show(context: context);
   }
 

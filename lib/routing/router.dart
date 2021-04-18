@@ -14,6 +14,7 @@ import 'package:Medicall/models/user/provider_user_model.dart';
 import 'package:Medicall/screens/Shared/Login/login.dart';
 import 'package:Medicall/screens/Shared/visit_information/consult_photos.dart';
 import 'package:Medicall/screens/Shared/visit_information/review_visit_information.dart';
+import 'package:Medicall/screens/patient_flow/ScheduleVisit/schedule_visit.dart';
 import 'package:Medicall/screens/patient_flow/account/patient_account.dart';
 import 'package:Medicall/screens/patient_flow/account/payment_detail/payment_detail.dart';
 import 'package:Medicall/screens/patient_flow/account/payment_detail/summary_payment.dart';
@@ -51,6 +52,7 @@ import 'package:Medicall/screens/patient_flow/visit_details/visit_prescriptions.
 import 'package:Medicall/screens/patient_flow/visit_details/visit_treatment_recommendations.dart';
 import 'package:Medicall/screens/patient_flow/visit_payment/make_payment.dart';
 import 'package:Medicall/screens/provider_flow/account/accepted_insurances/accepted_insurances.dart';
+import 'package:Medicall/screens/provider_flow/account/nylas_connect/nylas_connect.dart';
 import 'package:Medicall/screens/provider_flow/account/provider_account.dart';
 import 'package:Medicall/screens/provider_flow/account/select_services/select_services.dart';
 import 'package:Medicall/screens/provider_flow/account/stripe_connect/stripe_connect.dart';
@@ -125,6 +127,8 @@ class Routes {
   static const providerAccount = '/provider-account';
   static const paymentDetail = '/payment-detail';
   static const stripeConnect = '/stripe-connect';
+  static const nylasConnect = '/nylas-connect';
+  static const scheduleVisit = '/schedule_visit';
   static const consultDetail = '/consult-detail';
   static const previousConsults = '/previous-consults';
   static const videoNotesFromProvider = '/video-notes-from-provider';
@@ -733,6 +737,20 @@ class Router {
       case Routes.stripeConnect:
         return MaterialPageRoute<dynamic>(
           builder: (context) => StripeConnect.create(context),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case Routes.nylasConnect:
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => NylasConnect.create(context),
+          settings: settings,
+          fullscreenDialog: true,
+        );
+      case Routes.scheduleVisit:
+        final Map<String, dynamic> mapArgs = args;
+        final Consult consult = mapArgs['consult'];
+        return MaterialPageRoute<dynamic>(
+          builder: (context) => ScheduleVisit.create(context, consult),
           settings: settings,
           fullscreenDialog: true,
         );

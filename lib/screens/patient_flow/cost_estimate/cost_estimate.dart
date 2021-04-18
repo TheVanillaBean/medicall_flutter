@@ -73,6 +73,7 @@ class CostEstimate extends StatelessWidget {
     }
     model.consult.insurancePayment = true;
     model.consult.insuranceInfo = model.insuranceInfo;
+    model.consult.visitType = VisitType.Live;
     StartVisitScreen.show(
       context: context,
       consult: model.consult,
