@@ -100,7 +100,11 @@ class QuestionsViewModel extends PropertyChangeNotifier
     consult.patientId = (await this.auth.currentUser()).uid;
     if (consult.state == null ||
         consult.state != ConsultStatus.ReferralRequested) {
-      consult.state = ConsultStatus.PendingPayment;
+      if (consult.visitType == VisitType.Async) {
+        consult.state = ConsultStatus.PendingPayment;
+      } else {
+        consult.state = ConsultStatus.NeedsScheduling;
+      }
     }
     ScreeningQuestions questions =
         ScreeningQuestions(screeningQuestions: consult.questions);

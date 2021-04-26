@@ -14,12 +14,23 @@ enum ConsultStatus {
   Completed,
   Signed,
   ReferralRequested,
+  NeedsScheduling,
+  Scheduled
 }
+
+enum VisitType { Live, Async }
 
 extension EnumParser on String {
   ConsultStatus toConsultStatus() {
     return ConsultStatus.values.firstWhere(
       (e) => e.toString().toLowerCase() == 'ConsultStatus.$this'.toLowerCase(),
+      orElse: () => null,
+    ); //return null if not found
+  }
+
+  VisitType toVisitType() {
+    return VisitType.values.firstWhere(
+      (e) => e.toString().toLowerCase() == 'VisitType.$this'.toLowerCase(),
       orElse: () => null,
     ); //return null if not found
   }
@@ -78,6 +89,7 @@ class Consult {
   bool insurancePayment;
   InsuranceInfo insuranceInfo;
   bool seenDoctorInPastThreeYears;
+  VisitType visitType;
 
   //not serialized
   PatientUser patientUser;
@@ -112,6 +124,7 @@ class Consult {
     this.insurancePayment = false,
     this.insuranceInfo,
     this.seenDoctorInPastThreeYears = false,
+    this.visitType = VisitType.Async,
   });
 
   factory Consult.fromMap(Map<String, dynamic> data, String documentId) {
@@ -168,6 +181,9 @@ class Consult {
 
     final bool seenDoctor = data['seen_doctor_past_three_years'] ?? false;
 
+    final VisitType visitType =
+        (data['visit_type'] as String).toVisitType() ?? VisitType.Async;
+
     return Consult(
       uid: documentId,
       providerId: providerId,
@@ -189,6 +205,7 @@ class Consult {
       insurancePayment: insurancePayment,
       insuranceInfo: insuranceInfo,
       seenDoctorInPastThreeYears: seenDoctor,
+      visitType: visitType,
     );
   }
 
@@ -207,6 +224,7 @@ class Consult {
       'provider_message_notifications': providerMessageNotifications,
       'insurance_payment': insurancePayment,
       'seen_doctor_past_three_years': seenDoctorInPastThreeYears,
+      'visit_type': EnumToString.convertToString(visitType)
     };
     if (providerReclassified) {
       baseToMap.addAll({

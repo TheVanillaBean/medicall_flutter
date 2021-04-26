@@ -8,6 +8,7 @@ import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/user/provider_user_model.dart';
 import 'package:Medicall/routing/router.dart';
 import 'package:Medicall/screens/provider_flow/account/accepted_insurances/accepted_insurances.dart';
+import 'package:Medicall/screens/provider_flow/account/nylas_connect/nylas_connect.dart';
 import 'package:Medicall/screens/provider_flow/account/stripe_connect/stripe_connect.dart';
 import 'package:Medicall/screens/provider_flow/dashboard/provider_dashboard_list_item.dart';
 import 'package:Medicall/screens/provider_flow/dashboard/provider_dashboard_view_model.dart';
@@ -17,6 +18,7 @@ import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProviderDashboardScreen extends StatelessWidget {
   final ProviderDashboardViewModel model;
@@ -56,9 +58,17 @@ class ProviderDashboardScreen extends StatelessWidget {
     }
   }
 
-  void consultItemPressed(BuildContext context, Consult consult) {
+  Future<void> consultItemPressed(BuildContext context, Consult consult) async {
     if (!(model.userProvider.user as ProviderUser).stripeConnectAuthorized) {
       StripeConnect.show(context: context, pushReplaceNamed: true);
+    } else if (consult.state == ConsultStatus.Scheduled) {
+      String url = await model.getVideoLink(consult);
+
+      if (await canLaunch(url)) {
+        await launch(url, enableJavaScript: true);
+      } else {
+        throw 'Could not launch url';
+      }
     } else {
       VisitOverview.show(
         context: context,
@@ -113,37 +123,57 @@ class ProviderDashboardScreen extends StatelessWidget {
 
   List<Widget> _buildChildren({BuildContext context, double height}) {
     ProviderUser user = this.model.userProvider.user as ProviderUser;
-    return [
-      user.stripeConnectAuthorized
-          ? _buildStripeAuthorizedHeader()
-          : _buildNeedsAuthHeader(),
-      SizedBox(
-        height: height * 0.1,
-      ),
-    ];
+    if (!user.stripeConnectAuthorized) {
+      return [
+        _buildNeedsStripeAuthHeader(context),
+        SizedBox(
+          height: height * 0.1,
+        ),
+      ];
+    } else if (user.acceptedInsurances.length == 0) {
+      return [
+        _buildNeedsAcceptedInsurancesHeader(context),
+        SizedBox(
+          height: height * 0.1,
+        ),
+      ];
+    } else if (!user.nylasConnected) {
+      return [
+        _buildNeedsNylasHeader(context),
+        SizedBox(
+          height: height * 0.1,
+        ),
+      ];
+    } else {
+      return [
+        _buildStripeAuthorizedHeader(),
+        SizedBox(
+          height: height * 0.1,
+        ),
+      ];
+    }
   }
 
-  Widget _buildAcceptedInsurancesHeader() {
-    return StreamBuilder<Object>(
-        stream: null,
-        builder: (context, snapshot) {
-          return Column(
-            children: [
-              Text(
-                'You have not selected your accepted insurances yet',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.headline6,
-              ),
-              SizedBox(height: 24),
-              ReusableRaisedButton(
-                title: 'Select my insurances',
-                onPressed: () {
-                  AcceptedInsurances.show(context: context);
-                },
-              )
-            ],
-          );
-        });
+  Widget _buildNeedsAcceptedInsurancesHeader(BuildContext context) {
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Center(
+            child: Text(
+              "You have not selected your accepted insurances yet. This enables us to only allow patients to create a visit with you if you accept their insurance.",
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.headline6,
+            ),
+          ),
+          SizedBox(height: 24),
+          ReusableRaisedButton(
+            title: "Select my accepted insurances",
+            onPressed: () => AcceptedInsurances.show(context: context),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildStripeAuthorizedHeader() {
@@ -171,7 +201,8 @@ class ProviderDashboardScreen extends StatelessWidget {
                   ),
                   itemBuilder: (context, consult) => ProviderDashboardListItem(
                     consult: consult,
-                    onTap: () => consultItemPressed(context, consult),
+                    onTap: () async =>
+                        await consultItemPressed(context, consult),
                   ),
                 ),
               ),
@@ -182,34 +213,53 @@ class ProviderDashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildNeedsAuthHeader() {
-    return StreamBuilder<List<Consult>>(
-      stream: model.consultStream.stream,
-      builder:
-          (BuildContext context, AsyncSnapshot<List<Consult>> consultSnapshot) {
-        return Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Center(
-                child: Text(
-                  "You are not connected to Stripe. We use Stripe to send payouts to you for each visit you review.",
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.headline6,
-                ),
-              ),
-              SizedBox(height: 24),
-              ReusableRaisedButton(
-                title: "Connect my account with Stripe",
-                onPressed: () => StripeConnect.show(
-                  context: context,
-                  pushReplaceNamed: false,
-                ),
-              ),
-            ],
+  Widget _buildNeedsStripeAuthHeader(BuildContext context) {
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Center(
+            child: Text(
+              "You are not connected to Stripe. We use Stripe to send payouts to you for each visit you review.",
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.headline6,
+            ),
           ),
-        );
-      },
+          SizedBox(height: 24),
+          ReusableRaisedButton(
+            title: "Connect my account with Stripe",
+            onPressed: () => StripeConnect.show(
+              context: context,
+              pushReplaceNamed: false,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNeedsNylasHeader(BuildContext context) {
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Center(
+            child: Text(
+              "You are not connected to Nylas. We use Nylas to handle dynamic scheduling for live visits.",
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.headline6,
+            ),
+          ),
+          SizedBox(height: 24),
+          ReusableRaisedButton(
+            title: "Connect my account with Nylas",
+            onPressed: () => NylasConnect.show(
+              context: context,
+              pushReplaceNamed: false,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -110,7 +110,11 @@ class MakePaymentViewModel with ChangeNotifier {
   }
 
   Future<void> updateConsultStatus() async {
-    this.consult.state = ConsultStatus.PendingReview;
+    if (this.consult.visitType == VisitType.Live) {
+      this.consult.state = ConsultStatus.Scheduled;
+    } else {
+      this.consult.state = ConsultStatus.PendingReview;
+    }
     if (this.coupon != null) {
       this.consult.coupon = coupon.code;
     }

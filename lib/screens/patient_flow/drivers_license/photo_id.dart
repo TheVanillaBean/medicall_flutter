@@ -6,6 +6,7 @@ import 'package:Medicall/screens/patient_flow/account/patient_account.dart';
 import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
 import 'package:Medicall/screens/patient_flow/drivers_license/photo_id_view_model.dart';
 import 'package:Medicall/screens/patient_flow/personal_info/personal_info.dart';
+import 'package:Medicall/screens/patient_flow/schedule_visit/schedule_visit.dart';
 import 'package:Medicall/screens/patient_flow/visit_payment/make_payment.dart';
 import 'package:Medicall/services/database.dart';
 import 'package:Medicall/services/extimage_provider.dart';
@@ -89,7 +90,15 @@ class PhotoIDScreen extends StatelessWidget {
             (model.userProvider.user as PatientUser).profilePic.length > 2 &&
             (model.userProvider.user as PatientUser).mailingAddress.length >
                 2) {
-          MakePayment.show(context: context, consult: model.consult);
+          if (model.consult.visitType == VisitType.Live &&
+              model.consult.state == ConsultStatus.NeedsScheduling) {
+            ScheduleVisit.show(
+                context: context,
+                pushReplaceNamed: true,
+                consult: model.consult);
+          } else {
+            MakePayment.show(context: context, consult: model.consult);
+          }
         } else {
           PersonalInfoScreen.show(context: context, consult: model.consult);
         }

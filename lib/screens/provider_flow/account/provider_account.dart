@@ -18,9 +18,11 @@ import 'package:Medicall/services/firebase_storage_service.dart';
 import 'package:Medicall/services/user_provider.dart';
 import 'package:Medicall/util/app_util.dart';
 import 'package:Medicall/util/image_picker.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProviderAccountScreen extends StatefulWidget {
   final UpdateProviderInfoViewModel model;
@@ -199,6 +201,8 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
             _buildMedicalResidencyCard(medicallUser),
             Divider(height: 0.5, thickness: 1),
             _buildProviderBioCard(medicallUser),
+            Divider(height: 0.5, thickness: 1),
+            _buildEditScheduleCard(medicallUser),
             SizedBox(height: 50),
           ],
         ),
@@ -446,6 +450,25 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
     );
   }
 
+  Widget _buildEditScheduleCard(MedicallUser medicallUser) {
+    return ReusableAccountCard(
+      leading: 'Schedule',
+      title: 'Edit Availability',
+      trailing: IconButton(
+        icon: Icon(Icons.create, size: 20),
+        onPressed: () async {
+          String url = await getScheduleUrl();
+
+          if (await canLaunch(url)) {
+            await launch(url, enableJavaScript: true);
+          } else {
+            throw 'Could not launch url';
+          }
+        },
+      ),
+    );
+  }
+
   Widget _buildAvatarWidget({
     MedicallUser medicallUser,
     FirebaseStorageService storageService,
@@ -528,5 +551,19 @@ class _ProviderAccountScreenState extends State<ProviderAccountScreen> {
       await firestoreDatabase.setUser(userProvider.user);
     }
     AssetPicker.unregisterObserve();
+  }
+
+  Future<String> getScheduleUrl() async {
+    final callable = CloudFunctions.instance
+        .getHttpsCallable(functionName: 'retrieveScheduleEditUrl')
+          ..timeout = const Duration(seconds: 30);
+
+    final HttpsCallableResult result = await callable.call();
+
+    if (result.data != null) {
+      return result.data;
+    }
+
+    return "true";
   }
 }
