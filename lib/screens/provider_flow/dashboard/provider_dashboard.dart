@@ -18,6 +18,7 @@ import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProviderDashboardScreen extends StatelessWidget {
   final ProviderDashboardViewModel model;
@@ -57,9 +58,17 @@ class ProviderDashboardScreen extends StatelessWidget {
     }
   }
 
-  void consultItemPressed(BuildContext context, Consult consult) {
+  Future<void> consultItemPressed(BuildContext context, Consult consult) async {
     if (!(model.userProvider.user as ProviderUser).stripeConnectAuthorized) {
       StripeConnect.show(context: context, pushReplaceNamed: true);
+    } else if (consult.state == ConsultStatus.Scheduled) {
+      String url = await model.getVideoLink(consult);
+
+      if (await canLaunch(url)) {
+        await launch(url, enableJavaScript: true);
+      } else {
+        throw 'Could not launch url';
+      }
     } else {
       VisitOverview.show(
         context: context,
@@ -192,7 +201,8 @@ class ProviderDashboardScreen extends StatelessWidget {
                   ),
                   itemBuilder: (context, consult) => ProviderDashboardListItem(
                     consult: consult,
-                    onTap: () => consultItemPressed(context, consult),
+                    onTap: () async =>
+                        await consultItemPressed(context, consult),
                   ),
                 ),
               ),

@@ -2,9 +2,9 @@ import 'package:Medicall/common_widgets/custom_app_bar.dart';
 import 'package:Medicall/common_widgets/form_submit_button.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
 import 'package:Medicall/models/consult_model.dart';
-import 'package:Medicall/models/user/user_model_base.dart';
 import 'package:Medicall/routing/router.dart';
-import 'package:Medicall/screens/patient_flow/ScheduleVisit/schedule_visit_view_model.dart';
+import 'package:Medicall/screens/patient_flow/dashboard/patient_dashboard.dart';
+import 'package:Medicall/screens/patient_flow/schedule_visit/schedule_visit_view_model.dart';
 import 'package:Medicall/screens/patient_flow/visit_payment/make_payment.dart';
 import 'package:Medicall/services/auth.dart';
 import 'package:Medicall/services/user_provider.dart';
@@ -60,6 +60,7 @@ class ScheduleVisit extends StatelessWidget {
 
   void _navigateToScheduleURL() async {
     String url = await model.getScheduleUrl();
+
     if (await canLaunch(url)) {
       await launch(url, enableJavaScript: true);
     } else {
@@ -79,6 +80,10 @@ class ScheduleVisit extends StatelessWidget {
         type: AppBarType.Close,
         title: "Schedule Visit",
         theme: Theme.of(context),
+        onPressed: () => PatientDashboardScreen.show(
+          context: context,
+          pushReplaceNamed: true,
+        ),
       ),
       body: StreamBuilder<DocumentSnapshot>(
           stream: FirebaseFirestore.instance
@@ -88,11 +93,6 @@ class ScheduleVisit extends StatelessWidget {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               if (snapshot.data.data()['state'] == "NeedsScheduling") {
-                MedicallUser provider = MedicallUser.fromMap(
-                    userType: USER_TYPE.PROVIDER,
-                    data: snapshot.data.data(), //lol
-                    uid: user.uid);
-                this.model.userProvider.user = provider;
                 return _buildNeedsSchedulingWidget(context);
               } else {
                 return _buildScheduledWidget(context);

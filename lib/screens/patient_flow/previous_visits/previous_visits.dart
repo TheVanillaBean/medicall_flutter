@@ -7,6 +7,7 @@ import 'package:Medicall/screens/patient_flow/drivers_license/photo_id.dart';
 import 'package:Medicall/screens/patient_flow/personal_info/personal_info.dart';
 import 'package:Medicall/screens/patient_flow/previous_visits/previous_visits_list_item.dart';
 import 'package:Medicall/screens/patient_flow/previous_visits/previous_visits_view_model.dart';
+import 'package:Medicall/screens/patient_flow/schedule_visit/schedule_visit.dart';
 import 'package:Medicall/screens/patient_flow/visit_details/visit_details_overview.dart';
 import 'package:Medicall/screens/patient_flow/visit_payment/make_payment.dart';
 import 'package:Medicall/services/database.dart';
@@ -48,8 +49,13 @@ class PreviousVisits extends StatelessWidget {
       if ((model.userProvider.user as PatientUser).fullName.length > 2 &&
           (model.userProvider.user as PatientUser).profilePic.length > 2 &&
           (model.userProvider.user as PatientUser).mailingAddress.length > 2) {
-        //personal info check
-        MakePayment.show(context: context, consult: consult);
+        if (consult.visitType == VisitType.Live &&
+            consult.state == ConsultStatus.NeedsScheduling) {
+          ScheduleVisit.show(
+              context: context, pushReplaceNamed: true, consult: consult);
+        } else {
+          MakePayment.show(context: context, consult: consult);
+        }
       } else {
         PersonalInfoScreen.show(context: context, consult: consult);
       }

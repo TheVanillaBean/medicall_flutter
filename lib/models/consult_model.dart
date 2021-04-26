@@ -27,6 +27,13 @@ extension EnumParser on String {
       orElse: () => null,
     ); //return null if not found
   }
+
+  VisitType toVisitType() {
+    return VisitType.values.firstWhere(
+      (e) => e.toString().toLowerCase() == 'VisitType.$this'.toLowerCase(),
+      orElse: () => null,
+    ); //return null if not found
+  }
 }
 
 abstract class ChatClosedKeys {
@@ -174,7 +181,8 @@ class Consult {
 
     final bool seenDoctor = data['seen_doctor_past_three_years'] ?? false;
 
-    final VisitType visitType = data['visit_type'] ?? VisitType.Async;
+    final VisitType visitType =
+        (data['visit_type'] as String).toVisitType() ?? VisitType.Async;
 
     return Consult(
       uid: documentId,
@@ -216,7 +224,7 @@ class Consult {
       'provider_message_notifications': providerMessageNotifications,
       'insurance_payment': insurancePayment,
       'seen_doctor_past_three_years': seenDoctorInPastThreeYears,
-      'visit_type': visitType
+      'visit_type': EnumToString.convertToString(visitType)
     };
     if (providerReclassified) {
       baseToMap.addAll({

@@ -10,6 +10,7 @@ import 'package:Medicall/screens/patient_flow/drivers_license/photo_id.dart';
 import 'package:Medicall/screens/patient_flow/patient_prescriptions/patient_prescriptions.dart';
 import 'package:Medicall/screens/patient_flow/personal_info/personal_info.dart';
 import 'package:Medicall/screens/patient_flow/previous_visits/previous_visits.dart';
+import 'package:Medicall/screens/patient_flow/schedule_visit/schedule_visit.dart';
 import 'package:Medicall/screens/patient_flow/symptoms_list/symptoms.dart';
 import 'package:Medicall/screens/patient_flow/visit_details/visit_details_overview.dart';
 import 'package:Medicall/screens/patient_flow/visit_payment/make_payment.dart';
@@ -18,6 +19,7 @@ import 'package:Medicall/services/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PatientDashboardScreen extends StatelessWidget {
   final PatientDashboardViewModel model;
@@ -75,8 +77,14 @@ class PatientDashboardScreen extends StatelessWidget {
       if ((model.userProvider.user as PatientUser).fullName.length > 2 &&
           (model.userProvider.user as PatientUser).profilePic.length > 2 &&
           (model.userProvider.user as PatientUser).mailingAddress.length > 2) {
-        //personal info check
-        MakePayment.show(context: context, consult: consult);
+        //Check for live visit status
+        if (consult.visitType == VisitType.Live &&
+            consult.state == ConsultStatus.NeedsScheduling) {
+          ScheduleVisit.show(
+              context: context, pushReplaceNamed: true, consult: consult);
+        } else {
+          MakePayment.show(context: context, consult: consult);
+        }
       } else {
         PersonalInfoScreen.show(context: context, consult: consult);
       }
@@ -220,14 +228,7 @@ class PatientDashboardScreen extends StatelessWidget {
                     ),
                     itemBuilder: (context, consult) => PatientDashboardListItem(
                       consult: consult,
-                      onTap: () => consult.state ==
-                                  ConsultStatus.PendingPayment ||
-                              consult.state == ConsultStatus.ReferralRequested
-                          ? _navigateToVisitPayment(context, consult)
-                          : VisitDetailsOverview.show(
-                              context: context,
-                              consult: consult,
-                            ),
+                      onTap: () async => await consultPressed(consult, context),
                     ),
                   ),
                 ),
@@ -237,5 +238,26 @@ class PatientDashboardScreen extends StatelessWidget {
         );
       },
     );
+  }
+
+  Future<void> consultPressed(Consult consult, BuildContext context) async {
+    if (consult.state == ConsultStatus.PendingPayment ||
+        consult.state == ConsultStatus.NeedsScheduling ||
+        consult.state == ConsultStatus.ReferralRequested) {
+      _navigateToVisitPayment(context, consult);
+    } else if (consult.state == ConsultStatus.Scheduled) {
+      String url = await model.getVideoLink(consult);
+
+      if (await canLaunch(url)) {
+        await launch(url, enableJavaScript: true);
+      } else {
+        throw 'Could not launch url';
+      }
+    } else {
+      VisitDetailsOverview.show(
+        context: context,
+        consult: consult,
+      );
+    }
   }
 }

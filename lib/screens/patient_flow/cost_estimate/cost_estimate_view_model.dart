@@ -47,7 +47,7 @@ class CostEstimateViewModel with FullNameValidator, ChangeNotifier {
   Future<bool> requestCostEstimate() async {
     this.updateWith(isLoading: true, requestedCostEstimate: true);
     final callable = CloudFunctions.instance
-        .getHttpsCallable(functionName: 'requestCostEstimate')
+        .getHttpsCallable(functionName: 'retrieveCoverage')
           ..timeout = const Duration(seconds: 30);
 
     Map<String, dynamic> parameters = {};

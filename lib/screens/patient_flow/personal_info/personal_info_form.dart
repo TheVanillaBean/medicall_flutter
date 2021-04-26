@@ -1,7 +1,8 @@
-import 'package:Medicall/common_widgets/custom_date_picker_formfield.dart';
 import 'package:Medicall/common_widgets/custom_dropdown_formfield.dart';
+import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/screens/patient_flow/personal_info/personal_info_text_field.dart';
 import 'package:Medicall/screens/patient_flow/personal_info/personal_info_view_model.dart';
+import 'package:Medicall/screens/patient_flow/schedule_visit/schedule_visit.dart';
 import 'package:Medicall/screens/patient_flow/visit_payment/make_payment.dart';
 import 'package:Medicall/services/extimage_provider.dart';
 import 'package:Medicall/util/app_util.dart';
@@ -36,7 +37,13 @@ class _PersonalInfoFormState extends State<PersonalInfoForm> {
     try {
       await model.submit();
       extendedImageProvider.clearImageMemory();
-      MakePayment.show(context: context, consult: model.consult);
+      if (model.consult.visitType == VisitType.Live &&
+          model.consult.state == ConsultStatus.NeedsScheduling) {
+        ScheduleVisit.show(
+            context: context, pushReplaceNamed: true, consult: model.consult);
+      } else {
+        MakePayment.show(context: context, consult: model.consult);
+      }
     } catch (e) {
       AppUtil().showFlushBar(e, context);
     }

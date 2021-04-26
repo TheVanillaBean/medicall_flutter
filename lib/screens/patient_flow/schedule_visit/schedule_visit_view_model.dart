@@ -33,8 +33,8 @@ class ScheduleVisitViewModel with ChangeNotifier {
 
     this.updateWith(isLoading: false);
 
-    if (result.data["data"] != null) {
-      return result.data["data"];
+    if (result.data != null) {
+      return result.data;
     }
 
     return "true";

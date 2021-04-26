@@ -1,5 +1,6 @@
 import 'package:Medicall/common_widgets/list_items_builder.dart';
 import 'package:Medicall/common_widgets/reusable_raised_button.dart';
+import 'package:Medicall/models/consult_model.dart';
 import 'package:Medicall/models/questionnaire/question_model.dart';
 import 'package:Medicall/models/user/patient_user_model.dart';
 import 'package:Medicall/screens/patient_flow/drivers_license/photo_id.dart';
@@ -7,8 +8,8 @@ import 'package:Medicall/screens/patient_flow/personal_info/personal_info.dart';
 import 'package:Medicall/screens/patient_flow/questionnaire/questions_screen.dart';
 import 'package:Medicall/screens/patient_flow/questionnaire/questions_view_model.dart';
 import 'package:Medicall/screens/patient_flow/questionnaire/review_questions/review_page_list_item.dart';
+import 'package:Medicall/screens/patient_flow/schedule_visit/schedule_visit.dart';
 import 'package:Medicall/screens/patient_flow/visit_payment/make_payment.dart';
-import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/screenutil.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
@@ -42,8 +43,15 @@ class ReviewPage extends StatelessWidget {
             (model.userProvider.user as PatientUser).profilePic.length > 2 &&
             (model.userProvider.user as PatientUser).mailingAddress.length >
                 2) {
-          //personal info check
-          MakePayment.show(context: context, consult: model.consult);
+          if (model.consult.visitType == VisitType.Live &&
+              model.consult.state == ConsultStatus.NeedsScheduling) {
+            ScheduleVisit.show(
+                context: context,
+                pushReplaceNamed: true,
+                consult: model.consult);
+          } else {
+            MakePayment.show(context: context, consult: model.consult);
+          }
         } else {
           PersonalInfoScreen.show(context: context, consult: model.consult);
         }
